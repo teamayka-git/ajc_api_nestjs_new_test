@@ -32,7 +32,7 @@ export class LoggerMiddleware implements NestMiddleware {
         throw new UnauthorizedException();
 
       }
-
+console.log("mdwr_______  "+req["_userId_"]);
       req["_userId_"] = data._userId_;
       req["_employeeId_"] = data._employeeId_;
 
