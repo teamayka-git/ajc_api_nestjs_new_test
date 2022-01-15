@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
+import { MeDto } from './app.dto';
 import { ModelNames } from './common/model_names';
 import { Counters } from './tableModels/counters.model';
 import { Employee } from './tableModels/employee.model';
@@ -19,6 +20,43 @@ export class AppService {
   }
 
 
+  async me(dto: MeDto, _user_id_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    var resultEmployee = await this.userModel
+      .aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(_userId_) } },
+        { $sort: { _id: -1 } },
+        {
+          $lookup: {
+            from: ModelNames.EMPLOYEES,
+            let: { employeeId: '$_employeeId' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$_id', '$$employeeId'] } } },
+            ],
+            as: 'employeeDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$employeeDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+       
+      ])
+      .session(transactionSession);
+
+    if (resultEmployee.length == 0) {
+      throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
+    }
+ 
+    await transactionSession.commitTransaction();
+    await transactionSession.endSession();
+
+    return { message: 'success', data: resultEmployee[0] };
+  }
   
   async  project_init() {
     var dateTime = new Date().getTime();

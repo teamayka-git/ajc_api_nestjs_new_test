@@ -1,4 +1,5 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request } from '@nestjs/common';
+import { MeDto } from './app.dto';
 import { AppService } from './app.service';
 
 @Controller()
@@ -8,6 +9,10 @@ export class AppController {
   @Get()
   getHello(): string {
     return this.appService.getHello();
+  }
+  @Post("me")
+  me(@Body() dto: MeDto, @Request() req) {
+    return this.appService.me(dto, req['_user_id_']);
   }
   @Post("project_init")
   project_init() {
