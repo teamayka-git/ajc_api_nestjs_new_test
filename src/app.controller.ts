@@ -12,7 +12,7 @@ export class AppController {
   }
   @Post("me")
   me(@Body() dto: MeDto, @Request() req) {
-    return this.appService.me(dto, req['_user_id_']);
+    return this.appService.me(dto, req['_userId_']);
   }
   @Post("project_init")
   project_init() {
