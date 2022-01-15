@@ -20,7 +20,7 @@ export class AppService {
   }
 
 
-  async me(dto: MeDto, _user_id_: string) {
+  async me(dto: MeDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
