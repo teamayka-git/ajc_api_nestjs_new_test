@@ -24,6 +24,10 @@ export class AppService {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
+
+
+console.log("_userId_   "+_userId_);
+
     var resultEmployee = await this.userModel
       .aggregate([
         { $match: { _id: new mongoose.Types.ObjectId(_userId_) } },
