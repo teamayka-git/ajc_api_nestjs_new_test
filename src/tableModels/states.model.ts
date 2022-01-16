@@ -3,13 +3,10 @@ import { ModelNames } from 'src/common/model_names';
 import { GlobalConfig } from 'src/config/global_config';
 
 
-export const BranchSchema = new mongoose.Schema({
+export const StatesSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
     _name: { type: String, required: true, default: "nil" },
-    _uid: { type: String, required: true, default: "nil" },
-    _email: { type: String, required: true, default: "nil" },
-    _mobile: { type: String, required: true, default: "nil" },
-    _tectCode: { type: String, required: true, default: "nil" },
+    _code:  { type: Number, required: true, default: -1 },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
     _updatedUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
@@ -17,13 +14,10 @@ export const BranchSchema = new mongoose.Schema({
     _status: { type: Number, required: true, default: -1 },
 });
  
-export interface Branch {
+export interface States {
     _id: String;
     _name: String;
-    _uid: String;
-    _email:  String;
-    _mobile: String;
-    _tectCode: String;
+    _code: Number;
     _createdUserId:String;
     _createdAt:  Number;
     _updatedUserId: String;
@@ -31,22 +25,22 @@ export interface Branch {
     _status: Number;
 }
 
-BranchSchema.index({_uid:1});
-BranchSchema.index({_name: 1});
-BranchSchema.index({_email: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
-BranchSchema.post('save', async function(error, doc, next) {
+StatesSchema.index({_name: 1});
+StatesSchema.index({_code: 1});
+StatesSchema.index({_code: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
+StatesSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
 });
-BranchSchema.post('insertMany', async function(error, doc, next) {
+StatesSchema.post('insertMany', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
 });
-BranchSchema.post('updateOne', async function(error, doc, next) {
+StatesSchema.post('updateOne', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
 });
-BranchSchema.post('findOneAndUpdate', async function(error, doc, next) {
+StatesSchema.post('findOneAndUpdate', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
 });
-BranchSchema.post('updateMany', async function(error, doc, next) {
+StatesSchema.post('updateMany', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
 });
 function schemaPostFunctionForDuplicate(error, doc, next) {

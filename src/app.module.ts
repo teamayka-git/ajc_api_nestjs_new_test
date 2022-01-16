@@ -17,6 +17,7 @@ import { EmployeeSchema } from './tableModels/employee.model';
 import { CountersSchema } from './tableModels/counters.model';
 import { EmployeesModule } from './modules/employees/employees.module';
 import { BranchModule } from './modules/branch/branch.module';
+import { StatesModule } from './modules/states/states.module';
 
 
 @Module({
@@ -36,6 +37,7 @@ import { BranchModule } from './modules/branch/branch.module';
   ]),
   EmployeesModule,
   BranchModule,
+  StatesModule,
   
   
   // SalesReturnRequestStatusesModule,

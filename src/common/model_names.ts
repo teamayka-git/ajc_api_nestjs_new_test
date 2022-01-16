@@ -4,6 +4,7 @@ export enum ModelNames {
     EMPLOYEES="employees",
     COUNTERS="counters",
     BRANCHES="branches",
+    STATES="states",
    
     
 
