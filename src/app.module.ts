@@ -64,10 +64,10 @@ export class AppModule {
       consumer
         .apply(LoggerMiddleware)
         .exclude(
+          process.env.GLOBAL_PREFIX_FOR_API + '/project_init',
           // process.env.GLOBAL_PREFIX_FOR_API + '/(.*)',
           // process.env.GLOBAL_PREFIX_FOR_API + '/store_front/(.*)',
           process.env.GLOBAL_PREFIX_FOR_API + '/employees/login',
-          // process.env.GLOBAL_PREFIX_FOR_API + '/project_init',
        
         )
         .forRoutes('*');
