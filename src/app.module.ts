@@ -16,6 +16,7 @@ import { UserSchema } from './tableModels/user.model';
 import { EmployeeSchema } from './tableModels/employee.model';
 import { CountersSchema } from './tableModels/counters.model';
 import { EmployeesModule } from './modules/employees/employees.module';
+import { BranchModule } from './modules/branch/branch.module';
 
 
 @Module({
@@ -34,6 +35,7 @@ import { EmployeesModule } from './modules/employees/employees.module';
     { name: ModelNames.COUNTERS, schema:CountersSchema },
   ]),
   EmployeesModule,
+  BranchModule,
   
   
   // SalesReturnRequestStatusesModule,
