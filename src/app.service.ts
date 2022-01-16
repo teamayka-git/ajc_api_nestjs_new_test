@@ -5,13 +5,16 @@ import { MeDto } from './app.dto';
 import { ModelNames } from './common/model_names';
 import { Counters } from './tableModels/counters.model';
 import { Employee } from './tableModels/employee.model';
+import { Generals } from './tableModels/generals.model';
 import { User } from './tableModels/user.model';
 const crypto = require('crypto');
 
 
 @Injectable()
 export class AppService {
-  constructor( @InjectModel(ModelNames.USER) private readonly userModel: mongoose.Model<User>,@InjectModel(ModelNames.COUNTERS)
+  constructor( @InjectModel(ModelNames.USER) private readonly userModel: mongoose.Model<User>,
+  @InjectModel(ModelNames.GENERALS) private readonly generalsModel: mongoose.Model<Generals>,
+  @InjectModel(ModelNames.COUNTERS)
   private readonly countersModel: mongoose.Model<Counters>, @InjectModel(ModelNames.EMPLOYEES) private readonly employeeModel: mongoose.Model<Employee>,
 
     @InjectConnection() private readonly connection: mongoose.Connection,){}
@@ -131,6 +134,319 @@ export class AppService {
           );
     
           userId = resultUser._id;
+
+
+
+          await this.generalsModel.findOneAndUpdate(
+            { _code: 1000 },
+            {
+              $setOnInsert: {
+                _string:"Rs",
+                _number:-1,
+                _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+          await this.generalsModel.findOneAndUpdate(
+            { _code: 1001 },
+            {
+              $setOnInsert: {
+                _string:"₹",
+                _number:-1,
+                _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+    
+          await this.generalsModel.findOneAndUpdate(
+            { _code: 1002 },
+            {
+              $setOnInsert: {
+                _string:"",
+                _number:2,
+                _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+    
+          await this.generalsModel.findOneAndUpdate(
+            { _code: 1003 },
+            {
+              $setOnInsert: {
+                _string:"",
+                _number:10,
+                _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+          await this.generalsModel.findOneAndUpdate(
+            { _code: 1004 },
+            {
+              $setOnInsert: {
+                _string:"",
+                _number:30,
+                _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+          await this.generalsModel.findOneAndUpdate(
+            { _code: 1005 },
+            {
+              $setOnInsert: {
+                _string:"",
+                _number:14,
+                _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+    
+          await this.generalsModel.findOneAndUpdate(
+            { _code: 1006 },
+            {
+              $setOnInsert: {
+                _string:"",
+                _number:1,
+                _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+    
+          await this.generalsModel.findOneAndUpdate(
+            { _code: 1007 },
+            {
+              $setOnInsert: {
+                _string:"",
+                _number:1,
+                _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+          await this.generalsModel.findOneAndUpdate(
+            { _code: 1008 },
+            {
+              $setOnInsert: {
+                _string:"",
+                _number:1,
+                _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+          await this.generalsModel.findOneAndUpdate(
+            { _code: 1009 },
+            {
+              $setOnInsert: {
+                _string:"",
+                _number:1,
+                _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+    
+          await this.generalsModel.findOneAndUpdate(
+            { _code: 1010 },
+            {
+              $setOnInsert: {
+                _string:"",
+                _number:1,
+                _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+          await this.generalsModel.findOneAndUpdate(
+            { _code: 1011 },
+            {
+              $setOnInsert: {
+                _string:"",
+                _number:1,
+                _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+          await this.generalsModel.findOneAndUpdate(
+            { _code: 1012 },
+            {
+              $setOnInsert: {
+                _string:"",
+                _number:1,
+                _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+    
+          await this.generalsModel.findOneAndUpdate(
+            { _code: 1013 },
+            {
+              $setOnInsert: {
+                _string:"AJC",
+                _number:-1,
+                _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+          await this.generalsModel.findOneAndUpdate(
+            { _code: 1014 },
+            {
+              $setOnInsert: {
+                _string:"GOLD",
+                _number:-1,
+                _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+    
+          await this.generalsModel.findOneAndUpdate(
+            { _code: 1015 },
+            {
+              $setOnInsert: {
+                _string:"",
+                _number:1,
+                _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+
+          await this.generalsModel.findOneAndUpdate(
+            { _code: 1016 },
+            {
+              $setOnInsert: {
+                _string:"",
+                _number:1,
+                _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+
+          await this.generalsModel.findOneAndUpdate(
+            { _code: 1017 },
+            {
+              $setOnInsert: {
+                _string:"AJC",
+                _number:-1,
+                _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+
+
+
+
+
+
+
+
+
+
+
+
+
     } else {
       userId = resultCheckUser[0]._id;
     }

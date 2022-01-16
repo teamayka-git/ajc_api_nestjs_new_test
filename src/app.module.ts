@@ -21,6 +21,7 @@ import { StatesModule } from './modules/states/states.module';
 import { DistrictsModule } from './modules/districts/districts.module';
 import { CitiesModule } from './modules/cities/cities.module';
 import { GeneralsModule } from './modules/generals/generals.module';
+import { GeneralsSchema } from './tableModels/generals.model';
 
 
 @Module({
@@ -37,6 +38,7 @@ import { GeneralsModule } from './modules/generals/generals.module';
     { name: ModelNames.USER, schema: UserSchema },
     { name: ModelNames.EMPLOYEES, schema: EmployeeSchema },
     { name: ModelNames.COUNTERS, schema:CountersSchema },
+    { name: ModelNames.GENERALS, schema:GeneralsSchema },
   ]),
   EmployeesModule,
   BranchModule,

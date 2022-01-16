@@ -6,7 +6,7 @@ import { GlobalConfig } from 'src/config/global_config';
 export const GeneralsSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
     _code:  { type: Number, required: true, default: -1 },
-    _string: { type: String, required: true, default: "nil" },
+    _string: { type: String, default: "nil" },
     _number: { type: Number, required: true, default: -1 },
     _json: { type: Object, required: true, default: {} },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
@@ -57,4 +57,25 @@ function schemaPostFunctionForDuplicate(error, doc, next) {
 
 
 /*
+_code:{
+    1000 - currency denominator text, 
+    1001 - currency denominator symbol, 
+    1002 - product floating digit weight, 
+    1003 - product purity, 
+    1004 - customer credit amount limit percentage, 
+    1005 - customer credit days limit, 
+    1006 - tax gold manufacturing tax rate %, 
+    1007 - tax product CGST %, 
+    1008 - tax product SGST %, 
+    1009 - tax product IGST %, 
+    1010 - tax holemarking tax %, 
+    1011 - tax other charge tax %, 
+    1012 - tax job work tax %, 
+    1013 - order sale new order suffix, 
+    1014 - order sale new order prefix, 
+    1015 - order sale new order suffix status, 
+    1016 - order sale new order prefix status, 
+    1017 - order headname prefix
+
+}
 */

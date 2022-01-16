@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Put, Request } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Put, Request } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { GeneralsCreateDto, GeneralsEditDto, GeneralsListDto, GeneralsStatusChangeDto } from './generals.dto';
 import { GeneralsService } from './generals.service';
