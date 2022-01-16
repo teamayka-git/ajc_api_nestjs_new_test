@@ -33,6 +33,7 @@ export interface Employee {
     _status: Number;
 }
 
+EmployeeSchema.index({_email: 1});
 EmployeeSchema.index({_email: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 EmployeeSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);

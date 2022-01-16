@@ -31,6 +31,7 @@ export interface Branch {
     _status: Number;
 }
 
+BranchSchema.index({_name: 1,_uid:1});
 BranchSchema.index({_email: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 BranchSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);

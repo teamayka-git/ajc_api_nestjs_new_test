@@ -32,6 +32,7 @@ export interface User {
     _status: Number;
 } 
 
+UserSchema.index({_employeeId: 1});
 /*
 _type:{
     0 - employee

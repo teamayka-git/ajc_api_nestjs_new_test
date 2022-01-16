@@ -26,7 +26,6 @@ export class AppService {
     transactionSession.startTransaction();
 
 
-console.log("_userId_   "+_userId_);
 
     var resultEmployee = await this.userModel
       .aggregate([
