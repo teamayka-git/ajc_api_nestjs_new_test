@@ -5,6 +5,8 @@ export enum ModelNames {
     COUNTERS="counters",
     BRANCHES="branches",
     STATES="states",
+    DISTRICTS="districts",
+    CITIES="cities",
    
     
 

@@ -18,6 +18,8 @@ import { CountersSchema } from './tableModels/counters.model';
 import { EmployeesModule } from './modules/employees/employees.module';
 import { BranchModule } from './modules/branch/branch.module';
 import { StatesModule } from './modules/states/states.module';
+import { DistrictsModule } from './modules/districts/districts.module';
+import { CitiesModule } from './modules/cities/cities.module';
 
 
 @Module({
@@ -38,6 +40,8 @@ import { StatesModule } from './modules/states/states.module';
   EmployeesModule,
   BranchModule,
   StatesModule,
+  DistrictsModule,
+  CitiesModule,
   
   
   // SalesReturnRequestStatusesModule,
