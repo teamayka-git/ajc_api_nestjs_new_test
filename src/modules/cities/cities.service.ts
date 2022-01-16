@@ -99,7 +99,7 @@ export class CitiesService {
         transactionSession.startTransaction();
     
         var arrayAggregation = [];
-        arrayAggregation.push({ $match: { _status: { $in: [1, 0] } } });
+        arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
     
         if (dto.searchingText != '') {
           //todo

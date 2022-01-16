@@ -1,4 +1,5 @@
 import {
+  ArrayMinSize,
   IsArray,
   IsEmail,
   IsNumber,
@@ -79,7 +80,10 @@ export class GeneralsEditDto {
 
 export class GeneralsListDto {
 
- 
+  @IsArray()
+  @ArrayMinSize(1)
+  @ApiProperty({ type: [Number],description:descriptionStatus })
+  statusArray:number[];
 
   @IsArray()
   @ApiProperty({ type: [String] })

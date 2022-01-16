@@ -17,7 +17,7 @@ export class EmployeesController {
     @Res({ passthrough: true }) response: Response, //jwt response store in cookie
   ) {
     var returnData: Object = await this.employeesService.login(dto);
-console.log("login   "+JSON.stringify(returnData));
+    
     const jwt = await this.jwtService.signAsync(
       {
         _userId_: returnData['_id'],

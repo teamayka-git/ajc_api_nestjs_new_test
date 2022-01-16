@@ -1,4 +1,5 @@
 import {
+  ArrayMinSize,
   IsArray,
   IsEmail,
   IsNumber,
@@ -59,6 +60,10 @@ export class StatesEditDto {
 }
 
 export class StatesListDto {
+  @IsArray()
+  @ArrayMinSize(1)
+  @ApiProperty({ type: [Number],description:descriptionStatus })
+  statusArray:number[];
 
   @IsArray()
   @ApiProperty({ type: [Number],description:descriptionListScreenTypeForList })

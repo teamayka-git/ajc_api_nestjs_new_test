@@ -101,7 +101,7 @@ export class GeneralsService {
         transactionSession.startTransaction();
     
         var arrayAggregation = [];
-        arrayAggregation.push({ $match: { _status: { $in: [1, 0] } } });
+        arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
     
         if (dto.generalsIds.length > 0) {
             var newSettingsId = [];

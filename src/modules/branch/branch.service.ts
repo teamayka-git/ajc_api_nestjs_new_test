@@ -111,7 +111,7 @@ var resultCounterPurchase= await this.countersModel.findOneAndUpdate(
 
 
       var arrayAggregation = [];
-      arrayAggregation.push({ $match: { _status: { $in: [1, 0] } } });
+      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
       if (dto.searchingText != "") {//todo
           arrayAggregation.push({ $match: { $or: [{ _name: new RegExp(dto.searchingText, "i") },
