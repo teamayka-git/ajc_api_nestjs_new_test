@@ -7,6 +7,7 @@ export enum ModelNames {
     STATES="states",
     DISTRICTS="districts",
     CITIES="cities",
+    GENERALS="generals",
    
     
 

@@ -20,6 +20,7 @@ import { BranchModule } from './modules/branch/branch.module';
 import { StatesModule } from './modules/states/states.module';
 import { DistrictsModule } from './modules/districts/districts.module';
 import { CitiesModule } from './modules/cities/cities.module';
+import { GeneralsModule } from './modules/generals/generals.module';
 
 
 @Module({
@@ -42,6 +43,7 @@ import { CitiesModule } from './modules/cities/cities.module';
   StatesModule,
   DistrictsModule,
   CitiesModule,
+  GeneralsModule,
   
   
   // SalesReturnRequestStatusesModule,
