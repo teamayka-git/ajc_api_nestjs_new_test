@@ -9,7 +9,7 @@ export class GuardUserRoleStringGenerate {
      
         var userRole="";
         switch(userRoleNumber){
-            case 1:userRole=GuardUserRole.SUPER_ADMIN;break;
+            case 0:userRole=GuardUserRole.SUPER_ADMIN;break;
             }
 
 return userRole;

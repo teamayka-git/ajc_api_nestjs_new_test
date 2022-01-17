@@ -123,7 +123,7 @@ export class AppService {
                 _fcmId:"",
                 _device_unique_id:"",
                 _permissions:[],
-                _userRole:1,
+                _userRole:0,
                 _createdUserId:null,
                 _createdAt:-1,
                 _updatedUserId:null,

@@ -19,10 +19,15 @@ if(!roles){
 
 const request=context.switchToHttp().getRequest();
 
-if(roles==request["_userRole_"]){
-  return true;
+
+
+
+for(var i=0;i<roles.length;i++){
+  if(request["_userRole_"]==roles[i]){
+    return true;
+  }
 }
- 
+
 
     return false;
   }
