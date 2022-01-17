@@ -10,6 +10,7 @@ export enum ModelNames {
     GENERALS="generals",
     GOLD_RATE_TIMELINES="gold_rate_timelines",
     DELIVERY_HUBS="delivery_hubs",
+    GROUP_MASTERS="group_masters",
    
     
 

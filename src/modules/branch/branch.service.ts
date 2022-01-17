@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
@@ -108,7 +108,7 @@ var resultCounterPurchase= await this.countersModel.findOneAndUpdate(
       const transactionSession = await this.connection.startSession();
       transactionSession.startTransaction();
 
-
+      throw new HttpException('big error', HttpStatus.INTERNAL_SERVER_ERROR);
 
       var arrayAggregation = [];
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
