@@ -10,6 +10,7 @@ export const UserSchema = new mongoose.Schema({
     _fcmId: { type: String ,default:""},
     _deviceUniqueId: { type: String ,default: ""},
     _permissions: { type: Object,required: true, default:[]},
+    _userRole: { type: Number, required: true, default: -1 },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
     _updatedUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
@@ -25,6 +26,7 @@ export interface User {
     _fcmId: String;
     _deviceUniqueId: String;
     _permissions:Object;
+    _userRole:Number;
     _createdUserId:String;
     _createdAt:  Number;
     _updatedUserId: String;
@@ -34,6 +36,9 @@ export interface User {
 
 UserSchema.index({_employeeId: 1});
 /*
+_userRole:{
+    1 - super_admin
+}
 _type:{
     0 - employee
 }

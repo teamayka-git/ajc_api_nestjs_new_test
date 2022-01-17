@@ -1,10 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, Put, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/Auth/roles.decorator';
+import { RolesGuard } from 'src/Auth/roles.guard';
+import { GuardUserRole } from 'src/common/GuardUserRole';
 import { BranchCreateDto, BranchEditDto, BranchListDto, BranchStatusChangeDto } from './branch.dto';
 import { BranchService } from './branch.service';
 
 @ApiTags("Branch Docs") 
 @Controller('branch')
+@UseGuards(RolesGuard)
 export class BranchController {
   constructor(private readonly branchService: BranchService) {}
 
@@ -24,6 +28,7 @@ export class BranchController {
   }
   
   @Post("list")
+  @Roles(GuardUserRole.SUPER_ADMIN)
   list(@Body() dto:BranchListDto) {
     return this.branchService.list(dto);
   }

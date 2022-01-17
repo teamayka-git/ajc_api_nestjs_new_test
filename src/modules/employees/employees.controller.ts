@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { EmployeeLoginDto } from './employees.dto';
 import { Response } from 'express'; //jwt response store in cookie
 import { ApiTags } from '@nestjs/swagger';
+import { GuardUserRole, GuardUserRoleStringGenerate } from 'src/common/GuardUserRole';
 
 @ApiTags('Employee Docs')
 @Controller('employees')
@@ -18,11 +19,19 @@ export class EmployeesController {
   ) {
     var returnData: Object = await this.employeesService.login(dto);
     
+var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole']);
+
+
+
+
+
+
     const jwt = await this.jwtService.signAsync(
       {
         _userId_: returnData['_id'],
         _employeeId_: returnData['_employeeId'],
         _type_: returnData['_type'],
+        _userRole_:userRole
       },
       { expiresIn: '365d' },
     );

@@ -8,7 +8,7 @@ export class LoggerMiddleware implements NestMiddleware {
   constructor(private jwtService: JwtService) { }
 
   async use(req: Request, res: Response, next: () => void) {
-   // console.log("request happening, message from middlewate" + req.url);
+  //  console.log("request happening, message from middlewate" + req.url);
 
       //  console.log("body  "+JSON.stringify(req.body));
 
@@ -35,6 +35,7 @@ export class LoggerMiddleware implements NestMiddleware {
 // console.log("mdwr_______  "+req["_userId_"]);
       req["_userId_"] = data._userId_;
       req["_employeeId_"] = data._employeeId_;
+      req["_userRole_"] = data._userRole_;
 
      
       next();

@@ -1,10 +1,13 @@
-import { Body, Controller, Get, Post, Request } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, SetMetadata, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { MeDto } from './app.dto';
 import { AppService } from './app.service';
+import { Roles } from './Auth/roles.decorator';
+import { RolesGuard } from './Auth/roles.guard';
 
 @ApiTags("") 
 @Controller()
+@UseGuards(RolesGuard)
 export class AppController {
   constructor(   private readonly appService: AppService) {}
 
