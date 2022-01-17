@@ -17,18 +17,18 @@ export class CitiesController {
   @Post()
   @Roles(GuardUserRole.SUPER_ADMIN)
   create(@Body() dto: CitiesCreateDto,@Request() req) {
-    return this.citiesService.create(dto,req["_user_id_"]);
+    return this.citiesService.create(dto,req["_userId_"]);
   }
   
   @Put()
   @Roles(GuardUserRole.SUPER_ADMIN)
   edit(@Body() dto: CitiesEditDto,@Request() req) {
-    return this.citiesService.edit(dto,req["_user_id_"]);
+    return this.citiesService.edit(dto,req["_userId_"]);
   }
   @Delete()
   @Roles(GuardUserRole.SUPER_ADMIN)
   status_change(@Body() dto: CitiesStatusChangeDto,@Request() req) {
-    return this.citiesService.status_change(dto,req["_user_id_"]);
+    return this.citiesService.status_change(dto,req["_userId_"]);
   }
   
   @Post("list")

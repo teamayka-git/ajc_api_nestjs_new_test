@@ -16,18 +16,18 @@ export class DistrictsController {
   @Post()
   @Roles(GuardUserRole.SUPER_ADMIN)
   create(@Body() dto: DistrictsCreateDto,@Request() req) {
-    return this.districtsService.create(dto,req["_user_id_"]);
+    return this.districtsService.create(dto,req["_userId_"]);
   }
   
   @Put()
   @Roles(GuardUserRole.SUPER_ADMIN)
   edit(@Body() dto: DistrictsEditDto,@Request() req) {
-    return this.districtsService.edit(dto,req["_user_id_"]);
+    return this.districtsService.edit(dto,req["_userId_"]);
   }
   @Delete()
   @Roles(GuardUserRole.SUPER_ADMIN)
   status_change(@Body() dto: DistrictsStatusChangeDto,@Request() req) {
-    return this.districtsService.status_change(dto,req["_user_id_"]);
+    return this.districtsService.status_change(dto,req["_userId_"]);
   }
   
   @Post("list")

@@ -15,18 +15,18 @@ export class GeneralsController {
   @Post()
   @Roles(GuardUserRole.SUPER_ADMIN)
   create(@Body() dto: GeneralsCreateDto,@Request() req) {
-    return this.generalsService.create(dto,req["_user_id_"]);
+    return this.generalsService.create(dto,req["_userId_"]);
   }
   
   @Put()
   @Roles(GuardUserRole.SUPER_ADMIN)
   edit(@Body() dto: GeneralsEditDto,@Request() req) {
-    return this.generalsService.edit(dto,req["_user_id_"]);
+    return this.generalsService.edit(dto,req["_userId_"]);
   }
   @Delete()
   @Roles(GuardUserRole.SUPER_ADMIN)
   status_change(@Body() dto: GeneralsStatusChangeDto,@Request() req) {
-    return this.generalsService.status_change(dto,req["_user_id_"]);
+    return this.generalsService.status_change(dto,req["_userId_"]);
   }
   
   @Post("list")

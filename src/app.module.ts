@@ -23,6 +23,7 @@ import { CitiesModule } from './modules/cities/cities.module';
 import { GeneralsModule } from './modules/generals/generals.module';
 import { GeneralsSchema } from './tableModels/generals.model';
 import { GoldRateTimelinesModule } from './modules/gold-rate-timelines/gold-rate-timelines.module';
+import { DeliveryHubsModule } from './modules/delivery-hubs/delivery-hubs.module';
 
 
 @Module({
@@ -48,6 +49,7 @@ import { GoldRateTimelinesModule } from './modules/gold-rate-timelines/gold-rate
   CitiesModule,
   GeneralsModule,
   GoldRateTimelinesModule,
+  DeliveryHubsModule,
   
   
   // SalesReturnRequestStatusesModule,
