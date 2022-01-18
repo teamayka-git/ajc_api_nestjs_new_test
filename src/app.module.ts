@@ -38,6 +38,7 @@ import { TdsMastersModule } from './modules/tds-masters/tds-masters.module';
 import { TcsMastersModule } from './modules/tcs-masters/tcs-masters.module';
 import { TransportMastersModule } from './modules/transport-masters/transport-masters.module';
 import { TestCenterMastersModule } from './modules/test-center-masters/test-center-masters.module';
+import { TestChargeMastersModule } from './modules/test-charge-masters/test-charge-masters.module';
 
 
 @Module({
@@ -77,6 +78,7 @@ import { TestCenterMastersModule } from './modules/test-center-masters/test-cent
   TcsMastersModule,
   TransportMastersModule,
   TestCenterMastersModule,
+  TestChargeMastersModule,
   
   
   // SalesReturnRequestStatusesModule,

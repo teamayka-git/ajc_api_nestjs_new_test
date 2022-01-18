@@ -22,6 +22,7 @@ export enum ModelNames {
     TCS_MASTERS="tcsMasters",
     TRANSPORT_MASTERS="transportMasters",
     TEST_CENTER_MASTERS="testCenterMasters",
+    TEST_CHARGE_MASTERS="testChargeMasters",
    
     
 
