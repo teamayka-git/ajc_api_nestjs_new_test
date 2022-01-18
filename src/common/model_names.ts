@@ -14,6 +14,7 @@ export enum ModelNames {
     CATEGORIES="categories",
     SUB_CATEGORIES="subCategories",
     STONE="stone",
+    PURITY="purity",
    
     
 
