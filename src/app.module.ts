@@ -36,6 +36,7 @@ import { ProcessMasterModule } from './modules/process-master/process-master.mod
 import { UnitMastersModule } from './modules/unit-masters/unit-masters.module';
 import { TdsMastersModule } from './modules/tds-masters/tds-masters.module';
 import { TcsMastersModule } from './modules/tcs-masters/tcs-masters.module';
+import { TransportMastersModule } from './modules/transport-masters/transport-masters.module';
 
 
 @Module({
@@ -73,6 +74,7 @@ import { TcsMastersModule } from './modules/tcs-masters/tcs-masters.module';
   UnitMastersModule,
   TdsMastersModule,
   TcsMastersModule,
+  TransportMastersModule,
   
   
   // SalesReturnRequestStatusesModule,

@@ -20,6 +20,7 @@ export enum ModelNames {
     UNIT_MASTER="unitMasters",
     TDS_MASTERS="tdsMasters",
     TCS_MASTERS="tcsMasters",
+    TRANSPORT_MASTERS="transportMasters",
    
     
 
