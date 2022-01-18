@@ -18,7 +18,8 @@ export enum ModelNames {
     DEPARTMENT="departments",
     PROCESS_MASTER="processMasters",
     UNIT_MASTER="unitMasters",
-    TDS_MASTERS="tcsMasters",
+    TDS_MASTERS="tdsMasters",
+    TCS_MASTERS="tcsMasters",
    
     
 

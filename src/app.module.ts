@@ -35,6 +35,7 @@ import { DepartmentsSchema } from './tableModels/departments.model';
 import { ProcessMasterModule } from './modules/process-master/process-master.module';
 import { UnitMastersModule } from './modules/unit-masters/unit-masters.module';
 import { TdsMastersModule } from './modules/tds-masters/tds-masters.module';
+import { TcsMastersModule } from './modules/tcs-masters/tcs-masters.module';
 
 
 @Module({
@@ -71,6 +72,7 @@ import { TdsMastersModule } from './modules/tds-masters/tds-masters.module';
   ProcessMasterModule,
   UnitMastersModule,
   TdsMastersModule,
+  TcsMastersModule,
   
   
   // SalesReturnRequestStatusesModule,
