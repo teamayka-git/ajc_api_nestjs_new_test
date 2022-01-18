@@ -4,6 +4,7 @@ import * as mongoose from 'mongoose';
 import { MeDto } from './app.dto';
 import { ModelNames } from './common/model_names';
 import { Counters } from './tableModels/counters.model';
+import { Departments } from './tableModels/departments.model';
 import { Employee } from './tableModels/employee.model';
 import { Generals } from './tableModels/generals.model';
 import { Purity } from './tableModels/purity.model';
@@ -15,6 +16,8 @@ const crypto = require('crypto');
 export class AppService {
   constructor( @InjectModel(ModelNames.USER) private readonly userModel: mongoose.Model<User>,
   @InjectModel(ModelNames.GENERALS) private readonly generalsModel: mongoose.Model<Generals>,
+  @InjectModel(ModelNames.DEPARTMENT)
+  private readonly departmentModel: mongoose.Model<Departments>,
   @InjectModel(ModelNames.PURITY) private readonly purityModel: mongoose.Model<Purity>,
   @InjectModel(ModelNames.COUNTERS)
   private readonly countersModel: mongoose.Model<Counters>, @InjectModel(ModelNames.EMPLOYEES) private readonly employeeModel: mongoose.Model<Employee>,
@@ -510,10 +513,78 @@ export class AppService {
             { upsert: true, new: true, transactionSession },
           );
 
+          await this.departmentModel.findOneAndUpdate(
+            { _name: "Order head" },
+            {
+              $setOnInsert: {
+                _prefix:"OH",
+                _processMasterStatus:0,
+                _code:1000,
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+
+          await this.departmentModel.findOneAndUpdate(
+            { _name: "Sales executive" },
+            {
+              $setOnInsert: {
+                _prefix:"SE",
+                _processMasterStatus:0,
+                _code:1001,
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+
+          await this.departmentModel.findOneAndUpdate(
+            { _name: "Relationship manager" },
+            {
+              $setOnInsert: {
+                _prefix:"RM",
+                _processMasterStatus:0,
+                _code:1002,
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+
+          await this.departmentModel.findOneAndUpdate(
+            { _name: "Worker" },
+            {
+              $setOnInsert: {
+                _prefix:"WK",
+                _processMasterStatus:1,
+                _code:1003,
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
 
 
 
 
+          
 
 
 

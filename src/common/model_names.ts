@@ -13,8 +13,9 @@ export enum ModelNames {
     GROUP_MASTERS="group_masters",
     CATEGORIES="categories",
     SUB_CATEGORIES="subCategories",
-    STONE="stone",
-    PURITY="purity",
+    STONE="stones",
+    PURITY="purities",
+    DEPARTMENT="departments",
    
     
 

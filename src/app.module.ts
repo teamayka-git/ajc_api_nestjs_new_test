@@ -30,6 +30,8 @@ import { SubCategoriesModule } from './modules/sub-categories/sub-categories.mod
 import { StoneModule } from './modules/stone/stone.module';
 import { PurityModule } from './modules/purity/purity.module';
 import { PuritySchema } from './tableModels/purity.model';
+import { DepartmentsModule } from './modules/departments/departments.module';
+import { DepartmentsSchema } from './tableModels/departments.model';
 
 
 @Module({
@@ -46,7 +48,7 @@ import { PuritySchema } from './tableModels/purity.model';
     { name: ModelNames.USER, schema: UserSchema },
     { name: ModelNames.EMPLOYEES, schema: EmployeeSchema },
     { name: ModelNames.COUNTERS, schema:CountersSchema },
-    { name: ModelNames.GENERALS, schema:GeneralsSchema },
+    { name: ModelNames.GENERALS, schema:GeneralsSchema },{name:ModelNames.DEPARTMENT,schema:DepartmentsSchema},
     {name:ModelNames.PURITY,schema:PuritySchema}
   ]),
   EmployeesModule,
@@ -62,6 +64,7 @@ import { PuritySchema } from './tableModels/purity.model';
   SubCategoriesModule,
   StoneModule,
   PurityModule,
+  DepartmentsModule,
   
   
   // SalesReturnRequestStatusesModule,
