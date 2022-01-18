@@ -7,6 +7,7 @@ export const DeliveryHubsSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
     _name: { type: String, required: true, default: "nil" },
     _code:  { type: Number, required: true, default: -1 },
+    _dataGuard: { type:Object, required: true, default: [] },
     _citiesId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.CITIES, default: null },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
@@ -20,6 +21,7 @@ export interface DeliveryHubs {
     _name: String;
     _code: Number;
     _citiesId:String;
+    _dataGuard:Object;
     _createdUserId:String;
     _createdAt:  Number;
     _updatedUserId: String;

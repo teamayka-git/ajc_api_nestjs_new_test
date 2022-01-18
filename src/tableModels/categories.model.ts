@@ -12,6 +12,7 @@ export const CategoriesSchema = new mongoose.Schema({
     ref: ModelNames.GROUP_MASTERS,
     default: null,
   },
+  _dataGuard: { type:Object, required: true, default: [] },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -33,6 +34,7 @@ export interface Categories {
   _code: Number;
   _description: String;
   _groupId: String;
+  _dataGuard:Object;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;

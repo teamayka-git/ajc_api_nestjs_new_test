@@ -29,6 +29,7 @@ export class StatesService {
         // _id:new MongooseModule.Types.ObjectId(),
         _name: mapItem.name,
         _code: mapItem.code,
+        _dataGuard:mapItem.dataGuard,
         _createdUserId: _userId_,
         _createdAt: dateTime,
         _updatedUserId: null,
@@ -59,6 +60,7 @@ export class StatesService {
         $set: {
           _name: dto.name,
           _code: dto.code,
+          _dataGuard:dto.dataGuard,
           _updatedUserId: _userId_,
           _updatedAt: dateTime,
         },

@@ -24,6 +24,7 @@ export class UnitMastersService {
             // _id:new MongooseModule.Types.ObjectId(),
             _name: mapItem.name,
             _value: mapItem.value,
+            _dataGuard:mapItem.dataGuard,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -55,6 +56,7 @@ export class UnitMastersService {
                 _name: dto.name,
                 _value: dto.value,
                 
+          _dataGuard:dto.dataGuard,
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
             },

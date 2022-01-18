@@ -7,6 +7,7 @@ export const StatesSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
     _name: { type: String, required: true, default: "nil" },
     _code:  { type: Number, required: true, default: -1 },
+    _dataGuard: { type:Object, required: true, default: [] },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
     _updatedUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
@@ -18,6 +19,7 @@ export interface States {
     _id: String;
     _name: String;
     _code: Number;
+    _dataGuard:Object;
     _createdUserId:String;
     _createdAt:  Number;
     _updatedUserId: String;

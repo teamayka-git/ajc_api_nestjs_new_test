@@ -12,6 +12,7 @@ export const GroupMastersSchema = new mongoose.Schema({
     _meltingPurity:  { type: Number, required: true, default: -1 },
     _taxPercentage:  { type: Number, required: true, default: -1 },
     _purity:  { type: Number, required: true, default: -1 },
+    _dataGuard: { type:Object, required: true, default: [] },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
     _updatedUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
@@ -28,6 +29,7 @@ export interface GroupMasters {
     _meltingPurity:Number;
     _taxPercentage:Number;
     _purity:Number;
+    _dataGuard:Object;
     _createdUserId:String;
     _createdAt:  Number;
     _updatedUserId: String;

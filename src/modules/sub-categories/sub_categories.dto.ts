@@ -14,6 +14,7 @@ import { Optional } from '@nestjs/common';
 
 const descriptionStatus="0-Inactive, 1-Active, 2-Delete";
 const descriptionListScreenTypeForList="0-total documents count";
+const descriptionListDataGuard="0-edit protect, 1-disabe protect, 2-delete protect";
 
 
 
@@ -44,6 +45,10 @@ class SubCategoriesCreateList {
   @ApiProperty({})
   defaultValueAdditionPercentage: number;
 
+  @IsArray()
+  @ApiProperty({ type: [Number],description:descriptionListDataGuard })
+  dataGuard:number[];
+  
   
 }
 
@@ -89,6 +94,10 @@ export class SubCategoriesEditDto {
   @ApiProperty({})
   defaultValueAdditionPercentage: number;
 
+  @IsArray()
+  @ApiProperty({ type: [Number],description:descriptionListDataGuard })
+  dataGuard:number[];
+  
 }
 
 export class SubCategoriesListDto {

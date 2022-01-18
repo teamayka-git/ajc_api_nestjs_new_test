@@ -24,6 +24,7 @@ export class PurityService {
             // _id:new MongooseModule.Types.ObjectId(),
             _name: mapItem.name,
             _purity: mapItem.purity,
+            _dataGuard:mapItem.dataGuard,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -54,6 +55,7 @@ export class PurityService {
             $set: {
               _name: dto.name,
               _purity: dto.purity,
+              _dataGuard:dto.dataGuard,
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
             },

@@ -8,6 +8,7 @@ export const DistrictsSchema = new mongoose.Schema({
     _name: { type: String, required: true, default: "nil" },
     _code:  { type: Number, required: true, default: -1 },
     _statesId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.STATES, default: null },
+    _dataGuard: { type:Object, required: true, default: [] },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
     _updatedUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
@@ -20,6 +21,7 @@ export interface Districts {
     _name: String;
     _code: Number;
     _statesId:String;
+    _dataGuard:Object;
     _createdUserId:String;
     _createdAt:  Number;
     _updatedUserId: String;

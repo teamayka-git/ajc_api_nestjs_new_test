@@ -25,6 +25,7 @@ export class ProcessMasterService {
             _name: mapItem.name,
             _code: mapItem.code,
             _parentId:mapItem.parentId=="nil"?null:mapItem.parentId,
+            _dataGuard:mapItem.dataGuard,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -57,6 +58,7 @@ export class ProcessMasterService {
                 _code: dto.code,
                 _parentId:dto.parentId=="nil"?null:dto.parentId,
                 
+          _dataGuard:dto.dataGuard,
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
             },

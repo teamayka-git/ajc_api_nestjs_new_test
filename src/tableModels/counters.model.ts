@@ -8,6 +8,7 @@ export const CountersSchema = new mongoose.Schema({
     _tableName: { type: String, required: true, default: "nil" },
     _count: { type: Number, required: true, default: -1 },
     
+    _dataGuard: { type:Object, required: true, default: [] },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
     _updatedUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
@@ -19,6 +20,7 @@ export interface Counters {
     _id: String;
     _tableName: String;
     _count: number;
+    _dataGuard:Object;
     _createdUserId:String;
     _createdAt:  Number;
     _updatedUserId: String;
