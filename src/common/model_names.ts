@@ -16,7 +16,8 @@ export enum ModelNames {
     STONE="stones",
     PURITY="purities",
     DEPARTMENT="departments",
-    PROCESS_MASTER="processMaster",
+    PROCESS_MASTER="processMasters",
+    UNIT_MASTER="unitMasters",
    
     
 
