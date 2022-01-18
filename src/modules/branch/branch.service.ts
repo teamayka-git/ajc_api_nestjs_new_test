@@ -36,6 +36,7 @@ var resultCounterPurchase= await this.countersModel.findOneAndUpdate(
           _email:  dto.email,
           _mobile: dto.mobile,
           _tectCode: dto.textCode,
+          _dataGuard:dto.dataGuard,
           _createdUserId:_userId_,
           _createdAt:  dateTime,
           _updatedUserId: null,
@@ -65,6 +66,7 @@ var resultCounterPurchase= await this.countersModel.findOneAndUpdate(
             _email:  dto.email,
             _mobile: dto.mobile,
             _tectCode: dto.textCode,
+            _dataGuard:dto.dataGuard,
             _updatedUserId:_userId_,
             _updatedAt:  dateTime,
           }
