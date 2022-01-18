@@ -27,6 +27,7 @@ import { DeliveryHubsModule } from './modules/delivery-hubs/delivery-hubs.module
 import { GroupMastersModule } from './modules/group-masters/group-masters.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { SubCategoriesModule } from './modules/sub-categories/sub-categories.module';
+import { StoneModule } from './modules/stone/stone.module';
 
 
 @Module({
@@ -56,6 +57,7 @@ import { SubCategoriesModule } from './modules/sub-categories/sub-categories.mod
   GroupMastersModule,
   CategoriesModule,
   SubCategoriesModule,
+  StoneModule,
   
   
   // SalesReturnRequestStatusesModule,

@@ -11,9 +11,9 @@ import { StatesService } from './states.service';
 
 
 
-@ApiTags("State Docs") 
 @Controller('states')
 @UseGuards(RolesGuard)
+@ApiTags("State Docs") 
 export class StatesController {
   constructor(private readonly statesService: StatesService) {}
 
