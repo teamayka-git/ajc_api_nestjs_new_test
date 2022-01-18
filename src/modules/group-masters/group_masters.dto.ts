@@ -21,6 +21,9 @@ class GroupMastersCreateList {
 
   @IsString()
   @ApiProperty({})
+  name: string;
+  @IsString()
+  @ApiProperty({})
   rawMaterialStatus: string;
   
   @IsString()
@@ -59,6 +62,9 @@ export class GroupMastersCreateDto {
 }
 export class GroupMastersEditDto {
 
+  @IsString()
+  @ApiProperty({})
+  name: string;
 
   @IsString()
   @ApiProperty({})
