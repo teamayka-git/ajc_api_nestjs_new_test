@@ -19,7 +19,7 @@ export class GroupMastersService {
     
         var arrayToStates = [];
     
-        dto.stateArray.map((mapItem) => {
+        dto.array.map((mapItem) => {
           arrayToStates.push({
             // _id:new MongooseModule.Types.ObjectId(),
             _name:mapItem.name,

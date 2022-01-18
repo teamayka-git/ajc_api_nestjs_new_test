@@ -47,7 +47,7 @@ export class CategoriesCreateDto {
   @ApiProperty({type:[CategoriesCreateList]})
   @ValidateNested({ each: true })
   @Type(() => CategoriesCreateList)
-  stateArray: CategoriesCreateList[];
+  array: CategoriesCreateList[];
 
   
 }

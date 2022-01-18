@@ -12,6 +12,7 @@ export enum ModelNames {
     DELIVERY_HUBS="delivery_hubs",
     GROUP_MASTERS="group_masters",
     CATEGORIES="categories",
+    SUB_CATEGORIES="subCategories",
    
     
 

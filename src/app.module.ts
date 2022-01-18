@@ -26,6 +26,7 @@ import { GoldRateTimelinesModule } from './modules/gold-rate-timelines/gold-rate
 import { DeliveryHubsModule } from './modules/delivery-hubs/delivery-hubs.module';
 import { GroupMastersModule } from './modules/group-masters/group-masters.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { SubCategoriesModule } from './modules/sub-categories/sub-categories.module';
 
 
 @Module({
@@ -54,6 +55,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
   DeliveryHubsModule,
   GroupMastersModule,
   CategoriesModule,
+  SubCategoriesModule,
   
   
   // SalesReturnRequestStatusesModule,

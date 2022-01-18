@@ -56,7 +56,7 @@ export class GroupMastersCreateDto {
   @ApiProperty({type:[GroupMastersCreateList]})
   @ValidateNested({ each: true })
   @Type(() => GroupMastersCreateList)
-  stateArray: GroupMastersCreateList[];
+  array: GroupMastersCreateList[];
 
   
 }

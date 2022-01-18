@@ -17,7 +17,7 @@ const descriptionListScreenTypeForList="0-total documents count";
 
 
 
-class StatesCreateList {
+class SubCategoriesCreateList {
 
   @IsString()
   @ApiProperty({})
@@ -28,26 +28,42 @@ class StatesCreateList {
   @ApiProperty({})
   code: number;
 
+  @IsString()
+  @ApiProperty({})
+  description: string;
+
+  @IsString()
+  @ApiProperty({})
+  categoryId: string;
+
+  
+  @IsNumber()
+  @ApiProperty({})
+  hmsealing: number;
+  @IsNumber()
+  @ApiProperty({})
+  defaultValueAdditionPercentage: number;
 
   
 }
 
 
-export class StatesCreateDto {
+export class SubCategoriesCreateDto {
   @IsArray()
-  @ApiProperty({type:[StatesCreateList]})
+  @ApiProperty({type:[SubCategoriesCreateList]})
   @ValidateNested({ each: true })
-  @Type(() => StatesCreateList)
-  array: StatesCreateList[];
+  @Type(() => SubCategoriesCreateList)
+  array: SubCategoriesCreateList[];
 
   
 }
-export class StatesEditDto {
+export class SubCategoriesEditDto {
 
 
   @IsString()
   @ApiProperty({})
-  stateId: string;
+  subCategoryId: string;
+ 
   @IsString()
   @ApiProperty({})
   name: string;
@@ -57,9 +73,25 @@ export class StatesEditDto {
   @ApiProperty({})
   code: number;
 
+  @IsString()
+  @ApiProperty({})
+  description: string;
+
+  @IsString()
+  @ApiProperty({})
+  categoryId: string;
+
+  
+  @IsNumber()
+  @ApiProperty({})
+  hmsealing: number;
+  @IsNumber()
+  @ApiProperty({})
+  defaultValueAdditionPercentage: number;
+
 }
 
-export class StatesListDto {
+export class SubCategoriesListDto {
   @IsArray()
   @ArrayMinSize(1)
   @ApiProperty({ type: [Number],description:descriptionStatus })
@@ -73,7 +105,11 @@ export class StatesListDto {
 
   @IsArray()
   @ApiProperty({ type: [String] })
-  stateIds: string[];
+  subCategoryIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  categoryIds: string[];
 
   @IsNumber()
   @ApiProperty({})
@@ -93,12 +129,12 @@ export class StatesListDto {
 }
 
 
-export class StatesStatusChangeDto {
+export class SubCategoriesStatusChangeDto {
 
 
   @IsArray()
   @ApiProperty({ type: [String] })
-  stateIds: string[];
+  subCategoryIds: string[];
 
 
   @IsNumber()

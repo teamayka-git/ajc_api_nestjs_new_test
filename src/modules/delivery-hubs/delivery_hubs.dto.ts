@@ -42,7 +42,7 @@ export class DeliveryHubCreateDto {
   @ApiProperty({type:[DeliveryHubCreateList]})
   @ValidateNested({ each: true })
   @Type(() => DeliveryHubCreateList)
-  stateArray: DeliveryHubCreateList[];
+  array: DeliveryHubCreateList[];
 
   
 }
