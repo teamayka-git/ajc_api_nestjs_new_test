@@ -32,6 +32,7 @@ import { PurityModule } from './modules/purity/purity.module';
 import { PuritySchema } from './tableModels/purity.model';
 import { DepartmentsModule } from './modules/departments/departments.module';
 import { DepartmentsSchema } from './tableModels/departments.model';
+import { ProcessMasterModule } from './modules/process-master/process-master.module';
 
 
 @Module({
@@ -65,6 +66,7 @@ import { DepartmentsSchema } from './tableModels/departments.model';
   StoneModule,
   PurityModule,
   DepartmentsModule,
+  ProcessMasterModule,
   
   
   // SalesReturnRequestStatusesModule,

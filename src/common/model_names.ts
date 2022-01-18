@@ -8,7 +8,7 @@ export enum ModelNames {
     DISTRICTS="districts",
     CITIES="cities",
     GENERALS="generals",
-    GOLD_RATE_TIMELINES="gold_rate_timelines",
+    GOLD_RATE_TIMELINES="goldRateTimelines",
     DELIVERY_HUBS="delivery_hubs",
     GROUP_MASTERS="group_masters",
     CATEGORIES="categories",
@@ -16,6 +16,7 @@ export enum ModelNames {
     STONE="stones",
     PURITY="purities",
     DEPARTMENT="departments",
+    PROCESS_MASTER="processMaster",
    
     
 
