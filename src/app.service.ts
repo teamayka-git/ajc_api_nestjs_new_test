@@ -6,6 +6,7 @@ import { ModelNames } from './common/model_names';
 import { Counters } from './tableModels/counters.model';
 import { Employee } from './tableModels/employee.model';
 import { Generals } from './tableModels/generals.model';
+import { Purity } from './tableModels/purity.model';
 import { User } from './tableModels/user.model';
 const crypto = require('crypto');
 
@@ -14,6 +15,7 @@ const crypto = require('crypto');
 export class AppService {
   constructor( @InjectModel(ModelNames.USER) private readonly userModel: mongoose.Model<User>,
   @InjectModel(ModelNames.GENERALS) private readonly generalsModel: mongoose.Model<Generals>,
+  @InjectModel(ModelNames.PURITY) private readonly purityModel: mongoose.Model<Purity>,
   @InjectModel(ModelNames.COUNTERS)
   private readonly countersModel: mongoose.Model<Counters>, @InjectModel(ModelNames.EMPLOYEES) private readonly employeeModel: mongoose.Model<Employee>,
 
@@ -426,6 +428,78 @@ export class AppService {
                 _string:"AJC",
                 _number:-1,
                 _json:{basic:"basic"},
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+
+
+
+
+
+
+
+          await this.purityModel.findOneAndUpdate(
+            { _name: "916" },
+            {
+              $setOnInsert: {
+                _purity:916,
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+
+
+
+          await this.purityModel.findOneAndUpdate(
+            { _name: "22" },
+            {
+              $setOnInsert: {
+                _purity:22,
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+
+
+
+          await this.purityModel.findOneAndUpdate(
+            { _name: "18" },
+            {
+              $setOnInsert: {
+                _purity:18,
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
+
+
+
+          await this.purityModel.findOneAndUpdate(
+            { _name: "144" },
+            {
+              $setOnInsert: {
+                _purity:144,
                 _createdUser_id: null,
                 _createdAt: dateTime,
                 _updatedUser_id: null,

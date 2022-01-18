@@ -29,6 +29,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { SubCategoriesModule } from './modules/sub-categories/sub-categories.module';
 import { StoneModule } from './modules/stone/stone.module';
 import { PurityModule } from './modules/purity/purity.module';
+import { PuritySchema } from './tableModels/purity.model';
 
 
 @Module({
@@ -46,6 +47,7 @@ import { PurityModule } from './modules/purity/purity.module';
     { name: ModelNames.EMPLOYEES, schema: EmployeeSchema },
     { name: ModelNames.COUNTERS, schema:CountersSchema },
     { name: ModelNames.GENERALS, schema:GeneralsSchema },
+    {name:ModelNames.PURITY,schema:PuritySchema}
   ]),
   EmployeesModule,
   BranchModule,
