@@ -10,6 +10,7 @@ export const BranchSchema = new mongoose.Schema({
     _email: { type: String, required: true, default: "nil" },
     _mobile: { type: String, required: true, default: "nil" },
     _tectCode: { type: String, required: true, default: "nil" },
+    _dataGuard: { type:Object, required: true, default: [] },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
     _updatedUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
@@ -23,6 +24,7 @@ export interface Branch {
     _uid: String;
     _email:  String;
     _mobile: String;
+    _dataGuard:Object;
     _tectCode: String;
     _createdUserId:String;
     _createdAt:  Number;
@@ -59,4 +61,9 @@ function schemaPostFunctionForDuplicate(error, doc, next) {
 
 
 /*
+_dataGuard:{
+    0-edit protection
+    1-disable protect
+    2-delete protect
+}
 */

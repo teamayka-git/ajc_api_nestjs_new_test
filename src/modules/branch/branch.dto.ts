@@ -4,6 +4,7 @@ import { Type, Type as ValidateTypes } from "class-transformer"
 import { Optional } from '@nestjs/common';
  
 const descriptionListScreenTypeForBranchList="0-total documents count";
+const descriptionListDataGuard="0-edit protect, 1-disabe protect, 2-delete protect";
 
 const descriptionStatus="0-Inactive, 1-Active, 2-Delete";
 
@@ -24,6 +25,11 @@ export class BranchCreateDto {
     @ApiProperty({})
     textCode: string;
 
+    @IsArray()
+    @ApiProperty({ type: [Number],description:descriptionListDataGuard })
+    dataGuard:number[];
+    
+    
 
     
 }
@@ -49,6 +55,12 @@ export class BranchEditDto {
     @IsString()
     @ApiProperty({})
     textCode: string;
+
+    
+    @IsArray()
+    @ApiProperty({ type: [Number],description:descriptionListDataGuard })
+    dataGuard:number[];
+    
 
 }
 
