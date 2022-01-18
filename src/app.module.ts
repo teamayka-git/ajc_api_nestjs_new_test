@@ -34,6 +34,7 @@ import { DepartmentsModule } from './modules/departments/departments.module';
 import { DepartmentsSchema } from './tableModels/departments.model';
 import { ProcessMasterModule } from './modules/process-master/process-master.module';
 import { UnitMastersModule } from './modules/unit-masters/unit-masters.module';
+import { TdsMastersModule } from './modules/tds-masters/tds-masters.module';
 
 
 @Module({
@@ -69,6 +70,7 @@ import { UnitMastersModule } from './modules/unit-masters/unit-masters.module';
   DepartmentsModule,
   ProcessMasterModule,
   UnitMastersModule,
+  TdsMastersModule,
   
   
   // SalesReturnRequestStatusesModule,
