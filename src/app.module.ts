@@ -25,6 +25,7 @@ import { GeneralsSchema } from './tableModels/generals.model';
 import { GoldRateTimelinesModule } from './modules/gold-rate-timelines/gold-rate-timelines.module';
 import { DeliveryHubsModule } from './modules/delivery-hubs/delivery-hubs.module';
 import { GroupMastersModule } from './modules/group-masters/group-masters.module';
+import { CategoriesModule } from './modules/categories/categories.module';
 
 
 @Module({
@@ -52,6 +53,7 @@ import { GroupMastersModule } from './modules/group-masters/group-masters.module
   GoldRateTimelinesModule,
   DeliveryHubsModule,
   GroupMastersModule,
+  CategoriesModule,
   
   
   // SalesReturnRequestStatusesModule,

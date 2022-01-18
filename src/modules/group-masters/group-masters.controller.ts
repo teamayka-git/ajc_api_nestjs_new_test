@@ -6,8 +6,8 @@ import { GuardUserRole } from 'src/common/GuardUserRole';
 import { GroupMastersService } from './group-masters.service';
 import { GroupMastersCreateDto, GroupMastersEditDto, GroupMastersListDto, GroupMastersStatusChangeDto } from './group_masters.dto';
 
-@ApiTags("Group master Docs") 
 @Controller('group-masters')
+@ApiTags("Group master Docs") 
 @UseGuards(RolesGuard)
 export class GroupMastersController {
   constructor(private readonly groupMastersService: GroupMastersService) {}

@@ -11,6 +11,7 @@ export enum ModelNames {
     GOLD_RATE_TIMELINES="gold_rate_timelines",
     DELIVERY_HUBS="delivery_hubs",
     GROUP_MASTERS="group_masters",
+    CATEGORIES="categories",
    
     
 
