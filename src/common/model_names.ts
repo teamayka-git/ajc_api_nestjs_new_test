@@ -23,6 +23,7 @@ export enum ModelNames {
     TRANSPORT_MASTERS="transportMasters",
     TEST_CENTER_MASTERS="testCenterMasters",
     TEST_CHARGE_MASTERS="testChargeMasters",
+    FACTORIES="factories",
    
     
 
