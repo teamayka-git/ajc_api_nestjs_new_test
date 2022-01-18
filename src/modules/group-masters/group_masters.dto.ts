@@ -22,9 +22,9 @@ class GroupMastersCreateList {
   @IsString()
   @ApiProperty({})
   name: string;
-  @IsString()
+  @IsNumber()
   @ApiProperty({})
-  rawMaterialStatus: string;
+  rawMaterialStatus: number;
   
   @IsString()
   @ApiProperty({})
@@ -70,9 +70,9 @@ export class GroupMastersEditDto {
   @ApiProperty({})
   groupMasterId: string;
 
-  @IsString()
+  @IsNumber()
   @ApiProperty({})
-  rawMaterialStatus: string;
+  rawMaterialStatus: number;
   
   @IsString()
   @ApiProperty({})
