@@ -9,6 +9,7 @@ export const GeneralsSchema = new mongoose.Schema({
     _string: { type: String, default: "nil" },
     _number: { type: Number, required: true, default: -1 },
     _json: { type: Object, required: true, default: {} },
+    _type: { type: Number, required: true, default: -1 },
     _dataGuard: { type:Object, required: true, default: [] },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
@@ -23,6 +24,7 @@ export interface Generals {
     _string: String;
     _number: String;
     _json: Object;
+    _type:Number;
     _dataGuard:Object;
     _createdUserId:String;
     _createdAt:  Number;
@@ -79,5 +81,12 @@ _code:{
     1016 - order sale new order prefix status, 
     1017 - order headname prefix
 
+}
+_type:{
+    0 - tax
+    1 - customer
+    2 - currency
+    3 - product
+    4 - order
 }
 */

@@ -19,6 +19,9 @@ const descriptionListForCodes="1000-currency denominator text, 1001-currency den
 
 const descriptionListDataGuard="0-edit protect, 1-disabe protect, 2-delete protect";
 
+const descriptionType="0-tax, 1-customer, 2-currency, 3-product, 4-order";
+
+
 
 class GeneralsCreateList {
 
@@ -45,6 +48,10 @@ class GeneralsCreateList {
   dataGuard:number[];
   
   
+  @IsNumber()
+  @ApiProperty({description:descriptionType})
+  type: number;
+
 }
 
 
@@ -73,6 +80,11 @@ export class GeneralsEditDto {
   @ApiProperty({description:descriptionListForCodes})
   code: number;
 
+  
+  @IsNumber()
+  @ApiProperty({description:descriptionType})
+  type: number;
+
   @IsNumber()
   @ApiProperty({})
   number:number;
@@ -98,6 +110,11 @@ export class GeneralsListDto {
   @ApiProperty({ type: [String] })
   generalsIds: string[];
 
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @ApiProperty({ type: [Number],description:descriptionType })
+  typeArray:number[];
 
 
   @IsNumber()

@@ -27,6 +27,7 @@ export class GeneralsService {
             _string:mapItem.string,
             _number:mapItem.number,
             _json:mapItem.json,
+            _type:mapItem.type,
             _dataGuard:mapItem.dataGuard,
             _createdUserId: _userId_,
             _createdAt: dateTime,
@@ -60,6 +61,7 @@ export class GeneralsService {
                 _string:dto.string,
                 _number:dto.number,
                 _json:dto.json,
+                _type:dto.type,
                 _dataGuard:dto.dataGuard,
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
@@ -106,12 +108,16 @@ export class GeneralsService {
         arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
     
         if (dto.generalsIds.length > 0) {
-            var newSettingsId = [];
-            dto.generalsIds.map((mapItem) => {
-              newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
-            });
-            arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
-          }
+          var newSettingsId = [];
+          dto.generalsIds.map((mapItem) => {
+            newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+          });
+          arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
+        }
+        if (dto.typeArray.length > 0) {
+          
+          arrayAggregation.push({ $match: { _type: { $in: dto.typeArray } } });
+        }
           if (dto.codes.length > 0) {
            
             arrayAggregation.push({ $match: { _code: { $in: dto.codes } } });
