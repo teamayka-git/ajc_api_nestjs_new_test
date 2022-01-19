@@ -20,12 +20,23 @@ export class BanksService {
         var arrayToStates = [];
     
         dto.array.map((mapItem) => {
+
+
+var userId="";
+if(mapItem.userId=="nil"){
+    userId=_userId_;
+}else{
+    userId=mapItem.userId;
+}
+
+
           arrayToStates.push({
             // _id:new MongooseModule.Types.ObjectId(),
             _acNo:mapItem.acNo,
             _ifsc:mapItem.ifsc,
             _acHolderName:mapItem.acHolderName,
             _branchName:mapItem.branchName,
+            _userId:userId,
             _type:mapItem.type,
             _dataGuard:mapItem.dataGuard,
             _createdUserId: _userId_,
@@ -50,6 +61,15 @@ export class BanksService {
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
     
+
+
+        var userId="";
+        if(dto.userId=="nil"){
+            userId=_userId_;
+        }else{
+            userId=dto.userId;
+        }
+
         var result = await this.bankModel.findOneAndUpdate(
           {
             _id: dto.bankId,
@@ -60,6 +80,7 @@ export class BanksService {
                 _ifsc:dto.ifsc,
                 _acHolderName:dto.acHolderName,
                 _branchName:dto.branchName,
+                _userId:userId,
                 _type:dto.type,
               _dataGuard:dto.dataGuard,
               _updatedUserId: _userId_,
@@ -125,6 +146,13 @@ export class BanksService {
             newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
           });
           arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
+        }
+        if (dto.userIds.length > 0) {
+          var newSettingsId = [];
+          dto.userIds.map((mapItem) => {
+            newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+          });
+          arrayAggregation.push({ $match: { _userId: { $in: newSettingsId } } });
         }
         if (dto.types.length > 0) {
        

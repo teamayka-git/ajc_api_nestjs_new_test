@@ -10,6 +10,7 @@ export const BankSchema = new mongoose.Schema({
     _acHolderName:  { type: String, required: true, default: "nil" },
     _branchName:  { type: String, required: true, default: "nil" },
     _type:  { type: Number, required: true, default: -1 },
+    _userId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _dataGuard: { type:Object, required: true, default: [] },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
@@ -25,6 +26,7 @@ export interface Bank {
     _acHolderName: String;
     _branchName: String;
     _type: Number;
+    _userId:String;
     _dataGuard:Object;
     _createdUserId:String;
     _createdAt:  Number;

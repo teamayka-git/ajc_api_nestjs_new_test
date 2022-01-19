@@ -25,6 +25,10 @@ class BanksCreateList {
 
   @IsString()
   @ApiProperty({})
+  userId: string;
+
+  @IsString()
+  @ApiProperty({})
   acNo: string;
 
   @IsString()
@@ -62,6 +66,10 @@ export class BanksCreateDto {
   
 }
 export class BanksEditDto {
+
+  @IsString()
+  @ApiProperty({})
+  userId: string;
 
 
   @IsString()
@@ -116,6 +124,10 @@ export class BanksListDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   bankIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  userIds: string[];
 
   @IsNumber()
   @ApiProperty({})

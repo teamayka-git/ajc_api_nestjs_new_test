@@ -1,6 +1,9 @@
-import { Controller, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
+import { GuardUserRole } from 'src/common/GuardUserRole';
+import { BanksCreateDto, BanksEditDto, BanksListDto, BanksStatusChangeDto } from './banks.dto';
 import { BanksService } from './banks.service';
 
 
