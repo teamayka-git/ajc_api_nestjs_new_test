@@ -30,6 +30,7 @@ export enum ModelNames {
     GLOBAL_GALLERY_CATEGORIES="globalGalleryCategories",
     GLOBAL_GALLERY_SUB_CATEGORIES="globalGallerySubCategories",
     BANKS="banks",
+    GLOBAL_GALLERIES="globalGalleries",
    
     
 

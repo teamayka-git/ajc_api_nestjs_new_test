@@ -15,7 +15,6 @@ export class SupplierController {
   constructor( private jwtService: JwtService,private readonly supplierService: SupplierService) {}
 
   @Post("login")
-  @Roles(GuardUserRole.SUPPLIER)
   async login(@Body() dto: SupplierLoginDto,
     @Res({ passthrough: true }) response: Response, //jwt response store in cookie
   ) {

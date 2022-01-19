@@ -17,7 +17,6 @@ export class EmployeesController {
 
 
   @Post("login")
-  @Roles(GuardUserRole.SUPER_ADMIN)
   async login(@Body() dto: EmployeeLoginDto,
     @Res({ passthrough: true }) response: Response, //jwt response store in cookie
   ) {

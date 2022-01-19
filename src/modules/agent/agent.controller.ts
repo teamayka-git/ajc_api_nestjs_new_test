@@ -15,7 +15,6 @@ export class AgentController {
   constructor( private jwtService: JwtService,private readonly agentService: AgentService) {}
 
   @Post("login")
-  @Roles(GuardUserRole.AGENT)
   async login(@Body() dto: AgentLoginDto,
     @Res({ passthrough: true }) response: Response, //jwt response store in cookie
   ) {
