@@ -27,6 +27,7 @@ export interface UnitMaster {
     _status: Number;
 }
 
+UnitMasterSchema.index({_status: 1});
 UnitMasterSchema.index({_name: 1});
 UnitMasterSchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 UnitMasterSchema.post('save', async function(error, doc, next) {

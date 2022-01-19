@@ -27,6 +27,7 @@ export interface TestChargersMasters {
     _status: Number;
 }
 
+TestChargersMastersStoneSchema.index({_status: 1});
 TestChargersMastersStoneSchema.index({_name: 1});
 
 

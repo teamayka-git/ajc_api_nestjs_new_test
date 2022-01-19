@@ -27,6 +27,7 @@ export interface Stone {
     _status: Number;
 }
 
+StoneSchema.index({_status: 1});
 StoneSchema.index({_name: 1});
 StoneSchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 StoneSchema.post('save', async function(error, doc, next) {

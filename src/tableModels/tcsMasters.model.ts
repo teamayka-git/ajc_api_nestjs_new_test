@@ -25,6 +25,9 @@ export interface TcsMasters {
     _status: Number;
 }
 
+
+
+TcsMastersSchema.index({_status: 1});
 TcsMastersSchema.index({_percentage: 1});
 TcsMastersSchema.index({_percentage: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 TcsMastersSchema.post('save', async function(error, doc, next) {

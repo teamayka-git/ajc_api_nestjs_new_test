@@ -27,6 +27,7 @@ export interface Purity {
     _status: Number;
 }
 
+PuritySchema.index({_status: 1});
 PuritySchema.index({_name: 1});
 PuritySchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 PuritySchema.post('save', async function(error, doc, next) {

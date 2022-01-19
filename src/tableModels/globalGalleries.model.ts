@@ -51,6 +51,7 @@ export interface GlobalGalleries {
   _status: Number;
 }
 
+GlobalGalleriesSchema.index({_status: 1});
 GlobalGalleriesSchema.index({ _name: 1 });
 GlobalGalleriesSchema.index({ _type: 1 });
 GlobalGalleriesSchema.index({ _docType: 1 });

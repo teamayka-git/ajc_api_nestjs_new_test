@@ -27,6 +27,7 @@ export interface States {
     _status: Number;
 }
 
+StatesSchema.index({_status: 1});
 StatesSchema.index({_name: 1});
 StatesSchema.index({_code: 1});
 StatesSchema.index({_code: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});

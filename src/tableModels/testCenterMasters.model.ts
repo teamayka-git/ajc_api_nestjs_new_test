@@ -38,6 +38,10 @@ export interface TestCenterMasters {
   _status: Number;
 }
 
+
+
+
+TestCenterMastersSchema.index({_status: 1});
 TestCenterMastersSchema.index({ _place: 1 });
 TestCenterMastersSchema.index({ _code: 1 });
 TestCenterMastersSchema.index(

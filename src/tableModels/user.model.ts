@@ -38,6 +38,7 @@ export interface User {
     _status: Number;
 } 
 
+UserSchema.index({_status: 1});
 UserSchema.index({_employeeId: 1});
 UserSchema.index({_agentId: 1});
 UserSchema.index({_supplierId: 1});

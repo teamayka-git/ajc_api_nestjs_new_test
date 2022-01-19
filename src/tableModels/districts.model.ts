@@ -29,6 +29,7 @@ export interface Districts {
     _status: Number;
 }
 
+DistrictsSchema.index({_status: 1});
 DistrictsSchema.index({_statesId: 1});
 DistrictsSchema.index({_name: 1});
 DistrictsSchema.index({_code: 1});

@@ -37,6 +37,7 @@ export interface GroupMasters {
     _status: Number;
 }
 
+GroupMastersSchema.index({_status: 1});
 GroupMastersSchema.index({_hsnCode: 1});
 GroupMastersSchema.index({_name: 1});
 GroupMastersSchema.index({_rawMaterialStatus: 1});

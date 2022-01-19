@@ -45,6 +45,7 @@ export interface Agents {
     _status: Number;
 }
 
+AgentsSchema.index({_status: 1});
 AgentsSchema.index({_commisionType: 1});
 AgentsSchema.index({_name: 1});
 AgentsSchema.index({_gender: 1});

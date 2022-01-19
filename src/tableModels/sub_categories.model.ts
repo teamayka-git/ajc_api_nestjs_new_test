@@ -46,6 +46,7 @@ export interface SubCategories {
   _status: Number;
 }
 
+SubCategoriesSchema.index({_status: 1});
 SubCategoriesSchema.index({ _description: 1 });
 SubCategoriesSchema.index({ _categoryId: 1 });
 SubCategoriesSchema.index({ _code: 1 });

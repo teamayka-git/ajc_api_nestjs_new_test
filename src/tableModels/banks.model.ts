@@ -35,6 +35,7 @@ export interface Bank {
     _status: Number;
 }
 
+BankSchema.index({_status: 1});
 BankSchema.index({_type: 1});
 BankSchema.index({_acNo: 1});
 BankSchema.index({_acNo: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});

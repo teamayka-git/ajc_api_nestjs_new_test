@@ -29,6 +29,7 @@ export interface Cities {
     _status: Number;
 }
 
+CitiesSchema.index({_status: 1});
 CitiesSchema.index({_districtsId: 1});
 CitiesSchema.index({_name: 1});
 CitiesSchema.index({_code: 1});

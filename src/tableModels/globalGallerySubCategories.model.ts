@@ -39,6 +39,7 @@ export interface GlobalGallerySubCategories {
 }
 
 
+GlobalGallerySubCategoriesSchema.index({_status: 1});
 GlobalGallerySubCategoriesSchema.index({ _name: 1 });
 GlobalGallerySubCategoriesSchema.index(
   { _code: 1 },

@@ -37,6 +37,7 @@ export interface Employee {
     _status: Number;
 }
 
+EmployeeSchema.index({_status: 1});
 EmployeeSchema.index({_name: 1});
 EmployeeSchema.index({_gender: 1});
 EmployeeSchema.index({_mobile: 1});

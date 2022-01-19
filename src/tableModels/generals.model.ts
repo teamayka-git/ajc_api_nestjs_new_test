@@ -33,6 +33,7 @@ export interface Generals {
     _status: Number;
 }
 
+GeneralsSchema.index({_status: 1});
 GeneralsSchema.index({_name: 1});
 GeneralsSchema.index({_code: 1});
 GeneralsSchema.index({_code: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});

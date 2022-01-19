@@ -31,6 +31,7 @@ export interface Departments {
     _status: Number;
 }
 
+DepartmentsSchema.index({_status: 1});
 DepartmentsSchema.index({_code: 1});
 DepartmentsSchema.index({_name: 1});
 DepartmentsSchema.index({_code: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});

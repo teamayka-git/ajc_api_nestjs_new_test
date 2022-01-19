@@ -33,6 +33,7 @@ export interface Branch {
     _status: Number;
 }
 
+BranchSchema.index({_status: 1});
 BranchSchema.index({_uid:1});
 BranchSchema.index({_name: 1});
 BranchSchema.index({_email: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});

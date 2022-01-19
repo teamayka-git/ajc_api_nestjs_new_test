@@ -25,6 +25,9 @@ export interface TdsMasters {
     _status: Number;
 }
 
+
+
+TdsMastersSchema.index({_status: 1});
 TdsMastersSchema.index({_percentage: 1});
 TdsMastersSchema.index({_percentage: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 TdsMastersSchema.post('save', async function(error, doc, next) {

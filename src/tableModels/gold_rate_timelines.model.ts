@@ -23,6 +23,7 @@ export interface GoldRateTimelines {
     _status: Number;
 }
 
+GoldRateTimelinesSchema.index({_status: 1});
 GoldRateTimelinesSchema.index({_ratePerGram: 1});
 GoldRateTimelinesSchema.index({_createdAt: 1});
 

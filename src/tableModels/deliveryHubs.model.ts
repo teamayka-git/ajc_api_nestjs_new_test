@@ -29,6 +29,7 @@ export interface DeliveryHubs {
     _status: Number;
 }
 
+DeliveryHubsSchema.index({_status: 1});
 DeliveryHubsSchema.index({_citiesId: 1});
 DeliveryHubsSchema.index({_name: 1});
 DeliveryHubsSchema.index({_code: 1});

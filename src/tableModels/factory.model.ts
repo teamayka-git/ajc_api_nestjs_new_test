@@ -27,6 +27,7 @@ export interface Factory {
     _status: Number;
 }
 
+FactorySchema.index({_status: 1});
 FactorySchema.index({_cityId: 1});
 FactorySchema.index({_name: 1});
 FactorySchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});

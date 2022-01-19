@@ -27,6 +27,7 @@ export interface TransportMasters {
     _status: Number;
 }
 
+TransportMastersSchema.index({_status: 1});
 TransportMastersSchema.index({_name: 1});
 TransportMastersSchema.index({_name: 1});
 TransportMastersSchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});

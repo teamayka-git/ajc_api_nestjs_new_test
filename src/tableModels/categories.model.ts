@@ -42,6 +42,7 @@ export interface Categories {
   _status: Number;
 }
 
+CategoriesSchema.index({_status: 1});
 CategoriesSchema.index({ _description: 1 });
 CategoriesSchema.index({ _groupId: 1 });
 CategoriesSchema.index({ _code: 1 });

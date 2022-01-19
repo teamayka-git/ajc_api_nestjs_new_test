@@ -40,6 +40,9 @@ export interface Suppliers {
     _updatedAt:  Number;
     _status: Number;
 }
+
+
+SuppliersSchema.index({_status: 1});
 SuppliersSchema.index({_name: 1});
 SuppliersSchema.index({_gender: 1});
 SuppliersSchema.index({_mobile: 1});
