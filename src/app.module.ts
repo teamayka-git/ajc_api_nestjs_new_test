@@ -47,6 +47,7 @@ import { CompanyModule } from './modules/company/company.module';
 import { GlobalGalleryCategoryModule } from './modules/global-gallery-category/global-gallery-category.module';
 import { GlobalGallerySubCategoryModule } from './modules/global-gallery-sub-category/global-gallery-sub-category.module';
 import { BanksModule } from './modules/banks/banks.module';
+import { GlobalGalleryModule } from './modules/global-gallery/global-gallery.module';
 
 
 @Module({
@@ -94,6 +95,7 @@ import { BanksModule } from './modules/banks/banks.module';
   GlobalGalleryCategoryModule,
   GlobalGallerySubCategoryModule,
   BanksModule,
+  GlobalGalleryModule,
   
   
   // SalesReturnRequestStatusesModule,

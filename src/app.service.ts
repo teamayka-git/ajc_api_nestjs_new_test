@@ -56,39 +56,40 @@ export class AppService {
             path: '$userDetails',
             preserveNullAndEmptyArrays: true,
           },
-        },
-        {
-          $lookup: {
-            from: ModelNames.AGENTS,
-            let: { agentId: '$_agentId' },
-            pipeline: [
-              { $match: { $expr: { $eq: ['$_id', '$$agentId'] } } },
-            ],
-            as: 'userDetails',
-          },
-        },
-        {
-          $unwind: {
-            path: '$userDetails',
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $lookup: {
-            from: ModelNames.SUPPLIERS,
-            let: { supplierId: '$_supplierId' },
-            pipeline: [
-              { $match: { $expr: { $eq: ['$_id', '$$supplierId'] } } },
-            ],
-            as: 'userDetails',
-          },
-        },
-        {
-          $unwind: {
-            path: '$userDetails',
-            preserveNullAndEmptyArrays: true,
-          },
-        },
+        }
+        // ,
+        // {
+        //   $lookup: {
+        //     from: ModelNames.AGENTS,
+        //     let: { agentId: '$_agentId' },
+        //     pipeline: [
+        //       { $match: { $expr: { $eq: ['$_id', '$$agentId'] } } },
+        //     ],
+        //     as: 'userDetails',
+        //   },
+        // },
+        // {
+        //   $unwind: {
+        //     path: '$userDetails',
+        //     preserveNullAndEmptyArrays: true,
+        //   },
+        // },
+        // {
+        //   $lookup: {
+        //     from: ModelNames.SUPPLIERS,
+        //     let: { supplierId: '$_supplierId' },
+        //     pipeline: [
+        //       { $match: { $expr: { $eq: ['$_id', '$$supplierId'] } } },
+        //     ],
+        //     as: 'userDetails',
+        //   },
+        // },
+        // {
+        //   $unwind: {
+        //     path: '$userDetails',
+        //     preserveNullAndEmptyArrays: true,
+        //   },
+        // },
        
       ])
       .session(transactionSession);
