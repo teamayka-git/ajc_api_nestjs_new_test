@@ -40,6 +40,8 @@ import { TransportMastersModule } from './modules/transport-masters/transport-ma
 import { TestCenterMastersModule } from './modules/test-center-masters/test-center-masters.module';
 import { TestChargeMastersModule } from './modules/test-charge-masters/test-charge-masters.module';
 import { FactoriesModule } from './modules/factories/factories.module';
+import { AgentModule } from './modules/agent/agent.module';
+import { SupplierModule } from './modules/supplier/supplier.module';
 
 
 @Module({
@@ -81,6 +83,8 @@ import { FactoriesModule } from './modules/factories/factories.module';
   TestCenterMastersModule,
   TestChargeMastersModule,
   FactoriesModule,
+  AgentModule,
+  SupplierModule,
   
   
   // SalesReturnRequestStatusesModule,

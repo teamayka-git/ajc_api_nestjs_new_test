@@ -55,6 +55,38 @@ export class AppService {
             preserveNullAndEmptyArrays: true,
           },
         },
+        {
+          $lookup: {
+            from: ModelNames.AGENTS,
+            let: { agentId: '$_agentId' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$_id', '$$agentId'] } } },
+            ],
+            as: 'userDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$userDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: ModelNames.SUPPLIERS,
+            let: { supplierId: '$_supplierId' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$_id', '$$supplierId'] } } },
+            ],
+            as: 'userDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$userDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
        
       ])
       .session(transactionSession);
@@ -109,7 +141,9 @@ export class AppService {
                 _gender:0,
                 _password:encryptedPassword,
                 _uid:1,
+                _mobile:"",
                 _lastLogin:-1,
+                _dataGuard:[1,2],
                 _createdUserId:null,
                 _createdAt:dateTime,
                 _updatedUserId:null,

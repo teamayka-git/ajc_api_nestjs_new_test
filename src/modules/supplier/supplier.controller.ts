@@ -1,27 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, UseGuards } from '@nestjs/common';
-import { EmployeesService } from './employees.service';
+import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { EmployeeLoginDto } from './employees.dto';
-import { Response } from 'express'; //jwt response store in cookie
 import { ApiTags } from '@nestjs/swagger';
-import { GuardUserRole, GuardUserRoleStringGenerate } from 'src/common/GuardUserRole';
 import { RolesGuard } from 'src/Auth/roles.guard';
+import { SupplierService } from './supplier.service';
+import { Response } from 'express'; //jwt response store in cookie
 import { Roles } from 'src/Auth/roles.decorator';
+import { GuardUserRole, GuardUserRoleStringGenerate } from 'src/common/GuardUserRole';
+import { SupplierLoginDto } from './supplier.dto';
 
-@ApiTags('Employee Docs')
+@Controller('supplier')
 @UseGuards(RolesGuard)
-@Controller('employees')
-export class EmployeesController {
-  constructor(
-    private jwtService: JwtService,private readonly employeesService: EmployeesService) {}
-
+@ApiTags("Supplier Docs") 
+export class SupplierController {
+  constructor( private jwtService: JwtService,private readonly supplierService: SupplierService) {}
 
   @Post("login")
-  @Roles(GuardUserRole.SUPER_ADMIN)
-  async login(@Body() dto: EmployeeLoginDto,
+  @Roles(GuardUserRole.SUPPLIER)
+  async login(@Body() dto: SupplierLoginDto,
     @Res({ passthrough: true }) response: Response, //jwt response store in cookie
   ) {
-    var returnData: Object = await this.employeesService.login(dto);
+    var returnData: Object = await this.supplierService.login(dto);
     
 var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole']);
 
@@ -33,7 +31,7 @@ var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole'])
     const jwt = await this.jwtService.signAsync(
       {
         _userId_: returnData['_id'],
-        _employeeId_: returnData['_employeeId'],
+        _supplierId_: returnData['_supplierId'],
         _type_: returnData['_type'],
         _userRole_:userRole
       },
@@ -45,5 +43,5 @@ var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole'])
     return { message: 'Success', data: returnData, token: jwt };
   }
 
-  
+
 }

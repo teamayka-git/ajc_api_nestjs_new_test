@@ -59,6 +59,10 @@ private readonly counterModel: mongoose.Model<Counters>,
       );
     }
 
+
+await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_lastLogin:dateTime}} , { new: true, transactionSession });
+
+
     var resultUser = await this.userModel
       .aggregate([
         {

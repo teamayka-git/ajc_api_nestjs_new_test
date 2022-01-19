@@ -24,6 +24,8 @@ export enum ModelNames {
     TEST_CENTER_MASTERS="testCenterMasters",
     TEST_CHARGE_MASTERS="testChargeMasters",
     FACTORIES="factories",
+    AGENTS="agents",
+    SUPPLIERS="suppliers",
    
     
 
