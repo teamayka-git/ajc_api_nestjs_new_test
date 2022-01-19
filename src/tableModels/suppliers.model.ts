@@ -27,9 +27,10 @@ export interface Suppliers {
     _name: String;
     _gender: Number;
     _email:  String;
-    _password: String;
+    _password: String; 
     _cityId:String;
     _uid: String;
+    _mobile:String;
     _lastLogin:Number;
     _address:String;
     _dataGuard:Object;

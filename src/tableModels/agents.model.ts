@@ -30,12 +30,13 @@ export interface Agents {
     _gender: Number;
     _email:  String;
     _password: String;
+    _mobile:String;
     _cityId:String;
     _uid: String;
     _lastLogin:Number;
     _commisionAmount:Number;
     _commisionPercentage:Number;
-    _commisionType:Number;
+    _commisionType:Number; 
     _dataGuard:Object;
     _createdUserId:String;
     _createdAt:  Number;
@@ -44,6 +45,7 @@ export interface Agents {
     _status: Number;
 }
 
+AgentsSchema.index({_commisionType: 1});
 AgentsSchema.index({_name: 1});
 AgentsSchema.index({_gender: 1});
 AgentsSchema.index({_mobile: 1});

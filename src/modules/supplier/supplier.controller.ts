@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Put, Request, Res, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ApiTags } from '@nestjs/swagger';
 import { RolesGuard } from 'src/Auth/roles.guard';
@@ -6,7 +6,7 @@ import { SupplierService } from './supplier.service';
 import { Response } from 'express'; //jwt response store in cookie
 import { Roles } from 'src/Auth/roles.decorator';
 import { GuardUserRole, GuardUserRoleStringGenerate } from 'src/common/GuardUserRole';
-import { SupplierLoginDto } from './supplier.dto';
+import { SupplierCreateDto, SupplierEditDto, SupplierListDto, SupplierLoginDto, SupplierStatusChangeDto } from './supplier.dto';
 
 @Controller('supplier')
 @UseGuards(RolesGuard)
@@ -42,6 +42,30 @@ var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole'])
 
     return { message: 'Success', data: returnData, token: jwt };
   }
+
+
+  @Post()
+  @Roles(GuardUserRole.SUPER_ADMIN)
+  create(@Body() dto: SupplierCreateDto,@Request() req) {
+    return this.supplierService.create(dto,req["_userId_"]);
+  }
+  
+  @Put()
+  @Roles(GuardUserRole.SUPER_ADMIN)
+  edit(@Body() dto: SupplierEditDto,@Request() req) {
+    return this.supplierService.edit(dto,req["_userId_"]);
+  }
+  @Delete()
+  @Roles(GuardUserRole.SUPER_ADMIN)
+  status_change(@Body() dto: SupplierStatusChangeDto,@Request() req) {
+    return this.supplierService.status_change(dto,req["_userId_"]);
+  }
+  
+  @Post("list")
+  list(@Body() dto:SupplierListDto) {
+    return this.supplierService.list(dto);
+  }
+
 
 
 }
