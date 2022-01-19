@@ -28,6 +28,7 @@ export enum ModelNames {
     SUPPLIERS="suppliers",
     COMPANIES="companies",
     GLOBAL_GALLERY_CATEGORIES="globalGalleryCategories",
+    GLOBAL_GALLERY_SUB_CATEGORIES="globalGallerySubCategories",
    
     
 
