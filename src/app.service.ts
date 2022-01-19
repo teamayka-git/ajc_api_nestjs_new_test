@@ -3,6 +3,7 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { MeDto } from './app.dto';
 import { ModelNames } from './common/model_names';
+import { Company } from './tableModels/companies.model';
 import { Counters } from './tableModels/counters.model';
 import { Departments } from './tableModels/departments.model';
 import { Employee } from './tableModels/employee.model';
@@ -19,6 +20,7 @@ export class AppService {
   @InjectModel(ModelNames.DEPARTMENT)
   private readonly departmentModel: mongoose.Model<Departments>,
   @InjectModel(ModelNames.PURITY) private readonly purityModel: mongoose.Model<Purity>,
+  @InjectModel(ModelNames.COMPANIES) private readonly companyModel: mongoose.Model<Company>,
   @InjectModel(ModelNames.COUNTERS)
   private readonly countersModel: mongoose.Model<Counters>, @InjectModel(ModelNames.EMPLOYEES) private readonly employeeModel: mongoose.Model<Employee>,
 
@@ -175,8 +177,24 @@ export class AppService {
     
           userId = resultUser._id;
 
+          
 
-
+          await this.companyModel.findOneAndUpdate(
+            { _email: "ajc@gmail.com" },
+            {
+              $setOnInsert: {
+                _name:"AJC",
+                _place:"Malappuram",
+                _dataGuard:[0,1,2],
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
           await this.generalsModel.findOneAndUpdate(
             { _code: 1000 },
             {

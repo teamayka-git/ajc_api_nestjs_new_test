@@ -42,6 +42,8 @@ import { TestChargeMastersModule } from './modules/test-charge-masters/test-char
 import { FactoriesModule } from './modules/factories/factories.module';
 import { AgentModule } from './modules/agent/agent.module';
 import { SupplierModule } from './modules/supplier/supplier.module';
+import { CompanySchema } from './tableModels/companies.model';
+import { CompanyModule } from './modules/company/company.module';
 
 
 @Module({
@@ -57,7 +59,7 @@ import { SupplierModule } from './modules/supplier/supplier.module';
   MongooseModule.forFeature([
     { name: ModelNames.USER, schema: UserSchema },
     { name: ModelNames.EMPLOYEES, schema: EmployeeSchema },
-    { name: ModelNames.COUNTERS, schema:CountersSchema },
+    { name: ModelNames.COUNTERS, schema:CountersSchema },{ name: ModelNames.COMPANIES, schema:CompanySchema },
     { name: ModelNames.GENERALS, schema:GeneralsSchema },{name:ModelNames.DEPARTMENT,schema:DepartmentsSchema},
     {name:ModelNames.PURITY,schema:PuritySchema}
   ]),
@@ -85,6 +87,7 @@ import { SupplierModule } from './modules/supplier/supplier.module';
   FactoriesModule,
   AgentModule,
   SupplierModule,
+  CompanyModule,
   
   
   // SalesReturnRequestStatusesModule,

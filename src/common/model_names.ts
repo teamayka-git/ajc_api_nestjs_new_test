@@ -26,6 +26,7 @@ export enum ModelNames {
     FACTORIES="factories",
     AGENTS="agents",
     SUPPLIERS="suppliers",
+    COMPANIES="companies",
    
     
 
