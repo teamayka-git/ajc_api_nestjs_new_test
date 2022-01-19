@@ -9,6 +9,29 @@
 public/upload_files/temp/*
 !.gitkeep
 
+public/upload_files/category/*
+!.gitkeep
+
+public/upload_files/subCategory/*
+!.gitkeep
+
+public/upload_files/stone/*
+!.gitkeep
+
+public/upload_files/agent/*
+!.gitkeep
+
+public/upload_files/branch/*
+!.gitkeep
+
+
+public/upload_files/employee/*
+!.gitkeep
+
+
+public/upload_files/supplier/*
+!.gitkeep
+
 
 
 

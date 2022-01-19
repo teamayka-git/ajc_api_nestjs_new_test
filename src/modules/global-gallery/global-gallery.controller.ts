@@ -1,10 +1,13 @@
-import { Body, Controller, Delete, Post, Request, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Post, Request, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
+import { FileMulterHelper } from 'src/shared/file_multter_helper';
 import { GlobalGalleryService } from './global-gallery.service';
 import { GlobalGalleryCreateDto, GlobalGalleryListDto, GlobalGalleryStatusChangeDto } from './global_gallery.dto';
+import { diskStorage } from "multer"
 
 @UseGuards(RolesGuard)
 @ApiTags("Global Gallery Docs") 
@@ -15,8 +18,21 @@ export class GlobalGalleryController {
 
   
   @Post()
-  create(@Body() dto: GlobalGalleryCreateDto,@Request() req) {
-    return this.globalGalleryService.create(dto,req["_userId_"]);
+  @ApiCreatedResponse({ description: "files upload on these input feilds => [documents]" })
+  @UseInterceptors(FileFieldsInterceptor([
+   {
+      name: "documents"
+    },
+  ], {
+    storage: diskStorage({
+      destination: FileMulterHelper.filePathGlobalGalleries,
+      filename: FileMulterHelper.customFileName
+
+    })
+  })) 
+
+  create(@Body() dto: GlobalGalleryCreateDto,@Request() req,@UploadedFiles() file) {
+    return this.globalGalleryService.create(dto,req["_userId_"],file==null?{}:JSON.parse(JSON.stringify(file)));
   }
   
   

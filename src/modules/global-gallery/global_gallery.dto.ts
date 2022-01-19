@@ -25,6 +25,10 @@ class GlobalGalleryCreateList {
 
   @IsString()
   @ApiProperty({})
+  originalname: string;
+
+  @IsString()
+  @ApiProperty({})
   name: string;
 
   @IsString()
@@ -36,28 +40,33 @@ class GlobalGalleryCreateList {
   globalGallerySubCategoryId: string;
 
   
-  @IsNumber()
-  @ApiProperty({description:descriptionListType})
-  type: number;
-
-  @IsNumber()
-  @ApiProperty({description:descriptionListDocType})
-  docType: number;
 
   
-
   
   
 }
 
 
 export class GlobalGalleryCreateDto {
+  @Transform(({ value }) =>
+  typeof value == 'string' ? JSON.parse(value) : value,
+    )
   @IsArray()
   @ApiProperty({type:[GlobalGalleryCreateList]})
   @ValidateNested({ each: true })
   @Type(() => GlobalGalleryCreateList)
   array: GlobalGalleryCreateList[];
 
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({description:descriptionListDocType})
+  docType: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({description:descriptionListType})
+  type: number;
   
 }
 

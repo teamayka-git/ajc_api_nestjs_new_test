@@ -58,7 +58,7 @@ GlobalGalleriesSchema.index({ _globalGalleryCategoryId: 1 });
 GlobalGalleriesSchema.index({ _globalGallerySubCategoryId: 1 });
 
 /*
-_docType:{
+_docType:{ 
     0 - image
     1 - video
     2 - pdf
@@ -71,8 +71,7 @@ _type:{
     2-stone
     3-agent
     4-branch
-    5-branch
-    6-employee
-    7-supplier
+    5-employee
+    6-supplier
 }
 */

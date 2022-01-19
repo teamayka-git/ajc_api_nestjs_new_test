@@ -28,6 +28,32 @@ export class FileMulterHelper {
     cb(null, UploadedFileDirectoryPath.TEMP);
   }
 
-
-  
+  static filePathGlobalGalleries(req, file, cb) {
+    var document_location = '';
+    switch (Number(req.body.type)) {
+      case 0:
+        document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY;
+        break;
+      case 1:
+        document_location =
+          UploadedFileDirectoryPath.GLOBAL_GALLERY_SUB_CATEGORY;
+        break;
+      case 2:
+        document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_STONE;
+        break;
+      case 3:
+        document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_AGENT;
+        break;
+      case 4:
+        document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH;
+        break;
+      case 5:
+        document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_EMPLOYEE;
+        break;
+      default:
+        document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_SUPPLIER;
+        break;
+    }
+    cb(null, document_location);
+  }
 }
