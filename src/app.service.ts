@@ -46,12 +46,12 @@ export class AppService {
             pipeline: [
               { $match: { $expr: { $eq: ['$_id', '$$employeeId'] } } },
             ],
-            as: 'employeeDetails',
+            as: 'userDetails',
           },
         },
         {
           $unwind: {
-            path: '$employeeDetails',
+            path: '$userDetails',
             preserveNullAndEmptyArrays: true,
           },
         },
