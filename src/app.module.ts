@@ -44,6 +44,7 @@ import { AgentModule } from './modules/agent/agent.module';
 import { SupplierModule } from './modules/supplier/supplier.module';
 import { CompanySchema } from './tableModels/companies.model';
 import { CompanyModule } from './modules/company/company.module';
+import { GlobalGalleryCategoryModule } from './modules/global-gallery-category/global-gallery-category.module';
 
 
 @Module({
@@ -88,6 +89,7 @@ import { CompanyModule } from './modules/company/company.module';
   AgentModule,
   SupplierModule,
   CompanyModule,
+  GlobalGalleryCategoryModule,
   
   
   // SalesReturnRequestStatusesModule,
