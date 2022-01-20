@@ -19,7 +19,8 @@ export class GlobalGalleryService {
   constructor(
     @InjectModel(ModelNames.GLOBAL_GALLERIES)
     private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
-    private readonly counterModel: mongoose.Model<Counters>,
+
+    @InjectModel(ModelNames.COUNTERS)    private readonly counterModel: mongoose.Model<Counters>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async create(dto: GlobalGalleryCreateDto, _userId_: string, file: Object) {
