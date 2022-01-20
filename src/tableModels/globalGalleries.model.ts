@@ -17,6 +17,7 @@ export const GlobalGalleriesSchema = new mongoose.Schema({
     default: null,
   },
   _docType: { type: Number, required: true, default: -1 },
+  _uid: { type: Number, required: true, default: -1 },
   _type: { type: Number, required: true, default: -1 },
   _url: { type: String, required: true, default: 'nil' },
   _thumbUrl: { type: String, required: true, default: 'nil' },
@@ -42,6 +43,7 @@ export interface GlobalGalleries {
   _globalGallerySubCategoryId: String;
   _docType: Number;
   _type: Number;
+  _uid: Number;
   _url: String;
   _thumbUrl: String;
   _createdUserId: String;

@@ -12,12 +12,14 @@ import {
 import * as sharp from 'sharp';
 import { GlobalConfig } from 'src/config/global_config';
 import { StringUtils } from 'src/utils/string_utils';
+import { Counters } from 'src/tableModels/counters.model';
 
 @Injectable()
 export class GlobalGalleryService {
   constructor(
     @InjectModel(ModelNames.GLOBAL_GALLERIES)
     private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
+    private readonly counterModel: mongoose.Model<Counters>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async create(dto: GlobalGalleryCreateDto, _userId_: string, file: Object) {
@@ -87,6 +89,18 @@ export class GlobalGalleryService {
       }
     }
 
+
+    var resultCounterPurchase= await this.counterModel.findOneAndUpdate(
+      { _table_name: ModelNames.GLOBAL_GALLERIES},
+      {
+        $inc: {
+          _count:dto.array.length,
+          },
+        },
+      {  new: true, transactionSession },
+    );
+
+
     for(var i=0;i<dto.array.length;i++){
 
         var fileUrl = 'nil';
@@ -114,7 +128,7 @@ export class GlobalGalleryService {
   
             console.log('bbb  ');
           }
-        
+     
 
 
       arrayToStates.push({
@@ -125,6 +139,7 @@ export class GlobalGalleryService {
         _docType: dto.docType,
         _type: dto.type,
         _url: fileUrl,
+        _uid:(resultCounterPurchase._count-dto.array.length+(i+1)),
         _thumbUrl: fileUrlThumb,
         _createdUserId: _userId_,
         _createdAt: dateTime,
@@ -179,7 +194,10 @@ export class GlobalGalleryService {
       //todo
       arrayAggregation.push({
         $match: {
-          $or: [{ _name: new RegExp(dto.searchingText, 'i') }],
+          $or: [
+            { _name: new RegExp(dto.searchingText, 'i') },
+            { _uid: dto.searchingText },
+          ],
         },
       });
     }
@@ -223,6 +241,46 @@ export class GlobalGalleryService {
       arrayAggregation.push({ $skip: dto.skip });
       arrayAggregation.push({ $limit: dto.limit });
     }
+
+
+    if (dto.screenType.findIndex((it) => it == 100) != -1) {
+
+      arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.GLOBAL_GALLERY_CATEGORIES,
+              let: { globalGalleryCategoryId: '$_globalGalleryCategoryId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$globalGalleryCategoryId'] } } }],
+              as: 'globalGalleryCategoryDetails',
+            },
+          },
+          {
+            $unwind: { path: '$globalGalleryCategoryDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
+    }
+    if (dto.screenType.findIndex((it) => it == 101) != -1) {
+
+      arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.GLOBAL_GALLERY_SUB_CATEGORIES,
+              let: { globalGallerySubCategoryId: '$_globalGallerySubCategoryId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$globalGallerySubCategoryId'] } } }],
+              as: 'globalGallerySubCategoryDetails',
+            },
+          },
+          {
+            $unwind: { path: '$globalGallerySubCategoryDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
+    }
+
+
+
+
+
+
 
     var result = await this.globalGalleryModel
       .aggregate(arrayAggregation)

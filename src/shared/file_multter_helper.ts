@@ -27,6 +27,9 @@ export class FileMulterHelper {
   static filePathTempImage(req, file, cb) {
     cb(null, UploadedFileDirectoryPath.TEMP);
   }
+  static filePathTempBranch(req, file, cb) {
+    cb(null, UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH);
+  }
 
   static filePathGlobalGalleries(req, file, cb) {
     var document_location = '';

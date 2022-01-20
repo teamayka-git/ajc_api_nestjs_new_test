@@ -6,29 +6,90 @@ import { Branch } from 'src/tableModels/branch.model';
 import * as mongoose from 'mongoose';
 import { BranchCreateDto, BranchEditDto, BranchListDto, BranchStatusChangeDto } from './branch.dto';
 import { Counters } from 'src/tableModels/counters.model';
+import * as sharp from 'sharp';
+import { GlobalConfig } from 'src/config/global_config';
+import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
+import { StringUtils } from 'src/utils/string_utils';
+import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 
 @Injectable()
 export class BranchService {
   constructor(@InjectModel(ModelNames.BRANCHES) private readonly branchModel: Model<Branch>,
   @InjectModel(ModelNames.COUNTERS) private readonly countersModel: Model<Counters>,
+  @InjectModel(ModelNames.GLOBAL_GALLERIES) private readonly globalGalleryModel: Model<GlobalGalleries>,
   @InjectConnection() private readonly connection: mongoose.Connection) { }
-  async create(dto: BranchCreateDto, _userId_: string) {
+  async create(dto: BranchCreateDto, _userId_: string, file: Object) {
       var dateTime = new Date().getTime();
       const transactionSession = await this.connection.startSession();
       transactionSession.startTransaction();
 
+      if (file.hasOwnProperty('image')) {
+        var filePath =
+          __dirname +
+          `/../../../public${file['image'][0]['path'].split('public')[1]}`;
+       await sharp(filePath)
+          .toFormat('png')
+          .png({ quality: GlobalConfig().THUMB_QUALITY })
+          .toFile(
+            UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+              new StringUtils().makeThumbImageFileName(
+                file['image'][0]['filename'],
+              ),
+          );
 
+      }
 
+      var globalGalleryId=null;
+      //globalGalleryAdd
+      if (file.hasOwnProperty('image')) {
+
+        var resultCounterPurchase= await this.countersModel.findOneAndUpdate(
+            { _table_name: ModelNames.GLOBAL_GALLERIES},
+            {
+              $inc: {
+                _count:1,
+                },
+              },
+            {  new: true, transactionSession },
+          );
+
+      const globalGallery = new this.globalGalleryModel({
+        // _id:new MongooseModule.Types.ObjectId(),
+        __name:"",
+        _globalGalleryCategoryId:null,
+        _globalGallerySubCategoryId:null,
+        _docType:0,
+        _type:4,
+        _uid:resultCounterPurchase._count,
+        _url:`${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
+            process.env.PORT
+          }${file['image'][0]['path'].split('public')[1]}`,
+        _thumbUrl: new StringUtils().makeThumbImageFileName(
+            `${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
+              process.env.PORT
+            }${file['image'][0]['path'].split('public')[1]}`,
+          ),
+        _created_user_id: _userId_,
+        _created_at: dateTime,
+        _updated_user_id: null,
+        _updated_at: -1,
+        _status: 1,
+      });
+    var resultGlobalGallery=  await globalGallery.save({
+        session: transactionSession,
+      });
       
-var resultCounterPurchase= await this.countersModel.findOneAndUpdate(
-    { _table_name: ModelNames.BRANCHES},
-    {
-      $inc: {
-        _count:1,
-        },
-      },
-    {  new: true, transactionSession },
-  );
+      globalGalleryId=resultGlobalGallery._id;
+    }
+    var resultCounterPurchase= await this.countersModel.findOneAndUpdate(
+        { _table_name: ModelNames.BRANCHES},
+        {
+          $inc: {
+            _count:1,
+            },
+          },
+        {  new: true, transactionSession },
+      );
       const newsettingsModel = new this.branchModel({
           // _id:new MongooseModule.Types.ObjectId(),
           _name:dto.name,
@@ -36,6 +97,7 @@ var resultCounterPurchase= await this.countersModel.findOneAndUpdate(
           _email:  dto.email,
           _mobile: dto.mobile,
           _tectCode: dto.textCode,
+          _globalGalleryId:globalGalleryId,
           _dataGuard:dto.dataGuard,
           _createdUserId:_userId_,
           _createdAt:  dateTime,
@@ -51,25 +113,93 @@ var resultCounterPurchase= await this.countersModel.findOneAndUpdate(
   }
 
 
-  async edit(dto: BranchEditDto, _userId_: string) {
+  async edit(dto: BranchEditDto, _userId_: string, file: Object) {
       var dateTime = new Date().getTime();
       const transactionSession = await this.connection.startSession();
       transactionSession.startTransaction();
+      if (file.hasOwnProperty('image')) {
+        var filePath =
+          __dirname +
+          `/../../../public${file['image'][0]['path'].split('public')[1]}`;
+       await sharp(filePath)
+          .toFormat('png')
+          .png({ quality: GlobalConfig().THUMB_QUALITY })
+          .toFile(
+            UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+              new StringUtils().makeThumbImageFileName(
+                file['image'][0]['filename'],
+              ),
+          );
+
+      }
+
+
+    //   _globalGalleryId:globalGalleryId,
+
+      var updateObject= {
+        _name:dto.name,
+        _email:  dto.email,
+        _mobile: dto.mobile,
+        _tectCode: dto.textCode,
+        _dataGuard:dto.dataGuard,
+        _updatedUserId:_userId_,
+        _updatedAt:  dateTime,
+      }
+
+      var globalGalleryId=null;
+      //globalGalleryAdd
+      if (file.hasOwnProperty('image')) {
+
+        var resultCounterPurchase= await this.countersModel.findOneAndUpdate(
+            { _table_name: ModelNames.GLOBAL_GALLERIES},
+            {
+              $inc: {
+                _count:1,
+                },
+              },
+            {  new: true, transactionSession },
+          );
+
+      const globalGallery = new this.globalGalleryModel({
+        // _id:new MongooseModule.Types.ObjectId(),
+        __name:"",
+        _globalGalleryCategoryId:null,
+        _globalGallerySubCategoryId:null,
+        _docType:0,
+        _type:4,
+        _uid:resultCounterPurchase._count,
+        _url:`${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
+            process.env.PORT
+          }${file['image'][0]['path'].split('public')[1]}`,
+        _thumbUrl: new StringUtils().makeThumbImageFileName(
+            `${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
+              process.env.PORT
+            }${file['image'][0]['path'].split('public')[1]}`,
+          ),
+        _created_user_id: _userId_,
+        _created_at: dateTime,
+        _updated_user_id: null,
+        _updated_at: -1,
+        _status: 1,
+      });
+    var resultGlobalGallery=  await globalGallery.save({
+        session: transactionSession,
+      });
+      
+      globalGalleryId=resultGlobalGallery._id;
+      updateObject["_globalGalleryI"]=globalGalleryId
+    }
+
+
+
+
 
 
 
       var result = await this.branchModel.findOneAndUpdate({
           _id: dto.branchId
       }, {
-          $set: {
-            _name:dto.name,
-            _email:  dto.email,
-            _mobile: dto.mobile,
-            _tectCode: dto.textCode,
-            _dataGuard:dto.dataGuard,
-            _updatedUserId:_userId_,
-            _updatedAt:  dateTime,
-          }
+          $set:updateObject
       }, { new: true, transactionSession });
 
       await transactionSession.commitTransaction();
@@ -140,8 +270,24 @@ var resultCounterPurchase= await this.countersModel.findOneAndUpdate(
           arrayAggregation.push({ $limit: dto.limit});
       }
 
+      
 
+      if (dto.screenType.findIndex((it) => it == 100) != -1) {
 
+        arrayAggregation.push(
+            {
+              $lookup: {
+                from: ModelNames.GLOBAL_GALLERIES,
+                let: { globalGalleryId: '$_globalGalleryId' },
+                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } }],
+                as: 'globalGalleryDetails',
+              },
+            },
+            {
+              $unwind: { path: '$globalGalleryDetails', preserveNullAndEmptyArrays: true },
+            },
+          );
+      }
       var result = await this.branchModel.aggregate(arrayAggregation).session(transactionSession);
 
 

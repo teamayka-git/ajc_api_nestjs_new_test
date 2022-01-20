@@ -13,7 +13,7 @@ import { Optional } from '@nestjs/common';
 
 
 const descriptionStatus="0-Inactive, 1-Active, 2-Delete";
-const descriptionListScreenTypeForList="0-total documents count";
+const descriptionListScreenTypeForList="0-total documents count,100-category details populate,101-sub category details";
 const descriptionListType="    0-category, 1-sub category, 2-stone, 3-agent, 4-branch, 5-branch, 6-employee, 7-supplier";
 const descriptionListDocType="0-image, 1-video, 2-pdf, 3-audio, 4-document";
 

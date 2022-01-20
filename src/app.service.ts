@@ -159,6 +159,21 @@ export class AppService {
         { upsert: true, new: true, transactionSession },
       );
 
+      await this.countersModel.findOneAndUpdate(
+        { _tableName: ModelNames.GLOBAL_GALLERIES },
+        {
+          $setOnInsert: {
+            _count: 0,
+            _createdUser_id: null,
+            _createdAt: dateTime,
+            _updatedUser_id: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, transactionSession },
+      );
+
 
 
       var encryptedPassword = await crypto.pbkdf2Sync("123456", process.env.CRYPTO_ENCRYPTION_SALT, 
