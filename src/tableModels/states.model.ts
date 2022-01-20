@@ -31,6 +31,7 @@ StatesSchema.index({_status: 1});
 StatesSchema.index({_name: 1});
 StatesSchema.index({_code: 1});
 StatesSchema.index({_code: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
+StatesSchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 StatesSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
 });
@@ -48,7 +49,7 @@ StatesSchema.post('updateMany', async function(error, doc, next) {
 });
 function schemaPostFunctionForDuplicate(error, doc, next) {
     if(error.code==11000){
-        next(new Error('Code already existing'));
+        next(new Error('Code or Name already existing'));
    }else{
     next();
    }

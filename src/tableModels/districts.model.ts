@@ -34,6 +34,7 @@ DistrictsSchema.index({_statesId: 1});
 DistrictsSchema.index({_name: 1});
 DistrictsSchema.index({_code: 1});
 DistrictsSchema.index({_code: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
+DistrictsSchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 DistrictsSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
 });
@@ -51,7 +52,7 @@ DistrictsSchema.post('updateMany', async function(error, doc, next) {
 });
 function schemaPostFunctionForDuplicate(error, doc, next) {
     if(error.code==11000){
-        next(new Error('Code already existing'));
+        next(new Error('Code or Name already existing'));
    }else{
     next();
    }

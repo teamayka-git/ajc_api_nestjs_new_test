@@ -36,7 +36,7 @@ export interface GlobalGalleryCategories {
 GlobalGalleryCategoriesSchema.index({_status: 1});
 GlobalGalleryCategoriesSchema.index({ _name: 1 });
 GlobalGalleryCategoriesSchema.index(
-  { _code: 1 },
+  { _name: 1 },
   { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },
 );
 GlobalGalleryCategoriesSchema.post('save', async function (error, doc, next) {

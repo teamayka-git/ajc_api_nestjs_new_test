@@ -42,7 +42,7 @@ export interface GlobalGallerySubCategories {
 GlobalGallerySubCategoriesSchema.index({_status: 1});
 GlobalGallerySubCategoriesSchema.index({ _name: 1 });
 GlobalGallerySubCategoriesSchema.index(
-  { _code: 1 },
+  { _name: 1 },
   { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },
 );
 GlobalGallerySubCategoriesSchema.post('save', async function (error, doc, next) {
