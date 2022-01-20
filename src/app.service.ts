@@ -8,6 +8,7 @@ import { Counters } from './tableModels/counters.model';
 import { Departments } from './tableModels/departments.model';
 import { Employee } from './tableModels/employee.model';
 import { Generals } from './tableModels/generals.model';
+import { ProcessMaster } from './tableModels/processMaster.model';
 import { Purity } from './tableModels/purity.model';
 import { User } from './tableModels/user.model';
 const crypto = require('crypto');
@@ -21,6 +22,7 @@ export class AppService {
   private readonly departmentModel: mongoose.Model<Departments>,
   @InjectModel(ModelNames.PURITY) private readonly purityModel: mongoose.Model<Purity>,
   @InjectModel(ModelNames.COMPANIES) private readonly companyModel: mongoose.Model<Company>,
+  @InjectModel(ModelNames.PROCESS_MASTER) private readonly processMastersModel: mongoose.Model<ProcessMaster>,
   @InjectModel(ModelNames.COUNTERS)
   private readonly countersModel: mongoose.Model<Counters>, @InjectModel(ModelNames.EMPLOYEES) private readonly employeeModel: mongoose.Model<Employee>,
 
@@ -710,11 +712,29 @@ export class AppService {
 
 
 
+          await this.processMastersModel.findOneAndUpdate(
+            { _code: 1000 },
+            {
+              $setOnInsert: {
+                _name: "Master Design",
+                _parentId:null,
+                _dataGuard:[0,1,2],
+                _createdUser_id: null,
+                _createdAt: dateTime,
+                _updatedUser_id: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true, transactionSession },
+          );
 
+
+        
           
 
 
-
+          
 
 
 

@@ -7,7 +7,7 @@ import { TestCenterMastersService } from './test-center-masters.service';
 import { TestCenterMastersCreateDto, TestCenterMastersEditDto, TestCenterMastersListDto, TestCenterMastersStatusChangeDto } from './test_center_masters.dto';
 
 @UseGuards(RolesGuard)
-@ApiTags("Stone Docs") 
+@ApiTags("Test Center Docs") 
 @Controller('test-center-masters')
 export class TestCenterMastersController {
   constructor(private readonly testCenterMastersService: TestCenterMastersService) {}

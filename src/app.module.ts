@@ -48,6 +48,7 @@ import { GlobalGalleryCategoryModule } from './modules/global-gallery-category/g
 import { GlobalGallerySubCategoryModule } from './modules/global-gallery-sub-category/global-gallery-sub-category.module';
 import { BanksModule } from './modules/banks/banks.module';
 import { GlobalGalleryModule } from './modules/global-gallery/global-gallery.module';
+import { ProcessMasterSchema } from './tableModels/processMaster.model';
 
 
 @Module({
@@ -65,7 +66,7 @@ import { GlobalGalleryModule } from './modules/global-gallery/global-gallery.mod
     { name: ModelNames.EMPLOYEES, schema: EmployeeSchema },
     { name: ModelNames.COUNTERS, schema:CountersSchema },{ name: ModelNames.COMPANIES, schema:CompanySchema },
     { name: ModelNames.GENERALS, schema:GeneralsSchema },{name:ModelNames.DEPARTMENT,schema:DepartmentsSchema},
-    {name:ModelNames.PURITY,schema:PuritySchema}
+    {name:ModelNames.PURITY,schema:PuritySchema},{name:ModelNames.PROCESS_MASTER,schema:ProcessMasterSchema},
   ]),
   EmployeesModule,
   BranchModule,
