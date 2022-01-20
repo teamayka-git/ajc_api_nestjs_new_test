@@ -139,6 +139,26 @@ export class CitiesService {
           arrayAggregation.push({ $limit: dto.limit });
         }
     
+
+
+        
+        if (dto.screenType.findIndex((it) => it == 100) != -1) {
+
+          arrayAggregation.push(
+              {
+                $lookup: {
+                  from: ModelNames.DISTRICTS,
+                  let: { districtId: '$_districtsId' },
+                  pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$districtId'] } } }],
+                  as: 'districtDetails',
+                },
+              },
+              {
+                $unwind: { path: '$districtDetails', preserveNullAndEmptyArrays: true },
+              },
+            );
+        }
+
         var result = await this.citiesModel
           .aggregate(arrayAggregation)
           .session(transactionSession);

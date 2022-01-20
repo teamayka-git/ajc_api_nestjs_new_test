@@ -124,7 +124,7 @@ export class DistrictsService {
 
         
         if (dto.stateIds.length > 0) {
-            var newSettingsId = [];
+            var newSettingsId = []; 
             dto.stateIds.map((mapItem) => {
               newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
             });
@@ -138,6 +138,25 @@ export class DistrictsService {
           arrayAggregation.push({ $limit: dto.limit });
         }
     
+
+        if (dto.screenType.findIndex((it) => it == 100) != -1) {
+
+          arrayAggregation.push(
+              {
+                $lookup: {
+                  from: ModelNames.STATES,
+                  let: { stateId: '$_statesId' },
+                  pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$stateId'] } } }],
+                  as: 'stateDetails',
+                },
+              },
+              {
+                $unwind: { path: '$stateDetails', preserveNullAndEmptyArrays: true },
+              },
+            );
+        }
+
+
         var result = await this.districtModel
           .aggregate(arrayAggregation)
           .session(transactionSession);
