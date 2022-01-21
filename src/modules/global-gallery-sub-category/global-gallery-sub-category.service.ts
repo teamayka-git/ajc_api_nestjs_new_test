@@ -132,6 +132,25 @@ export class GlobalGallerySubCategoryService {
           arrayAggregation.push({ $limit: dto.limit });
         }
     
+
+        if (dto.screenType.findIndex((it) => it == 100) != -1) {
+
+          arrayAggregation.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERY_CATEGORIES,
+                  let: { globalGalleryCategoryId: '$_globalGalleryCategoryId' },
+                  pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$globalGalleryCategoryId'] } } }],
+                  as: 'globalGalleryCategoryDetails',
+                },
+              },
+              {
+                $unwind: { path: '$globalGalleryCategoryDetails', preserveNullAndEmptyArrays: true },
+              },
+            );
+        }
+    
+
         var result = await this.globalGallerySubCategoriesModel
           .aggregate(arrayAggregation)
           .session(transactionSession);

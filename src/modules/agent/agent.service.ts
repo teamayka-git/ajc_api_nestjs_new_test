@@ -286,6 +286,26 @@ export class AgentService {
       arrayAggregation.push({ $limit: dto.limit });
     }
 
+
+    if (dto.screenType.findIndex((it) => it == 100) != -1) {
+
+      arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.CITIES,
+              let: { cityId: '$_cityId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$cityId'] } } }],
+              as: 'cityDetails',
+            },
+          },
+          {
+            $unwind: { path: '$cityDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
+    }
+
+
+
     var result = await this.agentModel
       .aggregate(arrayAggregation)
       .session(transactionSession);

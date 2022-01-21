@@ -134,7 +134,21 @@ export class FactoriesService {
           arrayAggregation.push({ $skip: dto.skip });
           arrayAggregation.push({ $limit: dto.limit });
         }
-    
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.CITIES,
+              let: { cityId: '$_cityId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$cityId'] } } }],
+              as: 'cityDetails',
+            },
+          },
+          {
+            $unwind: { path: '$cityDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
+    }
+
         var result = await this.factoryModel
           .aggregate(arrayAggregation)
           .session(transactionSession);

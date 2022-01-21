@@ -149,6 +149,24 @@ export class SubCategoriesService {
           arrayAggregation.push({ $skip: dto.skip });
           arrayAggregation.push({ $limit: dto.limit });
         }
+
+        if (dto.screenType.findIndex((it) => it == 100) != -1) {
+
+          arrayAggregation.push(
+              {
+                $lookup: {
+                  from: ModelNames.CATEGORIES,
+                  let: { categoryId: '$_categoryId' },
+                  pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$categoryId'] } } }],
+                  as: 'categoryDetails',
+                },
+              },
+              {
+                $unwind: { path: '$categoryDetails', preserveNullAndEmptyArrays: true },
+              },
+            );
+        }
+    
     
         var result = await this.subCategoriesModel
           .aggregate(arrayAggregation)

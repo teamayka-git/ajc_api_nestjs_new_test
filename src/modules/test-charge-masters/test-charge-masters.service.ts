@@ -116,6 +116,22 @@ export class TestChargeMastersService {
           arrayAggregation.push({ $skip: dto.skip });
           arrayAggregation.push({ $limit: dto.limit });
         }
+        if (dto.screenType.findIndex((it) => it == 100) != -1) {
+
+          arrayAggregation.push(
+              {
+                $lookup: {
+                  from: ModelNames.GROUP_MASTERS,
+                  let: { groupId: '$_groupId' },
+                  pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$groupId'] } } }],
+                  as: 'groupDetails',
+                },
+              },
+              {
+                $unwind: { path: '$groupDetails', preserveNullAndEmptyArrays: true },
+              },
+            );
+        }
     
         var result = await this.testChargeMastersModel
           .aggregate(arrayAggregation)

@@ -133,6 +133,22 @@ export class DeliveryHubsService {
           arrayAggregation.push({ $skip: dto.skip });
           arrayAggregation.push({ $limit: dto.limit });
         }
+        if (dto.screenType.findIndex((it) => it == 100) != -1) {
+
+          arrayAggregation.push(
+              {
+                $lookup: {
+                  from: ModelNames.CITIES,
+                  let: { cityId: '$_citiesId' },
+                  pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$cityId'] } } }],
+                  as: 'cityDetails',
+                },
+              },
+              {
+                $unwind: { path: '$cityDetails', preserveNullAndEmptyArrays: true },
+              },
+            );
+        }
     
         var result = await this.deliveryHubsModel
           .aggregate(arrayAggregation)

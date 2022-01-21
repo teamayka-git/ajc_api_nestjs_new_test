@@ -165,6 +165,56 @@ if(mapItem.userId=="nil"){
           arrayAggregation.push({ $skip: dto.skip });
           arrayAggregation.push({ $limit: dto.limit });
         }
+        if (dto.screenType.findIndex((it) => it == 100) != -1) {
+
+          arrayAggregation.push(
+            {
+              $lookup: {
+                from: ModelNames.USER,
+                let: { userId: '$_userId' },
+                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+              
+                {
+                  $lookup: {
+                    from: ModelNames.EMPLOYEES,
+                    let: { employeeId: '$_employeeId' },
+                    pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$employeeId'] } } }],
+                    as: 'employeeDetails',
+                  },
+                },
+                {
+                  $unwind: { path: '$employeeDetails', preserveNullAndEmptyArrays: true },
+                },{
+                  $lookup: {
+                    from: ModelNames.AGENTS,
+                    let: { agentId: '$_agentId' },
+                    pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$agentId'] } } }],
+                    as: 'agentDetails',
+                  },
+                },
+                {
+                  $unwind: { path: '$agentDetails', preserveNullAndEmptyArrays: true },
+                },{
+                  $lookup: {
+                    from: ModelNames.SUPPLIERS,
+                    let: { supplierId: '$_supplierId' },
+                    pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$supplierId'] } } }],
+                    as: 'supplierDetails',
+                  },
+                },
+                {
+                  $unwind: { path: '$supplierDetails', preserveNullAndEmptyArrays: true },
+                },
+              
+              ],
+                as: 'userDetails',
+              },
+            },
+            {
+              $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true },
+            },
+            );
+        }
     
         var result = await this.bankModel
           .aggregate(arrayAggregation)

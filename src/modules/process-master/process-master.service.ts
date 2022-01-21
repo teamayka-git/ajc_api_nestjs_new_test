@@ -142,6 +142,25 @@ export class ProcessMasterService {
           arrayAggregation.push({ $skip: dto.skip });
           arrayAggregation.push({ $limit: dto.limit });
         }
+
+
+        if (dto.screenType.findIndex((it) => it == 100) != -1) {
+
+          arrayAggregation.push(
+              {
+                $lookup: {
+                  from: ModelNames.PROCESS_MASTER,
+                  let: { parentId: '$_parentId' },
+                  pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$parentId'] } } }],
+                  as: 'parentDetails',
+                },
+              },
+              {
+                $unwind: { path: '$parentDetails', preserveNullAndEmptyArrays: true },
+              },
+            );
+        }
+    
     
         var result = await this.processMasterModel
           .aggregate(arrayAggregation)
