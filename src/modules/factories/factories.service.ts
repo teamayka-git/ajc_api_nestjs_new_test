@@ -134,6 +134,8 @@ export class FactoriesService {
           arrayAggregation.push({ $skip: dto.skip });
           arrayAggregation.push({ $limit: dto.limit });
         }
+        if (dto.screenType.findIndex((it) => it == 100) != -1) {
+
         arrayAggregation.push(
           {
             $lookup: {
