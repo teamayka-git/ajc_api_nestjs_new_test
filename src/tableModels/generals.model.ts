@@ -10,6 +10,7 @@ export const GeneralsSchema = new mongoose.Schema({
     _number: { type: Number, required: true, default: -1 },
     _json: { type: Object, required: true, default: {} },
     _type: { type: Number, required: true, default: -1 },
+    _vlaueType: { type: Number, required: true, default: -1 },
     _dataGuard: { type:Object, required: true, default: [] },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
@@ -25,6 +26,7 @@ export interface Generals {
     _number: String;
     _json: Object;
     _type:Number;
+    _vlaueType:Number;
     _dataGuard:Object;
     _createdUserId:String;
     _createdAt:  Number;

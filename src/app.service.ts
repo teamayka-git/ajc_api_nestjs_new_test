@@ -249,6 +249,7 @@ export class AppService {
               $setOnInsert: {
                 _string:"Rs",
                 _number:-1,
+                _vlaueType:1,
                 _json:{basic:"basic"},
                 _type:2,
                 _dataGuard:[0,1,2],
@@ -268,6 +269,7 @@ export class AppService {
                 _string:"₹",
                 _number:-1,
                 _json:{basic:"basic"},
+                _vlaueType:1,
                 _type:2,
                 _dataGuard:[0,1,2],
                 _createdUser_id: null,
@@ -286,6 +288,7 @@ export class AppService {
               $setOnInsert: {
                 _string:"",
                 _number:2,
+                _vlaueType:0,
                 _json:{basic:"basic"},
                 _type:3,
                 _dataGuard:[0,1,2],
@@ -305,6 +308,7 @@ export class AppService {
               $setOnInsert: {
                 _string:"",
                 _number:10,
+                _vlaueType:0,
                 _json:{basic:"basic"},
                 _type:3,
                 _dataGuard:[0,1,2],
@@ -323,6 +327,7 @@ export class AppService {
               $setOnInsert: {
                 _string:"",
                 _number:30,
+                _vlaueType:0,
                 _json:{basic:"basic"},
                 _type:1,
                 _dataGuard:[0,1,2],
@@ -341,6 +346,7 @@ export class AppService {
               $setOnInsert: {
                 _string:"",
                 _number:14,
+                _vlaueType:0,
                 _json:{basic:"basic"},
                 _type:1,
                 _dataGuard:[0,1,2],
@@ -360,6 +366,7 @@ export class AppService {
               $setOnInsert: {
                 _string:"",
                 _number:1,
+                _vlaueType:0,
                 _json:{basic:"basic"},
                 _type:0,
                 _dataGuard:[0,1,2],
@@ -379,6 +386,7 @@ export class AppService {
               $setOnInsert: {
                 _string:"",
                 _number:1,
+                _vlaueType:0,
                 _json:{basic:"basic"},
                 _type:0,
                 _dataGuard:[0,1,2],
@@ -398,6 +406,7 @@ export class AppService {
                 _string:"",
                 _number:1,
                 _json:{basic:"basic"},
+                _vlaueType:0,
                 _type:0,
                 _dataGuard:[0,1,2],
                 _createdUser_id: null,
@@ -415,6 +424,7 @@ export class AppService {
               $setOnInsert: {
                 _string:"",
                 _number:1,
+                _vlaueType:0,
                 _json:{basic:"basic"},
                 _type:0,
                 _dataGuard:[0,1,2],
@@ -434,6 +444,7 @@ export class AppService {
               $setOnInsert: {
                 _string:"",
                 _number:1,
+                _vlaueType:0,
                 _json:{basic:"basic"},
                 _type:0,
                 _dataGuard:[0,1,2],
@@ -452,6 +463,7 @@ export class AppService {
               $setOnInsert: {
                 _string:"",
                 _number:1,
+                _vlaueType:0,
                 _json:{basic:"basic"},
                 _type:0,
                 _dataGuard:[0,1,2],
@@ -470,6 +482,7 @@ export class AppService {
               $setOnInsert: {
                 _string:"",
                 _number:1,
+                _vlaueType:0,
                 _json:{basic:"basic"},
                 _type:0,
                 _dataGuard:[0,1,2],
@@ -488,6 +501,7 @@ export class AppService {
             {
               $setOnInsert: {
                 _string:"AJC",
+                _vlaueType:1,
                 _number:-1,
                 _json:{basic:"basic"},
                 _type:4,
@@ -508,6 +522,7 @@ export class AppService {
                 _string:"GOLD",
                 _number:-1,
                 _json:{basic:"basic"},
+                _vlaueType:1,
                 _type:4,
                 _dataGuard:[0,1,2],
                 _createdUser_id: null,
@@ -527,6 +542,7 @@ export class AppService {
                 _string:"",
                 _number:1,
                 _json:{basic:"basic"},
+                _vlaueType:0,
                 _type:4,
                 _dataGuard:[0,1,2],
                 _createdUser_id: null,
@@ -545,6 +561,7 @@ export class AppService {
               $setOnInsert: {
                 _string:"",
                 _number:1,
+                _vlaueType:0,
                 _json:{basic:"basic"},
                 _type:4,
                 _dataGuard:[0,1,2],
@@ -564,6 +581,7 @@ export class AppService {
               $setOnInsert: {
                 _string:"AJC",
                 _number:-1,
+                _vlaueType:1,
                 _json:{basic:"basic"},
                 _type:4,
                 _dataGuard:[0,1,2],
