@@ -63,13 +63,13 @@ export class AgentCreateDto {
   @ApiProperty({description:descriptionListCommisionType})
   commisionType: number;
 
-  @IsString()
+  @IsNumber()
   @ApiProperty({})
-  commisionAmount: string;
+  commisionAmount: number;
 
-  @IsString()
+  @IsNumber()
   @ApiProperty({})
-  commisionPercentage: string;
+  commisionPercentage: number;
 
 
   @IsArray()
@@ -112,13 +112,13 @@ export class AgentEditDto {
   @ApiProperty({description:descriptionListCommisionType})
   commisionType: number;
 
-  @IsString()
+  @IsNumber()
   @ApiProperty({})
-  commisionAmount: string;
+  commisionAmount: number;
 
-  @IsString()
+  @IsNumber()
   @ApiProperty({})
-  commisionPercentage: string;
+  commisionPercentage: number;
 
 
   @IsArray()
