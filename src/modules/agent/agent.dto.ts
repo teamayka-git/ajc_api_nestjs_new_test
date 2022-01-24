@@ -59,9 +59,9 @@ export class AgentCreateDto {
   cityId: string;
 
 
-  @IsString()
+  @IsNumber()
   @ApiProperty({description:descriptionListCommisionType})
-  commisionType: string;
+  commisionType: number;
 
   @IsString()
   @ApiProperty({})
@@ -108,9 +108,9 @@ export class AgentEditDto {
   cityId: string;
 
 
-  @IsString()
+  @IsNumber()
   @ApiProperty({description:descriptionListCommisionType})
-  commisionType: string;
+  commisionType: number;
 
   @IsString()
   @ApiProperty({})
