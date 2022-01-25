@@ -29,6 +29,7 @@ export interface Stone {
 
 StoneSchema.index({_status: 1});
 StoneSchema.index({_name: 1});
+StoneSchema.index({_weight: 1});
 StoneSchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 StoneSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);

@@ -16,6 +16,8 @@ const descriptionStatus="0-Inactive, 1-Active, 2-Delete";
 const descriptionListScreenTypeForList="0-total documents count";
 const descriptionListDataGuard="0-edit protect, 1-disabe protect, 2-delete protect";
 
+const descriptionListSortOrder="1-ascending, -1-descending";
+const descriptionListSortType="0-Created Date, 1-Status,2-Name, 3-Code, 4-place, 5-Allowed wastage";
 
 
 
@@ -88,6 +90,16 @@ export class TestCenterMastersEditDto {
 }
 
 export class TestCenterMastersListDto {
+
+  @IsNumber()
+  @ApiProperty({description:descriptionListSortType})
+  sortType: number;
+  @IsNumber()
+  @ApiProperty({description:descriptionListSortOrder})
+  sortOrder: number;
+
+
+
   @IsArray()
   @ArrayMinSize(1)
   @ApiProperty({ type: [Number],description:descriptionStatus })

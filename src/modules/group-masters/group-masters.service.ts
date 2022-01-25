@@ -139,8 +139,17 @@ export class GroupMastersService {
 
 
 
-
-        arrayAggregation.push({ $sort: { _id: -1 } });
+          switch(dto.sortType){
+            case 0: arrayAggregation.push({ $sort: { _id: dto.sortOrder } });              break;
+            case 1:arrayAggregation.push({ $sort: { _status: dto.sortOrder } });               break;
+            case 2: arrayAggregation.push({ $sort: { _name: dto.sortOrder } });               break;
+            case 3: arrayAggregation.push({ $sort: { _rawMaterialStatus: dto.sortOrder } });               break;
+            case 4: arrayAggregation.push({ $sort: { _hsnCode: dto.sortOrder } });               break;
+            case 5: arrayAggregation.push({ $sort: { _meltingPurity: dto.sortOrder } });               break;
+            case 6: arrayAggregation.push({ $sort: { _taxPercentage: dto.sortOrder } });               break;
+            case 7: arrayAggregation.push({ $sort: { _purity: dto.sortOrder } });               break;
+            
+          }
     
         if (dto.skip != -1) {
           arrayAggregation.push({ $skip: dto.skip });

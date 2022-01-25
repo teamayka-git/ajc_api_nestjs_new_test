@@ -279,7 +279,16 @@ export class AgentService {
         arrayAggregation.push({ $match: { _commisionType: { $in:dto.commisionType } } });
       }
   
-    arrayAggregation.push({ $sort: { _id: -1 } });
+
+
+      switch(dto.sortType){
+        case 0: arrayAggregation.push({ $sort: { _id: dto.sortOrder } });              break;
+        case 1:arrayAggregation.push({ $sort: { _status: dto.sortOrder } });               break;
+        case 2: arrayAggregation.push({ $sort: { _name: dto.sortOrder } });               break;
+        case 3: arrayAggregation.push({ $sort: { _commisionType: dto.sortOrder } });               break;
+        case 4: arrayAggregation.push({ $sort: { _uid: dto.sortOrder } });               break;
+        
+      }
 
     if (dto.skip != -1) {
       arrayAggregation.push({ $skip: dto.skip });

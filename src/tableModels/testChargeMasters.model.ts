@@ -28,6 +28,7 @@ export interface TestChargersMasters {
 }
 
 TestChargersMastersStoneSchema.index({_status: 1});
+TestChargersMastersStoneSchema.index({_charge: 1});
 TestChargersMastersStoneSchema.index({_name: 1});
 
 

@@ -41,6 +41,9 @@ GroupMastersSchema.index({_status: 1});
 GroupMastersSchema.index({_hsnCode: 1});
 GroupMastersSchema.index({_name: 1});
 GroupMastersSchema.index({_rawMaterialStatus: 1});
+GroupMastersSchema.index({_meltingPurity: 1});
+GroupMastersSchema.index({_taxPercentage: 1});
+GroupMastersSchema.index({_purity: 1});
 GroupMastersSchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 GroupMastersSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);

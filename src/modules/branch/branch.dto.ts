@@ -7,6 +7,9 @@ const descriptionListScreenTypeForBranchList="0-total documents count,100-popula
 const descriptionListDataGuard="0-edit protect, 1-disabe protect, 2-delete protect";
 
 const descriptionStatus="0-Inactive, 1-Active, 2-Delete";
+const descriptionListSortOrder="1-ascending, -1-descending";
+const descriptionListSortType="0-Created Date, 1-Status,2-Name, 3-UID";
+
 
 export class BranchCreateDto {
     @IsString()
@@ -65,6 +68,15 @@ export class BranchEditDto {
 }
 
 export class BranchListDto {
+
+
+    @IsNumber()
+    @ApiProperty({description:descriptionListSortType})
+    sortType: number;
+    @IsNumber()
+    @ApiProperty({description:descriptionListSortOrder})
+    sortOrder: number;
+  
 
     @IsArray()
     @ArrayMinSize(1)
