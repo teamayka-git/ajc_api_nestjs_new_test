@@ -3,7 +3,7 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { ProcessMaster } from 'src/tableModels/processMaster.model';
-import { ProcessMasterCreateDto, ProcessMasterEditDto, ProcessMasterListDto, ProcessMasterStatusChangeDto } from './process_master.dto';
+import { ListFilterLocadingProcessMasterDto, ProcessMasterCreateDto, ProcessMasterEditDto, ProcessMasterListDto, ProcessMasterStatusChangeDto } from './process_master.dto';
 
 @Injectable()
 export class ProcessMasterService {
@@ -204,5 +204,84 @@ export class ProcessMasterService {
           data: { list: result, totalCount: totalCount },
         };
       }
+
+
+
+
+      async listFilterLoadingProcessMaster(dto: ListFilterLocadingProcessMasterDto) {
+        var dateTime = new Date().getTime();
+        const transactionSession = await this.connection.startSession();
+        transactionSession.startTransaction();
+    
+        var arrayAggregation = [];
+        arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+    
+     
+
+       arrayAggregation.push({ $group: { _id: '$_parentId' } });
+
+        
+    
+        if (dto.skip != -1) {
+          arrayAggregation.push({ $skip: dto.skip });
+          arrayAggregation.push({ $limit: dto.limit });
+        }
+
+
+        if (dto.screenType.findIndex((it) => it == 100) != -1) {
+
+          arrayAggregation.push(
+              {
+                $lookup: {
+                  from: ModelNames.PROCESS_MASTER,
+                  let: { processMasterId: '$_id' },
+                  pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$processMasterId'] } } }],
+                  as: 'processMasterDetails',
+                },
+              },
+              {
+                $unwind: { path: '$processMasterDetails', preserveNullAndEmptyArrays: true },
+              },
+            );
+        }
+    
+    
+        var result = await this.processMasterModel
+          .aggregate(arrayAggregation)
+          .session(transactionSession);
+    
+        var totalCount = 0;
+        if (dto.screenType.findIndex((it) => it == 0) != -1) {
+          //Get total count
+          var limitIndexCount = arrayAggregation.findIndex(
+            (it) => it.hasOwnProperty('$limit') === true,
+          );
+          if (limitIndexCount != -1) {
+            arrayAggregation.splice(limitIndexCount, 1);
+          }
+          var skipIndexCount = arrayAggregation.findIndex(
+            (it) => it.hasOwnProperty('$skip') === true,
+          );
+          if (skipIndexCount != -1) {
+            arrayAggregation.splice(skipIndexCount, 1);
+          }
+          arrayAggregation.push({ $group: { _id: null, totalCount: { $sum: 1 } } });
+    
+          var resultTotalCount = await this.processMasterModel
+            .aggregate(arrayAggregation)
+            .session(transactionSession);
+          if (resultTotalCount.length > 0) {
+            totalCount = resultTotalCount[0].totalCount;
+          }
+        }
+    
+        await transactionSession.commitTransaction();
+        await transactionSession.endSession();
+        return {
+          message: 'success',
+          data: { list: result, totalCount: totalCount },
+        };
+      }
+
 
 }

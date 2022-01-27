@@ -4,7 +4,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole, GuardUserRoleStringGenerate } from 'src/common/GuardUserRole';
-import {  AgentCreateDto, AgentEditDto, AgentListDto, AgentLoginDto, AgentStatusChangeDto } from './agent.dto';
+import {  AgentCreateDto, AgentEditDto, AgentListDto, AgentLoginDto, AgentStatusChangeDto, ListFilterLocadingAgentDto } from './agent.dto';
 import { AgentService } from './agent.service';
 
 import { Response } from 'express'; //jwt response store in cookie
@@ -67,6 +67,10 @@ var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole'])
     return this.agentService.list(dto);
   }
 
+  @Post("listFilterLoadingAgent")
+  listFilterLoadingAgent(@Body() dto:ListFilterLocadingAgentDto) {
+    return this.agentService.listFilterLoadingAgent(dto);
+  }
 
   
 

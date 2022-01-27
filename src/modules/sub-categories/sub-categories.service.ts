@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { SubCategories } from 'src/tableModels/sub_categories.model';
 import * as mongoose from 'mongoose';
-import { SubCategoriesCreateDto, SubCategoriesEditDto, SubCategoriesListDto, SubCategoriesStatusChangeDto } from './sub_categories.dto';
+import { ListFilterLocadingSubCategoryDto, SubCategoriesCreateDto, SubCategoriesEditDto, SubCategoriesListDto, SubCategoriesStatusChangeDto } from './sub_categories.dto';
 
 @Injectable()
 export class SubCategoriesService {
@@ -209,5 +209,93 @@ export class SubCategoriesService {
           data: { list: result, totalCount: totalCount },
         };
       }
+
+
+
+
+
+
+
+      async listFilterLoadingSubCategory(dto: ListFilterLocadingSubCategoryDto) {
+        var dateTime = new Date().getTime();
+        const transactionSession = await this.connection.startSession();
+        transactionSession.startTransaction();
+    
+        var arrayAggregation = [];
+        arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+    
+     
+
+       arrayAggregation.push({ $group: { _id: '$_categoryId' } });
+
+        
+    
+        if (dto.skip != -1) {
+          arrayAggregation.push({ $skip: dto.skip });
+          arrayAggregation.push({ $limit: dto.limit });
+        }
+
+
+        if (dto.screenType.findIndex((it) => it == 100) != -1) {
+
+          arrayAggregation.push(
+              {
+                $lookup: {
+                  from: ModelNames.CATEGORIES,
+                  let: { categoryId: '$_id' },
+                  pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$categoryId'] } } }],
+                  as: 'categoryDetails',
+                },
+              },
+              {
+                $unwind: { path: '$categoryDetails', preserveNullAndEmptyArrays: true },
+              },
+            );
+        }
+    
+    
+        var result = await this.subCategoriesModel
+          .aggregate(arrayAggregation)
+          .session(transactionSession);
+    
+        var totalCount = 0;
+        if (dto.screenType.findIndex((it) => it == 0) != -1) {
+          //Get total count
+          var limitIndexCount = arrayAggregation.findIndex(
+            (it) => it.hasOwnProperty('$limit') === true,
+          );
+          if (limitIndexCount != -1) {
+            arrayAggregation.splice(limitIndexCount, 1);
+          }
+          var skipIndexCount = arrayAggregation.findIndex(
+            (it) => it.hasOwnProperty('$skip') === true,
+          );
+          if (skipIndexCount != -1) {
+            arrayAggregation.splice(skipIndexCount, 1);
+          }
+          arrayAggregation.push({ $group: { _id: null, totalCount: { $sum: 1 } } });
+    
+          var resultTotalCount = await this.subCategoriesModel
+            .aggregate(arrayAggregation)
+            .session(transactionSession);
+          if (resultTotalCount.length > 0) {
+            totalCount = resultTotalCount[0].totalCount;
+          }
+        }
+    
+        await transactionSession.commitTransaction();
+        await transactionSession.endSession();
+        return {
+          message: 'success',
+          data: { list: result, totalCount: totalCount },
+        };
+      }
+
+
+
+
+
+
+
 
 }

@@ -4,7 +4,7 @@ import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { DeliveryHubsService } from './delivery-hubs.service';
-import { DeliveryHubCreateDto, DeliveryHubEditDto, DeliveryHubListDto, DeliveryHubStatusChangeDto } from './delivery_hubs.dto';
+import { DeliveryHubCreateDto, DeliveryHubEditDto, DeliveryHubListDto, DeliveryHubStatusChangeDto, ListFilterLocadingDeliveryHubDto } from './delivery_hubs.dto';
 
 @ApiTags("Delivery_hubs Docs") 
 @Controller('delivery-hubs')
@@ -32,6 +32,10 @@ export class DeliveryHubsController {
   @Post("list")
   list(@Body() dto:DeliveryHubListDto) {
     return this.deliveryHubsService.list(dto);
+  }
+  @Post("listFilterLoadingDeliveryHub")
+  listFilterLoadingDeliveryHub(@Body() dto:ListFilterLocadingDeliveryHubDto) {
+    return this.deliveryHubsService.listFilterLoadingDeliveryHub(dto);
   }
 
 

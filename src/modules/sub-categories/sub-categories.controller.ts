@@ -4,7 +4,7 @@ import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { SubCategoriesService } from './sub-categories.service';
-import { SubCategoriesCreateDto, SubCategoriesEditDto, SubCategoriesListDto, SubCategoriesStatusChangeDto } from './sub_categories.dto';
+import { ListFilterLocadingSubCategoryDto, SubCategoriesCreateDto, SubCategoriesEditDto, SubCategoriesListDto, SubCategoriesStatusChangeDto } from './sub_categories.dto';
 
 
 
@@ -34,6 +34,10 @@ export class SubCategoriesController {
   @Post("list")
   list(@Body() dto:SubCategoriesListDto) {
     return this.subCategoriesService.list(dto);
+  }
+  @Post("listFilterLoadingSubCategory")
+  listFilterLoadingSubCategory(@Body() dto:ListFilterLocadingSubCategoryDto) {
+    return this.subCategoriesService.listFilterLoadingSubCategory(dto);
   }
 
 

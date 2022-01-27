@@ -6,7 +6,7 @@ import { SupplierService } from './supplier.service';
 import { Response } from 'express'; //jwt response store in cookie
 import { Roles } from 'src/Auth/roles.decorator';
 import { GuardUserRole, GuardUserRoleStringGenerate } from 'src/common/GuardUserRole';
-import { SupplierCreateDto, SupplierEditDto, SupplierListDto, SupplierLoginDto, SupplierStatusChangeDto } from './supplier.dto';
+import { ListFilterLocadingSupplierDto, SupplierCreateDto, SupplierEditDto, SupplierListDto, SupplierLoginDto, SupplierStatusChangeDto } from './supplier.dto';
 
 @Controller('supplier')
 @UseGuards(RolesGuard)
@@ -65,6 +65,10 @@ var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole'])
     return this.supplierService.list(dto);
   }
 
+  @Post("listFilterLoadingSupplier")
+  listFilterLoadingSupplier(@Body() dto:ListFilterLocadingSupplierDto) {
+    return this.supplierService.listFilterLoadingSupplier(dto);
+  }
 
 
 }

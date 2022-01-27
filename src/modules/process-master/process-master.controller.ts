@@ -4,7 +4,7 @@ import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { ProcessMasterService } from './process-master.service';
-import { ProcessMasterCreateDto, ProcessMasterEditDto, ProcessMasterListDto, ProcessMasterStatusChangeDto } from './process_master.dto';
+import { ListFilterLocadingProcessMasterDto, ProcessMasterCreateDto, ProcessMasterEditDto, ProcessMasterListDto, ProcessMasterStatusChangeDto } from './process_master.dto';
 
 @Controller('process-master')
 @UseGuards(RolesGuard)
@@ -35,6 +35,10 @@ export class ProcessMasterController {
     return this.processMasterService.list(dto);
   }
 
+  @Post("listFilterLoadingProcessMaster")
+  listFilterLoadingProcessMaster(@Body() dto:ListFilterLocadingProcessMasterDto) {
+    return this.processMasterService.listFilterLoadingProcessMaster(dto);
+  }
 
 
 }

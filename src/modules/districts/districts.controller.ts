@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
-import { DistrictsCreateDto, DistrictsEditDto, DistrictsListDto, DistrictsStatusChangeDto } from './districts.dto';
+import { DistrictsCreateDto, DistrictsEditDto, DistrictsListDto, DistrictsStatusChangeDto, ListFilterLocadingDistrictDto } from './districts.dto';
 import { DistrictsService } from './districts.service';
 
 
@@ -33,6 +33,10 @@ export class DistrictsController {
   @Post("list")
   list(@Body() dto:DistrictsListDto) {
     return this.districtsService.list(dto);
+  }
+  @Post("listFilterLoadingDistrict")
+  listFilterLoadingDistrict(@Body() dto:ListFilterLocadingDistrictDto) {
+    return this.districtsService.listFilterLoadingDistrict(dto);
   }
 
 }

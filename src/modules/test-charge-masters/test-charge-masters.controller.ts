@@ -4,7 +4,7 @@ import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { TestChargeMastersService } from './test-charge-masters.service';
-import { TestChargeMastersCreateDto, TestChargeMastersEditDto, TestChargeMastersListDto, TestChargeMastersStatusChangeDto } from './testChargeMasters.dto';
+import { ListFilterLocadingTestChargeDto, TestChargeMastersCreateDto, TestChargeMastersEditDto, TestChargeMastersListDto, TestChargeMastersStatusChangeDto } from './testChargeMasters.dto';
 
 @UseGuards(RolesGuard)
 @ApiTags("Test Charge Masters Docs") 
@@ -33,6 +33,10 @@ export class TestChargeMastersController {
   @Post("list")
   list(@Body() dto:TestChargeMastersListDto) {
     return this.testChargeMastersService.list(dto);
+  }
+  @Post("listFilterLoadingTestCharge")
+  listFilterLoadingTestCharge(@Body() dto:ListFilterLocadingTestChargeDto) {
+    return this.testChargeMastersService.listFilterLoadingTestCharge(dto);
   }
 
 }

@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
-import { CitiesCreateDto, CitiesEditDto, CitiesListDto, CitiesStatusChangeDto } from './cities.dto';
+import { CitiesCreateDto, CitiesEditDto, CitiesListDto, CitiesStatusChangeDto, ListFilterLocadingCityDto } from './cities.dto';
 import { CitiesService } from './cities.service';
 
 
@@ -34,6 +34,10 @@ export class CitiesController {
   @Post("list")
   list(@Body() dto:CitiesListDto) {
     return this.citiesService.list(dto);
+  }
+  @Post("listFilterLoadingCity")
+  listFilterLoadingCity(@Body() dto:ListFilterLocadingCityDto) {
+    return this.citiesService.listFilterLoadingCity(dto);
   }
 
 }

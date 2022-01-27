@@ -17,6 +17,7 @@ const descriptionListScreenTypeForList="0-total documents count,100-district det
 const descriptionListDataGuard="0-edit protect, 1-disabe protect, 2-delete protect";
 const descriptionListSortOrder="1-ascending, -1-descending";
 const descriptionListSortType="0-Created Date, 1-Status,2-Name, 3-Code";
+const descriptionListScreenTypeForFilterLoading="0-total documents count";
 
 
 
@@ -140,5 +141,25 @@ export class CitiesStatusChangeDto {
   @IsNumber()
   @ApiProperty({description:descriptionStatus})
   status: number;
+
+}
+export class ListFilterLocadingCityDto {
+  @IsArray()
+  @ArrayMinSize(1)
+  @ApiProperty({ type: [Number],description:descriptionStatus })
+  statusArray:number[];
+
+  @IsArray()
+  @ApiProperty({ type: [Number],description:descriptionListScreenTypeForFilterLoading })
+  screenType:number[];
+  
+  @IsNumber()
+  @ApiProperty({})
+  limit: number;
+
+
+  @IsNumber()
+  @ApiProperty({})
+  skip: number;
 
 }

@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
-import { CategoriesCreateDto, CategoriesEditDto, CategoriesListDto, CategoriesStatusChangeDto } from './categories.dto';
+import { CategoriesCreateDto, CategoriesEditDto, CategoriesListDto, CategoriesStatusChangeDto, ListFilterLocadingCategoryDto } from './categories.dto';
 import { CategoriesService } from './categories.service';
 
 @ApiTags("Categories Docs") 
@@ -32,6 +32,10 @@ export class CategoriesController {
   @Post("list")
   list(@Body() dto:CategoriesListDto) {
     return this.categoriesService.list(dto);
+  }  
+  @Post("listFilterLoadingCategory")
+  listFilterLoadingCategory(@Body() dto:ListFilterLocadingCategoryDto) {
+    return this.categoriesService.listFilterLoadingCategory(dto);
   }
 
 
