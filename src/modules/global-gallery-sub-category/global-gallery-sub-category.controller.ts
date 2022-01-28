@@ -4,7 +4,7 @@ import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { GlobalGallerySubCategoryService } from './global-gallery-sub-category.service';
-import { GlobalGallerySubCategoryCreateDto, GlobalGallerySubCategoryEditDto, GlobalGallerySubCategoryListDto, GlobalGallerySubCategoryStatusChangeDto } from './global_gallery_sub_category.dto';
+import { GlobalGallerySubCategoryCreateDto, GlobalGallerySubCategoryEditDto, GlobalGallerySubCategoryListDto, GlobalGallerySubCategoryStatusChangeDto, ListFilterLocadingGlobalSubCategoryDto } from './global_gallery_sub_category.dto';
 
 @UseGuards(RolesGuard)
 @ApiTags("Global Gallery Sub Catterogy Docs") 
@@ -35,6 +35,10 @@ export class GlobalGallerySubCategoryController {
   @Post("list")
   list(@Body() dto:GlobalGallerySubCategoryListDto) {
     return this.globalGallerySubCategoryService.list(dto);
+  }
+  @Post("listFilterLoadingGlobalSubCategory")
+  listFilterLoadingGlobalSubCategory(@Body() dto:ListFilterLocadingGlobalSubCategoryDto) {
+    return this.globalGallerySubCategoryService.listFilterLoadingGlobalSubCategory(dto);
   }
 
 

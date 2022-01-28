@@ -18,7 +18,7 @@ const descriptionListDataGuard="0-edit protect, 1-disabe protect, 2-delete prote
 
 const descriptionListSortOrder="1-ascending, -1-descending";
 const descriptionListSortType="0-Created Date, 1-Status,2-Name, 3-Code";
-const descriptionListScreenTypeForFilterLoading="0-total documents count";
+const descriptionListScreenTypeForFilterLoading="0-total documents count, 100-item details";
 
 
 class SubCategoriesCreateList {

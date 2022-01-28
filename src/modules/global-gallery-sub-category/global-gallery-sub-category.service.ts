@@ -3,7 +3,7 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { GlobalGallerySubCategories } from 'src/tableModels/globalGallerySubCategories.model';
-import { GlobalGallerySubCategoryCreateDto, GlobalGallerySubCategoryEditDto, GlobalGallerySubCategoryListDto, GlobalGallerySubCategoryStatusChangeDto } from './global_gallery_sub_category.dto';
+import { GlobalGallerySubCategoryCreateDto, GlobalGallerySubCategoryEditDto, GlobalGallerySubCategoryListDto, GlobalGallerySubCategoryStatusChangeDto, ListFilterLocadingGlobalSubCategoryDto } from './global_gallery_sub_category.dto';
 
 @Injectable()
 export class GlobalGallerySubCategoryService {
@@ -192,5 +192,84 @@ export class GlobalGallerySubCategoryService {
           data: { list: result, totalCount: totalCount },
         };
       }
+
+
+      async listFilterLoadingGlobalSubCategory(dto: ListFilterLocadingGlobalSubCategoryDto) {
+        var dateTime = new Date().getTime();
+        const transactionSession = await this.connection.startSession();
+        transactionSession.startTransaction();
+    
+        var arrayAggregation = [];
+        arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+    
+     
+
+       arrayAggregation.push({ $group: { _id: '$_globalGalleryCategoryId' } });
+
+        
+    
+        if (dto.skip != -1) {
+          arrayAggregation.push({ $skip: dto.skip });
+          arrayAggregation.push({ $limit: dto.limit });
+        }
+
+
+        if (dto.screenType.findIndex((it) => it == 100) != -1) {
+
+          arrayAggregation.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERY_CATEGORIES,
+                  let: { subCategoryId: '$_id' },
+                  pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$subCategoryId'] } } }],
+                  as: 'subCategoryDetails',
+                },
+              },
+              {
+                $unwind: { path: '$subCategoryDetails', preserveNullAndEmptyArrays: true },
+              },
+            );
+        }
+    
+    
+        var result = await this.globalGallerySubCategoriesModel
+          .aggregate(arrayAggregation)
+          .session(transactionSession);
+    
+        var totalCount = 0;
+        if (dto.screenType.findIndex((it) => it == 0) != -1) {
+          //Get total count
+          var limitIndexCount = arrayAggregation.findIndex(
+            (it) => it.hasOwnProperty('$limit') === true,
+          );
+          if (limitIndexCount != -1) {
+            arrayAggregation.splice(limitIndexCount, 1);
+          }
+          var skipIndexCount = arrayAggregation.findIndex(
+            (it) => it.hasOwnProperty('$skip') === true,
+          );
+          if (skipIndexCount != -1) {
+            arrayAggregation.splice(skipIndexCount, 1);
+          }
+          arrayAggregation.push({ $group: { _id: null, totalCount: { $sum: 1 } } });
+    
+          var resultTotalCount = await this.globalGallerySubCategoriesModel
+            .aggregate(arrayAggregation)
+            .session(transactionSession);
+          if (resultTotalCount.length > 0) {
+            totalCount = resultTotalCount[0].totalCount;
+          }
+        }
+    
+        await transactionSession.commitTransaction();
+        await transactionSession.endSession();
+        return {
+          message: 'success',
+          data: { list: result, totalCount: totalCount },
+        };
+      }
+
+
+
 
 }
