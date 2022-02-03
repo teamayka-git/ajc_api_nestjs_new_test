@@ -72,8 +72,24 @@ var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole'])
   
   @Put()
   @Roles(GuardUserRole.SUPER_ADMIN)
-  edit(@Body() dto: AgentEditDto,@Request() req) {
-    return this.agentService.edit(dto,req["_userId_"]);
+  @ApiCreatedResponse({ description: 'files upload on these input feilds => [image]' })
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        {
+          name: 'image',
+        },
+      ],
+      {
+        storage: diskStorage({
+          destination: FileMulterHelper.filePathTempAgent,
+          filename: FileMulterHelper.customFileName,
+        }),
+      },
+    ),
+  )
+  edit(@Body() dto: AgentEditDto,@Request() req, @UploadedFiles() file) {
+    return this.agentService.edit(dto,req["_userId_"],file == null ? {} : JSON.parse(JSON.stringify(file)));
   }
   @Delete()
   @Roles(GuardUserRole.SUPER_ADMIN)
