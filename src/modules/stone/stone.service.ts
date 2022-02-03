@@ -2,22 +2,52 @@ import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
+import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { Stone } from 'src/tableModels/stone.model';
 import { StoneCreateDto, StoneEditDto, StoneListDto, StoneStatusChangeDto } from './stone.dto';
+import * as sharp from 'sharp';
+import { GlobalConfig } from 'src/config/global_config';
+import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
+import { Counters } from 'src/tableModels/counters.model';
+import { StringUtils } from 'src/utils/string_utils';
 
 @Injectable()
 export class StoneService {
 
     constructor(
         @InjectModel(ModelNames.STONE) private readonly stoneModel: mongoose.Model<Stone>,
+        @InjectModel(ModelNames.GLOBAL_GALLERIES) private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
+        @InjectModel(ModelNames.COUNTERS)
+        private readonly counterModel: mongoose.Model<Counters>,
         @InjectConnection() private readonly connection: mongoose.Connection,
       ) {}
-      async create(dto: StoneCreateDto, _userId_: string) {
+      async create(dto: StoneCreateDto, _userId_: string, file: Object) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
     
         var arrayToStates = [];
+
+        if (file.hasOwnProperty('image')) {
+          for(var i=0;i<file['image'].length;i++){
+            var filePath =
+            __dirname +
+            `/../../../public${file['image'][i]['path'].split('public')[1]}`;
+         await sharp(filePath)
+            .toFormat('png')
+            .png({ quality: GlobalConfig().THUMB_QUALITY })
+            .toFile(
+              UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+                new StringUtils().makeThumbImageFileName(
+                  file['image'][i]['filename'],
+                ),
+            );
+          }
+        }
+
+
+
+
     
         dto.array.map((mapItem) => {
           arrayToStates.push({
@@ -42,23 +72,89 @@ export class StoneService {
         return { message: 'success', data: { list: result1 } };
       }
     
-      async edit(dto: StoneEditDto, _userId_: string) {
+      async edit(dto: StoneEditDto, _userId_: string, file: Object) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
     
+
+        if (file.hasOwnProperty('image')) {
+          var filePath =
+            __dirname +
+            `/../../../public${file['image'][0]['path'].split('public')[1]}`;
+         await sharp(filePath)
+            .toFormat('png')
+            .png({ quality: GlobalConfig().THUMB_QUALITY })
+            .toFile(
+              UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+                new StringUtils().makeThumbImageFileName(
+                  file['image'][0]['filename'],
+                ),
+            );
+    
+        }
+    
+        var updateObject= {
+          _name: dto.name,
+          _weight: dto.weight,
+          _dataGuard:dto.dataGuard,
+          _updatedUserId: _userId_,
+          _updatedAt: dateTime,
+        }
+
+
+
+        var globalGalleryId=null;
+        //globalGalleryAdd
+        if (file.hasOwnProperty('image')) {
+    
+          var resultCounterPurchase= await this.counterModel.findOneAndUpdate(
+              { _table_name: ModelNames.GLOBAL_GALLERIES},
+              {
+                $inc: {
+                  _count:1,
+                  },
+                },
+              {  new: true, transactionSession },
+            );
+    
+        const globalGallery = new this.globalGalleryModel({
+          // _id:new MongooseModule.Types.ObjectId(),
+          __name:"",
+          _globalGalleryCategoryId:null,
+          _globalGallerySubCategoryId:null,
+          _docType:0,
+          _type:4,
+          _uid:resultCounterPurchase._count,
+          _url:`${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
+              process.env.PORT
+            }${file['image'][0]['path'].split('public')[1]}`,
+          _thumbUrl: new StringUtils().makeThumbImageFileName(
+              `${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
+                process.env.PORT
+              }${file['image'][0]['path'].split('public')[1]}`,
+            ),
+          _created_user_id: _userId_,
+          _created_at: dateTime,
+          _updated_user_id: null,
+          _updated_at: -1,
+          _status: 1,
+        });
+      var resultGlobalGallery=  await globalGallery.save({
+          session: transactionSession,
+        });
+        
+        globalGalleryId=resultGlobalGallery._id;
+        updateObject["_globalGalleryI"]=globalGalleryId
+      }
+    
+
         var result = await this.stoneModel.findOneAndUpdate(
           {
             _id: dto.stoneId,
           },
           {
-            $set: {
-              _name: dto.name,
-              _weight: dto.weight,
-              _dataGuard:dto.dataGuard,
-              _updatedUserId: _userId_,
-              _updatedAt: dateTime,
-            },
+            $set:updateObject
           },
           { new: true, transactionSession },
         );
@@ -131,6 +227,22 @@ export class StoneService {
           arrayAggregation.push({ $limit: dto.limit });
         }
     
+        if (dto.screenType.findIndex((it) => it == 50) != -1) {
+
+          arrayAggregation.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } }],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: { path: '$globalGalleryDetails', preserveNullAndEmptyArrays: true },
+              },
+            );
+        }
         var result = await this.stoneModel
           .aggregate(arrayAggregation)
           .session(transactionSession);

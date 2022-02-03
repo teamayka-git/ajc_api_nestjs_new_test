@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Post, Put, Request, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Post, Put, Request, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
@@ -7,6 +7,9 @@ import { SubCategoriesService } from './sub-categories.service';
 import { ListFilterLocadingSubCategoryDto, SubCategoriesCreateDto, SubCategoriesEditDto, SubCategoriesListDto, SubCategoriesStatusChangeDto } from './sub_categories.dto';
 
 
+import { diskStorage } from 'multer';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { FileMulterHelper } from 'src/shared/file_multter_helper';
 
 @ApiTags("SubCategories Docs") 
 @UseGuards(RolesGuard)
@@ -16,14 +19,46 @@ export class SubCategoriesController {
 
   @Post()
   @Roles(GuardUserRole.SUPER_ADMIN)
-  create(@Body() dto: SubCategoriesCreateDto,@Request() req) {
-    return this.subCategoriesService.create(dto,req["_userId_"]);
+  @ApiCreatedResponse({ description: 'files upload on these input feilds => [image]' })
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        {
+          name: 'image',
+        },
+      ],
+      {
+        storage: diskStorage({
+          destination: FileMulterHelper.filePathTempSubCategory,
+          filename: FileMulterHelper.customFileName,
+        }),
+      },
+    ),
+  )
+  create(@Body() dto: SubCategoriesCreateDto,@Request() req, @UploadedFiles() file) {
+    return this.subCategoriesService.create(dto,req["_userId_"],file == null ? {} : JSON.parse(JSON.stringify(file)));
   }
   
   @Put()
   @Roles(GuardUserRole.SUPER_ADMIN)
-  edit(@Body() dto: SubCategoriesEditDto,@Request() req) {
-    return this.subCategoriesService.edit(dto,req["_userId_"]);
+  @ApiCreatedResponse({ description: 'files upload on these input feilds => [image]' })
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        {
+          name: 'image',
+        },
+      ],
+      {
+        storage: diskStorage({
+          destination: FileMulterHelper.filePathTempSubCategory,
+          filename: FileMulterHelper.customFileName,
+        }),
+      },
+    ),
+  )
+  edit(@Body() dto: SubCategoriesEditDto,@Request() req, @UploadedFiles() file) {
+    return this.subCategoriesService.edit(dto,req["_userId_"],file == null ? {} : JSON.parse(JSON.stringify(file)));
   }
   @Delete()
   @Roles(GuardUserRole.SUPER_ADMIN)

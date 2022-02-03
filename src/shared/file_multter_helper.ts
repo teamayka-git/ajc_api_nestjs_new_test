@@ -37,6 +37,15 @@ export class FileMulterHelper {
   static filePathTempSupplier(req, file, cb) {
     cb(null, UploadedFileDirectoryPath.GLOBAL_GALLERY_SUPPLIER);
   }
+  static filePathTempStone(req, file, cb) {
+    cb(null, UploadedFileDirectoryPath.GLOBAL_GALLERY_STONE);
+  }
+  static filePathTempCategory(req, file, cb) {
+    cb(null, UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY);
+  }
+  static filePathTempSubCategory(req, file, cb) {
+    cb(null, UploadedFileDirectoryPath.GLOBAL_GALLERY_SUB_CATEGORY);
+  }
 
   static filePathGlobalGalleries(req, file, cb) {
     var document_location = '';

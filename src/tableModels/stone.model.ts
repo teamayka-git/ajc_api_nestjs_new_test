@@ -8,6 +8,7 @@ export const StoneSchema = new mongoose.Schema({
     _name: { type: String, required: true, default: "nil" },
     _weight:  { type: Number, required: true, default: -1 },
     _dataGuard: { type:Object, required: true, default: [] },
+    _globalGalleryId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.GLOBAL_GALLERIES, default: null },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
     _updatedUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
@@ -19,6 +20,7 @@ export interface Stone {
     _id: String;
     _name: String;
     _weight: Number;
+    _globalGalleryId:String;
     _dataGuard:Object;
     _createdUserId:String;
     _createdAt:  Number;

@@ -1,10 +1,13 @@
-import { Body, Controller, Delete, Post, Put, Request, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Post, Put, Request, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { StoneCreateDto, StoneEditDto, StoneListDto, StoneStatusChangeDto } from './stone.dto';
 import { StoneService } from './stone.service';
+import { diskStorage } from 'multer';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { FileMulterHelper } from 'src/shared/file_multter_helper';
 
 @UseGuards(RolesGuard)
 @ApiTags("Stone Docs") 
@@ -15,14 +18,46 @@ export class StoneController {
 
   @Post()
   @Roles(GuardUserRole.SUPER_ADMIN)
-  create(@Body() dto: StoneCreateDto,@Request() req) {
-    return this.stoneService.create(dto,req["_userId_"]);
+  @ApiCreatedResponse({ description: 'files upload on these input feilds => [image]' })
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        {
+          name: 'image',
+        },
+      ],
+      {
+        storage: diskStorage({
+          destination: FileMulterHelper.filePathTempStone,
+          filename: FileMulterHelper.customFileName,
+        }),
+      },
+    ),
+  )
+  create(@Body() dto: StoneCreateDto,@Request() req, @UploadedFiles() file) {
+    return this.stoneService.create(dto,req["_userId_"],file == null ? {} : JSON.parse(JSON.stringify(file)));
   }
   
   @Put()
   @Roles(GuardUserRole.SUPER_ADMIN)
-  edit(@Body() dto: StoneEditDto,@Request() req) {
-    return this.stoneService.edit(dto,req["_userId_"]);
+  @ApiCreatedResponse({ description: 'files upload on these input feilds => [image]' })
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        {
+          name: 'image',
+        },
+      ],
+      {
+        storage: diskStorage({
+          destination: FileMulterHelper.filePathTempStone,
+          filename: FileMulterHelper.customFileName,
+        }),
+      },
+    ),
+  )
+  edit(@Body() dto: StoneEditDto,@Request() req, @UploadedFiles() file) {
+    return this.stoneService.edit(dto,req["_userId_"],file == null ? {} : JSON.parse(JSON.stringify(file)));
   }
   @Delete()
   @Roles(GuardUserRole.SUPER_ADMIN)
