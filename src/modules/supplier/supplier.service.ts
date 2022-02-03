@@ -2,10 +2,14 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
+import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
+import { GlobalConfig } from 'src/config/global_config';
 import { Counters } from 'src/tableModels/counters.model';
+import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { Suppliers } from 'src/tableModels/suppliers.model';
 import { User } from 'src/tableModels/user.model';
 import { StringUtils } from 'src/utils/string_utils';
+import * as sharp from 'sharp';
 import { ListFilterLocadingSupplierDto, SupplierCreateDto, SupplierEditDto, SupplierListDto, SupplierLoginDto, SupplierStatusChangeDto } from './supplier.dto';
 
 const crypto = require('crypto');
@@ -17,6 +21,8 @@ export class SupplierService {
     private readonly suppliersModel: mongoose.Model<Suppliers>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
+    
+  @InjectModel(ModelNames.GLOBAL_GALLERIES) private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
       @InjectConnection() private readonly connection: mongoose.Connection,){}
       async login(dto: SupplierLoginDto) {
         var dateTime = new Date().getTime();
@@ -109,10 +115,87 @@ export class SupplierService {
       }
     
     
-      async create(dto: SupplierCreateDto, _userId_: string) {
+      async create(dto: SupplierCreateDto, _userId_: string, file: Object) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
+
+
+
+
+
+
+
+
+        if (file.hasOwnProperty('image')) {
+          var filePath =
+            __dirname +
+            `/../../../public${file['image'][0]['path'].split('public')[1]}`;
+         await sharp(filePath)
+            .toFormat('png')
+            .png({ quality: GlobalConfig().THUMB_QUALITY })
+            .toFile(
+              UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+                new StringUtils().makeThumbImageFileName(
+                  file['image'][0]['filename'],
+                ),
+            );
+    
+        }
+    
+    
+        var globalGalleryId=null;
+        //globalGalleryAdd
+        if (file.hasOwnProperty('image')) {
+    
+          var resultCounterPurchase= await this.counterModel.findOneAndUpdate(
+              { _table_name: ModelNames.GLOBAL_GALLERIES},
+              {
+                $inc: {
+                  _count:1,
+                  },
+                },
+              {  new: true, transactionSession },
+            );
+    
+        const globalGallery = new this.globalGalleryModel({
+          // _id:new MongooseModule.Types.ObjectId(),
+          __name:"",
+          _globalGalleryCategoryId:null,
+          _globalGallerySubCategoryId:null,
+          _docType:0,
+          _type:4,
+          _uid:resultCounterPurchase._count,
+          _url:`${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
+              process.env.PORT
+            }${file['image'][0]['path'].split('public')[1]}`,
+          _thumbUrl: new StringUtils().makeThumbImageFileName(
+              `${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
+                process.env.PORT
+              }${file['image'][0]['path'].split('public')[1]}`,
+            ),
+          _created_user_id: _userId_,
+          _created_at: dateTime,
+          _updated_user_id: null,
+          _updated_at: -1,
+          _status: 1,
+        });
+      var resultGlobalGallery=  await globalGallery.save({
+          session: transactionSession,
+        });
+        
+        globalGalleryId=resultGlobalGallery._id;
+      }
+    
+
+
+
+
+
+
+
+
+
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
             { _table_name: ModelNames.SUPPLIERS },
             {
@@ -146,6 +229,7 @@ export class SupplierService {
             _password: encryptedPassword,
             _mobile: dto.mobile,
             _uid: resultCounterPurchase._count,
+            _globalGalleryId:globalGalleryId,
             _cityId: dto.cityId,
             _address: dto.address,
             _lastLogin: 0,
@@ -163,26 +247,101 @@ export class SupplierService {
         return { message: 'success', data: { list: result1 } };
       }
     
-      async edit(dto: SupplierEditDto, _userId_: string) {
+      async edit(dto: SupplierEditDto, _userId_: string, file: Object) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
     
+
+
+
+        if (file.hasOwnProperty('image')) {
+          var filePath =
+            __dirname +
+            `/../../../public${file['image'][0]['path'].split('public')[1]}`;
+         await sharp(filePath)
+            .toFormat('png')
+            .png({ quality: GlobalConfig().THUMB_QUALITY })
+            .toFile(
+              UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+                new StringUtils().makeThumbImageFileName(
+                  file['image'][0]['filename'],
+                ),
+            );
+    
+        }
+
+
+        var updateObject= {
+          _name: dto.name,
+          _gender: dto.gender,
+          _mobile: dto.mobile,
+          _cityId: dto.cityId,
+          _address: dto.address,
+        _dataGuard:dto.dataGuard,
+        _updatedUserId: _userId_,
+        _updatedAt: dateTime,
+        }    
+
+
+
+        var globalGalleryId=null;
+        //globalGalleryAdd
+        if (file.hasOwnProperty('image')) {
+    
+          var resultCounterPurchase= await this.counterModel.findOneAndUpdate(
+              { _table_name: ModelNames.GLOBAL_GALLERIES},
+              {
+                $inc: {
+                  _count:1,
+                  },
+                },
+              {  new: true, transactionSession },
+            );
+    
+        const globalGallery = new this.globalGalleryModel({
+          // _id:new MongooseModule.Types.ObjectId(),
+          __name:"",
+          _globalGalleryCategoryId:null,
+          _globalGallerySubCategoryId:null,
+          _docType:0,
+          _type:4,
+          _uid:resultCounterPurchase._count,
+          _url:`${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
+              process.env.PORT
+            }${file['image'][0]['path'].split('public')[1]}`,
+          _thumbUrl: new StringUtils().makeThumbImageFileName(
+              `${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
+                process.env.PORT
+              }${file['image'][0]['path'].split('public')[1]}`,
+            ),
+          _created_user_id: _userId_,
+          _created_at: dateTime,
+          _updated_user_id: null,
+          _updated_at: -1,
+          _status: 1,
+        });
+      var resultGlobalGallery=  await globalGallery.save({
+          session: transactionSession,
+        });
+        
+        globalGalleryId=resultGlobalGallery._id;
+        updateObject["_globalGalleryI"]=globalGalleryId
+      }
+    
+
+
+
+
+
+
+
         var result = await this.suppliersModel.findOneAndUpdate(
           {
             _id: dto.supplierId,
           },
           {
-            $set: {
-                _name: dto.name,
-                _gender: dto.gender,
-                _mobile: dto.mobile,
-                _cityId: dto.cityId,
-                _address: dto.address,
-              _dataGuard:dto.dataGuard,
-              _updatedUserId: _userId_,
-              _updatedAt: dateTime,
-            },
+            $set: updateObject
           },
           { new: true, transactionSession },
         );
@@ -286,7 +445,22 @@ export class SupplierService {
             );
         }
     
-    
+        if (dto.screenType.findIndex((it) => it == 50) != -1) {
+
+          arrayAggregation.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } }],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: { path: '$globalGalleryDetails', preserveNullAndEmptyArrays: true },
+              },
+            );
+        }
         var result = await this.suppliersModel
           .aggregate(arrayAggregation)
           .session(transactionSession);

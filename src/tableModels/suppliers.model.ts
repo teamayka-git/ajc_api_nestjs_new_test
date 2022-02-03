@@ -14,6 +14,7 @@ export const SuppliersSchema = new mongoose.Schema({
     _cityId:  { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.CITIES, default: null },
     _lastLogin: { type: Number, required: true, default: -1 },
     _address: { type: String, required: true, default: "nil" },
+    _globalGalleryId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.GLOBAL_GALLERIES, default: null },
     _dataGuard: { type:Object, required: true, default: [] },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
@@ -32,6 +33,7 @@ export interface Suppliers {
     _uid: String;
     _mobile:String;
     _lastLogin:Number;
+    _globalGalleryId:String;
     _address:String;
     _dataGuard:Object;
     _createdUserId:String;

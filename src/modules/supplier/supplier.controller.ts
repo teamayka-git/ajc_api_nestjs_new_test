@@ -1,11 +1,14 @@
-import { Body, Controller, Delete, Post, Put, Request, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Put, Request, Res, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { SupplierService } from './supplier.service';
 import { Response } from 'express'; //jwt response store in cookie
 import { Roles } from 'src/Auth/roles.decorator';
 import { GuardUserRole, GuardUserRoleStringGenerate } from 'src/common/GuardUserRole';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { FileMulterHelper } from 'src/shared/file_multter_helper';
+import { diskStorage } from 'multer';
 import { ListFilterLocadingSupplierDto, SupplierCreateDto, SupplierEditDto, SupplierListDto, SupplierLoginDto, SupplierStatusChangeDto } from './supplier.dto';
 
 @Controller('supplier')
@@ -45,14 +48,46 @@ var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole'])
 
   @Post()
   @Roles(GuardUserRole.SUPER_ADMIN)
-  create(@Body() dto: SupplierCreateDto,@Request() req) {
-    return this.supplierService.create(dto,req["_userId_"]);
+  @ApiCreatedResponse({ description: 'files upload on these input feilds => [image]' })
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        {
+          name: 'image',
+        },
+      ],
+      {
+        storage: diskStorage({
+          destination: FileMulterHelper.filePathTempSupplier,
+          filename: FileMulterHelper.customFileName,
+        }),
+      },
+    ),
+  )
+  create(@Body() dto: SupplierCreateDto,@Request() req, @UploadedFiles() file) {
+    return this.supplierService.create(dto,req["_userId_"],file == null ? {} : JSON.parse(JSON.stringify(file)));
   }
   
   @Put()
   @Roles(GuardUserRole.SUPER_ADMIN)
-  edit(@Body() dto: SupplierEditDto,@Request() req) {
-    return this.supplierService.edit(dto,req["_userId_"]);
+  @ApiCreatedResponse({ description: 'files upload on these input feilds => [image]' })
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        {
+          name: 'image',
+        },
+      ],
+      {
+        storage: diskStorage({
+          destination: FileMulterHelper.filePathTempSupplier,
+          filename: FileMulterHelper.customFileName,
+        }),
+      },
+    ),
+  )
+  edit(@Body() dto: SupplierEditDto,@Request() req, @UploadedFiles() file) {
+    return this.supplierService.edit(dto,req["_userId_"],file == null ? {} : JSON.parse(JSON.stringify(file)));
   }
   @Delete()
   @Roles(GuardUserRole.SUPER_ADMIN)
