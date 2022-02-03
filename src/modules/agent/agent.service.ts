@@ -15,6 +15,10 @@ import {
   ListFilterLocadingAgentDto,
 } from './agent.dto';
 const crypto = require('crypto');
+import * as sharp from 'sharp';
+import { GlobalConfig } from 'src/config/global_config';
+import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
+import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 
 @Injectable()
 export class AgentService {
@@ -25,6 +29,8 @@ export class AgentService {
     private readonly agentModel: mongoose.Model<Agents>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
+    
+  @InjectModel(ModelNames.GLOBAL_GALLERIES) private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async login(dto: AgentLoginDto) {
@@ -122,10 +128,76 @@ export class AgentService {
     return resultUser[0];
   }
 
-  async create(dto: AgentCreateDto, _userId_: string) {
+  async create(dto: AgentCreateDto, _userId_: string, file: Object) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
+
+
+
+
+    if (file.hasOwnProperty('image')) {
+      var filePath =
+        __dirname +
+        `/../../../public${file['image'][0]['path'].split('public')[1]}`;
+     await sharp(filePath)
+        .toFormat('png')
+        .png({ quality: GlobalConfig().THUMB_QUALITY })
+        .toFile(
+          UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+            new StringUtils().makeThumbImageFileName(
+              file['image'][0]['filename'],
+            ),
+        );
+
+    }
+
+
+    var globalGalleryId=null;
+    //globalGalleryAdd
+    if (file.hasOwnProperty('image')) {
+
+      var resultCounterPurchase= await this.counterModel.findOneAndUpdate(
+          { _table_name: ModelNames.GLOBAL_GALLERIES},
+          {
+            $inc: {
+              _count:1,
+              },
+            },
+          {  new: true, transactionSession },
+        );
+
+    const globalGallery = new this.globalGalleryModel({
+      // _id:new MongooseModule.Types.ObjectId(),
+      __name:"",
+      _globalGalleryCategoryId:null,
+      _globalGallerySubCategoryId:null,
+      _docType:0,
+      _type:4,
+      _uid:resultCounterPurchase._count,
+      _url:`${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
+          process.env.PORT
+        }${file['image'][0]['path'].split('public')[1]}`,
+      _thumbUrl: new StringUtils().makeThumbImageFileName(
+          `${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
+            process.env.PORT
+          }${file['image'][0]['path'].split('public')[1]}`,
+        ),
+      _created_user_id: _userId_,
+      _created_at: dateTime,
+      _updated_user_id: null,
+      _updated_at: -1,
+      _status: 1,
+    });
+  var resultGlobalGallery=  await globalGallery.save({
+      session: transactionSession,
+    });
+    
+    globalGalleryId=resultGlobalGallery._id;
+  }
+
+
+
 
     var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
       { _table_name: ModelNames.AGENTS },
@@ -162,6 +234,7 @@ export class AgentService {
       _uid: resultCounterPurchase._count,
       _cityId: dto.cityId,
       _lastLogin: 0,
+      _globalGalleryId:globalGalleryId,
       _commisionAmount: dto.commisionAmount,
       _commisionPercentage: dto.commisionPercentage,
       _commisionType: dto.commisionType,

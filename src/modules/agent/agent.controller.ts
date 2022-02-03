@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Post, Put, Request, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Put, Request, Res, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole, GuardUserRoleStringGenerate } from 'src/common/GuardUserRole';
@@ -8,6 +8,9 @@ import {  AgentCreateDto, AgentEditDto, AgentListDto, AgentLoginDto, AgentStatus
 import { AgentService } from './agent.service';
 
 import { Response } from 'express'; //jwt response store in cookie
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { FileMulterHelper } from 'src/shared/file_multter_helper';
+import { diskStorage } from 'multer';
 @Controller('agent')
 @UseGuards(RolesGuard)
 @ApiTags("Agent Docs") 
@@ -47,8 +50,24 @@ var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole'])
 
   @Post()
   @Roles(GuardUserRole.SUPER_ADMIN)
-  create(@Body() dto: AgentCreateDto,@Request() req) {
-    return this.agentService.create(dto,req["_userId_"]);
+  @ApiCreatedResponse({ description: 'files upload on these input feilds => [image]' })
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        {
+          name: 'image',
+        },
+      ],
+      {
+        storage: diskStorage({
+          destination: FileMulterHelper.filePathTempAgent,
+          filename: FileMulterHelper.customFileName,
+        }),
+      },
+    ),
+  )
+  create(@Body() dto: AgentCreateDto,@Request() req, @UploadedFiles() file) {
+    return this.agentService.create(dto,req["_userId_"],file == null ? {} : JSON.parse(JSON.stringify(file)));
   }
   
   @Put()

@@ -8,6 +8,7 @@ import { ModelNames } from 'src/common/model_names';
 import { UserSchema } from 'src/tableModels/user.model';
 import { CountersSchema } from 'src/tableModels/counters.model';
 import { AgentsSchema } from 'src/tableModels/agents.model';
+import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
 
 @Module({ imports: [
   JwtModule.register({
@@ -18,6 +19,9 @@ import { AgentsSchema } from 'src/tableModels/agents.model';
     { name: ModelNames.USER, schema: UserSchema },
     { name: ModelNames.AGENTS, schema: AgentsSchema },
     { name: ModelNames.COUNTERS, schema: CountersSchema },
+
+    
+    {name:ModelNames.GLOBAL_GALLERIES,schema:GlobalGalleriesSchema},
   ]),
 ],
   controllers: [AgentController],

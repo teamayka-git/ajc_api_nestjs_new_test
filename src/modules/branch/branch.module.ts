@@ -10,8 +10,9 @@ import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
 @Module({
   imports:[MongooseModule.forFeature([
     {name:ModelNames.BRANCHES,schema:BranchSchema},
-    {name:ModelNames.GLOBAL_GALLERIES,schema:GlobalGalleriesSchema},
+
     
+    {name:ModelNames.GLOBAL_GALLERIES,schema:GlobalGalleriesSchema},
     {name:ModelNames.COUNTERS,schema:CountersSchema}
   ])],
 

@@ -16,6 +16,7 @@ export const AgentsSchema = new mongoose.Schema({
     _commisionAmount: { type: Number, required: true, default: -1 },
     _commisionPercentage: { type: Number, required: true, default: -1 },
     _commisionType: { type: Number, required: true, default: -1 },
+    _globalGalleryId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.GLOBAL_GALLERIES, default: null },
     _dataGuard: { type:Object, required: true, default: [] },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
@@ -37,6 +38,7 @@ export interface Agents {
     _commisionAmount:Number;
     _commisionPercentage:Number;
     _commisionType:Number; 
+    _globalGalleryId:String;
     _dataGuard:Object;
     _createdUserId:String;
     _createdAt:  Number;
