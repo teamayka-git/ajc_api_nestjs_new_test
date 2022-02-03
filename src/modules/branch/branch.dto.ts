@@ -3,7 +3,7 @@ import { ApiProperty } from "@nestjs/swagger"
 import { Type, Type as ValidateTypes } from "class-transformer"
 import { Optional } from '@nestjs/common';
  
-const descriptionListScreenTypeForBranchList="0-total documents count,100-populate image global gallery";
+const descriptionListScreenTypeForBranchList="0-total documents count,50-populate image global gallery";
 const descriptionListDataGuard="0-edit protect, 1-disabe protect, 2-delete protect";
 
 const descriptionStatus="0-Inactive, 1-Active, 2-Delete";

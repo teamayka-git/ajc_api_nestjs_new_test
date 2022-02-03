@@ -276,7 +276,7 @@ export class BranchService {
 
       
 
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.findIndex((it) => it == 50) != -1) {
 
         arrayAggregation.push(
             {

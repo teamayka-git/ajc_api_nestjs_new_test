@@ -458,7 +458,22 @@ export class AgentService {
         );
     }
 
+    if (dto.screenType.findIndex((it) => it == 50) != -1) {
 
+      arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.GLOBAL_GALLERIES,
+              let: { globalGalleryId: '$_globalGalleryId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } }],
+              as: 'globalGalleryDetails',
+            },
+          },
+          {
+            $unwind: { path: '$globalGalleryDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
+    }
 
     var result = await this.agentModel
       .aggregate(arrayAggregation)

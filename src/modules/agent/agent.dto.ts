@@ -12,7 +12,7 @@ import { Optional } from '@nestjs/common';
 
 
 const descriptionStatus="0-Inactive, 1-Active, 2-Delete";
-const descriptionListScreenTypeForList="0-total documents count, 100-city detail";
+const descriptionListScreenTypeForList="0-total documents count, ,50-populate image global gallery,100-city detail";
 const descriptionListDataGuard="0-edit protect, 1-disabe protect, 2-delete protect";
 const descriptionListGender="0-male, 1-female, 2-other";
 const descriptionListCommisionType="0-Commision Percentage, 1-Commision amount";
