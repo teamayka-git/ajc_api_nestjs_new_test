@@ -9,7 +9,7 @@ import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { Suppliers } from 'src/tableModels/suppliers.model';
 import { User } from 'src/tableModels/user.model';
 import { StringUtils } from 'src/utils/string_utils';
-import * as sharp from 'sharp';
+import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 import { ListFilterLocadingSupplierDto, SupplierCreateDto, SupplierEditDto, SupplierListDto, SupplierLoginDto, SupplierStatusChangeDto } from './supplier.dto';
 
 const crypto = require('crypto');
@@ -131,15 +131,14 @@ export class SupplierService {
           var filePath =
             __dirname +
             `/../../../public${file['image'][0]['path'].split('public')[1]}`;
-         await sharp(filePath)
-            .toFormat('png')
-            .png({ quality: GlobalConfig().THUMB_QUALITY })
-            .toFile(
-              UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
-                new StringUtils().makeThumbImageFileName(
-                  file['image'][0]['filename'],
-                ),
-            );
+
+
+            new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+              new StringUtils().makeThumbImageFileName(
+                file['image'][0]['filename'],
+              ));
+
+       
     
         }
     
@@ -259,15 +258,13 @@ export class SupplierService {
           var filePath =
             __dirname +
             `/../../../public${file['image'][0]['path'].split('public')[1]}`;
-         await sharp(filePath)
-            .toFormat('png')
-            .png({ quality: GlobalConfig().THUMB_QUALITY })
-            .toFile(
-              UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
-                new StringUtils().makeThumbImageFileName(
-                  file['image'][0]['filename'],
-                ),
-            );
+
+            new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+              new StringUtils().makeThumbImageFileName(
+                file['image'][0]['filename'],
+              ));
+
+        
     
         }
 

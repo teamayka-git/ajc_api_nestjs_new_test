@@ -6,11 +6,11 @@ import { SubCategories } from 'src/tableModels/sub_categories.model';
 import * as mongoose from 'mongoose';
 import { ListFilterLocadingSubCategoryDto, SubCategoriesCreateDto, SubCategoriesEditDto, SubCategoriesListDto, SubCategoriesStatusChangeDto } from './sub_categories.dto';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
-import * as sharp from 'sharp';
 import { GlobalConfig } from 'src/config/global_config';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
 import { Counters } from 'src/tableModels/counters.model';
 import { StringUtils } from 'src/utils/string_utils';
+import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 
 @Injectable()
 export class SubCategoriesService {
@@ -34,15 +34,14 @@ export class SubCategoriesService {
             var filePath =
             __dirname +
             `/../../../public${file['image'][i]['path'].split('public')[1]}`;
-         await sharp(filePath)
-            .toFormat('png')
-            .png({ quality: GlobalConfig().THUMB_QUALITY })
-            .toFile(
-              UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
-                new StringUtils().makeThumbImageFileName(
-                  file['image'][i]['filename'],
-                ),
-            );
+
+            new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+              new StringUtils().makeThumbImageFileName(
+                file['image'][i]['filename'],
+              ));
+
+
+        
           }
         }
 
@@ -97,15 +96,14 @@ export class SubCategoriesService {
           var filePath =
             __dirname +
             `/../../../public${file['image'][0]['path'].split('public')[1]}`;
-         await sharp(filePath)
-            .toFormat('png')
-            .png({ quality: GlobalConfig().THUMB_QUALITY })
-            .toFile(
-              UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
-                new StringUtils().makeThumbImageFileName(
-                  file['image'][0]['filename'],
-                ),
-            );
+
+            new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+              new StringUtils().makeThumbImageFileName(
+                file['image'][0]['filename'],
+              ));
+
+
+       
     
         }
     

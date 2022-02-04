@@ -9,10 +9,10 @@ import {
   GlobalGalleryListDto,
   GlobalGalleryStatusChangeDto,
 } from './global_gallery.dto';
-import * as sharp from 'sharp';
 import { GlobalConfig } from 'src/config/global_config';
 import { StringUtils } from 'src/utils/string_utils';
 import { Counters } from 'src/tableModels/counters.model';
+import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 
 @Injectable()
 export class GlobalGalleryService {
@@ -76,15 +76,14 @@ export class GlobalGalleryService {
               `/../../../public${
                 file['documents'][count]['path'].split('public')[1]
               }`;
-            sharp(filePath)
-              .toFormat('png')
-              .png({ quality: GlobalConfig().THUMB_QUALITY })
-              .toFile(
-                document_location +
-                  new StringUtils().makeThumbImageFileName(
-                    file['documents'][count]['filename'],
-                  ),
-              );
+
+              new ThumbnailUtils().generateThumbnail(filePath,  document_location +
+                new StringUtils().makeThumbImageFileName(
+                  file['documents'][count]['filename'],
+                ));
+
+
+          
           }
         }
       }
