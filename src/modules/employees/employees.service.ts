@@ -150,7 +150,7 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
         );
 
     const globalGallery = new this.globalGalleryModel({
-      __name:"",
+      __name:file['image'][0]['originalname'],
       _globalGalleryCategoryId:null,
       _globalGallerySubCategoryId:null,
       _docType:0,
@@ -297,7 +297,7 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
         );
 
     const globalGallery = new this.globalGalleryModel({
-      __name:"",
+      __name:file['image'][0]['originalname'],
       _globalGalleryCategoryId:null,
       _globalGallerySubCategoryId:null,
       _docType:0,

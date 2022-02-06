@@ -51,7 +51,7 @@ export class BranchService {
           );
 
       const globalGallery = new this.globalGalleryModel({
-        __name:"",
+        __name:file['image'][0]['originalname'],
         _globalGalleryCategoryId:null,
         _globalGallerySubCategoryId:null,
         _docType:0,
@@ -154,7 +154,7 @@ export class BranchService {
           );
 
       const globalGallery = new this.globalGalleryModel({
-        __name:"",
+        __name:file['image'][0]['originalname'],
         _globalGalleryCategoryId:null,
         _globalGallerySubCategoryId:null,
         _docType:0,
