@@ -193,6 +193,7 @@ export class AppService {
                 _uid:1,
                 _mobile:"",
                 _lastLogin:-1,
+                _globalGalleryId:null,
                 _dataGuard:[1,2],
                 _createdUserId:null,
                 _createdAt:dateTime,

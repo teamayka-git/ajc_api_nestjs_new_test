@@ -34,6 +34,9 @@ export class FileMulterHelper {
   static filePathTempAgent(req, file, cb) {
     cb(null, UploadedFileDirectoryPath.GLOBAL_GALLERY_AGENT);
   }
+  static filePathTempEmployee(req, file, cb) {
+    cb(null, UploadedFileDirectoryPath.GLOBAL_GALLERY_EMPLOYEE);
+  }
   static filePathTempSupplier(req, file, cb) {
     cb(null, UploadedFileDirectoryPath.GLOBAL_GALLERY_SUPPLIER);
   }

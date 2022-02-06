@@ -8,6 +8,7 @@ import { UserSchema } from 'src/tableModels/user.model';
 import { JwtModule } from '@nestjs/jwt';
 import { GlobalConfig } from 'src/config/global_config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
 
 @Module({  imports: [
   JwtModule.register({
@@ -18,6 +19,9 @@ import { MongooseModule } from '@nestjs/mongoose';
     { name: ModelNames.USER, schema: UserSchema },
     { name: ModelNames.EMPLOYEES, schema: EmployeeSchema },
     { name: ModelNames.COUNTERS, schema: CountersSchema },
+
+    
+    {name:ModelNames.GLOBAL_GALLERIES,schema:GlobalGalleriesSchema},
   ]),
 ],
   controllers: [EmployeesController],

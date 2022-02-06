@@ -18,7 +18,7 @@ const descriptionListGender="0-male, 1-female, 2-other";
 const descriptionListCommisionType="0-Commision Percentage, 1-Commision amount";
 const descriptionListSortOrder="1-ascending, -1-descending";
 const descriptionListSortType="0-Created Date,1-Status  2-Name,3-commision type, 4-UID, 4-";
-const descriptionListScreenTypeForFilterLoading="0-total documents count, 100-item details";
+const descriptionListScreenTypeForFilterLoading="0-total documents count, 100-city details";
 export class AgentLoginDto {
  
   @IsEmail()

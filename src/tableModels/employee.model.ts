@@ -12,6 +12,7 @@ export const EmployeeSchema = new mongoose.Schema({
     _mobile: { type: String,  default: "nil" },
     _uid: { type: String, required: true, default: "nil" },
     _lastLogin: { type: Number, required: true, default: -1 },
+    _globalGalleryId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.GLOBAL_GALLERIES, default: null },
     _dataGuard: { type:Object, required: true, default: [] },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
@@ -29,6 +30,7 @@ export interface Employee {
     _mobile:String;
     _uid: String;
     _lastLogin:Number;
+    _globalGalleryId:String;
     _dataGuard:Object;
     _createdUserId:String;
     _createdAt:  Number;
