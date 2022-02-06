@@ -27,7 +27,7 @@ class CategoriesCreateList {
   @ApiProperty({})
   name: string;
 
-  
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   code: number;
@@ -40,7 +40,7 @@ class CategoriesCreateList {
   @ApiProperty({})
   groupId: string;
 
-  
+  @Transform(({ value }) =>typeof value == 'string' ? JSON.parse(value) : value    )
   @IsArray()
   @ApiProperty({ type: [Number],description:descriptionListDataGuard })
   dataGuard:number[];
@@ -51,6 +51,9 @@ class CategoriesCreateList {
 
 
 export class CategoriesCreateDto {
+  @Transform(({ value }) =>
+  typeof value == 'string' ? JSON.parse(value) : value,
+    )
   @IsArray()
   @ApiProperty({type:[CategoriesCreateList]})
   @ValidateNested({ each: true })
@@ -69,7 +72,7 @@ export class CategoriesEditDto {
   @ApiProperty({})
   name: string;
 
-  
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   code: number;
@@ -82,6 +85,9 @@ export class CategoriesEditDto {
   @ApiProperty({})
   groupId: string;
 
+  @Transform(({ value }) =>
+  typeof value == 'string' ? JSON.parse(value) : value,
+    )
   @IsArray()
   @ApiProperty({ type: [Number],description:descriptionListDataGuard })
   dataGuard:number[];

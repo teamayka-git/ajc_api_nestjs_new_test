@@ -28,11 +28,12 @@ class StoneCreateList {
   @ApiProperty({})
   name: string;
 
-  
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   weight: number;
 
+  @Transform(({ value }) =>typeof value == 'string' ? JSON.parse(value) : value    )
   @IsArray()
   @ApiProperty({ type: [Number],description:descriptionListDataGuard })
   dataGuard:number[];
@@ -42,6 +43,7 @@ class StoneCreateList {
 
 
 export class StoneCreateDto {
+  @Transform(({ value }) =>typeof value == 'string' ? JSON.parse(value) : value    )
   @IsArray()
   @ApiProperty({type:[StoneCreateList]})
   @ValidateNested({ each: true })
@@ -60,11 +62,12 @@ export class StoneEditDto {
   @ApiProperty({})
   name: string;
 
-  
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   weight: number;
 
+  @Transform(({ value }) =>typeof value == 'string' ? JSON.parse(value) : value    )
   @IsArray()
   @ApiProperty({ type: [Number],description:descriptionListDataGuard })
   dataGuard:number[];

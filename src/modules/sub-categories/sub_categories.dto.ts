@@ -27,7 +27,7 @@ class SubCategoriesCreateList {
   @ApiProperty({})
   name: string;
 
-  
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   code: number;
@@ -40,14 +40,16 @@ class SubCategoriesCreateList {
   @ApiProperty({})
   categoryId: string;
 
-  
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   hmsealing: number;
+  
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   defaultValueAdditionPercentage: number;
-
+  @Transform(({ value }) =>typeof value == 'string' ? JSON.parse(value) : value    )
   @IsArray()
   @ApiProperty({ type: [Number],description:descriptionListDataGuard })
   dataGuard:number[];
@@ -57,6 +59,7 @@ class SubCategoriesCreateList {
 
 
 export class SubCategoriesCreateDto {
+  @Transform(({ value }) =>typeof value == 'string' ? JSON.parse(value) : value    )
   @IsArray()
   @ApiProperty({type:[SubCategoriesCreateList]})
   @ValidateNested({ each: true })
@@ -77,6 +80,7 @@ export class SubCategoriesEditDto {
   name: string;
 
   
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   code: number;
@@ -90,13 +94,15 @@ export class SubCategoriesEditDto {
   categoryId: string;
 
   
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   hmsealing: number;
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   defaultValueAdditionPercentage: number;
-
+  @Transform(({ value }) =>typeof value == 'string' ? JSON.parse(value) : value    )
   @IsArray()
   @ApiProperty({ type: [Number],description:descriptionListDataGuard })
   dataGuard:number[];

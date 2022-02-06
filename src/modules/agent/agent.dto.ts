@@ -37,7 +37,7 @@ export class AgentCreateDto {
   @ApiProperty({})
   name: string;
 
-  
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({description:descriptionListGender})
   gender: number;
@@ -59,20 +59,21 @@ export class AgentCreateDto {
   @ApiProperty({})
   cityId: string;
 
-
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({description:descriptionListCommisionType})
   commisionType: number;
-
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   commisionAmount: number;
-
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   commisionPercentage: number;
 
 
+  @Transform(({ value }) =>typeof value == 'string' ? JSON.parse(value) : value    )
   @IsArray()
   @ApiProperty({ type: [Number],description:descriptionListDataGuard })
   dataGuard:number[];
@@ -95,6 +96,7 @@ export class AgentEditDto {
   name: string;
 
   
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({description:descriptionListGender})
   gender: number;
@@ -109,19 +111,23 @@ export class AgentEditDto {
   cityId: string;
 
 
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({description:descriptionListCommisionType})
   commisionType: number;
 
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   commisionAmount: number;
 
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   commisionPercentage: number;
 
 
+  @Transform(({ value }) =>typeof value == 'string' ? JSON.parse(value) : value    )
   @IsArray()
   @ApiProperty({ type: [Number],description:descriptionListDataGuard })
   dataGuard:number[];

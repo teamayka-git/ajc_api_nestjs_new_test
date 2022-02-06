@@ -1,6 +1,6 @@
 import { ArrayContains, ArrayMinSize, IsArray, IsDefined, IsEmail, IsEmpty, IsJSON, IsNumber, IsObject, IsOptional, IsString, ValidateNested, ValidationTypes } from 'class-validator'
 import { ApiProperty } from "@nestjs/swagger"
-import { Type, Type as ValidateTypes } from "class-transformer"
+import { Transform, Type, Type as ValidateTypes } from "class-transformer"
 import { Optional } from '@nestjs/common';
  
 const descriptionListScreenTypeForBranchList="0-total documents count,50-populate image global gallery";
@@ -28,6 +28,7 @@ export class BranchCreateDto {
     @ApiProperty({})
     textCode: string;
 
+    @Transform(({ value }) =>typeof value == 'string' ? JSON.parse(value) : value    )
     @IsArray()
     @ApiProperty({ type: [Number],description:descriptionListDataGuard })
     dataGuard:number[];
@@ -60,6 +61,7 @@ export class BranchEditDto {
     textCode: string;
 
     
+  @Transform(({ value }) =>typeof value == 'string' ? JSON.parse(value) : value    )
     @IsArray()
     @ApiProperty({ type: [Number],description:descriptionListDataGuard })
     dataGuard:number[];
