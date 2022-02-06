@@ -26,7 +26,6 @@ export class DepartmentsService {
 
     dto.array.map((mapItem) => {
       arrayToStates.push({
-        // _id:new MongooseModule.Types.ObjectId(),
         _name: mapItem.name,
         _prefix: mapItem.prefix,
         _processMasterStatus: 0,

@@ -22,7 +22,6 @@ export class FactoriesService {
     
         dto.array.map((mapItem) => {
           arrayToStates.push({
-            // _id:new MongooseModule.Types.ObjectId(),
             _name: mapItem.name,
             _cityId: mapItem.cityId,
             _dataGuard:mapItem.dataGuard,

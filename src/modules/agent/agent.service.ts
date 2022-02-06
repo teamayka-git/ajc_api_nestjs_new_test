@@ -142,7 +142,7 @@ export class AgentService {
         `/../../../public${file['image'][0]['path'].split('public')[1]}`;
 
 
-        new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+        new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_AGENT +
           new StringUtils().makeThumbImageFileName(
             file['image'][0]['filename'],
           ));
@@ -167,12 +167,11 @@ export class AgentService {
         );
 
     const globalGallery = new this.globalGalleryModel({
-      // _id:new MongooseModule.Types.ObjectId(),
       __name:"",
       _globalGalleryCategoryId:null,
       _globalGallerySubCategoryId:null,
       _docType:0,
-      _type:4,
+      _type:3,
       _uid:resultCounterPurchase._count,
       _url:`${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
           process.env.PORT
@@ -224,7 +223,6 @@ export class AgentService {
       .toString(`hex`);
 
     const newsettingsModel = new this.agentModel({
-      // _id:new MongooseModule.Types.ObjectId(),
       _name: dto.name,
       _gender: dto.gender,
       _email: dto.email,
@@ -248,7 +246,6 @@ export class AgentService {
 
 
     const userModel = new this.userModel({
-      // _id:new MongooseModule.Types.ObjectId(),
       _type:1,
       _employeeId:null,
       _agentId:result1._id,
@@ -289,7 +286,7 @@ export class AgentService {
         `/../../../public${file['image'][0]['path'].split('public')[1]}`;
 
 
-        new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+        new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_AGENT +
           new StringUtils().makeThumbImageFileName(
             file['image'][0]['filename'],
           ));
@@ -333,12 +330,11 @@ export class AgentService {
         );
 
     const globalGallery = new this.globalGalleryModel({
-      // _id:new MongooseModule.Types.ObjectId(),
       __name:"",
       _globalGalleryCategoryId:null,
       _globalGallerySubCategoryId:null,
       _docType:0,
-      _type:4,
+      _type:3,
       _uid:resultCounterPurchase._count,
       _url:`${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
           process.env.PORT

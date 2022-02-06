@@ -20,7 +20,6 @@ export class GoldRateTimelinesService {
   
         
         const newsettingsModel = new this.goldRateTimelinesModel({
-            // _id:new MongooseModule.Types.ObjectId(),
             _ratePerGram:dto.rate,
             _createdUserId:_userId_,
             _createdAt:  dateTime,

@@ -21,7 +21,6 @@ export class PurityService {
     
         dto.array.map((mapItem) => {
           arrayToStates.push({
-            // _id:new MongooseModule.Types.ObjectId(),
             _name: mapItem.name,
             _purity: mapItem.purity,
             _dataGuard:mapItem.dataGuard,

@@ -51,7 +51,6 @@ export class BranchService {
           );
 
       const globalGallery = new this.globalGalleryModel({
-        // _id:new MongooseModule.Types.ObjectId(),
         __name:"",
         _globalGalleryCategoryId:null,
         _globalGallerySubCategoryId:null,
@@ -88,7 +87,6 @@ export class BranchService {
         {  new: true, transactionSession },
       );
       const newsettingsModel = new this.branchModel({
-          // _id:new MongooseModule.Types.ObjectId(),
           _name:dto.name,
           _uid: resultCounterPurchase._count,
           _email:  dto.email,
@@ -156,7 +154,6 @@ export class BranchService {
           );
 
       const globalGallery = new this.globalGalleryModel({
-        // _id:new MongooseModule.Types.ObjectId(),
         __name:"",
         _globalGalleryCategoryId:null,
         _globalGallerySubCategoryId:null,

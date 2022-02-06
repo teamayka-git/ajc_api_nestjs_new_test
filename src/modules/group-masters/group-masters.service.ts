@@ -21,7 +21,6 @@ export class GroupMastersService {
     
         dto.array.map((mapItem) => {
           arrayToStates.push({
-            // _id:new MongooseModule.Types.ObjectId(),
             _name:mapItem.name,
             _rawMaterialStatus:mapItem.rawMaterialStatus,
             _hsnCode:mapItem.hsnCode,

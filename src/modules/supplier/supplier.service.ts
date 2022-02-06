@@ -133,7 +133,7 @@ export class SupplierService {
             `/../../../public${file['image'][0]['path'].split('public')[1]}`;
 
 
-            new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+            new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_SUPPLIER +
               new StringUtils().makeThumbImageFileName(
                 file['image'][0]['filename'],
               ));
@@ -158,12 +158,11 @@ export class SupplierService {
             );
     
         const globalGallery = new this.globalGalleryModel({
-          // _id:new MongooseModule.Types.ObjectId(),
           __name:"",
           _globalGalleryCategoryId:null,
           _globalGallerySubCategoryId:null,
           _docType:0,
-          _type:4,
+          _type:6,
           _uid:resultCounterPurchase._count,
           _url:`${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
               process.env.PORT
@@ -221,7 +220,6 @@ export class SupplierService {
             .toString(`hex`);
     
         const newsettingsModel = new this.suppliersModel({
-            // _id:new MongooseModule.Types.ObjectId(),
             _name: dto.name,
             _gender: dto.gender,
             _email: dto.email,
@@ -246,7 +244,6 @@ export class SupplierService {
 
     
           const userModel = new this.userModel({
-            // _id:new MongooseModule.Types.ObjectId(),
             _type:2,
             _employeeId:null,
             _agentId:null,
@@ -286,7 +283,7 @@ export class SupplierService {
             __dirname +
             `/../../../public${file['image'][0]['path'].split('public')[1]}`;
 
-            new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+            new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_SUPPLIER +
               new StringUtils().makeThumbImageFileName(
                 file['image'][0]['filename'],
               ));
@@ -323,12 +320,11 @@ export class SupplierService {
             );
     
         const globalGallery = new this.globalGalleryModel({
-          // _id:new MongooseModule.Types.ObjectId(),
           __name:"",
           _globalGalleryCategoryId:null,
           _globalGallerySubCategoryId:null,
           _docType:0,
-          _type:4,
+          _type:6,
           _uid:resultCounterPurchase._count,
           _url:`${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
               process.env.PORT

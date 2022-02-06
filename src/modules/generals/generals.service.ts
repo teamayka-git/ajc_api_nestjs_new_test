@@ -22,7 +22,6 @@ export class GeneralsService {
     
         dto.array.map((mapItem) => {
           arrayToStates.push({
-            // _id:new MongooseModule.Types.ObjectId(),
             _code:mapItem.code,
             _string:mapItem.string,
             _number:mapItem.number,

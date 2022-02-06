@@ -53,7 +53,7 @@ export class StoneService {
 
         new ThumbnailUtils().generateThumbnail(
           filePath,
-          UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+          UploadedFileDirectoryPath.GLOBAL_GALLERY_STONE +
             new StringUtils().makeThumbImageFileName(
               file['image'][i]['filename'],
             ),
@@ -66,7 +66,7 @@ export class StoneService {
           _globalGalleryCategoryId: null,
           _globalGallerySubCategoryId: null,
           _docType: 0,
-          _type: 4,
+          _type: 2,
           _uid: resultCounterPurchase._count - file['image'].length + (i + 1),
           _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
             process.env.SERVER_DOMAIN
@@ -98,7 +98,6 @@ export class StoneService {
 
     dto.array.map((mapItem) => {
       arrayToStates.push({
-        // _id:new MongooseModule.Types.ObjectId(),
         _name: mapItem.name,
         _weight: mapItem.weight,
         _dataGuard: mapItem.dataGuard,
@@ -140,7 +139,7 @@ export class StoneService {
 
       new ThumbnailUtils().generateThumbnail(
         filePath,
-        UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+        UploadedFileDirectoryPath.GLOBAL_GALLERY_STONE +
           new StringUtils().makeThumbImageFileName(
             file['image'][0]['filename'],
           ),
@@ -169,12 +168,11 @@ export class StoneService {
       );
 
       const globalGallery = new this.globalGalleryModel({
-        // _id:new MongooseModule.Types.ObjectId(),
         __name: '',
         _globalGalleryCategoryId: null,
         _globalGallerySubCategoryId: null,
         _docType: 0,
-        _type: 4,
+        _type: 2,
         _uid: resultCounterPurchase._count,
         _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
           process.env.SERVER_DOMAIN

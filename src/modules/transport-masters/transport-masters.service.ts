@@ -22,7 +22,6 @@ export class TransportMastersService {
     
         dto.array.map((mapItem) => {
           arrayToStates.push({
-            // _id:new MongooseModule.Types.ObjectId(),
             _name: mapItem.name,
             _type: mapItem.type,
             _dataGuard:mapItem.dataGuard,

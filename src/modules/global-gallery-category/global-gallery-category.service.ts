@@ -21,7 +21,6 @@ export class GlobalGalleryCategoryService {
     
         dto.array.map((mapItem) => {
           arrayToStates.push({
-            // _id:new MongooseModule.Types.ObjectId(),
             _name: mapItem.name,
             _dataGuard:mapItem.dataGuard,
             _createdUserId: _userId_,

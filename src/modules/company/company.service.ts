@@ -23,7 +23,6 @@ export class CompanyService {
     
         dto.array.map((mapItem) => {
           arrayToStates.push({
-            // _id:new MongooseModule.Types.ObjectId(),
             _name:mapItem.name,
             _place:mapItem.place,
             _email:mapItem.email,

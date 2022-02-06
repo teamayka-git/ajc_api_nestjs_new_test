@@ -125,7 +125,7 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
         `/../../../public${file['image'][0]['path'].split('public')[1]}`;
 
 
-        new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+        new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_EMPLOYEE +
           new StringUtils().makeThumbImageFileName(
             file['image'][0]['filename'],
           ));
@@ -150,12 +150,11 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
         );
 
     const globalGallery = new this.globalGalleryModel({
-      // _id:new MongooseModule.Types.ObjectId(),
       __name:"",
       _globalGalleryCategoryId:null,
       _globalGallerySubCategoryId:null,
       _docType:0,
-      _type:4,
+      _type:5,
       _uid:resultCounterPurchase._count,
       _url:`${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
           process.env.PORT
@@ -207,7 +206,6 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
       .toString(`hex`);
 
     const newsettingsModel = new this.employeeModel({
-      // _id:new MongooseModule.Types.ObjectId(),
       _name: dto.name,
       _gender: dto.gender,
       _email: dto.email,
@@ -225,7 +223,6 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
     });
     var result1 = await newsettingsModel.save({ session: transactionSession });
     const userModel = new this.userModel({
-      // _id:new MongooseModule.Types.ObjectId(),
       _type:0,
       _employeeId:result1._id,
       _agentId:null,
@@ -260,7 +257,7 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
         `/../../../public${file['image'][0]['path'].split('public')[1]}`;
 
 
-        new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+        new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_EMPLOYEE +
           new StringUtils().makeThumbImageFileName(
             file['image'][0]['filename'],
           ));
@@ -300,12 +297,11 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
         );
 
     const globalGallery = new this.globalGalleryModel({
-      // _id:new MongooseModule.Types.ObjectId(),
       __name:"",
       _globalGalleryCategoryId:null,
       _globalGallerySubCategoryId:null,
       _docType:0,
-      _type:4,
+      _type:5,
       _uid:resultCounterPurchase._count,
       _url:`${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
           process.env.PORT

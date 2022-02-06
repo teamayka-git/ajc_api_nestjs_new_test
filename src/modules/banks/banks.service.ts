@@ -31,7 +31,6 @@ if(mapItem.userId=="nil"){
 
 
           arrayToStates.push({
-            // _id:new MongooseModule.Types.ObjectId(),
             _acNo:mapItem.acNo,
             _ifsc:mapItem.ifsc,
             _acHolderName:mapItem.acHolderName,

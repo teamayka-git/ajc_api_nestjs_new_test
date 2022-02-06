@@ -21,7 +21,6 @@ export class DistrictsService {
     
         dto.districtArray.map((mapItem) => {
           arrayToStates.push({
-            // _id:new MongooseModule.Types.ObjectId(),
             _name: mapItem.name,
             _code: mapItem.code,
             _statesId: mapItem.stateId,

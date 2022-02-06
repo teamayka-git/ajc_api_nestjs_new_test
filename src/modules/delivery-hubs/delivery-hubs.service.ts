@@ -20,7 +20,6 @@ export class DeliveryHubsService {
     
         dto.array.map((mapItem) => {
           arrayToStates.push({
-            // _id:new MongooseModule.Types.ObjectId(),
             _name: mapItem.name,
             _code: mapItem.code,
             _citiesId:mapItem.cityId,

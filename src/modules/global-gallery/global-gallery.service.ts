@@ -132,7 +132,6 @@ export class GlobalGalleryService {
 
 
       arrayToStates.push({
-        // _id:new MongooseModule.Types.ObjectId(),
         _name: dto.array[i].name,
         _globalGalleryCategoryId: dto.array[i].globalGalleryCategoryId=="nil"?null:dto.array[i].globalGalleryCategoryId,
         _globalGallerySubCategoryId: dto.array[i].globalGallerySubCategoryId=="nil"?null:dto.array[i].globalGallerySubCategoryId,

@@ -22,7 +22,6 @@ export class TestChargeMastersService {
     
         dto.array.map((mapItem) => {
           arrayToStates.push({
-            // _id:new MongooseModule.Types.ObjectId(),
             _groupId:mapItem.groupId,
             _charge:mapItem.charge,
             _dataGuard:mapItem.dataGuard,

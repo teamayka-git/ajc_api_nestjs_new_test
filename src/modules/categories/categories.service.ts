@@ -51,7 +51,7 @@ export class CategoriesService {
     
             new ThumbnailUtils().generateThumbnail(
               filePath,
-              UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+              UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY +
                 new StringUtils().makeThumbImageFileName(
                   file['image'][i]['filename'],
                 ),
@@ -64,7 +64,7 @@ export class CategoriesService {
               _globalGalleryCategoryId: null,
               _globalGallerySubCategoryId: null,
               _docType: 0,
-              _type: 4,
+              _type: 0,
               _uid: resultCounterPurchase._count - file['image'].length + (i + 1),
               _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
                 process.env.SERVER_DOMAIN
@@ -104,7 +104,6 @@ export class CategoriesService {
 
         dto.array.map((mapItem) => {
           arrayToStates.push({
-            // _id:new MongooseModule.Types.ObjectId(),
             _name:mapItem.name,
             _code:mapItem.code,
             _description:mapItem.description,
@@ -145,7 +144,7 @@ export class CategoriesService {
             __dirname +
             `/../../../public${file['image'][0]['path'].split('public')[1]}`;
 
-            new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+            new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY +
               new StringUtils().makeThumbImageFileName(
                 file['image'][0]['filename'],
               ));
@@ -186,12 +185,11 @@ export class CategoriesService {
             );
     
         const globalGallery = new this.globalGalleryModel({
-          // _id:new MongooseModule.Types.ObjectId(),
           __name:"",
           _globalGalleryCategoryId:null,
           _globalGallerySubCategoryId:null,
           _docType:0,
-          _type:4,
+          _type:0,
           _uid:resultCounterPurchase._count,
           _url:`${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
               process.env.PORT

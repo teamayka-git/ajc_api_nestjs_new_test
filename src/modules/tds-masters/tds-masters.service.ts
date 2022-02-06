@@ -22,7 +22,6 @@ export class TdsMastersService {
     
         dto.array.map((mapItem) => {
           arrayToStates.push({
-            // _id:new MongooseModule.Types.ObjectId(),
             _percentage:mapItem.percentage,
             _dataGuard:mapItem.dataGuard,
             _createdUserId: _userId_,

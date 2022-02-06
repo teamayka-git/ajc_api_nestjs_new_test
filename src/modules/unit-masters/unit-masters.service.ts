@@ -21,7 +21,6 @@ export class UnitMastersService {
     
         dto.array.map((mapItem) => {
           arrayToStates.push({
-            // _id:new MongooseModule.Types.ObjectId(),
             _name: mapItem.name,
             _value: mapItem.value,
             _dataGuard:mapItem.dataGuard,
