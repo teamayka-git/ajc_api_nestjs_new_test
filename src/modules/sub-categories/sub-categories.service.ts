@@ -29,21 +29,73 @@ export class SubCategoriesService {
     
         var arrayToStates = [];
 
-        if (file.hasOwnProperty('image')) {
-          for(var i=0;i<file['image'].length;i++){
-            var filePath =
-            __dirname +
-            `/../../../public${file['image'][i]['path'].split('public')[1]}`;
-
-            new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
-              new StringUtils().makeThumbImageFileName(
-                file['image'][i]['filename'],
-              ));
+      
+        var arrayGlobalGalleries=[];
+    
 
 
         
+        if (file.hasOwnProperty('image')) {
+          var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
+            { _table_name: ModelNames.GLOBAL_GALLERIES },
+            {
+              $inc: {
+                _count: file['image'].length,
+              },
+            },
+            { new: true, transactionSession },
+          );
+    
+          for (var i = 0; i < file['image'].length; i++) {
+            var filePath =
+              __dirname +
+              `/../../../public${file['image'][i]['path'].split('public')[1]}`;
+    
+            new ThumbnailUtils().generateThumbnail(
+              filePath,
+              UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+                new StringUtils().makeThumbImageFileName(
+                  file['image'][i]['filename'],
+                ),
+            );
+    
+            var globalGalleryId = new mongoose.Types.ObjectId();
+            arrayGlobalGalleries.push({
+              _id: globalGalleryId,
+              __name: '',
+              _globalGalleryCategoryId: null,
+              _globalGallerySubCategoryId: null,
+              _docType: 0,
+              _type: 4,
+              _uid: resultCounterPurchase._count - file['image'].length + (i + 1),
+              _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
+                process.env.SERVER_DOMAIN
+              }:${process.env.PORT}${file['image'][i]['path'].split('public')[1]}`,
+              _thumbUrl: new StringUtils().makeThumbImageFileName(
+                `${process.env.SSL == 'true' ? 'https' : 'http'}://${
+                  process.env.SERVER_DOMAIN
+                }:${process.env.PORT}${
+                  file['image'][i]['path'].split('public')[1]
+                }`,
+              ),
+              _created_user_id: _userId_,
+              _created_at: dateTime,
+              _updated_user_id: null,
+              _updated_at: -1,
+              _status: 1,
+            });
+    
+            var count = dto.array.findIndex(
+              (it) => it.fileOriginalName == file['image'][i]['originalname'],
+            );
+            if (count != -1) {
+              dto.array[count]['globalGalleryId'] = globalGalleryId;
+            } else {
+              dto.array[count]['globalGalleryId'] = 'nil';
+            }
           }
         }
+
 
 
 
@@ -63,6 +115,10 @@ export class SubCategoriesService {
             _categoryId:mapItem.categoryId,
             _hmSealing:mapItem.hmsealing,
             _defaultValueAdditionPercentage:mapItem.defaultValueAdditionPercentage,
+            _globalGalleryId:
+              mapItem['globalGalleryId'] == 'nil'
+                ? null
+                : mapItem['globalGalleryId'],
             _dataGuard:mapItem.dataGuard,
             _createdUserId: _userId_,
             _createdAt: dateTime,
@@ -76,6 +132,10 @@ export class SubCategoriesService {
           session: transactionSession,
         });
     
+        await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
+          session: transactionSession,
+        });
+        
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: 'success', data: { list: result1 } };
