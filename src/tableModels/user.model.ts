@@ -48,6 +48,7 @@ _userRole:{
     0 - super_admin
     1 - agent
     2 - supplier
+    3 - employee
 }
 _type:{
     0 - employee

@@ -21,7 +21,7 @@ export class SupplierService {
     private readonly suppliersModel: mongoose.Model<Suppliers>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
-    
+     
   @InjectModel(ModelNames.GLOBAL_GALLERIES) private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
       @InjectConnection() private readonly connection: mongoose.Connection,){}
       async login(dto: SupplierLoginDto) {
@@ -240,6 +240,33 @@ export class SupplierService {
             _status: 1,
           });
           var result1 = await newsettingsModel.save({ session: transactionSession });
+
+
+
+
+    
+          const userModel = new this.userModel({
+            // _id:new MongooseModule.Types.ObjectId(),
+            _type:2,
+            _employeeId:null,
+            _agentId:null,
+            _supplierId:result1._id,
+            _fcmId:"",
+            _deviceUniqueId:"",
+            _permissions:[],
+            _userRole:2,
+            _created_user_id: _userId_,
+            _created_at: dateTime,
+            _updated_user_id: null,
+            _updated_at: -1,
+            _status: 1,
+          });
+        await userModel.save({
+            session: transactionSession,
+          });
+
+
+
     
         await transactionSession.commitTransaction();
         await transactionSession.endSession();

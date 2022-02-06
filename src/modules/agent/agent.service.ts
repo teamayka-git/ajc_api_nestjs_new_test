@@ -19,7 +19,7 @@ import { GlobalConfig } from 'src/config/global_config';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
-
+ 
 @Injectable()
 export class AgentService {
   constructor(
@@ -245,6 +245,33 @@ export class AgentService {
       _status: 1,
     });
     var result1 = await newsettingsModel.save({ session: transactionSession });
+
+
+    const userModel = new this.userModel({
+      // _id:new MongooseModule.Types.ObjectId(),
+      _type:1,
+      _employeeId:null,
+      _agentId:result1._id,
+      _supplierId:null,
+      _fcmId:"",
+      _deviceUniqueId:"",
+      _permissions:[],
+      _userRole:1,
+      _created_user_id: _userId_,
+      _created_at: dateTime,
+      _updated_user_id: null,
+      _updated_at: -1,
+      _status: 1,
+    });
+  await userModel.save({
+      session: transactionSession,
+    });
+
+
+
+
+
+
 
     await transactionSession.commitTransaction();
     await transactionSession.endSession();

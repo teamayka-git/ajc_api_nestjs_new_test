@@ -14,7 +14,7 @@ const crypto = require('crypto');
 
 @Injectable()
 export class EmployeesService {
-constructor(  @InjectModel(ModelNames.USER) private readonly userModel: mongoose.Model<User>,
+  constructor(  @InjectModel(ModelNames.USER) private readonly userModel: mongoose.Model<User>, 
 @InjectModel(ModelNames.GLOBAL_GALLERIES) private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
 @InjectModel(ModelNames.EMPLOYEES)
 private readonly employeeModel: mongoose.Model<Employee>,
@@ -224,6 +224,25 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
       _status: 1,
     });
     var result1 = await newsettingsModel.save({ session: transactionSession });
+    const userModel = new this.userModel({
+      // _id:new MongooseModule.Types.ObjectId(),
+      _type:0,
+      _employeeId:result1._id,
+      _agentId:null,
+      _supplierId:null,
+      _fcmId:"",
+      _deviceUniqueId:"",
+      _permissions:[],
+      _userRole:3,
+      _created_user_id: _userId_,
+      _created_at: dateTime,
+      _updated_user_id: null,
+      _updated_at: -1,
+      _status: 1,
+    });
+  await userModel.save({
+      session: transactionSession,
+    });
 
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
