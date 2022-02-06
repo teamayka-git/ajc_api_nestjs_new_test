@@ -18,7 +18,7 @@ const descriptionListDataGuard="0-edit protect, 1-disabe protect, 2-delete prote
 const descriptionListSortOrder="1-ascending, -1-descending";
 const descriptionListSortType="0-Created Date, 1-Status,2-Name, 3-Code";
 const descriptionListScreenTypeForFilterLoading="0-total documents count, 100-item details";
-const descriptionFileOriginalName="file name givent while uploading";
+const descriptionFileOriginalName="file name givent while uploading, if there is no image then give 'nil; here";
 
 
 
@@ -32,7 +32,7 @@ class CategoriesCreateList {
   @IsNumber()
   @ApiProperty({})
   code: number;
-  
+
   @IsString()
   @ApiProperty({description:descriptionFileOriginalName})
   fileOriginalName: string;
