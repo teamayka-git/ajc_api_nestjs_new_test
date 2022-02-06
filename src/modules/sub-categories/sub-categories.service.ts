@@ -164,7 +164,7 @@ export class SubCategoriesService {
         });
         
         globalGalleryId=resultGlobalGallery._id;
-        updateObject["_globalGalleryI"]=globalGalleryId
+        updateObject["_globalGalleryId"]=globalGalleryId
       }
     
 

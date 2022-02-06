@@ -264,7 +264,6 @@ export class SupplierService {
                 file['image'][0]['filename'],
               ));
 
-        console.log("image thumb generating");
     
         }
 
@@ -326,14 +325,12 @@ export class SupplierService {
 
 
 
-        console.log("image id  "+globalGalleryId);
 
-        updateObject["_globalGalleryI"]=globalGalleryId
+        updateObject["_globalGalleryId"]=globalGalleryId
       }
     
 
 
-console.log("updateObject    "+JSON.stringify(updateObject));
 
 
 

@@ -142,7 +142,7 @@ export class StoneService {
         });
         
         globalGalleryId=resultGlobalGallery._id;
-        updateObject["_globalGalleryI"]=globalGalleryId
+        updateObject["_globalGalleryId"]=globalGalleryId
       }
     
 

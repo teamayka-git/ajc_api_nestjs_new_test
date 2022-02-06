@@ -182,7 +182,7 @@ export class BranchService {
       });
       
       globalGalleryId=resultGlobalGallery._id;
-      updateObject["_globalGalleryI"]=globalGalleryId
+      updateObject["_globalGalleryId"]=globalGalleryId
     }
 
 

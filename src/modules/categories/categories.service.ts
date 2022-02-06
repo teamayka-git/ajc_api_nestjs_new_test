@@ -146,7 +146,7 @@ export class CategoriesService {
         });
         
         globalGalleryId=resultGlobalGallery._id;
-        updateObject["_globalGalleryI"]=globalGalleryId
+        updateObject["_globalGalleryId"]=globalGalleryId
       }
     
 

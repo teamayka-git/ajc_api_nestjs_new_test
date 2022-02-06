@@ -332,7 +332,7 @@ export class AgentService {
     });
     
     globalGalleryId=resultGlobalGallery._id;
-    updateObject["_globalGalleryI"]=globalGalleryId
+    updateObject["_globalGalleryId"]=globalGalleryId
   }
 
 
