@@ -34,7 +34,7 @@ export interface GlobalGalleryCategories {
 
 
 GlobalGalleryCategoriesSchema.index({_status: 1});
-GlobalGalleryCategoriesSchema.index({ _name: 1 });
+GlobalGalleryCategoriesSchema.index({ _name: 1,_id:1 });
 GlobalGalleryCategoriesSchema.index(
   { _name: 1 },
   { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },

@@ -32,8 +32,8 @@ export interface Departments {
 }
 
 DepartmentsSchema.index({_status: 1});
-DepartmentsSchema.index({_code: 1});
-DepartmentsSchema.index({_name: 1});
+DepartmentsSchema.index({_code: 1,_id:1});
+DepartmentsSchema.index({_name: 1,_id:1});
 DepartmentsSchema.index({_code: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 DepartmentsSchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 DepartmentsSchema.post('save', async function(error, doc, next) {

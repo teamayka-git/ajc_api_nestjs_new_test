@@ -32,7 +32,7 @@ export interface Counters {
 
 
 CountersSchema.index({_status: 1});
-CountersSchema.index({_tableName: 1});
+CountersSchema.index({_tableName: 1,_id:1});
 CountersSchema.index({_tableName: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 CountersSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);

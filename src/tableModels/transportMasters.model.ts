@@ -28,8 +28,8 @@ export interface TransportMasters {
 }
 
 TransportMastersSchema.index({_status: 1});
-TransportMastersSchema.index({_name: 1});
-TransportMastersSchema.index({_name: 1});
+TransportMastersSchema.index({_type: 1});
+TransportMastersSchema.index({_name: 1,_id:1});
 TransportMastersSchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 TransportMastersSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);

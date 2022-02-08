@@ -39,7 +39,7 @@ export interface GroupMasters {
 
 GroupMastersSchema.index({_status: 1});
 GroupMastersSchema.index({_hsnCode: 1});
-GroupMastersSchema.index({_name: 1});
+GroupMastersSchema.index({_name: 1,_id:1});
 GroupMastersSchema.index({_rawMaterialStatus: 1});
 GroupMastersSchema.index({_meltingPurity: 1});
 GroupMastersSchema.index({_taxPercentage: 1});

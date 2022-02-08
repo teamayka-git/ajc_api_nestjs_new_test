@@ -28,7 +28,7 @@ export interface TcsMasters {
 
 
 TcsMastersSchema.index({_status: 1});
-TcsMastersSchema.index({_percentage: 1});
+TcsMastersSchema.index({_percentage: 1,_id:1});
 TcsMastersSchema.index({_percentage: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 TcsMastersSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);

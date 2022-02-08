@@ -30,7 +30,7 @@ export interface Company {
 }
 
 CompanySchema.index({_status: 1});
-CompanySchema.index({_name: 1});
+CompanySchema.index({_name: 1,_id:1});
 CompanySchema.index({_place: 1});
 CompanySchema.index({_email: 1});
 CompanySchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});

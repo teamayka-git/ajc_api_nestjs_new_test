@@ -37,7 +37,7 @@ export interface Bank {
 
 BankSchema.index({_status: 1});
 BankSchema.index({_type: 1});
-BankSchema.index({_acNo: 1});
+BankSchema.index({_acNo: 1,_id:1});
 BankSchema.index({_acNo: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 BankSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);

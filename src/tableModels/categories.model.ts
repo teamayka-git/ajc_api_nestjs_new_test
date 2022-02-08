@@ -48,8 +48,8 @@ export interface Categories {
 CategoriesSchema.index({_status: 1});
 CategoriesSchema.index({ _description: 1 });
 CategoriesSchema.index({ _groupId: 1 });
-CategoriesSchema.index({ _code: 1 });
-CategoriesSchema.index({ _name: 1 });
+CategoriesSchema.index({ _code: 1,_id:1 });
+CategoriesSchema.index({ _name: 1 ,_id:1});
 CategoriesSchema.index(
   { _name: 1 },
   { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },

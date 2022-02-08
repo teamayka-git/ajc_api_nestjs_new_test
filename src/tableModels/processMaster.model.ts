@@ -30,8 +30,8 @@ export interface ProcessMaster {
 }
 
 ProcessMasterSchema.index({_status: 1});
-ProcessMasterSchema.index({_name: 1});
-ProcessMasterSchema.index({_code: 1});
+ProcessMasterSchema.index({_name: 1,_id:1});
+ProcessMasterSchema.index({_code: 1,_id:1});
 ProcessMasterSchema.index({_code: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 ProcessMasterSchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 ProcessMasterSchema.post('save', async function(error, doc, next) {

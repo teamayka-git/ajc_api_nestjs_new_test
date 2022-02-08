@@ -44,7 +44,7 @@ EmployeeSchema.index({_name: 1});
 EmployeeSchema.index({_gender: 1});
 EmployeeSchema.index({_mobile: 1});
 EmployeeSchema.index({_uid: 1});
-EmployeeSchema.index({_email: 1});
+EmployeeSchema.index({_email: 1,_id:1});
 EmployeeSchema.index({_email: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 EmployeeSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);

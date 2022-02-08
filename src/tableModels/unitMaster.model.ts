@@ -29,7 +29,7 @@ export interface UnitMaster {
 
 UnitMasterSchema.index({_status: 1});
 UnitMasterSchema.index({_value: 1});
-UnitMasterSchema.index({_name: 1});
+UnitMasterSchema.index({_name: 1,_id:1});
 UnitMasterSchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 UnitMasterSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);

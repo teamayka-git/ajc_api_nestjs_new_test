@@ -29,7 +29,7 @@ export interface Factory {
 
 FactorySchema.index({_status: 1});
 FactorySchema.index({_cityId: 1});
-FactorySchema.index({_name: 1});
+FactorySchema.index({_name: 1,_id:1});
 FactorySchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 FactorySchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);

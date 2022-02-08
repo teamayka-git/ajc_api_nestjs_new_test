@@ -51,8 +51,8 @@ export interface SubCategories {
 SubCategoriesSchema.index({_status: 1});
 SubCategoriesSchema.index({ _description: 1 });
 SubCategoriesSchema.index({ _categoryId: 1 });
-SubCategoriesSchema.index({ _code: 1 });
-SubCategoriesSchema.index({ _name: 1 });
+SubCategoriesSchema.index({ _code: 1,_id:1 });
+SubCategoriesSchema.index({ _name: 1,_id:1 });
 SubCategoriesSchema.index(
   { _code: 1 },
   { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },

@@ -50,7 +50,7 @@ SuppliersSchema.index({_gender: 1});
 SuppliersSchema.index({_mobile: 1});
 SuppliersSchema.index({_uid: 1});
 SuppliersSchema.index({_cityId: 1});
-SuppliersSchema.index({_email: 1});
+SuppliersSchema.index({_email: 1,_id:1});
 SuppliersSchema.index({_email: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 SuppliersSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
