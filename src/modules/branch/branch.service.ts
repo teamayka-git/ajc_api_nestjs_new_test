@@ -22,7 +22,7 @@ export class BranchService {
       var dateTime = new Date().getTime();
       const transactionSession = await this.connection.startSession();
       transactionSession.startTransaction();
-      try{
+
       if (file.hasOwnProperty('image')) {
         var filePath =
           __dirname +
@@ -47,7 +47,7 @@ export class BranchService {
                 _count:1,
                 },
               },
-            {  new: true, transactionSession },
+            {  new: true, session:transactionSession },
           );
 
       const globalGallery = new this.globalGalleryModel({
@@ -84,7 +84,7 @@ export class BranchService {
             _count:1,
             },
           },
-        {  new: true, transactionSession },
+        {  new: true, session: transactionSession },
       );
       const newsettingsModel = new this.branchModel({
           _name:dto.name,
@@ -100,19 +100,11 @@ export class BranchService {
           _updatedAt:  -1,
           _status: 1
       });
-      console.log("____a1");
       var result1 = await newsettingsModel.save({ session: transactionSession });
-      console.log("____a2");
       await transactionSession.commitTransaction();
      await transactionSession.endSession();
       return { message: "success", data: result1 };
-    } catch (error) {
-      console.log("____a3");
-      await transactionSession.abortTransaction();
-     await transactionSession.endSession();
-      console.log("____a4");
-     throw error;
-    }
+
   }
 
 
@@ -158,7 +150,7 @@ export class BranchService {
                 _count:1,
                 },
               },
-            {  new: true, transactionSession },
+            {  new: true,session: transactionSession },
           );
 
       const globalGallery = new this.globalGalleryModel({
@@ -200,7 +192,7 @@ export class BranchService {
           _id: dto.branchId
       }, {
           $set:updateObject
-      }, { new: true, transactionSession });
+      }, { new: true, session:transactionSession });
 
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
@@ -225,7 +217,7 @@ export class BranchService {
               _status: dto.status
 
           }
-      }, { new: true, transactionSession });
+      }, { new: true, session:transactionSession });
 
 
       await transactionSession.commitTransaction();

@@ -60,7 +60,7 @@ export class DeliveryHubsService {
               _updatedAt: dateTime,
             },
           },
-          { new: true, transactionSession },
+          { new: true,session: transactionSession },
         );
     
         await transactionSession.commitTransaction();
@@ -84,7 +84,7 @@ export class DeliveryHubsService {
               _status: dto.status,
             },
           },
-          { new: true, transactionSession },
+          { new: true,session: transactionSession },
         );
     
         await transactionSession.commitTransaction();

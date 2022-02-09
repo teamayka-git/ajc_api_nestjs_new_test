@@ -64,7 +64,7 @@ export class StatesService {
           _updatedAt: dateTime,
         },
       },
-      { new: true, transactionSession },
+      { new: true,session: transactionSession },
     );
 
     await transactionSession.commitTransaction();
@@ -88,7 +88,7 @@ export class StatesService {
           _status: dto.status,
         },
       },
-      { new: true, transactionSession },
+      { new: true, session:transactionSession },
     );
 
     await transactionSession.commitTransaction();

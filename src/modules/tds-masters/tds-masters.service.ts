@@ -58,7 +58,7 @@ export class TdsMastersService {
               _updatedAt: dateTime,
             },
           },
-          { new: true, transactionSession },
+          { new: true, session:transactionSession },
         );
     
         await transactionSession.commitTransaction();
@@ -82,7 +82,7 @@ export class TdsMastersService {
               _status: dto.status,
             },
           },
-          { new: true, transactionSession },
+          { new: true,session: transactionSession },
         );
     
         await transactionSession.commitTransaction();

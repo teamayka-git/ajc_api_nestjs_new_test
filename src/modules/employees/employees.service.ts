@@ -65,7 +65,7 @@ private readonly counterModel: mongoose.Model<Counters>,
     }
 
 
-await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_lastLogin:dateTime}} , { new: true, transactionSession });
+await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_lastLogin:dateTime}} , { new: true,session: transactionSession });
 
 
     var resultUser = await this.userModel
@@ -146,7 +146,7 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
               _count:1,
               },
             },
-          {  new: true, transactionSession },
+          {  new: true, session:transactionSession },
         );
 
     const globalGallery = new this.globalGalleryModel({
@@ -187,7 +187,7 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
           _count: 1,
         },
       },
-      { new: true, transactionSession },
+      { new: true, session:transactionSession },
     );
 
     var password = '';
@@ -293,7 +293,7 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
               _count:1,
               },
             },
-          {  new: true, transactionSession },
+          {  new: true, session:transactionSession },
         );
 
     const globalGallery = new this.globalGalleryModel({
@@ -335,7 +335,7 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
       {
         $set: updateObject
       },
-      { new: true, transactionSession },
+      { new: true,session: transactionSession },
     );
 
     await transactionSession.commitTransaction();
@@ -359,7 +359,7 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
           _status: dto.status,
         },
       },
-      { new: true, transactionSession },
+      { new: true,session: transactionSession },
     );
 
     await transactionSession.commitTransaction();

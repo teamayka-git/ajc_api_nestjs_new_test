@@ -86,7 +86,7 @@ if(mapItem.userId=="nil"){
               _updatedAt: dateTime,
             },
           },
-          { new: true, transactionSession },
+          { new: true,session: transactionSession },
         );
     
         await transactionSession.commitTransaction();
@@ -110,7 +110,7 @@ if(mapItem.userId=="nil"){
               _status: dto.status,
             },
           },
-          { new: true, transactionSession },
+          { new: true,session: transactionSession },
         );
     
         await transactionSession.commitTransaction();

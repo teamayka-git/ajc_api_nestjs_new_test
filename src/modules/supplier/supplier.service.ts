@@ -68,7 +68,7 @@ export class SupplierService {
         }
     
     
-    await this.suppliersModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_lastLogin:dateTime}} , { new: true, transactionSession });
+    await this.suppliersModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_lastLogin:dateTime}} , { new: true,session: transactionSession });
     
         var resultUser = await this.userModel
           .aggregate([
@@ -154,7 +154,7 @@ export class SupplierService {
                   _count:1,
                   },
                 },
-              {  new: true, transactionSession },
+              {  new: true,session: transactionSession },
             );
     
         const globalGallery = new this.globalGalleryModel({
@@ -201,7 +201,7 @@ export class SupplierService {
                 _count: 1,
               },
             },
-            { new: true, transactionSession },
+            { new: true,session: transactionSession },
           );
       
           var password = '';
@@ -316,7 +316,7 @@ export class SupplierService {
                   _count:1,
                   },
                 },
-              {  new: true, transactionSession },
+              {  new: true,session: transactionSession },
             );
     
         const globalGallery = new this.globalGalleryModel({
@@ -365,7 +365,7 @@ export class SupplierService {
           {
             $set: updateObject
           },
-          { new: true, transactionSession },
+          { new: true,session: transactionSession },
         );
     
         await transactionSession.commitTransaction();
@@ -389,7 +389,7 @@ export class SupplierService {
               _status: dto.status,
             },
           },
-          { new: true, transactionSession },
+          { new: true,session: transactionSession },
         );
     
         await transactionSession.commitTransaction();

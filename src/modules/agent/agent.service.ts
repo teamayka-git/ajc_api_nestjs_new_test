@@ -82,7 +82,7 @@ export class AgentService {
     await this.agentModel.findOneAndUpdate(
       { _id: resultEmployee[0]._id },
       { $set: { _lastLogin: dateTime } },
-      { new: true, transactionSession },
+      { new: true, session:transactionSession },
     );
 
     var resultUser = await this.userModel
@@ -163,7 +163,7 @@ export class AgentService {
               _count:1,
               },
             },
-          {  new: true, transactionSession },
+          {  new: true,session: transactionSession },
         );
 
     const globalGallery = new this.globalGalleryModel({
@@ -204,7 +204,7 @@ export class AgentService {
           _count: 1,
         },
       },
-      { new: true, transactionSession },
+      { new: true,session: transactionSession },
     );
 
     var password = '';
@@ -326,7 +326,7 @@ export class AgentService {
               _count:1,
               },
             },
-          {  new: true, transactionSession },
+          {  new: true,session: transactionSession },
         );
 
     const globalGallery = new this.globalGalleryModel({
@@ -368,7 +368,7 @@ export class AgentService {
       {
         $set: updateObject
       },
-      { new: true, transactionSession },
+      { new: true,session: transactionSession },
     );
 
     await transactionSession.commitTransaction();
@@ -392,7 +392,7 @@ export class AgentService {
           _status: dto.status,
         },
       },
-      { new: true, transactionSession },
+      { new: true, session:transactionSession },
     );
 
     await transactionSession.commitTransaction();

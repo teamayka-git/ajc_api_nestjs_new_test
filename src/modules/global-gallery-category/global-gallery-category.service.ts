@@ -57,7 +57,7 @@ export class GlobalGalleryCategoryService {
               _updatedAt: dateTime,
             },
           },
-          { new: true, transactionSession },
+          { new: true,session: transactionSession },
         );
     
         await transactionSession.commitTransaction();
@@ -81,7 +81,7 @@ export class GlobalGalleryCategoryService {
               _status: dto.status,
             },
           },
-          { new: true, transactionSession },
+          { new: true,session: transactionSession },
         );
     
         await transactionSession.commitTransaction();

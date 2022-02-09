@@ -68,7 +68,7 @@ export class GeneralsService {
               _updatedAt: dateTime,
             },
           },
-          { new: true, transactionSession },
+          { new: true,session: transactionSession },
         );
     
         await transactionSession.commitTransaction();
@@ -92,7 +92,7 @@ export class GeneralsService {
               _status: dto.status,
             },
           },
-          { new: true, transactionSession },
+          { new: true,session: transactionSession },
         );
     
         await transactionSession.commitTransaction();

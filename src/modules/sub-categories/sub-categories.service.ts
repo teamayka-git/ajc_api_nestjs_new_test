@@ -43,7 +43,7 @@ export class SubCategoriesService {
                 _count: file['image'].length,
               },
             },
-            { new: true, transactionSession },
+            { new: true, session:transactionSession },
           );
     
           for (var i = 0; i < file['image'].length; i++) {
@@ -193,7 +193,7 @@ export class SubCategoriesService {
                   _count:1,
                   },
                 },
-              {  new: true, transactionSession },
+              {  new: true,session: transactionSession },
             );
     
         const globalGallery = new this.globalGalleryModel({
@@ -233,7 +233,7 @@ export class SubCategoriesService {
           {
             $set:updateObject
           },
-          { new: true, transactionSession },
+          { new: true,session: transactionSession },
         );
     
         await transactionSession.commitTransaction();
@@ -257,7 +257,7 @@ export class SubCategoriesService {
               _status: dto.status,
             },
           },
-          { new: true, transactionSession },
+          { new: true, session:transactionSession },
         );
     
         await transactionSession.commitTransaction();

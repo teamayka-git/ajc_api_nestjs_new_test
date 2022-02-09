@@ -60,7 +60,7 @@ export class UnitMastersService {
               _updatedAt: dateTime,
             },
           },
-          { new: true, transactionSession },
+          { new: true, session:transactionSession },
         );
     
         await transactionSession.commitTransaction();
@@ -84,7 +84,7 @@ export class UnitMastersService {
               _status: dto.status,
             },
           },
-          { new: true, transactionSession },
+          { new: true,session: transactionSession },
         );
     
         await transactionSession.commitTransaction();

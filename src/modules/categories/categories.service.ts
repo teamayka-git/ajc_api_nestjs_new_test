@@ -41,7 +41,7 @@ export class CategoriesService {
                 _count: file['image'].length,
               },
             },
-            { new: true, transactionSession },
+            { new: true,session: transactionSession },
           );
     
           for (var i = 0; i < file['image'].length; i++) {
@@ -181,7 +181,7 @@ export class CategoriesService {
                   _count:1,
                   },
                 },
-              {  new: true, transactionSession },
+              {  new: true,session: transactionSession },
             );
     
         const globalGallery = new this.globalGalleryModel({
@@ -223,7 +223,7 @@ export class CategoriesService {
           {
             $set: updateObject
           },
-          { new: true, transactionSession },
+          { new: true,session: transactionSession },
         );
     
         await transactionSession.commitTransaction();
@@ -247,7 +247,7 @@ export class CategoriesService {
               _status: dto.status,
             },
           },
-          { new: true, transactionSession },
+          { new: true,session: transactionSession },
         );
     
         await transactionSession.commitTransaction();

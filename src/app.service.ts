@@ -126,7 +126,7 @@ export class AppService {
           },
           $set: { _status: 1 },
         },
-        { upsert: true, new: true, transactionSession },
+        { upsert: true, new: true,session: transactionSession },
       );
 
       await this.countersModel.findOneAndUpdate(
@@ -141,7 +141,7 @@ export class AppService {
           },
           $set: { _status: 1 },
         },
-        { upsert: true, new: true, transactionSession },
+        { upsert: true, new: true,session: transactionSession },
       );
 
       await this.countersModel.findOneAndUpdate(
@@ -156,7 +156,7 @@ export class AppService {
           },
           $set: { _status: 1 },
         },
-        { upsert: true, new: true, transactionSession },
+        { upsert: true, new: true, session:transactionSession },
       );
 
       await this.countersModel.findOneAndUpdate(
@@ -171,7 +171,7 @@ export class AppService {
           },
           $set: { _status: 1 },
         },
-        { upsert: true, new: true, transactionSession },
+        { upsert: true, new: true, session:transactionSession },
       );
 
       await this.countersModel.findOneAndUpdate(
@@ -186,7 +186,7 @@ export class AppService {
           },
           $set: { _status: 1 },
         },
-        { upsert: true, new: true, transactionSession },
+        { upsert: true, new: true,session: transactionSession },
       );
 
 
@@ -217,7 +217,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
     
           var resultUser = await this.userModel.findOneAndUpdate(
@@ -236,7 +236,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true, session:transactionSession },
           );
     
           userId = resultUser._id;
@@ -257,7 +257,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
           await this.generalsModel.findOneAndUpdate(
             { _code: 1000 },
@@ -276,7 +276,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true, session:transactionSession },
           );
           await this.generalsModel.findOneAndUpdate(
             { _code: 1001 },
@@ -295,7 +295,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
     
           await this.generalsModel.findOneAndUpdate(
@@ -315,7 +315,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
     
           await this.generalsModel.findOneAndUpdate(
@@ -335,7 +335,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true, session:transactionSession },
           );
           await this.generalsModel.findOneAndUpdate(
             { _code: 1004 },
@@ -354,7 +354,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
           await this.generalsModel.findOneAndUpdate(
             { _code: 1005 },
@@ -373,7 +373,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
     
           await this.generalsModel.findOneAndUpdate(
@@ -393,7 +393,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
     
           await this.generalsModel.findOneAndUpdate(
@@ -413,7 +413,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
           await this.generalsModel.findOneAndUpdate(
             { _code: 1008 },
@@ -432,7 +432,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true, session:transactionSession },
           );
           await this.generalsModel.findOneAndUpdate(
             { _code: 1009 },
@@ -451,7 +451,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
     
           await this.generalsModel.findOneAndUpdate(
@@ -471,7 +471,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
           await this.generalsModel.findOneAndUpdate(
             { _code: 1011 },
@@ -490,7 +490,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
           await this.generalsModel.findOneAndUpdate(
             { _code: 1012 },
@@ -509,7 +509,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true, session:transactionSession },
           );
     
           await this.generalsModel.findOneAndUpdate(
@@ -529,7 +529,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
           await this.generalsModel.findOneAndUpdate(
             { _code: 1014 },
@@ -548,7 +548,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true, session:transactionSession },
           );
     
           await this.generalsModel.findOneAndUpdate(
@@ -568,7 +568,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
 
           await this.generalsModel.findOneAndUpdate(
@@ -588,7 +588,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true, session:transactionSession },
           );
 
           await this.generalsModel.findOneAndUpdate(
@@ -608,7 +608,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
 
 
@@ -630,7 +630,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true, session:transactionSession },
           );
 
 
@@ -648,7 +648,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true, session:transactionSession },
           );
 
 
@@ -666,7 +666,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
 
 
@@ -684,7 +684,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
 
           await this.departmentModel.findOneAndUpdate(
@@ -702,7 +702,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
 
           await this.departmentModel.findOneAndUpdate(
@@ -720,7 +720,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
 
           await this.departmentModel.findOneAndUpdate(
@@ -738,7 +738,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
 
           await this.departmentModel.findOneAndUpdate(
@@ -756,7 +756,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true, session:transactionSession },
           );
 
 
@@ -775,7 +775,7 @@ export class AppService {
               },
               $set: { _status: 1 },
             },
-            { upsert: true, new: true, transactionSession },
+            { upsert: true, new: true,session: transactionSession },
           );
 
 

@@ -97,7 +97,7 @@ export class GlobalGalleryService {
           _count:dto.array.length,
           },
         },
-      {  new: true, transactionSession },
+      {  new: true,session: transactionSession },
     );
 
 
@@ -173,7 +173,7 @@ export class GlobalGalleryService {
           _status: dto.status,
         },
       },
-      { new: true, transactionSession },
+      { new: true,session: transactionSession },
     );
 
     await transactionSession.commitTransaction();
