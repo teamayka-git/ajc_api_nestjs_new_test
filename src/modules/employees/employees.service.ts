@@ -140,7 +140,7 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
     if (file.hasOwnProperty('image')) {
 
       var resultCounterPurchase= await this.counterModel.findOneAndUpdate(
-          { _table_name: ModelNames.GLOBAL_GALLERIES},
+          { _tableName: ModelNames.GLOBAL_GALLERIES},
           {
             $inc: {
               _count:1,
@@ -181,7 +181,7 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
 
 
     var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
-      { _table_name: ModelNames.EMPLOYEES },
+      { _tableName: ModelNames.EMPLOYEES },
       {
         $inc: {
           _count: 1,
@@ -287,7 +287,7 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
     if (file.hasOwnProperty('image')) {
 
       var resultCounterPurchase= await this.counterModel.findOneAndUpdate(
-          { _table_name: ModelNames.GLOBAL_GALLERIES},
+          { _tableName: ModelNames.GLOBAL_GALLERIES},
           {
             $inc: {
               _count:1,

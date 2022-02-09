@@ -37,7 +37,7 @@ export class SubCategoriesService {
         
         if (file.hasOwnProperty('image')) {
           var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
-            { _table_name: ModelNames.GLOBAL_GALLERIES },
+            { _tableName: ModelNames.GLOBAL_GALLERIES },
             {
               $inc: {
                 _count: file['image'].length,
@@ -187,7 +187,7 @@ export class SubCategoriesService {
         if (file.hasOwnProperty('image')) {
     
           var resultCounterPurchase= await this.counterModel.findOneAndUpdate(
-              { _table_name: ModelNames.GLOBAL_GALLERIES},
+              { _tableName: ModelNames.GLOBAL_GALLERIES},
               {
                 $inc: {
                   _count:1,

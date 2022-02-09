@@ -22,7 +22,7 @@ export class BranchService {
       var dateTime = new Date().getTime();
       const transactionSession = await this.connection.startSession();
       transactionSession.startTransaction();
-
+      try{
       if (file.hasOwnProperty('image')) {
         var filePath =
           __dirname +
@@ -41,7 +41,7 @@ export class BranchService {
       if (file.hasOwnProperty('image')) {
 
         var resultCounterPurchase= await this.countersModel.findOneAndUpdate(
-            { _table_name: ModelNames.GLOBAL_GALLERIES},
+            { _tableName: ModelNames.GLOBAL_GALLERIES},
             {
               $inc: {
                 _count:1,
@@ -78,7 +78,7 @@ export class BranchService {
       globalGalleryId=resultGlobalGallery._id;
     }
     var resultCounterPurchase= await this.countersModel.findOneAndUpdate(
-        { _table_name: ModelNames.BRANCHES},
+        { _tableName: ModelNames.BRANCHES},
         {
           $inc: {
             _count:1,
@@ -100,11 +100,19 @@ export class BranchService {
           _updatedAt:  -1,
           _status: 1
       });
+      console.log("____a1");
       var result1 = await newsettingsModel.save({ session: transactionSession });
-
+      console.log("____a2");
       await transactionSession.commitTransaction();
-      await transactionSession.endSession();
+     await transactionSession.endSession();
       return { message: "success", data: result1 };
+    } catch (error) {
+      console.log("____a3");
+      await transactionSession.abortTransaction();
+     await transactionSession.endSession();
+      console.log("____a4");
+     throw error;
+    }
   }
 
 
@@ -144,7 +152,7 @@ export class BranchService {
       if (file.hasOwnProperty('image')) {
 
         var resultCounterPurchase= await this.countersModel.findOneAndUpdate(
-            { _table_name: ModelNames.GLOBAL_GALLERIES},
+            { _tableName: ModelNames.GLOBAL_GALLERIES},
             {
               $inc: {
                 _count:1,

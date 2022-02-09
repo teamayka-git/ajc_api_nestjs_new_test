@@ -148,7 +148,7 @@ export class SupplierService {
         if (file.hasOwnProperty('image')) {
     
           var resultCounterPurchase= await this.counterModel.findOneAndUpdate(
-              { _table_name: ModelNames.GLOBAL_GALLERIES},
+              { _tableName: ModelNames.GLOBAL_GALLERIES},
               {
                 $inc: {
                   _count:1,
@@ -195,7 +195,7 @@ export class SupplierService {
 
 
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
-            { _table_name: ModelNames.SUPPLIERS },
+            { _tableName: ModelNames.SUPPLIERS },
             {
               $inc: {
                 _count: 1,
@@ -310,7 +310,7 @@ export class SupplierService {
         if (file.hasOwnProperty('image')) {
     
           var resultCounterPurchase= await this.counterModel.findOneAndUpdate(
-              { _table_name: ModelNames.GLOBAL_GALLERIES},
+              { _tableName: ModelNames.GLOBAL_GALLERIES},
               {
                 $inc: {
                   _count:1,

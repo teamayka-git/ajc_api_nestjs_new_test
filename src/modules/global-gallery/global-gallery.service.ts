@@ -91,7 +91,7 @@ export class GlobalGalleryService {
 
 
     var resultCounterPurchase= await this.counterModel.findOneAndUpdate(
-      { _table_name: ModelNames.GLOBAL_GALLERIES},
+      { _tableName: ModelNames.GLOBAL_GALLERIES},
       {
         $inc: {
           _count:dto.array.length,

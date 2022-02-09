@@ -157,7 +157,7 @@ export class AgentService {
     if (file.hasOwnProperty('image')) {
 
       var resultCounterPurchase= await this.counterModel.findOneAndUpdate(
-          { _table_name: ModelNames.GLOBAL_GALLERIES},
+          { _tableName: ModelNames.GLOBAL_GALLERIES},
           {
             $inc: {
               _count:1,
@@ -198,7 +198,7 @@ export class AgentService {
 
 
     var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
-      { _table_name: ModelNames.AGENTS },
+      { _tableName: ModelNames.AGENTS },
       {
         $inc: {
           _count: 1,
@@ -320,7 +320,7 @@ export class AgentService {
     if (file.hasOwnProperty('image')) {
 
       var resultCounterPurchase= await this.counterModel.findOneAndUpdate(
-          { _table_name: ModelNames.GLOBAL_GALLERIES},
+          { _tableName: ModelNames.GLOBAL_GALLERIES},
           {
             $inc: {
               _count:1,
