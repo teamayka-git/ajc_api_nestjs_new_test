@@ -21,7 +21,7 @@ export class DepartmentsService {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var arrayToStates = [];
 
     dto.array.map((mapItem) => {
@@ -46,13 +46,18 @@ export class DepartmentsService {
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
     return { message: 'success', data: { list: result1 } };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
   async edit(dto: DepartmentEditDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var result = await this.departmentModel.findOneAndUpdate(
       {
         _id: dto.departmentId,
@@ -73,13 +78,18 @@ export class DepartmentsService {
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
     return { message: 'success', data: result };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
   async status_change(dto: DepartmentStatusChangeDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var result = await this.departmentModel.updateMany(
       {
         _id: { $in: dto.departmentIds },
@@ -97,13 +107,18 @@ export class DepartmentsService {
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
     return { message: 'success', data: result };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
   async list(dto: DepartmentListDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var arrayAggregation = [];
     arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
@@ -176,5 +191,10 @@ export class DepartmentsService {
       message: 'success',
       data: { list: result, totalCount: totalCount },
     };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 }

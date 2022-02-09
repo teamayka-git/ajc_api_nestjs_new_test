@@ -16,7 +16,7 @@ export class GroupMastersService {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var arrayToStates = [];
     
         dto.array.map((mapItem) => {
@@ -44,13 +44,18 @@ export class GroupMastersService {
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: 'success', data: { list: result1 } };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
     
       async edit(dto: GroupMastersEditDto, _userId_: string) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var result = await this.groupMastersModel.findOneAndUpdate(
           {
             _id: dto.groupMasterId,
@@ -75,13 +80,18 @@ export class GroupMastersService {
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: 'success', data: result };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
     
       async status_change(dto: GroupMastersStatusChangeDto, _userId_: string) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var result = await this.groupMastersModel.updateMany(
           {
             _id: { $in: dto.groupMasterIds },
@@ -99,13 +109,18 @@ export class GroupMastersService {
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: 'success', data: result };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
     
       async list(dto: GroupMastersListDto) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var arrayAggregation = [];
         arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
     
@@ -190,6 +205,11 @@ export class GroupMastersService {
           message: 'success',
           data: { list: result, totalCount: totalCount },
         };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
 
 }

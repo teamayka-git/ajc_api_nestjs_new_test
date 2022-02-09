@@ -29,7 +29,7 @@ export class SupplierService {
     
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var resultEmployee = await this.suppliersModel
           .aggregate([{ $match: { _email: dto.email } }])
           .session(transactionSession);
@@ -112,14 +112,19 @@ export class SupplierService {
         await transactionSession.endSession();
     
         return resultUser[0];
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
     
     
       async create(dto: SupplierCreateDto, _userId_: string, file: Object) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-
+try{
 
 
 
@@ -268,13 +273,18 @@ export class SupplierService {
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: 'success', data: { list: result1 } };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
     
       async edit(dto: SupplierEditDto, _userId_: string, file: Object) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
 
 
 
@@ -371,13 +381,18 @@ export class SupplierService {
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: 'success', data: result };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
     
       async status_change(dto: SupplierStatusChangeDto, _userId_: string) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var result = await this.suppliersModel.updateMany(
           {
             _id: { $in: dto.supplierIds },
@@ -395,13 +410,18 @@ export class SupplierService {
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: 'success', data: result };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
     
       async list(dto: SupplierListDto) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var arrayAggregation = [];
         arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
     
@@ -518,14 +538,19 @@ export class SupplierService {
           message: 'success',
           data: { list: result, totalCount: totalCount },
         };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
 
 
       async listFilterLoadingSupplier(dto: ListFilterLocadingSupplierDto) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var arrayAggregation = [];
         arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
     
@@ -594,5 +619,10 @@ export class SupplierService {
           message: 'success',
           data: { list: result, totalCount: totalCount },
         };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
 }

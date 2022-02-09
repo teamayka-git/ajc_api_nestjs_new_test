@@ -27,7 +27,7 @@ export class GlobalGalleryService {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var arrayToStates = [];
 
     //Doing thumbnail generation
@@ -155,13 +155,18 @@ export class GlobalGalleryService {
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
     return { message: 'success', data: { list: result1 } };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
   async status_change(dto: GlobalGalleryStatusChangeDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var result = await this.globalGalleryModel.updateMany(
       {
         _id: { $in: dto.globalGalleryIds },
@@ -179,13 +184,18 @@ export class GlobalGalleryService {
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
     return { message: 'success', data: result };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
   async list(dto: GlobalGalleryListDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var arrayAggregation = [];
     arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
@@ -316,5 +326,10 @@ export class GlobalGalleryService {
       message: 'success',
       data: { list: result, totalCount: totalCount },
     };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 }

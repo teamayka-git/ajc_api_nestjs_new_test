@@ -38,8 +38,8 @@ export class AgentService {
 
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
-    var resultEmployee = await this.agentModel
+try{
+      var resultEmployee = await this.agentModel
       .aggregate([{ $match: { _email: dto.email } }])
       .session(transactionSession);
     if (resultEmployee.length == 0) {
@@ -126,14 +126,19 @@ export class AgentService {
     await transactionSession.endSession();
 
     return resultUser[0];
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
   async create(dto: AgentCreateDto, _userId_: string, file: Object) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
 
-
+try{
 
 
     if (file.hasOwnProperty('image')) {
@@ -273,13 +278,18 @@ export class AgentService {
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
     return { message: 'success', data: result1 };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
   async edit(dto: AgentEditDto, _userId_: string, file: Object) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     if (file.hasOwnProperty('image')) {
       var filePath =
         __dirname +
@@ -374,13 +384,18 @@ export class AgentService {
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
     return { message: 'success', data: result };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
   async status_change(dto: AgentStatusChangeDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var result = await this.agentModel.updateMany(
       {
         _id: { $in: dto.agentIds },
@@ -398,13 +413,18 @@ export class AgentService {
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
     return { message: 'success', data: result };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
   async list(dto: AgentListDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var arrayAggregation = [];
     arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
@@ -532,7 +552,12 @@ export class AgentService {
       message: 'success',
       data: { list: result, totalCount: totalCount },
     };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
 
 
@@ -541,7 +566,7 @@ export class AgentService {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var arrayAggregation = [];
     arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
@@ -610,7 +635,12 @@ export class AgentService {
       message: 'success',
       data: { list: result, totalCount: totalCount },
     };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
 
 }

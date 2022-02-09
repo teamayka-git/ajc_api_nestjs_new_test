@@ -16,7 +16,7 @@ export class ProcessMasterService {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var arrayToStates = [];
     
         dto.array.map((mapItem) => {
@@ -40,13 +40,18 @@ export class ProcessMasterService {
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: 'success', data: { list: result1 } };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
     
       async edit(dto: ProcessMasterEditDto, _userId_: string) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var result = await this.processMasterModel.findOneAndUpdate(
           {
             _id: dto.processMasterId,
@@ -68,13 +73,18 @@ export class ProcessMasterService {
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: 'success', data: result };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
     
       async status_change(dto: ProcessMasterStatusChangeDto, _userId_: string) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var result = await this.processMasterModel.updateMany(
           {
             _id: { $in: dto.processMasterIds },
@@ -92,13 +102,18 @@ export class ProcessMasterService {
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: 'success', data: result };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
     
       async list(dto: ProcessMasterListDto) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var arrayAggregation = [];
         arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
     
@@ -202,7 +217,12 @@ export class ProcessMasterService {
           message: 'success',
           data: { list: result, totalCount: totalCount },
         };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
 
 
 
@@ -211,7 +231,7 @@ export class ProcessMasterService {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var arrayAggregation = [];
         arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
     
@@ -280,7 +300,12 @@ export class ProcessMasterService {
           message: 'success',
           data: { list: result, totalCount: totalCount },
         };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
 
 
 }

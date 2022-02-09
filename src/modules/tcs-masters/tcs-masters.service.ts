@@ -17,7 +17,7 @@ export class TcsMastersService {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var arrayToStates = [];
     
         dto.array.map((mapItem) => {
@@ -39,13 +39,18 @@ export class TcsMastersService {
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: 'success', data: { list: result1 } };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
     
       async edit(dto: TcsMastersEditDto, _userId_: string) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var result = await this.tcsMastersModel.findOneAndUpdate(
           {
             _id: dto.tcsMasterId,
@@ -64,13 +69,18 @@ export class TcsMastersService {
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: 'success', data: result };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
     
       async status_change(dto: TcsMastersStatusChangeDto, _userId_: string) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var result = await this.tcsMastersModel.updateMany(
           {
             _id: { $in: dto.tcsMasterIds },
@@ -88,13 +98,17 @@ export class TcsMastersService {
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: 'success', data: result };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
-    
+    }
       async list(dto: TcsMastersListDto) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var arrayAggregation = [];
         arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
     
@@ -155,6 +169,11 @@ export class TcsMastersService {
           message: 'success',
           data: { list: result, totalCount: totalCount },
         };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
 
 }

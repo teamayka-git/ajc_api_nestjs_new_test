@@ -16,7 +16,7 @@ export class BanksService {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var arrayToStates = [];
     
         dto.array.map((mapItem) => {
@@ -53,13 +53,18 @@ if(mapItem.userId=="nil"){
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: 'success', data: { list: result1 } };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
     
       async edit(dto: BanksEditDto, _userId_: string) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
 
 
         var userId="";
@@ -92,13 +97,18 @@ if(mapItem.userId=="nil"){
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: 'success', data: result };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
     
       async status_change(dto: BanksStatusChangeDto, _userId_: string) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var result = await this.bankModel.updateMany(
           {
             _id: { $in: dto.bankIds },
@@ -116,13 +126,18 @@ if(mapItem.userId=="nil"){
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: 'success', data: result };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
     
       async list(dto: BanksListDto) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-    
+    try{
         var arrayAggregation = [];
         arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
     
@@ -250,6 +265,11 @@ if(mapItem.userId=="nil"){
           message: 'success',
           data: { list: result, totalCount: totalCount },
         };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
       }
+    }
 
 }

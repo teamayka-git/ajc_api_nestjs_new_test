@@ -31,7 +31,7 @@ export class StoneService {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var arrayToStates = [];
     var arrayGlobalGalleries = [];
 
@@ -125,13 +125,18 @@ export class StoneService {
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
     return { message: 'success', data: { list: result1 } };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
   async edit(dto: StoneEditDto, _userId_: string, file: Object) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     if (file.hasOwnProperty('image')) {
       var filePath =
         __dirname +
@@ -209,13 +214,18 @@ export class StoneService {
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
     return { message: 'success', data: result };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
   async status_change(dto: StoneStatusChangeDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var result = await this.stoneModel.updateMany(
       {
         _id: { $in: dto.stoneIds },
@@ -233,13 +243,18 @@ export class StoneService {
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
     return { message: 'success', data: result };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
   async list(dto: StoneListDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var arrayAggregation = [];
     arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
@@ -334,5 +349,10 @@ export class StoneService {
       message: 'success',
       data: { list: result, totalCount: totalCount },
     };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 }

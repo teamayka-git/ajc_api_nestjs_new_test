@@ -21,7 +21,7 @@ export class StatesService {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var arrayToStates = [];
 
     dto.array.map((mapItem) => {
@@ -44,13 +44,18 @@ export class StatesService {
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
     return { message: 'success', data: { list: result1 } };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
   async edit(dto: StatesEditDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var result = await this.statesModel.findOneAndUpdate(
       {
         _id: dto.stateId,
@@ -70,13 +75,18 @@ export class StatesService {
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
     return { message: 'success', data: result };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
   async status_change(dto: StatesStatusChangeDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var result = await this.statesModel.updateMany(
       {
         _id: { $in: dto.stateIds },
@@ -94,13 +104,18 @@ export class StatesService {
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
     return { message: 'success', data: result };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
   async list(dto: StatesListDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var arrayAggregation = [];
     arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
@@ -172,5 +187,10 @@ export class StatesService {
       message: 'success',
       data: { list: result, totalCount: totalCount },
     };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 }

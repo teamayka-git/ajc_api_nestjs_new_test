@@ -22,7 +22,7 @@ export class BranchService {
       var dateTime = new Date().getTime();
       const transactionSession = await this.connection.startSession();
       transactionSession.startTransaction();
-
+try{
       if (file.hasOwnProperty('image')) {
         var filePath =
           __dirname +
@@ -104,7 +104,11 @@ export class BranchService {
       await transactionSession.commitTransaction();
      await transactionSession.endSession();
       return { message: "success", data: result1 };
-
+    }catch(error){
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
   }
 
 
@@ -112,6 +116,9 @@ export class BranchService {
       var dateTime = new Date().getTime();
       const transactionSession = await this.connection.startSession();
       transactionSession.startTransaction();
+
+try{
+
       if (file.hasOwnProperty('image')) {
         var filePath =
           __dirname +
@@ -197,6 +204,11 @@ export class BranchService {
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return { message: "success", data: result };
+    }catch(error){
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
   }
 
 
@@ -206,7 +218,7 @@ export class BranchService {
       var dateTime = new Date().getTime();
       const transactionSession = await this.connection.startSession();
       transactionSession.startTransaction();
-
+try{
       var result = await this.branchModel.updateMany({
           _id: { $in: dto.branchIds }
       }, {
@@ -223,6 +235,11 @@ export class BranchService {
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return { message: "success", data: result };
+    }catch(error){
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
   }
 
 
@@ -231,8 +248,7 @@ export class BranchService {
       var dateTime = new Date().getTime();
       const transactionSession = await this.connection.startSession();
       transactionSession.startTransaction();
-
-
+try{
 
       var arrayAggregation = [];
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
@@ -311,5 +327,10 @@ export class BranchService {
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return { message: "success", data: { list: result, totalCount: totalCount } };
+    }catch(error){
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
   }
 }

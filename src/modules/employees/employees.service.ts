@@ -26,7 +26,7 @@ private readonly counterModel: mongoose.Model<Counters>,
 
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var resultEmployee = await this.employeeModel
       .aggregate([{ $match: { _email: dto.email } }])
       .session(transactionSession);
@@ -110,12 +110,17 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
     await transactionSession.endSession();
 
     return resultUser[0];
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
   async create(dto: EmployeeCreateDto, _userId_: string, file: Object) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
 
 
 
@@ -244,13 +249,18 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
     return { message: 'success', data: result1 };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
   async edit(dto: EmployeeEditDto, _userId_: string, file: Object) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     if (file.hasOwnProperty('image')) {
       var filePath =
         __dirname +
@@ -341,13 +351,18 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
     return { message: 'success', data: result };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
   async status_change(dto: EmployeeStatusChangeDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var result = await this.employeeModel.updateMany(
       {
         _id: { $in: dto.employeeIds },
@@ -365,13 +380,18 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
     return { message: 'success', data: result };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
   async list(dto: EmployeeListDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-
+try{
     var arrayAggregation = [];
     arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
@@ -473,7 +493,12 @@ await this.employeeModel.findOneAndUpdate({_id:resultEmployee[0]._id},{$set:{_la
       message: 'success',
       data: { list: result, totalCount: totalCount },
     };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
   }
+}
 
 
 

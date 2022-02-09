@@ -15,7 +15,7 @@ export class GoldRateTimelinesService {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-  
+  try{
   
   
         
@@ -32,13 +32,18 @@ export class GoldRateTimelinesService {
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: "success", data: result1 };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
+      }
     }
   
     async list(dto: GoldRateTimelinesListDto) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
-  
+  try{
   
   
         var arrayAggregation = [];
@@ -144,6 +149,11 @@ export class GoldRateTimelinesService {
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: "success", data: { list: result, totalCount: totalCount } };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
+      }
     }
 
 
