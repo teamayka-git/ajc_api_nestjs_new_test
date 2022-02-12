@@ -7,4 +7,5 @@ export enum UploadedFileDirectoryPath {
   GLOBAL_GALLERY_BRANCH = './public/upload_files/branch/',
   GLOBAL_GALLERY_EMPLOYEE = './public/upload_files/employee/',
   GLOBAL_GALLERY_SUPPLIER = './public/upload_files/supplier/',
+  GLOBAL_GALLERY_OTHERS = './public/upload_files/others/',
 }

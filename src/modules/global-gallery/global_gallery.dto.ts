@@ -13,11 +13,9 @@ import { Optional } from '@nestjs/common';
 
 
 const descriptionStatus="0-Inactive, 1-Active, 2-Delete";
-const descriptionListScreenTypeForList="0-total documents count,100-category details populate,101-sub category details";
-const descriptionListType="    0-category, 1-sub category, 2-stone, 3-agent, 4-branch, 5-branch, 6-employee, 7-supplier";
+const descriptionListScreenTypeForList="0-total documents count,100-category details populate";
+const descriptionListType=" -1-other   0-category, 1-sub category, 2-stone, 3-agent, 4-branch, 5-branch, 6-employee, 7-supplier";
 const descriptionListDocType="0-image, 1-video, 2-pdf, 3-audio, 4-document";
-
-
 
 
 
@@ -90,11 +88,6 @@ export class GlobalGalleryListDto {
   @ApiProperty({ type: [String] })
   categoryIds: string[];
 
-  @IsArray()
-  @ApiProperty({ type: [String] })
-  subCategoryIds: string[];
-
-
 
   @IsArray()
   @ApiProperty({ type: [Number],description:descriptionListDocType })
@@ -125,6 +118,8 @@ export class GlobalGalleryListDto {
 }
 
 
+
+
 export class GlobalGalleryStatusChangeDto {
 
 
@@ -136,5 +131,25 @@ export class GlobalGalleryStatusChangeDto {
   @IsNumber()
   @ApiProperty({description:descriptionStatus})
   status: number;
+
+}
+export class HomeDefaultFolderDto {
+
+
+  
+
+  @IsNumber()
+  @ApiProperty({})
+  type: number;
+
+}
+export class HomeItemsDto {
+
+
+  
+
+  @IsString()
+  @ApiProperty({})
+  categoryId: string;
 
 }

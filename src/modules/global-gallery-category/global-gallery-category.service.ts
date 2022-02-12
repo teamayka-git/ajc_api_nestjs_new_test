@@ -22,6 +22,8 @@ export class GlobalGalleryCategoryService {
         dto.array.map((mapItem) => {
           arrayToStates.push({
             _name: mapItem.name,
+            _type: mapItem.type,
+            _globalGalleryCategoryId:(mapItem.globalGalleryCategoryId=="nil"||mapItem.globalGalleryCategoryId=="")?null:mapItem.globalGalleryCategoryId,
             _dataGuard:mapItem.dataGuard,
             _createdUserId: _userId_,
             _createdAt: dateTime,
@@ -57,6 +59,8 @@ export class GlobalGalleryCategoryService {
           {
             $set: {
               _name: dto.name,
+              _type: dto.type,
+              _globalGalleryCategoryId:(dto.globalGalleryCategoryId=="nil"||dto.globalGalleryCategoryId=="")?null:dto.globalGalleryCategoryId,
               _dataGuard:dto.dataGuard,
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
@@ -129,6 +133,23 @@ export class GlobalGalleryCategoryService {
           });
           arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
         }
+
+        if (dto.globalGalleryCategoryIds.length > 0) {
+          var newSettingsId = [];
+          dto.globalGalleryCategoryIds.map((mapItem) => {
+            newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+          });
+          arrayAggregation.push({ $match: { _globalGalleryCategoryId: { $in: newSettingsId } } });
+        }
+
+
+
+        if (dto.type.length > 0) {
+          
+          arrayAggregation.push({ $match: { _type: { $in:dto.type } } });
+        }
+
+
     
         switch(dto.sortType){
           case 0: arrayAggregation.push({ $sort: { _id: dto.sortOrder } });              break;

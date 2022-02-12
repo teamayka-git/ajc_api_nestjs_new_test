@@ -72,8 +72,11 @@ export class FileMulterHelper {
       case 5:
         document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_EMPLOYEE;
         break;
-      default:
+      case 6:
         document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_SUPPLIER;
+        break;
+      default:
+        document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_OTHERS;
         break;
     }
     cb(null, document_location);

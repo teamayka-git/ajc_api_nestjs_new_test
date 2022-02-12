@@ -64,7 +64,6 @@ try{
           _id: globalGalleryId,
           __name: file['image'][i]['originalname'],
           _globalGalleryCategoryId: null,
-          _globalGallerySubCategoryId: null,
           _docType: 0,
           _type: 2,
           _uid: resultCounterPurchase._count - file['image'].length + (i + 1),
@@ -175,7 +174,6 @@ try{
       const globalGallery = new this.globalGalleryModel({
         __name: file['image'][0]['originalname'],
         _globalGalleryCategoryId: null,
-        _globalGallerySubCategoryId: null,
         _docType: 0,
         _type: 2,
         _uid: resultCounterPurchase._count,

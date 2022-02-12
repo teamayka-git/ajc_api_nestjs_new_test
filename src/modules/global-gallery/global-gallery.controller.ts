@@ -6,7 +6,7 @@ import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { FileMulterHelper } from 'src/shared/file_multter_helper';
 import { GlobalGalleryService } from './global-gallery.service';
-import { GlobalGalleryCreateDto, GlobalGalleryListDto, GlobalGalleryStatusChangeDto } from './global_gallery.dto';
+import { GlobalGalleryCreateDto, GlobalGalleryListDto, GlobalGalleryStatusChangeDto, HomeDefaultFolderDto, HomeItemsDto } from './global_gallery.dto';
 import { diskStorage } from "multer"
 
 @UseGuards(RolesGuard)
@@ -44,6 +44,22 @@ export class GlobalGalleryController {
   @Post("list")
   list(@Body() dto:GlobalGalleryListDto) {
     return this.globalGalleryService.list(dto);
+  }
+
+  
+  @Post("home")
+  home() {
+    return this.globalGalleryService.home();
+  }
+
+  @Post("homeDefaultFolder")
+  homeDefaultFolder(@Body() dto: HomeDefaultFolderDto) {
+    return this.globalGalleryService.homeDefaultFolder(dto);
+  }
+
+  @Post("homeItems")
+  homeItems(@Body() dto: HomeItemsDto) {
+    return this.globalGalleryService.homeItems(dto);
   }
 
 

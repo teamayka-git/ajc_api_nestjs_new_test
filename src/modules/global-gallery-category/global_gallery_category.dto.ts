@@ -14,11 +14,11 @@ import { Optional } from '@nestjs/common';
 
 const descriptionStatus="0-Inactive, 1-Active, 2-Delete";
 const descriptionListScreenTypeForList="0-total documents count";
-const descriptionListDataGuard="0-edit protect, 1-disabe protect, 2-delete protect";
+const descriptionListDataGuard="0-edit protect, 1-disabe protect, 2-delete protect, 3-default folder will be there";
 
 const descriptionListSortOrder="1-ascending, -1-descending";
 const descriptionListSortType="0-Created Date, 1-Status,2-Name";
-
+const descriptionType="1-main category, 2-sub category";
 
 
 
@@ -28,13 +28,23 @@ class GlobalGalleryCategoryCreateList {
   @ApiProperty({})
   name: string;
 
+
+  
+  @IsNumber()
+  @ApiProperty({description:descriptionType})
+type: number;
+
   
 
   @IsArray()
   @ApiProperty({ type: [Number],description:descriptionListDataGuard })
   dataGuard:number[];
   
-  
+  @IsString()
+  @ApiProperty({})
+  globalGalleryCategoryId: string;
+
+
 }
 
 
@@ -57,6 +67,15 @@ export class GlobalGalleryCategoryEditDto {
   @IsString()
   @ApiProperty({})
   name: string;
+
+  @IsString()
+  @ApiProperty({})
+  globalGalleryCategoryId: string;
+
+  
+  @IsNumber()
+  @ApiProperty({description:descriptionType})
+type: number;
 
   
   @IsArray()
@@ -85,10 +104,19 @@ export class GlobalGalleryCategoryListDto {
   screenType:number[];
   
   
+  @IsArray()
+  @ApiProperty({ type: [Number],description:descriptionType })
+  type:number[];
+  
+  
 
   @IsArray()
   @ApiProperty({ type: [String] })
   globalGalleryIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  globalGalleryCategoryIds: string[];
 
   @IsNumber()
   @ApiProperty({})

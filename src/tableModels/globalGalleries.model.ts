@@ -11,11 +11,6 @@ export const GlobalGalleriesSchema = new mongoose.Schema({
     ref: ModelNames.GLOBAL_GALLERY_CATEGORIES,
     default: null,
   },
-  _globalGallerySubCategoryId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.GLOBAL_GALLERY_SUB_CATEGORIES,
-    default: null,
-  },
   _docType: { type: Number, required: true, default: -1 },
   _uid: { type: Number, required: true, default: -1 },
   _type: { type: Number, required: true, default: -1 },
@@ -40,7 +35,6 @@ export interface GlobalGalleries {
   _id: String;
   _name: String;
   _globalGalleryCategoryId: String;
-  _globalGallerySubCategoryId: String;
   _docType: Number;
   _type: Number;
   _uid: Number;
@@ -58,7 +52,6 @@ GlobalGalleriesSchema.index({ _name: 1 });
 GlobalGalleriesSchema.index({ _type: 1 });
 GlobalGalleriesSchema.index({ _docType: 1 });
 GlobalGalleriesSchema.index({ _globalGalleryCategoryId: 1 });
-GlobalGalleriesSchema.index({ _globalGallerySubCategoryId: 1 });
 
 /*
 _docType:{ 
@@ -69,6 +62,8 @@ _docType:{
     4 - document
 }
 _type:{
+-1-other 
+
     0-category
     1-sub category
     2-stone

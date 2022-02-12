@@ -157,7 +157,6 @@ try{
     const globalGallery = new this.globalGalleryModel({
       __name:file['image'][0]['originalname'],
       _globalGalleryCategoryId:null,
-      _globalGallerySubCategoryId:null,
       _docType:0,
       _type:5,
       _uid:resultCounterPurchase._count,
@@ -309,7 +308,6 @@ try{
     const globalGallery = new this.globalGalleryModel({
       __name:file['image'][0]['originalname'],
       _globalGalleryCategoryId:null,
-      _globalGallerySubCategoryId:null,
       _docType:0,
       _type:5,
       _uid:resultCounterPurchase._count,

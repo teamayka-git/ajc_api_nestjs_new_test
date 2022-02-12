@@ -8,6 +8,7 @@ import { Counters } from './tableModels/counters.model';
 import { Departments } from './tableModels/departments.model';
 import { Employee } from './tableModels/employee.model';
 import { Generals } from './tableModels/generals.model';
+import { GlobalGalleryCategories } from './tableModels/globalGallerycategories.model';
 import { ProcessMaster } from './tableModels/processMaster.model';
 import { Purity } from './tableModels/purity.model';
 import { User } from './tableModels/user.model';
@@ -23,6 +24,7 @@ export class AppService {
   @InjectModel(ModelNames.PURITY) private readonly purityModel: mongoose.Model<Purity>,
   @InjectModel(ModelNames.COMPANIES) private readonly companyModel: mongoose.Model<Company>,
   @InjectModel(ModelNames.PROCESS_MASTER) private readonly processMastersModel: mongoose.Model<ProcessMaster>,
+  @InjectModel(ModelNames.GLOBAL_GALLERY_CATEGORIES) private readonly globalGalleryCategoriesModel: mongoose.Model<GlobalGalleryCategories>,
   @InjectModel(ModelNames.COUNTERS)
   private readonly countersModel: mongoose.Model<Counters>, @InjectModel(ModelNames.EMPLOYEES) private readonly employeeModel: mongoose.Model<Employee>,
 
@@ -778,6 +780,136 @@ export class AppService {
             { upsert: true, new: true,session: transactionSession },
           );
 
+
+/*
+
+  0-category
+    1-sub category
+    2-stone
+    3-agent
+    4-branch
+    5-employee
+    6-supplier
+*/
+
+
+          
+          await this.globalGalleryCategoriesModel.findOneAndUpdate(
+            { _name: "Categories" },
+            {
+              $setOnInsert: {
+                _globalGalleryCategoryId:null,
+                _type:0,
+                _dataGuard:[0,1,2,3],
+                _createdUserId: null,
+                _createdAt: dateTime,
+                _updatedUserId: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true,session: transactionSession },
+          );
+
+          
+          await this.globalGalleryCategoriesModel.findOneAndUpdate(
+            { _name: "Sub Categories" },
+            {
+              $setOnInsert: {
+                _globalGalleryCategoryId:null,
+                _type:1,
+                _dataGuard:[0,1,2,3],
+                _createdUserId: null,
+                _createdAt: dateTime,
+                _updatedUserId: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true,session: transactionSession },
+          );
+          await this.globalGalleryCategoriesModel.findOneAndUpdate(
+            { _name: "Stones" },
+            {
+              $setOnInsert: {
+                _globalGalleryCategoryId:null,
+                _type:2,
+                _dataGuard:[0,1,2,3],
+                _createdUserId: null,
+                _createdAt: dateTime,
+                _updatedUserId: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true,session: transactionSession },
+          );
+          await this.globalGalleryCategoriesModel.findOneAndUpdate(
+            { _name: "Agents" },
+            {
+              $setOnInsert: {
+                _globalGalleryCategoryId:null,
+                _type:3,
+                _dataGuard:[0,1,2,3],
+                _createdUserId: null,
+                _createdAt: dateTime,
+                _updatedUserId: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true,session: transactionSession },
+          );
+
+          await this.globalGalleryCategoriesModel.findOneAndUpdate(
+            { _name: "Branches" },
+            {
+              $setOnInsert: {
+                _globalGalleryCategoryId:null,
+                _type:4,
+                _dataGuard:[0,1,2,3],
+                _createdUserId: null,
+                _createdAt: dateTime,
+                _updatedUserId: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true,session: transactionSession },
+          );
+          await this.globalGalleryCategoriesModel.findOneAndUpdate(
+            { _name: "Employees" },
+            {
+              $setOnInsert: {
+                _globalGalleryCategoryId:null,
+                _type:5,
+                _dataGuard:[0,1,2,3],
+                _createdUserId: null,
+                _createdAt: dateTime,
+                _updatedUserId: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true,session: transactionSession },
+          );
+
+          await this.globalGalleryCategoriesModel.findOneAndUpdate(
+            { _name: "Suppliers" },
+            {
+              $setOnInsert: {
+                _globalGalleryCategoryId:null,
+                _type:6,
+                _dataGuard:[0,1,2,3],
+                _createdUserId: null,
+                _createdAt: dateTime,
+                _updatedUserId: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true,session: transactionSession },
+          );
 
         
           

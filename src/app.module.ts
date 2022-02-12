@@ -45,10 +45,10 @@ import { SupplierModule } from './modules/supplier/supplier.module';
 import { CompanySchema } from './tableModels/companies.model';
 import { CompanyModule } from './modules/company/company.module';
 import { GlobalGalleryCategoryModule } from './modules/global-gallery-category/global-gallery-category.module';
-import { GlobalGallerySubCategoryModule } from './modules/global-gallery-sub-category/global-gallery-sub-category.module';
 import { BanksModule } from './modules/banks/banks.module';
 import { GlobalGalleryModule } from './modules/global-gallery/global-gallery.module';
 import { ProcessMasterSchema } from './tableModels/processMaster.model';
+import { GlobalGalleryCategoriesSchema } from './tableModels/globalGallerycategories.model';
 
 
 @Module({
@@ -67,6 +67,7 @@ import { ProcessMasterSchema } from './tableModels/processMaster.model';
     { name: ModelNames.COUNTERS, schema:CountersSchema },{ name: ModelNames.COMPANIES, schema:CompanySchema },
     { name: ModelNames.GENERALS, schema:GeneralsSchema },{name:ModelNames.DEPARTMENT,schema:DepartmentsSchema},
     {name:ModelNames.PURITY,schema:PuritySchema},{name:ModelNames.PROCESS_MASTER,schema:ProcessMasterSchema},
+    {name:ModelNames.GLOBAL_GALLERY_CATEGORIES,schema:GlobalGalleryCategoriesSchema}
   ]),
   EmployeesModule,
   BranchModule,
@@ -94,7 +95,6 @@ import { ProcessMasterSchema } from './tableModels/processMaster.model';
   SupplierModule,
   CompanyModule,
   GlobalGalleryCategoryModule,
-  GlobalGallerySubCategoryModule,
   BanksModule,
   GlobalGalleryModule,
   
