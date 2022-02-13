@@ -49,6 +49,7 @@ import { BanksModule } from './modules/banks/banks.module';
 import { GlobalGalleryModule } from './modules/global-gallery/global-gallery.module';
 import { ProcessMasterSchema } from './tableModels/processMaster.model';
 import { GlobalGalleryCategoriesSchema } from './tableModels/globalGallerycategories.model';
+import { ChatGateway } from './socket/chat.gateway';
 
 
 @Module({
@@ -107,7 +108,8 @@ import { GlobalGalleryCategoriesSchema } from './tableModels/globalGallerycatego
       provide: APP_FILTER,
       useClass: HttpErrorFilter,
     },
-    { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },],
+    { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
+    ChatGateway,],
 })
 export class AppModule {
     //for middleware
