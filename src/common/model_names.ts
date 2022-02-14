@@ -31,6 +31,7 @@ export enum ModelNames {
     BANKS="banks",
     GLOBAL_GALLERIES="global_galleries",
     RATE_CARDS="rate_cards",
+    RATE_BASE_MASTERS="rate_base_masters",
 
 
 
