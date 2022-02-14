@@ -50,7 +50,6 @@ import { GlobalGalleryModule } from './modules/global-gallery/global-gallery.mod
 import { ProcessMasterSchema } from './tableModels/processMaster.model';
 import { GlobalGalleryCategoriesSchema } from './tableModels/globalGallerycategories.model';
 import { ChatGateway } from './socket/chat.gateway';
-import { ChatModule } from './modules/chat/chat.module';
 import { ChatPendingMessagesSchema } from './tableModels/chatPendingMessager.model';
 import { ChatPersonalChatsSchema } from './tableModels/chatPersonalChats.model';
 import { ChatPersonalChatMessagesSchema } from './tableModels/chatPersonalChatMessages.model';
@@ -107,7 +106,6 @@ import { ChatPersonalChatMessagesSchema } from './tableModels/chatPersonalChatMe
   GlobalGalleryCategoryModule,
   BanksModule,
   GlobalGalleryModule,
-  ChatModule,
   
   
   // SalesReturnRequestStatusesModule,

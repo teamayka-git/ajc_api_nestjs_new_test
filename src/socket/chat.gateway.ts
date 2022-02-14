@@ -13,7 +13,6 @@ import { Server, Socket } from 'socket.io';
 import { ModelNames } from 'src/common/model_names';
 import { SocketChatEvents } from 'src/common/SocketChatEvents';
 import { GlobalConfig } from 'src/config/global_config';
-import { ChatService } from 'src/modules/chat/chat.service';
 import * as mongoose from 'mongoose';
 import { ChatPendingMessages } from 'src/tableModels/chatPendingMessager.model';
 import { ChatPersonalChatMessages } from 'src/tableModels/chatPersonalChatMessages.model';
