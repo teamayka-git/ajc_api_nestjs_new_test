@@ -53,6 +53,7 @@ import { ChatGateway } from './socket/chat.gateway';
 import { ChatPendingMessagesSchema } from './tableModels/chatPendingMessager.model';
 import { ChatPersonalChatsSchema } from './tableModels/chatPersonalChats.model';
 import { ChatPersonalChatMessagesSchema } from './tableModels/chatPersonalChatMessages.model';
+import { RateCardModule } from './modules/rate-card/rate-card.module';
 
 
 @Module({
@@ -106,6 +107,7 @@ import { ChatPersonalChatMessagesSchema } from './tableModels/chatPersonalChatMe
   GlobalGalleryCategoryModule,
   BanksModule,
   GlobalGalleryModule,
+  RateCardModule,
   
   
   // SalesReturnRequestStatusesModule,
