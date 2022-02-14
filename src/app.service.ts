@@ -12,6 +12,7 @@ import { GlobalGalleryCategories } from './tableModels/globalGallerycategories.m
 import { ProcessMaster } from './tableModels/processMaster.model';
 import { Purity } from './tableModels/purity.model';
 import { User } from './tableModels/user.model';
+import { IndexUtils } from './utils/IndexUtils';
 const crypto = require('crypto');
 
 
@@ -30,6 +31,8 @@ export class AppService {
 
     @InjectConnection() private readonly connection: mongoose.Connection,){}
   getHello(): string {
+
+
     return 'Hello Worldwwwww!';
   }
 

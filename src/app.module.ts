@@ -50,6 +50,10 @@ import { GlobalGalleryModule } from './modules/global-gallery/global-gallery.mod
 import { ProcessMasterSchema } from './tableModels/processMaster.model';
 import { GlobalGalleryCategoriesSchema } from './tableModels/globalGallerycategories.model';
 import { ChatGateway } from './socket/chat.gateway';
+import { ChatModule } from './modules/chat/chat.module';
+import { ChatPendingMessagesSchema } from './tableModels/chatPendingMessager.model';
+import { ChatPersonalChatsSchema } from './tableModels/chatPersonalChats.model';
+import { ChatPersonalChatMessagesSchema } from './tableModels/chatPersonalChatMessages.model';
 
 
 @Module({
@@ -68,7 +72,12 @@ import { ChatGateway } from './socket/chat.gateway';
     { name: ModelNames.COUNTERS, schema:CountersSchema },{ name: ModelNames.COMPANIES, schema:CompanySchema },
     { name: ModelNames.GENERALS, schema:GeneralsSchema },{name:ModelNames.DEPARTMENT,schema:DepartmentsSchema},
     {name:ModelNames.PURITY,schema:PuritySchema},{name:ModelNames.PROCESS_MASTER,schema:ProcessMasterSchema},
-    {name:ModelNames.GLOBAL_GALLERY_CATEGORIES,schema:GlobalGalleryCategoriesSchema}
+    {name:ModelNames.GLOBAL_GALLERY_CATEGORIES,schema:GlobalGalleryCategoriesSchema},
+
+    {name:ModelNames.CHAT_PENDING_MESSAGES,schema:ChatPendingMessagesSchema},
+    {name:ModelNames.CHAT_PERSONAL_CHATS,schema:ChatPersonalChatsSchema},
+    {name:ModelNames.CHAT_PERSONAL_CHAT_MESSAGES,schema:ChatPersonalChatMessagesSchema},
+
   ]),
   EmployeesModule,
   BranchModule,
@@ -98,6 +107,7 @@ import { ChatGateway } from './socket/chat.gateway';
   GlobalGalleryCategoryModule,
   BanksModule,
   GlobalGalleryModule,
+  ChatModule,
   
   
   // SalesReturnRequestStatusesModule,

@@ -30,6 +30,20 @@ export enum ModelNames {
     GLOBAL_GALLERY_CATEGORIES="global_gallery_categories",
     BANKS="banks",
     GLOBAL_GALLERIES="global_galleries",
+
+
+
+
+
+
+
+
+
+
+    
+    CHAT_PERSONAL_CHAT_MESSAGES="chat_personal_chat_messages",
+    CHAT_PERSONAL_CHATS="chat_personal_chats",
+    CHAT_PENDING_MESSAGES="chat_pending_messages",
    
     
 
