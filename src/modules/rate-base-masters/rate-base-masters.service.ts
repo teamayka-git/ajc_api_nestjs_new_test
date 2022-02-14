@@ -113,7 +113,16 @@ export class RateBaseMastersService {
         var arrayAggregation = [];
         arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
     
-      
+        if (dto.searchingText != '') {
+            //todo
+            arrayAggregation.push({
+              $match: {
+                $or: [
+                  { _name: new RegExp(dto.searchingText, 'i') },
+                  ],
+              },
+            });
+          }
         if (dto.rateBaseMasterIds.length > 0) {
             var newSettingsId = [];
             dto.rateBaseMasterIds.map((mapItem) => {
@@ -155,7 +164,7 @@ export class RateBaseMastersService {
             arrayAggregation.splice(skipIndexCount, 1);
           }
           arrayAggregation.push({ $group: { _id: null, totalCount: { $sum: 1 } } });
-    
+     
           var resultTotalCount = await this.rateBaseMastersModel
             .aggregate(arrayAggregation)
             .session(transactionSession);
