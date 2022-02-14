@@ -1,11 +1,12 @@
 import { Body, Controller, Delete, Post, Put, Request } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { RateCardService } from './rate-card.service';
 import { RateCardCreateDto, RateCardEditDto, RateCardListDto, RateCardStatusChangeDto } from './rate_card.dto';
 
 
-@Controller('rate cards')
+@ApiTags("rate cards") 
 @Controller('rate-card')
 export class RateCardController {
   constructor(private readonly rateCardService: RateCardService) {}
