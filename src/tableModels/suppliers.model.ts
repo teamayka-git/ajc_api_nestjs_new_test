@@ -41,7 +41,7 @@ export interface Suppliers {
     _updatedUserId: String;
     _updatedAt:  Number;
     _status: Number;
-}
+} 
 
 
 SuppliersSchema.index({_status: 1});

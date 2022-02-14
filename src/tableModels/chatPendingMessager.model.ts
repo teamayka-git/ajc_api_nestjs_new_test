@@ -51,7 +51,7 @@ ChatPendingMessagesSchema.index({ _status: 1 });
 
 /*
 _type:{
-0-message send
+0-personal message send
 }
 
 */

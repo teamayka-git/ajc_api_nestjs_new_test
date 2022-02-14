@@ -42,7 +42,7 @@ UserSchema.index({_status: 1});
 UserSchema.index({_employeeId: 1});
 UserSchema.index({_agentId: 1});
 UserSchema.index({_supplierId: 1});
-UserSchema.index({_type: 1});
+UserSchema.index({_type: 1}); 
 /*
 _userRole:{
     0 - super_admin

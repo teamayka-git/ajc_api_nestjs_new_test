@@ -49,6 +49,9 @@ export class FileMulterHelper {
   static filePathTempSubCategory(req, file, cb) {
     cb(null, UploadedFileDirectoryPath.GLOBAL_GALLERY_SUB_CATEGORY);
   }
+  static filePathChatDocuments(req, file, cb) {
+    cb(null, UploadedFileDirectoryPath.CHAT_DOCUMENTS);
+  }
 
   static filePathGlobalGalleries(req, file, cb) {
     var document_location = '';
