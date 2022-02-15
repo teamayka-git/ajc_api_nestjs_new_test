@@ -71,5 +71,6 @@ _type:{
     4-branch
     5-employee
     6-supplier
+    7-customer
 }
 */

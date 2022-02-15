@@ -55,6 +55,7 @@ import { ChatPersonalChatsSchema } from './tableModels/chatPersonalChats.model';
 import { ChatPersonalChatMessagesSchema } from './tableModels/chatPersonalChatMessages.model';
 import { RateCardModule } from './modules/rate-card/rate-card.module';
 import { RateBaseMastersModule } from './modules/rate-base-masters/rate-base-masters.module';
+import { CustomersModule } from './modules/customers/customers.module';
 
 
 @Module({
@@ -110,6 +111,7 @@ import { RateBaseMastersModule } from './modules/rate-base-masters/rate-base-mas
   GlobalGalleryModule,
   RateCardModule,
   RateBaseMastersModule,
+  CustomersModule,
   
   
   // SalesReturnRequestStatusesModule,

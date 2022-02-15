@@ -29,6 +29,9 @@ public/upload_files/employee/*
 !.gitkeep
 
 
+public/upload_files/customer/*
+!.gitkeep
+
 public/upload_files/supplier/*
 !.gitkeep
 

@@ -34,6 +34,9 @@ export class FileMulterHelper {
   static filePathTempAgent(req, file, cb) {
     cb(null, UploadedFileDirectoryPath.GLOBAL_GALLERY_AGENT);
   }
+  static filePathTempCustomer(req, file, cb) {
+    cb(null, UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER);
+  }
   static filePathTempEmployee(req, file, cb) {
     cb(null, UploadedFileDirectoryPath.GLOBAL_GALLERY_EMPLOYEE);
   }
@@ -77,6 +80,9 @@ export class FileMulterHelper {
         break;
       case 6:
         document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_SUPPLIER;
+        break;
+      case 7:
+        document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER;
         break;
       default:
         document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_OTHERS;

@@ -9,6 +9,7 @@ export const UserSchema = new mongoose.Schema({
     _employeeId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.EMPLOYEES, default: null },
     _agentId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.AGENTS, default: null },
     _supplierId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.SUPPLIERS, default: null },
+    _customerId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.CUSTOMERS, default: null },
     _fcmId: { type: String ,default:""},
     _deviceUniqueId: { type: String ,default: ""},
     _permissions: { type: Object,required: true, default:[]},
@@ -27,6 +28,7 @@ export interface User {
     _employeeId: String;
     _agentId: String;
     _supplierId: String;
+    _customerId:String;
     _fcmId: String;
     _deviceUniqueId: String;
     _permissions:Object;
@@ -40,6 +42,7 @@ export interface User {
 
 UserSchema.index({_status: 1});
 UserSchema.index({_employeeId: 1});
+UserSchema.index({_customerId: 1});
 UserSchema.index({_agentId: 1});
 UserSchema.index({_supplierId: 1});
 UserSchema.index({_type: 1}); 
@@ -49,11 +52,13 @@ _userRole:{
     1 - agent
     2 - supplier
     3 - employee
+    4 - customer
 }
 _type:{
     0 - employee
     1 - agent
     2 - supplier
+    3 - customer
 }
 _permissions:[
     0 - SUPER ADMIN
