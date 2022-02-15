@@ -29,13 +29,10 @@ class GlobalGalleryCreateList {
   @ApiProperty({})
   name: string;
 
-  @IsString()
-  @ApiProperty({})
-  globalGalleryCategoryId: string;
 
   @IsString()
   @ApiProperty({})
-  globalGallerySubCategoryId: string;
+  categoryId: string;
 
   
   @Transform(({ value }) => Number(value))

@@ -139,9 +139,9 @@ export class GlobalGalleryService {
         arrayToStates.push({
           _name: dto.array[i].name,
           _globalGalleryCategoryId:
-            dto.array[i].globalGalleryCategoryId == 'nil'
+            dto.array[i].categoryId == 'nil'
               ? null
-              : dto.array[i].globalGalleryCategoryId,
+              : dto.array[i].categoryId,
           _docType:dto. array[i].docType,
           _type: dto.type,
           _url: fileUrl,
