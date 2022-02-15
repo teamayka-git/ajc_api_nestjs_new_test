@@ -41,7 +41,7 @@ export class GlobalGalleryService {
         for (var i = 0; i < dto.array.length; i++) {
           var document_location = '';
 
-          if (dto.docType == 0) {
+          if (dto.array[i].docType == 0) {
             switch (dto.type) {
               case 0:
                 document_location =
@@ -129,7 +129,7 @@ export class GlobalGalleryService {
           }`;
         }
 
-        if (dto.docType == 0) {
+        if (dto.array[i].docType == 0) {
           //if image only thumb url need to generate
           fileUrlThumb = new StringUtils().makeThumbImageFileName(fileUrl);
 
@@ -142,7 +142,7 @@ export class GlobalGalleryService {
             dto.array[i].globalGalleryCategoryId == 'nil'
               ? null
               : dto.array[i].globalGalleryCategoryId,
-          _docType: dto.docType,
+          _docType:dto. array[i].docType,
           _type: dto.type,
           _url: fileUrl,
           _uid: resultCounterPurchase._count - dto.array.length + (i + 1),

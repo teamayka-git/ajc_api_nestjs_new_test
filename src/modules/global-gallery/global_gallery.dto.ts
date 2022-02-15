@@ -38,7 +38,10 @@ class GlobalGalleryCreateList {
   globalGallerySubCategoryId: string;
 
   
-
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({description:descriptionListDocType})
+  docType: number;
   
   
   
@@ -56,10 +59,7 @@ export class GlobalGalleryCreateDto {
   array: GlobalGalleryCreateList[];
 
 
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({description:descriptionListDocType})
-  docType: number;
+
 
   @Transform(({ value }) => Number(value))
   @IsNumber()
