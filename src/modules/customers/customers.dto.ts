@@ -219,19 +219,15 @@ export class CustomerCreateDto {
 
 
 
-export class CustomerEditDto {
-
+export class CustomerEditeDto {
 
   @IsString()
   @ApiProperty({})
-  agentId: string;
-
-  
+  customerId: string;
   @IsString()
   @ApiProperty({})
   name: string;
 
-  
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({description:descriptionListGender})
@@ -240,88 +236,153 @@ export class CustomerEditDto {
 
   @IsString()
   @ApiProperty({})
-  mobile: string;
+  password: string;
 
   @IsString()
   @ApiProperty({})
-  cityId: string;
-
-
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({description:descriptionListCommisionType})
-  commisionType: number;
-
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({})
-  commisionAmount: number;
-
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({})
-  commisionPercentage: number;
-
+  mobile: string;
 
   @Transform(({ value }) =>typeof value == 'string' ? JSON.parse(value) : value    )
   @IsArray()
   @ApiProperty({ type: [Number],description:descriptionListDataGuard })
   dataGuard:number[];
-}
+  ///////////////////////////////////////////////////////////////////////////////
+  
 
-export class CustomerListDto {
+
+  @Transform(({ value }) => Number(value))
   @IsNumber()
-  @ApiProperty({description:descriptionListSortType})
-  sortType: number;
+  @ApiProperty({description:descriptionOrderSaleRate})
+  orderSaleRate: number;
+
+  @Transform(({ value }) => Number(value))
   @IsNumber()
-  @ApiProperty({description:descriptionListSortOrder})
-  sortOrder: number;
+  @ApiProperty({description:descriptionStockSaleRate})
+  stockSaleRate: number;
 
-
-
-  @IsArray()
-  @ArrayMinSize(1)
-  @ApiProperty({ type: [Number],description:descriptionStatus })
-  statusArray:number[];
-
-  @IsArray()
-  @ApiProperty({ type: [Number],description:descriptionListScreenTypeForList })
-  screenType:number[];
-  
-  @IsArray()
-  @ApiProperty({ type: [Number],description:descriptionListGender })
-  genders:number[];
-  
-  
-
-  @IsArray()
-  @ApiProperty({ type: [Number],description:descriptionListCommisionType })
-  commisionType:number[];
-  
-  
-
-  @IsArray()
-  @ApiProperty({ type: [String] })
-  cityIds: string[];
-
-  @IsArray()
-  @ApiProperty({ type: [String] })
-  agentIds: string[];
-
+  @Transform(({ value }) => Number(value))
   @IsNumber()
-  @ApiProperty({})
-  limit: number;
+  @ApiProperty({description:descriptionCustomerType})
+  customerType: number;
 
-
-  @IsNumber()
-  @ApiProperty({})
-  skip: number;
-
-
-  
   @IsString()
   @ApiProperty({})
-  searchingText: string;
+  branchId: string;
+
+  @IsString()
+  @ApiProperty({})
+  orderHeadId: string;
+
+  @IsString()
+  @ApiProperty({})
+  relationshipManagerId: string;
+
+  @IsString()
+  @ApiProperty({})
+  supplierId: string;
+
+  @IsString()
+  @ApiProperty({})
+  panCardNumber: string;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({description:descriptionBillingModeSale})
+  billingModeSale: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({description:descriptionBillingModePurchase})
+  billingModePurchase: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({description:descriptionHallmarkingStatus})
+  hallmarkingMandatoryStatus: number;
+
+
+  @IsString()
+  @ApiProperty({})
+  rateCardId: string;
+
+
+  @IsString()
+  @ApiProperty({})
+  gstNumber: string;
+
+
+  @IsString()
+  @ApiProperty({})
+  stateId: string;
+
+
+  @IsString()
+  @ApiProperty({})
+  districtId: string;
+
+  @IsString()
+  @ApiProperty({})
+  tdsId: string;
+
+  @IsString()
+  @ApiProperty({})
+  tcsId: string;
+
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  creditAmount: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  creditDays: number;
+
+  @IsString()
+  @ApiProperty({})
+  rateBaseMasterId: string;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  stonePricing: number;
+
+
+  @Transform(({ value }) =>typeof value == 'string' ? JSON.parse(value) : value    )
+  @IsArray()
+  @ApiProperty({ type: [Number], description:descriptionChatPermissions})
+  chatPermissions:number[];
+
+  @IsString()
+  @ApiProperty({})
+  agentId: string;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  agentCommision: number;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
 

@@ -1,9 +1,9 @@
-import { Body, Controller, Post, Request, Res, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Post, Put, Request, Res, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole, GuardUserRoleStringGenerate } from 'src/common/GuardUserRole';
-import { CustomerCreateDto, CustomerLoginDto } from './customers.dto';
+import { CustomerCreateDto, CustomerEditeDto, CustomerLoginDto } from './customers.dto';
 import { CustomersService } from './customers.service';
 import { Response } from 'express'; //jwt response store in cookie
 import { Roles } from 'src/Auth/roles.decorator';
@@ -70,7 +70,27 @@ var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole'])
   }
   
 
-
+  @Put()
+  @Roles(GuardUserRole.SUPER_ADMIN)
+  @ApiCreatedResponse({ description: 'files upload on these input feilds => [image]' })
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        {
+          name: 'image',
+        },
+      ],
+      {
+        storage: diskStorage({
+          destination: FileMulterHelper.filePathTempCustomer,
+          filename: FileMulterHelper.customFileName,
+        }),
+      },
+    ),
+  )
+  edit(@Body() dto: CustomerEditeDto,@Request() req, @UploadedFiles() file) {
+    return this.customersService.edit(dto,req["_userId_"],file == null ? {} : JSON.parse(JSON.stringify(file)));
+  }
 
 
 

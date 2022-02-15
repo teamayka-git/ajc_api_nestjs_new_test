@@ -6,7 +6,7 @@ import { Customers } from 'src/tableModels/customers.model';
 import { User } from 'src/tableModels/user.model';
 import * as mongoose from 'mongoose';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
-import { CustomerCreateDto, CustomerLoginDto } from './customers.dto';
+import { CustomerCreateDto, CustomerEditeDto, CustomerLoginDto } from './customers.dto';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 import { StringUtils } from 'src/utils/string_utils';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
@@ -170,7 +170,7 @@ export class CustomersService {
           __name:file['image'][0]['originalname'],
           _globalGalleryCategoryId:null,
           _docType:0,
-          _type:3,
+          _type:7,
           _uid:resultCounterPurchase._count,
           _url:`${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
               process.env.PORT
@@ -320,7 +320,140 @@ export class CustomersService {
 
 
 
-
+    async edit(dto: CustomerEditeDto, _userId_: string, file: Object) {
+        var dateTime = new Date().getTime();
+        const transactionSession = await this.connection.startSession();
+        transactionSession.startTransaction();
+    try{
+        if (file.hasOwnProperty('image')) {
+          var filePath =
+            __dirname +
+            `/../../../public${file['image'][0]['path'].split('public')[1]}`;
+    
+    
+            new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_AGENT +
+              new StringUtils().makeThumbImageFileName(
+                file['image'][0]['filename'],
+              ));
+    
+    
+       
+    
+        }
+    
+    
+        var updateObject= {
+            _name: dto.name,
+            _gender: dto.gender,
+            _mobile: dto.mobile,
+            _uid: resultCounterPurchase._count,
+            _globalGalleryId:globalGalleryId,
+            
+            
+            
+  
+  
+  
+  
+            _orderSaleRate:dto.orderSaleRate,
+            _stockSaleRate:dto.stockSaleRate,
+            _customerType:dto.customerType,
+            _branchId:dto.branchId,
+            _orderHeadId:dto.orderHeadId,
+            _relationshipManagerId:dto.relationshipManagerId,
+            _supplierId:dto.supplierId,
+            _panCardNumber:dto.panCardNumber,
+            _billingModeSale:dto.billingModeSale,
+            _billingModePurchase:dto.billingModePurchase,
+            _hallmarkingMandatoryStatus:dto.hallmarkingMandatoryStatus,
+            _rateCardId:dto.rateCardId,
+            _gstNumber:dto.gstNumber,
+            _stateId:dto.stateId,
+            _districtId:dto.districtId,
+            _tdsId:(dto.tdsId=="nil"||dto.tdsId=="")?null:dto.tdsId,
+            _tcsId:(dto.tcsId=="nil"||dto.tcsId=="")?null:dto.tcsId,
+            _creditAmount:dto.creditAmount,
+            _creditDays:dto.creditDays,
+            _rateBaseMasterId:dto.rateBaseMasterId,
+            _stonePricing:dto.stonePricing,
+            _chatPermissions:dto.chatPermissions,
+            _agentId:dto.agentId,
+            _agentCommision:dto.agentCommision,
+        _dataGuard: dto.dataGuard,
+        _updatedUserId: _userId_,
+        _updatedAt: dateTime,
+        }
+    
+    
+    
+    
+    
+    
+        var globalGalleryId=null;
+        //globalGalleryAdd
+        if (file.hasOwnProperty('image')) {
+    
+          var resultCounterPurchase= await this.counterModel.findOneAndUpdate(
+              { _tableName: ModelNames.GLOBAL_GALLERIES},
+              {
+                $inc: {
+                  _count:1,
+                  },
+                },
+              {  new: true,session: transactionSession },
+            );
+    
+        const globalGallery = new this.globalGalleryModel({
+          __name:file['image'][0]['originalname'],
+          _globalGalleryCategoryId:null,
+          _docType:0,
+          _type:7,
+          _uid:resultCounterPurchase._count,
+          _url:`${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
+              process.env.PORT
+            }${file['image'][0]['path'].split('public')[1]}`,
+          _thumbUrl: new StringUtils().makeThumbImageFileName(
+              `${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
+                process.env.PORT
+              }${file['image'][0]['path'].split('public')[1]}`,
+            ),
+          _created_user_id: _userId_,
+          _created_at: dateTime,
+          _updated_user_id: null,
+          _updated_at: -1,
+          _status: 1,
+        });
+      var resultGlobalGallery=  await globalGallery.save({
+          session: transactionSession,
+        });
+        
+        globalGalleryId=resultGlobalGallery._id;
+        updateObject["_globalGalleryId"]=globalGalleryId
+      }
+    
+    
+    
+    
+        var result = await this.customersModel.findOneAndUpdate(
+          {
+            _id: dto.customerId,
+          },
+          {
+            $set: updateObject
+          },
+          { new: true,session: transactionSession },
+        );
+    
+        await transactionSession.commitTransaction();
+        await transactionSession.endSession();
+        return { message: 'success', data: result };
+      }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
+      }
+    }
+    
 
 
 
