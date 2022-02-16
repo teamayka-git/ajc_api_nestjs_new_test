@@ -68,32 +68,35 @@ export class ChatGateway
   }
 
   @SubscribeMessage(SocketChatEvents.EVENT_PERSONAL_MESSAGE_SEND)
-  async handleMessagePersonalMessageSend(client: Socket, payload: string) {
+  async handleMessagePersonalMessageSend(client: Socket, payload: Object) {
+    console.log("Message uploaded 1");
     var dateTime = new Date().getTime();
 
-    var dataJson = JSON.parse(payload);
+
+    const dataJson = payload;
+
     var indexClient = this.connectedUsers.findIndex((i) => i.socket === client);
 
-    var userId = this.connectedUsers[indexClient].userId;
-    var recipientId = dataJson.data.recipientId;
-    var groupUid = dataJson.data.groupUid;
-    var value = dataJson.data.value;
-    var messageUid = dataJson.data.messageUid;
+    var userId = dataJson["userId"];
+    var recipientId = dataJson["recipientId"];
+    var groupUid = dataJson["groupUid"];
+    var value = dataJson["value"];
+    var messageUid = dataJson["messageUid"];
 
     if (typeof recipientId == 'undefined' || typeof recipientId != 'string') {
-      client.disconnect();
+      client.disconnect();console.log("111");
       return;
     }
     if (typeof groupUid == 'undefined' || typeof groupUid != 'string') {
-      client.disconnect();
+      client.disconnect();console.log("222");
       return;
     }
     if (typeof value == 'undefined' || typeof value != 'object') {
-      client.disconnect();
+      client.disconnect();console.log("333");
       return;
     }
     if (typeof messageUid == 'undefined' || typeof messageUid != 'string') {
-      client.disconnect();
+      client.disconnect();console.log("444");
       return;
     }
 
@@ -117,7 +120,7 @@ export class ChatGateway
       var resultChat = await personalChat.save();
       personalChatId = resultChat._id;
     }
-
+    console.log("Message uploaded 2");
     client.emit(
       SocketChatEvents.EVENT_PERSONAL_MESSAGE_UPLOADED,
       'OK',
@@ -131,7 +134,7 @@ export class ChatGateway
         },
       },
       async (ack1) => {
-        if (ack1 == 'OK') {
+        if (ack1 == 'OK') {  console.log("Message uploaded 31");
           const transactionSession = await this.connection.startSession();
           transactionSession.startTransaction();
           try {
@@ -178,7 +181,7 @@ export class ChatGateway
               sender: resultSender[0],
               time: dateTime,
             };
-
+            console.log("Message uploaded 4");
             var onlineUsers = new IndexUtils().multipleIndex(
               this.connectedUsers,
               recipientId,
@@ -186,7 +189,7 @@ export class ChatGateway
 
             for (var i = 0; i < onlineUsers.length; i++) {
               var onlineSocket = this.connectedUsers[onlineUsers[i]].socket;
-
+              console.log("Message uploaded 5");
               onlineSocket.emit(
                 SocketChatEvents.EVENT_PERSONAL_MESSAGE_RECEIVED,
                 resultChatPendingMessage._id,
@@ -203,7 +206,7 @@ export class ChatGateway
                 },
               );
             }
-
+            console.log("Message uploaded 6");
             await transactionSession.commitTransaction();
             await transactionSession.endSession();
           } catch (error) {
