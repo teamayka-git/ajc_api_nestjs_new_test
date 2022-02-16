@@ -70,10 +70,13 @@ export class GlobalGalleryService {
               case 6:
                 document_location =
                   UploadedFileDirectoryPath.GLOBAL_GALLERY_SUPPLIER;
+              case 7:
+                document_location =
+                  UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER;
                 break;
               default:
                 document_location =
-                  UploadedFileDirectoryPath.GLOBAL_GALLERY_SUPPLIER;
+                  UploadedFileDirectoryPath.GLOBAL_GALLERY_OTHERS;
                 break;
             }
 
@@ -87,6 +90,7 @@ export class GlobalGalleryService {
                   file['documents'][count]['path'].split('public')[1]
                 }`;
 
+                console.log("document_location   "+document_location);
               new ThumbnailUtils().generateThumbnail(
                 filePath,
                 document_location +
@@ -139,10 +143,8 @@ export class GlobalGalleryService {
         arrayToStates.push({
           _name: dto.array[i].name,
           _globalGalleryCategoryId:
-            dto.array[i].categoryId == 'nil'
-              ? null
-              : dto.array[i].categoryId,
-          _docType:dto. array[i].docType,
+            dto.array[i].categoryId == 'nil' ? null : dto.array[i].categoryId,
+          _docType: dto.array[i].docType,
           _type: dto.type,
           _url: fileUrl,
           _uid: resultCounterPurchase._count - dto.array.length + (i + 1),
@@ -360,10 +362,9 @@ export class GlobalGalleryService {
           },
         });
 
-        resultSubCategory =
-          await this.globalGalleryCategoriesModel.aggregate(
-            arrayAggregationSubCategory,
-          );
+        resultSubCategory = await this.globalGalleryCategoriesModel.aggregate(
+          arrayAggregationSubCategory,
+        );
 
         var arrayAggregationItems = [];
         arrayAggregationItems.push({
@@ -400,7 +401,7 @@ export class GlobalGalleryService {
         message: 'success',
         data: {
           listCategories: resultMainCategories,
-          listSubCategories:resultSubCategory,
+          listSubCategories: resultSubCategory,
           listItems: resultItems,
         },
       };
@@ -411,49 +412,43 @@ export class GlobalGalleryService {
     }
   }
 
-
-  
-  async homeDefaultFolder(dto:HomeDefaultFolderDto) {
+  async homeDefaultFolder(dto: HomeDefaultFolderDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-    
+      var arrayAggregationItems = [];
+      arrayAggregationItems.push({
+        $match: {
+          _status: 1,
+          _globalGalleryCategoryId: null,
+          _type: dto.type,
+        },
+      });
 
-        var arrayAggregationItems = [];
-        arrayAggregationItems.push({
-          $match: {
-            _status: 1,
-            _globalGalleryCategoryId: null,
-            _type:dto.type
-          },
-        });
+      arrayAggregationItems.push({ $sort: { _id: -1 } });
 
-        arrayAggregationItems.push({ $sort: { _id: -1 } });
+      arrayAggregationItems.push({
+        $project: {
+          _name: 1,
+          _globalGalleryCategoryId: 1,
+          _docType: 1,
+          _type: 1,
+          _uid: 1,
+          _url: 1,
+          _thumbUrl: 1,
+        },
+      });
 
-        arrayAggregationItems.push({
-          $project: {
-            _name: 1,
-            _globalGalleryCategoryId: 1,
-            _docType: 1,
-            _type: 1,
-            _uid: 1,
-            _url: 1,
-            _thumbUrl: 1,
-          },
-        });
-
-        var resultItems = await this.globalGalleryModel.aggregate(
-          arrayAggregationItems,
-        );
-      
+      var resultItems = await this.globalGalleryModel.aggregate(
+        arrayAggregationItems,
+      );
 
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return {
         message: 'success',
         data: {
-          
           list: resultItems,
         },
       };
@@ -464,88 +459,80 @@ export class GlobalGalleryService {
     }
   }
 
-
-  async homeItems(dto:HomeItemsDto) {
+  async homeItems(dto: HomeItemsDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+      var arrayAggregationSubCategory = [];
+      arrayAggregationSubCategory.push({ $match: { _status: 1, _type: 2 } });
+      arrayAggregationSubCategory.push({
+        $match: {
+          _globalGalleryCategoryId: new mongoose.Types.ObjectId(dto.categoryId),
+        },
+      });
+      arrayAggregationSubCategory.push({ $sort: { _id: -1 } });
 
-        var arrayAggregationSubCategory = [];
-        arrayAggregationSubCategory.push({ $match: { _status: 1, _type: 2 } });
-        arrayAggregationSubCategory.push({
-          $match: {
-            _globalGalleryCategoryId: new mongoose.Types.ObjectId(
-              dto.categoryId,
-            ),
+      arrayAggregationSubCategory.push({
+        $project: {
+          _name: 1,
+          _type: 1,
+          _dataGuard: 1,
+        },
+      });
+
+      var resultMainCategories =
+        await this.globalGalleryCategoriesModel.aggregate(
+          arrayAggregationSubCategory,
+        );
+
+      var arrayAggregationItems = [];
+      arrayAggregationItems.push({
+        $match: {
+          _status: 1,
+          _globalGalleryCategoryId: new mongoose.Types.ObjectId(dto.categoryId),
+        },
+      });
+
+      arrayAggregationItems.push({ $sort: { _id: -1 } });
+      arrayAggregationItems.push(
+        {
+          $lookup: {
+            from: ModelNames.GLOBAL_GALLERY_CATEGORIES,
+            let: { categoryId: '$_globalGalleryCategoryId' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$_id', '$$categoryId'] } } },
+            ],
+            as: 'subCategoryDetails',
           },
-        });
-        arrayAggregationSubCategory.push({ $sort: { _id: -1 } });
-
-        arrayAggregationSubCategory.push({
-          $project: {
+        },
+        {
+          $unwind: {
+            path: '$subCategoryDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      );
+      arrayAggregationItems.push({
+        $project: {
+          _name: 1,
+          _globalGalleryCategoryId: 1,
+          _docType: 1,
+          _type: 1,
+          _uid: 1,
+          _url: 1,
+          _thumbUrl: 1,
+          subCategoryDetails: {
             _name: 1,
             _type: 1,
             _dataGuard: 1,
           },
-        });
+        },
+      });
 
-        var resultMainCategories =
-          await this.globalGalleryCategoriesModel.aggregate(
-            arrayAggregationSubCategory,
-          );
-
-
-
-
-
-
-
-        var arrayAggregationItems = [];
-        arrayAggregationItems.push({
-          $match: {
-            _status: 1,
-            _globalGalleryCategoryId: new mongoose.Types.ObjectId(
-              dto.categoryId
-            ),
-          },
-        });
-
-        arrayAggregationItems.push({ $sort: { _id: -1 } });
-        arrayAggregationItems.push(
-          {
-            $lookup: {
-              from: ModelNames.GLOBAL_GALLERY_CATEGORIES,
-              let: { categoryId: '$_globalGalleryCategoryId' },
-              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$categoryId'] } } }],
-              as: 'subCategoryDetails',
-            },
-          },
-          {
-            $unwind: { path: '$subCategoryDetails', preserveNullAndEmptyArrays: true },
-          },
-        );
-        arrayAggregationItems.push({
-          $project: {
-            _name: 1,
-            _globalGalleryCategoryId: 1,
-            _docType: 1,
-            _type: 1,
-            _uid: 1,
-            _url: 1,
-            _thumbUrl: 1,
-            subCategoryDetails:{
-              _name: 1,
-            _type: 1,
-            _dataGuard: 1,
-            }
-          },
-        });
-
-        var resultItems = await this.globalGalleryModel.aggregate(
-          arrayAggregationItems,
-        );
-      
+      var resultItems = await this.globalGalleryModel.aggregate(
+        arrayAggregationItems,
+      );
 
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
@@ -562,5 +549,4 @@ export class GlobalGalleryService {
       throw error;
     }
   }
-
 }

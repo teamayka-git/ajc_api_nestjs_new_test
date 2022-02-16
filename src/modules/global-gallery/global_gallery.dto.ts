@@ -61,7 +61,7 @@ export class GlobalGalleryCreateDto {
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({description:descriptionListType})
-  type: number;
+  type: Number;
   
 }
 

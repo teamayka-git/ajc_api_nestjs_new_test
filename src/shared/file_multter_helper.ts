@@ -58,6 +58,9 @@ export class FileMulterHelper {
 
   static filePathGlobalGalleries(req, file, cb) {
     var document_location = '';
+
+    console.log("req.body.type  "+JSON.stringify(req.body));
+
     switch (Number(req.body.type)) {
       case 0:
         document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY;
