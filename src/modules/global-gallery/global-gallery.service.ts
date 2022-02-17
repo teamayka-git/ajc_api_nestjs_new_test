@@ -90,7 +90,7 @@ export class GlobalGalleryService {
                   file['documents'][count]['path'].split('public')[1]
                 }`;
 
-                console.log("document_location   "+document_location);
+              console.log('document_location   ' + document_location);
               new ThumbnailUtils().generateThumbnail(
                 filePath,
                 document_location +
@@ -176,7 +176,7 @@ export class GlobalGalleryService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var result = await this.globalGalleryModel.updateMany(
+      const result = await this.globalGalleryModel.updateMany(
         {
           _id: { $in: dto.globalGalleryIds },
         },

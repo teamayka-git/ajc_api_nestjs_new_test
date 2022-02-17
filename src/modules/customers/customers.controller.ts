@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole, GuardUserRoleStringGenerate } from 'src/common/GuardUserRole';
-import { CustomerCreateDto, CustomerEditeDto, CustomerLoginDto } from './customers.dto';
+import { CustomerCreateDto, CustomerEditeDto, CustomerLoginDto, ListCustomersDto } from './customers.dto';
 import { CustomersService } from './customers.service';
 import { Response } from 'express'; //jwt response store in cookie
 import { Roles } from 'src/Auth/roles.decorator';
@@ -90,6 +90,13 @@ var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole'])
   )
   edit(@Body() dto: CustomerEditeDto,@Request() req, @UploadedFiles() file) {
     return this.customersService.edit(dto,req["_userId_"],file == null ? {} : JSON.parse(JSON.stringify(file)));
+  }
+
+
+
+  @Post("list")
+  list(@Body() dto:ListCustomersDto) {
+    return this.customersService.list(dto);
   }
 
 

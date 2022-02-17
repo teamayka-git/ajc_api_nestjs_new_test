@@ -6,7 +6,7 @@ import { Customers } from 'src/tableModels/customers.model';
 import { User } from 'src/tableModels/user.model';
 import * as mongoose from 'mongoose';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
-import { CustomerCreateDto, CustomerEditeDto, CustomerLoginDto } from './customers.dto';
+import { CustomerCreateDto, CustomerEditeDto, CustomerLoginDto, ListCustomersDto } from './customers.dto';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 import { StringUtils } from 'src/utils/string_utils';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
@@ -457,7 +457,491 @@ export class CustomersService {
 
 
 
+    async list(dto: ListCustomersDto) {
+      var dateTime = new Date().getTime();
+      const transactionSession = await this.connection.startSession();
+      transactionSession.startTransaction();
+  try{
+      var arrayAggregation = [];
+      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+  
+      if (dto.searchingText != '') {
+        //todo
+        arrayAggregation.push({
+          $match: {
+            $or: [
+              { _name: new RegExp(dto.searchingText, 'i') },
+              { _email: dto.searchingText },
+              { _mobile: dto.searchingText },
+              { _uid: dto.searchingText },
+              {_panCardNumber:dto.searchingText},
+              {_gstNumber:dto.searchingText},
+              ],
+          },
+        });
+      }
+      if (dto.customerIds.length > 0) {
+        var newSettingsId = [];
+        dto.customerIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
+      }
+  
+      
+    
+        if (dto.gender.length > 0) {
+          
+          arrayAggregation.push({ $match: { _gender: { $in:dto.gender } } });
+        }
+      
+  
+  
+        switch(dto.sortType){
+          case 0: arrayAggregation.push({ $sort: { _id: dto.sortOrder } });              break;
+          case 1:arrayAggregation.push({ $sort: { _status: dto.sortOrder } });               break;
+          case 2: arrayAggregation.push({ $sort: { _name: dto.sortOrder } });               break;
+          case 3: arrayAggregation.push({ $sort: { _uid: dto.sortOrder } });               break;
+          case 4: arrayAggregation.push({ $sort: { _gender: dto.sortOrder } });               break;
+          case 5: arrayAggregation.push({ $sort: { _email: dto.sortOrder } });               break;
+          case 6: arrayAggregation.push({ $sort: { _orderSaleRate: dto.sortOrder } });               break;
+          case 7: arrayAggregation.push({ $sort: { _stockSaleRate: dto.sortOrder } });               break;
+          case 8: arrayAggregation.push({ $sort: { _customerType: dto.sortOrder } });               break;
+          case 9: arrayAggregation.push({ $sort: { _billingModeSale: dto.sortOrder } });               break;
+          case 10: arrayAggregation.push({ $sort: { _billingModePurchase: dto.sortOrder } });               break;
+          case 11: arrayAggregation.push({ $sort: { _hallmarkingMandatoryStatus: dto.sortOrder } });               break;
+          case 12: arrayAggregation.push({ $sort: { _creditAmount: dto.sortOrder } });               break;
+          case 13: arrayAggregation.push({ $sort: { _creditDays: dto.sortOrder } });               break;
+          case 14: arrayAggregation.push({ $sort: { _stonePricing: dto.sortOrder } });               break;
+          case 15: arrayAggregation.push({ $sort: { _agentCommision: dto.sortOrder } });               break;
+          
+        }
 
+        if (dto.orderSaleRates.length > 0) {
+          
+          arrayAggregation.push({ $match: { _orderSaleRate: { $in:dto.orderSaleRates } } });
+        }
+        if (dto.stockSaleRates.length > 0) {
+          
+          arrayAggregation.push({ $match: { _stockSaleRate: { $in:dto.stockSaleRates } } });
+        }
+        if (dto.customerTypes.length > 0) {
+          
+          arrayAggregation.push({ $match: { _customerType: { $in:dto.customerTypes } } });
+        }
+        if (dto.billingModelSales.length > 0) {
+          
+          arrayAggregation.push({ $match: { _billingModeSale: { $in:dto.billingModelSales } } });
+        }
+        if (dto.billingModelPurchases.length > 0) {
+          
+          arrayAggregation.push({ $match: { _billingModePurchase: { $in:dto.billingModelPurchases } } });
+        }
+        if (dto.hallmarkingMandatoryStatuses.length > 0) {
+          
+          arrayAggregation.push({ $match: { _hallmarkingMandatoryStatus: { $in:dto.hallmarkingMandatoryStatuses } } });
+        }
+
+
+  
+      if (dto.skip != -1) {
+        arrayAggregation.push({ $skip: dto.skip });
+        arrayAggregation.push({ $limit: dto.limit });
+      }
+  
+  
+  
+  
+      if (dto.screenType.findIndex((it) => it == 50) != -1) {
+  
+        arrayAggregation.push(
+            {
+              $lookup: {
+                from: ModelNames.GLOBAL_GALLERIES,
+                let: { globalGalleryId: '$_globalGalleryId' },
+                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } }],
+                as: 'globalGalleryDetails',
+              },
+            },
+            {
+              $unwind: { path: '$globalGalleryDetails', preserveNullAndEmptyArrays: true },
+            },
+          );
+      }
+  
+
+
+
+
+      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+  
+        arrayAggregation.push(
+            {
+              $lookup: {
+                from: ModelNames.BRANCHES,
+                let: { branchId: '$_branchId' },
+                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$branchId'] } } }],
+                as: 'branchDetails',
+              },
+            },
+            {
+              $unwind: { path: '$branchDetails', preserveNullAndEmptyArrays: true },
+            },
+          );
+      }
+     
+      if (dto.screenType.findIndex((it) => it == 104) != -1) {
+  
+        arrayAggregation.push(
+            {
+              $lookup: {
+                from: ModelNames.RATE_CARDS,
+                let: { rateCardIdId: '$_rateCardId' },
+                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$rateCardId'] } } }],
+                as: 'rateCardDetails',
+              },
+            },
+            {
+              $unwind: { path: '$rateCardDetails', preserveNullAndEmptyArrays: true },
+            },
+          );
+      }
+      if (dto.screenType.findIndex((it) => it == 105) != -1) {
+  
+        arrayAggregation.push(
+            {
+              $lookup: {
+                from: ModelNames.STATES,
+                let: { stateId: '$_stateId' },
+                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$stateId'] } } }],
+                as: 'stateDetails',
+              },
+            },
+            {
+              $unwind: { path: '$stateDetails', preserveNullAndEmptyArrays: true },
+            },
+          );
+      }
+      if (dto.screenType.findIndex((it) => it == 106) != -1) {
+  
+        arrayAggregation.push(
+            {
+              $lookup: {
+                from: ModelNames.DISTRICTS,
+                let: { districtId: '$_districtId' },
+                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$districtId'] } } }],
+                as: 'districtDetails',
+              },
+            },
+            {
+              $unwind: { path: '$districtDetails', preserveNullAndEmptyArrays: true },
+            },
+          );
+      }
+      if (dto.screenType.findIndex((it) => it == 107) != -1) {
+  
+        arrayAggregation.push(
+            {
+              $lookup: {
+                from: ModelNames.TDS_MASTERS,
+                let: { tdsId: '$_tdsId' },
+                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$tdsId'] } } }],
+                as: 'tdsDetails',
+              },
+            },
+            {
+              $unwind: { path: '$tdsDetails', preserveNullAndEmptyArrays: true },
+            },
+          );
+      }
+      if (dto.screenType.findIndex((it) => it == 108) != -1) {
+  
+        arrayAggregation.push(
+            {
+              $lookup: {
+                from: ModelNames.TCS_MASTERS,
+                let: { tcsId: '$_tcsId' },
+                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$tcsId'] } } }],
+                as: 'tcsDetails',
+              },
+            },
+            {
+              $unwind: { path: '$tcsDetails', preserveNullAndEmptyArrays: true },
+            },
+          );
+      }
+      if (dto.screenType.findIndex((it) => it == 109) != -1) {
+  
+        arrayAggregation.push(
+            {
+              $lookup: {
+                from: ModelNames.RATE_BASE_MASTERS,
+                let: { ratebaseId: '$_rateBaseMasterId' },
+                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$ratebaseId'] } } }],
+                as: 'ratebaseMasterDetails',
+              },
+            },
+            {
+              $unwind: { path: '$ratebaseMasterDetails', preserveNullAndEmptyArrays: true },
+            },
+          );
+      }
+     
+      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+        arrayAggregation.push( {
+          $lookup: {
+            from: ModelNames.USER,
+            let: { userId: '$_orderHeadId' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$_id', '$$userId'] },
+                },
+              },
+  
+              {
+                  $lookup: {
+                    from: ModelNames.EMPLOYEES,
+                    let: { employeeId: '$_employeeId' },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: { $eq: ['$_id', '$$employeeId'] },
+                        },
+                      },
+                    ],
+                    as: 'employeeDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$employeeDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                }
+  
+  
+            ],
+            as: 'orderHeadDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$orderHeadDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },);
+    }
+    if (dto.screenType.findIndex((it) => it == 102) != -1) {
+      arrayAggregation.push( {
+        $lookup: {
+          from: ModelNames.USER,
+          let: { userId: '$_relationshipManagerId' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$userId'] },
+              },
+            },
+
+            {
+                $lookup: {
+                  from: ModelNames.EMPLOYEES,
+                  let: { employeeId: '$_employeeId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$employeeId'] },
+                      },
+                    },
+                  ],
+                  as: 'employeeDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$employeeDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              }
+
+
+          ],
+          as: 'relationshipManagerDetails',
+        },
+      },
+      {
+        $unwind: {
+          path: '$relationshipManagerDetails',
+          preserveNullAndEmptyArrays: true,
+        },
+      },);
+  }
+
+
+  if (dto.screenType.findIndex((it) => it == 103) != -1) {
+    arrayAggregation.push( {
+      $lookup: {
+        from: ModelNames.USER,
+        let: { supplierId: '$_supplierId' },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ['$_id', '$$supplierId'] },
+            },
+          },
+
+          {
+              $lookup: {
+                from: ModelNames.SUPPLIERS,
+                let: { supplieruerId: '$_supplierId' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$_id', '$$supplieruerId'] },
+                    },
+                  },
+                ],
+                as: 'supplierDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$supplierDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            }
+
+
+        ],
+        as: 'supplierUserDetails',
+      },
+    },
+    {
+      $unwind: {
+        path: '$supplierUserDetails',
+        preserveNullAndEmptyArrays: true,
+      },
+    },);
+}
+
+if (dto.screenType.findIndex((it) => it == 110) != -1) {
+  arrayAggregation.push( {
+    $lookup: {
+      from: ModelNames.USER,
+      let: { agentUserId: '$_agentId' },
+      pipeline: [
+        {
+          $match: {
+            $expr: { $eq: ['$_id', '$$agentUserId'] },
+          },
+        },
+
+        {
+            $lookup: {
+              from: ModelNames.AGENTS,
+              let: { agentId: '$_agentId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$agentId'] },
+                  },
+                },
+              ],
+              as: 'agentDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$agentDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          }
+
+
+      ],
+      as: 'agentUserDetails',
+    },
+  },
+  {
+    $unwind: {
+      path: '$agentUserDetails',
+      preserveNullAndEmptyArrays: true,
+    },
+  },);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      var result = await this.customersModel
+        .aggregate(arrayAggregation)
+        .session(transactionSession);
+  
+      var totalCount = 0;
+      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+        //Get total count
+        var limitIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$limit') === true,
+        );
+        if (limitIndexCount != -1) {
+          arrayAggregation.splice(limitIndexCount, 1);
+        }
+        var skipIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$skip') === true,
+        );
+        if (skipIndexCount != -1) {
+          arrayAggregation.splice(skipIndexCount, 1);
+        }
+        arrayAggregation.push({ $group: { _id: null, totalCount: { $sum: 1 } } });
+  
+        var resultTotalCount = await this.customersModel
+          .aggregate(arrayAggregation)
+          .session(transactionSession);
+        if (resultTotalCount.length > 0) {
+          totalCount = resultTotalCount[0].totalCount;
+        }
+      }
+  
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return {
+        message: 'success',
+        data: { list: result, totalCount: totalCount },
+      };
+    }catch(error){
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  
 
 
 

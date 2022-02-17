@@ -4,7 +4,7 @@ import { GlobalConfig } from 'src/config/global_config';
 
 
 export const CustomersSchema = new mongoose.Schema({
-  //  _id: mongoose.Schema.Types.ObjectId,
+  //  _id: mongoose.Schema.Types.ObjectId, 
     _name: { type: String, required: true, default: "nil" }, 
     _gender: { type: Number, required: true, default: -1 },
     _email: { type: String, required: true, default: "nil" },

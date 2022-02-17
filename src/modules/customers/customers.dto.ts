@@ -17,8 +17,8 @@ const descriptionListDataGuard="0-edit protect, 1-disabe protect, 2-delete prote
 const descriptionListGender="0-male, 1-female, 2-other";
 const descriptionListCommisionType="0-Commision Percentage, 1-Commision amount";
 const descriptionListSortOrder="1-ascending, -1-descending";
-const descriptionListSortType="0-Created Date,1-Status  2-Name,3-commision type, 4-UID, 4-";
-const descriptionListScreenTypeForFilterLoading="0-total documents count, 100-city details";
+const descriptionListSortType="0-Created Date,1-Status  2-Name,3-UID, 4-gender, 5-email, 6-orderSaleRate, 7-stockSaleRate, 8-customerType, 9-billingModeSale, 10-billingModePurchase, 11-hallmarkingMandatoryStatus,12-creditAmount, 13-creditDays, 14-stonePricing, 15-agentCommision";
+const descriptionListScreenTypeForFilterLoading="0-total documents count, 50-globalGalleryImagePopulate, 100-branch populate, 101-orderHead populate, 102-relationship manager populate, 103-supplier populate, 104-rate card populate, 105-state populate, 106-district populate, 107-tds populate, 108-tcs populate, 109-ratebase master populate, 110-agent populate";
 
 const descriptionOrderSaleRate="0 - unfix, 1 - fix";
 const descriptionStockSaleRate="0 - unfix, 1 - fix";
@@ -401,7 +401,7 @@ export class CustomerStatusChangeDto {
 
 }
 
-export class ListFilterLocadingCustomersDto {
+export class ListCustomersDto {
   @IsArray()
   @ArrayMinSize(1)
   @ApiProperty({ type: [Number],description:descriptionStatus })
@@ -419,5 +419,123 @@ export class ListFilterLocadingCustomersDto {
   @IsNumber()
   @ApiProperty({})
   skip: number;
+
+
+
+  @IsNumber()
+  @ApiProperty({description:descriptionListSortType})
+  sortType: number;
+  @IsNumber()
+  @ApiProperty({description:descriptionListSortOrder})
+  sortOrder: number;
+
+
+
+  @IsArray()
+  @ApiProperty({ type: [Number],description:descriptionListGender })
+  gender:number[];
+
+ 
+  @IsString()
+  @ApiProperty({})
+  searchingText: string;
+
+
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  customerIds: string[];
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @IsArray()
+  @ApiProperty({ type: [Number],description:descriptionOrderSaleRate })
+  orderSaleRates:number[];
+
+  @IsArray()
+  @ApiProperty({ type: [Number],description:descriptionStockSaleRate })
+  stockSaleRates:number[];
+
+  @IsArray()
+  @ApiProperty({ type: [Number],description:descriptionCustomerType })
+  customerTypes:number[];
+
+  @IsArray()
+  @ApiProperty({ type: [Number],description:descriptionBillingModeSale })
+  billingModelSales:number[];
+
+  @IsArray()
+  @ApiProperty({ type: [Number],description:descriptionBillingModePurchase })
+  billingModelPurchases:number[];
+
+  @IsArray()
+  @ApiProperty({ type: [Number],description:descriptionHallmarkingStatus })
+  hallmarkingMandatoryStatuses:number[];
+
+
+
+
+
+
+
+
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  branchIds: string[];
+
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderHeadIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  relationshipManagerIds: string[];
+
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  supplierIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  rateCardIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  stateIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  districtIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  tdsIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  tcsIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  ratebaseMasterIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  agentIds: string[];
+
+
 
 }
