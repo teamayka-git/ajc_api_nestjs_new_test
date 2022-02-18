@@ -62,7 +62,7 @@ export class GlobalGalleryCategoryEditDto {
 
   @IsString()
   @ApiProperty({})
-  globalGalleryId: string;
+  globalGalleryCategoryIdForEdit: string;
 
   @IsString()
   @ApiProperty({})

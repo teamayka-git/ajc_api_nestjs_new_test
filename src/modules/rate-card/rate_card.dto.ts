@@ -56,6 +56,7 @@ export class RateCardEditDto {
   @IsString()
   @ApiProperty({})
   rateCardId:string;
+  
   @IsString()
   @ApiProperty({})
   subCategoryId:string;

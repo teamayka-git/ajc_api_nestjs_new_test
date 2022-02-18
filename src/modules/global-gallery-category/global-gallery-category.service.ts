@@ -54,7 +54,7 @@ export class GlobalGalleryCategoryService {
     try{
         var result = await this.globalGalleryCategoriesModel.findOneAndUpdate(
           {
-            _id: dto.globalGalleryId,
+            _id: dto.globalGalleryCategoryIdForEdit,
           },
           {
             $set: {
