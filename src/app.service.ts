@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { MeDto } from './app.dto';
+import { CommonNames } from './common/common_names';
 import { ModelNames } from './common/model_names';
 import { Company } from './tableModels/companies.model';
 import { Counters } from './tableModels/counters.model';
@@ -802,7 +803,7 @@ export class AppService {
             {
               $setOnInsert: {
                 _globalGalleryCategoryId:null,
-                _type:0,
+                _type:1,
                 _dataGuard:[0,1,2,3],
                 _createdUserId: null,
                 _createdAt: dateTime,
@@ -836,7 +837,7 @@ export class AppService {
             {
               $setOnInsert: {
                 _globalGalleryCategoryId:null,
-                _type:2,
+                _type:1,
                 _dataGuard:[0,1,2,3],
                 _createdUserId: null,
                 _createdAt: dateTime,
@@ -852,7 +853,7 @@ export class AppService {
             {
               $setOnInsert: {
                 _globalGalleryCategoryId:null,
-                _type:3,
+                _type:1,
                 _dataGuard:[0,1,2,3],
                 _createdUserId: null,
                 _createdAt: dateTime,
@@ -869,7 +870,7 @@ export class AppService {
             {
               $setOnInsert: {
                 _globalGalleryCategoryId:null,
-                _type:4,
+                _type:1,
                 _dataGuard:[0,1,2,3],
                 _createdUserId: null,
                 _createdAt: dateTime,
@@ -885,7 +886,7 @@ export class AppService {
             {
               $setOnInsert: {
                 _globalGalleryCategoryId:null,
-                _type:5,
+                _type:1,
                 _dataGuard:[0,1,2,3],
                 _createdUserId: null,
                 _createdAt: dateTime,
@@ -902,7 +903,24 @@ export class AppService {
             {
               $setOnInsert: {
                 _globalGalleryCategoryId:null,
-                _type:6,
+                _type:1,
+                _dataGuard:[0,1,2,3],
+                _createdUserId: null,
+                _createdAt: dateTime,
+                _updatedUserId: null,
+                _updatedAt: -1,
+              },
+              $set: { _status: 1 },
+            },
+            { upsert: true, new: true,session: transactionSession },
+          );
+
+          await this.globalGalleryCategoriesModel.findOneAndUpdate(
+            { _name: CommonNames.GLOBAL_GALLERY_CUSTOMER },
+            {
+              $setOnInsert: {
+                _globalGalleryCategoryId:null,
+                _type:1,
                 _dataGuard:[0,1,2,3],
                 _createdUserId: null,
                 _createdAt: dateTime,

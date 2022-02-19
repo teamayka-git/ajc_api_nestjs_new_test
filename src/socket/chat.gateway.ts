@@ -31,7 +31,7 @@ export class ChatGateway
 {
 
    
-
+    
   constructor(
     @InjectModel(ModelNames.CHAT_PENDING_MESSAGES)
     private readonly chatPendingMessagesModel: Model<ChatPendingMessages>,

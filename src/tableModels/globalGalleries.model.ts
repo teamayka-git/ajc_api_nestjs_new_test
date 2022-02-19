@@ -48,10 +48,35 @@ export interface GlobalGalleries {
 }
 
 GlobalGalleriesSchema.index({_status: 1});
-GlobalGalleriesSchema.index({ _name: 1 });
-GlobalGalleriesSchema.index({ _type: 1 });
+GlobalGalleriesSchema.index({ _name: 1,_id:1 });
+GlobalGalleriesSchema.index({ _type: 1 ,_id:1});
 GlobalGalleriesSchema.index({ _docType: 1 });
-GlobalGalleriesSchema.index({ _globalGalleryCategoryId: 1 });
+GlobalGalleriesSchema.index({ _globalGalleryCategoryId: 1,_id:1 });
+
+GlobalGalleriesSchema.index({_name: 1,_globalGalleryCategoryId:1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
+GlobalGalleriesSchema.post('save', async function(error, doc, next) {
+    schemaPostFunctionForDuplicate(error, doc, next);
+});
+GlobalGalleriesSchema.post('insertMany', async function(error, doc, next) {
+    schemaPostFunctionForDuplicate(error, doc, next);
+});
+GlobalGalleriesSchema.post('updateOne', async function(error, doc, next) {
+    schemaPostFunctionForDuplicate(error, doc, next);
+});
+GlobalGalleriesSchema.post('findOneAndUpdate', async function(error, doc, next) {
+    schemaPostFunctionForDuplicate(error, doc, next);
+});
+GlobalGalleriesSchema.post('updateMany', async function(error, doc, next) {
+    schemaPostFunctionForDuplicate(error, doc, next);
+});
+function schemaPostFunctionForDuplicate(error, doc, next) {
+    if(error.code==11000){
+        next(new Error('Name already existing'));
+   }else{
+    next();
+   }
+}
+
 
 /*
 _docType:{ 

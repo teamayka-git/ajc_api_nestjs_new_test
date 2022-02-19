@@ -14,7 +14,7 @@ import { Optional } from '@nestjs/common';
 
 const descriptionStatus="0-Inactive, 1-Active, 2-Delete";
 const descriptionListScreenTypeForList="0-total documents count,100-category details populate";
-const descriptionListType=" -1-other   0-category, 1-sub category, 2-stone, 3-agent, 4-branch, 5-branch, 6-employee, 7-supplier";
+const descriptionListType=" -1-other   0-category, 1-sub category, 2-stone, 3-agent, 4-branch, 5-employee, 6-supplier, 7-customer";
 const descriptionListDocType="0-image, 1-video, 2-pdf, 3-audio, 4-document";
 
 
@@ -25,7 +25,7 @@ class GlobalGalleryCreateList {
   @ApiProperty({})
   originalname: string;
 
-  @IsString()
+  @IsString() 
   @ApiProperty({})
   name: string;
 

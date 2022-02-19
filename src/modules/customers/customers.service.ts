@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Session } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { Counters } from 'src/tableModels/counters.model';
@@ -10,6 +10,8 @@ import { CustomerCreateDto, CustomerEditeDto, CustomerLoginDto, ListCustomersDto
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 import { StringUtils } from 'src/utils/string_utils';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
+import { GlobalGalleryCategories } from 'src/tableModels/globalGallerycategories.model';
+import { CommonNames } from 'src/common/common_names';
 const crypto = require('crypto');
 @Injectable()
 export class CustomersService {
@@ -21,6 +23,7 @@ export class CustomersService {
         @InjectModel(ModelNames.COUNTERS)
         private readonly counterModel: mongoose.Model<Counters>,
         
+        @InjectModel(ModelNames.GLOBAL_GALLERY_CATEGORIES) private readonly globalGalleryCategoriesModel: mongoose.Model<GlobalGalleryCategories>,
       @InjectModel(ModelNames.GLOBAL_GALLERIES) private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
         @InjectConnection() private readonly connection: mongoose.Connection,
       ) {}
@@ -302,8 +305,62 @@ export class CustomersService {
           session: transactionSession,
         });
     
+    var globalGalleryManinCategoryForCustomer=await this.globalGalleryCategoriesModel.find({_status:1,_name:CommonNames.GLOBAL_GALLERY_CUSTOMER,_type:1},{_id:1}).session(transactionSession);
+    if(globalGalleryManinCategoryForCustomer.length==0){
+      throw new HttpException('Global gallery category not found', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+   
+    var globalGalleryCategory=new this.globalGalleryCategoriesModel({
+      _name:dto.name,
+    _globalGalleryCategoryId:globalGalleryManinCategoryForCustomer[0]._id,
+    _dataGuard:[0,1,2],
+    _type:2,
+    _createdUserId:null,
+    _createdAt:dateTime,
+    _updatedUserId:null,
+    _updatedAt:-1,
+    _status:1
+    });
     
+    var globalGallerySpecificCustomer=await globalGalleryCategory.save({
+      session: transactionSession,
+    });
+
+
+    var globalGalleryCategoryProducts=new this.globalGalleryCategoriesModel({
+      _name:CommonNames.GLOBAL_GALLERY_CUSTOMER_PRODUCTS,
+    _globalGalleryCategoryId:globalGallerySpecificCustomer._id,
+    _dataGuard:[0,1,2],
+    _type:2,
+    _createdUserId:null,
+    _createdAt:dateTime,
+    _updatedUserId:null,
+    _updatedAt:-1,
+    _status:1
+    });
     
+    await globalGalleryCategoryProducts.save({
+      session: transactionSession,
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     
     
@@ -340,7 +397,22 @@ export class CustomersService {
        
     
         }
-    
+    var resultOldCustomerName=await this.customersModel.find({_id:dto.customerId},{_name:1});
+if(resultOldCustomerName.length==0){
+  throw new HttpException('Old customer data not found', HttpStatus.INTERNAL_SERVER_ERROR);
+}
+    var oldCustomerName=resultOldCustomerName[0]._name;
+
+
+
+
+
+
+
+
+
+
+
     
         var updateObject= {
             _name: dto.name,
@@ -444,6 +516,29 @@ export class CustomersService {
           { new: true,session: transactionSession },
         );
     
+
+if(oldCustomerName!=dto.name){
+  var globalGalleryManinCategoryForCustomer=await this.globalGalleryCategoriesModel.find({_status:1,_name:CommonNames.GLOBAL_GALLERY_CUSTOMER,_type:1},{_id:1}).session(transactionSession);
+  if(globalGalleryManinCategoryForCustomer.length==0){
+    throw new HttpException('Global gallery category not found', HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+await this.globalGalleryCategoriesModel.findOneAndUpdate({_name:oldCustomerName,_globalGalleryCategoryId:globalGalleryManinCategoryForCustomer[0]._id,_status:1},{$set:{_name:dto.name}},{ new: true,session: transactionSession });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: 'success', data: result };

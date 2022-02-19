@@ -46,7 +46,29 @@ GlobalGalleryCategoriesSchema.index({_type: 1});
 GlobalGalleryCategoriesSchema.index({_status: 1});
 GlobalGalleryCategoriesSchema.index({ _name: 1 });
 
-
+GlobalGalleryCategoriesSchema.index({_name: 1,_globalGalleryCategoryId:1,_type:1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
+GlobalGalleryCategoriesSchema.post('save', async function(error, doc, next) {
+    schemaPostFunctionForDuplicate(error, doc, next);
+});
+GlobalGalleryCategoriesSchema.post('insertMany', async function(error, doc, next) {
+    schemaPostFunctionForDuplicate(error, doc, next);
+});
+GlobalGalleryCategoriesSchema.post('updateOne', async function(error, doc, next) {
+    schemaPostFunctionForDuplicate(error, doc, next);
+});
+GlobalGalleryCategoriesSchema.post('findOneAndUpdate', async function(error, doc, next) {
+    schemaPostFunctionForDuplicate(error, doc, next);
+});
+GlobalGalleryCategoriesSchema.post('updateMany', async function(error, doc, next) {
+    schemaPostFunctionForDuplicate(error, doc, next);
+});
+function schemaPostFunctionForDuplicate(error, doc, next) {
+    if(error.code==11000){
+        next(new Error('Name already existing'));
+   }else{
+    next();
+   }
+}
 /*
 _type:{
   1- main category
