@@ -30,7 +30,7 @@ export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
 
-
+   
 
   constructor(
     @InjectModel(ModelNames.CHAT_PENDING_MESSAGES)
