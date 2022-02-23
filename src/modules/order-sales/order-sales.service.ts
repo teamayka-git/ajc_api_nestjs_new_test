@@ -478,12 +478,12 @@ if(dto.documentsLinkingIdsForDelete.length!=0){
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.ORDER_SALES_DOCUMENTS,
-            let: { orderSaleIdId: '$_id' },
+            let: { orderSaleIdId: '$_id' }, 
             pipeline: [
               {
                 $match: {
                   _status: 1,
-                  $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+                  $expr: { $eq: ['$_orderSaleId', '$$orderSaleIdId'] },
                 },
               },
               {
