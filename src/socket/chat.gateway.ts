@@ -24,7 +24,7 @@ import { ChatDocumentCreateDto } from 'src/app.dto';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
 import { StringUtils } from 'src/utils/string_utils';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
-
+ 
 @WebSocketGateway( { cors: true }) //todo add port from env file
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
