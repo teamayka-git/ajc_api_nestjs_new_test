@@ -285,7 +285,7 @@ try{
         transactionSession.startTransaction();
     try{
 
-
+      console.log("___a1");
 
         if (file.hasOwnProperty('image')) {
           var filePath =
@@ -296,11 +296,11 @@ try{
               new StringUtils().makeThumbImageFileName(
                 file['image'][0]['filename'],
               ));
-
+              console.log("___a2");
     
         }
 
-
+        console.log("___a3");
         var updateObject= {
           _name: dto.name,
           _gender: dto.gender,
@@ -311,13 +311,13 @@ try{
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
         }    
-
+        console.log("___a4");
 
 
         var globalGalleryId=null;
         //globalGalleryAdd
         if (file.hasOwnProperty('image')) {
-    
+          console.log("___a5");
           var resultCounterPurchase= await this.counterModel.findOneAndUpdate(
               { _tableName: ModelNames.GLOBAL_GALLERIES},
               {
@@ -327,7 +327,7 @@ try{
                 },
               {  new: true,session: transactionSession },
             );
-    
+            console.log("___a6");
         const globalGallery = new this.globalGalleryModel({
           __name:file['image'][0]['originalname'],
           _globalGalleryCategoryId:null,
@@ -348,13 +348,14 @@ try{
           _updated_at: -1,
           _status: 1,
         });
+        console.log("___a7");
       var resultGlobalGallery=  await globalGallery.save({
           session: transactionSession,
         });
         
         globalGalleryId=resultGlobalGallery._id;
 
-
+        console.log("___a8");
 
 
         updateObject["_globalGalleryId"]=globalGalleryId
@@ -364,7 +365,7 @@ try{
 
 
 
-
+      console.log("___a9");
 
         var result = await this.suppliersModel.findOneAndUpdate(
           {
@@ -375,7 +376,7 @@ try{
           },
           { new: true,session: transactionSession },
         );
-    
+        console.log("___a10");
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
         return { message: 'success', data: result };
