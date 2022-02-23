@@ -53,7 +53,7 @@ GlobalGalleriesSchema.index({ _type: 1 ,_id:1});
 GlobalGalleriesSchema.index({ _docType: 1 });
 GlobalGalleriesSchema.index({ _globalGalleryCategoryId: 1,_id:1 });
 
-GlobalGalleriesSchema.index({_name: 1,_globalGalleryCategoryId:1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
+/*GlobalGalleriesSchema.index({_name: 1,_globalGalleryCategoryId:1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 },_globalGalleryCategoryId:{$ne:null} }});
 GlobalGalleriesSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
 });
@@ -76,7 +76,7 @@ function schemaPostFunctionForDuplicate(error, doc, next) {
     next();
    }
 }
-
+*/
 
 /*
 _docType:{ 
