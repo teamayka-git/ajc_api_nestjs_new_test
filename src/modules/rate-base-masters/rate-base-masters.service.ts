@@ -58,7 +58,7 @@ export class RateBaseMastersService {
           },
           {
             $set: {
-                _name:dto.rateBaseMasterId,
+                _name:dto.name,
               _dataGuard:dto.dataGuard,
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
