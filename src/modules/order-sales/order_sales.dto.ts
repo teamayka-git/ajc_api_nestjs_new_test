@@ -18,7 +18,7 @@ import { Transform, Type, Type as ValidateTypes } from 'class-transformer';
 import { Optional } from '@nestjs/common';
 
 const descriptionListScreenTypeForBranchList =
-  '0-total documents count,100-populate sub categories, 101-list documents';
+  '0-total documents count,100-populate sub categories, 101-list documents, 102-customer id';
 const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 
@@ -215,6 +215,10 @@ export class OrderSaleListDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   salesPersonIds: string[];
+  
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  customerIds: string[];
 
   @IsArray()
   @ApiProperty({ type: [Number] })

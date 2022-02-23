@@ -4,6 +4,11 @@ import { GlobalConfig } from 'src/config/global_config';
 
 export const OrderSalesSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
+  _customerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.USER,
+    default: null,
+  },
   _subCategoryId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.SUB_CATEGORIES,
@@ -38,6 +43,7 @@ export const OrderSalesSchema = new mongoose.Schema({
 
 export interface OrderSales {
   _id: String;
+  _customerId: string;
   _subCategoryId: string;
   _quantity: number;
   _size: number;

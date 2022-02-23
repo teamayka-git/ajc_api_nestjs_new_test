@@ -425,6 +425,15 @@ if(dto.documentsLinkingIdsForDelete.length!=0){
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
 
+      
+      if (dto.customerIds.length > 0) {
+        var newSettingsId = [];
+        dto.customerIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _customerId: { $in: newSettingsId } } });
+      }
+
       switch (dto.sortType) {
         case 0:
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
@@ -516,6 +525,46 @@ if(dto.documentsLinkingIdsForDelete.length!=0){
         });
       }
 
+      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { customerId: '$_customerId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$customerId'] } } },
+
+                {
+                  $lookup: {
+                    from: ModelNames.USER,
+                    let: { customerUserId: '$_customerId' },
+                    pipeline: [
+                      { $match: { $expr: { $eq: ['$_id', '$$customerUserId'] } } },
+                    ],
+                    as: 'userDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$userDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+
+                }
+
+
+              ],
+              as: 'customerDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$customerDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
       var result = await this.orderSaleModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
