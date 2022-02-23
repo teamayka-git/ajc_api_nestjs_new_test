@@ -64,8 +64,7 @@ export class AppService {
             path: '$userDetails',
             preserveNullAndEmptyArrays: true,
           },
-        }
-        // ,
+        },
         // {
         //   $lookup: {
         //     from: ModelNames.AGENTS,
@@ -98,6 +97,22 @@ export class AppService {
         //     preserveNullAndEmptyArrays: true,
         //   },
         // },
+        {
+          $lookup: {
+            from: ModelNames.CUSTOMERS,
+            let: { customerId: '$_customerId' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$_id', '$$customerId'] } } },
+            ],
+            as: 'customerDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$customerDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
        
       ])
       .session(transactionSession);
