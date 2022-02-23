@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common'
 import * as cookieParser from 'cookie-parser';
 import * as fs from 'fs';
 import * as path from 'path';
+import { SocketIoAdapter } from './socket/socket_adapter';
 
 async function bootstrap() {
   const ssl = process.env.SSL === 'true' ? true : false;
@@ -45,9 +46,10 @@ async function bootstrap() {
       tagsSorter: 'alpha',
       operationsSorter: 'alpha'
     }
-  });
+  });  
+ 
 
-
+  app.useWebSocketAdapter(new SocketIoAdapter(app,["*"])); 
 
   await app.listen(process.env.PORT);
   console.log("satarted----------------_");
