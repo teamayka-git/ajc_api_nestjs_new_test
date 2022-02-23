@@ -140,6 +140,7 @@ export class OrderSalesService {
 
       const newsettingsModel = new this.orderSaleModel({
         _id: orderSaleId,
+        _customerId:_userId_,
         _subCategoryId: dto.subCategoryId,
         _quantity: dto.quantity,
         _size: dto.size,
