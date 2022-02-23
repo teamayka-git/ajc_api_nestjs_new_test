@@ -40,6 +40,14 @@ export class AppController {
   }
 
 
+  @Post("chatGetUsersList")
+  chatGetUsersList(@Request() req) {
+    return this.chatGateway.chatGetUsersList(req["_userId_"]);
+  }
+
+
+
+
 
 
 
