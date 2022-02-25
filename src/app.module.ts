@@ -137,6 +137,7 @@ export class AppModule {
           // process.env.GLOBAL_PREFIX_FOR_API + '/(.*)',
           // process.env.GLOBAL_PREFIX_FOR_API + '/store_front/(.*)',
           process.env.GLOBAL_PREFIX_FOR_API + '/employees/login',
+          process.env.GLOBAL_PREFIX_FOR_API + '/customers/login',
        
         )
         .forRoutes('*');
