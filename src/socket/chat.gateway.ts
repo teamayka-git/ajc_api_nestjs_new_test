@@ -25,7 +25,7 @@ import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_pa
 import { StringUtils } from 'src/utils/string_utils';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 
-@WebSocketGateway({ cors: true }) //todo add port from env file
+@WebSocketGateway(4001,{ cors: true }) //todo add port from env file
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
