@@ -25,7 +25,7 @@ import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_pa
 import { StringUtils } from 'src/utils/string_utils';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 
-@WebSocketGateway(4001,{ cors: true }) //todo add port from env file
+@WebSocketGateway(4001, { cors: true }) //todo add port from env file
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -533,9 +533,7 @@ export class ChatGateway
     }
   }
 
-  async chatGetUsersList(
-    _userId_: string
-  ) {
+  async chatGetUsersList(_userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -1010,11 +1008,37 @@ export class ChatGateway
         {
           $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true },
         },
+
+        {
+          $lookup: {
+            from: ModelNames.CHAT_PERSONAL_CHAT_MESSAGES,
+            let: { personalChatMessageId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: {
+                    $eq: ['$_personalChatId', '$$personalChatMessageId'],
+                  },
+                },
+              },
+              { $sort: { _id: -1 } },
+              {$limit:1}
+            ],
+            as: 'lastMessageDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$lastMessageDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
       ]);
 
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
-      return { message: 'success', data: {list:result} };
+      return { message: 'success', data: { list: result } };
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
