@@ -26,6 +26,7 @@ export const OrderSalesSchema = new mongoose.Schema({
   },
   _description: { type: String, required: true, default: 'nil' },
   _isRhodium: { type: Number, required: true, default: -1 },
+  _uid: { type: String, required: true, default: 'nil' },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -48,6 +49,7 @@ export interface OrderSales {
   _quantity: number;
   _size: number;
   _weight: number;
+  _uid:string;
   _stoneColour: string;
   _dueDate: number;
   _salesPersonId: string;

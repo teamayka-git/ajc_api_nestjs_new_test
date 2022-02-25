@@ -52,98 +52,104 @@ export class OrderSalesService {
         );
 
         for (var i = 0; i < dto.documents.length; i++) {
+          var count = file['documents'].findIndex(
+            (it) => dto.documents[i].fileOriginalName == it.originalname,
+          );
+          if (count != -1) {
+            if (dto.documents[i].docType == 0) {
+              var filePath =
+                __dirname +
+                `/../../../public${
+                  file['documents'][count]['path'].split('public')[1]
+                }`;
 
-
-            var count = file['documents'].findIndex(
-                (it) => dto.documents[i].fileOriginalName == it.originalname,
+              new ThumbnailUtils().generateThumbnail(
+                filePath,
+                UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER +
+                  new StringUtils().makeThumbImageFileName(
+                    file['documents'][count]['filename'],
+                  ),
               );
-              if (count != -1) {
-                if (dto.documents[i].docType == 0) {   var filePath =
-                  __dirname +
-                  `/../../../public${
-                    file['documents'][count]['path'].split('public')[1]
-                  }`;
-  
-                new ThumbnailUtils().generateThumbnail(
-                  filePath,
-                  UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER +
-                    new StringUtils().makeThumbImageFileName(
-                      file['documents'][count]['filename'],
-                    ),
-                );
-              }
             }
+          }
         }
 
-
-        
         for (var i = 0; i < dto.documents.length; i++) {
-
-            var count = dto.documents.findIndex(
-                (it) => it.fileOriginalName == file['image'][i]['originalname'],
-              );
-              if (count != -1) {
-          var globalGalleryId = new mongoose.Types.ObjectId();
-          arrayGlobalGalleries.push({
-            _id: globalGalleryId,
-            __name: file['documents'][count]['originalname'],
-            _globalGalleryCategoryId: null,
-            _docType: dto.documents[i].docType,
-            _type: 7,
-            _uid: resultCounterPurchase._count - dto.documents.length + (i + 1),
-            _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-              process.env.SERVER_DOMAIN
-            }:${process.env.PORT}${
-              file['documents'][count]['path'].split('public')[1]
-            }`,
-            _thumbUrl:dto.documents[i].docType==0? new StringUtils().makeThumbImageFileName(
-              `${process.env.SSL == 'true' ? 'https' : 'http'}://${
+          var count = dto.documents.findIndex(
+            (it) => it.fileOriginalName == file['image'][i]['originalname'],
+          );
+          if (count != -1) {
+            var globalGalleryId = new mongoose.Types.ObjectId();
+            arrayGlobalGalleries.push({
+              _id: globalGalleryId,
+              __name: file['documents'][count]['originalname'],
+              _globalGalleryCategoryId: null,
+              _docType: dto.documents[i].docType,
+              _type: 7,
+              _uid:
+                resultCounterPurchase._count - dto.documents.length + (i + 1),
+              _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
                 process.env.SERVER_DOMAIN
               }:${process.env.PORT}${
                 file['documents'][count]['path'].split('public')[1]
               }`,
-            ):"nil",
-            _created_user_id: _userId_,
-            _created_at: dateTime,
-            _updated_user_id: null,
-            _updated_at: -1,
-            _status: 1,
-          });
+              _thumbUrl:
+                dto.documents[i].docType == 0
+                  ? new StringUtils().makeThumbImageFileName(
+                      `${process.env.SSL == 'true' ? 'https' : 'http'}://${
+                        process.env.SERVER_DOMAIN
+                      }:${process.env.PORT}${
+                        file['documents'][count]['path'].split('public')[1]
+                      }`,
+                    )
+                  : 'nil',
+              _created_user_id: _userId_,
+              _created_at: dateTime,
+              _updated_user_id: null,
+              _updated_at: -1,
+              _status: 1,
+            });
 
-          
-
-
-          arrayGlobalGalleriesDocuments.push({
-            _orderSaleId:orderSaleId,
-            _globalGalleryId:globalGalleryId,
-            _createdUserId:_userId_,
-            _createdAt:dateTime,
-            _updatedUserId:null,
-            _updatedAt:-1,
-            _status:1
-          });
-
-
-
-
-
+            arrayGlobalGalleriesDocuments.push({
+              _orderSaleId: orderSaleId,
+              _globalGalleryId: globalGalleryId,
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _updatedUserId: null,
+              _updatedAt: -1,
+              _status: 1,
+            });
+          }
         }
-    }
 
-    await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
-        session: transactionSession,
-      });
-      await this.orderSaleDocumentsModel.insertMany(arrayGlobalGalleriesDocuments, {
-        session: transactionSession,
-      });
+        await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
+          session: transactionSession,
+        });
+        await this.orderSaleDocumentsModel.insertMany(
+          arrayGlobalGalleriesDocuments,
+          {
+            session: transactionSession,
+          },
+        );
       }
+
+      var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
+        { _tableName: ModelNames.ORDER_SALES },
+        {
+          $inc: {
+            _count: 1,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
 
       const newsettingsModel = new this.orderSaleModel({
         _id: orderSaleId,
-        _customerId:_userId_,
+        _customerId: _userId_,
         _subCategoryId: dto.subCategoryId,
         _quantity: dto.quantity,
         _size: dto.size,
+        _uid: resultCounterPurchase._count,
         _weight: dto.weight,
         _stoneColour: dto.stoneColor,
         _dueDate: dto.dueDate,
@@ -159,24 +165,6 @@ export class OrderSalesService {
       var result1 = await newsettingsModel.save({
         session: transactionSession,
       });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
@@ -194,123 +182,100 @@ export class OrderSalesService {
     transactionSession.startTransaction();
 
     try {
+      var arrayGlobalGalleries = [];
+      var arrayGlobalGalleriesDocuments = [];
+      if (file.hasOwnProperty('documents')) {
+        var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
+          { _tableName: ModelNames.GLOBAL_GALLERIES },
+          {
+            $inc: {
+              _count: dto.documents.length,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
 
-        var arrayGlobalGalleries=[];
-        var arrayGlobalGalleriesDocuments=[];
-        if (file.hasOwnProperty('documents')) {
-            var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
-              { _tableName: ModelNames.GLOBAL_GALLERIES },
-              {
-                $inc: {
-                  _count: dto.documents.length,
-                },
-              },
-              { new: true, session: transactionSession },
-            );
-    
-            for (var i = 0; i < dto.documents.length; i++) {
-    
-    
-                var count = file['documents'].findIndex(
-                    (it) => dto.documents[i].fileOriginalName == it.originalname,
-                  );
-                  if (count != -1) {
-                    if (dto.documents[i].docType == 0) {   var filePath =
-                      __dirname +
-                      `/../../../public${
-                        file['documents'][count]['path'].split('public')[1]
-                      }`;
-      
-                    new ThumbnailUtils().generateThumbnail(
-                      filePath,
-                      UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER +
-                        new StringUtils().makeThumbImageFileName(
-                          file['documents'][count]['filename'],
-                        ),
-                    );
-                  }
-                }
-            }
-    
-    
-            
-            for (var i = 0; i < dto.documents.length; i++) {
-    
-                var count = dto.documents.findIndex(
-                    (it) => it.fileOriginalName == file['image'][i]['originalname'],
-                  );
-                  if (count != -1) {
-              var globalGalleryId = new mongoose.Types.ObjectId();
-              arrayGlobalGalleries.push({
-                _id: globalGalleryId,
-                __name: file['documents'][count]['originalname'],
-                _globalGalleryCategoryId: null,
-                _docType: dto.documents[i].docType,
-                _type: 7,
-                _uid: resultCounterPurchase._count - dto.documents.length + (i + 1),
-                _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-                  process.env.SERVER_DOMAIN
-                }:${process.env.PORT}${
+        for (var i = 0; i < dto.documents.length; i++) {
+          var count = file['documents'].findIndex(
+            (it) => dto.documents[i].fileOriginalName == it.originalname,
+          );
+          if (count != -1) {
+            if (dto.documents[i].docType == 0) {
+              var filePath =
+                __dirname +
+                `/../../../public${
                   file['documents'][count]['path'].split('public')[1]
-                }`,
-                _thumbUrl:dto.documents[i].docType==0? new StringUtils().makeThumbImageFileName(
-                  `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-                    process.env.SERVER_DOMAIN
-                  }:${process.env.PORT}${
-                    file['documents'][count]['path'].split('public')[1]
-                  }`,
-                ):"nil",
-                _created_user_id: _userId_,
-                _created_at: dateTime,
-                _updated_user_id: null,
-                _updated_at: -1,
-                _status: 1,
-              });
-    
-              
-    
-    
-              arrayGlobalGalleriesDocuments.push({
-                _orderSaleId:dto.orderSaleId,
-                _globalGalleryId:globalGalleryId,
-                _createdUserId:_userId_,
-                _createdAt:dateTime,
-                _updatedUserId:null,
-                _updatedAt:-1,
-                _status:1
-              });
-    
-    
-    
-    
-    
+                }`;
+
+              new ThumbnailUtils().generateThumbnail(
+                filePath,
+                UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER +
+                  new StringUtils().makeThumbImageFileName(
+                    file['documents'][count]['filename'],
+                  ),
+              );
             }
-        }
-    
-        await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
-            session: transactionSession,
-          });
-          await this.orderSaleDocumentsModel.insertMany(arrayGlobalGalleriesDocuments, {
-            session: transactionSession,
-          });
           }
+        }
 
+        for (var i = 0; i < dto.documents.length; i++) {
+          var count = dto.documents.findIndex(
+            (it) => it.fileOriginalName == file['image'][i]['originalname'],
+          );
+          if (count != -1) {
+            var globalGalleryId = new mongoose.Types.ObjectId();
+            arrayGlobalGalleries.push({
+              _id: globalGalleryId,
+              __name: file['documents'][count]['originalname'],
+              _globalGalleryCategoryId: null,
+              _docType: dto.documents[i].docType,
+              _type: 7,
+              _uid:
+                resultCounterPurchase._count - dto.documents.length + (i + 1),
+              _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
+                process.env.SERVER_DOMAIN
+              }:${process.env.PORT}${
+                file['documents'][count]['path'].split('public')[1]
+              }`,
+              _thumbUrl:
+                dto.documents[i].docType == 0
+                  ? new StringUtils().makeThumbImageFileName(
+                      `${process.env.SSL == 'true' ? 'https' : 'http'}://${
+                        process.env.SERVER_DOMAIN
+                      }:${process.env.PORT}${
+                        file['documents'][count]['path'].split('public')[1]
+                      }`,
+                    )
+                  : 'nil',
+              _created_user_id: _userId_,
+              _created_at: dateTime,
+              _updated_user_id: null,
+              _updated_at: -1,
+              _status: 1,
+            });
 
+            arrayGlobalGalleriesDocuments.push({
+              _orderSaleId: dto.orderSaleId,
+              _globalGalleryId: globalGalleryId,
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _updatedUserId: null,
+              _updatedAt: -1,
+              _status: 1,
+            });
+          }
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-     
+        await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
+          session: transactionSession,
+        });
+        await this.orderSaleDocumentsModel.insertMany(
+          arrayGlobalGalleriesDocuments,
+          {
+            session: transactionSession,
+          },
+        );
+      }
 
       var updateObject = {
         _subCategoryId: dto.subCategoryId,
@@ -326,8 +291,6 @@ export class OrderSalesService {
         _updatedAt: dateTime,
       };
 
-     
-
       var result = await this.orderSaleModel.findOneAndUpdate(
         {
           _id: dto.orderSaleId,
@@ -338,27 +301,13 @@ export class OrderSalesService {
         { new: true, session: transactionSession },
       );
 
-
-
-
-if(dto.documentsLinkingIdsForDelete.length!=0){
-
-    await this.orderSaleDocumentsModel.updateMany({_id:{$in:dto.documentsLinkingIdsForDelete}},{$set:{_status:2}},
-        { new: true, session: transactionSession },);
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
+      if (dto.documentsLinkingIdsForDelete.length != 0) {
+        await this.orderSaleDocumentsModel.updateMany(
+          { _id: { $in: dto.documentsLinkingIdsForDelete } },
+          { $set: { _status: 2 } },
+          { new: true, session: transactionSession },
+        );
+      }
 
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
@@ -426,13 +375,14 @@ if(dto.documentsLinkingIdsForDelete.length!=0){
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
 
-      
       if (dto.customerIds.length > 0) {
         var newSettingsId = [];
         dto.customerIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
-        arrayAggregation.push({ $match: { _customerId: { $in: newSettingsId } } });
+        arrayAggregation.push({
+          $match: { _customerId: { $in: newSettingsId } },
+        });
       }
 
       switch (dto.sortType) {
@@ -488,7 +438,7 @@ if(dto.documentsLinkingIdsForDelete.length!=0){
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.ORDER_SALES_DOCUMENTS,
-            let: { orderSaleIdId: '$_id' }, 
+            let: { orderSaleIdId: '$_id' },
             pipeline: [
               {
                 $match: {
@@ -526,7 +476,7 @@ if(dto.documentsLinkingIdsForDelete.length!=0){
         });
       }
 
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.findIndex((it) => it == 102) != -1) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -537,10 +487,34 @@ if(dto.documentsLinkingIdsForDelete.length!=0){
 
                 {
                   $lookup: {
-                    from: ModelNames.USER,
+                    from: ModelNames.CUSTOMERS,
                     let: { customerUserId: '$_customerId' },
                     pipeline: [
-                      { $match: { $expr: { $eq: ['$_id', '$$customerUserId'] } } },
+                      {
+                        $match: {
+                          $expr: { $eq: ['$_id', '$$customerUserId'] },
+                        },
+                      },
+                      {
+                        $lookup: {
+                          from: ModelNames.GLOBAL_GALLERIES,
+                          let: { globalGalleryId: '$_globalGalleryId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                              },
+                            },
+                          ],
+                          as: 'dlobalGalleryDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$dlobalGalleryDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
                     ],
                     as: 'userDetails',
                   },
@@ -550,10 +524,7 @@ if(dto.documentsLinkingIdsForDelete.length!=0){
                     path: '$userDetails',
                     preserveNullAndEmptyArrays: true,
                   },
-
-                }
-
-
+                },
               ],
               as: 'customerDetails',
             },
@@ -566,6 +537,13 @@ if(dto.documentsLinkingIdsForDelete.length!=0){
           },
         );
       }
+
+
+
+    
+
+
+
       var result = await this.orderSaleModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
