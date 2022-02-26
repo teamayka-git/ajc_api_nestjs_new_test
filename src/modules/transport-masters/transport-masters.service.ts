@@ -133,11 +133,8 @@ export class TransportMastersService {
           arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
         }
         if (dto.types.length > 0) {
-          var newSettingsId = [];
-          dto.types.map((mapItem) => {
-            newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
-          });
-          arrayAggregation.push({ $match: { _type: { $in: newSettingsId } } });
+        
+          arrayAggregation.push({ $match: { _type: { $in: dto.types } } });
         }
     
         switch(dto.sortType){
