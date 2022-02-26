@@ -85,9 +85,6 @@ export class EmployeeEditDto {
   @ApiProperty({})
   email: string;
 
-  @IsString()
-  @ApiProperty({})
-  password: string;
 
   @IsString()
   @ApiProperty({})

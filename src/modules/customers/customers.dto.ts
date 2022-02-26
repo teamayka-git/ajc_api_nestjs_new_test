@@ -234,9 +234,6 @@ export class CustomerEditeDto {
   gender: number;
 
 
-  @IsString()
-  @ApiProperty({})
-  password: string;
 
   @IsString()
   @ApiProperty({})
