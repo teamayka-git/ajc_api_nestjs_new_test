@@ -214,6 +214,8 @@ try{
     var password = '';
     if (dto.password == '') {
       password = new StringUtils().makeid(6);
+    }else{
+      password=dto.password;
     }
 
     var encryptedPassword = await crypto
