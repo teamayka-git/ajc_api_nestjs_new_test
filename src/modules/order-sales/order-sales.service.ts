@@ -45,18 +45,18 @@ export class OrderSalesService {
           { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
             $inc: {
-              _count: dto.documents.length,
+              _count: dto.arrayDocuments.length,
             },
           },
           { new: true, session: transactionSession },
         );
 
-        for (var i = 0; i < dto.documents.length; i++) {
+        for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
-            (it) => dto.documents[i].fileOriginalName == it.originalname,
+            (it) => dto.arrayDocuments[i].fileOriginalName == it.originalname,
           );
           if (count != -1) {
-            if (dto.documents[i].docType == 0) {
+            if (dto.arrayDocuments[i].docType == 0) {
               var filePath =
                 __dirname +
                 `/../../../public${
@@ -74,8 +74,8 @@ export class OrderSalesService {
           }
         }
 
-        for (var i = 0; i < dto.documents.length; i++) {
-          var count = dto.documents.findIndex(
+        for (var i = 0; i < dto.arrayDocuments.length; i++) {
+          var count = dto.arrayDocuments.findIndex(
             (it) => it.fileOriginalName == file['image'][i]['originalname'],
           );
           if (count != -1) {
@@ -84,17 +84,17 @@ export class OrderSalesService {
               _id: globalGalleryId,
               __name: file['documents'][count]['originalname'],
               _globalGalleryCategoryId: null,
-              _docType: dto.documents[i].docType,
+              _docType: dto.arrayDocuments[i].docType,
               _type: 7,
               _uid:
-                resultCounterPurchase._count - dto.documents.length + (i + 1),
+                resultCounterPurchase._count - dto.arrayDocuments.length + (i + 1),
               _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
                 process.env.SERVER_DOMAIN
               }:${process.env.PORT}${
                 file['documents'][count]['path'].split('public')[1]
               }`,
               _thumbUrl:
-                dto.documents[i].docType == 0
+                dto.arrayDocuments[i].docType == 0
                   ? new StringUtils().makeThumbImageFileName(
                       `${process.env.SSL == 'true' ? 'https' : 'http'}://${
                         process.env.SERVER_DOMAIN
@@ -189,18 +189,18 @@ export class OrderSalesService {
           { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
             $inc: {
-              _count: dto.documents.length,
+              _count: dto.arrayDocuments.length,
             },
           },
           { new: true, session: transactionSession },
         );
 
-        for (var i = 0; i < dto.documents.length; i++) {
+        for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
-            (it) => dto.documents[i].fileOriginalName == it.originalname,
+            (it) => dto.arrayDocuments[i].fileOriginalName == it.originalname,
           );
           if (count != -1) {
-            if (dto.documents[i].docType == 0) {
+            if (dto.arrayDocuments[i].docType == 0) {
               var filePath =
                 __dirname +
                 `/../../../public${
@@ -218,8 +218,8 @@ export class OrderSalesService {
           }
         }
 
-        for (var i = 0; i < dto.documents.length; i++) {
-          var count = dto.documents.findIndex(
+        for (var i = 0; i < dto.arrayDocuments.length; i++) {
+          var count = dto.arrayDocuments.findIndex(
             (it) => it.fileOriginalName == file['image'][i]['originalname'],
           );
           if (count != -1) {
@@ -228,17 +228,17 @@ export class OrderSalesService {
               _id: globalGalleryId,
               __name: file['documents'][count]['originalname'],
               _globalGalleryCategoryId: null,
-              _docType: dto.documents[i].docType,
+              _docType: dto.arrayDocuments[i].docType,
               _type: 7,
               _uid:
-                resultCounterPurchase._count - dto.documents.length + (i + 1),
+                resultCounterPurchase._count - dto.arrayDocuments.length + (i + 1),
               _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
                 process.env.SERVER_DOMAIN
               }:${process.env.PORT}${
                 file['documents'][count]['path'].split('public')[1]
               }`,
               _thumbUrl:
-                dto.documents[i].docType == 0
+                dto.arrayDocuments[i].docType == 0
                   ? new StringUtils().makeThumbImageFileName(
                       `${process.env.SSL == 'true' ? 'https' : 'http'}://${
                         process.env.SERVER_DOMAIN

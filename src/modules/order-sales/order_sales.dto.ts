@@ -89,7 +89,7 @@ export class OrderSalesCreateDto {
   @ApiProperty({ type: [orderSaleCreateList] })
   @ValidateNested({ each: true })
   @Type(() => orderSaleCreateList)
-  documents: orderSaleCreateList[];
+  arrayDocuments: orderSaleCreateList[];
 }
 
 class orderSaleEditList {
@@ -161,7 +161,7 @@ export class OrderSalesEditDto {
   @ApiProperty({ type: [orderSaleEditList] })
   @ValidateNested({ each: true })
   @Type(() => orderSaleEditList)
-  documents: orderSaleEditList[];
+  arrayDocuments: orderSaleEditList[];
 }
 
 export class OrderSaleListDto {
