@@ -21,7 +21,7 @@ export class OrderSalesController {
     FileFieldsInterceptor(
       [
         {
-          name: 'image',
+          name: 'documents',
         },
       ],
       {
@@ -42,7 +42,7 @@ export class OrderSalesController {
     FileFieldsInterceptor(
       [
         {
-          name: 'image',
+          name: 'documents',
         },
       ],
       {
