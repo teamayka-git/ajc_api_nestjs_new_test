@@ -70,3 +70,6 @@ OrderSalesSchema.index({ _salesPerson: 1 });
 OrderSalesSchema.index({ _description: 1 });
 OrderSalesSchema.index({ _isRhodium: 1 });
 OrderSalesSchema.index({ _status: 1 });
+OrderSalesSchema.index({ _uid: 1,_id:1 });
+
+OrderSalesSchema.index({_uid: 1}, {unique: true});

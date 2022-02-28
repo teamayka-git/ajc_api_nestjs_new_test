@@ -50,8 +50,11 @@ export interface GlobalGalleries {
 GlobalGalleriesSchema.index({_status: 1});
 GlobalGalleriesSchema.index({ _name: 1,_id:1 });
 GlobalGalleriesSchema.index({ _type: 1 ,_id:1});
+GlobalGalleriesSchema.index({ _uid: 1 ,_id:1});
 GlobalGalleriesSchema.index({ _docType: 1 });
 GlobalGalleriesSchema.index({ _globalGalleryCategoryId: 1,_id:1 });
+
+GlobalGalleriesSchema.index({_uid: 1}, {unique: true});
 
 /*GlobalGalleriesSchema.index({_name: 1,_globalGalleryCategoryId:1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 },_globalGalleryCategoryId:{$ne:null} }});
 GlobalGalleriesSchema.post('save', async function(error, doc, next) {

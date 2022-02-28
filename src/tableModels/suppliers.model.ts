@@ -47,10 +47,13 @@ export interface Suppliers {
 SuppliersSchema.index({_status: 1});
 SuppliersSchema.index({_name: 1});
 SuppliersSchema.index({_gender: 1});
-SuppliersSchema.index({_mobile: 1});
-SuppliersSchema.index({_uid: 1});
+SuppliersSchema.index({_mobile: 1,_id:1});
+SuppliersSchema.index({_uid: 1,_id:1});
 SuppliersSchema.index({_cityId: 1});
 SuppliersSchema.index({_email: 1,_id:1});
+
+SuppliersSchema.index({_uid: 1}, {unique: true});
+SuppliersSchema.index({_mobile: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 SuppliersSchema.index({_email: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 SuppliersSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
@@ -69,7 +72,7 @@ SuppliersSchema.post('updateMany', async function(error, doc, next) {
 });
 function schemaPostFunctionForDuplicate(error, doc, next) {
     if(error.code==11000){
-        next(new Error('Email already existing'));
+        next(new Error('Email or Mobile already existing'));
    }else{
     next();
    }

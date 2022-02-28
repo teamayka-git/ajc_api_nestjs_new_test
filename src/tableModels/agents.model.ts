@@ -51,11 +51,13 @@ AgentsSchema.index({_status: 1});
 AgentsSchema.index({_commisionType: 1});
 AgentsSchema.index({_name: 1});
 AgentsSchema.index({_gender: 1});
-AgentsSchema.index({_mobile: 1});
-AgentsSchema.index({_uid: 1});
+AgentsSchema.index({_mobile: 1,_id:1});
+AgentsSchema.index({_uid: 1,_id:1});
 AgentsSchema.index({_cityId: 1});
 AgentsSchema.index({_email: 1,_id:1});
+AgentsSchema.index({_mobile: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 AgentsSchema.index({_email: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
+AgentsSchema.index({_uid: 1}, {unique: true});
 AgentsSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
 });
@@ -73,7 +75,7 @@ AgentsSchema.post('updateMany', async function(error, doc, next) {
 });
 function schemaPostFunctionForDuplicate(error, doc, next) {
     if(error.code==11000){
-        next(new Error('Email already existing'));
+        next(new Error('Email or Mobile already existing'));
    }else{
     next();
    }

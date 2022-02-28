@@ -42,9 +42,12 @@ export interface Employee {
 EmployeeSchema.index({_status: 1});
 EmployeeSchema.index({_name: 1}); 
 EmployeeSchema.index({_gender: 1});
-EmployeeSchema.index({_mobile: 1});
-EmployeeSchema.index({_uid: 1});
+EmployeeSchema.index({_mobile: 1,_id:1});
+EmployeeSchema.index({_uid: 1,_id:1});
 EmployeeSchema.index({_email: 1,_id:1});
+
+EmployeeSchema.index({_uid: 1}, {unique: true});
+EmployeeSchema.index({_mobile: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 EmployeeSchema.index({_email: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 EmployeeSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
@@ -63,7 +66,7 @@ EmployeeSchema.post('updateMany', async function(error, doc, next) {
 });
 function schemaPostFunctionForDuplicate(error, doc, next) {
     if(error.code==11000){
-        next(new Error('Email already existing'));
+        next(new Error('Email or Mobile already existing'));
    }else{
     next();
    }

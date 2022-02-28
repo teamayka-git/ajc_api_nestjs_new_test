@@ -130,9 +130,12 @@ CustomersSchema.index({_orderSaleRate: 1});
 CustomersSchema.index({_status: 1});
 CustomersSchema.index({_name: 1});
 CustomersSchema.index({_gender: 1});
-CustomersSchema.index({_mobile: 1});
-CustomersSchema.index({_uid: 1});
+CustomersSchema.index({_mobile: 1,_id:1});
+CustomersSchema.index({_uid: 1,_id:1});
 CustomersSchema.index({_email: 1,_id:1});
+
+CustomersSchema.index({_uid: 1}, {unique: true});
+CustomersSchema.index({_mobile: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 CustomersSchema.index({_email: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 CustomersSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
@@ -151,7 +154,7 @@ CustomersSchema.post('updateMany', async function(error, doc, next) {
 });
 function schemaPostFunctionForDuplicate(error, doc, next) {
     if(error.code==11000){
-        next(new Error('Email already existing'));
+        next(new Error('Email or Mobile already existing'));
    }else{
     next();
    }
