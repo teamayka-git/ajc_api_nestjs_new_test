@@ -4,7 +4,7 @@ import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { GlobalGalleryCategoryService } from './global-gallery-category.service';
-import { GlobalGalleryCategoryCreateDto, GlobalGalleryCategoryEditDto, GlobalGalleryCategoryListDto, GlobalGalleryCategoryStatusChangeDto } from './global_gallery_category.dto';
+import { CheckNameExistDto, GlobalGalleryCategoryCreateDto, GlobalGalleryCategoryEditDto, GlobalGalleryCategoryListDto, GlobalGalleryCategoryStatusChangeDto } from './global_gallery_category.dto';
 
 @UseGuards(RolesGuard)
 @ApiTags("Global Gallery Catterogy Docs") 
@@ -35,4 +35,9 @@ export class GlobalGalleryCategoryController {
     return this.globalGalleryCategoryService.list(dto);
   }
 
+  @Post("checkNameExisting")
+  checkNameExisting(@Body() dto:CheckNameExistDto) {
+    return this.globalGalleryCategoryService.checkNameExisting(dto);
+  }
+  
 }

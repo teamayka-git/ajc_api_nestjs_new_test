@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { Cities } from 'src/tableModels/cities.model';
 import * as mongoose from 'mongoose';
-import { CheckItemExistDto, CitiesCreateDto, CitiesEditDto, CitiesListDto, CitiesStatusChangeDto, ListFilterLocadingCityDto } from './cities.dto';
+import { CheckItemExistDto, CheckNameExistDto, CitiesCreateDto, CitiesEditDto, CitiesListDto, CitiesStatusChangeDto, ListFilterLocadingCityDto } from './cities.dto';
 
 @Injectable()
 export class CitiesService {
@@ -323,5 +323,27 @@ export class CitiesService {
         await transactionSession.endSession();
         throw error;
       }
+    }  
+    async checkNameExisting(dto: CheckNameExistDto) {
+      var dateTime = new Date().getTime();
+      const transactionSession = await this.connection.startSession();
+      transactionSession.startTransaction();
+      try {
+        var resultCount = await this.citiesModel
+          .count({ _name: dto.value,_status:{$in:[1,0]} })
+          .session(transactionSession);
+    
+        await transactionSession.commitTransaction();
+        await transactionSession.endSession();
+        return {
+          message: 'success',
+          data: { count: resultCount },
+        };
+      } catch (error) {
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
+      }
     }
+    
 }

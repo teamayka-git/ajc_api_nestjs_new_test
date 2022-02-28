@@ -3,7 +3,7 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { UnitMaster } from 'src/tableModels/unitMaster.model';
-import { UnitMasterCreateDto, UnitMasterEditDto, UnitMasterListDto, UnitMasterStatusChangeDto } from './process_master.dto';
+import { CheckNameExistDto, UnitMasterCreateDto, UnitMasterEditDto, UnitMasterListDto, UnitMasterStatusChangeDto } from './process_master.dto';
 
 @Injectable()
 export class UnitMastersService {
@@ -188,5 +188,27 @@ export class UnitMastersService {
         throw error;
       }
     }
-
+  
+    async checkNameExisting(dto: CheckNameExistDto) {
+      var dateTime = new Date().getTime();
+      const transactionSession = await this.connection.startSession();
+      transactionSession.startTransaction();
+      try {
+        var resultCount = await this.unitMasterModel
+          .count({ _name: dto.value,_status:{$in:[1,0]} })
+          .session(transactionSession);
+    
+        await transactionSession.commitTransaction();
+        await transactionSession.endSession();
+        return {
+          message: 'success',
+          data: { count: resultCount },
+        };
+      } catch (error) {
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
+      }
+    }
+    
 }

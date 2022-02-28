@@ -3,7 +3,7 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { Purity } from 'src/tableModels/purity.model';
-import { PurityCreateDto, PurityEditDto, PurityListDto, PurityStatusChangeDto } from './purity.dto';
+import { CheckNameExistDto, PurityCreateDto, PurityEditDto, PurityListDto, PurityStatusChangeDto } from './purity.dto';
 
 @Injectable()
 export class PurityService {
@@ -186,5 +186,27 @@ export class PurityService {
         throw error;
       }
     }
-
+  
+    async checkNameExisting(dto: CheckNameExistDto) {
+      var dateTime = new Date().getTime();
+      const transactionSession = await this.connection.startSession();
+      transactionSession.startTransaction();
+      try {
+        var resultCount = await this.purityModel
+          .count({ _name: dto.value,_status:{$in:[1,0]} })
+          .session(transactionSession);
+    
+        await transactionSession.commitTransaction();
+        await transactionSession.endSession();
+        return {
+          message: 'success',
+          data: { count: resultCount },
+        };
+      } catch (error) {
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
+      }
+    }
+    
 }

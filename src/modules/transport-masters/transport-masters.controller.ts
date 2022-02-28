@@ -4,7 +4,7 @@ import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { TransportMastersService } from './transport-masters.service';
-import { TransportMastersCreateDto, TransportMastersEditDto, TransportMastersListDto, TransportMastersStatusChangeDto } from './transportMasters.dto';
+import { CheckNameExistDto, TransportMastersCreateDto, TransportMastersEditDto, TransportMastersListDto, TransportMastersStatusChangeDto } from './transportMasters.dto';
 
 @UseGuards(RolesGuard)
 @ApiTags("Transport masters Docs") 
@@ -35,5 +35,10 @@ export class TransportMastersController {
     return this.transportMastersService.list(dto);
   }
 
+  @Post("checkNameExisting")
+  checkNameExisting(@Body() dto:CheckNameExistDto) {
+    return this.transportMastersService.checkNameExisting(dto);
+  }
+  
 
 }

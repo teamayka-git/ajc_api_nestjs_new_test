@@ -154,3 +154,11 @@ export class ListFilterLocadingFactoryDto {
   skip: number;
 
 }
+export class CheckNameExistDto {
+  
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+}
+  

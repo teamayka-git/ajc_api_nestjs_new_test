@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
-import { UnitMasterCreateDto, UnitMasterEditDto, UnitMasterListDto, UnitMasterStatusChangeDto } from './process_master.dto';
+import { CheckNameExistDto, UnitMasterCreateDto, UnitMasterEditDto, UnitMasterListDto, UnitMasterStatusChangeDto } from './process_master.dto';
 import { UnitMastersService } from './unit-masters.service';
 
 @Controller('unit-masters')
@@ -35,5 +35,10 @@ export class UnitMastersController {
     return this.unitMastersService.list(dto);
   }
 
+  @Post("checkNameExisting")
+  checkNameExisting(@Body() dto:CheckNameExistDto) {
+    return this.unitMastersService.checkNameExisting(dto);
+  }
+  
 
 }

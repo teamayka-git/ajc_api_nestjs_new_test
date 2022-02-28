@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
-import { CheckItemExistDto, DepartmentCreateDto, DepartmentEditDto, DepartmentListDto, DepartmentStatusChangeDto } from './departments.dto';
+import { CheckItemExistDto, CheckNameExistDto, DepartmentCreateDto, DepartmentEditDto, DepartmentListDto, DepartmentStatusChangeDto } from './departments.dto';
 import { DepartmentsService } from './departments.service';
 
 @Controller('departments')
@@ -36,6 +36,11 @@ export class DepartmentsController {
   @Post("checkCodeExisting")
   checkCodeExisting(@Body() dto:CheckItemExistDto) {
     return this.departmentsService.checkCodeExisting(dto);
+  }
+  
+  @Post("checkNameExisting")
+  checkNameExisting(@Body() dto:CheckNameExistDto) {
+    return this.departmentsService.checkNameExisting(dto);
   }
   
 }

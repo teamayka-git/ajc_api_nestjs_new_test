@@ -4,7 +4,7 @@ import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { SubCategoriesService } from './sub-categories.service';
-import { CheckItemExistDto, ListFilterLocadingSubCategoryDto, SubCategoriesCreateDto, SubCategoriesEditDto, SubCategoriesListDto, SubCategoriesStatusChangeDto } from './sub_categories.dto';
+import { CheckItemExistDto, CheckNameExistDto, ListFilterLocadingSubCategoryDto, SubCategoriesCreateDto, SubCategoriesEditDto, SubCategoriesListDto, SubCategoriesStatusChangeDto } from './sub_categories.dto';
 
 
 import { diskStorage } from 'multer';
@@ -77,6 +77,11 @@ export class SubCategoriesController {
   @Post("checkCodeExisting")
   checkCodeExisting(@Body() dto:CheckItemExistDto) {
     return this.subCategoriesService.checkCodeExisting(dto);
+  }
+  
+  @Post("checkNameExisting")
+  checkNameExisting(@Body() dto:CheckNameExistDto) {
+    return this.subCategoriesService.checkNameExisting(dto);
   }
   
 

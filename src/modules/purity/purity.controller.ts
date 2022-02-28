@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
-import { PurityCreateDto, PurityEditDto, PurityListDto, PurityStatusChangeDto } from './purity.dto';
+import { CheckNameExistDto, PurityCreateDto, PurityEditDto, PurityListDto, PurityStatusChangeDto } from './purity.dto';
 import { PurityService } from './purity.service';
 
 @UseGuards(RolesGuard)
@@ -35,5 +35,10 @@ export class PurityController {
     return this.purityService.list(dto);
   }
 
+  @Post("checkNameExisting")
+  checkNameExisting(@Body() dto:CheckNameExistDto) {
+    return this.purityService.checkNameExisting(dto);
+  }
+  
 
 }

@@ -169,3 +169,11 @@ export class CheckItemExistDto {
   value: string;
 
 }
+export class CheckNameExistDto {
+  
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+}
+  

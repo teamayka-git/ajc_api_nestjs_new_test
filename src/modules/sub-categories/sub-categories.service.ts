@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { SubCategories } from 'src/tableModels/sub_categories.model';
 import * as mongoose from 'mongoose';
-import { CheckItemExistDto, ListFilterLocadingSubCategoryDto, SubCategoriesCreateDto, SubCategoriesEditDto, SubCategoriesListDto, SubCategoriesStatusChangeDto } from './sub_categories.dto';
+import { CheckItemExistDto, CheckNameExistDto, ListFilterLocadingSubCategoryDto, SubCategoriesCreateDto, SubCategoriesEditDto, SubCategoriesListDto, SubCategoriesStatusChangeDto } from './sub_categories.dto';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { GlobalConfig } from 'src/config/global_config';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
@@ -515,7 +515,29 @@ export class SubCategoriesService {
       }
     }
 
-
+  
+    async checkNameExisting(dto: CheckNameExistDto) {
+      var dateTime = new Date().getTime();
+      const transactionSession = await this.connection.startSession();
+      transactionSession.startTransaction();
+      try {
+        var resultCount = await this.subCategoriesModel
+          .count({ _name: dto.value,_status:{$in:[1,0]} })
+          .session(transactionSession);
+    
+        await transactionSession.commitTransaction();
+        await transactionSession.endSession();
+        return {
+          message: 'success',
+          data: { count: resultCount },
+        };
+      } catch (error) {
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
+      }
+    }
+    
 
 
 

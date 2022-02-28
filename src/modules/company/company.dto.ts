@@ -136,3 +136,11 @@ export class CheckEmailExistDto {
 
 }
   
+export class CheckNameExistDto {
+  
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+}
+  

@@ -5,7 +5,7 @@ import { map } from 'rxjs';
 import { ModelNames } from 'src/common/model_names';
 import { Company } from 'src/tableModels/companies.model';
 import { StoneCreateDto } from '../stone/stone.dto';
-import { CheckEmailExistDto, CompanyCreateDto, CompanyEditDto, CompanyListDto, CompanyStatusChangeDto } from './company.dto';
+import { CheckEmailExistDto, CheckNameExistDto, CompanyCreateDto, CompanyEditDto, CompanyListDto, CompanyStatusChangeDto } from './company.dto';
 
 @Injectable()
 export class CompanyService {
@@ -206,5 +206,27 @@ export class CompanyService {
         await transactionSession.endSession();
         throw error;
       }
+    }  
+    async checkNameExisting(dto: CheckNameExistDto) {
+      var dateTime = new Date().getTime();
+      const transactionSession = await this.connection.startSession();
+      transactionSession.startTransaction();
+      try {
+        var resultCount = await this.companyModel
+          .count({ _name: dto.value,_status:{$in:[1,0]} })
+          .session(transactionSession);
+    
+        await transactionSession.commitTransaction();
+        await transactionSession.endSession();
+        return {
+          message: 'success',
+          data: { count: resultCount },
+        };
+      } catch (error) {
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
+      }
     }
+    
 }

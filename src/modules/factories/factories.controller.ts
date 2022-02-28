@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
-import { FactoriesCreateDto, FactoriesEditDto, FactoriesListDto, FactoriesStatusChangeDto, ListFilterLocadingFactoryDto } from './factories.dto';
+import { CheckNameExistDto, FactoriesCreateDto, FactoriesEditDto, FactoriesListDto, FactoriesStatusChangeDto, ListFilterLocadingFactoryDto } from './factories.dto';
 import { FactoriesService } from './factories.service';
 
 @UseGuards(RolesGuard)
@@ -39,5 +39,10 @@ export class FactoriesController {
     return this.factoriesService.listFilterLoadingFactory(dto);
   }
 
+  @Post("checkNameExisting")
+  checkNameExisting(@Body() dto:CheckNameExistDto) {
+    return this.factoriesService.checkNameExisting(dto);
+  }
+  
 
 }

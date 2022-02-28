@@ -3,7 +3,7 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { GlobalGalleryCategories } from 'src/tableModels/globalGallerycategories.model';
-import { GlobalGalleryCategoryCreateDto, GlobalGalleryCategoryEditDto, GlobalGalleryCategoryListDto, GlobalGalleryCategoryStatusChangeDto } from './global_gallery_category.dto';
+import { CheckNameExistDto, GlobalGalleryCategoryCreateDto, GlobalGalleryCategoryEditDto, GlobalGalleryCategoryListDto, GlobalGalleryCategoryStatusChangeDto } from './global_gallery_category.dto';
 
 @Injectable()
 export class GlobalGalleryCategoryService {
@@ -203,5 +203,27 @@ export class GlobalGalleryCategoryService {
         await transactionSession.endSession();
         throw error;
       }
+    }  
+    async checkNameExisting(dto: CheckNameExistDto) {
+      var dateTime = new Date().getTime();
+      const transactionSession = await this.connection.startSession();
+      transactionSession.startTransaction();
+      try {
+        var resultCount = await this.globalGalleryCategoriesModel
+          .count({ _name: dto.value,_status:{$in:[1,0]} })
+          .session(transactionSession);
+    
+        await transactionSession.commitTransaction();
+        await transactionSession.endSession();
+        return {
+          message: 'success',
+          data: { count: resultCount },
+        };
+      } catch (error) {
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
+      }
     }
+    
 }

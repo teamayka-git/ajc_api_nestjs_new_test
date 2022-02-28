@@ -135,3 +135,12 @@ export class StoneStatusChangeDto {
   status: number;
 
 }
+
+export class CheckNameExistDto {
+  
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+}
+  

@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
-import { CheckItemExistDto, CitiesCreateDto, CitiesEditDto, CitiesListDto, CitiesStatusChangeDto, ListFilterLocadingCityDto } from './cities.dto';
+import { CheckItemExistDto, CheckNameExistDto, CitiesCreateDto, CitiesEditDto, CitiesListDto, CitiesStatusChangeDto, ListFilterLocadingCityDto } from './cities.dto';
 import { CitiesService } from './cities.service';
 
 
@@ -43,4 +43,10 @@ export class CitiesController {
   checkCodeExisting(@Body() dto:CheckItemExistDto) {
     return this.citiesService.checkCodeExisting(dto);
   }
+  
+  @Post("checkNameExisting")
+  checkNameExisting(@Body() dto:CheckNameExistDto) {
+    return this.citiesService.checkNameExisting(dto);
+  }
+  
 }

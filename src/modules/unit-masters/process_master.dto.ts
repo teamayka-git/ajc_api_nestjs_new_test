@@ -130,3 +130,12 @@ export class UnitMasterStatusChangeDto {
   status: number;
 
 }
+
+export class CheckNameExistDto {
+  
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+}
+  

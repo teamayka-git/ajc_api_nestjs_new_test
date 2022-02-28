@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
-import { StatesCreateDto, StatesEditDto, StatesListDto, StatesStatusChangeDto } from './states.dto';
+import { CheckItemExistDto, CheckNameExistDto, StatesCreateDto, StatesEditDto, StatesListDto, StatesStatusChangeDto } from './states.dto';
 import { StatesService } from './states.service';
 
 
@@ -40,7 +40,12 @@ export class StatesController {
   }
   @Post("checkCodeExisting")
   checkCodeExisting(@Body() dto:CheckItemExistDto) {
-    return this.categoriesService.checkCodeExisting(dto);
+    return this.statesService.checkCodeExisting(dto);
+  }
+  
+  @Post("checkNameExisting")
+  checkNameExisting(@Body() dto:CheckNameExistDto) {
+    return this.statesService.checkNameExisting(dto);
   }
   
 

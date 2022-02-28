@@ -171,3 +171,12 @@ export class GroupMastersStatusChangeDto {
   status: number;
 
 }
+
+export class CheckNameExistDto {
+  
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+}
+  

@@ -4,7 +4,7 @@ import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { GroupMastersService } from './group-masters.service';
-import { GroupMastersCreateDto, GroupMastersEditDto, GroupMastersListDto, GroupMastersStatusChangeDto } from './group_masters.dto';
+import { CheckNameExistDto, GroupMastersCreateDto, GroupMastersEditDto, GroupMastersListDto, GroupMastersStatusChangeDto } from './group_masters.dto';
 
 @Controller('group-masters')
 @ApiTags("Group master Docs") 
@@ -35,5 +35,10 @@ export class GroupMastersController {
     return this.groupMastersService.list(dto);
   }
 
+  @Post("checkNameExisting")
+  checkNameExisting(@Body() dto:CheckNameExistDto) {
+    return this.groupMastersService.checkNameExisting(dto);
+  }
+  
 
 }
