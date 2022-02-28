@@ -10,7 +10,7 @@ import { Suppliers } from 'src/tableModels/suppliers.model';
 import { User } from 'src/tableModels/user.model';
 import { StringUtils } from 'src/utils/string_utils';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
-import { ListFilterLocadingSupplierDto, SupplierCreateDto, SupplierEditDto, SupplierListDto, SupplierLoginDto, SupplierStatusChangeDto } from './supplier.dto';
+import { CheckEmailExistDto, ListFilterLocadingSupplierDto, SupplierCreateDto, SupplierEditDto, SupplierListDto, SupplierLoginDto, SupplierStatusChangeDto } from './supplier.dto';
 
 const crypto = require('crypto');
 @Injectable()
@@ -628,4 +628,27 @@ console.log("file['image'][0]['originalname']   "+file['image'][0]['originalname
         throw error;
       }
     }
+
+      
+async checkEmailExisting(dto: CheckEmailExistDto) {
+  var dateTime = new Date().getTime();
+  const transactionSession = await this.connection.startSession();
+  transactionSession.startTransaction();
+  try {
+    var resultCount = await this.suppliersModel
+      .count({ _email: dto.value,_status:{$in:[1,0]} })
+      .session(transactionSession);
+
+    await transactionSession.commitTransaction();
+    await transactionSession.endSession();
+    return {
+      message: 'success',
+      data: { count: resultCount },
+    };
+  } catch (error) {
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
+  }
+}
 }

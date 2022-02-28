@@ -224,3 +224,12 @@ export class ListFilterLocadingAgentDto {
   skip: number;
 
 }
+
+export class CheckEmailExistDto {
+  
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+}
+  

@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Res, UseGuards, UseInterceptors, UploadedFiles, Request, Put } from '@nestjs/common';
 import { EmployeesService } from './employees.service';
 import { JwtService } from '@nestjs/jwt';
-import { EmployeeCreateDto, EmployeeEditDto, EmployeeListDto, EmployeeLoginDto, EmployeeStatusChangeDto } from './employees.dto';
+import { CheckEmailExistDto, EmployeeCreateDto, EmployeeEditDto, EmployeeListDto, EmployeeLoginDto, EmployeeStatusChangeDto } from './employees.dto';
 import { Response } from 'express'; //jwt response store in cookie
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { GuardUserRole, GuardUserRoleStringGenerate } from 'src/common/GuardUserRole';
@@ -104,4 +104,9 @@ var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole'])
     return this.employeesService.list(dto);
   }
 
+  @Post("checkEmailExisting")
+  checkEmailExisting(@Body() dto:CheckEmailExistDto) {
+    return this.employeesService.checkEmailExisting(dto);
+  }
+  
 }

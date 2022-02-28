@@ -158,3 +158,12 @@ export class EmployeeStatusChangeDto {
   status: number;
 
 }
+
+export class CheckEmailExistDto {
+  
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+}
+  

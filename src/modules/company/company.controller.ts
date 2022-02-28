@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
-import { CompanyCreateDto, CompanyEditDto, CompanyListDto, CompanyStatusChangeDto } from './company.dto';
+import { CheckEmailExistDto, CompanyCreateDto, CompanyEditDto, CompanyListDto, CompanyStatusChangeDto } from './company.dto';
 import { CompanyService } from './company.service';
 
 @UseGuards(RolesGuard)
@@ -35,5 +35,10 @@ export class CompanyController {
     return this.companyService.list(dto);
   }
 
+  @Post("checkEmailExisting")
+  checkEmailExisting(@Body() dto:CheckEmailExistDto) {
+    return this.companyService.checkEmailExisting(dto);
+  }
+  
 
 }

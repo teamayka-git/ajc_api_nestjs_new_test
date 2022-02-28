@@ -536,3 +536,12 @@ export class ListCustomersDto {
 
 
 }
+
+export class CheckEmailExistDto {
+  
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+}
+  

@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { Branch } from 'src/tableModels/branch.model';
 import * as mongoose from 'mongoose';
-import { BranchCreateDto, BranchEditDto, BranchListDto, BranchStatusChangeDto } from './branch.dto';
+import { BranchCreateDto, BranchEditDto, BranchListDto, BranchStatusChangeDto, CheckEmailExistDto } from './branch.dto';
 import { Counters } from 'src/tableModels/counters.model';
 import { GlobalConfig } from 'src/config/global_config';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
@@ -331,4 +331,26 @@ try{
       throw error;
     }
   }
+    
+async checkEmailExisting(dto: CheckEmailExistDto) {
+  var dateTime = new Date().getTime();
+  const transactionSession = await this.connection.startSession();
+  transactionSession.startTransaction();
+  try {
+    var resultCount = await this.branchModel
+      .count({ _email: dto.value,_status:{$in:[1,0]} })
+      .session(transactionSession);
+
+    await transactionSession.commitTransaction();
+    await transactionSession.endSession();
+    return {
+      message: 'success',
+      data: { count: resultCount },
+    };
+  } catch (error) {
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
+  }
+}
 }

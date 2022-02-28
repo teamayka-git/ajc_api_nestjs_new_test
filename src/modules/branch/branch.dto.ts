@@ -127,7 +127,14 @@ export class BranchStatusChangeDto {
 
 }
 
-
+export class CheckEmailExistDto {
+  
+    @IsString()
+    @ApiProperty({})
+    value: string;
+  
+  }
+    
 
 
 

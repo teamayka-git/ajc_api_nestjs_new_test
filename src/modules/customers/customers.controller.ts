@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole, GuardUserRoleStringGenerate } from 'src/common/GuardUserRole';
-import { CustomerCreateDto, CustomerEditeDto, CustomerLoginDto, ListCustomersDto } from './customers.dto';
+import { CheckEmailExistDto, CustomerCreateDto, CustomerEditeDto, CustomerLoginDto, ListCustomersDto } from './customers.dto';
 import { CustomersService } from './customers.service';
 import { Response } from 'express'; //jwt response store in cookie
 import { Roles } from 'src/Auth/roles.decorator';
@@ -99,6 +99,11 @@ var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole'])
     return this.customersService.list(dto);
   }
 
+  @Post("checkEmailExisting")
+  checkEmailExisting(@Body() dto:CheckEmailExistDto) {
+    return this.customersService.checkEmailExisting(dto);
+  }
+  
 
 
 }

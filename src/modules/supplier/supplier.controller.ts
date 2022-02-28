@@ -9,7 +9,7 @@ import { GuardUserRole, GuardUserRoleStringGenerate } from 'src/common/GuardUser
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { FileMulterHelper } from 'src/shared/file_multter_helper';
 import { diskStorage } from 'multer';
-import { ListFilterLocadingSupplierDto, SupplierCreateDto, SupplierEditDto, SupplierListDto, SupplierLoginDto, SupplierStatusChangeDto } from './supplier.dto';
+import { CheckEmailExistDto, ListFilterLocadingSupplierDto, SupplierCreateDto, SupplierEditDto, SupplierListDto, SupplierLoginDto, SupplierStatusChangeDto } from './supplier.dto';
 
 @Controller('supplier')
 @UseGuards(RolesGuard)
@@ -105,5 +105,10 @@ var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole'])
     return this.supplierService.listFilterLoadingSupplier(dto);
   }
 
+  @Post("checkEmailExisting")
+  checkEmailExisting(@Body() dto:CheckEmailExistDto) {
+    return this.supplierService.checkEmailExisting(dto);
+  }
+  
 
 }

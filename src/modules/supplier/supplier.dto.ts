@@ -201,3 +201,12 @@ export class ListFilterLocadingSupplierDto {
   skip: number;
 
 }
+
+export class CheckEmailExistDto {
+  
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+}
+  

@@ -12,6 +12,7 @@ import {
   AgentListDto,
   AgentLoginDto,
   AgentStatusChangeDto,
+  CheckEmailExistDto,
   ListFilterLocadingAgentDto,
 } from './agent.dto';
 const crypto = require('crypto');
@@ -642,5 +643,26 @@ try{
   }
 }
 
+async checkEmailExisting(dto: CheckEmailExistDto) {
+  var dateTime = new Date().getTime();
+  const transactionSession = await this.connection.startSession();
+  transactionSession.startTransaction();
+  try {
+    var resultCount = await this.agentModel
+      .count({ _email: dto.value,_status:{$in:[1,0]} })
+      .session(transactionSession);
+
+    await transactionSession.commitTransaction();
+    await transactionSession.endSession();
+    return {
+      message: 'success',
+      data: { count: resultCount },
+    };
+  } catch (error) {
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
+  }
+}
 
 }

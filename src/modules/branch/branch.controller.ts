@@ -5,7 +5,7 @@ import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { FileMulterHelper } from 'src/shared/file_multter_helper';
-import { BranchCreateDto, BranchEditDto, BranchListDto, BranchStatusChangeDto } from './branch.dto';
+import { BranchCreateDto, BranchEditDto, BranchListDto, BranchStatusChangeDto, CheckEmailExistDto } from './branch.dto';
 import { BranchService } from './branch.service';
 import { diskStorage } from 'multer';
 
@@ -70,5 +70,10 @@ export class BranchController {
     return this.branchService.list(dto);
   }
 
+  @Post("checkEmailExisting")
+  checkEmailExisting(@Body() dto:CheckEmailExistDto) {
+    return this.branchService.checkEmailExisting(dto);
+  }
+  
 
 }
