@@ -3,7 +3,7 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { ProcessMaster } from 'src/tableModels/processMaster.model';
-import { ListFilterLocadingProcessMasterDto, ProcessMasterCreateDto, ProcessMasterEditDto, ProcessMasterListDto, ProcessMasterStatusChangeDto } from './process_master.dto';
+import { CheckItemExistDto, ListFilterLocadingProcessMasterDto, ProcessMasterCreateDto, ProcessMasterEditDto, ProcessMasterListDto, ProcessMasterStatusChangeDto } from './process_master.dto';
 
 @Injectable()
 export class ProcessMasterService {
@@ -301,6 +301,27 @@ export class ProcessMasterService {
           data: { list: result, totalCount: totalCount },
         };
       }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
+      }
+    }
+    async checkCodeExisting(dto: CheckItemExistDto) {
+      var dateTime = new Date().getTime();
+      const transactionSession = await this.connection.startSession();
+      transactionSession.startTransaction();
+      try {
+        var resultCount = await this.processMasterModel
+          .count({ _code: dto.value })
+          .session(transactionSession);
+  
+        await transactionSession.commitTransaction();
+        await transactionSession.endSession();
+        return {
+          message: 'success',
+          data: { count: resultCount },
+        };
+      } catch (error) {
         await transactionSession.abortTransaction();
         await transactionSession.endSession();
         throw error;

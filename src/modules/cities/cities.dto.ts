@@ -163,3 +163,10 @@ export class ListFilterLocadingCityDto {
   skip: number;
 
 }
+export class CheckItemExistDto {
+  
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+}

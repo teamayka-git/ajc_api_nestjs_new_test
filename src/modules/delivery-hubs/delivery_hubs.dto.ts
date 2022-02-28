@@ -160,3 +160,10 @@ export class ListFilterLocadingDeliveryHubDto {
   skip: number;
 
 }
+export class CheckItemExistDto {
+  
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+}

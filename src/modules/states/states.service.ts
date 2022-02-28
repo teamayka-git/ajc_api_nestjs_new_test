@@ -5,6 +5,7 @@ import { ModelNames } from 'src/common/model_names';
 import { States } from 'src/tableModels/states.model';
 import * as mongoose from 'mongoose';
 import {
+  CheckItemExistDto,
   StatesCreateDto,
   StatesEditDto,
   StatesListDto,
@@ -193,4 +194,28 @@ try{
     throw error;
   }
 }
+
+async checkCodeExisting(dto: CheckItemExistDto) {
+  var dateTime = new Date().getTime();
+  const transactionSession = await this.connection.startSession();
+  transactionSession.startTransaction();
+  try {
+    var resultCount = await this.statesModel
+      .count({ _code: dto.value })
+      .session(transactionSession);
+
+    await transactionSession.commitTransaction();
+    await transactionSession.endSession();
+    return {
+      message: 'success',
+      data: { count: resultCount },
+    };
+  } catch (error) {
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
+  }
+}
+
+
 }

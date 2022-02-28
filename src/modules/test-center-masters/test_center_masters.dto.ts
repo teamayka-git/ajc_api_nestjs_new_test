@@ -146,3 +146,10 @@ export class TestCenterMastersStatusChangeDto {
   status: number;
 
 }
+export class CheckItemExistDto {
+  
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+}

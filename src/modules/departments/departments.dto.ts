@@ -137,3 +137,10 @@ export class DepartmentStatusChangeDto {
   status: number;
 
 }
+export class CheckItemExistDto {
+  
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+}

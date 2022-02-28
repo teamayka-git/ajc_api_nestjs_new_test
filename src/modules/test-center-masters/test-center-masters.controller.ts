@@ -4,7 +4,7 @@ import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { TestCenterMastersService } from './test-center-masters.service';
-import { TestCenterMastersCreateDto, TestCenterMastersEditDto, TestCenterMastersListDto, TestCenterMastersStatusChangeDto } from './test_center_masters.dto';
+import { CheckItemExistDto, TestCenterMastersCreateDto, TestCenterMastersEditDto, TestCenterMastersListDto, TestCenterMastersStatusChangeDto } from './test_center_masters.dto';
 
 @UseGuards(RolesGuard)
 @ApiTags("Test Center Docs") 
@@ -34,6 +34,10 @@ export class TestCenterMastersController {
   list(@Body() dto:TestCenterMastersListDto) {
     return this.testCenterMastersService.list(dto);
   }
-
+  @Post("checkCodeExisting")
+  checkCodeExisting(@Body() dto:CheckItemExistDto) {
+    return this.testCenterMastersService.checkCodeExisting(dto);
+  }
+  
 
 }

@@ -38,7 +38,11 @@ export class StatesController {
   list(@Body() dto:StatesListDto) {
     return this.statesService.list(dto);
   }
-
+  @Post("checkCodeExisting")
+  checkCodeExisting(@Body() dto:CheckItemExistDto) {
+    return this.categoriesService.checkCodeExisting(dto);
+  }
+  
 
 
 }

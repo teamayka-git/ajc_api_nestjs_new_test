@@ -4,6 +4,7 @@ import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { Departments } from 'src/tableModels/departments.model';
 import {
+  CheckItemExistDto,
   DepartmentCreateDto,
   DepartmentEditDto,
   DepartmentListDto,
@@ -197,4 +198,29 @@ try{
     throw error;
   }
 }
+
+
+async checkCodeExisting(dto: CheckItemExistDto) {
+  var dateTime = new Date().getTime();
+  const transactionSession = await this.connection.startSession();
+  transactionSession.startTransaction();
+  try {
+    var resultCount = await this.departmentModel
+      .count({ _code: dto.value })
+      .session(transactionSession);
+
+    await transactionSession.commitTransaction();
+    await transactionSession.endSession();
+    return {
+      message: 'success',
+      data: { count: resultCount },
+    };
+  } catch (error) {
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
+  }
+}
+
+
 }

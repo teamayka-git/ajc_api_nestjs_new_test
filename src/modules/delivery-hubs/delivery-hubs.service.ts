@@ -3,7 +3,7 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { DeliveryHubs } from 'src/tableModels/deliveryHubs.model';
-import { DeliveryHubCreateDto, DeliveryHubEditDto, DeliveryHubListDto, DeliveryHubStatusChangeDto, ListFilterLocadingDeliveryHubDto } from './delivery_hubs.dto';
+import { CheckItemExistDto, DeliveryHubCreateDto, DeliveryHubEditDto, DeliveryHubListDto, DeliveryHubStatusChangeDto, ListFilterLocadingDeliveryHubDto } from './delivery_hubs.dto';
 
 @Injectable()
 export class DeliveryHubsService {
@@ -294,5 +294,29 @@ export class DeliveryHubsService {
         throw error;
       }
     }
+    async checkCodeExisting(dto: CheckItemExistDto) {
+      var dateTime = new Date().getTime();
+      const transactionSession = await this.connection.startSession();
+      transactionSession.startTransaction();
+      try {
+        var resultCount = await this.deliveryHubsModel
+          .count({ _code: dto.value })
+          .session(transactionSession);
+  
+        await transactionSession.commitTransaction();
+        await transactionSession.endSession();
+        return {
+          message: 'success',
+          data: { count: resultCount },
+        };
+      } catch (error) {
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
+      }
+    }
+
+
+
 
 }

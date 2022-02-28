@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
-import { DistrictsCreateDto, DistrictsEditDto, DistrictsListDto, DistrictsStatusChangeDto, ListFilterLocadingDistrictDto } from './districts.dto';
+import { CheckItemExistDto, DistrictsCreateDto, DistrictsEditDto, DistrictsListDto, DistrictsStatusChangeDto, ListFilterLocadingDistrictDto } from './districts.dto';
 import { DistrictsService } from './districts.service';
 
 
@@ -38,5 +38,9 @@ export class DistrictsController {
   listFilterLoadingDistrict(@Body() dto:ListFilterLocadingDistrictDto) {
     return this.districtsService.listFilterLoadingDistrict(dto);
   }
-
+  @Post("checkCodeExisting")
+  checkCodeExisting(@Body() dto:CheckItemExistDto) {
+    return this.districtsService.checkCodeExisting(dto);
+  }
+  
 }

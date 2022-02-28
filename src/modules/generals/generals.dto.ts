@@ -160,3 +160,10 @@ export class GeneralsStatusChangeDto {
   status: number;
 
 }
+export class CheckItemExistDto {
+  
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+}

@@ -4,7 +4,7 @@ import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { DeliveryHubsService } from './delivery-hubs.service';
-import { DeliveryHubCreateDto, DeliveryHubEditDto, DeliveryHubListDto, DeliveryHubStatusChangeDto, ListFilterLocadingDeliveryHubDto } from './delivery_hubs.dto';
+import { CheckItemExistDto, DeliveryHubCreateDto, DeliveryHubEditDto, DeliveryHubListDto, DeliveryHubStatusChangeDto, ListFilterLocadingDeliveryHubDto } from './delivery_hubs.dto';
 
 @ApiTags("Delivery_hubs Docs") 
 @Controller('delivery-hubs')
@@ -39,5 +39,9 @@ export class DeliveryHubsController {
   }
 
 
-
+  @Post("checkCodeExisting")
+  checkCodeExisting(@Body() dto:CheckItemExistDto) {
+    return this.deliveryHubsService.checkCodeExisting(dto);
+  }
+  
 }

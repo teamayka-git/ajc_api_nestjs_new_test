@@ -162,3 +162,10 @@ export class ListFilterLocadingProcessMasterDto {
   skip: number;
 
 }
+export class CheckItemExistDto {
+  
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+}

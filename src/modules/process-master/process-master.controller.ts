@@ -4,7 +4,7 @@ import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { ProcessMasterService } from './process-master.service';
-import { ListFilterLocadingProcessMasterDto, ProcessMasterCreateDto, ProcessMasterEditDto, ProcessMasterListDto, ProcessMasterStatusChangeDto } from './process_master.dto';
+import { CheckItemExistDto, ListFilterLocadingProcessMasterDto, ProcessMasterCreateDto, ProcessMasterEditDto, ProcessMasterListDto, ProcessMasterStatusChangeDto } from './process_master.dto';
 
 @Controller('process-master')
 @UseGuards(RolesGuard)
@@ -39,6 +39,10 @@ export class ProcessMasterController {
   listFilterLoadingProcessMaster(@Body() dto:ListFilterLocadingProcessMasterDto) {
     return this.processMasterService.listFilterLoadingProcessMaster(dto);
   }
-
+  @Post("checkCodeExisting")
+  checkCodeExisting(@Body() dto:CheckItemExistDto) {
+    return this.processMasterService.checkCodeExisting(dto);
+  }
+  
 
 }

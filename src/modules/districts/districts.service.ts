@@ -3,7 +3,7 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { Districts } from 'src/tableModels/districts.model';
-import { DistrictsCreateDto, DistrictsEditDto, DistrictsListDto, DistrictsStatusChangeDto, ListFilterLocadingDistrictDto } from './districts.dto';
+import { CheckItemExistDto, DistrictsCreateDto, DistrictsEditDto, DistrictsListDto, DistrictsStatusChangeDto, ListFilterLocadingDistrictDto } from './districts.dto';
 
 @Injectable()
 export class DistrictsService {
@@ -296,6 +296,27 @@ export class DistrictsService {
           data: { list: result, totalCount: totalCount },
         };
       }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
+      }
+    }
+    async checkCodeExisting(dto: CheckItemExistDto) {
+      var dateTime = new Date().getTime();
+      const transactionSession = await this.connection.startSession();
+      transactionSession.startTransaction();
+      try {
+        var resultCount = await this.districtModel
+          .count({ _code: dto.value })
+          .session(transactionSession);
+  
+        await transactionSession.commitTransaction();
+        await transactionSession.endSession();
+        return {
+          message: 'success',
+          data: { count: resultCount },
+        };
+      } catch (error) {
         await transactionSession.abortTransaction();
         await transactionSession.endSession();
         throw error;

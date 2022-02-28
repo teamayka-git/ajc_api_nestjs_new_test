@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
-import { GeneralsCreateDto, GeneralsEditDto, GeneralsListDto, GeneralsStatusChangeDto } from './generals.dto';
+import { CheckItemExistDto, GeneralsCreateDto, GeneralsEditDto, GeneralsListDto, GeneralsStatusChangeDto } from './generals.dto';
 import { GeneralsService } from './generals.service';
 
 @ApiTags("General Docs") 
@@ -34,5 +34,9 @@ export class GeneralsController {
     return this.generalsService.list(dto);
   }
 
-
+  @Post("checkCodeExisting")
+  checkCodeExisting(@Body() dto:CheckItemExistDto) {
+    return this.generalsService.checkCodeExisting(dto);
+  }
+  
 }

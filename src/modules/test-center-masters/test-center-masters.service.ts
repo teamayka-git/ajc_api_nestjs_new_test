@@ -3,7 +3,7 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { TestCenterMasters } from 'src/tableModels/testCenterMasters.model';
-import { TestCenterMastersCreateDto, TestCenterMastersEditDto, TestCenterMastersListDto, TestCenterMastersStatusChangeDto } from './test_center_masters.dto';
+import { CheckItemExistDto, TestCenterMastersCreateDto, TestCenterMastersEditDto, TestCenterMastersListDto, TestCenterMastersStatusChangeDto } from './test_center_masters.dto';
 
 @Injectable()
 export class TestCenterMastersService {
@@ -190,6 +190,27 @@ export class TestCenterMastersService {
           data: { list: result, totalCount: totalCount },
         };
       }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
+      }
+    }
+    async checkCodeExisting(dto: CheckItemExistDto) {
+      var dateTime = new Date().getTime();
+      const transactionSession = await this.connection.startSession();
+      transactionSession.startTransaction();
+      try {
+        var resultCount = await this.testCenterMastersModel
+          .count({ _code: dto.value })
+          .session(transactionSession);
+  
+        await transactionSession.commitTransaction();
+        await transactionSession.endSession();
+        return {
+          message: 'success',
+          data: { count: resultCount },
+        };
+      } catch (error) {
         await transactionSession.abortTransaction();
         await transactionSession.endSession();
         throw error;

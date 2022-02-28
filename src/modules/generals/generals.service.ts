@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { Generals } from 'src/tableModels/generals.model';
 import * as mongoose from 'mongoose';
-import { GeneralsCreateDto, GeneralsEditDto, GeneralsListDto, GeneralsStatusChangeDto } from './generals.dto';
+import { CheckItemExistDto, GeneralsCreateDto, GeneralsEditDto, GeneralsListDto, GeneralsStatusChangeDto } from './generals.dto';
 
 @Injectable()
 export class GeneralsService {
@@ -159,6 +159,27 @@ export class GeneralsService {
           data: { list: result },
         };
       }catch(error){
+        await transactionSession.abortTransaction();
+        await transactionSession.endSession();
+        throw error;
+      }
+    }
+    async checkCodeExisting(dto: CheckItemExistDto) {
+      var dateTime = new Date().getTime();
+      const transactionSession = await this.connection.startSession();
+      transactionSession.startTransaction();
+      try {
+        var resultCount = await this.generalsModel
+          .count({ _code: dto.value })
+          .session(transactionSession);
+  
+        await transactionSession.commitTransaction();
+        await transactionSession.endSession();
+        return {
+          message: 'success',
+          data: { count: resultCount },
+        };
+      } catch (error) {
         await transactionSession.abortTransaction();
         await transactionSession.endSession();
         throw error;
