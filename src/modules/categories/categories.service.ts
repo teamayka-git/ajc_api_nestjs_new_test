@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { Categories } from 'src/tableModels/categories.model';
-import { CategoriesCreateDto, CategoriesEditDto, CategoriesListDto, CategoriesStatusChangeDto, ListFilterLocadingCategoryDto } from './categories.dto';
+import { CategoriesCreateDto, CategoriesEditDto, CategoriesListDto, CategoriesStatusChangeDto, CheckItemExistDto, ListFilterLocadingCategoryDto } from './categories.dto';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { GlobalConfig } from 'src/config/global_config';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
@@ -406,84 +406,108 @@ export class CategoriesService {
 
       
     
-      async listFilterLoadingCategory(dto: ListFilterLocadingCategoryDto) {
-        var dateTime = new Date().getTime();
-        const transactionSession = await this.connection.startSession();
-        transactionSession.startTransaction();
-    try{
-        var arrayAggregation = [];
-        arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
-    
-     
+    async listFilterLoadingCategory(dto: ListFilterLocadingCategoryDto) {
+      var dateTime = new Date().getTime();
+      const transactionSession = await this.connection.startSession();
+      transactionSession.startTransaction();
+  try{
+      var arrayAggregation = [];
+      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+  
+   
 
-       arrayAggregation.push({ $group: { _id: '$_groupId' } });
+     arrayAggregation.push({ $group: { _id: '$_groupId' } });
 
-        
-    
-        if (dto.skip != -1) {
-          arrayAggregation.push({ $skip: dto.skip });
-          arrayAggregation.push({ $limit: dto.limit });
-        }
+      
+  
+      if (dto.skip != -1) {
+        arrayAggregation.push({ $skip: dto.skip });
+        arrayAggregation.push({ $limit: dto.limit });
+      }
 
 
-        if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.findIndex((it) => it == 100) != -1) {
 
-          arrayAggregation.push(
-              {
-                $lookup: {
-                  from: ModelNames.GROUP_MASTERS,
-                  let: { groupId: '$_id' },
-                  pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$groupId'] } } }],
-                  as: 'groupDetails',
-                },
+        arrayAggregation.push(
+            {
+              $lookup: {
+                from: ModelNames.GROUP_MASTERS,
+                let: { groupId: '$_id' },
+                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$groupId'] } } }],
+                as: 'groupDetails',
               },
-              {
-                $unwind: { path: '$groupDetails', preserveNullAndEmptyArrays: true },
-              },
-            );
+            },
+            {
+              $unwind: { path: '$groupDetails', preserveNullAndEmptyArrays: true },
+            },
+          );
+      }
+  
+  
+      var result = await this.categoriesModel
+        .aggregate(arrayAggregation)
+        .session(transactionSession);
+  
+      var totalCount = 0;
+      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+        //Get total count
+        var limitIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$limit') === true,
+        );
+        if (limitIndexCount != -1) {
+          arrayAggregation.splice(limitIndexCount, 1);
         }
-    
-    
-        var result = await this.categoriesModel
+        var skipIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$skip') === true,
+        );
+        if (skipIndexCount != -1) {
+          arrayAggregation.splice(skipIndexCount, 1);
+        }
+        arrayAggregation.push({ $group: { _id: null, totalCount: { $sum: 1 } } });
+  
+        var resultTotalCount = await this.categoriesModel
           .aggregate(arrayAggregation)
           .session(transactionSession);
-    
-        var totalCount = 0;
-        if (dto.screenType.findIndex((it) => it == 0) != -1) {
-          //Get total count
-          var limitIndexCount = arrayAggregation.findIndex(
-            (it) => it.hasOwnProperty('$limit') === true,
-          );
-          if (limitIndexCount != -1) {
-            arrayAggregation.splice(limitIndexCount, 1);
-          }
-          var skipIndexCount = arrayAggregation.findIndex(
-            (it) => it.hasOwnProperty('$skip') === true,
-          );
-          if (skipIndexCount != -1) {
-            arrayAggregation.splice(skipIndexCount, 1);
-          }
-          arrayAggregation.push({ $group: { _id: null, totalCount: { $sum: 1 } } });
-    
-          var resultTotalCount = await this.categoriesModel
-            .aggregate(arrayAggregation)
-            .session(transactionSession);
-          if (resultTotalCount.length > 0) {
-            totalCount = resultTotalCount[0].totalCount;
-          }
+        if (resultTotalCount.length > 0) {
+          totalCount = resultTotalCount[0].totalCount;
         }
-    
-        await transactionSession.commitTransaction();
-        await transactionSession.endSession();
-        return {
-          message: 'success',
-          data: { list: result, totalCount: totalCount },
-        };
-      }catch(error){
-        await transactionSession.abortTransaction();
-        await transactionSession.endSession();
-        throw error;
       }
+  
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return {
+        message: 'success',
+        data: { list: result, totalCount: totalCount },
+      };
+    }catch(error){
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
     }
+  }
+      
+    
+  async checkCodeExisting(dto: CheckItemExistDto) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+try{
+
+
+  var resultCount=await this.categoriesModel.count({_code:dto.value}).session(transactionSession);
+  
+
+    await transactionSession.commitTransaction();
+    await transactionSession.endSession();
+    return {
+      message: 'success',
+      data: { count:resultCount },
+    };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
+  }
+}
 
 }

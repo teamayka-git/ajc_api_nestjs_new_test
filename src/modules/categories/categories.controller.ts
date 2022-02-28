@@ -3,7 +3,7 @@ import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
-import { CategoriesCreateDto, CategoriesEditDto, CategoriesListDto, CategoriesStatusChangeDto, ListFilterLocadingCategoryDto } from './categories.dto';
+import { CategoriesCreateDto, CategoriesEditDto, CategoriesListDto, CategoriesStatusChangeDto, CheckItemExistDto, ListFilterLocadingCategoryDto } from './categories.dto';
 import { CategoriesService } from './categories.service';
 import { diskStorage } from 'multer';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
@@ -71,6 +71,11 @@ export class CategoriesController {
   @Post("listFilterLoadingCategory")
   listFilterLoadingCategory(@Body() dto:ListFilterLocadingCategoryDto) {
     return this.categoriesService.listFilterLoadingCategory(dto);
+  }
+
+  @Post("checkCodeExisting")
+  checkCodeExisting(@Body() dto:CheckItemExistDto) {
+    return this.categoriesService.checkCodeExisting(dto);
   }
 
 

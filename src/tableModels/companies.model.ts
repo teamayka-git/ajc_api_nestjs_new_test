@@ -32,7 +32,8 @@ export interface Company {
 CompanySchema.index({_status: 1});
 CompanySchema.index({_name: 1,_id:1});
 CompanySchema.index({_place: 1});
-CompanySchema.index({_email: 1});
+CompanySchema.index({_email: 1,_id:1});
+CompanySchema.index({_email: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 CompanySchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 CompanySchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
@@ -51,7 +52,7 @@ CompanySchema.post('updateMany', async function(error, doc, next) {
 });
 function schemaPostFunctionForDuplicate(error, doc, next) {
     if(error.code==11000){
-        next(new Error('Name already existing'));
+        next(new Error('Name or email already existing'));
    }else{
     next();
    }

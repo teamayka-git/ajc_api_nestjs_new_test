@@ -182,3 +182,10 @@ export class ListFilterLocadingCategoryDto {
   skip: number;
 
 }
+export class CheckItemExistDto {
+  
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+}
