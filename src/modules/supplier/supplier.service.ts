@@ -10,7 +10,7 @@ import { Suppliers } from 'src/tableModels/suppliers.model';
 import { User } from 'src/tableModels/user.model';
 import { StringUtils } from 'src/utils/string_utils';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
-import { CheckEmailExistDto, ListFilterLocadingSupplierDto, SupplierCreateDto, SupplierEditDto, SupplierListDto, SupplierLoginDto, SupplierStatusChangeDto } from './supplier.dto';
+import { CheckEmailExistDto, CheckMobileExistDto, ListFilterLocadingSupplierDto, SupplierCreateDto, SupplierEditDto, SupplierListDto, SupplierLoginDto, SupplierStatusChangeDto } from './supplier.dto';
 
 const crypto = require('crypto');
 @Injectable()
@@ -637,6 +637,28 @@ async checkEmailExisting(dto: CheckEmailExistDto) {
   try {
     var resultCount = await this.suppliersModel
       .count({ _email: dto.value,_status:{$in:[1,0]} })
+      .session(transactionSession);
+
+    await transactionSession.commitTransaction();
+    await transactionSession.endSession();
+    return {
+      message: 'success',
+      data: { count: resultCount },
+    };
+  } catch (error) {
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
+  }
+}
+
+async checkMobileExisting(dto: CheckMobileExistDto) {
+  var dateTime = new Date().getTime();
+  const transactionSession = await this.connection.startSession();
+  transactionSession.startTransaction();
+  try {
+    var resultCount = await this.suppliersModel
+      .count({ _mobile: dto.value,_status:{$in:[1,0]} })
       .session(transactionSession);
 
     await transactionSession.commitTransaction();

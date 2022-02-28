@@ -6,7 +6,7 @@ import { Customers } from 'src/tableModels/customers.model';
 import { User } from 'src/tableModels/user.model';
 import * as mongoose from 'mongoose';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
-import { CheckEmailExistDto, CustomerCreateDto, CustomerEditeDto, CustomerLoginDto, ListCustomersDto } from './customers.dto';
+import { CheckEmailExistDto, CheckMobileExistDto, CustomerCreateDto, CustomerEditeDto, CustomerLoginDto, ListCustomersDto } from './customers.dto';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 import { StringUtils } from 'src/utils/string_utils';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
@@ -1063,6 +1063,27 @@ if (dto.screenType.findIndex((it) => it == 110) != -1) {
   }
 
 
+  async checkMobileExisting(dto: CheckMobileExistDto) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var resultCount = await this.customersModel
+        .count({ _mobile: dto.value,_status:{$in:[1,0]} })
+        .session(transactionSession);
+  
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return {
+        message: 'success',
+        data: { count: resultCount },
+      };
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
 
 
 

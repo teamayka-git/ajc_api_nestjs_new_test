@@ -544,4 +544,10 @@ export class CheckEmailExistDto {
   value: string;
 
 }
+export class CheckMobileExistDto {
   
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+}

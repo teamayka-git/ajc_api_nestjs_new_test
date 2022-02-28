@@ -4,7 +4,7 @@ import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole, GuardUserRoleStringGenerate } from 'src/common/GuardUserRole';
-import {  AgentCreateDto, AgentEditDto, AgentListDto, AgentLoginDto, AgentStatusChangeDto, CheckEmailExistDto, ListFilterLocadingAgentDto } from './agent.dto';
+import {  AgentCreateDto, AgentEditDto, AgentListDto, AgentLoginDto, AgentStatusChangeDto, CheckEmailExistDto, CheckMobileExistDto, ListFilterLocadingAgentDto } from './agent.dto';
 import { AgentService } from './agent.service';
 
 import { Response } from 'express'; //jwt response store in cookie
@@ -110,6 +110,11 @@ var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole'])
   @Post("checkEmailExisting")
   checkEmailExisting(@Body() dto:CheckEmailExistDto) {
     return this.agentService.checkEmailExisting(dto);
+  }
+  
+  @Post("checkMobileExisting")
+  checkMobileExisting(@Body() dto:CheckMobileExistDto) {
+    return this.agentService.checkMobileExisting(dto);
   }
   
 
