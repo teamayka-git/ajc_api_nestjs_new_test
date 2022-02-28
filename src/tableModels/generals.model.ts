@@ -38,7 +38,7 @@ export interface Generals {
 GeneralsSchema.index({_status: 1});
 GeneralsSchema.index({_name: 1});
 GeneralsSchema.index({_code: 1,_id:1});
-GeneralsSchema.index({_code: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
+GeneralsSchema.index({_code: 1}, {unique: true,});
 GeneralsSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
 });

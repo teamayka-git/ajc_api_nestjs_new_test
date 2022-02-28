@@ -56,7 +56,7 @@ CategoriesSchema.index(
 );
 CategoriesSchema.index(
   { _code: 1 },
-  { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },
+  { unique: true,  },
 );
 CategoriesSchema.post('save', async function (error, doc, next) {
   schemaPostFunctionForDuplicate(error, doc, next);

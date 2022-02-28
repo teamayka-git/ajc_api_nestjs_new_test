@@ -33,7 +33,7 @@ CitiesSchema.index({_status: 1});
 CitiesSchema.index({_districtsId: 1});
 CitiesSchema.index({_name: 1,_id:1});
 CitiesSchema.index({_code: 1,_id:1});
-CitiesSchema.index({_code: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
+CitiesSchema.index({_code: 1}, {unique: true,});
 CitiesSchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 CitiesSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);

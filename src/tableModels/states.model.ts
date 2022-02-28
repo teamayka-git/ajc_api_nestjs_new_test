@@ -30,7 +30,7 @@ export interface States {
 StatesSchema.index({_status: 1});
 StatesSchema.index({_name: 1,_id:1});
 StatesSchema.index({_code: 1,_id:1});
-StatesSchema.index({_code: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
+StatesSchema.index({_code: 1}, {unique: true,});
 StatesSchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 StatesSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);

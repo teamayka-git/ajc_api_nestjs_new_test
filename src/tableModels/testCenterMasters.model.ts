@@ -47,7 +47,7 @@ TestCenterMastersSchema.index({ _allowerWastage: 1 });
 TestCenterMastersSchema.index({ _code: 1,_id:1 });
 TestCenterMastersSchema.index(
   { _code: 1 },
-  { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },
+  { unique: true, },
 );
 TestCenterMastersSchema.index({ _name: 1 ,_id:1});
 TestCenterMastersSchema.index(

@@ -55,7 +55,7 @@ SubCategoriesSchema.index({ _code: 1,_id:1 });
 SubCategoriesSchema.index({ _name: 1,_id:1 });
 SubCategoriesSchema.index(
   { _code: 1 },
-  { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },
+  { unique: true,  },
 );
 SubCategoriesSchema.index(
   { _name: 1 },

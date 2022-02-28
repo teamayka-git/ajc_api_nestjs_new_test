@@ -33,7 +33,7 @@ DistrictsSchema.index({_status: 1});
 DistrictsSchema.index({_statesId: 1});
 DistrictsSchema.index({_name: 1,_id:1});
 DistrictsSchema.index({_code: 1,_id:1});
-DistrictsSchema.index({_code: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
+DistrictsSchema.index({_code: 1}, {unique: true,});
 DistrictsSchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 DistrictsSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
