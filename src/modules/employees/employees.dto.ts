@@ -14,7 +14,7 @@ const descriptionListGender="0-male, 1-female, 2-other";
 const descriptionStatus="0-Inactive, 1-Active, 2-Delete";
 const descriptionListSortOrder="1-ascending, -1-descending";
 const descriptionListSortType="0-Created Date,1-Status  2-Name,3-UID";
-const descriptionListScreenTypeForList="0-total documents count, ,50-populate image global gallery, 100-user id also get";
+const descriptionListScreenTypeForList="0-total documents count, ,50-populate image global gallery, 100-user id also get, 101-department populate, 102-process master populate";
 
 export class EmployeeLoginDto {
  

@@ -482,6 +482,8 @@ export class EmployeesService {
         );
       }
 
+      
+
       if (dto.screenType.findIndex((it) => it == 100) != -1) {
         arrayAggregation.push(
           {
@@ -499,6 +501,45 @@ export class EmployeesService {
           },
           {
             $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
+      }
+
+      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.DEPARTMENT,
+              let: { departmentId: '$_departmentId' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$departmentId'] } },
+                },
+              ],
+              as: 'departmentDetails',
+            },
+          },
+          {
+            $unwind: { path: '$departmentDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
+      }
+      if (dto.screenType.findIndex((it) => it == 102) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.PROCESS_MASTER,
+              let: { processMasterId: '$_processMasterId' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$processMasterId'] } },
+                },
+              ],
+              as: 'processMasterDetails',
+            },
+          },
+          {
+            $unwind: { path: '$processMasterDetails', preserveNullAndEmptyArrays: true },
           },
         );
       }
