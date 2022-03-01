@@ -47,6 +47,10 @@ export class OrderSalesCreateDto {
   @ApiProperty({})
   subCategoryId: string;
 
+  @IsString()
+  @ApiProperty({})
+  customerId: string;
+
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
@@ -112,6 +116,12 @@ export class OrderSalesEditDto {
   @ApiProperty({})
   subCategoryId: string;
 
+
+  @IsString()
+  @ApiProperty({})
+  customerId: string;
+
+  
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})

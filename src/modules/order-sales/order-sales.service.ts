@@ -145,7 +145,7 @@ export class OrderSalesService {
 
       const newsettingsModel = new this.orderSaleModel({
         _id: orderSaleId,
-        _customerId: _userId_,
+        _customerId: (dto.customerId=="" || dto.customerId=="nil")?_userId_:dto.customerId,
         _subCategoryId: dto.subCategoryId,
         _quantity: dto.quantity,
         _size: dto.size,
@@ -278,6 +278,8 @@ export class OrderSalesService {
       }
 
       var updateObject = {
+        
+        _customerId: (dto.customerId=="" || dto.customerId=="nil")?_userId_:dto.customerId,
         _subCategoryId: dto.subCategoryId,
         _quantity: dto.quantity,
         _size: dto.size,
