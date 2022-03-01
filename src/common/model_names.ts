@@ -35,6 +35,7 @@ export enum ModelNames {
     RATE_BASE_MASTERS="rate_base_masters",
     CUSTOMERS="customers",
     ORDER_SALES="order_sales",
+    ORDER_SALES_ROOT_CAUSES="order_sales_root_causes",
     ORDER_SALES_DOCUMENTS="order_sales_documents",
 
 

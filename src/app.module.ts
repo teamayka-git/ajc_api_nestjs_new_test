@@ -57,6 +57,7 @@ import { RateCardModule } from './modules/rate-card/rate-card.module';
 import { RateBaseMastersModule } from './modules/rate-base-masters/rate-base-masters.module';
 import { CustomersModule } from './modules/customers/customers.module';
 import { OrderSalesModule } from './modules/order-sales/order-sales.module';
+import { OrderSaleRootCausesModule } from './modules/order-sale-root-causes/order-sale-root-causes.module';
 
 
 @Module({
@@ -114,6 +115,7 @@ import { OrderSalesModule } from './modules/order-sales/order-sales.module';
   RateBaseMastersModule,
   CustomersModule,
   OrderSalesModule,
+  OrderSaleRootCausesModule,
   
   
   // SalesReturnRequestStatusesModule,
