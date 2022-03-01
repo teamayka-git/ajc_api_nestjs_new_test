@@ -229,6 +229,8 @@ export class EmployeesService {
         _uid: resultCounterPurchase._count,
         _lastLogin: 0,
         _globalGalleryId: globalGalleryId,
+        _departmentId: dto.departmentId,
+        _processMasterId: (dto.processMasterId=="nil" || dto.processMasterId=="")?null:dto.processMasterId,
         _dataGuard: dto.dataGuard,
         _createdUserId: _userId_,
         _createdAt: dateTime,
@@ -291,6 +293,8 @@ export class EmployeesService {
         _name: dto.name,
         _gender: dto.gender,
         _mobile: dto.mobile,
+        _departmentId: dto.departmentId,
+        _processMasterId: (dto.processMasterId=="nil" || dto.processMasterId=="")?null:dto.processMasterId,
         __dataGuard: dto.dataGuard,
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
@@ -415,6 +419,22 @@ export class EmployeesService {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
+      }
+      
+      if (dto.departmentIds.length > 0) {
+        var newSettingsId = [];
+        dto.departmentIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _departmentId: { $in: newSettingsId } } });
+      }
+      
+      if (dto.processMasterIds.length > 0) {
+        var newSettingsId = [];
+        dto.processMasterIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _processMasterId: { $in: newSettingsId } } });
       }
 
       if (dto.genders.length > 0) {

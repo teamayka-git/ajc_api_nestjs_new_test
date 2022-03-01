@@ -13,6 +13,8 @@ export const EmployeeSchema = new mongoose.Schema({
     _uid: { type: String, required: true, default: "nil" },
     _lastLogin: { type: Number, required: true, default: -1 },
     _globalGalleryId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.GLOBAL_GALLERIES, default: null },
+    _departmentId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.DEPARTMENT, default: null },
+    _processMasterId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.PROCESS_MASTER, default: null },
     _dataGuard: { type:Object, required: true, default: [] },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
@@ -29,6 +31,8 @@ export interface Employee {
     _password: String;
     _mobile:String;
     _uid: String;
+    _departmentId: String;
+    _processMasterId: String;
     _lastLogin:Number;
     _globalGalleryId:String;
     _dataGuard:Object;
@@ -39,6 +43,8 @@ export interface Employee {
     _status: Number;
 }
 
+EmployeeSchema.index({_departmentId: 1});
+EmployeeSchema.index({_processMasterId: 1});
 EmployeeSchema.index({_status: 1});
 EmployeeSchema.index({_name: 1}); 
 EmployeeSchema.index({_gender: 1});

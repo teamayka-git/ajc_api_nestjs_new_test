@@ -52,6 +52,13 @@ export class EmployeeCreateDto {
   @ApiProperty({})
   mobile: string;
 
+  @IsString()
+  @ApiProperty({})
+  departmentId: string;
+  @IsString()
+  @ApiProperty({})
+  processMasterId: string;
+
   
 
   @Transform(({ value }) =>typeof value == 'string' ? JSON.parse(value) : value    )
@@ -90,7 +97,12 @@ export class EmployeeEditDto {
   @ApiProperty({})
   mobile: string;
 
-  
+  @IsString()
+  @ApiProperty({})
+  departmentId: string;
+  @IsString()
+  @ApiProperty({})
+  processMasterId: string;
 
   @Transform(({ value }) =>typeof value == 'string' ? JSON.parse(value) : value    )
   @IsArray()
@@ -126,6 +138,14 @@ export class EmployeeListDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   employeeIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  departmentIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  processMasterIds: string[];
 
   @IsNumber()
   @ApiProperty({})
