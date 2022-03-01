@@ -802,6 +802,7 @@ export class AppService {
             {
               $setOnInsert: {
                 _name: "Master Design",
+                _isAutomatic:0,
                 _parentId:null,
                 _dataGuard:[0,1,2],
                 _createdUserId: null,

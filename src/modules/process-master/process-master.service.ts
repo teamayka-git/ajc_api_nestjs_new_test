@@ -23,6 +23,7 @@ export class ProcessMasterService {
           arrayToStates.push({
             _name: mapItem.name,
             _code: mapItem.code,
+            isAutomatic:mapItem.isAutomatic,
             _parentId:mapItem.parentId=="nil"?null:mapItem.parentId,
             _dataGuard:mapItem.dataGuard,
             _createdUserId: _userId_,
@@ -58,7 +59,8 @@ export class ProcessMasterService {
           },
           {
             $set: {
-                _name: dto.name,
+              _name: dto.name,
+              _isAutomatic: dto.isAutomatic,
                 _code: dto.code,
                 _parentId:dto.parentId=="nil"?null:dto.parentId,
                 
@@ -135,6 +137,9 @@ export class ProcessMasterService {
           });
           arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
         }
+        if (dto.isAutomatic.length > 0) {
+          arrayAggregation.push({ $match: { _isAutomatic: { $in: dto.isAutomatic } } });
+        }
     
         if (dto.parentIds.length > 0) {
             var newSettingsId = [];
@@ -155,6 +160,7 @@ export class ProcessMasterService {
             case 1:arrayAggregation.push({ $sort: { _status: dto.sortOrder } });               break;
             case 2: arrayAggregation.push({ $sort: { _name: dto.sortOrder } });               break;
             case 3: arrayAggregation.push({ $sort: { _code: dto.sortOrder } });               break;
+            case 4: arrayAggregation.push({ $sort: { _isAutomatic: dto.sortOrder } });               break;
             
           }
     

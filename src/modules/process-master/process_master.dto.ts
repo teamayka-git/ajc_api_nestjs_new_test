@@ -17,7 +17,7 @@ const descriptionListScreenTypeForList="0-total documents count, 100-process mas
 const descriptionListDataGuard="0-edit protect, 1-disabe protect, 2-delete protect";
 
 const descriptionListSortOrder="1-ascending, -1-descending";
-const descriptionListSortType="0-Created Date, 1-Status,2-Name, 3-Code";
+const descriptionListSortType="0-Created Date, 1-Status,2-Name, 3-Code, 4-is automatic";
 const descriptionListScreenTypeForFilterLoading="0-total documents count, 100-item details";
 
 
@@ -33,6 +33,10 @@ class ProcessMasterCreateList {
   @IsNumber()
   @ApiProperty({})
   code: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  isAutomatic: number;
 
   
   @IsString()
@@ -70,6 +74,10 @@ export class ProcessMasterEditDto {
   @IsNumber()
   @ApiProperty({})
   code: number;
+  
+  @IsNumber()
+  @ApiProperty({})
+  isAutomatic: number;
 
   
   @IsString()
@@ -100,6 +108,10 @@ export class ProcessMasterListDto {
   @IsArray()
   @ApiProperty({ type: [Number],description:descriptionListScreenTypeForList })
   screenType:number[];
+  
+  @IsArray()
+  @ApiProperty({ type: [Number] })
+  isAutomatic:number[];
   
   
 
