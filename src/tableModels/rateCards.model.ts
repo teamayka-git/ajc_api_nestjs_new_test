@@ -5,9 +5,7 @@ import { GlobalConfig } from 'src/config/global_config';
 
 export const RateCardsSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
-  _subCategoryId:  { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.SUB_CATEGORIES, default: null },
-  _percentage: { type: Number, required: true, default: -1 },
-  _dataGuard: { type:Object, required: true, default: [] },
+  _name:  { type:String, required: true, default: "nil" },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
     _updatedUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
@@ -17,9 +15,7 @@ export const RateCardsSchema = new mongoose.Schema({
  
 export interface RateCards {
     _id: String;
-    _subCategoryId: Number;
-    _percentage: Number;
-    _dataGuard:Object;
+    _name: String;
     _createdUserId:String;
     _createdAt:  Number;
     _updatedUserId: String;
@@ -29,7 +25,7 @@ export interface RateCards {
 
 
 
-RateCardsSchema.index({_subCategoryId: 1});
+RateCardsSchema.index({_name: 1});
 RateCardsSchema.index({_status: 1});
 
 
