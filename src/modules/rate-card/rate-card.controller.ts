@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { RateCardService } from './rate-card.service';
-import { RateCardCreateDto, RateCardEditDto, RateCardListDto, RateCardStatusChangeDto } from './rate_card.dto';
+import { RateCardCreateDto, RateCardEditDto, RateCardListDto, RateCardStatusChangeDto, RemovePercentagesDto } from './rate_card.dto';
 
 
 @ApiTags("rate cards") 
@@ -17,6 +17,11 @@ export class RateCardController {
   @Roles(GuardUserRole.SUPER_ADMIN)
   create(@Body() dto: RateCardCreateDto,@Request() req) {
     return this.rateCardService.create(dto,req["_userId_"]);
+  }
+  @Post("remove_percentages")
+  @Roles(GuardUserRole.SUPER_ADMIN)
+  remove_percentages(@Body() dto: RemovePercentagesDto,@Request() req) {
+    return this.rateCardService.remove_percentages(dto,req["_userId_"]);
   }
   
   @Put()

@@ -4,7 +4,7 @@ import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { RateCardPercentages } from 'src/tableModels/rateCardPercentages.model';
 import { RateCards } from 'src/tableModels/rateCards.model';
-import { RateCardCreateDto, RateCardEditDto, RateCardListDto, RateCardStatusChangeDto } from './rate_card.dto';
+import { RateCardCreateDto, RateCardEditDto, RateCardListDto, RateCardStatusChangeDto, RemovePercentagesDto } from './rate_card.dto';
 
 @Injectable()
 export class RateCardService {
@@ -68,60 +68,60 @@ export class RateCardService {
       }
     }
     
-      async edit(dto: RateCardEditDto, _userId_: string) {
-        var dateTime = new Date().getTime();
-        const transactionSession = await this.connection.startSession();
-        transactionSession.startTransaction();
-    try{
-        var result = await this.rateCardsModel.findOneAndUpdate(
-          {
-            _id: dto.rateCardId,
+    async edit(dto: RateCardEditDto, _userId_: string) {
+      var dateTime = new Date().getTime();
+      const transactionSession = await this.connection.startSession();
+      transactionSession.startTransaction();
+  try{
+      var result = await this.rateCardsModel.findOneAndUpdate(
+        {
+          _id: dto.rateCardId,
+        },
+        {
+          $set: {
+            _name:dto.rateCardName,
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
           },
-          {
-            $set: {
-              _name:dto.rateCardName,
-              _updatedUserId: _userId_,
-              _updatedAt: dateTime,
-            },
-          },
-          { new: true,session: transactionSession },
-        );
-    
+        },
+        { new: true,session: transactionSession },
+      );
+  
 
-        var arrayToStates = [];
+      var arrayToStates = [];
 
-        dto.arrayAdd.map((mapItem) => {
-          arrayToStates.push({
-            _rateCardId:dto.rateCardId,
-            _subCategoryId:mapItem.subCategoryId,
-            _percentage:mapItem.percentage,
-            _createdUserId: _userId_,
-            _createdAt: dateTime,
-            _updatedUserId: null,
-            _updatedAt: -1,
-            _status: 1,
-          });
+      dto.arrayAdd.map((mapItem) => {
+        arrayToStates.push({
+          _rateCardId:dto.rateCardId,
+          _subCategoryId:mapItem.subCategoryId,
+          _percentage:mapItem.percentage,
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
         });
-    
-        var result11 = await this.rateCardsModel.insertMany(arrayToStates, {
-          session: transactionSession,
-        });
+      });
+  
+      var result11 = await this.rateCardsModel.insertMany(arrayToStates, {
+        session: transactionSession,
+      });
 
 
 
-        await this.rateCardPercentagessModel.updateMany(
-          {
-            _id: { $in: dto.removePercentageIds },
+      await this.rateCardPercentagessModel.updateMany(
+        {
+          _id: { $in: dto.removePercentageIds },
+        },
+        {
+          $set: {
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+            _status: 2,
           },
-          {
-            $set: {
-              _updatedUserId: _userId_,
-              _updatedAt: dateTime,
-              _status: 2,
-            },
-          },
-          { new: true,session: transactionSession },
-        );
+        },
+        { new: true,session: transactionSession },
+      );
 
 
 
@@ -131,16 +131,57 @@ export class RateCardService {
 
 
 
-        await transactionSession.commitTransaction();
-        await transactionSession.endSession();
-        return { message: 'success', data: result };
-      }catch(error){
-        await transactionSession.abortTransaction();
-        await transactionSession.endSession();
-        throw error;
-      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return { message: 'success', data: result };
+    }catch(error){
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
     }
+  }
+  
     
+  async remove_percentages(dto: RemovePercentagesDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+try{
+   
+
+
+    await this.rateCardPercentagessModel.updateMany(
+      {
+        _id: { $in: dto.removePercentageIds },
+      },
+      {
+        $set: {
+          _updatedUserId: _userId_,
+          _updatedAt: dateTime,
+          _status: 2,
+        },
+      },
+      { new: true,session: transactionSession },
+    );
+
+
+
+
+
+
+
+
+
+    await transactionSession.commitTransaction();
+    await transactionSession.endSession();
+    return { message: 'success', data: {} };
+  }catch(error){
+    await transactionSession.abortTransaction();
+    await transactionSession.endSession();
+    throw error;
+  }
+}
+
       async status_change(dto: RateCardStatusChangeDto, _userId_: string) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();

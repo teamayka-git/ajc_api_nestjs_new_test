@@ -60,6 +60,14 @@ export class RateCardCreateDto {
 
   
 }
+export class RemovePercentagesDto {
+ 
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  removePercentageIds: string[];
+
+  
+}
 export class RateCardEditDto {
 
 
