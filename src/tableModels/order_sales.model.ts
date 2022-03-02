@@ -18,7 +18,7 @@ export const OrderSalesSchema = new mongoose.Schema({
   _size: { type: Number, required: true, default: -1 },
   _weight: { type: Number, required: true, default: -1 },
   _stoneColour: { type: String, required: true, default: 'nil' },
-  _rootCause: { type: String, required: true, default: 'nil' },
+  _rootCause: { type: String, default: 'nil' },
   _dueDate: { type: Number, required: true, default: -1 },
   _salesPersonId: {
     type: mongoose.Schema.Types.ObjectId,
