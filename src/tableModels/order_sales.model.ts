@@ -18,15 +18,22 @@ export const OrderSalesSchema = new mongoose.Schema({
   _size: { type: Number, required: true, default: -1 },
   _weight: { type: Number, required: true, default: -1 },
   _stoneColour: { type: String, required: true, default: 'nil' },
+  _rootCause: { type: String, required: true, default: 'nil' },
   _dueDate: { type: Number, required: true, default: -1 },
   _salesPersonId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
     default: null,
   },
+  _rootCauseId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.ORDER_SALES_ROOT_CAUSES,
+    default: null,
+  },
   _description: { type: String, required: true, default: 'nil' },
   _isMatFinish: { type: Number, required: true, default: -1 },
   _isRhodium: { type: Number, required: true, default: -1 },
+  _workStatus: { type: Number, required: true, default: -1 },
   _uid: { type: String, required: true, default: 'nil' },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -53,6 +60,9 @@ export interface OrderSales {
   _uid:string;
   _stoneColour: string;
   _dueDate: number;
+  _workStatus: number;
+  _rootCauseId:String;
+  _rootCause:String;
   _salesPersonId: string;
   _description: string;
   _isRhodium: number;
@@ -64,6 +74,9 @@ export interface OrderSales {
   _status: Number;
 }
 
+OrderSalesSchema.index({ _workStatus: 1 });
+OrderSalesSchema.index({ _rootCause: 1 });
+OrderSalesSchema.index({ _rootCause: 1 });
 OrderSalesSchema.index({ _subCategoryId: 1 });
 OrderSalesSchema.index({ _quantity: 1 });
 OrderSalesSchema.index({ _stoneColour: 1 });
@@ -75,3 +88,10 @@ OrderSalesSchema.index({ _status: 1 });
 OrderSalesSchema.index({ _uid: 1,_id:1 });
 
 OrderSalesSchema.index({_uid: 1}, {unique: true});
+/*
+_workStatus:{
+  0- pending
+  1- accept
+  2- reject
+}
+*/

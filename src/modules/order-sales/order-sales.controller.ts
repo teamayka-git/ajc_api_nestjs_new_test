@@ -5,7 +5,7 @@ import { Roles } from 'src/Auth/roles.decorator';
 import { OrderSalesService } from './order-sales.service';
 import { diskStorage } from 'multer';
 import { FileMulterHelper } from 'src/shared/file_multter_helper';
-import { OrderSaleListDto, OrderSalesChangeDto, OrderSalesCreateDto, OrderSalesEditDto } from './order_sales.dto';
+import { OrderSaleListDto, OrderSalesChangeDto, OrderSalesCreateDto, OrderSalesEditDto, OrderSalesWorkStatusChangeDto } from './order_sales.dto';
 
 
 
@@ -59,6 +59,11 @@ export class OrderSalesController {
   @Delete()
   status_change(@Body() dto: OrderSalesChangeDto,@Request() req) {
     return this.orderSalesService.status_change(dto,req["_userId_"]);
+  }
+  
+  @Post("change_work_status")
+  change_work_status(@Body() dto: OrderSalesWorkStatusChangeDto,@Request() req) {
+    return this.orderSalesService.change_work_status(dto,req["_userId_"]);
   }
   
   @Post("list")

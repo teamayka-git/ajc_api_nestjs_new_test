@@ -10,6 +10,7 @@ import {
   OrderSalesChangeDto,
   OrderSalesCreateDto,
   OrderSalesEditDto,
+  OrderSalesWorkStatusChangeDto,
 } from './order_sales.dto';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { Counters } from 'src/tableModels/counters.model';
@@ -166,7 +167,9 @@ if(customerDetails.length==0){
         _stoneColour: dto.stoneColor,
         _dueDate: dto.dueDate,
         _salesPersonId: customerDetails[0]._orderHeadId,
-
+        _workStatus:0,
+        _rootCauseId:null,
+        _rootCause:"",
         _description: dto.description,
         _isRhodium: dto.isRhodium,
         _isMatFinish: dto.isMatFinish,
@@ -365,6 +368,40 @@ if(customerDetails.length==0){
     }
   }
 
+
+
+
+
+  
+  async change_work_status(dto: OrderSalesWorkStatusChangeDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var result = await this.orderSaleModel.updateMany(
+        {
+          _id: { $in: dto.orderSaleIds },
+        },
+        {
+          $set: {
+            _rootCauseId: (dto.rootCauseId==""||dto.rootCauseId=="nil")?null:dto.rootCauseId,
+            _workStatus: dto.workStatus,
+            _rootCause: dto.rootCause,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return { message: 'success', data: result };
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
   async list(dto: OrderSaleListDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
@@ -408,6 +445,10 @@ if(customerDetails.length==0){
       if (dto.isRhodium.length > 0) {
        
         arrayAggregation.push({ $match: { _isRhodium: { $in: newSettingsId } } });
+      }
+      if (dto.workStatus.length > 0) {
+       
+        arrayAggregation.push({ $match: { _rootCause: { $in: newSettingsId } } });
       }
       switch (dto.sortType) {
         case 0:
@@ -458,6 +499,30 @@ if(customerDetails.length==0){
           },
         );
       }
+
+      if (dto.screenType.findIndex((it) => it == 103) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_ROOT_CAUSES,
+              let: { rootCauseId: '$_rootCauseId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$rootCauseId'] } } },
+              ],
+              as: 'rootCauseDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$rootCauseDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+
+
       if (dto.screenType.findIndex((it) => it == 101) != -1) {
         arrayAggregation.push({
           $lookup: {

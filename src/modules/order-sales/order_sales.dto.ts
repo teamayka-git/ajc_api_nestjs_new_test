@@ -18,7 +18,7 @@ import { Transform, Type, Type as ValidateTypes } from 'class-transformer';
 import { Optional } from '@nestjs/common';
 
 const descriptionListScreenTypeForBranchList =
-  '0-total documents count,100-populate sub categories, 101-list documents, 102-customer id';
+  '0-total documents count,100-populate sub categories, 101-list documents, 102-customer id, 103-root cause populate';
 const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 
@@ -30,6 +30,9 @@ const descriptionListDocType = '0-image, 1-video, 2-pdf, 3-audio, 4-document';
 
 const descriptionFileOriginalName =
   "file name givent while uploading, if there is no image then give 'nil; here";
+
+const descriptionWorkStatus="0-pending, 1-accepted, 2-rejected";
+
 
 class orderSaleCreateList {
   @IsString()
@@ -237,6 +240,13 @@ export class OrderSaleListDto {
   @IsArray()
   @ApiProperty({ type: [Number] })
   isRhodium: number[];
+
+
+  @IsArray()
+  @ApiProperty({ type: [Number],description:descriptionWorkStatus })
+  workStatus: number[];
+
+
   @IsArray()
   @ApiProperty({ type: [Number] })
   isMatFinish: number[];
@@ -250,4 +260,22 @@ export class OrderSalesChangeDto {
   @IsNumber()
   @ApiProperty({ description: descriptionStatus })
   status: number;
+}
+export class OrderSalesWorkStatusChangeDto {
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleIds: string[];
+
+  @IsNumber()
+  @ApiProperty({ description: descriptionWorkStatus })
+  workStatus: number;
+
+  @IsString()
+  @ApiProperty({  })
+  rootCause:string;
+  @IsString()
+  @ApiProperty({  })
+  rootCauseId: string;
+
+
 }
