@@ -153,9 +153,11 @@ export class OrderSalesService {
         _weight: dto.weight,
         _stoneColour: dto.stoneColor,
         _dueDate: dto.dueDate,
-        _salesPersonId: dto.salsPersonId,
+        _salesPersonId: null,//todo
+
         _description: dto.description,
         _isRhodium: dto.isRhodium,
+        _isMatFinish: dto.isMatFinish,
         _createdUserId: _userId_,
         _createdAt: dateTime,
         _updatedUserId: null,
@@ -286,7 +288,9 @@ export class OrderSalesService {
         _weight: dto.weight,
         _stoneColour: dto.stoneColor,
         _dueDate: dto.dueDate,
-        _salesPersonId: dto.salsPersonId,
+        _salesPersonId: null,//todo
+        
+        _isMatFinish: dto.isMatFinish,
         _description: dto.description,
         _isRhodium: dto.isRhodium,
         _updatedUserId: _userId_,
@@ -386,7 +390,14 @@ export class OrderSalesService {
           $match: { _customerId: { $in: newSettingsId } },
         });
       }
-
+      if (dto.isMatFinish.length > 0) {
+       
+        arrayAggregation.push({ $match: { _isMatFinish: { $in: newSettingsId } } });
+      }
+      if (dto.isRhodium.length > 0) {
+       
+        arrayAggregation.push({ $match: { _isRhodium: { $in: newSettingsId } } });
+      }
       switch (dto.sortType) {
         case 0:
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });

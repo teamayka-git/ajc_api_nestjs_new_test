@@ -76,15 +76,16 @@ export class OrderSalesCreateDto {
 
   @IsString()
   @ApiProperty({})
-  salsPersonId: string;
-  @IsString()
-  @ApiProperty({})
   description: string;
 
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   isRhodium: number;
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  isMatFinish: number;
 
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
@@ -147,15 +148,18 @@ export class OrderSalesEditDto {
 
   @IsString()
   @ApiProperty({})
-  salsPersonId: string;
-  @IsString()
-  @ApiProperty({})
   description: string;
 
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   isRhodium: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  isMatFinish: number;
+
 
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
@@ -233,6 +237,9 @@ export class OrderSaleListDto {
   @IsArray()
   @ApiProperty({ type: [Number] })
   isRhodium: number[];
+  @IsArray()
+  @ApiProperty({ type: [Number] })
+  isMatFinish: number[];
 }
 
 export class OrderSalesChangeDto {

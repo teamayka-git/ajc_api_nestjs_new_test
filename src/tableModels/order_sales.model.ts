@@ -25,6 +25,7 @@ export const OrderSalesSchema = new mongoose.Schema({
     default: null,
   },
   _description: { type: String, required: true, default: 'nil' },
+  _isMatFinish: { type: Number, required: true, default: -1 },
   _isRhodium: { type: Number, required: true, default: -1 },
   _uid: { type: String, required: true, default: 'nil' },
   _createdUserId: {
@@ -55,6 +56,7 @@ export interface OrderSales {
   _salesPersonId: string;
   _description: string;
   _isRhodium: number;
+  _isMatFinish: number;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
