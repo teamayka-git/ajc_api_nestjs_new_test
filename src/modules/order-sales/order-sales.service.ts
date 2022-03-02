@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
@@ -16,6 +16,7 @@ import { Counters } from 'src/tableModels/counters.model';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
 import { StringUtils } from 'src/utils/string_utils';
+import { Customers } from 'src/tableModels/customers.model';
 
 @Injectable()
 export class OrderSalesService {
@@ -24,6 +25,8 @@ export class OrderSalesService {
     private readonly orderSaleModel: Model<OrderSales>,
     @InjectModel(ModelNames.ORDER_SALES_DOCUMENTS)
     private readonly orderSaleDocumentsModel: Model<OrderSalesDocuments>,
+    @InjectModel(ModelNames.CUSTOMERS)
+    private readonly customersModel: Model<Customers>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: Model<Counters>,
     @InjectModel(ModelNames.GLOBAL_GALLERIES)
@@ -143,6 +146,15 @@ export class OrderSalesService {
         { new: true, session: transactionSession },
       );
 
+
+var customerDetails=await this.customersModel.find({_id:dto.customerId,_status:1});
+if(customerDetails.length==0){
+  
+  throw new HttpException('Customer not found', HttpStatus.INTERNAL_SERVER_ERROR);
+}
+
+
+
       const newsettingsModel = new this.orderSaleModel({
         _id: orderSaleId,
         _customerId: (dto.customerId=="" || dto.customerId=="nil")?_userId_:dto.customerId,
@@ -153,7 +165,7 @@ export class OrderSalesService {
         _weight: dto.weight,
         _stoneColour: dto.stoneColor,
         _dueDate: dto.dueDate,
-        _salesPersonId: null,//todo
+        _salesPersonId: customerDetails[0]._orderHeadId,
 
         _description: dto.description,
         _isRhodium: dto.isRhodium,
@@ -288,7 +300,6 @@ export class OrderSalesService {
         _weight: dto.weight,
         _stoneColour: dto.stoneColor,
         _dueDate: dto.dueDate,
-        _salesPersonId: null,//todo
         
         _isMatFinish: dto.isMatFinish,
         _description: dto.description,
