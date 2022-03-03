@@ -440,15 +440,15 @@ if(customerDetails.length==0){
       }
       if (dto.isMatFinish.length > 0) {
        
-        arrayAggregation.push({ $match: { _isMatFinish: { $in: newSettingsId } } });
+        arrayAggregation.push({ $match: { _isMatFinish: { $in: dto.isMatFinish } } });
       }
       if (dto.isRhodium.length > 0) {
        
-        arrayAggregation.push({ $match: { _isRhodium: { $in: newSettingsId } } });
+        arrayAggregation.push({ $match: { _isRhodium: { $in: dto.isRhodium } } });
       }
       if (dto.workStatus.length > 0) {
        
-        arrayAggregation.push({ $match: { _workStatus: { $in: newSettingsId } } });
+        arrayAggregation.push({ $match: { _workStatus: { $in: dto.workStatus } } });
       }
       switch (dto.sortType) {
         case 0:
