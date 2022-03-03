@@ -804,6 +804,7 @@ export class AppService {
                 _name: "Master Design",
                 _isAutomatic:0,
                 _parentId:null,
+                _maxHours:2,
                 _dataGuard:[0,1,2],
                 _createdUserId: null,
                 _createdAt: dateTime,

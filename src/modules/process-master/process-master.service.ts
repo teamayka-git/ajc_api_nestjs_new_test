@@ -309,6 +309,22 @@ export class ProcessMasterService {
         );
       }
 
+      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.SUB_PROCESS_MASTER,
+              let: { processId: '$_id' },
+              pipeline: [
+                { $match: {_status:1, $expr: { $eq: ['$_processMasterId', '$$processId'] } } },
+              ],
+              as: 'subProcessList',
+            },
+          },
+          
+        );
+      }
+
       var result = await this.processMasterModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
