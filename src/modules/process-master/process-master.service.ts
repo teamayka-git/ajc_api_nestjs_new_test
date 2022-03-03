@@ -23,7 +23,7 @@ export class ProcessMasterService {
           arrayToStates.push({
             _name: mapItem.name,
             _code: mapItem.code,
-            isAutomatic:mapItem.isAutomatic,
+            _isAutomatic:mapItem.isAutomatic,
             _parentId:mapItem.parentId=="nil"?null:mapItem.parentId,
             _dataGuard:mapItem.dataGuard,
             _createdUserId: _userId_,
