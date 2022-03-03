@@ -6,7 +6,10 @@ import { ModelNames } from 'src/common/model_names';
 import { ProcessMasterSchema } from 'src/tableModels/processMaster.model';
 
 @Module({
-  imports:[MongooseModule.forFeature([{name:ModelNames.PROCESS_MASTER,schema:ProcessMasterSchema}])],
+  imports:[MongooseModule.forFeature([
+    {name:ModelNames.PROCESS_MASTER,schema:ProcessMasterSchema},
+    {name:ModelNames.PROCESS_MASTER,schema:ProcessMasterSchema},
+  ])],
   controllers: [ProcessMasterController],
   providers: [ProcessMasterService]
 })

@@ -37,6 +37,7 @@ export enum ModelNames {
     ORDER_SALES="order_sales",
     ORDER_SALES_ROOT_CAUSES="order_sales_root_causes",
     ORDER_SALES_DOCUMENTS="order_sales_documents",
+    SUB_PROCESS_MASTER="sub_process_masters",
 
 
 

@@ -4,7 +4,7 @@ import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { ProcessMasterService } from './process-master.service';
-import { CheckItemExistDto, CheckNameExistDto, ListFilterLocadingProcessMasterDto, ProcessMasterCreateDto, ProcessMasterEditDto, ProcessMasterListDto, ProcessMasterStatusChangeDto } from './process_master.dto';
+import { CheckItemExistDto, CheckNameExistDto, CheckNameExistSubProcessDto, ListFilterLocadingProcessMasterDto, ProcessMasterCreateDto, ProcessMasterEditDto, ProcessMasterListDto, ProcessMasterStatusChangeDto, SubProcessMasterDeleteDto } from './process_master.dto';
 
 @Controller('process-master')
 @UseGuards(RolesGuard)
@@ -24,6 +24,14 @@ export class ProcessMasterController {
   edit(@Body() dto: ProcessMasterEditDto,@Request() req) {
     return this.processMasterService.edit(dto,req["_userId_"]);
   }
+
+
+  @Post("deleteSubProcess")
+  @Roles(GuardUserRole.SUPER_ADMIN)
+  deleteSubProcess(@Body() dto: SubProcessMasterDeleteDto,@Request() req) {
+    return this.processMasterService.deleteSubProcess(dto,req["_userId_"]);
+  }
+
   @Delete()
   @Roles(GuardUserRole.SUPER_ADMIN)
   status_change(@Body() dto: ProcessMasterStatusChangeDto,@Request() req) {
@@ -47,6 +55,15 @@ export class ProcessMasterController {
   @Post("checkNameExisting")
   checkNameExisting(@Body() dto:CheckNameExistDto) {
     return this.processMasterService.checkNameExisting(dto);
+  }
+  
+  @Post("checkSubProcessNameExisting")
+  checkSubProcessNameExisting(@Body() dto:CheckNameExistSubProcessDto) {
+    return this.processMasterService.checkSubProcessNameExisting(dto);
+  }
+  @Post("checkSubProcessCodeExisting")
+  checkSubProcessCodeExisting(@Body() dto:CheckNameExistSubProcessDto) {
+    return this.processMasterService.checkSubProcessCodeExisting(dto);
   }
   
 

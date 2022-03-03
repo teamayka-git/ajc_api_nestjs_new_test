@@ -23,7 +23,7 @@ const descriptionListScreenTypeForFilterLoading="0-total documents count, 100-it
 
 
 
-class ProcessMasterCreateList {
+class SubProcessMasterCreateList {
 
   @IsString()
   @ApiProperty({})
@@ -38,6 +38,36 @@ class ProcessMasterCreateList {
   @ApiProperty({})
   isAutomatic: number;
 
+  @IsNumber()
+  @ApiProperty({})
+  maxHours: number;
+
+  
+  @IsNumber()
+  @ApiProperty({})
+  priority: number;
+
+
+}
+class ProcessMasterCreateList {
+
+  @IsString()
+  @ApiProperty({})
+  name: string;
+
+  
+  @IsNumber()
+  @ApiProperty({})
+  code: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  maxHours: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  isAutomatic: number;
+
   
   @IsString()
   @ApiProperty({})
@@ -46,6 +76,14 @@ class ProcessMasterCreateList {
   @IsArray()
   @ApiProperty({ type: [Number],description:descriptionListDataGuard })
   dataGuard:number[];
+
+  @IsArray()
+  @ApiProperty({type:[SubProcessMasterCreateList]})
+  @ValidateNested({ each: true })
+  @Type(() => SubProcessMasterCreateList)
+  arraySubProcessMasters: SubProcessMasterCreateList[];
+
+  
   
 }
 
@@ -56,6 +94,17 @@ export class ProcessMasterCreateDto {
   @ValidateNested({ each: true })
   @Type(() => ProcessMasterCreateList)
   array: ProcessMasterCreateList[];
+
+  
+}
+
+
+
+export class SubProcessMasterDeleteDto {
+ 
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  arraySubProcessMasterIdsForDelete: string[];
 
   
 }
@@ -79,6 +128,10 @@ export class ProcessMasterEditDto {
   @ApiProperty({})
   isAutomatic: number;
 
+  @IsNumber()
+  @ApiProperty({})
+  maxHours: number;
+
   
   @IsString()
   @ApiProperty({})
@@ -87,6 +140,18 @@ export class ProcessMasterEditDto {
   @IsArray()
   @ApiProperty({ type: [Number],description:descriptionListDataGuard })
   dataGuard:number[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  arraySubProcessMasterIdsForDelete: string[];
+
+  @IsArray()
+  @ApiProperty({type:[SubProcessMasterCreateList]})
+  @ValidateNested({ each: true })
+  @Type(() => SubProcessMasterCreateList)
+  arraySubProcessMastersAdd: SubProcessMasterCreateList[];
+
+  
   
 }
 
@@ -186,6 +251,17 @@ export class CheckNameExistDto {
   @IsString()
   @ApiProperty({})
   value: string;
+
+}
+export class CheckNameExistSubProcessDto {
+  
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+  @IsString()
+  @ApiProperty({})
+  processMaster: string;
 
 }
   
