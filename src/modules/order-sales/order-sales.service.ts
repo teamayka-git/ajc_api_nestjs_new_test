@@ -448,7 +448,7 @@ if(customerDetails.length==0){
       }
       if (dto.workStatus.length > 0) {
        
-        arrayAggregation.push({ $match: { _rootCause: { $in: newSettingsId } } });
+        arrayAggregation.push({ $match: { _workStatus: { $in: newSettingsId } } });
       }
       switch (dto.sortType) {
         case 0:
