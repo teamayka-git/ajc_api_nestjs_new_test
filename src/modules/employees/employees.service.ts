@@ -206,8 +206,8 @@ export class EmployeesService {
       var password = '';
       if (dto.password == '') {
         password = new StringUtils().makeid(6);
-      }else{
-        password=dto.password;
+      } else {
+        password = dto.password;
       }
 
       var encryptedPassword = await crypto
@@ -230,7 +230,10 @@ export class EmployeesService {
         _lastLogin: 0,
         _globalGalleryId: globalGalleryId,
         _departmentId: dto.departmentId,
-        _processMasterId: (dto.processMasterId=="nil" || dto.processMasterId=="")?null:dto.processMasterId,
+        _processMasterId:
+          dto.processMasterId == 'nil' || dto.processMasterId == ''
+            ? null
+            : dto.processMasterId,
         _dataGuard: dto.dataGuard,
         _createdUserId: _userId_,
         _createdAt: dateTime,
@@ -294,7 +297,10 @@ export class EmployeesService {
         _gender: dto.gender,
         _mobile: dto.mobile,
         _departmentId: dto.departmentId,
-        _processMasterId: (dto.processMasterId=="nil" || dto.processMasterId=="")?null:dto.processMasterId,
+        _processMasterId:
+          dto.processMasterId == 'nil' || dto.processMasterId == ''
+            ? null
+            : dto.processMasterId,
         __dataGuard: dto.dataGuard,
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
@@ -420,25 +426,54 @@ export class EmployeesService {
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
-      
+
       if (dto.departmentIds.length > 0) {
         var newSettingsId = [];
         dto.departmentIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
-        arrayAggregation.push({ $match: { _departmentId: { $in: newSettingsId } } });
+        arrayAggregation.push({
+          $match: { _departmentId: { $in: newSettingsId } },
+        });
       }
-      
+
       if (dto.processMasterIds.length > 0) {
         var newSettingsId = [];
         dto.processMasterIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
-        arrayAggregation.push({ $match: { _processMasterId: { $in: newSettingsId } } });
+        arrayAggregation.push({
+          $match: { _processMasterId: { $in: newSettingsId } },
+        });
       }
 
       if (dto.genders.length > 0) {
         arrayAggregation.push({ $match: { _gender: { $in: dto.genders } } });
+      }
+
+      if (dto.departmenCodes.length != 0) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.DEPARTMENT,
+              let: { departmentId: '$_departmentId' },
+              pipeline: [
+                {
+                  $match: {_code:{$in:dto.departmenCodes}, $expr: { $eq: ['$_id', '$$departmentId'] } },
+                },
+                {
+                  $project: {
+                    _id: 1,
+                  },
+                },
+              ],
+              as: 'departmentDetailsForCheck',
+            },
+          },
+          {
+            $unwind: { path: '$departmentDetailsForCheck' },
+          },
+        );
       }
 
       switch (dto.sortType) {
@@ -482,8 +517,6 @@ export class EmployeesService {
         );
       }
 
-      
-
       if (dto.screenType.findIndex((it) => it == 100) != -1) {
         arrayAggregation.push(
           {
@@ -520,7 +553,10 @@ export class EmployeesService {
             },
           },
           {
-            $unwind: { path: '$departmentDetails', preserveNullAndEmptyArrays: true },
+            $unwind: {
+              path: '$departmentDetails',
+              preserveNullAndEmptyArrays: true,
+            },
           },
         );
       }
@@ -539,7 +575,10 @@ export class EmployeesService {
             },
           },
           {
-            $unwind: { path: '$processMasterDetails', preserveNullAndEmptyArrays: true },
+            $unwind: {
+              path: '$processMasterDetails',
+              preserveNullAndEmptyArrays: true,
+            },
           },
         );
       }
@@ -587,48 +626,48 @@ export class EmployeesService {
       throw error;
     }
   }
-    
-async checkEmailExisting(dto: CheckEmailExistDto) {
-  var dateTime = new Date().getTime();
-  const transactionSession = await this.connection.startSession();
-  transactionSession.startTransaction();
-  try {
-    var resultCount = await this.employeeModel
-      .count({ _email: dto.value,_status:{$in:[1,0]} })
-      .session(transactionSession);
 
-    await transactionSession.commitTransaction();
-    await transactionSession.endSession();
-    return {
-      message: 'success',
-      data: { count: resultCount },
-    };
-  } catch (error) {
-    await transactionSession.abortTransaction();
-    await transactionSession.endSession();
-    throw error;
+  async checkEmailExisting(dto: CheckEmailExistDto) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var resultCount = await this.employeeModel
+        .count({ _email: dto.value, _status: { $in: [1, 0] } })
+        .session(transactionSession);
+
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return {
+        message: 'success',
+        data: { count: resultCount },
+      };
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
   }
-}
 
-async checkMobileExisting(dto: CheckMobileExistDto) {
-  var dateTime = new Date().getTime();
-  const transactionSession = await this.connection.startSession();
-  transactionSession.startTransaction();
-  try {
-    var resultCount = await this.employeeModel
-      .count({ _mobile: dto.value,_status:{$in:[1,0]} })
-      .session(transactionSession);
+  async checkMobileExisting(dto: CheckMobileExistDto) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var resultCount = await this.employeeModel
+        .count({ _mobile: dto.value, _status: { $in: [1, 0] } })
+        .session(transactionSession);
 
-    await transactionSession.commitTransaction();
-    await transactionSession.endSession();
-    return {
-      message: 'success',
-      data: { count: resultCount },
-    };
-  } catch (error) {
-    await transactionSession.abortTransaction();
-    await transactionSession.endSession();
-    throw error;
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return {
+        message: 'success',
+        data: { count: resultCount },
+      };
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
   }
-}
 }

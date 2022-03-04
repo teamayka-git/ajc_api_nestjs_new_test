@@ -26,8 +26,7 @@ export const CustomersSchema = new mongoose.Schema({
     _hallmarkingMandatoryStatus: { type: Number, required: true, default: -1 },
     _rateCardId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.RATE_CARDS, default: null },
     _gstNumber: { type: String, required: true, default: "nil" },
-    _stateId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.STATES, default: null },
-    _districtId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.DISTRICTS, default: null },
+    _cityId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.CITIES, default: null },
     _tdsId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.TDS_MASTERS, default: null },
     _tcsId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.TCS_MASTERS, default: null },
     _creditAmount: { type: Number, required: true, default: -1 },
@@ -72,8 +71,6 @@ export interface Customers {
     _hallmarkingMandatoryStatus:Number;
     _rateCardId:String;
     _gstNumber:String;
-    _stateId:String;
-    _districtId:String;
     _tdsId:String;
     _tcsId:String;
     _creditAmount:Number;

@@ -254,8 +254,7 @@ export class CustomersService {
           _hallmarkingMandatoryStatus:dto.hallmarkingMandatoryStatus,
           _rateCardId:dto.rateCardId,
           _gstNumber:dto.gstNumber,
-          _stateId:dto.stateId,
-          _districtId:dto.districtId,
+          _cityId:dto.cityId,
           _tdsId:(dto.tdsId=="nil"||dto.tdsId=="")?null:dto.tdsId,
           _tcsId:(dto.tcsId=="nil"||dto.tcsId=="")?null:dto.tcsId,
           _creditAmount:dto.creditAmount,
@@ -442,8 +441,7 @@ if(resultOldCustomerName.length==0){
             _hallmarkingMandatoryStatus:dto.hallmarkingMandatoryStatus,
             _rateCardId:dto.rateCardId,
             _gstNumber:dto.gstNumber,
-            _stateId:dto.stateId,
-            _districtId:dto.districtId,
+            _cityId:dto.cityId,
             _tdsId:(dto.tdsId=="nil"||dto.tdsId=="")?null:dto.tdsId,
             _tcsId:(dto.tcsId=="nil"||dto.tcsId=="")?null:dto.tcsId,
             _creditAmount:dto.creditAmount,
@@ -703,35 +701,20 @@ await this.globalGalleryCategoriesModel.findOneAndUpdate({_name:oldCustomerName,
             },
           );
       }
-      if (dto.screenType.findIndex((it) => it == 105) != -1) {
-  
-        arrayAggregation.push(
-            {
-              $lookup: {
-                from: ModelNames.STATES,
-                let: { stateId: '$_stateId' },
-                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$stateId'] } } }],
-                as: 'stateDetails',
-              },
-            },
-            {
-              $unwind: { path: '$stateDetails', preserveNullAndEmptyArrays: true },
-            },
-          );
-      }
+
       if (dto.screenType.findIndex((it) => it == 106) != -1) {
   
         arrayAggregation.push(
             {
               $lookup: {
-                from: ModelNames.DISTRICTS,
-                let: { districtId: '$_districtId' },
-                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$districtId'] } } }],
-                as: 'districtDetails',
+                from: ModelNames.CITIES,
+                let: { cityId: '$_cityId' },
+                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$cityId'] } } }],
+                as: 'cityDetails',
               },
             },
             {
-              $unwind: { path: '$districtDetails', preserveNullAndEmptyArrays: true },
+              $unwind: { path: '$cityDetails', preserveNullAndEmptyArrays: true },
             },
           );
       }
@@ -806,6 +789,22 @@ await this.globalGalleryCategoriesModel.findOneAndUpdate({_name:oldCustomerName,
                           $expr: { $eq: ['$_id', '$$employeeId'] },
                         },
                       },
+                      {
+                        $lookup: {
+                          from: ModelNames.GLOBAL_GALLERIES,
+                          let: { globalGalleryId: '$_globalGalleryId' },
+                          pipeline: [
+                            { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+                          ],
+                          as: 'globalGalleryDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$globalGalleryDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      }
                     ],
                     as: 'employeeDetails',
                   },
@@ -851,6 +850,22 @@ await this.globalGalleryCategoriesModel.findOneAndUpdate({_name:oldCustomerName,
                         $expr: { $eq: ['$_id', '$$employeeId'] },
                       },
                     },
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    }
                   ],
                   as: 'employeeDetails',
                 },
@@ -898,6 +913,22 @@ await this.globalGalleryCategoriesModel.findOneAndUpdate({_name:oldCustomerName,
                       $expr: { $eq: ['$_id', '$$supplieruerId'] },
                     },
                   },
+                  {
+                    $lookup: {
+                      from: ModelNames.GLOBAL_GALLERIES,
+                      let: { globalGalleryId: '$_globalGalleryId' },
+                      pipeline: [
+                        { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+                      ],
+                      as: 'globalGalleryDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$globalGalleryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  }
                 ],
                 as: 'supplierDetails',
               },
@@ -944,6 +975,22 @@ if (dto.screenType.findIndex((it) => it == 110) != -1) {
                     $expr: { $eq: ['$_id', '$$agentId'] },
                   },
                 },
+                {
+                  $lookup: {
+                    from: ModelNames.GLOBAL_GALLERIES,
+                    let: { globalGalleryId: '$_globalGalleryId' },
+                    pipeline: [
+                      { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+                    ],
+                    as: 'globalGalleryDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$globalGalleryDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                }
               ],
               as: 'agentDetails',
             },

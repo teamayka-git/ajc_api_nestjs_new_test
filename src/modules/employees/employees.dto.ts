@@ -145,6 +145,10 @@ export class EmployeeListDto {
 
   @IsArray()
   @ApiProperty({ type: [String] })
+  departmenCodes: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
   processMasterIds: string[];
 
   @IsNumber()
