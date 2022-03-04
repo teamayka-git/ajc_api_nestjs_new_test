@@ -240,7 +240,7 @@ export class GlobalGalleryService {
         arrayAggregation.push({ $match: { _type: { $in: dto.types } } });
       }
       if (dto.docTypes.length > 0) {
-        arrayAggregation.push({ $match: { _type: { $in: dto.docTypes } } });
+        arrayAggregation.push({ $match: { _docType: { $in: dto.docTypes } } });
       }
 
       arrayAggregation.push({ $sort: { _id: -1 } });
