@@ -8,9 +8,11 @@ import { OrderSalesDocumentsSchema } from 'src/tableModels/order_sales_documents
 import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
 import { CountersSchema } from 'src/tableModels/counters.model';
 import { CustomersSchema } from 'src/tableModels/customers.model';
+import { UserSchema } from 'src/tableModels/user.model';
 
 @Module({
   imports:[MongooseModule.forFeature([
+    { name: ModelNames.USER, schema: UserSchema },
     {name:ModelNames.ORDER_SALES,schema:OrderSalesSchema},{name:ModelNames.GLOBAL_GALLERIES,schema:GlobalGalleriesSchema},{name:ModelNames.COUNTERS,schema:CountersSchema},{name:ModelNames.CUSTOMERS,schema:CustomersSchema},
     { name: ModelNames.ORDER_SALES_DOCUMENTS, schema: OrderSalesDocumentsSchema },])],
   controllers: [OrderSalesController],
