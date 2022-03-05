@@ -95,7 +95,7 @@ export class OrderSalesService {
             var globalGalleryId = new mongoose.Types.ObjectId();
             arrayGlobalGalleries.push({
               _id: globalGalleryId,
-              __name: file['documents'][count]['originalname'],
+              __name: dto.arrayDocuments[i].fileOriginalName,
               _globalGalleryCategoryId: null,
               _docType: dto.arrayDocuments[i].docType,
               _type: 7,
