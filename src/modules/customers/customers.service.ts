@@ -691,7 +691,7 @@ await this.globalGalleryCategoriesModel.findOneAndUpdate({_name:oldCustomerName,
             {
               $lookup: {
                 from: ModelNames.RATE_CARDS,
-                let: { rateCardIdId: '$_rateCardId' },
+                let: { rateCardId: '$_rateCardId' },
                 pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$rateCardId'] } } }],
                 as: 'rateCardDetails',
               },
