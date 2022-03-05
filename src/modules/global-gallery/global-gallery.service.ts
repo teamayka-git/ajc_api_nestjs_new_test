@@ -122,7 +122,7 @@ export class GlobalGalleryService {
         var count = file['documents'].findIndex(
           (it) => it.originalname == dto.array[i].originalname,
         );
-
+ 
         console.log('count  ' + count);
 
         if (count != -1) {

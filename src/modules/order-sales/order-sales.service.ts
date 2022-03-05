@@ -87,8 +87,8 @@ export class OrderSalesService {
         }
         console.log("__s4");
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
-          var count = dto.arrayDocuments.findIndex(
-            (it) => it.fileOriginalName == file['image'][i]['originalname'],
+          var count = file['documents'].findIndex(
+            (it) => it.originalname == dto.arrayDocuments[i].fileOriginalName,
           );
           if (count != -1) {
             console.log("__s4");
@@ -114,7 +114,7 @@ export class OrderSalesService {
                       }:${process.env.PORT}${
                         file['documents'][count]['path'].split('public')[1]
                       }`,
-                    )
+                    ) 
                   : 'nil',
               _created_user_id: _userId_,
               _created_at: dateTime,
