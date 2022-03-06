@@ -423,7 +423,6 @@ if(resultOldCustomerName.length==0){
             _name: dto.name,
             _gender: dto.gender,
             _mobile: dto.mobile,
-            _uid: resultCounterPurchase._count,
             _globalGalleryId:globalGalleryId,
             
             
