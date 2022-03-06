@@ -507,8 +507,8 @@ try{
           {
             $lookup: {
               from: ModelNames.USER,
-              let: { Id: '$_id' },
-              pipeline: [{ $match: { $expr: { $eq: ['$_agentId', '$$Id'] } } }],
+              let: { userId: '$_id' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_agentId', '$$userId'] } } }],
               as: 'userDetails',
             },
           },

@@ -671,8 +671,8 @@ await this.globalGalleryCategoriesModel.findOneAndUpdate({_name:oldCustomerName,
             {
               $lookup: {
                 from: ModelNames.USER,
-                let: { Id: '$_id' },
-                pipeline: [{ $match: { $expr: { $eq: ['$_customerId', '$$Id'] } } }],
+                let: { userId: '$_id' },
+                pipeline: [{ $match: { $expr: { $eq: ['$_customerId', '$$userId'] } } }],
                 as: 'userDetails',
               },
             },
