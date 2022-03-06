@@ -633,6 +633,135 @@ console.log("__s9");
                           preserveNullAndEmptyArrays: true,
                         },
                       },
+
+
+                      {
+                        $lookup: {
+                          from: ModelNames.USER,
+                          let: { userId: '$_orderHeadId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: { $eq: ['$_id', '$$userId'] },
+                              },
+                            },
+                
+                            {
+                                $lookup: {
+                                  from: ModelNames.EMPLOYEES,
+                                  let: { employeeId: '$_employeeId' },
+                                  pipeline: [
+                                    {
+                                      $match: {
+                                        $expr: { $eq: ['$_id', '$$employeeId'] },
+                                      },
+                                    },
+                                    {
+                                      $lookup: {
+                                        from: ModelNames.GLOBAL_GALLERIES,
+                                        let: { globalGalleryId: '$_globalGalleryId' },
+                                        pipeline: [
+                                          { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+                                        ],
+                                        as: 'globalGalleryDetails',
+                                      },
+                                    },
+                                    {
+                                      $unwind: {
+                                        path: '$globalGalleryDetails',
+                                        preserveNullAndEmptyArrays: true,
+                                      },
+                                    }
+                                  ],
+                                  as: 'employeeDetails',
+                                },
+                              },
+                              {
+                                $unwind: {
+                                  path: '$employeeDetails',
+                                  preserveNullAndEmptyArrays: true,
+                                },
+                              }
+                
+                
+                          ],
+                          as: 'orderHeadDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$orderHeadDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                      {
+                        $lookup: {
+                          from: ModelNames.USER,
+                          let: { userId: '$_relationshipManagerId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: { $eq: ['$_id', '$$userId'] },
+                              },
+                            },
+                
+                            {
+                                $lookup: {
+                                  from: ModelNames.EMPLOYEES,
+                                  let: { employeeId: '$_employeeId' },
+                                  pipeline: [
+                                    {
+                                      $match: {
+                                        $expr: { $eq: ['$_id', '$$employeeId'] },
+                                      },
+                                    },
+                                    {
+                                      $lookup: {
+                                        from: ModelNames.GLOBAL_GALLERIES,
+                                        let: { globalGalleryId: '$_globalGalleryId' },
+                                        pipeline: [
+                                          { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+                                        ],
+                                        as: 'globalGalleryDetails',
+                                      },
+                                    },
+                                    {
+                                      $unwind: {
+                                        path: '$globalGalleryDetails',
+                                        preserveNullAndEmptyArrays: true,
+                                      },
+                                    }
+                                  ],
+                                  as: 'employeeDetails',
+                                },
+                              },
+                              {
+                                $unwind: {
+                                  path: '$employeeDetails',
+                                  preserveNullAndEmptyArrays: true,
+                                },
+                              }
+                
+                
+                          ],
+                          as: 'relationshipManagerDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$relationshipManagerDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      }
+
+
+
+
+
+
+
+
+
                     ],
                     as: 'userDetails',
                   },
