@@ -489,6 +489,22 @@ console.log("file['image'][0]['originalname']   "+file['image'][0]['originalname
               },
             );
         }
+        if (dto.screenType.findIndex((it) => it == 101) != -1) {
+
+          arrayAggregation.push(
+              {
+                $lookup: {
+                  from: ModelNames.USER,
+                  let: { Id: '$_id' },
+                  pipeline: [{ $match: { $expr: { $eq: ['$_supplierId', '$$Id'] } } }],
+                  as: 'userDetails',
+                },
+              },
+              {
+                $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true },
+              },
+            );
+        }
     
         if (dto.screenType.findIndex((it) => it == 50) != -1) {
 

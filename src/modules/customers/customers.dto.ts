@@ -18,7 +18,7 @@ const descriptionListGender="0-male, 1-female, 2-other";
 const descriptionListCommisionType="0-Commision Percentage, 1-Commision amount";
 const descriptionListSortOrder="1-ascending, -1-descending";
 const descriptionListSortType="0-Created Date,1-Status  2-Name,3-UID, 4-gender, 5-email, 6-orderSaleRate, 7-stockSaleRate, 8-customerType, 9-billingModeSale, 10-billingModePurchase, 11-hallmarkingMandatoryStatus,12-creditAmount, 13-creditDays, 14-stonePricing, 15-agentCommision";
-const descriptionListScreenTypeForFilterLoading="0-total documents count, 50-globalGalleryImagePopulate, 100-branch populate, 101-orderHead populate, 102-relationship manager populate, 103-supplier populate, 104-rate card populate, 106-city populate, 107-tds populate, 108-tcs populate, 109-ratebase master populate, 110-agent populate";
+const descriptionListScreenTypeForFilterLoading="0-total documents count, 50-globalGalleryImagePopulate, 100-branch populate, 101-orderHead populate, 102-relationship manager populate, 103-supplier populate, 104-rate card populate, 106-city populate, 107-tds populate, 108-tcs populate, 109-ratebase master populate, 110-agent populate, 111-user details populate";
 
 const descriptionOrderSaleRate="0 - unfix, 1 - fix";
 const descriptionStockSaleRate="0 - unfix, 1 - fix";

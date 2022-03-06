@@ -665,7 +665,23 @@ await this.globalGalleryCategoriesModel.findOneAndUpdate({_name:oldCustomerName,
       }
   
 
+      if (dto.screenType.findIndex((it) => it == 111) != -1) {
 
+        arrayAggregation.push(
+            {
+              $lookup: {
+                from: ModelNames.USER,
+                let: { Id: '$_id' },
+                pipeline: [{ $match: { $expr: { $eq: ['$_customerId', '$$Id'] } } }],
+                as: 'userDetails',
+              },
+            },
+            {
+              $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true },
+            },
+          );
+      }
+  
 
 
       if (dto.screenType.findIndex((it) => it == 100) != -1) {
