@@ -383,6 +383,9 @@ export class CustomersService {
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
     try{
+
+      console.log("___s1");
+
         if (file.hasOwnProperty('image')) {
           var filePath =
             __dirname +
@@ -398,6 +401,7 @@ export class CustomersService {
        
     
         }
+        console.log("___s2");
     var resultOldCustomerName=await this.customersModel.find({_id:dto.customerId},{_name:1});
 if(resultOldCustomerName.length==0){
   throw new HttpException('Old customer data not found', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -411,7 +415,7 @@ if(resultOldCustomerName.length==0){
 
 
 
-
+    console.log("___s3");
 
 
     
@@ -457,7 +461,7 @@ if(resultOldCustomerName.length==0){
         }
     
     
-    
+        console.log("___s4");
     
     
     
@@ -495,6 +499,7 @@ if(resultOldCustomerName.length==0){
           _updated_at: -1,
           _status: 1,
         });
+        console.log("___s5");
       var resultGlobalGallery=  await globalGallery.save({
           session: transactionSession,
         });
@@ -504,7 +509,7 @@ if(resultOldCustomerName.length==0){
       }
     
     
-    
+      console.log("___s6");
     
         var result = await this.customersModel.findOneAndUpdate(
           {
@@ -516,6 +521,7 @@ if(resultOldCustomerName.length==0){
           { new: true,session: transactionSession },
         );
     
+        console.log("___s7");
 
 if(oldCustomerName!=dto.name){
   var globalGalleryManinCategoryForCustomer=await this.globalGalleryCategoriesModel.find({_status:1,_name:CommonNames.GLOBAL_GALLERY_CUSTOMER,_type:1},{_id:1}).session(transactionSession);
@@ -527,7 +533,7 @@ await this.globalGalleryCategoriesModel.findOneAndUpdate({_name:oldCustomerName,
 
 
 
-
+console.log("___s8");
 
 
 
