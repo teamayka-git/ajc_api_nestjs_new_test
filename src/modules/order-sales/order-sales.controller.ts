@@ -47,7 +47,7 @@ export class OrderSalesController {
       ],
       {
         storage: diskStorage({
-          destination: FileMulterHelper.filePathTempBranch,
+          destination: FileMulterHelper.filePathTempCustomer,
           filename: FileMulterHelper.customFileName,
         }),
       },
