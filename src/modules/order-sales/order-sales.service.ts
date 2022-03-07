@@ -268,14 +268,15 @@ console.log("__s9");
         console.log("ll3");
 
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
-          var count = dto.arrayDocuments.findIndex(
-            (it) => it.fileOriginalName == file['image'][i]['originalname'],
+          var count = file['documents'].findIndex(
+            (it) => it.originalname == dto.arrayDocuments[i].fileOriginalName,
           );
           if (count != -1) {
+            console.log("__s4");
             var globalGalleryId = new mongoose.Types.ObjectId();
             arrayGlobalGalleries.push({
               _id: globalGalleryId,
-              __name: file['documents'][count]['originalname'],
+              __name: dto.arrayDocuments[i].fileOriginalName,
               _globalGalleryCategoryId: null,
               _docType: dto.arrayDocuments[i].docType,
               _type: 7,
@@ -294,7 +295,7 @@ console.log("__s9");
                       }:${process.env.PORT}${
                         file['documents'][count]['path'].split('public')[1]
                       }`,
-                    )
+                    ) 
                   : 'nil',
               _created_user_id: _userId_,
               _created_at: dateTime,
@@ -302,7 +303,7 @@ console.log("__s9");
               _updated_at: -1,
               _status: 1,
             });
-            console.log("ll4");
+            console.log("__s5");
             arrayGlobalGalleriesDocuments.push({
               _orderSaleId: dto.orderSaleId,
               _globalGalleryId: globalGalleryId,
