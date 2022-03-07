@@ -18,7 +18,7 @@ export const OrderSaleSetProcessesSchema = new mongoose.Schema({
   _orderStatus: { type: Number, required: true, default: -1 },
   _processId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.USER,
+    ref: ModelNames.PROCESS_MASTER,
     default: null,
   },
   

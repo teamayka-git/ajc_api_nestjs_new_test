@@ -18,7 +18,7 @@ export const OrderSaleSetSubProcessHistoriesSchema = new mongoose.Schema({
   _orderStatus: { type: Number, required: true, default: -1 },
   _subProcessId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.USER,
+    ref: ModelNames.SUB_PROCESS_MASTER,
     default: null,
   },
   
