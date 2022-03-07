@@ -39,6 +39,10 @@ export enum ModelNames {
     ORDER_SALES_DOCUMENTS="order_sales_documents",
     SUB_PROCESS_MASTER="sub_process_masters",
     ORDER_SALE_HISTORIES="order_sale_histories",
+    ORDER_SALE_SET_PROCESSES="order_sale_set_processes",
+    ORDER_SALE_SET_SUB_PROCESSES="order_sale_set_sub_processes",
+    ORDER_SALE_SET_PROCESS_HISTORIES="order_sale_set_process_histories",
+    ORDER_SALE_SET_SUB_PROCESS_HISTORIES="order_sale_set_sub_process_histories",
 
 
 

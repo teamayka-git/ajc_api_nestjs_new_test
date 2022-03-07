@@ -23,6 +23,30 @@ array.map((mapItem,index)=>{
 
   }
 
+
+
+
+  
+  public multipleIndexSetSubProcess(array,data) {
+
+    var indexes = [];
+   
+    
+array.map((mapItem,index)=>{
+  if(mapItem._processMasterId==data){
+    indexes.push(index);
+  }
+  
+});
+
+
+
+
+    return indexes;
+
+
+  }
+
  
   
 
