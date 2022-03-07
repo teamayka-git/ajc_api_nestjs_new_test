@@ -76,7 +76,7 @@ export interface OrderSales {
 
 OrderSalesSchema.index({ _workStatus: 1 });
 OrderSalesSchema.index({ _rootCause: 1 });
-OrderSalesSchema.index({ _rootCause: 1 });
+OrderSalesSchema.index({ _rootCauseId: 1 });
 OrderSalesSchema.index({ _subCategoryId: 1 });
 OrderSalesSchema.index({ _quantity: 1 });
 OrderSalesSchema.index({ _stoneColour: 1 });

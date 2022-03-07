@@ -19,6 +19,7 @@ import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_pa
 import { StringUtils } from 'src/utils/string_utils';
 import { Customers } from 'src/tableModels/customers.model';
 import { User } from 'src/tableModels/user.model';
+import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 
 @Injectable()
 export class OrderSalesService {
@@ -33,7 +34,9 @@ export class OrderSalesService {
     private readonly counterModel: Model<Counters>,
     @InjectModel(ModelNames.GLOBAL_GALLERIES)
     private readonly globalGalleryModel: Model<GlobalGalleries>,
-    
+    @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
+    private readonly orderSaleHistoriesModel: Model<OrderSaleHistories>,
+
     @InjectModel(ModelNames.USER)
     private readonly userModel: mongoose.Model<User>,
     @InjectConnection() private readonly connection: mongoose.Connection,
@@ -48,7 +51,7 @@ export class OrderSalesService {
 
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
-      console.log("__s1");
+      console.log('__s1');
       if (file.hasOwnProperty('documents')) {
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
@@ -59,16 +62,15 @@ export class OrderSalesService {
           },
           { new: true, session: transactionSession },
         );
-        console.log("__s2");
+        console.log('__s2');
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
             (it) => dto.arrayDocuments[i].fileOriginalName == it.originalname,
           );
 
           if (count != -1) {
-          
             if (dto.arrayDocuments[i].docType == 0) {
-              console.log("__s3");
+              console.log('__s3');
               var filePath =
                 __dirname +
                 `/../../../public${
@@ -85,13 +87,13 @@ export class OrderSalesService {
             }
           }
         }
-        console.log("__s4");
+        console.log('__s4');
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
             (it) => it.originalname == dto.arrayDocuments[i].fileOriginalName,
           );
           if (count != -1) {
-            console.log("__s4");
+            console.log('__s4');
             var globalGalleryId = new mongoose.Types.ObjectId();
             arrayGlobalGalleries.push({
               _id: globalGalleryId,
@@ -100,7 +102,9 @@ export class OrderSalesService {
               _docType: dto.arrayDocuments[i].docType,
               _type: 7,
               _uid:
-                resultCounterPurchase._count - dto.arrayDocuments.length + (i + 1),
+                resultCounterPurchase._count -
+                dto.arrayDocuments.length +
+                (i + 1),
               _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
                 process.env.SERVER_DOMAIN
               }:${process.env.PORT}${
@@ -114,7 +118,7 @@ export class OrderSalesService {
                       }:${process.env.PORT}${
                         file['documents'][count]['path'].split('public')[1]
                       }`,
-                    ) 
+                    )
                   : 'nil',
               _created_user_id: _userId_,
               _created_at: dateTime,
@@ -122,7 +126,7 @@ export class OrderSalesService {
               _updated_at: -1,
               _status: 1,
             });
-            console.log("__s5");
+            console.log('__s5');
             arrayGlobalGalleriesDocuments.push({
               _orderSaleId: orderSaleId,
               _globalGalleryId: globalGalleryId,
@@ -135,11 +139,7 @@ export class OrderSalesService {
           }
         }
 
-        console.log("__s6");
-
-
-
-
+        console.log('__s6');
 
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
@@ -151,7 +151,7 @@ export class OrderSalesService {
           },
         );
       }
-      console.log("__s7");
+      console.log('__s7');
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.ORDER_SALES },
         {
@@ -161,29 +161,37 @@ export class OrderSalesService {
         },
         { new: true, session: transactionSession },
       );
-      
 
-      var customerUserId="";
-      if(dto.customerId=="" || dto.customerId=="nil"){
-        customerUserId=_userId_;
-      }else{
-        customerUserId=dto.customerId;
+      var customerUserId = '';
+      if (dto.customerId == '' || dto.customerId == 'nil') {
+        customerUserId = _userId_;
+      } else {
+        customerUserId = dto.customerId;
       }
-      var resultCustomerUser=await this.userModel.find({_id:customerUserId,_status:1});
-      if(resultCustomerUser.length==0){
-  
-        throw new HttpException('Customer user not found', HttpStatus.INTERNAL_SERVER_ERROR);
+      var resultCustomerUser = await this.userModel.find({
+        _id: customerUserId,
+        _status: 1,
+      });
+      if (resultCustomerUser.length == 0) {
+        throw new HttpException(
+          'Customer user not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
 
+      console.log('__s8');
+      var customerDetails = await this.customersModel.find({
+        _id: resultCustomerUser[0]._customerId,
+        _status: 1,
+      });
+      if (customerDetails.length == 0) {
+        throw new HttpException(
+          'Customer not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
 
-      console.log("__s8");
-var customerDetails=await this.customersModel.find({_id:resultCustomerUser[0]._customerId,_status:1});
-if(customerDetails.length==0){
-  
-  throw new HttpException('Customer not found', HttpStatus.INTERNAL_SERVER_ERROR);
-}
-
-console.log("__s9");
+      console.log('__s9');
 
       const newsettingsModel = new this.orderSaleModel({
         _id: orderSaleId,
@@ -196,9 +204,9 @@ console.log("__s9");
         _stoneColour: dto.stoneColor,
         _dueDate: dto.dueDate,
         _salesPersonId: customerDetails[0]._orderHeadId,
-        _workStatus:0,
-        _rootCauseId:null,
-        _rootCause:"",
+        _workStatus: 0,
+        _rootCauseId: null,
+        _rootCause: '',
         _description: dto.description,
         _isRhodium: dto.isRhodium,
         _isMatFinish: dto.isMatFinish,
@@ -211,7 +219,7 @@ console.log("__s9");
       var result1 = await newsettingsModel.save({
         session: transactionSession,
       });
-      console.log("__s10");
+      console.log('__s10');
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return { message: 'success', data: result1 };
@@ -228,10 +236,9 @@ console.log("__s9");
     transactionSession.startTransaction();
 
     try {
-
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
-      console.log("ll1");
+      console.log('ll1');
       if (file.hasOwnProperty('documents')) {
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
@@ -242,7 +249,7 @@ console.log("__s9");
           },
           { new: true, session: transactionSession },
         );
-        console.log("ll2");
+        console.log('ll2');
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
             (it) => dto.arrayDocuments[i].fileOriginalName == it.originalname,
@@ -265,14 +272,14 @@ console.log("__s9");
             }
           }
         }
-        console.log("ll3");
+        console.log('ll3');
 
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
             (it) => it.originalname == dto.arrayDocuments[i].fileOriginalName,
           );
           if (count != -1) {
-            console.log("__s4");
+            console.log('__s4');
             var globalGalleryId = new mongoose.Types.ObjectId();
             arrayGlobalGalleries.push({
               _id: globalGalleryId,
@@ -281,7 +288,9 @@ console.log("__s9");
               _docType: dto.arrayDocuments[i].docType,
               _type: 7,
               _uid:
-                resultCounterPurchase._count - dto.arrayDocuments.length + (i + 1),
+                resultCounterPurchase._count -
+                dto.arrayDocuments.length +
+                (i + 1),
               _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
                 process.env.SERVER_DOMAIN
               }:${process.env.PORT}${
@@ -295,7 +304,7 @@ console.log("__s9");
                       }:${process.env.PORT}${
                         file['documents'][count]['path'].split('public')[1]
                       }`,
-                    ) 
+                    )
                   : 'nil',
               _created_user_id: _userId_,
               _created_at: dateTime,
@@ -303,7 +312,7 @@ console.log("__s9");
               _updated_at: -1,
               _status: 1,
             });
-            console.log("__s5");
+            console.log('__s5');
             arrayGlobalGalleriesDocuments.push({
               _orderSaleId: dto.orderSaleId,
               _globalGalleryId: globalGalleryId,
@@ -315,7 +324,7 @@ console.log("__s9");
             });
           }
         }
-        console.log("ll4");
+        console.log('ll4');
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
         });
@@ -326,24 +335,26 @@ console.log("__s9");
           },
         );
       }
-      console.log("ll5");
+      console.log('ll5');
       var updateObject = {
-        
-        _customerId: (dto.customerId=="" || dto.customerId=="nil")?_userId_:dto.customerId,
+        _customerId:
+          dto.customerId == '' || dto.customerId == 'nil'
+            ? _userId_
+            : dto.customerId,
         _subCategoryId: dto.subCategoryId,
         _quantity: dto.quantity,
         _size: dto.size,
         _weight: dto.weight,
         _stoneColour: dto.stoneColor,
         _dueDate: dto.dueDate,
-        
+
         _isMatFinish: dto.isMatFinish,
         _description: dto.description,
         _isRhodium: dto.isRhodium,
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
       };
-      console.log("ll6");
+      console.log('ll6');
       var result = await this.orderSaleModel.findOneAndUpdate(
         {
           _id: dto.orderSaleId,
@@ -353,7 +364,7 @@ console.log("__s9");
         },
         { new: true, session: transactionSession },
       );
-      console.log("ll7");
+      console.log('ll7');
       if (dto.documentsLinkingIdsForDelete.length != 0) {
         await this.orderSaleDocumentsModel.updateMany(
           { _id: { $in: dto.documentsLinkingIdsForDelete } },
@@ -361,7 +372,7 @@ console.log("__s9");
           { new: true, session: transactionSession },
         );
       }
-      console.log("ll8");
+      console.log('ll8');
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return { message: 'success', data: result };
@@ -401,12 +412,10 @@ console.log("__s9");
     }
   }
 
-
-
-
-
-  
-  async change_work_status(dto: OrderSalesWorkStatusChangeDto, _userId_: string) {
+  async change_work_status(
+    dto: OrderSalesWorkStatusChangeDto,
+    _userId_: string,
+  ) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -417,13 +426,34 @@ console.log("__s9");
         },
         {
           $set: {
-            _rootCauseId: (dto.rootCauseId==""||dto.rootCauseId=="nil")?null:dto.rootCauseId,
+            _rootCauseId:
+              dto.rootCauseId == '' || dto.rootCauseId == 'nil'
+                ? null
+                : dto.rootCauseId,
             _workStatus: dto.workStatus,
             _rootCause: dto.rootCause,
           },
         },
         { new: true, session: transactionSession },
       );
+
+      var arrayToOrderSaleHistories = [];
+      dto.orderSaleIds.map((mapItem) => {
+        arrayToOrderSaleHistories.push({
+          _orderSaleId: mapItem,
+          _workStatus: dto.workStatus,
+          _rootCauseId:
+            dto.rootCauseId == '' || dto.rootCauseId == 'nil'
+              ? null
+              : dto.rootCauseId,
+          _rootCause: dto.rootCause,
+          _status: 1,
+        });
+      });
+
+      await this.orderSaleHistoriesModel.insertMany(arrayToOrderSaleHistories, {
+        session: transactionSession,
+      });
 
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
@@ -472,16 +502,19 @@ console.log("__s9");
         });
       }
       if (dto.isMatFinish.length > 0) {
-       
-        arrayAggregation.push({ $match: { _isMatFinish: { $in: dto.isMatFinish } } });
+        arrayAggregation.push({
+          $match: { _isMatFinish: { $in: dto.isMatFinish } },
+        });
       }
       if (dto.isRhodium.length > 0) {
-       
-        arrayAggregation.push({ $match: { _isRhodium: { $in: dto.isRhodium } } });
+        arrayAggregation.push({
+          $match: { _isRhodium: { $in: dto.isRhodium } },
+        });
       }
       if (dto.workStatus.length > 0) {
-       
-        arrayAggregation.push({ $match: { _workStatus: { $in: dto.workStatus } } });
+        arrayAggregation.push({
+          $match: { _workStatus: { $in: dto.workStatus } },
+        });
       }
       switch (dto.sortType) {
         case 0:
@@ -554,7 +587,42 @@ console.log("__s9");
         );
       }
 
+      if (dto.screenType.findIndex((it) => it == 104) != -1) {
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.ORDER_SALE_HISTORIES,
+            let: { orderSaleId: '$_id' },
+            pipeline: [
+              {
+                $match: { $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] } },
+              },
 
+              {
+                $lookup: {
+                  from: ModelNames.ORDER_SALES_ROOT_CAUSES,
+                  let: { rootCauseId: '$_rootCauseId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$rootCauseId'] } } },
+                    {
+                      $project: {
+                        _name: 1,
+                      },
+                    },
+                  ],
+                  as: 'rootCauseDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$rootCauseDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            ],
+            as: 'orderSaleHistories',
+          },
+        });
+      }
 
       if (dto.screenType.findIndex((it) => it == 101) != -1) {
         arrayAggregation.push({
@@ -638,7 +706,6 @@ console.log("__s9");
                         },
                       },
 
-
                       {
                         $lookup: {
                           from: ModelNames.USER,
@@ -649,45 +716,54 @@ console.log("__s9");
                                 $expr: { $eq: ['$_id', '$$userId'] },
                               },
                             },
-                
+
                             {
-                                $lookup: {
-                                  from: ModelNames.EMPLOYEES,
-                                  let: { employeeId: '$_employeeId' },
-                                  pipeline: [
-                                    {
-                                      $match: {
-                                        $expr: { $eq: ['$_id', '$$employeeId'] },
-                                      },
+                              $lookup: {
+                                from: ModelNames.EMPLOYEES,
+                                let: { employeeId: '$_employeeId' },
+                                pipeline: [
+                                  {
+                                    $match: {
+                                      $expr: { $eq: ['$_id', '$$employeeId'] },
                                     },
-                                    {
-                                      $lookup: {
-                                        from: ModelNames.GLOBAL_GALLERIES,
-                                        let: { globalGalleryId: '$_globalGalleryId' },
-                                        pipeline: [
-                                          { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
-                                        ],
-                                        as: 'globalGalleryDetails',
+                                  },
+                                  {
+                                    $lookup: {
+                                      from: ModelNames.GLOBAL_GALLERIES,
+                                      let: {
+                                        globalGalleryId: '$_globalGalleryId',
                                       },
+                                      pipeline: [
+                                        {
+                                          $match: {
+                                            $expr: {
+                                              $eq: [
+                                                '$_id',
+                                                '$$globalGalleryId',
+                                              ],
+                                            },
+                                          },
+                                        },
+                                      ],
+                                      as: 'globalGalleryDetails',
                                     },
-                                    {
-                                      $unwind: {
-                                        path: '$globalGalleryDetails',
-                                        preserveNullAndEmptyArrays: true,
-                                      },
-                                    }
-                                  ],
-                                  as: 'employeeDetails',
-                                },
+                                  },
+                                  {
+                                    $unwind: {
+                                      path: '$globalGalleryDetails',
+                                      preserveNullAndEmptyArrays: true,
+                                    },
+                                  },
+                                ],
+                                as: 'employeeDetails',
                               },
-                              {
-                                $unwind: {
-                                  path: '$employeeDetails',
-                                  preserveNullAndEmptyArrays: true,
-                                },
-                              }
-                
-                
+                            },
+                            {
+                              $unwind: {
+                                path: '$employeeDetails',
+                                preserveNullAndEmptyArrays: true,
+                              },
+                            },
                           ],
                           as: 'orderHeadDetails',
                         },
@@ -708,45 +784,54 @@ console.log("__s9");
                                 $expr: { $eq: ['$_id', '$$userId'] },
                               },
                             },
-                
+
                             {
-                                $lookup: {
-                                  from: ModelNames.EMPLOYEES,
-                                  let: { employeeId: '$_employeeId' },
-                                  pipeline: [
-                                    {
-                                      $match: {
-                                        $expr: { $eq: ['$_id', '$$employeeId'] },
-                                      },
+                              $lookup: {
+                                from: ModelNames.EMPLOYEES,
+                                let: { employeeId: '$_employeeId' },
+                                pipeline: [
+                                  {
+                                    $match: {
+                                      $expr: { $eq: ['$_id', '$$employeeId'] },
                                     },
-                                    {
-                                      $lookup: {
-                                        from: ModelNames.GLOBAL_GALLERIES,
-                                        let: { globalGalleryId: '$_globalGalleryId' },
-                                        pipeline: [
-                                          { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
-                                        ],
-                                        as: 'globalGalleryDetails',
+                                  },
+                                  {
+                                    $lookup: {
+                                      from: ModelNames.GLOBAL_GALLERIES,
+                                      let: {
+                                        globalGalleryId: '$_globalGalleryId',
                                       },
+                                      pipeline: [
+                                        {
+                                          $match: {
+                                            $expr: {
+                                              $eq: [
+                                                '$_id',
+                                                '$$globalGalleryId',
+                                              ],
+                                            },
+                                          },
+                                        },
+                                      ],
+                                      as: 'globalGalleryDetails',
                                     },
-                                    {
-                                      $unwind: {
-                                        path: '$globalGalleryDetails',
-                                        preserveNullAndEmptyArrays: true,
-                                      },
-                                    }
-                                  ],
-                                  as: 'employeeDetails',
-                                },
+                                  },
+                                  {
+                                    $unwind: {
+                                      path: '$globalGalleryDetails',
+                                      preserveNullAndEmptyArrays: true,
+                                    },
+                                  },
+                                ],
+                                as: 'employeeDetails',
                               },
-                              {
-                                $unwind: {
-                                  path: '$employeeDetails',
-                                  preserveNullAndEmptyArrays: true,
-                                },
-                              }
-                
-                
+                            },
+                            {
+                              $unwind: {
+                                path: '$employeeDetails',
+                                preserveNullAndEmptyArrays: true,
+                              },
+                            },
                           ],
                           as: 'relationshipManagerDetails',
                         },
@@ -756,16 +841,7 @@ console.log("__s9");
                           path: '$relationshipManagerDetails',
                           preserveNullAndEmptyArrays: true,
                         },
-                      }
-
-
-
-
-
-
-
-
-
+                      },
                     ],
                     as: 'userDetails',
                   },
@@ -788,12 +864,6 @@ console.log("__s9");
           },
         );
       }
-
-
-
-    
-
-
 
       var result = await this.orderSaleModel
         .aggregate(arrayAggregation)

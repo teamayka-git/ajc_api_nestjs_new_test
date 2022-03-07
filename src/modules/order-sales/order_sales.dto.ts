@@ -18,7 +18,7 @@ import { Transform, Type, Type as ValidateTypes } from 'class-transformer';
 import { Optional } from '@nestjs/common';
 
 const descriptionListScreenTypeForBranchList =
-  '0-total documents count,100-populate sub categories, 101-list documents, 102-customer id, 103-root cause populate';
+  '0-total documents count,100-populate sub categories, 101-list documents, 102-customer id, 103-root cause populate, 104-order sale histories';
 const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 
