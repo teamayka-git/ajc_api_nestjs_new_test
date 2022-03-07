@@ -11,6 +11,8 @@ import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_pa
 import { Counters } from 'src/tableModels/counters.model';
 import { StringUtils } from 'src/utils/string_utils';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
+import { RateCards } from 'src/tableModels/rateCards.model';
+import { RateCardPercentages } from 'src/tableModels/rateCardPercentages.model';
 
 @Injectable()
 export class SubCategoriesService {
@@ -18,6 +20,8 @@ export class SubCategoriesService {
     constructor(
         @InjectModel(ModelNames.SUB_CATEGORIES) private readonly subCategoriesModel: Model<SubCategories>,
         @InjectModel(ModelNames.GLOBAL_GALLERIES) private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
+        @InjectModel(ModelNames.RATE_CARDS) private readonly rateCardsModel: mongoose.Model<RateCards>,
+        @InjectModel(ModelNames.RATE_CARD_PERCENTAGESS) private readonly rateCardPercentagesModel: mongoose.Model<RateCardPercentages>,
         @InjectModel(ModelNames.COUNTERS)
         private readonly counterModel: mongoose.Model<Counters>,
         @InjectConnection() private readonly connection: mongoose.Connection,
@@ -31,7 +35,7 @@ export class SubCategoriesService {
 
       
         var arrayGlobalGalleries=[];
-    
+    var arrayToRateCardPercentage=[];
 
 
         
@@ -99,14 +103,16 @@ export class SubCategoriesService {
 
 
 
-
+var resultRateCards=await this.rateCardsModel.find({_status:{$in:[0,1]}},{_id:1});
 
 
 
 
     
         dto.array.map((mapItem) => {
+          var subCategoryId = new mongoose.Types.ObjectId();
           arrayToStates.push({
+            _id:subCategoryId,
             _name:mapItem.name,
             _code:mapItem.code,
             _description:mapItem.description,
@@ -124,6 +130,25 @@ export class SubCategoriesService {
             _updatedAt: -1,
             _status: 1,
           });
+
+
+          resultRateCards.map(mapItem1=>{
+            arrayToRateCardPercentage.push({
+
+              _rateCardId:mapItem1._id,
+              _subCategoryId:subCategoryId,
+              _percentage:mapItem.defaultPercentage,
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _updatedUserId: null,
+              _updatedAt: -1,
+              _status: 1,
+  
+            });
+          });
+
+          
+
         });
     
         var result1 = await this.subCategoriesModel.insertMany(arrayToStates, {
@@ -131,6 +156,9 @@ export class SubCategoriesService {
         });
     
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
+          session: transactionSession,
+        });
+         await this.rateCardPercentagesModel.insertMany(arrayToRateCardPercentage, {
           session: transactionSession,
         });
 

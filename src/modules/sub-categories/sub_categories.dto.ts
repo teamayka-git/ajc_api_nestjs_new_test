@@ -59,6 +59,10 @@ class SubCategoriesCreateList {
   @ApiProperty({ type: [Number],description:descriptionListDataGuard })
   dataGuard:number[];
   
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  defaultPercentage: number;
   
 }
 
