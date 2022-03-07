@@ -228,8 +228,10 @@ console.log("__s9");
     transactionSession.startTransaction();
 
     try {
+
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
+      console.log("ll1");
       if (file.hasOwnProperty('documents')) {
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
@@ -240,7 +242,7 @@ console.log("__s9");
           },
           { new: true, session: transactionSession },
         );
-
+        console.log("ll2");
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
             (it) => dto.arrayDocuments[i].fileOriginalName == it.originalname,
@@ -263,6 +265,7 @@ console.log("__s9");
             }
           }
         }
+        console.log("ll3");
 
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = dto.arrayDocuments.findIndex(
@@ -299,7 +302,7 @@ console.log("__s9");
               _updated_at: -1,
               _status: 1,
             });
-
+            console.log("ll4");
             arrayGlobalGalleriesDocuments.push({
               _orderSaleId: dto.orderSaleId,
               _globalGalleryId: globalGalleryId,
@@ -311,7 +314,7 @@ console.log("__s9");
             });
           }
         }
-
+        console.log("ll4");
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
         });
@@ -322,7 +325,7 @@ console.log("__s9");
           },
         );
       }
-
+      console.log("ll5");
       var updateObject = {
         
         _customerId: (dto.customerId=="" || dto.customerId=="nil")?_userId_:dto.customerId,
@@ -339,7 +342,7 @@ console.log("__s9");
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
       };
-
+      console.log("ll6");
       var result = await this.orderSaleModel.findOneAndUpdate(
         {
           _id: dto.orderSaleId,
@@ -349,7 +352,7 @@ console.log("__s9");
         },
         { new: true, session: transactionSession },
       );
-
+      console.log("ll7");
       if (dto.documentsLinkingIdsForDelete.length != 0) {
         await this.orderSaleDocumentsModel.updateMany(
           { _id: { $in: dto.documentsLinkingIdsForDelete } },
@@ -357,7 +360,7 @@ console.log("__s9");
           { new: true, session: transactionSession },
         );
       }
-
+      console.log("ll8");
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return { message: 'success', data: result };
