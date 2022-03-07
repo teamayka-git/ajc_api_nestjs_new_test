@@ -13,11 +13,8 @@ import { Optional } from '@nestjs/common';
 
 
 const descriptionStatus="0-Inactive, 1-Active, 2-Delete";
-const descriptionListScreenTypeForList="0-total documents count,100-district details";
-const descriptionListDataGuard="0-edit protect, 1-disabe protect, 2-delete protect";
-const descriptionListSortOrder="1-ascending, -1-descending";
-const descriptionListSortType="0-Created Date, 1-Status,2-Name, 3-Code";
-const descriptionListScreenTypeForFilterLoading="0-total documents count, 100-item details";
+
+const DescriptionOrderSaleChangeProcessOrderStatus="0-Pending, 1-Assigned, 2-On Working, 3-Completed, 4-Hold, Request To Assign";
 
 
 
@@ -52,6 +49,55 @@ export class SetProcessCreateDto {
   @ValidateNested({ each: true })
   @Type(() => SetProcessCreateList)
   array: SetProcessCreateList[];
+
+  
+}
+
+
+
+export class ChangeProcessOrderStatusDto {
+
+  
+  @IsString()
+  @ApiProperty({})
+  orderSaleSetProcessId: string;
+  
+  @IsString()
+  @ApiProperty({})
+  userId: string;
+  
+  @IsString()
+  @ApiProperty({})
+  descriptionId: string;
+
+
+  
+  @IsNumber()
+  @ApiProperty({description:DescriptionOrderSaleChangeProcessOrderStatus})
+  orderStatus: number;
+
+  
+}
+export class ChangeSubProcessOrderStatusDto {
+
+  
+  @IsString()
+  @ApiProperty({})
+  orderSaleSetSubProcessId: string;
+  
+  @IsString()
+  @ApiProperty({})
+  userId: string;
+  
+  @IsString()
+  @ApiProperty({})
+  descriptionId: string;
+
+
+  
+  @IsNumber()
+  @ApiProperty({description:DescriptionOrderSaleChangeProcessOrderStatus})
+  orderStatus: number;
 
   
 }

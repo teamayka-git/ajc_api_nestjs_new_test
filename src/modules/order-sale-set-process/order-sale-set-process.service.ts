@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { ModelNames } from 'src/common/model_names';
-import { SetProcessCreateDto } from './order_sale_set_process.dto';
+import {
+  ChangeProcessOrderStatusDto,
+  ChangeSubProcessOrderStatusDto,
+  SetProcessCreateDto,
+} from './order_sale_set_process.dto';
 import * as mongoose from 'mongoose';
 import { OrderSaleSetProcesses } from 'src/tableModels/order_sale_set_processes.model';
 import { OrderSaleSetProcessHistories } from 'src/tableModels/order_sale_set_process_histories.model';
@@ -49,6 +53,7 @@ export class OrderSaleSetProcessService {
         var initialDataProcessId = new mongoose.Types.ObjectId();
         arrayToSetProcess.push({
           _id: initialDataProcessId,
+          _description: '',
           _orderSaleId: mapItem.orderSaleId,
           _userId: mapItem.initialUserId,
           _orderStatus: 0,
@@ -65,6 +70,7 @@ export class OrderSaleSetProcessService {
             _orderSaleSetProcessId: initialDataProcessId,
             _userId: null,
             _orderStatus: 0,
+            _description: '',
             _subProcessId: resultSubProcess[mapItem2]._id,
             _status: 1,
           });
@@ -76,6 +82,7 @@ export class OrderSaleSetProcessService {
             _id: processId,
             _orderSaleId: mapItem.orderSaleId,
             _userId: null,
+            _description: '',
             _orderStatus: 0,
             _processId: mapItem1,
             _status: 1,
@@ -90,6 +97,7 @@ export class OrderSaleSetProcessService {
             arrayToSetSubProcess.push({
               _orderSaleSetProcessId: processId,
               _userId: null,
+              _description: '',
               _orderStatus: 0,
               _subProcessId: resultSubProcess[mapItem2]._id,
               _status: 1,
@@ -104,13 +112,9 @@ export class OrderSaleSetProcessService {
           session: transactionSession,
         },
       );
-      await this.orderSaleSetSubProcessModel.insertMany(
-        arrayToSetSubProcess,
-        {
-          session: transactionSession,
-        },
-      );
-
+      await this.orderSaleSetSubProcessModel.insertMany(arrayToSetSubProcess, {
+        session: transactionSession,
+      });
 
       await this.orderSaleSetProcessHistoriesModel.insertMany(
         arrayToSetProcess,
@@ -125,10 +129,96 @@ export class OrderSaleSetProcessService {
         },
       );
 
-
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return { message: 'success', data: { list: result1 } };
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async changeProcessOrderStatus(
+    dto: ChangeProcessOrderStatusDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var result = await this.orderSaleSetProcessModel.findOneAndUpdate(
+        {
+          _id: dto.orderSaleSetProcessId,
+        },
+        {
+          $set: {
+            _userId: dto.userId,
+            _orderStatus: dto.orderStatus,
+            _description: dto.descriptionId,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      const orderSaleHistory = new this.orderSaleSetProcessHistoriesModel({
+        _orderSaleId: result._orderSaleId,
+        _userId: result._userId,
+        _orderStatus: result._orderStatus,
+        _description: result._description,
+        _processId: result._processId,
+        _status: result._status,
+      });
+      await orderSaleHistory.save({
+        session: transactionSession,
+      });
+
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return { message: 'success', data: result };
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async changeSubProcessOrderStatus(
+    dto: ChangeSubProcessOrderStatusDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var result = await this.orderSaleSetSubProcessModel.findOneAndUpdate(
+        {
+          _id: dto.orderSaleSetSubProcessId,
+        },
+        {
+          $set: {
+            _userId: dto.userId,
+            _orderStatus: dto.orderStatus,
+            _description: dto.descriptionId,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      const orderSaleHistory = new this.orderSaleSetSubProcessHistoriesModel({
+        _orderSaleSetProcessId: result._orderSaleSetProcessId,
+        _userId: result._userId,
+        _orderStatus: result._orderStatus,
+        _description: result._description,
+        _processId: result._subProcessId,
+        _status: result._status,
+      });
+      await orderSaleHistory.save({
+        session: transactionSession,
+      });
+
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return { message: 'success', data: result };
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();

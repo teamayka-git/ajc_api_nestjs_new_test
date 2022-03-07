@@ -22,6 +22,7 @@ export const OrderSaleSetSubProcessHistoriesSchema = new mongoose.Schema({
     default: null,
   },
   
+  _description: { type: String, default: "" },
   _status: { type: Number, required: true, default: -1 },
 });
 
@@ -31,9 +32,11 @@ export interface OrderSaleSetSubProcessHistories {
   _userId: String;
   _orderStatus:number;
   _subProcessId:String;
+  _description:string;
   _status: Number;
 }
 
+OrderSaleSetSubProcessHistoriesSchema.index({ _description: 1 });
 OrderSaleSetSubProcessHistoriesSchema.index({ _orderSaleSetProcessId: 1 });
 OrderSaleSetSubProcessHistoriesSchema.index({ _userId: 1 });
 OrderSaleSetSubProcessHistoriesSchema.index({ _orderStatus: 1 });
