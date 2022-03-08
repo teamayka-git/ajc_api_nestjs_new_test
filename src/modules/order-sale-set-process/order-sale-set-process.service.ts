@@ -39,7 +39,6 @@ export class OrderSaleSetProcessService {
 
       var arrayProcessIds = [];
       dto.array.map((mapItem) => {
-        arrayProcessIds.push(mapItem.initialProcessId);
 
         arrayProcessIds.push(...mapItem.processIds);
       });
@@ -50,32 +49,11 @@ export class OrderSaleSetProcessService {
       );
 
       dto.array.map((mapItem) => {
-        var initialDataProcessId = new mongoose.Types.ObjectId();
-        arrayToSetProcess.push({
-          _id: initialDataProcessId,
-          _description: '',
-          _orderSaleId: mapItem.orderSaleId,
-          _userId: mapItem.initialUserId,
-          _orderStatus: 0,
-          _processId: mapItem.initialProcessId,
-          _status: 1,
-        });
 
-        var arrayInitialData = new IndexUtils().multipleIndexSetSubProcess(
-          resultSubProcess,
-          mapItem.initialProcessId,
-        );
-        arrayInitialData.map((mapItem2) => {
-          arrayToSetSubProcess.push({
-            _orderSaleSetProcessId: initialDataProcessId,
-            _userId: null,
-            _orderStatus: 0,
-            _description: '',
-            _subProcessId: resultSubProcess[mapItem2]._id,
-            _status: 1,
-          });
-        });
+        
 
+
+        
         mapItem.processIds.map((mapItem1) => {
           var processId = new mongoose.Types.ObjectId();
           arrayToSetProcess.push({

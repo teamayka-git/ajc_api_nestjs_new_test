@@ -27,13 +27,7 @@ class SetProcessCreateList {
   orderSaleId: string;
 
 
-  @IsString()
-  @ApiProperty({})
-  initialProcessId: string;
-  @IsString()
-  @ApiProperty({})
-  initialUserId: string;
-
+  
 
 
   @IsArray()
