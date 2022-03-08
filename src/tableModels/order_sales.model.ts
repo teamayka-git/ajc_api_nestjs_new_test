@@ -30,7 +30,7 @@ export const OrderSalesSchema = new mongoose.Schema({
     ref: ModelNames.ORDER_SALES_ROOT_CAUSES,
     default: null,
   },
-  _description: { type: String, required: true, default: 'nil' },
+  _description: { type: String, default: "" },
   _isMatFinish: { type: Number, required: true, default: -1 },
   _isRhodium: { type: Number, required: true, default: -1 },
   _workStatus: { type: Number, required: true, default: -1 },

@@ -16,7 +16,7 @@ export const OrderSaleHistoriesSchema = new mongoose.Schema({
     ref: ModelNames.ORDER_SALES_ROOT_CAUSES,
     default: null,
   },
-  _rootCause: { type: String, required: true, default: 'nil' },
+  _rootCause: { type: String, default: 'nil' },
   _status: { type: Number, required: true, default: -1 },
 });
 
