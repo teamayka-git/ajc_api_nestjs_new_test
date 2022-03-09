@@ -13,6 +13,8 @@ import { OrderSaleSetSubProcesses } from 'src/tableModels/order_sale_set_sub_pro
 import { OrderSaleSetSubProcessHistories } from 'src/tableModels/order_sale_set_sub_process_histories.model';
 import { SubProcessMaster } from 'src/tableModels/subProcessMaster.model';
 import { IndexUtils } from 'src/utils/IndexUtils';
+import { OrderSales } from 'src/tableModels/order_sales.model';
+import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 
 @Injectable()
 export class OrderSaleSetProcessService {
@@ -25,6 +27,11 @@ export class OrderSaleSetProcessService {
     private readonly orderSaleSetSubProcessModel: mongoose.Model<OrderSaleSetSubProcesses>,
     @InjectModel(ModelNames.ORDER_SALE_SET_SUB_PROCESS_HISTORIES)
     private readonly orderSaleSetSubProcessHistoriesModel: mongoose.Model<OrderSaleSetSubProcessHistories>,
+    @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
+    private readonly orderSaleHistoriesModel: mongoose.Model<OrderSaleHistories>,
+
+    @InjectModel(ModelNames.ORDER_SALES)
+    private readonly orderSaleModel: mongoose.Model<OrderSales>,
     @InjectModel(ModelNames.SUB_PROCESS_MASTER)
     private readonly subProcessModel: mongoose.Model<SubProcessMaster>,
     @InjectConnection() private readonly connection: mongoose.Connection,
@@ -38,8 +45,9 @@ export class OrderSaleSetProcessService {
       var arrayToSetSubProcess = [];
 
       var arrayProcessIds = [];
+      var arrayOrdersaleIds = [];
       dto.array.map((mapItem) => {
-
+        arrayOrdersaleIds.push(mapItem.orderSaleId);
         arrayProcessIds.push(...mapItem.processIds);
       });
 
@@ -106,6 +114,40 @@ export class OrderSaleSetProcessService {
           session: transactionSession,
         },
       );
+
+
+
+      await this.orderSaleModel.updateMany(
+        {
+          _id: { $in: arrayOrdersaleIds },
+        },
+        {
+          $set: {
+            _workStatus: 3,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+
+var arrayToOrderSaleHistory=[];
+
+
+      dto.array.map((mapItem) => {
+        arrayToOrderSaleHistory.push({
+          _orderSaleId: mapItem.orderSaleId,
+          _workStatus: 3,
+          _rootCauseId:null,
+          _rootCause: "",
+          _status: 1,
+        });
+      });
+
+      await this.orderSaleHistoriesModel.insertMany(arrayToOrderSaleHistory, {
+        session: transactionSession,
+      });
+
+
 
       await transactionSession.commitTransaction();
       await transactionSession.endSession();

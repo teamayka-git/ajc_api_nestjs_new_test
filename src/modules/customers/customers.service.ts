@@ -170,7 +170,7 @@ export class CustomersService {
             );
     
         const globalGallery = new this.globalGalleryModel({
-          __name:file['image'][0]['originalname'],
+          _name:file['image'][0]['originalname'],
           _globalGalleryCategoryId:null,
           _docType:0,
           _type:7,
@@ -479,7 +479,7 @@ if(resultOldCustomerName.length==0){
             );
     
         const globalGallery = new this.globalGalleryModel({
-          __name:file['image'][0]['originalname'],
+          _name:file['image'][0]['originalname'],
           _globalGalleryCategoryId:null,
           _docType:0,
           _type:7,

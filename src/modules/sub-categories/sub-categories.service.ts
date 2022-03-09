@@ -66,7 +66,7 @@ export class SubCategoriesService {
             var globalGalleryId = new mongoose.Types.ObjectId();
             arrayGlobalGalleries.push({
               _id: globalGalleryId,
-              __name: file['image'][i]['originalname'],
+              _name: file['image'][i]['originalname'],
               _globalGalleryCategoryId: null,
               _docType: 0,
               _type: 1,
@@ -229,7 +229,7 @@ var resultRateCards=await this.rateCardsModel.find({_status:{$in:[0,1]}},{_id:1}
             );
     
         const globalGallery = new this.globalGalleryModel({
-          __name:file['image'][0]['originalname'],
+          _name:file['image'][0]['originalname'],
           _globalGalleryCategoryId:null,
           _docType:0,
           _type:1,

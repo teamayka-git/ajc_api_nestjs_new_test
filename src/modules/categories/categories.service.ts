@@ -66,7 +66,7 @@ export class CategoriesService {
           var globalGalleryId = new mongoose.Types.ObjectId();
           arrayGlobalGalleries.push({
             _id: globalGalleryId,
-            __name: file['image'][i]['originalname'],
+            _name: file['image'][i]['originalname'],
             _globalGalleryCategoryId: null,
             _docType: 0,
             _type: 0,
@@ -179,7 +179,7 @@ export class CategoriesService {
         );
 
         const globalGallery = new this.globalGalleryModel({
-          __name: file['image'][0]['originalname'],
+          _name: file['image'][0]['originalname'],
           _globalGalleryCategoryId: null,
           _docType: 0,
           _type: 0,

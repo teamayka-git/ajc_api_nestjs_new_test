@@ -93,5 +93,6 @@ _workStatus:{
   0- pending
   1- accept
   2- reject
+  3- set process done
 }
 */

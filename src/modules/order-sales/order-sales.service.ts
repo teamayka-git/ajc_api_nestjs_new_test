@@ -97,7 +97,7 @@ export class OrderSalesService {
             var globalGalleryId = new mongoose.Types.ObjectId();
             arrayGlobalGalleries.push({
               _id: globalGalleryId,
-              __name: dto.arrayDocuments[i].fileOriginalName,
+              _name: dto.arrayDocuments[i].fileOriginalName,
               _globalGalleryCategoryId: null,
               _docType: dto.arrayDocuments[i].docType,
               _type: 7,
@@ -283,7 +283,7 @@ export class OrderSalesService {
             var globalGalleryId = new mongoose.Types.ObjectId();
             arrayGlobalGalleries.push({
               _id: globalGalleryId,
-              __name: dto.arrayDocuments[i].fileOriginalName,
+              _name: dto.arrayDocuments[i].fileOriginalName,
               _globalGalleryCategoryId: null,
               _docType: dto.arrayDocuments[i].docType,
               _type: 7,

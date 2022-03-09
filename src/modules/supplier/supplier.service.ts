@@ -163,7 +163,7 @@ try{
             );
     
         const globalGallery = new this.globalGalleryModel({
-          __name:file['image'][0]['originalname'],
+          _name:file['image'][0]['originalname'],
           _globalGalleryCategoryId:null,
           _docType:0,
           _type:6,
@@ -333,7 +333,7 @@ try{
 console.log("file['image'][0]['originalname']   "+file['image'][0]['originalname']);
 
         const globalGallery = new this.globalGalleryModel({
-          __name:file['image'][0]['originalname'],
+          _name:file['image'][0]['originalname'],
           _globalGalleryCategoryId:null,
           _docType:0,
           _type:6,
