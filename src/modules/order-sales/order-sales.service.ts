@@ -20,6 +20,9 @@ import { StringUtils } from 'src/utils/string_utils';
 import { Customers } from 'src/tableModels/customers.model';
 import { User } from 'src/tableModels/user.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
+import { Employee } from 'src/tableModels/employee.model';
+import { Departments } from 'src/tableModels/departments.model';
+import { ProcessMaster } from 'src/tableModels/processMaster.model';
 
 @Injectable()
 export class OrderSalesService {
@@ -36,9 +39,14 @@ export class OrderSalesService {
     private readonly globalGalleryModel: Model<GlobalGalleries>,
     @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
     private readonly orderSaleHistoriesModel: Model<OrderSaleHistories>,
-
+    @InjectModel(ModelNames.EMPLOYEES)
+    private readonly employeeModel: mongoose.Model<Employee>,
+    @InjectModel(ModelNames.DEPARTMENT)
+    private readonly departmentModel: mongoose.Model<Departments>,
     @InjectModel(ModelNames.USER)
     private readonly userModel: mongoose.Model<User>,
+    @InjectModel(ModelNames.PROCESS_MASTER)
+    private readonly processMasterModel: mongoose.Model<ProcessMaster>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
@@ -566,318 +574,329 @@ export class OrderSalesService {
         );
       }
 
-
-
       if (dto.screenType.findIndex((it) => it == 105) != -1) {
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.ORDER_SALE_SET_PROCESSES,
-              let: { orderSaleSetProcess: '$_id' },
-              pipeline: [
-                { $match: {_status:1, $expr: { $eq: ['$_orderSaleId', '$$orderSaleSetProcess'] } } },
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.ORDER_SALE_SET_PROCESSES,
+            let: { orderSaleSetProcess: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_orderSaleId', '$$orderSaleSetProcess'] },
+                },
+              },
 
-                {
-                  $lookup: {
-                    from: ModelNames.PROCESS_MASTER,
-                    let: { processId: '$_processId' },
-                    pipeline: [
-                      { $match: { $expr: { $eq: ['$_id', '$$processId'] } } },
-                    ],
-                    as: 'processDetails',
-                  },
+              {
+                $lookup: {
+                  from: ModelNames.PROCESS_MASTER,
+                  let: { processId: '$_processId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$processId'] } } },
+                  ],
+                  as: 'processDetails',
                 },
-                {
-                  $unwind: {
-                    path: '$processDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
+              },
+              {
+                $unwind: {
+                  path: '$processDetails',
+                  preserveNullAndEmptyArrays: true,
                 },
-                {
-                  $lookup: {
-                    from: ModelNames.USER,
-                    let: { userId: '$_userId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$userId'] },
-                        },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.USER,
+                  let: { userId: '$_userId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$userId'] },
                       },
-          
-                      {
-                          $lookup: {
-                            from: ModelNames.EMPLOYEES,
-                            let: { employeeId: '$_employeeId' },
-                            pipeline: [
-                              {
-                                $match: {
-                                  $expr: { $eq: ['$_id', '$$employeeId'] },
-                                },
-                              },{$project:{
-                                _name:1,
-                                _email:1,
-                                _mobile:1,
-                                _uid:1,
-                                _globalGalleryId:1
-                              }},
-                              {
-                                $lookup: {
-                                  from: ModelNames.GLOBAL_GALLERIES,
-                                  let: { globalGalleryId: '$_globalGalleryId' },
-                                  pipeline: [
-                                    { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
-                                  ],
-                                  as: 'globalGalleryDetails',
-                                },
-                              },
-                              {
-                                $unwind: {
-                                  path: '$globalGalleryDetails',
-                                  preserveNullAndEmptyArrays: true,
-                                },
-                              }
-                            ],
-                            as: 'employeeDetails',
-                          },
-                        },
-                        {
-                          $unwind: {
-                            path: '$employeeDetails',
-                            preserveNullAndEmptyArrays: true,
-                          },
-                        }
-          
-          
-                    ],
-                    as: 'userDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$userDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                }
+                    },
 
-              ],
-              as: 'setProcessList',
-            },
-          }
-         
-        );
+                    {
+                      $lookup: {
+                        from: ModelNames.EMPLOYEES,
+                        let: { employeeId: '$_employeeId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: { $eq: ['$_id', '$$employeeId'] },
+                            },
+                          },
+                          {
+                            $project: {
+                              _name: 1,
+                              _email: 1,
+                              _mobile: 1,
+                              _uid: 1,
+                              _globalGalleryId: 1,
+                            },
+                          },
+                          {
+                            $lookup: {
+                              from: ModelNames.GLOBAL_GALLERIES,
+                              let: { globalGalleryId: '$_globalGalleryId' },
+                              pipeline: [
+                                {
+                                  $match: {
+                                    $expr: {
+                                      $eq: ['$_id', '$$globalGalleryId'],
+                                    },
+                                  },
+                                },
+                              ],
+                              as: 'globalGalleryDetails',
+                            },
+                          },
+                          {
+                            $unwind: {
+                              path: '$globalGalleryDetails',
+                              preserveNullAndEmptyArrays: true,
+                            },
+                          },
+                        ],
+                        as: 'employeeDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$employeeDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                  ],
+                  as: 'userDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$userDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            ],
+            as: 'setProcessList',
+          },
+        });
       }
 
-
-
       if (dto.screenType.findIndex((it) => it == 105) != -1) {
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.ORDER_SALE_SET_PROCESSES,
-              let: { orderSaleSetProcess: '$_id' },
-              pipeline: [
-                { $match: {_status:1, $expr: { $eq: ['$_orderSaleId', '$$orderSaleSetProcess'] } } },
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.ORDER_SALE_SET_PROCESSES,
+            let: { orderSaleSetProcess: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_orderSaleId', '$$orderSaleSetProcess'] },
+                },
+              },
 
-                {
-                  $lookup: {
-                    from: ModelNames.PROCESS_MASTER,
-                    let: { processId: '$_processId' },
-                    pipeline: [
-                      { $match: { $expr: { $eq: ['$_id', '$$processId'] } } },
-                    ],
-                    as: 'processDetails',
-                  },
+              {
+                $lookup: {
+                  from: ModelNames.PROCESS_MASTER,
+                  let: { processId: '$_processId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$processId'] } } },
+                  ],
+                  as: 'processDetails',
                 },
-                {
-                  $unwind: {
-                    path: '$processDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
+              },
+              {
+                $unwind: {
+                  path: '$processDetails',
+                  preserveNullAndEmptyArrays: true,
                 },
-                {
-                  $lookup: {
-                    from: ModelNames.USER,
-                    let: { userId: '$_userId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$userId'] },
-                        },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.USER,
+                  let: { userId: '$_userId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$userId'] },
                       },
-          
-                      {
-                          $lookup: {
-                            from: ModelNames.EMPLOYEES,
-                            let: { employeeId: '$_employeeId' },
-                            pipeline: [
-                              {
-                                $match: {
-                                  $expr: { $eq: ['$_id', '$$employeeId'] },
-                                },
-                              },{$project:{
-                                _name:1,
-                                _email:1,
-                                _mobile:1,
-                                _uid:1,
-                                _globalGalleryId:1
-                              }},
-                              {
-                                $lookup: {
-                                  from: ModelNames.GLOBAL_GALLERIES,
-                                  let: { globalGalleryId: '$_globalGalleryId' },
-                                  pipeline: [
-                                    { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
-                                  ],
-                                  as: 'globalGalleryDetails',
-                                },
-                              },
-                              {
-                                $unwind: {
-                                  path: '$globalGalleryDetails',
-                                  preserveNullAndEmptyArrays: true,
-                                },
-                              }
-                            ],
-                            as: 'employeeDetails',
-                          },
-                        },
-                        {
-                          $unwind: {
-                            path: '$employeeDetails',
-                            preserveNullAndEmptyArrays: true,
-                          },
-                        }
-          
-          
-                    ],
-                    as: 'userDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$userDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
+                    },
 
-
-
-
-
-
-
-
-                {
-                  $lookup: {
-                    from: ModelNames.ORDER_SALE_SET_SUB_PROCESSES,
-                    let: { setProcess: '$_id' },
-                    pipeline: [
-                      { $match: {_status:1, $expr: { $eq: ['$_orderSaleSetProcessId', '$$setProcess'] } } },
-      
-                      {
-                        $lookup: {
-                          from: ModelNames.SUB_PROCESS_MASTER,
-                          let: { processId: '$_subProcessId' },
-                          pipeline: [
-                            { $match: { $expr: { $eq: ['$_id', '$$processId'] } } },
-                          ],
-                          as: 'processDetails',
-                        },
-                      },
-                      {
-                        $unwind: {
-                          path: '$processDetails',
-                          preserveNullAndEmptyArrays: true,
-                        },
-                      },
-                      {
-                        $lookup: {
-                          from: ModelNames.USER,
-                          let: { userId: '$_userId' },
-                          pipeline: [
-                            {
-                              $match: {
-                                $expr: { $eq: ['$_id', '$$userId'] },
-                              },
+                    {
+                      $lookup: {
+                        from: ModelNames.EMPLOYEES,
+                        let: { employeeId: '$_employeeId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: { $eq: ['$_id', '$$employeeId'] },
                             },
-                
-                            {
-                                $lookup: {
-                                  from: ModelNames.EMPLOYEES,
-                                  let: { employeeId: '$_employeeId' },
-                                  pipeline: [
-                                    {
-                                      $match: {
-                                        $expr: { $eq: ['$_id', '$$employeeId'] },
-                                      },
-                                    },{$project:{
-                                      _name:1,
-                                      _email:1,
-                                      _mobile:1,
-                                      _uid:1,
-                                      _globalGalleryId:1
-                                    }},
-                                    {
-                                      $lookup: {
-                                        from: ModelNames.GLOBAL_GALLERIES,
-                                        let: { globalGalleryId: '$_globalGalleryId' },
-                                        pipeline: [
-                                          { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
-                                        ],
-                                        as: 'globalGalleryDetails',
-                                      },
+                          },
+                          {
+                            $project: {
+                              _name: 1,
+                              _email: 1,
+                              _mobile: 1,
+                              _uid: 1,
+                              _globalGalleryId: 1,
+                            },
+                          },
+                          {
+                            $lookup: {
+                              from: ModelNames.GLOBAL_GALLERIES,
+                              let: { globalGalleryId: '$_globalGalleryId' },
+                              pipeline: [
+                                {
+                                  $match: {
+                                    $expr: {
+                                      $eq: ['$_id', '$$globalGalleryId'],
                                     },
-                                    {
-                                      $unwind: {
-                                        path: '$globalGalleryDetails',
-                                        preserveNullAndEmptyArrays: true,
-                                      },
-                                    }
-                                  ],
-                                  as: 'employeeDetails',
+                                  },
                                 },
-                              },
-                              {
-                                $unwind: {
-                                  path: '$employeeDetails',
-                                  preserveNullAndEmptyArrays: true,
-                                },
-                              }
-                
-                
-                          ],
-                          as: 'userDetails',
+                              ],
+                              as: 'globalGalleryDetails',
+                            },
+                          },
+                          {
+                            $unwind: {
+                              path: '$globalGalleryDetails',
+                              preserveNullAndEmptyArrays: true,
+                            },
+                          },
+                        ],
+                        as: 'employeeDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$employeeDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                  ],
+                  as: 'userDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$userDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+
+              {
+                $lookup: {
+                  from: ModelNames.ORDER_SALE_SET_SUB_PROCESSES,
+                  let: { setProcess: '$_id' },
+                  pipeline: [
+                    {
+                      $match: {
+                        _status: 1,
+                        $expr: {
+                          $eq: ['$_orderSaleSetProcessId', '$$setProcess'],
                         },
                       },
-                      {
-                        $unwind: {
-                          path: '$userDetails',
-                          preserveNullAndEmptyArrays: true,
-                        },
-                      }
-      
-                    ],
-                    as: 'setSubProcessList',
-                  },
-                }
+                    },
 
+                    {
+                      $lookup: {
+                        from: ModelNames.SUB_PROCESS_MASTER,
+                        let: { processId: '$_subProcessId' },
+                        pipeline: [
+                          {
+                            $match: { $expr: { $eq: ['$_id', '$$processId'] } },
+                          },
+                        ],
+                        as: 'processDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$processDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                    {
+                      $lookup: {
+                        from: ModelNames.USER,
+                        let: { userId: '$_userId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: { $eq: ['$_id', '$$userId'] },
+                            },
+                          },
 
-
-
-
-
-
-
-
-
-
-
-              ],
-              as: 'setProcessListAll',
-            },
-          }
-         
-        );
+                          {
+                            $lookup: {
+                              from: ModelNames.EMPLOYEES,
+                              let: { employeeId: '$_employeeId' },
+                              pipeline: [
+                                {
+                                  $match: {
+                                    $expr: { $eq: ['$_id', '$$employeeId'] },
+                                  },
+                                },
+                                {
+                                  $project: {
+                                    _name: 1,
+                                    _email: 1,
+                                    _mobile: 1,
+                                    _uid: 1,
+                                    _globalGalleryId: 1,
+                                  },
+                                },
+                                {
+                                  $lookup: {
+                                    from: ModelNames.GLOBAL_GALLERIES,
+                                    let: {
+                                      globalGalleryId: '$_globalGalleryId',
+                                    },
+                                    pipeline: [
+                                      {
+                                        $match: {
+                                          $expr: {
+                                            $eq: ['$_id', '$$globalGalleryId'],
+                                          },
+                                        },
+                                      },
+                                    ],
+                                    as: 'globalGalleryDetails',
+                                  },
+                                },
+                                {
+                                  $unwind: {
+                                    path: '$globalGalleryDetails',
+                                    preserveNullAndEmptyArrays: true,
+                                  },
+                                },
+                              ],
+                              as: 'employeeDetails',
+                            },
+                          },
+                          {
+                            $unwind: {
+                              path: '$employeeDetails',
+                              preserveNullAndEmptyArrays: true,
+                            },
+                          },
+                        ],
+                        as: 'userDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$userDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                  ],
+                  as: 'setSubProcessList',
+                },
+              },
+            ],
+            as: 'setProcessListAll',
+          },
+        });
       }
 
       if (dto.screenType.findIndex((it) => it == 103) != -1) {
@@ -1179,6 +1198,83 @@ export class OrderSalesService {
         );
       }
 
+      var resultWorkets = [];
+      var resultProcessMasters=[];
+
+      if (dto.screenType.findIndex((it) => it == 105) != -1) {
+        var resultDepartment = await this.departmentModel.find({
+          _code: 1003,
+          _status: 1,
+        });
+        if (resultDepartment.length == 0) {
+          throw new HttpException(
+            'Department not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        resultWorkets = await this.employeeModel.aggregate([
+          {
+            $match: {
+              _departmentId: new mongoose.Types.ObjectId(
+                resultDepartment[0]._id,
+              ),
+              _status: 1,
+            },
+          },
+
+          {
+            $project: {
+              _name: 1,
+              _email: 1,
+              _mobile: 1,
+              _uid: 1,
+              _globalGalleryId: 1,
+            },
+          },
+          {
+            $lookup: {
+              from: ModelNames.GLOBAL_GALLERIES,
+              let: { globalGalleryId: '$_globalGalleryId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+              ],
+              as: 'globalGalleryDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$globalGalleryDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { employeeId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_employeeId', '$$employeeId'] },
+                  },
+                },
+              ],
+              as: 'userDetails',
+            }
+          },
+          {
+            $unwind: {
+              path: '$userDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+
+        ]);
+
+        resultProcessMasters=await this.processMasterModel.find({_status:1});
+      }
+
       var result = await this.orderSaleModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
@@ -1214,7 +1310,7 @@ export class OrderSalesService {
       await transactionSession.endSession();
       return {
         message: 'success',
-        data: { list: result, totalCount: totalCount },
+        data: { list: result, totalCount: totalCount, workers: resultWorkets,processMasters:resultProcessMasters },
       };
     } catch (error) {
       await transactionSession.abortTransaction();
