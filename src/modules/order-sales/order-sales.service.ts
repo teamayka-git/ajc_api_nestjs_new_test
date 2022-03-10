@@ -681,7 +681,7 @@ export class OrderSalesService {
         });
       }
 
-      if (dto.screenType.findIndex((it) => it == 105) != -1) {
+      if (dto.screenType.findIndex((it) => it == 106) != -1) {
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.ORDER_SALE_SET_PROCESSES,
