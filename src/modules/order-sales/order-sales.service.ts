@@ -1225,11 +1225,13 @@ export class OrderSalesService {
 
           {
             $project: {
+              _id:1,
               _name: 1,
               _email: 1,
               _mobile: 1,
               _uid: 1,
               _globalGalleryId: 1,
+              _processMasterId:1
             },
           },
           {
