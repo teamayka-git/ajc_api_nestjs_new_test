@@ -1807,7 +1807,7 @@ export class ChatGateway
         arrayJsonDatasPersonalMessageCreatedIds.push(mapItem._id);
       }
     });
-
+console.log("arrayJsonDatasPersonalMessageCreatedIds   "+arrayJsonDatasPersonalMessageCreatedIds.length);
     if (arrayJsonDatasPersonalMessageCreated.length != 0) {
       client.emit(
         SocketChatEvents.EVENT_PERSONAL_MESSAGE_RECEIVED,
@@ -1819,10 +1819,15 @@ export class ChatGateway
           },
         },
         (ack) => {
+
+          console.log("arrayJsonDatasPersonalMessageCreatedIds   "+arrayJsonDatasPersonalMessageCreatedIds.length);
+
+
           this.chatPendingMessagesModel.updateMany(
             { _id: { $in: arrayJsonDatasPersonalMessageCreatedIds } },
             { $set: { _deliveredSeen: 1 } },
           );
+          
         },
       );
     }
