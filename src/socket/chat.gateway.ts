@@ -71,7 +71,7 @@ export class ChatGateway
       console.log("___a2");
       return;
     }
-    if (typeof appType == 'undefined' || typeof appType != 'number') {
+    if (typeof appType == 'undefined' || typeof appType != 'string') {
       client.disconnect();
       console.log("___a3");
       return;
