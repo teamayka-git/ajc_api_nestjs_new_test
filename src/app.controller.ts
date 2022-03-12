@@ -18,7 +18,7 @@ export class AppController {
 
 
 
-  @Post()
+  @Post("chatDocumentUpload")
   @ApiCreatedResponse({ description: 'files upload on these input feilds => [document]' })
   @UseInterceptors(
     FileFieldsInterceptor(
