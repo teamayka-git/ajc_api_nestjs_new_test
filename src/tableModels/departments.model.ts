@@ -53,7 +53,6 @@ DepartmentsSchema.post('updateMany', async function(error, doc, next) {
 });
 function schemaPostFunctionForDuplicate(error, doc, next) {
 
-console.log("errorDepartments  "+error);
 
     if(error.code==11000){
         next(new Error('Name or Code already existing'));

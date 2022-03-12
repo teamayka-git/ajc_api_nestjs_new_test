@@ -90,7 +90,6 @@ export class GlobalGalleryService {
                   file['documents'][count]['path'].split('public')[1]
                 }`;
 
-              console.log('document_location   ' + document_location);
               new ThumbnailUtils().generateThumbnail(
                 filePath,
                 document_location +
@@ -117,13 +116,11 @@ export class GlobalGalleryService {
         var fileUrl = 'nil';
         var fileUrlThumb = 'nil';
 
-        console.log('aaaa   ' + JSON.stringify(file));
         //uploaded files here
         var count = file['documents'].findIndex(
           (it) => it.originalname == dto.array[i].originalname,
         );
  
-        console.log('count  ' + count);
 
         if (count != -1) {
           fileUrl = `${process.env.SSL == 'true' ? 'https' : 'http'}://${
@@ -137,7 +134,6 @@ export class GlobalGalleryService {
           //if image only thumb url need to generate
           fileUrlThumb = new StringUtils().makeThumbImageFileName(fileUrl);
 
-          console.log('bbb  ');
         }
 
         arrayToStates.push({

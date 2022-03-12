@@ -59,7 +59,7 @@ export class OrderSalesService {
 
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
-      console.log('__s1');
+    
       if (file.hasOwnProperty('documents')) {
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
@@ -70,7 +70,7 @@ export class OrderSalesService {
           },
           { new: true, session: transactionSession },
         );
-        console.log('__s2');
+       
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
             (it) => dto.arrayDocuments[i].fileOriginalName == it.originalname,
@@ -78,7 +78,7 @@ export class OrderSalesService {
 
           if (count != -1) {
             if (dto.arrayDocuments[i].docType == 0) {
-              console.log('__s3');
+             
               var filePath =
                 __dirname +
                 `/../../../public${
@@ -95,13 +95,12 @@ export class OrderSalesService {
             }
           }
         }
-        console.log('__s4');
+        
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
             (it) => it.originalname == dto.arrayDocuments[i].fileOriginalName,
           );
           if (count != -1) {
-            console.log('__s4');
             var globalGalleryId = new mongoose.Types.ObjectId();
             arrayGlobalGalleries.push({
               _id: globalGalleryId,
@@ -134,7 +133,6 @@ export class OrderSalesService {
               _updated_at: -1,
               _status: 1,
             });
-            console.log('__s5');
             arrayGlobalGalleriesDocuments.push({
               _orderSaleId: orderSaleId,
               _globalGalleryId: globalGalleryId,
@@ -147,7 +145,6 @@ export class OrderSalesService {
           }
         }
 
-        console.log('__s6');
 
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
@@ -159,7 +156,6 @@ export class OrderSalesService {
           },
         );
       }
-      console.log('__s7');
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.ORDER_SALES },
         {
@@ -187,7 +183,6 @@ export class OrderSalesService {
         );
       }
 
-      console.log('__s8');
       var customerDetails = await this.customersModel.find({
         _id: resultCustomerUser[0]._customerId,
         _status: 1,
@@ -199,7 +194,6 @@ export class OrderSalesService {
         );
       }
 
-      console.log('__s9');
 
       const newsettingsModel = new this.orderSaleModel({
         _id: orderSaleId,
@@ -227,7 +221,6 @@ export class OrderSalesService {
       var result1 = await newsettingsModel.save({
         session: transactionSession,
       });
-      console.log('__s10');
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return { message: 'success', data: result1 };
@@ -246,7 +239,7 @@ export class OrderSalesService {
     try {
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
-      console.log('ll1');
+     
       if (file.hasOwnProperty('documents')) {
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
@@ -257,7 +250,6 @@ export class OrderSalesService {
           },
           { new: true, session: transactionSession },
         );
-        console.log('ll2');
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
             (it) => dto.arrayDocuments[i].fileOriginalName == it.originalname,
@@ -280,14 +272,12 @@ export class OrderSalesService {
             }
           }
         }
-        console.log('ll3');
 
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
             (it) => it.originalname == dto.arrayDocuments[i].fileOriginalName,
           );
           if (count != -1) {
-            console.log('__s4');
             var globalGalleryId = new mongoose.Types.ObjectId();
             arrayGlobalGalleries.push({
               _id: globalGalleryId,
@@ -320,7 +310,6 @@ export class OrderSalesService {
               _updated_at: -1,
               _status: 1,
             });
-            console.log('__s5');
             arrayGlobalGalleriesDocuments.push({
               _orderSaleId: dto.orderSaleId,
               _globalGalleryId: globalGalleryId,
@@ -332,7 +321,6 @@ export class OrderSalesService {
             });
           }
         }
-        console.log('ll4');
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
         });
@@ -343,7 +331,6 @@ export class OrderSalesService {
           },
         );
       }
-      console.log('ll5');
       var updateObject = {
         _customerId:
           dto.customerId == '' || dto.customerId == 'nil'
@@ -362,7 +349,6 @@ export class OrderSalesService {
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
       };
-      console.log('ll6');
       var result = await this.orderSaleModel.findOneAndUpdate(
         {
           _id: dto.orderSaleId,
@@ -372,7 +358,6 @@ export class OrderSalesService {
         },
         { new: true, session: transactionSession },
       );
-      console.log('ll7');
       if (dto.documentsLinkingIdsForDelete.length != 0) {
         await this.orderSaleDocumentsModel.updateMany(
           { _id: { $in: dto.documentsLinkingIdsForDelete } },
@@ -380,7 +365,6 @@ export class OrderSalesService {
           { new: true, session: transactionSession },
         );
       }
-      console.log('ll8');
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return { message: 'success', data: result };

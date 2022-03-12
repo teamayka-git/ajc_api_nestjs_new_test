@@ -52,6 +52,14 @@ ChatPendingMessagesSchema.index({ _status: 1 });
 /*
 _type:{
 0-personal message send
+1-personal message delete
+}
+
+_deliveredSeen:{
+  0 - pending
+  1 - delivered
+  2 - seen
+  3 - played
 }
 
 */

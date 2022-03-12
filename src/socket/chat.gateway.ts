@@ -50,7 +50,6 @@ export class ChatGateway
 
   afterInit(server: Server) {
     //when server start socket.io
-    console.log('chat socket started');
   }
 
   handleConnection(client: Socket, ...args: any[]) {
@@ -75,7 +74,7 @@ export class ChatGateway
 
   @SubscribeMessage(SocketChatEvents.EVENT_PERSONAL_MESSAGE_SEND)
   async handleMessagePersonalMessageSend(client: Socket, payload: Object) {
-    console.log('Message uploaded 1');
+   
     var dateTime = new Date().getTime();
 
     const dataJson = payload;
@@ -90,22 +89,18 @@ export class ChatGateway
 
     if (typeof recipientId == 'undefined' || typeof recipientId != 'string') {
       client.disconnect();
-      console.log('111');
       return;
     }
     if (typeof groupUid == 'undefined' || typeof groupUid != 'string') {
       client.disconnect();
-      console.log('222');
       return;
     }
     if (typeof value == 'undefined' || typeof value != 'object') {
       client.disconnect();
-      console.log('333');
       return;
     }
     if (typeof messageUid == 'undefined' || typeof messageUid != 'string') {
       client.disconnect();
-      console.log('444');
       return;
     }
 
@@ -129,7 +124,6 @@ export class ChatGateway
       var resultChat = await personalChat.save();
       personalChatId = resultChat._id;
     }
-    console.log('Message uploaded 2');
     client.emit(
       SocketChatEvents.EVENT_PERSONAL_MESSAGE_UPLOADED,
       'OK',
@@ -144,7 +138,6 @@ export class ChatGateway
       },
       async (ack1) => {
         if (ack1 == 'OK') {
-          console.log('Message uploaded 31');
           const transactionSession = await this.connection.startSession();
           transactionSession.startTransaction();
           try {
@@ -162,11 +155,11 @@ export class ChatGateway
             });
 
             const personalPendingMessage =
-              new this.chatPersonalChatMessagesModel({
+              new this.chatPendingMessagesModel({
                 _userId: recipientId,
                 _createdUserId: userId,
                 _type: 0,
-                _deliveredSeen: -1,
+                _deliveredSeen: 0,
                 _personalChatId: personalChatId,
                 _personalMessageId: resultChatpersonalMessage._id,
                 _status: 1,
@@ -407,34 +400,20 @@ export class ChatGateway
               sender: resultSender[0],
               time: dateTime,
             };
-            console.log('Message uploaded 4');
             var onlineUsers = new IndexUtils().multipleIndexChat(
               this.connectedUsers,
               recipientId,
             );
 
-            console.log('onlineUsers   ' + JSON.stringify(onlineUsers));
-
-            console.log('all users   ' + this.connectedUsers.length);
-            console.log('receipient id   ' + recipientId);
-            console.log('sender id   ' + userId);
-            console.log('jsonString    ' + JSON.stringify(jsonString));
-
-            for (var i = 0; i < this.connectedUsers.length; i++) {
-              console.log('User ids ' + this.connectedUsers[i].userId);
-            }
+          
 
             for (var i = 0; i < onlineUsers.length; i++) {
-              console.log(
-                'Sending from server   ' +
-                  this.connectedUsers[onlineUsers[i]].userId,
-              );
+            
               var onlineSocket = this.connectedUsers[onlineUsers[i]].socket;
 
-              //  console.log("this.connectedUsers[onlineUsers[i]].socket   "+JSON.stringify(this.connectedUsers[onlineUsers[i]].socket));
-              onlineSocket.emit(
+                onlineSocket.emit(
                 SocketChatEvents.EVENT_PERSONAL_MESSAGE_RECEIVED,
-                'OK',
+                resultChatPendingMessage._id,
                 {
                   data: {
                     list: [jsonString],
@@ -442,19 +421,17 @@ export class ChatGateway
                   },
                 },
                 (ack) => {
-                  // TableChatPendingData.updateOne({ _id: ack }, { $set: { "_status": 0 } }).then(result => {
-                  // }).catch(error => {
-                  // });
+                  this.chatPendingMessagesModel.updateOne({ _id: ack }, { $set: { _deliveredSeen: 1 } }).then(result => {
+                  }).catch(error => {
+                  });
                 },
               );
             }
-            console.log('Message uploaded 6');
             await transactionSession.commitTransaction();
             await transactionSession.endSession();
           } catch (error) {
             await transactionSession.abortTransaction();
             await transactionSession.endSession();
-            console.log('Socket chat error ' + JSON.stringify(error));
           }
         }
       },
@@ -533,12 +510,18 @@ export class ChatGateway
               );
 
               var arrayToPendingTable = [];
+              var arrayToPendingTableIds = [];
+
+             
+
               arrayMessageIds.map((mapItem) => {
+                var pendingTableId = new mongoose.Types.ObjectId();
+                arrayToPendingTableIds.push(pendingTableId);
                 arrayToPendingTable.push({
                   _userId: recipientId,
                   _createdUserId: userId,
                   _type: 1,
-                  _deliveredSeen: -1,
+                  _deliveredSeen: 0,
                   _personalChatId: resultPersonalChatMessages[0]._id,
                   _personalMessageId: mapItem,
                   _status: 1,
@@ -568,14 +551,17 @@ export class ChatGateway
 
                 onlineSocket.emit(
                   SocketChatEvents.EVENT_PERSONAL_MESSAGE_DELETE_RECEIVED,
-                  'OK',
+                  JSON.stringify(arrayToPendingTableIds),
                   {
                     data: jsonString,
                   },
                   (ack) => {
-                    // TableChatPendingData.updateOne({ _id: ack }, { $set: { "_status": 0 } }).then(result => {
-                    // }).catch(error => {
-                    // });
+
+
+
+                    this.chatPendingMessagesModel.updateOne({ _id: {$in:JSON.parse(ack)} }, { $set: { _deliveredSeen: 1 } }).then(result => {
+                    }).catch(error => {
+                    });
                   },
                 );
               }
@@ -586,7 +572,6 @@ export class ChatGateway
           } catch (error) {
             await transactionSession.abortTransaction();
             await transactionSession.endSession();
-            console.log('Socket chat error ' + JSON.stringify(error));
           }
         }
       },
@@ -607,7 +592,6 @@ export class ChatGateway
     // var resultGlobalGallery=   globalGallery.save({
     // });
 
-    console.log('message received   ' + payload);
 
     return 'Hello world!';
   }
@@ -684,11 +668,11 @@ export class ChatGateway
         session: transactionSession,
       });
 
-      const personalPendingMessage = new this.chatPersonalChatMessagesModel({
+      const personalPendingMessage = new this.chatPendingMessagesModel({
         _userId: dto.recipientId,
         _createdUserId: _userId_,
         _type: 0,
-        _deliveredSeen: -1,
+        _deliveredSeen: 0,
         _personalChatId: personalChatId,
         _personalMessageId: resultChatpersonalMessage._id,
         _status: 1,
@@ -948,9 +932,9 @@ export class ChatGateway
             },
           },
           (ack) => {
-            // TableChatPendingData.updateOne({ _id: ack }, { $set: { "_status": 0 } }).then(result => {
-            // }).catch(error => {
-            // });
+            this.chatPendingMessagesModel.updateOne({ _id: ack }, { $set: { _deliveredSeen:1 } }).then(result => {
+            }).catch(error => {
+            });
           },
         );
       }

@@ -61,7 +61,6 @@ GroupMastersSchema.post('updateMany', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
 });
 function schemaPostFunctionForDuplicate(error, doc, next) {
-    console.log("errorGroup   "+JSON.stringify(error));
     if(error.code==11000){
         next(new Error('Name already existing'));
    }else{
