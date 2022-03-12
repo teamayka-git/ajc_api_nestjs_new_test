@@ -63,25 +63,27 @@ export class ChatGateway
 
     if (typeof userId == 'undefined' || typeof userId != 'string') {
       client.disconnect();
+      console.log("___a1");
       return;
     }
     if (typeof deviceId == 'undefined' || typeof deviceId != 'string') {
       client.disconnect();
+      console.log("___a2");
       return;
     }
     if (typeof appType == 'undefined' || typeof appType != 'number') {
       client.disconnect();
+      console.log("___a3");
       return;
     }
 
-    if (
-      typeof lastPendingId == 'undefined' ||
-      typeof lastPendingId != 'string'
-    ) {
+    if (  typeof lastPendingId == 'undefined' ||  typeof lastPendingId != 'string') {
       client.disconnect();
+      console.log("___a4");
       return;
     }
 
+    console.log("___a5");
     this.connectedUsers.push({
       userId: client.handshake.query.userId,
       socket: client,
