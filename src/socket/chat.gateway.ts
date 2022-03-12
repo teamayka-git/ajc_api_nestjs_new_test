@@ -1818,16 +1818,16 @@ console.log("arrayJsonDatasPersonalMessageCreatedIds   "+arrayJsonDatasPersonalM
             isWantToShowNotification: true,
           },
         },
-        (ack) => {
+        async (ack) =>  {
 
           console.log("arrayJsonDatasPersonalMessageCreatedIds   "+arrayJsonDatasPersonalMessageCreatedIds.length);
 
 
-          this.chatPendingMessagesModel.updateMany(
+       await   this.chatPendingMessagesModel.updateMany(
             { _id: { $in: arrayJsonDatasPersonalMessageCreatedIds } },
             { $set: { _deliveredSeen: 1 } },
           );
-          
+
         },
       );
     }
