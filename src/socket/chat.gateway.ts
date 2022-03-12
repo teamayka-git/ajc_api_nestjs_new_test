@@ -25,7 +25,7 @@ import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_pa
 import { StringUtils } from 'src/utils/string_utils';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 
-@WebSocketGateway( { cors: true }) //todo add port from env file
+@WebSocketGateway({ cors: true }) //todo add port from env file
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -55,6 +55,33 @@ export class ChatGateway
   handleConnection(client: Socket, ...args: any[]) {
     console.log('client connected   ' + JSON.stringify(args));
     // console.log("______ client connected   "+client.handshake.query.token);
+
+    var userId = client.handshake.query.userId;
+    var deviceId = client.handshake.query.deviceId;
+    var appType = client.handshake.query.appType;
+    var lastPendingId = client.handshake.query.lastPendingId;
+
+    if (typeof userId == 'undefined' || typeof userId != 'string') {
+      client.disconnect();
+      return;
+    }
+    if (typeof deviceId == 'undefined' || typeof deviceId != 'string') {
+      client.disconnect();
+      return;
+    }
+    if (typeof appType == 'undefined' || typeof appType != 'number') {
+      client.disconnect();
+      return;
+    }
+
+    if (
+      typeof lastPendingId == 'undefined' ||
+      typeof lastPendingId != 'string'
+    ) {
+      client.disconnect();
+      return;
+    }
+
     this.connectedUsers.push({
       userId: client.handshake.query.userId,
       socket: client,
@@ -65,6 +92,8 @@ export class ChatGateway
       `client connected   ${client.handshake.query.userId} ` +
         this.connectedUsers.length,
     );
+
+    this.sendPendingMessages(client, lastPendingId, userId);
   }
   handleDisconnect(client: Socket) {
     var indexClient = this.connectedUsers.findIndex((i) => i.socket === client);
@@ -74,7 +103,6 @@ export class ChatGateway
 
   @SubscribeMessage(SocketChatEvents.EVENT_PERSONAL_MESSAGE_SEND)
   async handleMessagePersonalMessageSend(client: Socket, payload: Object) {
-   
     var dateTime = new Date().getTime();
 
     const dataJson = payload;
@@ -86,6 +114,7 @@ export class ChatGateway
     var groupUid = dataJson['groupUid'];
     var value = dataJson['value'];
     var messageUid = dataJson['messageUid'];
+    var time = dataJson['time'];
 
     if (typeof recipientId == 'undefined' || typeof recipientId != 'string') {
       client.disconnect();
@@ -100,6 +129,10 @@ export class ChatGateway
       return;
     }
     if (typeof messageUid == 'undefined' || typeof messageUid != 'string') {
+      client.disconnect();
+      return;
+    }
+    if (typeof time == 'undefined' || typeof time != 'number') {
       client.disconnect();
       return;
     }
@@ -144,7 +177,7 @@ export class ChatGateway
             const personalMessage = new this.chatPersonalChatMessagesModel({
               _personalChatId: personalChatId,
               _senderId: userId,
-              _createdTime: dateTime,
+              _createdTime: time,
               _messageUid: messageUid,
               _type: 0,
               _value: value,
@@ -154,16 +187,15 @@ export class ChatGateway
               session: transactionSession,
             });
 
-            const personalPendingMessage =
-              new this.chatPendingMessagesModel({
-                _userId: recipientId,
-                _createdUserId: userId,
-                _type: 0,
-                _deliveredSeen: 0,
-                _personalChatId: personalChatId,
-                _personalMessageId: resultChatpersonalMessage._id,
-                _status: 1,
-              });
+            const personalPendingMessage = new this.chatPendingMessagesModel({
+              _userId: recipientId,
+              _createdUserId: userId,
+              _type: 0,
+              _deliveredSeen: 0,
+              _personalChatId: personalChatId,
+              _personalMessageId: resultChatpersonalMessage._id,
+              _status: 1,
+            });
             var resultChatPendingMessage = await personalPendingMessage.save({
               session: transactionSession,
             });
@@ -398,20 +430,17 @@ export class ChatGateway
               recipientId: recipientId,
               messageUid: messageUid,
               sender: resultSender[0],
-              time: dateTime,
+              time: time,
             };
             var onlineUsers = new IndexUtils().multipleIndexChat(
               this.connectedUsers,
               recipientId,
             );
 
-          
-
             for (var i = 0; i < onlineUsers.length; i++) {
-            
               var onlineSocket = this.connectedUsers[onlineUsers[i]].socket;
 
-                onlineSocket.emit(
+              onlineSocket.emit(
                 SocketChatEvents.EVENT_PERSONAL_MESSAGE_RECEIVED,
                 resultChatPendingMessage._id,
                 {
@@ -421,9 +450,10 @@ export class ChatGateway
                   },
                 },
                 (ack) => {
-                  this.chatPendingMessagesModel.updateOne({ _id: ack }, { $set: { _deliveredSeen: 1 } }).then(result => {
-                  }).catch(error => {
-                  });
+                  this.chatPendingMessagesModel
+                    .updateOne({ _id: ack }, { $set: { _deliveredSeen: 1 } })
+                    .then((result) => {})
+                    .catch((error) => {});
                 },
               );
             }
@@ -512,8 +542,6 @@ export class ChatGateway
               var arrayToPendingTable = [];
               var arrayToPendingTableIds = [];
 
-             
-
               arrayMessageIds.map((mapItem) => {
                 var pendingTableId = new mongoose.Types.ObjectId();
                 arrayToPendingTableIds.push(pendingTableId);
@@ -551,17 +579,18 @@ export class ChatGateway
 
                 onlineSocket.emit(
                   SocketChatEvents.EVENT_PERSONAL_MESSAGE_DELETE_RECEIVED,
-                  JSON.stringify(arrayToPendingTableIds),
+                  'OK',
                   {
                     data: jsonString,
                   },
                   (ack) => {
-
-
-
-                    this.chatPendingMessagesModel.updateOne({ _id: {$in:JSON.parse(ack)} }, { $set: { _deliveredSeen: 1 } }).then(result => {
-                    }).catch(error => {
-                    });
+                    this.chatPendingMessagesModel
+                      .updateOne(
+                        { _id: { $in: arrayToPendingTableIds } },
+                        { $set: { _deliveredSeen: 1 } },
+                      )
+                      .then((result) => {})
+                      .catch((error) => {});
                   },
                 );
               }
@@ -591,7 +620,6 @@ export class ChatGateway
     // });
     // var resultGlobalGallery=   globalGallery.save({
     // });
-
 
     return 'Hello world!';
   }
@@ -658,7 +686,7 @@ export class ChatGateway
       const personalMessage = new this.chatPersonalChatMessagesModel({
         _personalChatId: personalChatId,
         _senderId: _userId_,
-        _createdTime: dateTime,
+        _createdTime: dto.time,
         _messageUid: dto.messageUid,
         _type: dto.type,
         _value: dto.value,
@@ -911,7 +939,7 @@ export class ChatGateway
         recipientId: dto.recipientId,
         messageUid: dto.messageUid,
         sender: resultSender[0],
-        time: dateTime,
+        time: dto.time,
       };
 
       var onlineUsers = new IndexUtils().multipleIndexChat(
@@ -932,9 +960,10 @@ export class ChatGateway
             },
           },
           (ack) => {
-            this.chatPendingMessagesModel.updateOne({ _id: ack }, { $set: { _deliveredSeen:1 } }).then(result => {
-            }).catch(error => {
-            });
+            this.chatPendingMessagesModel
+              .updateOne({ _id: ack }, { $set: { _deliveredSeen: 1 } })
+              .then((result) => {})
+              .catch((error) => {});
           },
         );
       }
@@ -1459,6 +1488,341 @@ export class ChatGateway
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
       throw error;
+    }
+  }
+
+  async sendPendingMessages(
+    client: Socket,
+    lastPendingId: string,
+    userId: string,
+  ) {
+    var arrayPendingAggregationArray = [];
+    arrayPendingAggregationArray.push({ $sort: { _id: 1 } });
+    if (lastPendingId != '') {
+      arrayPendingAggregationArray.push({
+        $match: { _id: { $gt: new mongoose.Types.ObjectId(lastPendingId) } },
+      });
+    }
+    arrayPendingAggregationArray.push({
+      $match: {
+        _userId: new mongoose.Types.ObjectId(userId),
+        _deliveredSeen: 0,
+        _status: 1,
+      },
+    });
+    arrayPendingAggregationArray.push(
+      {
+        $lookup: {
+          from: ModelNames.CHAT_PERSONAL_CHATS,
+          let: { personChatId: '$_personalChatId' },
+          pipeline: [
+            { $match: { $expr: { $eq: ['$_id', '$$personChatId'] } } },
+          ],
+          as: 'personChatIdsDetails',
+        },
+      },
+      {
+        $unwind: {
+          path: '$personChatIdsDetails',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+    );
+    arrayPendingAggregationArray.push(
+      {
+        $lookup: {
+          from: ModelNames.CHAT_PERSONAL_CHAT_MESSAGES,
+          let: { personChatMessageId: '$_personalMessageId' },
+          pipeline: [
+            { $match: { $expr: { $eq: ['$_id', '$$personChatMessageId'] } } },
+          ],
+          as: 'personMessage',
+        },
+      },
+      {
+        $unwind: {
+          path: '$personMessage',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+    );
+
+    arrayPendingAggregationArray.push(
+      {
+        $lookup: {
+          from: ModelNames.USER,
+          let: { userId: '$_createdUserId' },
+          pipeline: [
+            { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+            {
+              $project: {
+                _type: 1,
+                _employeeId: 1,
+                _agentId: 1,
+                _supplierId: 1,
+                _customerId: 1,
+              },
+            },
+            {
+              $lookup: {
+                from: ModelNames.EMPLOYEES,
+                let: { employeeId: '$_employeeId' },
+                pipeline: [
+                  { $match: { $expr: { $eq: ['$_id', '$$employeeId'] } } },
+                  {
+                    $lookup: {
+                      from: ModelNames.GLOBAL_GALLERIES,
+                      let: { globalGalleryId: '$_globalGalleryId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                          },
+                        },
+                      ],
+                      as: 'globalGalleryDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$globalGalleryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                  {
+                    $project: {
+                      _name: 1,
+                      _email: 1,
+                      _mobile: 1,
+                      _uid: 1,
+                      globalGalleryDetails: {
+                        _name: 1,
+                        _docType: 1,
+                        _type: 1,
+                        _uid: 1,
+                        _url: 1,
+                        _thumbUrl: 1,
+                      },
+                    },
+                  },
+                ],
+                as: 'employeeDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$employeeDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $lookup: {
+                from: ModelNames.AGENTS,
+                let: { agentId: '$_agentId' },
+                pipeline: [
+                  { $match: { $expr: { $eq: ['$_id', '$$agentId'] } } },
+                  {
+                    $lookup: {
+                      from: ModelNames.GLOBAL_GALLERIES,
+                      let: { globalGalleryId: '$_globalGalleryId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                          },
+                        },
+                      ],
+                      as: 'globalGalleryDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$globalGalleryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                  {
+                    $project: {
+                      _name: 1,
+                      _email: 1,
+                      _mobile: 1,
+                      _uid: 1,
+                      globalGalleryDetails: {
+                        _name: 1,
+                        _docType: 1,
+                        _type: 1,
+                        _uid: 1,
+                        _url: 1,
+                        _thumbUrl: 1,
+                      },
+                    },
+                  },
+                ],
+                as: 'agentDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$agentDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $lookup: {
+                from: ModelNames.SUPPLIERS,
+                let: { suppliersId: '$_supplierId' },
+                pipeline: [
+                  { $match: { $expr: { $eq: ['$_id', '$$suppliersId'] } } },
+                  {
+                    $lookup: {
+                      from: ModelNames.GLOBAL_GALLERIES,
+                      let: { globalGalleryId: '$_globalGalleryId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                          },
+                        },
+                      ],
+                      as: 'globalGalleryDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$globalGalleryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                  {
+                    $project: {
+                      _name: 1,
+                      _email: 1,
+                      _mobile: 1,
+                      _uid: 1,
+                      globalGalleryDetails: {
+                        _name: 1,
+                        _docType: 1,
+                        _type: 1,
+                        _uid: 1,
+                        _url: 1,
+                        _thumbUrl: 1,
+                      },
+                    },
+                  },
+                ],
+                as: 'supplierDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$supplierDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $lookup: {
+                from: ModelNames.CUSTOMERS,
+                let: { customerId: '$_customerId' },
+                pipeline: [
+                  { $match: { $expr: { $eq: ['$_id', '$$customerId'] } } },
+                  {
+                    $lookup: {
+                      from: ModelNames.GLOBAL_GALLERIES,
+                      let: { globalGalleryId: '$_globalGalleryId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                          },
+                        },
+                      ],
+                      as: 'globalGalleryDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$globalGalleryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                  {
+                    $project: {
+                      _name: 1,
+                      _email: 1,
+                      _mobile: 1,
+                      _uid: 1,
+                      globalGalleryDetails: {
+                        _name: 1,
+                        _docType: 1,
+                        _type: 1,
+                        _uid: 1,
+                        _url: 1,
+                        _thumbUrl: 1,
+                      },
+                    },
+                  },
+                ],
+                as: 'customerDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$customerDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          ],
+          as: 'createdUserDetails',
+        },
+      },
+      {
+        $unwind: {
+          path: '$createdUserDetails',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+    );
+
+    var resultGroupPendingDatas = await this.chatPendingMessagesModel.aggregate(
+      arrayPendingAggregationArray,
+    );
+
+    var arrayJsonDatasPersonalMessageCreated = [];
+    var arrayJsonDatasPersonalMessageCreatedIds = [];
+    resultGroupPendingDatas.map((mapItem) => {
+      if (mapItem._type == 0) {
+        arrayJsonDatasPersonalMessageCreated.push({
+          _personalChatId: mapItem._personalChatId,
+          messageId: mapItem._personalMessageId,
+          value: mapItem.personMessage._value,
+          type: 0,
+          groupUid: mapItem.personChatIdsDetails._groupUid,
+          recipientId: userId,
+          messageUid: mapItem.personMessage._messageUid,
+          sender: mapItem.createdUserDetails,
+          time: mapItem.personMessage._createdTime,
+        });
+        arrayJsonDatasPersonalMessageCreatedIds.push(mapItem._id);
+      }
+    });
+
+    if (arrayJsonDatasPersonalMessageCreated.length != 0) {
+      client.emit(
+        SocketChatEvents.EVENT_PERSONAL_MESSAGE_RECEIVED,
+        'OK',
+        {
+          data: {
+            list: arrayJsonDatasPersonalMessageCreated,
+            isWantToShowNotification: true,
+          },
+        },
+        (ack) => {
+          this.chatPendingMessagesModel.updateMany(
+            { _id: { $in: arrayJsonDatasPersonalMessageCreatedIds } },
+            { $set: { _deliveredSeen: 1 } },
+          );
+        },
+      );
     }
   }
 }
