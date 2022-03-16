@@ -3,6 +3,8 @@ import * as nodemailer from 'nodemailer';
 // export enum GlobalConfig {
 // }
 export const GlobalConfig = () => ({
+
+  RESPONSE_RESTRICT_COUNT:Number(process.env.RESPONSE_RESTRICT_COUNT),
   JWT_SECRET_KEY: String(process.env.JWT_SECRET_KEY),
   THUMB_SIZE: Number(process.env.THUMB_SIZE),
   PORT_CHAT_SOCKET: Number(process.env.PORT_CHAT_SOCKET),
@@ -19,6 +21,8 @@ export const GlobalConfig = () => ({
       rejectUnauthorized: false,
     },
   }),
+  
+  RESPONSE_RESTRICT_RESPONSE:"Response restrict count is High, ",
 });
 
 
