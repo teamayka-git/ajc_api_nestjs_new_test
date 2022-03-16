@@ -270,9 +270,9 @@ export class AgentService {
 
       const responseJSON = { message: 'success', data: result1 };
       if (
-        GlobalConfig().RESPONSE_RESTRICT_COUNT != -1 &&
+        process.env.RESPONSE_RESTRICT == "true" &&
         JSON.stringify(responseJSON).length >=
-          GlobalConfig().RESPONSE_RESTRICT_COUNT
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
         throw new HttpException(
           GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
@@ -288,7 +288,7 @@ export class AgentService {
       await transactionSession.endSession();
       throw error;
     }
-  }
+  } 
 
   async edit(dto: AgentEditDto, _userId_: string, file: Object) {
     var dateTime = new Date().getTime();
@@ -377,9 +377,9 @@ export class AgentService {
 
       const responseJSON = { message: 'success', data: result };
       if (
-        GlobalConfig().RESPONSE_RESTRICT_COUNT != -1 &&
+        process.env.RESPONSE_RESTRICT == "true" &&
         JSON.stringify(responseJSON).length >=
-          GlobalConfig().RESPONSE_RESTRICT_COUNT
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
         throw new HttpException(
           GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
@@ -418,9 +418,9 @@ export class AgentService {
 
       const responseJSON = { message: 'success', data: result };
       if (
-        GlobalConfig().RESPONSE_RESTRICT_COUNT != -1 &&
+        process.env.RESPONSE_RESTRICT == "true" &&
         JSON.stringify(responseJSON).length >=
-          GlobalConfig().RESPONSE_RESTRICT_COUNT
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
         throw new HttpException(
           GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
@@ -597,9 +597,9 @@ export class AgentService {
         data: { list: result, totalCount: totalCount },
       };
       if (
-        GlobalConfig().RESPONSE_RESTRICT_COUNT != -1 &&
+        process.env.RESPONSE_RESTRICT == "true" &&
         JSON.stringify(responseJSON).length >=
-          GlobalConfig().RESPONSE_RESTRICT_COUNT
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
         throw new HttpException(
           GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
@@ -684,9 +684,9 @@ export class AgentService {
         data: { list: result, totalCount: totalCount },
       };
       if (
-        GlobalConfig().RESPONSE_RESTRICT_COUNT != -1 &&
+        process.env.RESPONSE_RESTRICT == "true" &&
         JSON.stringify(responseJSON).length >=
-          GlobalConfig().RESPONSE_RESTRICT_COUNT
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
         throw new HttpException(
           GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
@@ -718,9 +718,9 @@ export class AgentService {
         data: { count: resultCount },
       };
       if (
-        GlobalConfig().RESPONSE_RESTRICT_COUNT != -1 &&
+        process.env.RESPONSE_RESTRICT == "true" &&
         JSON.stringify(responseJSON).length >=
-          GlobalConfig().RESPONSE_RESTRICT_COUNT
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
         throw new HttpException(
           GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
@@ -752,9 +752,9 @@ export class AgentService {
         data: { count: resultCount },
       };
       if (
-        GlobalConfig().RESPONSE_RESTRICT_COUNT != -1 &&
+        process.env.RESPONSE_RESTRICT == "true" &&
         JSON.stringify(responseJSON).length >=
-          GlobalConfig().RESPONSE_RESTRICT_COUNT
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
         throw new HttpException(
           GlobalConfig().RESPONSE_RESTRICT_RESPONSE +

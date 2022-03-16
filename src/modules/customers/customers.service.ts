@@ -12,6 +12,7 @@ import { StringUtils } from 'src/utils/string_utils';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
 import { GlobalGalleryCategories } from 'src/tableModels/globalGallerycategories.model';
 import { CommonNames } from 'src/common/common_names';
+import { GlobalConfig } from 'src/config/global_config';
 const crypto = require('crypto');
 @Injectable()
 export class CustomersService {
@@ -348,27 +349,22 @@ export class CustomersService {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-    
-        await transactionSession.commitTransaction();
-        await transactionSession.endSession();
-        return { message: 'success', data: result1 };
+    const responseJSON = { message: 'success', data: result1 };
+    if (
+      process.env.RESPONSE_RESTRICT == "true" &&
+      JSON.stringify(responseJSON).length >=
+        GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+    ) {
+      throw new HttpException(
+        GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+          JSON.stringify(responseJSON).length,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+    await transactionSession.commitTransaction();
+    await transactionSession.endSession();
+    return responseJSON;
+        
       }catch(error){
         await transactionSession.abortTransaction();
         await transactionSession.endSession();
@@ -534,10 +530,21 @@ await this.globalGalleryCategoriesModel.findOneAndUpdate({_name:oldCustomerName,
 
 
 
-
-        await transactionSession.commitTransaction();
-        await transactionSession.endSession();
-        return { message: 'success', data: result };
+const responseJSON = { message: 'success', data: result };
+if (
+  process.env.RESPONSE_RESTRICT == "true" &&
+  JSON.stringify(responseJSON).length >=
+    GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+) {
+  throw new HttpException(
+    GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+      JSON.stringify(responseJSON).length,
+    HttpStatus.INTERNAL_SERVER_ERROR,
+  );
+}
+await transactionSession.commitTransaction();
+await transactionSession.endSession();
+return responseJSON;
       }catch(error){
         await transactionSession.abortTransaction();
         await transactionSession.endSession();
@@ -1085,12 +1092,27 @@ if (dto.screenType.findIndex((it) => it == 110) != -1) {
         }
       }
   
-      await transactionSession.commitTransaction();
-      await transactionSession.endSession();
-      return {
-        message: 'success',
-        data: { list: result, totalCount: totalCount },
-      };
+    
+
+const responseJSON =  {
+  message: 'success',
+  data: { list: result, totalCount: totalCount },
+};
+if (
+  process.env.RESPONSE_RESTRICT == "true" &&
+  JSON.stringify(responseJSON).length >=
+    GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+) {
+  throw new HttpException(
+    GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+      JSON.stringify(responseJSON).length,
+    HttpStatus.INTERNAL_SERVER_ERROR,
+  );
+}
+await transactionSession.commitTransaction();
+await transactionSession.endSession();
+return responseJSON;
+      
     }catch(error){
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
@@ -1108,12 +1130,26 @@ if (dto.screenType.findIndex((it) => it == 110) != -1) {
         .count({ _email: dto.value,_status:{$in:[1,0]} })
         .session(transactionSession);
   
-      await transactionSession.commitTransaction();
-      await transactionSession.endSession();
-      return {
-        message: 'success',
-        data: { count: resultCount },
-      };
+    
+const responseJSON = {
+  message: 'success',
+  data: { count: resultCount },
+};
+if (
+  process.env.RESPONSE_RESTRICT == "true" &&
+  JSON.stringify(responseJSON).length >=
+    GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+) {
+  throw new HttpException(
+    GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+      JSON.stringify(responseJSON).length,
+    HttpStatus.INTERNAL_SERVER_ERROR,
+  );
+}
+await transactionSession.commitTransaction();
+await transactionSession.endSession();
+return responseJSON;
+      
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
@@ -1131,12 +1167,25 @@ if (dto.screenType.findIndex((it) => it == 110) != -1) {
         .count({ _mobile: dto.value,_status:{$in:[1,0]} })
         .session(transactionSession);
   
-      await transactionSession.commitTransaction();
-      await transactionSession.endSession();
-      return {
-        message: 'success',
-        data: { count: resultCount },
-      };
+   
+const responseJSON = {
+  message: 'success',
+  data: { count: resultCount },
+};
+if (
+  process.env.RESPONSE_RESTRICT == "true" &&
+  JSON.stringify(responseJSON).length >=
+    GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+) {
+  throw new HttpException(
+    GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+      JSON.stringify(responseJSON).length,
+    HttpStatus.INTERNAL_SERVER_ERROR,
+  );
+}
+await transactionSession.commitTransaction();
+await transactionSession.endSession();
+return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
