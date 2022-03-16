@@ -71,7 +71,7 @@ var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole'])
   }
   
   @Put()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+  
   @ApiCreatedResponse({ description: 'files upload on these input feilds => [image]' })
   @UseInterceptors(
     FileFieldsInterceptor(
@@ -92,7 +92,6 @@ var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole'])
     return this.agentService.edit(dto,req["_userId_"],file == null ? {} : JSON.parse(JSON.stringify(file)));
   }
   @Delete()
-  @Roles(GuardUserRole.SUPER_ADMIN)
   status_change(@Body() dto: AgentStatusChangeDto,@Request() req) {
     return this.agentService.status_change(dto,req["_userId_"]);
   }
