@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
+import { GlobalConfig } from 'src/config/global_config';
 import { TransportMasters } from 'src/tableModels/transportMasters.model';
 import { CheckNameExistDto, TransportMastersCreateDto, TransportMastersEditDto, TransportMastersListDto, TransportMastersStatusChangeDto } from './transportMasters.dto';
 
@@ -37,9 +38,22 @@ export class TransportMastersService {
           session: transactionSession,
         });
     
+      
+        const responseJSON =   { message: 'success', data: { list: result1 } };
+        if (
+          process.env.RESPONSE_RESTRICT == "true" &&
+          JSON.stringify(responseJSON).length >=
+            GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+        ) {
+          throw new HttpException(
+            GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+              JSON.stringify(responseJSON).length,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
-        return { message: 'success', data: { list: result1 } };
+        return responseJSON;
       }catch(error){
         await transactionSession.abortTransaction();
         await transactionSession.endSession();
@@ -68,9 +82,22 @@ export class TransportMastersService {
           { new: true, session:transactionSession },
         );
     
+       
+        const responseJSON =   { message: 'success', data: result };
+        if (
+          process.env.RESPONSE_RESTRICT == "true" &&
+          JSON.stringify(responseJSON).length >=
+            GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+        ) {
+          throw new HttpException(
+            GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+              JSON.stringify(responseJSON).length,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
-        return { message: 'success', data: result };
+        return responseJSON;
       }catch(error){
         await transactionSession.abortTransaction();
         await transactionSession.endSession();
@@ -97,9 +124,22 @@ export class TransportMastersService {
           { new: true,session: transactionSession },
         );
     
+      
+        const responseJSON =   { message: 'success', data: result };
+        if (
+          process.env.RESPONSE_RESTRICT == "true" &&
+          JSON.stringify(responseJSON).length >=
+            GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+        ) {
+          throw new HttpException(
+            GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+              JSON.stringify(responseJSON).length,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
         await transactionSession.commitTransaction();
         await transactionSession.endSession();
-        return { message: 'success', data: result };
+        return responseJSON;
       }catch(error){
         await transactionSession.abortTransaction();
         await transactionSession.endSession();
@@ -179,12 +219,25 @@ export class TransportMastersService {
           }
         }
     
-        await transactionSession.commitTransaction();
-        await transactionSession.endSession();
-        return {
+       
+        const responseJSON =   {
           message: 'success',
           data: { list: result, totalCount: totalCount },
         };
+        if (
+          process.env.RESPONSE_RESTRICT == "true" &&
+          JSON.stringify(responseJSON).length >=
+            GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+        ) {
+          throw new HttpException(
+            GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+              JSON.stringify(responseJSON).length,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+        await transactionSession.commitTransaction();
+        await transactionSession.endSession();
+        return responseJSON;
       }catch(error){
         await transactionSession.abortTransaction();
         await transactionSession.endSession();
@@ -201,12 +254,25 @@ export class TransportMastersService {
           .count({ _name: dto.value,_status:{$in:[1,0]} })
           .session(transactionSession);
     
-        await transactionSession.commitTransaction();
-        await transactionSession.endSession();
-        return {
-          message: 'success',
-          data: { count: resultCount },
-        };
+        
+          const responseJSON =   {
+            message: 'success',
+            data: { count: resultCount },
+          };
+          if (
+            process.env.RESPONSE_RESTRICT == "true" &&
+            JSON.stringify(responseJSON).length >=
+              GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+          ) {
+            throw new HttpException(
+              GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+                JSON.stringify(responseJSON).length,
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
+          await transactionSession.commitTransaction();
+          await transactionSession.endSession();
+          return responseJSON;
       } catch (error) {
         await transactionSession.abortTransaction();
         await transactionSession.endSession();

@@ -23,6 +23,7 @@ import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { Employee } from 'src/tableModels/employee.model';
 import { Departments } from 'src/tableModels/departments.model';
 import { ProcessMaster } from 'src/tableModels/processMaster.model';
+import { GlobalConfig } from 'src/config/global_config';
 
 @Injectable()
 export class OrderSalesService {
@@ -221,9 +222,22 @@ export class OrderSalesService {
       var result1 = await newsettingsModel.save({
         session: transactionSession,
       });
+     
+      const responseJSON =     { message: 'success', data: result1 };
+      if (
+        process.env.RESPONSE_RESTRICT == "true" &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
-      return { message: 'success', data: result1 };
+      return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
@@ -365,9 +379,22 @@ export class OrderSalesService {
           { new: true, session: transactionSession },
         );
       }
+      
+      const responseJSON =    { message: 'success', data: result };
+      if (
+        process.env.RESPONSE_RESTRICT == "true" &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
-      return { message: 'success', data: result };
+      return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
@@ -394,9 +421,22 @@ export class OrderSalesService {
         { new: true, session: transactionSession },
       );
 
+      
+      const responseJSON =    { message: 'success', data: result };
+      if (
+        process.env.RESPONSE_RESTRICT == "true" &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
-      return { message: 'success', data: result };
+      return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
@@ -447,9 +487,22 @@ export class OrderSalesService {
         session: transactionSession,
       });
 
+     
+      const responseJSON =    { message: 'success', data: result };
+      if (
+        process.env.RESPONSE_RESTRICT == "true" &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
-      return { message: 'success', data: result };
+      return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
@@ -1292,12 +1345,25 @@ export class OrderSalesService {
         }
       }
 
-      await transactionSession.commitTransaction();
-      await transactionSession.endSession();
-      return {
+     
+      const responseJSON =    {
         message: 'success',
         data: { list: result, totalCount: totalCount, workers: resultWorkets,processMasters:resultProcessMasters },
       };
+      if (
+        process.env.RESPONSE_RESTRICT == "true" &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
