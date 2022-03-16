@@ -21,7 +21,7 @@ export const GlobalConfig = () => ({
     },
   }),
   
-  RESPONSE_RESTRICT_DEFAULT_COUNT:10000,
+  RESPONSE_RESTRICT_DEFAULT_COUNT:1000,
   RESPONSE_RESTRICT_RESPONSE:"Response restrict count exceeded, ",
 });
 
