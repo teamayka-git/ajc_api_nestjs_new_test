@@ -932,6 +932,10 @@ export class ChatGateway
         },
       ]);
 
+
+console.log("_____d1");
+
+
       var jsonString = {
         _personalChatId: personalChatId,
         messageId: resultChatpersonalMessage._id,
@@ -943,7 +947,7 @@ export class ChatGateway
         sender: resultSender[0],
         time: dto.time,
       };
-
+      console.log("_____d1 jsonString "+JSON.stringify(jsonString));
       var onlineUsers = new IndexUtils().multipleIndexChat(
         this.connectedUsers,
         dto.recipientId,
