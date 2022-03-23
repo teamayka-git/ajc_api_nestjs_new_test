@@ -674,6 +674,7 @@ console.log("___j1  dto "+JSON.stringify(dto));
 
       //finding personal chat id
 
+      console.log("___j5");
       var resultGroupUid = await this.chatPersonalChatsModel.find({
         _groupUid: dto.groupUid,
         _status: 1,
@@ -691,6 +692,7 @@ console.log("___j1  dto "+JSON.stringify(dto));
         personalChatId = resultChat._id;
       }
 
+      console.log("___j6");
       const personalMessage = new this.chatPersonalChatMessagesModel({
         _personalChatId: personalChatId,
         _senderId: _userId_,
@@ -704,6 +706,7 @@ console.log("___j1  dto "+JSON.stringify(dto));
         session: transactionSession,
       });
 
+      console.log("___j7");
       const personalPendingMessage = new this.chatPendingMessagesModel({
         _userId: dto.recipientId,
         _createdUserId: _userId_,
@@ -717,6 +720,7 @@ console.log("___j1  dto "+JSON.stringify(dto));
         session: transactionSession,
       });
 
+      console.log("___j8");
       var resultSender = await this.userModel.aggregate([
         { $match: { _id: new mongoose.Types.ObjectId(_userId_) } },
         {
@@ -939,7 +943,7 @@ console.log("___j1  dto "+JSON.stringify(dto));
       ]);
 
 
-console.log("_____d1");
+      console.log("___j9");
 
 
       var jsonString = {
@@ -980,6 +984,7 @@ console.log("_____d1");
         );
       }
 
+      console.log("___j10");
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return { message: 'success', data: jsonString };
