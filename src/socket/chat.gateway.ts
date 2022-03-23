@@ -635,7 +635,13 @@ export class ChatGateway
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+
+console.log("___j1  dto "+JSON.stringify(dto));
+
+
       if (file.hasOwnProperty('document')) {
+        console.log("___j2");
         if (dto.type == 1) {
           var filePath =
             __dirname +
@@ -649,7 +655,7 @@ export class ChatGateway
               ),
           );
         }
-
+        console.log("___j3");
         dto.value['fileUrl'] = `${
           process.env.SSL == 'true' ? 'https' : 'http'
         }://${process.env.SERVER_DOMAIN}:${process.env.PORT}${
@@ -663,7 +669,7 @@ export class ChatGateway
           }`,
         );
       }
-
+      console.log("___j4");
       var personalChatId = '';
 
       //finding personal chat id
