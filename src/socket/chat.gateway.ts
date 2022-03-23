@@ -679,9 +679,15 @@ console.log("___j1  dto "+JSON.stringify(dto));
         _groupUid: dto.groupUid,
         _status: 1,
       });
+      console.log("___j5.0");
       if (resultGroupUid.length != 0) {
+        
+      console.log("___j5.1");
         personalChatId = resultGroupUid[0]._id;
+
+        console.log("___j5.2");
       } else {
+        console.log("___j5.3");
         const personalChat = new this.chatPersonalChatsModel({
           _personalIdOne: _userId_,
           _personalIdTwo: dto.recipientId,
@@ -689,8 +695,12 @@ console.log("___j1  dto "+JSON.stringify(dto));
           _status: 1,
         });
         var resultChat = await personalChat.save();
-        personalChatId = resultChat._id;
-      }
+
+        console.log("___j.4");
+                personalChatId = resultChat._id;
+      
+                console.log("___j5.5");
+              }
 
       console.log("___j6");
       const personalMessage = new this.chatPersonalChatMessagesModel({
