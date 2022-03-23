@@ -643,9 +643,11 @@ console.log("___j1  dto "+JSON.stringify(dto));
       if (file.hasOwnProperty('document')) {
         console.log("___j2");
         if (dto.type == 1) {
+
+          
           var filePath =
             __dirname +
-            `/../../../public${file['document'][0]['path'].split('public')[1]}`;
+            `/../../public${file['document'][0]['path'].split('public')[1]}`;
 console.log("___filePath   "+filePath);
           new ThumbnailUtils().generateThumbnail(
             filePath,
