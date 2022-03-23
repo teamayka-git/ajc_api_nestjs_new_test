@@ -681,7 +681,7 @@ console.log("___filePath   "+filePath);
       //finding personal chat id
 
       console.log("___j5");
-    /*  var resultGroupUid = await this.chatPersonalChatsModel.find({
+      var resultGroupUid = await this.chatPersonalChatsModel.find({
         _groupUid: dto.groupUid,
         _status: 1,
       });
@@ -998,7 +998,7 @@ console.log("___filePath   "+filePath);
               .catch((error) => {});
           },
         );
-      }*/
+      }
 
       console.log("___j10");
       await transactionSession.commitTransaction();
