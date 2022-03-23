@@ -646,7 +646,7 @@ console.log("___j1  dto "+JSON.stringify(dto));
           var filePath =
             __dirname +
             `/../../../public${file['document'][0]['path'].split('public')[1]}`;
-
+console.log("___filePath   "+filePath);
           new ThumbnailUtils().generateThumbnail(
             filePath,
             UploadedFileDirectoryPath.CHAT_DOCUMENTS +
