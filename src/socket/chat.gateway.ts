@@ -936,7 +936,7 @@ export class ChatGateway
         _personalChatId: personalChatId,
         messageId: resultChatpersonalMessage._id,
         value: dto.value,
-        type: 0,
+        type: dto.type,
         groupUid: dto.groupUid,
         recipientId: dto.recipientId,
         messageUid: dto.messageUid,

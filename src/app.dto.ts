@@ -26,7 +26,7 @@ export class MeDto {
 export class ChatDocumentCreateDto {
   @Transform(({ value }) => Number(value))
   @IsNumber()
-  @ApiProperty({description:descriptionType})
+  @ApiProperty({})
   time: number;
   
   @IsString()
