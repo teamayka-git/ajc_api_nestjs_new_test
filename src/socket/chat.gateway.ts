@@ -661,6 +661,8 @@ console.log("___j1  dto "+JSON.stringify(dto));
         }://${process.env.SERVER_DOMAIN}:${process.env.PORT}${
           file['document'][0]['path'].split('public')[1]
         }`;
+        
+        console.log("___j3.1");
         dto.value['fileUrlThumb'] = new StringUtils().makeThumbImageFileName(
           `${process.env.SSL == 'true' ? 'https' : 'http'}://${
             process.env.SERVER_DOMAIN
@@ -668,6 +670,8 @@ console.log("___j1  dto "+JSON.stringify(dto));
             file['document'][0]['path'].split('public')[1]
           }`,
         );
+        
+        console.log("___j3.2");
       }
       console.log("___j4");
       var personalChatId = '';
