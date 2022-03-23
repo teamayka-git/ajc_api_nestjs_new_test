@@ -679,7 +679,7 @@ console.log("___j1  dto "+JSON.stringify(dto));
       //finding personal chat id
 
       console.log("___j5");
-      var resultGroupUid = await this.chatPersonalChatsModel.find({
+    /*  var resultGroupUid = await this.chatPersonalChatsModel.find({
         _groupUid: dto.groupUid,
         _status: 1,
       });
@@ -996,12 +996,12 @@ console.log("___j1  dto "+JSON.stringify(dto));
               .catch((error) => {});
           },
         );
-      }
+      }*/
 
       console.log("___j10");
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
-      return { message: 'success', data: jsonString };
+      return { message: 'success', data: "jsonString" };
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
