@@ -1003,7 +1003,7 @@ console.log("___filePath   "+filePath);
       console.log("___j10");
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
-      return { message: 'success', data: "jsonString" };
+      return { message: 'success', data: jsonString };
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
