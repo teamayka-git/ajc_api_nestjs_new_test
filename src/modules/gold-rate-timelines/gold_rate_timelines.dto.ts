@@ -19,9 +19,9 @@ const descriptionListScreenTypeForList="0-total documents count, 1-populate user
 
 
 export class GoldRateTimelinesCreateDto {
-  @IsString()
+  @IsNumber()
   @ApiProperty({})
-  rate: string;
+  rate: number;
 
   
 
