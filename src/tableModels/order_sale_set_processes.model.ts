@@ -29,7 +29,7 @@ export const OrderSaleSetProcessesSchema = new mongoose.Schema({
 export interface OrderSaleSetProcesses {
   _id: String;
   _orderSaleId:String;
-  _userId: String;
+  _userId: String; 
   _orderStatus:number;
   _description:string;
   _processId:String;

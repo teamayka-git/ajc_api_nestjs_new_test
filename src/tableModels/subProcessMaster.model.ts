@@ -8,7 +8,7 @@ export const SubProcessMasterSchema = new mongoose.Schema({
     _name: { type: String, required: true, default: "nil" },
     _code:  { type: Number, required: true, default: -1 },
     _maxHours:{ type: Number, required: true, default: -1 },
-    _processMasterId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
+    _processMasterId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.PROCESS_MASTER, default: null },
     _isAutomatic:{ type: Number, required: true, default: -1 },
     _priority: { type: Number, required: true, default: -1 },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },

@@ -11,6 +11,7 @@ import {
   OrderSalesCreateDto,
   OrderSalesEditDto,
   OrderSalesWorkStatusChangeDto,
+  SetProcessAssignedOrderSaleListDto,
 } from './order_sales.dto';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { Counters } from 'src/tableModels/counters.model';
@@ -24,6 +25,7 @@ import { Employee } from 'src/tableModels/employee.model';
 import { Departments } from 'src/tableModels/departments.model';
 import { ProcessMaster } from 'src/tableModels/processMaster.model';
 import { GlobalConfig } from 'src/config/global_config';
+import { OrderSaleSetProcesses } from 'src/tableModels/order_sale_set_processes.model';
 
 @Injectable()
 export class OrderSalesService {
@@ -48,6 +50,8 @@ export class OrderSalesService {
     private readonly userModel: mongoose.Model<User>,
     @InjectModel(ModelNames.PROCESS_MASTER)
     private readonly processMasterModel: mongoose.Model<ProcessMaster>,
+    @InjectModel(ModelNames.ORDER_SALE_SET_PROCESSES)
+    private readonly orderSaleSetProcessModel: mongoose.Model<OrderSaleSetProcesses>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
@@ -60,7 +64,7 @@ export class OrderSalesService {
 
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
-    
+
       if (file.hasOwnProperty('documents')) {
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
@@ -71,7 +75,7 @@ export class OrderSalesService {
           },
           { new: true, session: transactionSession },
         );
-       
+
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
             (it) => dto.arrayDocuments[i].fileOriginalName == it.originalname,
@@ -79,7 +83,6 @@ export class OrderSalesService {
 
           if (count != -1) {
             if (dto.arrayDocuments[i].docType == 0) {
-             
               var filePath =
                 __dirname +
                 `/../../../public${
@@ -96,7 +99,7 @@ export class OrderSalesService {
             }
           }
         }
-        
+
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
             (it) => it.originalname == dto.arrayDocuments[i].fileOriginalName,
@@ -146,7 +149,6 @@ export class OrderSalesService {
           }
         }
 
-
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
         });
@@ -195,7 +197,6 @@ export class OrderSalesService {
         );
       }
 
-
       const newsettingsModel = new this.orderSaleModel({
         _id: orderSaleId,
         _customerId: customerUserId,
@@ -222,10 +223,10 @@ export class OrderSalesService {
       var result1 = await newsettingsModel.save({
         session: transactionSession,
       });
-     
-      const responseJSON =     { message: 'success', data: result1 };
+
+      const responseJSON = { message: 'success', data: result1 };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -253,7 +254,7 @@ export class OrderSalesService {
     try {
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
-     
+
       if (file.hasOwnProperty('documents')) {
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
@@ -379,10 +380,10 @@ export class OrderSalesService {
           { new: true, session: transactionSession },
         );
       }
-      
-      const responseJSON =    { message: 'success', data: result };
+
+      const responseJSON = { message: 'success', data: result };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -421,10 +422,9 @@ export class OrderSalesService {
         { new: true, session: transactionSession },
       );
 
-      
-      const responseJSON =    { message: 'success', data: result };
+      const responseJSON = { message: 'success', data: result };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -487,10 +487,9 @@ export class OrderSalesService {
         session: transactionSession,
       });
 
-     
-      const responseJSON =    { message: 'success', data: result };
+      const responseJSON = { message: 'success', data: result };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -1236,7 +1235,7 @@ export class OrderSalesService {
       }
 
       var resultWorkets = [];
-      var resultProcessMasters=[];
+      var resultProcessMasters = [];
 
       if (dto.screenType.findIndex((it) => it == 105) != -1) {
         var resultDepartment = await this.departmentModel.find({
@@ -1262,13 +1261,13 @@ export class OrderSalesService {
 
           {
             $project: {
-              _id:1,
+              _id: 1,
               _name: 1,
               _email: 1,
               _mobile: 1,
               _uid: 1,
               _globalGalleryId: 1,
-              _processMasterId:1
+              _processMasterId: 1,
             },
           },
           {
@@ -1300,7 +1299,7 @@ export class OrderSalesService {
                 },
               ],
               as: 'userDetails',
-            }
+            },
           },
           {
             $unwind: {
@@ -1308,10 +1307,11 @@ export class OrderSalesService {
               preserveNullAndEmptyArrays: true,
             },
           },
-
         ]);
 
-        resultProcessMasters=await this.processMasterModel.find({_status:1});
+        resultProcessMasters = await this.processMasterModel.find({
+          _status: 1,
+        });
       }
 
       var result = await this.orderSaleModel
@@ -1345,13 +1345,224 @@ export class OrderSalesService {
         }
       }
 
-     
-      const responseJSON =    {
+      const responseJSON = {
         message: 'success',
-        data: { list: result, totalCount: totalCount, workers: resultWorkets,processMasters:resultProcessMasters },
+        data: {
+          list: result,
+          totalCount: totalCount,
+          workers: resultWorkets,
+          processMasters: resultProcessMasters,
+        },
       };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async set_proccess_assigned_order_sale_list(
+    dto: SetProcessAssignedOrderSaleListDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var arrayAggregation = [];
+      var arrayUserIds = [];
+
+      arrayAggregation.push({
+        $match: {
+          _status: 1,
+        },
+      });
+
+
+
+      if (dto.idsArray.length > 0) {
+        var newSettingsId = [];
+        dto.idsArray.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
+      }
+
+
+
+
+      if (dto.employeesArray.length > 0) {
+        dto.employeesArray.map((mapItem) => {
+          arrayUserIds.push(new mongoose.Types.ObjectId(mapItem));
+        });
+      }
+
+      if (dto.screenType.findIndex((it) => it == 500) != -1) {
+        arrayUserIds.push(new mongoose.Types.ObjectId(_userId_));
+      }
+      if (arrayUserIds.length > 0) {
+        arrayAggregation.push({ $match: { _userId: { $in: arrayUserIds } } });
+      }
+      if (dto.workStatusArray.length > 0) {
+        arrayAggregation.push({
+          $match: { _orderStatus: { $in: dto.workStatusArray } },
+        });
+      }
+      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.PROCESS_MASTER,
+            let: { processId: '$_processId' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_id', '$$processId'] },
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.SUB_PROCESS_MASTER,
+                  let: { processId: '$_id' },
+                  pipeline: [
+                    {
+                      $match: {
+                        _status: 1,
+                        $expr: { $eq: ['$_processMasterId', '$$processId'] },
+                      },
+                    },
+                  ],
+                  as: 'subProcessDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$subProcessDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            ],
+            as: 'orderSaleDocumentList',
+          },
+        });
+      }
+
+      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES,
+              let: { orderSaleId: '$_orderSaleId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$orderSaleId'] } } },
+                {
+                  $lookup: {
+                    from: ModelNames.ORDER_SALES_DOCUMENTS,
+                    let: { orderSaleIdId: '$_id' },
+                    pipeline: [
+                      {
+                        $match: {
+                          _status: 1,
+                          $expr: { $eq: ['$_orderSaleId', '$$orderSaleIdId'] },
+                        },
+                      },
+                      {
+                        $project: {
+                          _orderSaleId: 1,
+                          _globalGalleryId: 1,
+                        },
+                      },
+                      {
+                        $lookup: {
+                          from: ModelNames.GLOBAL_GALLERIES,
+                          let: { globalGalleryId: '$_globalGalleryId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                              },
+                            },
+                          ],
+                          as: 'globalGalleryDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$globalGalleryDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    ],
+                    as: 'orderSaleDocumentList',
+                  },
+                },
+              ],
+              as: 'orderSaleDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderSaleDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      var result = await this.orderSaleSetProcessModel
+        .aggregate(arrayAggregation)
+        .session(transactionSession);
+
+      var totalCount = 0;
+      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+        //Get total count
+        var limitIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$limit') === true,
+        );
+        if (limitIndexCount != -1) {
+          arrayAggregation.splice(limitIndexCount, 1);
+        }
+        var skipIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$skip') === true,
+        );
+        if (skipIndexCount != -1) {
+          arrayAggregation.splice(skipIndexCount, 1);
+        }
+        arrayAggregation.push({
+          $group: { _id: null, totalCount: { $sum: 1 } },
+        });
+
+        var resultTotalCount = await this.orderSaleSetProcessModel
+          .aggregate(arrayAggregation)
+          .session(transactionSession);
+        if (resultTotalCount.length > 0) {
+          totalCount = resultTotalCount[0].totalCount;
+        }
+      }
+
+      const responseJSON = {
+        message: 'success',
+        data: {
+          list: result,
+          totalCount: totalCount,
+        },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {

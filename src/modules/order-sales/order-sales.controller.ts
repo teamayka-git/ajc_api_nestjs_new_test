@@ -5,7 +5,7 @@ import { Roles } from 'src/Auth/roles.decorator';
 import { OrderSalesService } from './order-sales.service';
 import { diskStorage } from 'multer';
 import { FileMulterHelper } from 'src/shared/file_multter_helper';
-import { OrderSaleListDto, OrderSalesChangeDto, OrderSalesCreateDto, OrderSalesEditDto, OrderSalesWorkStatusChangeDto } from './order_sales.dto';
+import { OrderSaleListDto, OrderSalesChangeDto, OrderSalesCreateDto, OrderSalesEditDto, OrderSalesWorkStatusChangeDto, SetProcessAssignedOrderSaleListDto } from './order_sales.dto';
 
 
 
@@ -71,5 +71,9 @@ export class OrderSalesController {
     return this.orderSalesService.list(dto);
   }
 
+  @Post("set_proccess_assigned_order_sale_list")
+  set_proccess_assigned_order_sale_list(@Body() dto:SetProcessAssignedOrderSaleListDto,@Request() req) {
+    return this.orderSalesService.set_proccess_assigned_order_sale_list(dto,req["_userId_"]);
+  }
 
 }

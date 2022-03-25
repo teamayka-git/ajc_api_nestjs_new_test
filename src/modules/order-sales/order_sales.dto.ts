@@ -32,7 +32,9 @@ const descriptionFileOriginalName =
   "file name givent while uploading, if there is no image then give 'nil; here";
 
 const descriptionWorkStatus="0-pending, 1-accepted, 2-rejected";
+const descriptionListScreenTypeForSetProcessOrdersaleList ='0-total count,100-order details,101-process and sub process details  500-order list assigned by me';
 
+const DescriptionOrderSaleProcessOrderStatus="0-Pending, 1-Assigned, 2-On Working, 3-Completed, 4-Hold, Request To Assign";
 
 class orderSaleCreateList {
   @IsString()
@@ -277,5 +279,31 @@ export class OrderSalesWorkStatusChangeDto {
   @ApiProperty({  })
   rootCauseId: string;
 
+
+}
+export class SetProcessAssignedOrderSaleListDto {
+
+
+  
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionListScreenTypeForSetProcessOrdersaleList,
+  })
+  screenType: number[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  employeesArray: string[];
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  idsArray: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [Number],description:DescriptionOrderSaleProcessOrderStatus })
+  workStatusArray: number[];
+
+  
+  
 
 }

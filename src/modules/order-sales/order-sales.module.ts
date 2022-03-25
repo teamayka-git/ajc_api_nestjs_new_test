@@ -13,6 +13,7 @@ import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.m
 import { EmployeeSchema } from 'src/tableModels/employee.model';
 import { DepartmentsSchema } from 'src/tableModels/departments.model';
 import { ProcessMasterSchema } from 'src/tableModels/processMaster.model';
+import { OrderSaleSetProcessesSchema } from 'src/tableModels/order_sale_set_processes.model';
 
 @Module({
   imports:[MongooseModule.forFeature([
@@ -24,7 +25,12 @@ import { ProcessMasterSchema } from 'src/tableModels/processMaster.model';
     {name:ModelNames.PROCESS_MASTER,schema:ProcessMasterSchema},
     {name:ModelNames.CUSTOMERS,schema:CustomersSchema},
     {name:ModelNames.ORDER_SALE_HISTORIES,schema:OrderSaleHistoriesSchema},
-    { name: ModelNames.ORDER_SALES_DOCUMENTS, schema: OrderSalesDocumentsSchema },])],
+    { name: ModelNames.ORDER_SALES_DOCUMENTS, schema: OrderSalesDocumentsSchema },
+  
+    {name:ModelNames.ORDER_SALE_SET_PROCESSES,schema:OrderSaleSetProcessesSchema},
+  
+  
+  ])],
   controllers: [OrderSalesController],
   providers: [OrderSalesService]
 })
