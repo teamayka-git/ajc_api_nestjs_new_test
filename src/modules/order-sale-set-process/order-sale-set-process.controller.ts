@@ -28,7 +28,7 @@ export class OrderSaleSetProcessController {
     return this.orderSaleSetProcessService.changeProcessOrderStatus(dto,req["_userId_"]);
   }
   
-  @Post()
+  @Post("changeSubProcessOrderStatus")
   changeSubProcessOrderStatus(@Body() dto: ChangeSubProcessOrderStatusDto,@Request() req) {
     return this.orderSaleSetProcessService.changeSubProcessOrderStatus(dto,req["_userId_"]);
   }
