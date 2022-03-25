@@ -17,7 +17,6 @@ export class OrderSaleSetProcessController {
  
 
   @Post("create")
-  @Roles(GuardUserRole.SUPER_ADMIN)
   create(@Body() dto: SetProcessCreateDto,@Request() req) {
     return this.orderSaleSetProcessService.create(dto,req["_userId_"]);
   }
@@ -25,7 +24,6 @@ export class OrderSaleSetProcessController {
 
   
   @Post("changeProcessOrderStatus")
-  @Roles(GuardUserRole.SUPER_ADMIN)
   changeProcessOrderStatus(@Body() dto: ChangeProcessOrderStatusDto,@Request() req) {
     return this.orderSaleSetProcessService.changeProcessOrderStatus(dto,req["_userId_"]);
   }
