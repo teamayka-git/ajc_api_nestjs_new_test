@@ -1510,6 +1510,22 @@ export class OrderSalesService {
                     as: 'orderSaleDocumentList',
                   },
                 },
+                {
+                  $lookup: {
+                    from: ModelNames.SUB_CATEGORIES,
+                    let: { subCategoryId: '$_subCategoryId' },
+                    pipeline: [
+                      { $match: { $expr: { $eq: ['$_id', '$$subCategoryId'] } } },
+                    ],
+                    as: 'subCategoryDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$subCategoryDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                }
               ],
               as: 'orderSaleDetails',
             },
