@@ -1444,15 +1444,9 @@ export class OrderSalesService {
                         _status: 1,
                         $expr: { $eq: ['$_processMasterId', '$$processId'] },
                       },
-                    },
+                    },{$sort:{ _priority:1}}
                   ],
-                  as: 'subProcessDetails',
-                },
-              },
-              {
-                $unwind: {
-                  path: '$subProcessDetails',
-                  preserveNullAndEmptyArrays: true,
+                  as: 'subProcessList',
                 },
               },
             ],
