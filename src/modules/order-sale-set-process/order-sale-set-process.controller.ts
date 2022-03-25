@@ -31,7 +31,6 @@ export class OrderSaleSetProcessController {
   }
   
   @Post()
-  @Roles(GuardUserRole.SUPER_ADMIN)
   changeSubProcessOrderStatus(@Body() dto: ChangeSubProcessOrderStatusDto,@Request() req) {
     return this.orderSaleSetProcessService.changeSubProcessOrderStatus(dto,req["_userId_"]);
   }
