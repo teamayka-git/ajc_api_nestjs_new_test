@@ -24,7 +24,7 @@ export const OrderSaleSetSubProcessesSchema = new mongoose.Schema({
   
   _description: { type: String, default: "" },
   _status: { type: Number, required: true, default: -1 },
-});
+}); 
 
 export interface OrderSaleSetSubProcesses {
   _id: String;

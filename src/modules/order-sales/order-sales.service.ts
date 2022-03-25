@@ -1425,40 +1425,40 @@ export class OrderSalesService {
       if (dto.screenType.findIndex((it) => it == 101) != -1) {
         arrayAggregation.push({
           $lookup: {
-            from: ModelNames.PROCESS_MASTER,
-            let: { processId: '$_processId' },
+            from: ModelNames.ORDER_SALE_SET_SUB_PROCESSES,
+            let: { orderSaleSetProcessId: '$_id' },
             pipeline: [
               {
                 $match: {
                   _status: 1,
-                  $expr: { $eq: ['$_id', '$$processId'] },
+                  $expr: { $eq: ['$_orderSaleSetProcessId', '$$orderSaleSetProcessId'] },
                 },
               },
               {
                 $lookup: {
                   from: ModelNames.SUB_PROCESS_MASTER,
-                  let: { processId: '$_id' },
+                  let: { subProcessId: '$_subProcessId' },
                   pipeline: [
                     {
                       $match: {
                         _status: 1,
-                        $expr: { $eq: ['$_processMasterId', '$$processId'] },
+                        $expr: { $eq: ['$_id', '$$subProcessId'] },
                       },
-                    },{$sort:{ _priority:1}}
+                    }
                   ],
-                  as: 'subProcessList',
+                  as: 'subProcessDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$subProcessDetails',
+                  preserveNullAndEmptyArrays: true,
                 },
               },
             ],
-            as: 'processMasterDetails',
+            as: 'subProcessMasterLinkings',
           },
-        },
-        {
-          $unwind: {
-            path: '$processMasterDetails',
-            preserveNullAndEmptyArrays: true,
-          },
-        },);
+        });
       }
 
       if (dto.screenType.findIndex((it) => it == 100) != -1) {
