@@ -1452,7 +1452,13 @@ export class OrderSalesService {
             ],
             as: 'processMasterDetails',
           },
-        });
+        },
+        {
+          $unwind: {
+            path: '$processMasterDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },);
       }
 
       if (dto.screenType.findIndex((it) => it == 100) != -1) {
