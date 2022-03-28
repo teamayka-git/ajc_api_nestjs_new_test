@@ -162,6 +162,29 @@ export class ProcessMasterService {
         { new: true, session: transactionSession },
       );
 
+for(var i=0;i<dto.arraySubProcessMasterEditList.length;i++){
+  await this.subProcessMasterModel.findOneAndUpdate(
+    {
+      _id:  dto.arraySubProcessMasterEditList[i].subProcessEditId ,
+    },
+    {
+      $set: {
+        _name: dto.arraySubProcessMasterEditList[i].name,
+          _code: dto.arraySubProcessMasterEditList[i].code,
+          _isAutomatic: dto.arraySubProcessMasterEditList[i].isAutomatic,
+          _maxHours: dto.arraySubProcessMasterEditList[i].maxHours,
+          _processMasterId: dto.processMasterId,
+          _priority: dto.arraySubProcessMasterEditList[i].priority,
+      },
+    },
+    { new: true, session: transactionSession },
+  );
+}
+
+
+
+
+
 
      
       const responseJSON =   { message: 'success', data: result };

@@ -49,6 +49,36 @@ class SubProcessMasterCreateList {
 
 
 }
+class SubProcessMasterEditList {
+
+  @IsString()
+  @ApiProperty({})
+  subProcessEditId: string;
+
+  @IsString()
+  @ApiProperty({})
+  name: string;
+
+  
+  @IsNumber()
+  @ApiProperty({})
+  code: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  isAutomatic: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  maxHours: number;
+
+  
+  @IsNumber()
+  @ApiProperty({})
+  priority: number;
+
+
+}
 class ProcessMasterCreateList {
 
   @IsString()
@@ -150,6 +180,12 @@ export class ProcessMasterEditDto {
   @ValidateNested({ each: true })
   @Type(() => SubProcessMasterCreateList)
   arraySubProcessMastersAdd: SubProcessMasterCreateList[];
+
+  @IsArray()
+  @ApiProperty({type:[SubProcessMasterEditList]})
+  @ValidateNested({ each: true })
+  @Type(() => SubProcessMasterEditList)
+  arraySubProcessMasterEditList: SubProcessMasterEditList[];
 
   
   

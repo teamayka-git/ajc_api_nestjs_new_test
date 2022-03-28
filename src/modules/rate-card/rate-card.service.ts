@@ -297,7 +297,7 @@ try{
 
 
 
-
+        SUB_CATEGORIES
         if (dto.screenType.findIndex((it) => it == 100) != -1) {
           arrayAggregation.push(
             {
@@ -308,6 +308,27 @@ try{
                   {
                     $match: { $expr: { $eq: ['$_rateCardId', '$$rateCardId'] } },
                   },
+
+                  {
+                    $lookup: {
+                      from: ModelNames.SUB_CATEGORIES,
+                      let: { subCategoryId: '$_subCategoryId' },
+                      pipeline: [
+                        {
+                          $match: { $expr: { $eq: ['$_id', '$$subCategoryId'] } },
+                        },
+                      ],
+                      as: 'subCategoryDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$subCategoryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+
+
                 ],
                 as: 'rateCardPercentageList',
               },
