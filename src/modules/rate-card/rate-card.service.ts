@@ -297,7 +297,7 @@ try{
 
 
 
-        SUB_CATEGORIES
+        
         if (dto.screenType.findIndex((it) => it == 100) != -1) {
           arrayAggregation.push(
             {
