@@ -1031,7 +1031,7 @@ console.log("___filePath   "+filePath);
             from: ModelNames.USER,
             let: { userId: '$_personalIdOne' },
             pipeline: [
-              { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+              { $match: { $expr:{$and:[{ $eq: ['$_id', '$$userId'] },{ $ne: ['$_id', _userId_] }] }  } },
               {
                 $project: {
                   _type: 1,
@@ -1250,18 +1250,19 @@ console.log("___filePath   "+filePath);
                 },
               },
             ],
-            as: 'userDetailsPersonOne',
+            as: 'userDetails',
           },
         },
         {
-          $unwind: { path: '$userDetailsPersonOne', preserveNullAndEmptyArrays: true },
+          $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true },
         },
         {
           $lookup: {
             from: ModelNames.USER,
             let: { userId: '$_personalIdTwo' },
             pipeline: [
-              { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+              { $match: { $expr:{$and:[{ $eq: ['$_id', '$$userId'] },{ $ne: ['$_id', _userId_] }] }  } },
+//              { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
               {
                 $project: {
                   _type: 1,
@@ -1480,11 +1481,11 @@ console.log("___filePath   "+filePath);
                 },
               },
             ],
-            as: 'userDetailsPersonTwo',
+            as: 'userDetails',
           },
         },
         {
-          $unwind: { path: '$userDetailsPersonTwo', preserveNullAndEmptyArrays: true },
+          $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true },
         },
 
         {
