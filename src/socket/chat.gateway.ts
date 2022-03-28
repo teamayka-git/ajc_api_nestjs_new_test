@@ -1250,11 +1250,11 @@ console.log("___filePath   "+filePath);
                 },
               },
             ],
-            as: 'userDetails',
+            as: 'userDetailsPersonOne',
           },
         },
         {
-          $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true },
+          $unwind: { path: '$userDetailsPersonOne', preserveNullAndEmptyArrays: true },
         },
         {
           $lookup: {
@@ -1480,11 +1480,11 @@ console.log("___filePath   "+filePath);
                 },
               },
             ],
-            as: 'userDetails',
+            as: 'userDetailsPersonTwo',
           },
         },
         {
-          $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true },
+          $unwind: { path: '$userDetailsPersonTwo', preserveNullAndEmptyArrays: true },
         },
 
         {
