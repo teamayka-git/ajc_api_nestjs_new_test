@@ -72,6 +72,21 @@ export class ChangeProcessOrderStatusDto {
 
   
 }
+export class ChangeProcessDescriptionOrderStatusDto {
+
+  
+  @IsString()
+  @ApiProperty({})
+  orderSaleSetProcessId: string;
+  
+  
+  @IsString()
+  @ApiProperty({})
+  descriptionId: string;
+
+
+  
+}
 export class ChangeSubProcessOrderStatusDto {
 
   

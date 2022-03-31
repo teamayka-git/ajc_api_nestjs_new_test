@@ -263,6 +263,18 @@ export class OrderSalesChangeDto {
   @ApiProperty({ description: descriptionStatus })
   status: number;
 }
+
+
+
+export class OrderSalesProcessMasterChangeDto {
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleProcessMasterIds: string[];
+
+  @IsString()
+  @ApiProperty({ description: descriptionStatus })
+  description: string;
+}
 export class OrderSalesWorkStatusChangeDto {
   @IsArray()
   @ApiProperty({ type: [String] })

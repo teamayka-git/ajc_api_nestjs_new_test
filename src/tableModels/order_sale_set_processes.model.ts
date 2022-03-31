@@ -42,7 +42,7 @@ OrderSaleSetProcessesSchema.index({ _orderSaleId: 1 });
 OrderSaleSetProcessesSchema.index({ _userId: 1 });
 OrderSaleSetProcessesSchema.index({ _orderStatus: 1 });
 OrderSaleSetProcessesSchema.index({ _status: 1 });
-
+ 
 /*
 _orderStatus:{
   0 - pending

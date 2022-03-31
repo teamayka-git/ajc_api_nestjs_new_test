@@ -1,6 +1,6 @@
 import { ApiTags } from '@nestjs/swagger';
 import { OrderSaleSetProcessService } from './order-sale-set-process.service';
-import { ChangeProcessOrderStatusDto, ChangeSubProcessOrderStatusDto, SetProcessCreateDto } from './order_sale_set_process.dto';
+import { ChangeProcessDescriptionOrderStatusDto, ChangeProcessOrderStatusDto, ChangeSubProcessOrderStatusDto, SetProcessCreateDto } from './order_sale_set_process.dto';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { Body, Controller, Delete, Post, Put, Request, UseGuards } from '@nestjs/common';
@@ -26,6 +26,10 @@ export class OrderSaleSetProcessController {
   @Post("changeProcessOrderStatus")
   changeProcessOrderStatus(@Body() dto: ChangeProcessOrderStatusDto,@Request() req) {
     return this.orderSaleSetProcessService.changeProcessOrderStatus(dto,req["_userId_"]);
+  }
+  @Post("changeProcessDescriptionOrderStatus")
+  changeProcessDescriptionOrderStatus(@Body() dto: ChangeProcessDescriptionOrderStatusDto,@Request() req) {
+    return this.orderSaleSetProcessService.changeProcessDescriptionOrderStatus(dto,req["_userId_"]);
   }
   
   @Post("changeSubProcessOrderStatus")

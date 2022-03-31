@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { ModelNames } from 'src/common/model_names';
 import {
+  ChangeProcessDescriptionOrderStatusDto,
   ChangeProcessOrderStatusDto,
   ChangeSubProcessOrderStatusDto,
   SetProcessCreateDto,
@@ -229,6 +230,68 @@ var arrayToOrderSaleHistory=[];
       throw error;
     }
   }
+
+
+
+
+  async changeProcessDescriptionOrderStatus(
+    dto: ChangeProcessDescriptionOrderStatusDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var result = await this.orderSaleSetProcessModel.findOneAndUpdate(
+        {
+          _id: dto.orderSaleSetProcessId,
+        },
+        {
+          $set: {
+            _description: dto.descriptionId,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      const orderSaleHistory = new this.orderSaleSetProcessHistoriesModel({
+        _orderSaleId: result._orderSaleId,
+        _userId: result._userId,
+        _orderStatus: result._orderStatus,
+        _description: result._description,
+        _processId: result._processId,
+        _status: result._status,
+      });
+      await orderSaleHistory.save({
+        session: transactionSession,
+      });
+
+      
+      const responseJSON =     { message: 'success', data: result };
+      if (
+        process.env.RESPONSE_RESTRICT == "true" &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+
+
+
   async changeSubProcessOrderStatus(
     dto: ChangeSubProcessOrderStatusDto,
     _userId_: string,
