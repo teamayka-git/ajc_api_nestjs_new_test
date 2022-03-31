@@ -393,37 +393,40 @@ export class CategoriesService {
       }
 
 
-arrayAggregation.push({
-  $switch:{
-    branches:[
-      { case: { $eq: [ dto.skip, -1 ] }, then: {
-            $lookup: {
-              from: ModelNames.USER,
-              let: { userId: '$_createdUserId' },
-              pipeline: [{ $match: {_status:1, $expr: {$and:[{$eq: [dto.skip, -1]},{$eq: ['$_id', '$$userId']}]       } } },],
-              as: 'userDetails',
-            },
-          } }
-    ]
-  }
-});
+// arrayAggregation.push({
+//   $switch:{
+//     branches:[
+//       { case: { $eq: [ dto.skip, -1 ] }, then: {
+//             $lookup: {
+//               from: ModelNames.USER,
+//               let: { userId: '$_createdUserId' },
+//               pipeline: [{ $match: {_status:1, $expr: {$and:[{$eq: [dto.skip, -1]},{$eq: ['$_id', '$$userId']}]       } } },],
+//               as: 'userDetails',
+//             },
+//           } }
+//     ]
+//   }
+// });
 
-      // arrayAggregation.push(
-      //   {
-      //     $lookup: {
-      //       from: ModelNames.USER,
-      //       let: { userId: '$_createdUserId' },
-      //       pipeline: [{ $match: {_status:1, $expr: {$and:[{$eq: [dto.skip, -1]},{$eq: ['$_id', '$$userId']}]       } } },],
-      //       as: 'userDetails',
-      //     },
-      //   },
-      //   {
-      //     $unwind: {
-      //       path: '$userDetails',
-      //       preserveNullAndEmptyArrays: true,
-      //     },
-      //   },
-      // );
+      arrayAggregation.push(
+        {
+          $lookup: {
+            from: ModelNames.USER,
+            let: { userId: '$_createdUserId' },
+            pipeline: [{ $match: {_status:1, $expr: {$and:[{$eq: [dto.skip, -1]},{$eq: ['$_id', '$$userId']}]       } } },],
+            as: 'userDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$userDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      );
+
+
+      arrayAggregation.push({$project:{_id:1}})
       var result = await this.categoriesModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
