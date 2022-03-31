@@ -396,7 +396,7 @@ export class CategoriesService {
           $lookup: {
             from: ModelNames.USER,
             let: { userId: '$_createdUserId' },
-            pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$userId'] } } }],
+            pipeline: [{ $match: { $expr: {$eq:[dto.skip,-1],      $eq: ['$_id', '$$userId'] } } }],
             as: 'userDetails',
           },
         },
