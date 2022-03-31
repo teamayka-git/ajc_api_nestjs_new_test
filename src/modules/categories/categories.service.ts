@@ -126,10 +126,10 @@ export class CategoriesService {
       await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
         session: transactionSession,
       });
-     
-      const responseJSON =   { message: 'success', data: { list: result1 } };
+
+      const responseJSON = { message: 'success', data: { list: result1 } };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -231,10 +231,9 @@ export class CategoriesService {
         { new: true, session: transactionSession },
       );
 
-    
-      const responseJSON =  { message: 'success', data: result };
+      const responseJSON = { message: 'success', data: result };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -273,10 +272,9 @@ export class CategoriesService {
         { new: true, session: transactionSession },
       );
 
-     
       const responseJSON = { message: 'success', data: result };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -396,7 +394,24 @@ export class CategoriesService {
           $lookup: {
             from: ModelNames.USER,
             let: { userId: '$_createdUserId' },
-            pipeline: [{ $match: {_status:1, $expr: {$and:[{$eq: [dto.skip, -1]},{$eq: ['$_id', '$$userId']}]       } } }],
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                       $eq: [dto.skip, -1]
+                    
+                  },
+                },
+              },
+              {
+                $match: {
+                  _status: 1,
+                  $expr: {
+                     $eq: ['$_id', '$$userId'] 
+                  },
+                },
+              },
+            ],
             as: 'userDetails',
           },
         },
@@ -438,13 +453,12 @@ export class CategoriesService {
         }
       }
 
-    
-      const responseJSON =  {
+      const responseJSON = {
         message: 'success',
         data: { list: result, totalCount: totalCount },
       };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -498,11 +512,6 @@ export class CategoriesService {
         );
       }
 
-
-
-
-
-
       var result = await this.categoriesModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
@@ -534,13 +543,12 @@ export class CategoriesService {
         }
       }
 
-     
-      const responseJSON =  {
+      const responseJSON = {
         message: 'success',
         data: { list: result, totalCount: totalCount },
       };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -569,48 +577,12 @@ export class CategoriesService {
         .count({ _code: dto.value })
         .session(transactionSession);
 
-     
-        const responseJSON =   {
-          message: 'success',
-          data: { count: resultCount },
-        };
-        if (
-          process.env.RESPONSE_RESTRICT == "true" &&
-          JSON.stringify(responseJSON).length >=
-            GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
-        ) {
-          throw new HttpException(
-            GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-              JSON.stringify(responseJSON).length,
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-        await transactionSession.commitTransaction();
-        await transactionSession.endSession();
-        return responseJSON;
-    } catch (error) {
-      await transactionSession.abortTransaction();
-      await transactionSession.endSession();
-      throw error;
-    }
-  }
-  
-async checkNameExisting(dto: CheckNameExistDto) {
-  var dateTime = new Date().getTime();
-  const transactionSession = await this.connection.startSession();
-  transactionSession.startTransaction();
-  try {
-    var resultCount = await this.categoriesModel
-      .count({ _name: dto.value,_status:{$in:[1,0]} })
-      .session(transactionSession);
-
-   
-      const responseJSON =  {
+      const responseJSON = {
         message: 'success',
         data: { count: resultCount },
       };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -623,11 +595,44 @@ async checkNameExisting(dto: CheckNameExistDto) {
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return responseJSON;
-  } catch (error) {
-    await transactionSession.abortTransaction();
-    await transactionSession.endSession();
-    throw error;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
   }
-}
 
+  async checkNameExisting(dto: CheckNameExistDto) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var resultCount = await this.categoriesModel
+        .count({ _name: dto.value, _status: { $in: [1, 0] } })
+        .session(transactionSession);
+
+      const responseJSON = {
+        message: 'success',
+        data: { count: resultCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
 }
