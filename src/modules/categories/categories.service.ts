@@ -483,6 +483,26 @@ export class CategoriesService {
         );
       }
 
+
+      arrayAggregation.push(
+        {
+          $lookup: {
+            from: ModelNames.USER,
+            let: { userId: '$_createdUserId' },
+            pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$userId'] } } }],
+            as: 'userDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$userDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      );
+
+
+
       var result = await this.categoriesModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
