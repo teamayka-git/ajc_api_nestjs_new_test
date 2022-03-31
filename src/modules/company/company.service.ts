@@ -155,7 +155,6 @@ export class CompanyService {
         transactionSession.startTransaction();
     try{
         var arrayAggregation = [];
-        arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
     
         if (dto.searchingText != '') {
           //todo
@@ -177,6 +176,7 @@ export class CompanyService {
           arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
         }
     
+        arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
         arrayAggregation.push({ $sort: { _id: -1 } });
     
         if (dto.skip != -1) {

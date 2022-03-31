@@ -302,7 +302,6 @@ export class CategoriesService {
     transactionSession.startTransaction();
     try {
       var arrayAggregation = [];
-      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
       if (dto.searchingText != '') {
         //todo
@@ -332,6 +331,7 @@ export class CategoriesService {
         arrayAggregation.push({ $match: { _groupId: { $in: newSettingsId } } });
       }
 
+      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {
         case 0:
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
@@ -408,22 +408,22 @@ export class CategoriesService {
 //   }
 // });
 
-      arrayAggregation.push(
-        {
-          $lookup: {
-            from: ModelNames.USER,
-            let: { userId: '$_createdUserId' },
-            pipeline: [{ $match: {_status:1, $expr: {$and:[{$eq: [dto.skip, -1]},{$eq: ['$_id', '$$userId']}]       } } },],
-            as: 'userDetails',
-          },
-        },
-        {
-          $unwind: {
-            path: '$userDetails',
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-      );
+      // arrayAggregation.push(
+      //   {
+      //     $lookup: {
+      //       from: ModelNames.USER,
+      //       let: { userId: '$_createdUserId' },
+      //       pipeline: [{ $match: {_status:1, $expr: {$and:[{$eq: [dto.skip, -1]},{$eq: ['$_id', '$$userId']}]       } } },],
+      //       as: 'userDetails',
+      //     },
+      //   },
+      //   {
+      //     $unwind: {
+      //       path: '$userDetails',
+      //       preserveNullAndEmptyArrays: true,
+      //     },
+      //   },
+      // );
 
 
       arrayAggregation.push({$project:{_id:1}})

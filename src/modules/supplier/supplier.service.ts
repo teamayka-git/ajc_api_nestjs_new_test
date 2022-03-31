@@ -440,7 +440,7 @@ export class SupplierService {
     transactionSession.startTransaction();
     try {
       var arrayAggregation = [];
-      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+     
 
       if (dto.searchingText != '') {
         //todo
@@ -472,6 +472,10 @@ export class SupplierService {
       if (dto.genders.length > 0) {
         arrayAggregation.push({ $match: { _gender: { $in: dto.genders } } });
       }
+
+
+      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+
       switch (dto.sortType) {
         case 0:
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });

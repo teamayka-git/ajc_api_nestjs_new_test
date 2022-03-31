@@ -561,7 +561,6 @@ return responseJSON;
       transactionSession.startTransaction();
   try{
       var arrayAggregation = [];
-      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
   
       if (dto.searchingText != '') {
         //todo
@@ -594,26 +593,7 @@ return responseJSON;
         }
       
   
-  
-        switch(dto.sortType){
-          case 0: arrayAggregation.push({ $sort: { _id: dto.sortOrder } });              break;
-          case 1:arrayAggregation.push({ $sort: { _status: dto.sortOrder } });               break;
-          case 2: arrayAggregation.push({ $sort: { _name: dto.sortOrder } });               break;
-          case 3: arrayAggregation.push({ $sort: { _uid: dto.sortOrder } });               break;
-          case 4: arrayAggregation.push({ $sort: { _gender: dto.sortOrder } });               break;
-          case 5: arrayAggregation.push({ $sort: { _email: dto.sortOrder } });               break;
-          case 6: arrayAggregation.push({ $sort: { _orderSaleRate: dto.sortOrder } });               break;
-          case 7: arrayAggregation.push({ $sort: { _stockSaleRate: dto.sortOrder } });               break;
-          case 8: arrayAggregation.push({ $sort: { _customerType: dto.sortOrder } });               break;
-          case 9: arrayAggregation.push({ $sort: { _billingModeSale: dto.sortOrder } });               break;
-          case 10: arrayAggregation.push({ $sort: { _billingModePurchase: dto.sortOrder } });               break;
-          case 11: arrayAggregation.push({ $sort: { _hallmarkingMandatoryStatus: dto.sortOrder } });               break;
-          case 12: arrayAggregation.push({ $sort: { _creditAmount: dto.sortOrder } });               break;
-          case 13: arrayAggregation.push({ $sort: { _creditDays: dto.sortOrder } });               break;
-          case 14: arrayAggregation.push({ $sort: { _stonePricing: dto.sortOrder } });               break;
-          case 15: arrayAggregation.push({ $sort: { _agentCommision: dto.sortOrder } });               break;
-          
-        }
+       
 
         if (dto.orderSaleRates.length > 0) {
           
@@ -640,7 +620,27 @@ return responseJSON;
           arrayAggregation.push({ $match: { _hallmarkingMandatoryStatus: { $in:dto.hallmarkingMandatoryStatuses } } });
         }
 
-
+        arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+  
+        switch(dto.sortType){
+          case 0: arrayAggregation.push({ $sort: { _id: dto.sortOrder } });              break;
+          case 1:arrayAggregation.push({ $sort: { _status: dto.sortOrder } });               break;
+          case 2: arrayAggregation.push({ $sort: { _name: dto.sortOrder } });               break;
+          case 3: arrayAggregation.push({ $sort: { _uid: dto.sortOrder } });               break;
+          case 4: arrayAggregation.push({ $sort: { _gender: dto.sortOrder } });               break;
+          case 5: arrayAggregation.push({ $sort: { _email: dto.sortOrder } });               break;
+          case 6: arrayAggregation.push({ $sort: { _orderSaleRate: dto.sortOrder } });               break;
+          case 7: arrayAggregation.push({ $sort: { _stockSaleRate: dto.sortOrder } });               break;
+          case 8: arrayAggregation.push({ $sort: { _customerType: dto.sortOrder } });               break;
+          case 9: arrayAggregation.push({ $sort: { _billingModeSale: dto.sortOrder } });               break;
+          case 10: arrayAggregation.push({ $sort: { _billingModePurchase: dto.sortOrder } });               break;
+          case 11: arrayAggregation.push({ $sort: { _hallmarkingMandatoryStatus: dto.sortOrder } });               break;
+          case 12: arrayAggregation.push({ $sort: { _creditAmount: dto.sortOrder } });               break;
+          case 13: arrayAggregation.push({ $sort: { _creditDays: dto.sortOrder } });               break;
+          case 14: arrayAggregation.push({ $sort: { _stonePricing: dto.sortOrder } });               break;
+          case 15: arrayAggregation.push({ $sort: { _agentCommision: dto.sortOrder } });               break;
+          
+        }
   
       if (dto.skip != -1) {
         arrayAggregation.push({ $skip: dto.skip });

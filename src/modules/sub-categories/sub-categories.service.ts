@@ -351,7 +351,7 @@ var resultRateCards=await this.rateCardsModel.find({_status:{$in:[0,1]}},{_id:1}
         transactionSession.startTransaction();
     try{
         var arrayAggregation = [];
-        arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+      
     
         if (dto.searchingText != '') {
           //todo
@@ -382,7 +382,7 @@ var resultRateCards=await this.rateCardsModel.find({_status:{$in:[0,1]}},{_id:1}
           }
     
 
-  
+          arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
 
 

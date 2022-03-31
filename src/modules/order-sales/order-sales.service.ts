@@ -515,7 +515,7 @@ export class OrderSalesService {
     transactionSession.startTransaction();
     try {
       var arrayAggregation = [];
-      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+     
 
       if (dto.searchingText != '') {
         //todo
@@ -560,6 +560,10 @@ export class OrderSalesService {
           $match: { _workStatus: { $in: dto.workStatus } },
         });
       }
+
+      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+
+
       switch (dto.sortType) {
         case 0:
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
@@ -1386,11 +1390,7 @@ export class OrderSalesService {
       var arrayAggregation = [];
       var arrayUserIds = [];
 
-      arrayAggregation.push({
-        $match: {
-          _status: 1,
-        },
-      });
+    
 
 
 
@@ -1422,6 +1422,15 @@ export class OrderSalesService {
           $match: { _orderStatus: { $in: dto.workStatusArray } },
         });
       }
+      arrayAggregation.push({
+        $match: {
+          _status: 1,
+        },
+      });
+
+
+
+
       if (dto.screenType.findIndex((it) => it == 101) != -1) {
         arrayAggregation.push({
           $lookup: {

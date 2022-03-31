@@ -180,7 +180,6 @@ if(mapItem.userId=="nil"){
         transactionSession.startTransaction();
     try{
         var arrayAggregation = [];
-        arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
     
         if (dto.searchingText != '') {
           //todo
@@ -214,6 +213,7 @@ if(mapItem.userId=="nil"){
           arrayAggregation.push({ $match: { _type: { $in: dto.types } } });
         }
     
+        arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
         arrayAggregation.push({ $sort: { _id: -1 } });
     
         if (dto.skip != -1) {

@@ -155,7 +155,7 @@ export class GlobalGalleryCategoryService {
         transactionSession.startTransaction();
     try{
         var arrayAggregation = [];
-        arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+     
     
         if (dto.searchingText != '') {
           //todo
@@ -189,7 +189,7 @@ export class GlobalGalleryCategoryService {
           
           arrayAggregation.push({ $match: { _type: { $in:dto.type } } });
         }
-
+        arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
     
         switch(dto.sortType){

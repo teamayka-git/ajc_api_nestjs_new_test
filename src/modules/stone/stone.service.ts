@@ -294,7 +294,7 @@ try{
     transactionSession.startTransaction();
 try{
     var arrayAggregation = [];
-    arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+   
 
     if (dto.searchingText != '') {
       //todo
@@ -311,7 +311,7 @@ try{
       });
       arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
     }
-
+    arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
     switch (dto.sortType) {
       case 0:
         arrayAggregation.push({ $sort: { _id: dto.sortOrder } });

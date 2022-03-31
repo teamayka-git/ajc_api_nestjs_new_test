@@ -61,7 +61,7 @@ export class GoldRateTimelinesService {
   
   
         var arrayAggregation = [];
-        arrayAggregation.push({ $match: { _status: 1} });
+      
   
       
         if (dto.goldRateTimelinesIds.length > 0) {
@@ -78,7 +78,7 @@ export class GoldRateTimelinesService {
     arrayAggregation.push({ $match: {_createdAt:{$lte:dto.endDate,$gte:dto.startDate}}});
   }
 
-
+  arrayAggregation.push({ $match: { _status: 1} });
   
   if (dto.screenType.findIndex((it) => it == 0) != -1) {
       arrayAggregation.push( {

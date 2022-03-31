@@ -153,7 +153,7 @@ export class TransportMastersService {
         transactionSession.startTransaction();
     try{
         var arrayAggregation = [];
-        arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+     
     
         if (dto.searchingText != '') {
           //todo
@@ -176,7 +176,7 @@ export class TransportMastersService {
         
           arrayAggregation.push({ $match: { _type: { $in: dto.types } } });
         }
-    
+        arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
         switch(dto.sortType){
           case 0: arrayAggregation.push({ $sort: { _id: dto.sortOrder } });              break;
           case 1:arrayAggregation.push({ $sort: { _status: dto.sortOrder } });               break;

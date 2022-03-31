@@ -161,7 +161,7 @@ export class GeneralsService {
         transactionSession.startTransaction();
     try{
         var arrayAggregation = [];
-        arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+      
     
         if (dto.generalsIds.length > 0) {
           var newSettingsId = [];
@@ -178,7 +178,7 @@ export class GeneralsService {
            
             arrayAggregation.push({ $match: { _code: { $in: dto.codes } } });
           }
-        
+          arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
         arrayAggregation.push({ $sort: { _id: -1 } });
     
         if (dto.skip != -1) {
