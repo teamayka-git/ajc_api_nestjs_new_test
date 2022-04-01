@@ -315,7 +315,7 @@ export class CategoriesService {
       // );
       console.log('___z2');
 
-      console.log('___z3   ' + JSON.stringify(file['image']));
+      console.log('___z3   ' + JSON.stringify(file));
 
       console.log('___z4');
       var aaa = await this.filesService.uploadFile(

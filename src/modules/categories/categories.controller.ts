@@ -5,6 +5,7 @@ import {
   Post,
   Put,
   Request,
+  UploadedFile,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -101,7 +102,7 @@ export class CategoriesController {
     description: 'files upload on these input feilds => [image]',
   })
   @UseInterceptors(FileInterceptor('image'))
-  testS3Bucket2(@Request() req, @UploadedFiles() file) {
+  testS3Bucket2(@Request() req, @UploadedFile() file) {
     return this.categoriesService.testS3Bucket2(
       req['_userId_'],
       file == null ? {} : JSON.parse(JSON.stringify(file)),
