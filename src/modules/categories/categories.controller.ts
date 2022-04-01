@@ -14,6 +14,7 @@ import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
+const multer = require('multer');
 import {
   CategoriesCreateDto,
   CategoriesEditDto,
@@ -102,7 +103,7 @@ export class CategoriesController {
     description: 'files upload on these input feilds => [image]',
   })
   @UseInterceptors(FileInterceptor('image'))
-  testS3Bucket2(@Request() req, @UploadedFile() file) {
+  testS3Bucket2(@Request() req, @UploadedFile() file: Express.Multer.File) {
     return this.categoriesService.testS3Bucket2(
       req['_userId_'],
       file == null ? {} : JSON.parse(JSON.stringify(file)),
