@@ -24,7 +24,10 @@ import {
 } from './categories.dto';
 import { CategoriesService } from './categories.service';
 import { diskStorage } from 'multer';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import {
+  FileFieldsInterceptor,
+  FileInterceptor,
+} from '@nestjs/platform-express';
 import { FileMulterHelper } from 'src/shared/file_multter_helper';
 
 @ApiTags('Categories Docs')
@@ -97,21 +100,7 @@ export class CategoriesController {
   @ApiCreatedResponse({
     description: 'files upload on these input feilds => [image]',
   })
-  @UseInterceptors(
-    FileFieldsInterceptor(
-      [
-        {
-          name: 'image',
-        },
-      ],
-      {
-        storage: diskStorage({
-          destination: FileMulterHelper.filePathTempCategory,
-          filename: FileMulterHelper.customFileName,
-        }),
-      },
-    ),
-  )
+  @UseInterceptors(FileInterceptor('image'))
   testS3Bucket2(@Request() req, @UploadedFiles() file) {
     return this.categoriesService.testS3Bucket2(
       req['_userId_'],

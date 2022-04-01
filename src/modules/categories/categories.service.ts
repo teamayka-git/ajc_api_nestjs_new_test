@@ -19,6 +19,7 @@ import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_pa
 import { Counters } from 'src/tableModels/counters.model';
 import { StringUtils } from 'src/utils/string_utils';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
+import { FilesS3Service } from 'src/s3_services/file.s3.services';
 
 @Injectable()
 export class CategoriesService {
@@ -29,6 +30,7 @@ export class CategoriesService {
     private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
+    private readonly filesService: FilesS3Service,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async create(dto: CategoriesCreateDto, _userId_: string, file: Object) {
@@ -250,69 +252,76 @@ export class CategoriesService {
       var arrayToStates = [];
       var arrayGlobalGalleries = [];
 
-      if (file.hasOwnProperty('image')) {
-        var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
-          { _tableName: ModelNames.GLOBAL_GALLERIES },
-          {
-            $inc: {
-              _count: file['image'].length,
-            },
-          },
-          { new: true, session: transactionSession },
-        );
+      console.log('___z1');
 
-        for (var i = 0; i < file['image'].length; i++) {
-          var filePath =
-            __dirname +
-            `/../../../public${file['image'][i]['path'].split('public')[1]}`;
+      // if (file.hasOwnProperty('image')) {
+      //   var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
+      //     { _tableName: ModelNames.GLOBAL_GALLERIES },
+      //     {
+      //       $inc: {
+      //         _count: file['image'].length,
+      //       },
+      //     },
+      //     { new: true, session: transactionSession },
+      //   );
 
-          new ThumbnailUtils().generateThumbnail(
-            filePath,
-            UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY +
-              new StringUtils().makeThumbImageFileName(
-                file['image'][i]['filename'],
-              ),
-          );
+      //   for (var i = 0; i < file['image'].length; i++) {
+      //     var filePath =
+      //       __dirname +
+      //       `/../../../public${file['image'][i]['path'].split('public')[1]}`;
 
-          var globalGalleryId = new mongoose.Types.ObjectId();
-          arrayGlobalGalleries.push({
-            _id: globalGalleryId,
-            _name: file['image'][i]['originalname'],
-            _globalGalleryCategoryId: null,
-            _docType: 0,
-            _type: 0,
-            _uid: resultCounterPurchase._count - file['image'].length + (i + 1),
-            _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-              process.env.SERVER_DOMAIN
-            }:${process.env.PORT}${
-              file['image'][i]['path'].split('public')[1]
-            }`,
-            _thumbUrl: new StringUtils().makeThumbImageFileName(
-              `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-                process.env.SERVER_DOMAIN
-              }:${process.env.PORT}${
-                file['image'][i]['path'].split('public')[1]
-              }`,
-            ),
-            _created_user_id: _userId_,
-            _created_at: dateTime,
-            _updated_user_id: null,
-            _updated_at: -1,
-            _status: 1,
-          });
-        }
-      }
+      //     new ThumbnailUtils().generateThumbnail(
+      //       filePath,
+      //       UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY +
+      //         new StringUtils().makeThumbImageFileName(
+      //           file['image'][i]['filename'],
+      //         ),
+      //     );
 
-      var globalGalleryList = await this.globalGalleryModel.insertMany(
-        arrayGlobalGalleries,
-        {
-          session: transactionSession,
-        },
+      //     var globalGalleryId = new mongoose.Types.ObjectId();
+      //     arrayGlobalGalleries.push({
+      //       _id: globalGalleryId,
+      //       _name: file['image'][i]['originalname'],
+      //       _globalGalleryCategoryId: null,
+      //       _docType: 0,
+      //       _type: 0,
+      //       _uid: resultCounterPurchase._count - file['image'].length + (i + 1),
+      //       _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
+      //         process.env.SERVER_DOMAIN
+      //       }:${process.env.PORT}${
+      //         file['image'][i]['path'].split('public')[1]
+      //       }`,
+      //       _thumbUrl: new StringUtils().makeThumbImageFileName(
+      //         `${process.env.SSL == 'true' ? 'https' : 'http'}://${
+      //           process.env.SERVER_DOMAIN
+      //         }:${process.env.PORT}${
+      //           file['image'][i]['path'].split('public')[1]
+      //         }`,
+      //       ),
+      //       _created_user_id: _userId_,
+      //       _created_at: dateTime,
+      //       _updated_user_id: null,
+      //       _updated_at: -1,
+      //       _status: 1,
+      //     });
+      //   }
+      // }
+
+      // var globalGalleryList = await this.globalGalleryModel.insertMany(
+      //   arrayGlobalGalleries,
+      //   {
+      //     session: transactionSession,
+      //   },
+      // );
+      console.log('___z2');
+      var aaa = await this.filesService.uploadFile(
+        file['image']['buffer'],
+        file['image']['originalname'],
       );
-
+      console.log('___z3');
       const responseJSON = {
         message: 'success',
-        data: { list: globalGalleryList },
+        data: aaa,
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
