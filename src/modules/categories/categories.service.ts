@@ -314,11 +314,15 @@ export class CategoriesService {
       //   },
       // );
       console.log('___z2');
+
+      console.log('___z3   ' + JSON.stringify(file['image']));
+
+      console.log('___z4');
       var aaa = await this.filesService.uploadFile(
         file['image']['buffer'],
         file['image']['originalname'],
       );
-      console.log('___z3');
+      console.log('___z5');
       const responseJSON = {
         message: 'success',
         data: aaa,
