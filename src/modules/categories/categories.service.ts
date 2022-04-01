@@ -126,10 +126,108 @@ export class CategoriesService {
       await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
         session: transactionSession,
       });
-     
-      const responseJSON =   { message: 'success', data: { list: result1 } };
+
+      const responseJSON = { message: 'success', data: { list: result1 } };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async testS3Bucket1(
+    _userId_: string,
+    file: Object,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var arrayToStates = [];
+      var arrayGlobalGalleries = [];
+
+      if (file.hasOwnProperty('image')) {
+        var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
+          { _tableName: ModelNames.GLOBAL_GALLERIES },
+          {
+            $inc: {
+              _count: file['image'].length,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+        for (var i = 0; i < file['image'].length; i++) {
+          var filePath =
+            __dirname +
+            `/../../../public${file['image'][i]['path'].split('public')[1]}`;
+
+          new ThumbnailUtils().generateThumbnail(
+            filePath,
+            UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY +
+              new StringUtils().makeThumbImageFileName(
+                file['image'][i]['filename'],
+              ),
+          );
+
+          var globalGalleryId = new mongoose.Types.ObjectId();
+          arrayGlobalGalleries.push({
+            _id: globalGalleryId,
+            _name: file['image'][i]['originalname'],
+            _globalGalleryCategoryId: null,
+            _docType: 0,
+            _type: 0,
+            _uid: resultCounterPurchase._count - file['image'].length + (i + 1),
+            _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
+              process.env.SERVER_DOMAIN
+            }:${process.env.PORT}${
+              file['image'][i]['path'].split('public')[1]
+            }`,
+            _thumbUrl: new StringUtils().makeThumbImageFileName(
+              `${process.env.SSL == 'true' ? 'https' : 'http'}://${
+                process.env.SERVER_DOMAIN
+              }:${process.env.PORT}${
+                file['image'][i]['path'].split('public')[1]
+              }`,
+            ),
+            _created_user_id: _userId_,
+            _created_at: dateTime,
+            _updated_user_id: null,
+            _updated_at: -1,
+            _status: 1,
+          });
+
+      
+        }
+      }
+
+      var globalGalleryList = await this.globalGalleryModel.insertMany(
+        arrayGlobalGalleries,
+        {
+          session: transactionSession,
+        },
+      );
+
+      const responseJSON = {
+        message: 'success',
+        data: { list: globalGalleryList },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -231,10 +329,9 @@ export class CategoriesService {
         { new: true, session: transactionSession },
       );
 
-    
-      const responseJSON =  { message: 'success', data: result };
+      const responseJSON = { message: 'success', data: result };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -273,10 +370,9 @@ export class CategoriesService {
         { new: true, session: transactionSession },
       );
 
-     
       const responseJSON = { message: 'success', data: result };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -392,21 +488,20 @@ export class CategoriesService {
         );
       }
 
-
-// arrayAggregation.push({
-//   $switch:{
-//     branches:[
-//       { case: { $eq: [ dto.skip, -1 ] }, then: {
-//             $lookup: {
-//               from: ModelNames.USER,
-//               let: { userId: '$_createdUserId' },
-//               pipeline: [{ $match: {_status:1, $expr: {$and:[{$eq: [dto.skip, -1]},{$eq: ['$_id', '$$userId']}]       } } },],
-//               as: 'userDetails',
-//             },
-//           } }
-//     ]
-//   }
-// });
+      // arrayAggregation.push({
+      //   $switch:{
+      //     branches:[
+      //       { case: { $eq: [ dto.skip, -1 ] }, then: {
+      //             $lookup: {
+      //               from: ModelNames.USER,
+      //               let: { userId: '$_createdUserId' },
+      //               pipeline: [{ $match: {_status:1, $expr: {$and:[{$eq: [dto.skip, -1]},{$eq: ['$_id', '$$userId']}]       } } },],
+      //               as: 'userDetails',
+      //             },
+      //           } }
+      //     ]
+      //   }
+      // });
 
       // arrayAggregation.push(
       //   {
@@ -425,8 +520,7 @@ export class CategoriesService {
       //   },
       // );
 
-
-      arrayAggregation.push({$project:{_id:1}})
+      arrayAggregation.push({ $project: { _id: 1 } });
       var result = await this.categoriesModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
@@ -458,13 +552,12 @@ export class CategoriesService {
         }
       }
 
-    
-      const responseJSON =  {
+      const responseJSON = {
         message: 'success',
         data: { list: result, totalCount: totalCount },
       };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -518,11 +611,6 @@ export class CategoriesService {
         );
       }
 
-
-
-
-
-
       var result = await this.categoriesModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
@@ -554,13 +642,12 @@ export class CategoriesService {
         }
       }
 
-     
-      const responseJSON =  {
+      const responseJSON = {
         message: 'success',
         data: { list: result, totalCount: totalCount },
       };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -589,48 +676,12 @@ export class CategoriesService {
         .count({ _code: dto.value })
         .session(transactionSession);
 
-     
-        const responseJSON =   {
-          message: 'success',
-          data: { count: resultCount },
-        };
-        if (
-          process.env.RESPONSE_RESTRICT == "true" &&
-          JSON.stringify(responseJSON).length >=
-            GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
-        ) {
-          throw new HttpException(
-            GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-              JSON.stringify(responseJSON).length,
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-        await transactionSession.commitTransaction();
-        await transactionSession.endSession();
-        return responseJSON;
-    } catch (error) {
-      await transactionSession.abortTransaction();
-      await transactionSession.endSession();
-      throw error;
-    }
-  }
-  
-async checkNameExisting(dto: CheckNameExistDto) {
-  var dateTime = new Date().getTime();
-  const transactionSession = await this.connection.startSession();
-  transactionSession.startTransaction();
-  try {
-    var resultCount = await this.categoriesModel
-      .count({ _name: dto.value,_status:{$in:[1,0]} })
-      .session(transactionSession);
-
-   
-      const responseJSON =  {
+      const responseJSON = {
         message: 'success',
         data: { count: resultCount },
       };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -643,11 +694,44 @@ async checkNameExisting(dto: CheckNameExistDto) {
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return responseJSON;
-  } catch (error) {
-    await transactionSession.abortTransaction();
-    await transactionSession.endSession();
-    throw error;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
   }
-}
 
+  async checkNameExisting(dto: CheckNameExistDto) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var resultCount = await this.categoriesModel
+        .count({ _name: dto.value, _status: { $in: [1, 0] } })
+        .session(transactionSession);
+
+      const responseJSON = {
+        message: 'success',
+        data: { count: resultCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
 }
