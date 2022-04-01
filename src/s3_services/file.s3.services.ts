@@ -27,7 +27,7 @@ export class FilesS3Service {
     });
     console.log('___f1');
 
-    let base64data = Buffer.from(file['data'], 'binary');
+    let base64data = Buffer.from(file['buffer'], 'binary');
     console.log('___f2');
     console.log(
       '___f3    ' + process.env.BUCKET_NAME + '    ' + file['originalname'],
