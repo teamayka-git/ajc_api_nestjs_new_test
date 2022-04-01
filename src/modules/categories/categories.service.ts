@@ -318,14 +318,11 @@ export class CategoriesService {
       console.log('___z3   ' + JSON.stringify(file['originalname']));
 
       console.log('___z4');
-      var aaa = await this.filesService.uploadFile(
-        file['buffer'],
-        file['originalname'],
-      );
+      await this.filesService.uploadMyFile(file);
       console.log('___z5');
       const responseJSON = {
         message: 'success',
-        data: aaa,
+        data: 'aaa',
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
