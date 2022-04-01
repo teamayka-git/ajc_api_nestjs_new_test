@@ -92,6 +92,33 @@ export class CategoriesController {
     );
   }
 
+  @Post('testS3Bucket2')
+  @Roles(GuardUserRole.SUPER_ADMIN)
+  @ApiCreatedResponse({
+    description: 'files upload on these input feilds => [image]',
+  })
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        {
+          name: 'image',
+        },
+      ],
+      {
+        storage: diskStorage({
+          destination: FileMulterHelper.filePathTempCategory,
+          filename: FileMulterHelper.customFileName,
+        }),
+      },
+    ),
+  )
+  testS3Bucket2(@Request() req, @UploadedFiles() file) {
+    return this.categoriesService.testS3Bucket2(
+      req['_userId_'],
+      file == null ? {} : JSON.parse(JSON.stringify(file)),
+    );
+  }
+
   @Put()
   @Roles(GuardUserRole.SUPER_ADMIN)
   @ApiCreatedResponse({
