@@ -59,18 +59,13 @@ export class OrderSaleSetProcessService {
       );
 
       dto.array.map((mapItem) => {
-
-        
-
-
-        
         mapItem.processIds.map((mapItem1) => {
           var processId = new mongoose.Types.ObjectId();
           arrayToSetProcess.push({
             _id: processId,
             _orderSaleId: mapItem.orderSaleId,
             _userId: null,
-            _description: '',
+            _description: mapItem.description,
             _orderStatus: 0,
             _processId: mapItem1,
             _status: 1,
@@ -117,8 +112,6 @@ export class OrderSaleSetProcessService {
         },
       );
 
-
-
       await this.orderSaleModel.updateMany(
         {
           _id: { $in: arrayOrdersaleIds },
@@ -131,16 +124,14 @@ export class OrderSaleSetProcessService {
         { new: true, session: transactionSession },
       );
 
-
-var arrayToOrderSaleHistory=[];
-
+      var arrayToOrderSaleHistory = [];
 
       dto.array.map((mapItem) => {
         arrayToOrderSaleHistory.push({
           _orderSaleId: mapItem.orderSaleId,
           _workStatus: 3,
-          _rootCauseId:null,
-          _rootCause: "",
+          _rootCauseId: null,
+          _rootCause: '',
           _status: 1,
         });
       });
@@ -149,12 +140,9 @@ var arrayToOrderSaleHistory=[];
         session: transactionSession,
       });
 
-
-
-     
-      const responseJSON =     { message: 'success', data: { list: result1 } };
+      const responseJSON = { message: 'success', data: { list: result1 } };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -208,10 +196,9 @@ var arrayToOrderSaleHistory=[];
         session: transactionSession,
       });
 
-      
-      const responseJSON =     { message: 'success', data: result };
+      const responseJSON = { message: 'success', data: result };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -230,9 +217,6 @@ var arrayToOrderSaleHistory=[];
       throw error;
     }
   }
-
-
-
 
   async changeProcessDescriptionOrderStatus(
     dto: ChangeProcessDescriptionOrderStatusDto,
@@ -266,10 +250,9 @@ var arrayToOrderSaleHistory=[];
         session: transactionSession,
       });
 
-      
-      const responseJSON =     { message: 'success', data: result };
+      const responseJSON = { message: 'success', data: result };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -288,9 +271,6 @@ var arrayToOrderSaleHistory=[];
       throw error;
     }
   }
-
-
-
 
   async changeSubProcessOrderStatus(
     dto: ChangeSubProcessOrderStatusDto,
@@ -326,10 +306,9 @@ var arrayToOrderSaleHistory=[];
         session: transactionSession,
       });
 
-      
-      const responseJSON =     { message: 'success', data: result };
+      const responseJSON = { message: 'success', data: result };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
