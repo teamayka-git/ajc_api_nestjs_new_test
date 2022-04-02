@@ -16,18 +16,23 @@ const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const DescriptionOrderSaleChangeProcessOrderStatus =
   '0-Pending, 1-Assigned, 2-On Working, 3-Completed, 4-Hold, Request To Assign';
 
+class processCreateList {
+  @IsString()
+  @ApiProperty({})
+  processId: string;
+
+  @IsString()
+  @ApiProperty({})
+  description: string;
+}
 class SetProcessCreateList {
   @IsString()
   @ApiProperty({})
   orderSaleId: string;
 
-  @IsString()
-  @ApiProperty({})
-  description: string;
-
   @IsArray()
-  @ApiProperty({ type: [String] })
-  processIds: string[];
+  @ApiProperty({ type: [processCreateList] })
+  arrayProcess: processCreateList[];
 }
 
 export class SetProcessCreateDto {
