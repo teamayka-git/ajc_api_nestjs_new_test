@@ -15,7 +15,7 @@ export class S3BucketUtils {
 
       const params = {
         Bucket: process.env.CDN_BUCKET_NAME,
-        Key: this.getFileNameGeneratedByCdnBucket(file['originalname'], path),
+        Key: getFileNameGeneratedByCdnBucket(file['originalname'], path),
         Body: base64data,
       };
       s3.upload(params, function (err, data) {
@@ -28,13 +28,14 @@ export class S3BucketUtils {
       });
     });
   }
-  public getFileNameGeneratedByCdnBucket(fileName: String, path: String) {
-    return (
-      process.env.CDN_BUCKET_INITIAL_PATH +
-      path +
-      process.env.CDN_BUCKET_FILE_NAME_PREFIX +
-      uuidv4() +
-      fileName
-    );
-  }
+}
+
+function getFileNameGeneratedByCdnBucket(fileName: String, path: String) {
+  return (
+    process.env.CDN_BUCKET_INITIAL_PATH +
+    path +
+    process.env.CDN_BUCKET_FILE_NAME_PREFIX +
+    uuidv4() +
+    fileName
+  );
 }
