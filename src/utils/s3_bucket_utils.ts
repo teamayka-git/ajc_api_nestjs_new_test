@@ -12,8 +12,6 @@ export class S3BucketUtils {
       });
 
       let base64data = Buffer.from(file['buffer'], 'binary');
-      let fileKey = getFileNameGeneratedByCdnBucket(file['originalname'], path);
-      console.log('fileKey  ' + fileKey);
 
       const params = {
         Bucket: process.env.CDN_BUCKET_NAME,
@@ -31,25 +29,6 @@ export class S3BucketUtils {
     });
   }
 }
-// public async getFileNameGeneratedByCdnBucket(
-//   fileName: String,
-//   path: String,
-// ): Promise<String> {
-
-//   console.log("___P   "+process.env.CDN_BUCKET_INITIAL_PATH +
-//   path +
-//   process.env.CDN_BUCKET_FILE_NAME_PREFIX +
-//   uuidv4() +
-//   fileName);
-
-//   return (
-//     process.env.CDN_BUCKET_INITIAL_PATH +
-//     path +
-//     process.env.CDN_BUCKET_FILE_NAME_PREFIX +
-//     uuidv4() +
-//     fileName
-//   );
-// }
 
 function getFileNameGeneratedByCdnBucket(fileName: String, path: String) {
   return (
