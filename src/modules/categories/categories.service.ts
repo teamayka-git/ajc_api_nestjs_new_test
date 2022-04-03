@@ -54,6 +54,8 @@ export class CategoriesService {
         );
 
         for (var i = 0; i < file['image'].length; i++) {
+          console.log('path    ' + file['image'][i]['path']);
+
           var resultUpload = await new S3BucketUtils().uploadMyFile(
             file['image'][i],
             UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY,
