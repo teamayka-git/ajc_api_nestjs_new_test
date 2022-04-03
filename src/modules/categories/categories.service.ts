@@ -96,7 +96,13 @@ export class CategoriesService {
           });
 
           var count = dto.array.findIndex(
-            (it) => it.fileOriginalName == file['image'][i]['originalname'],
+            (it) =>
+              it.fileOriginalName ==
+              new S3BucketUtils().getFileNameGeneratedByCdnBucket(
+                file['image'][i]['originalname'],
+                UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY,
+                true,
+              ),
           );
           if (count != -1) {
             dto.array[count]['globalGalleryId'] = globalGalleryId;
@@ -323,10 +329,7 @@ export class CategoriesService {
       console.log('___z4');
       // await this.filesService.uploadMyFile(file);
 
-      var resultUpload = await new S3BucketUtils().uploadMyFile(
-        file,
-        UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY,
-      );
+      var resultUpload = await new S3BucketUtils().uploadMyFile(file, '');
 
       console.log('resultUpload  ' + JSON.stringify(resultUpload));
 

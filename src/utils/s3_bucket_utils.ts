@@ -18,6 +18,7 @@ export class S3BucketUtils {
         Key: new S3BucketUtils().getFileNameGeneratedByCdnBucket(
           file['originalname'],
           path,
+          false,
         ),
         Body: base64data,
       };
@@ -26,7 +27,7 @@ export class S3BucketUtils {
           resolve({ status: 0 });
           // throw err;
         }
-        console.log('data   ' + JSON.stringify(data));
+        // console.log('data   ' + JSON.stringify(data));
         resolve({ status: 1, url: data.Location });
       });
     });
@@ -34,13 +35,18 @@ export class S3BucketUtils {
   public getFileNameGeneratedByCdnBucket(
     fileName: String,
     path: String,
+    isNeedToAddPrefixUrlOfBucket: Boolean,
   ): String {
-    return (
+    var returnString = '';
+    if (isNeedToAddPrefixUrlOfBucket == true) {
+      returnString += process.env.CDN_BUCKET_PREFIX_URL;
+    }
+
+    return (returnString +=
       process.env.CDN_BUCKET_INITIAL_PATH +
       path +
       process.env.CDN_BUCKET_FILE_NAME_PREFIX +
       uuidv4() +
-      fileName
-    );
+      fileName);
   }
 }
