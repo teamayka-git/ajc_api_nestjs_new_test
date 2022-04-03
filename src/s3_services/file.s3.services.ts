@@ -35,7 +35,7 @@ export class FilesS3Service {
     console.log('___f4');
     const params = {
       Bucket: process.env.BUCKET_NAME,
-      Key: file['originalname'],
+      Key: 'fayiz/' + file['originalname'],
       Body: base64data,
     };
     console.log('___f5');
