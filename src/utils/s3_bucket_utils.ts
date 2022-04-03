@@ -12,6 +12,11 @@ export class S3BucketUtils {
       });
 
       let base64data = Buffer.from(file['buffer'], 'binary');
+      let fileKey = this.getFileNameGeneratedByCdnBucket(
+        file['originalname'],
+        path,
+      );
+      console.log('fileKey  ' + fileKey);
 
       const params = {
         Bucket: process.env.CDN_BUCKET_NAME,
