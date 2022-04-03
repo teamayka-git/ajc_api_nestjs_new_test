@@ -18,7 +18,7 @@ export class S3BucketUtils {
       console.log('path    ' + file['path']);
 
       console.log('file    ' + JSON.stringify(file));
-      console.log('-----');
+      console.log('-----'); //
 
       // let bodyFs = fs.createReadStream(file.path) ;
 
