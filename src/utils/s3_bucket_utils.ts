@@ -23,13 +23,13 @@ export class S3BucketUtils {
       // let bodyFs = fs.createReadStream(file.path) ;
 
       const params = {
+        ACL: 'public-read',
         Bucket: process.env.CDN_BUCKET_NAME,
         Key: new S3BucketUtils().getFileNameGeneratedByCdnBucket(
           file['originalname'],
           path,
           false,
         ),
-        // ACL: 'public-read',
         contentType: file['mimetype'],
         Body: base64data,
       };
