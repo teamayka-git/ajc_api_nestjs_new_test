@@ -1,4 +1,4 @@
-/*export enum UploadedFileDirectoryPath {
+export enum UploadedFileDirectoryPath {
   TEMP = 'upload_files/temp/',
   GLOBAL_GALLERY_CATEGORY = 'upload_files/category/',
   GLOBAL_GALLERY_SUB_CATEGORY = 'upload_files/subCategory/',
@@ -10,9 +10,9 @@
   GLOBAL_GALLERY_SUPPLIER = 'upload_files/supplier/',
   GLOBAL_GALLERY_OTHERS = 'upload_files/others/',
   CHAT_DOCUMENTS = 'upload_files/chatDocuments/',
-}*/
+}
 
-export enum UploadedFileDirectoryPath {
+/*export enum UploadedFileDirectoryPath {
   TEMP = './public/upload_files/temp/',
   GLOBAL_GALLERY_CATEGORY = './public/upload_files/category/',
   GLOBAL_GALLERY_SUB_CATEGORY = './public/upload_files/subCategory/',
@@ -25,3 +25,4 @@ export enum UploadedFileDirectoryPath {
   GLOBAL_GALLERY_OTHERS = './public/upload_files/others/',
   CHAT_DOCUMENTS = './public/upload_files/chatDocuments/',
 }
+*/
