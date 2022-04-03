@@ -20,6 +20,7 @@ export class S3BucketUtils {
           path,
           false,
         ),
+        contentType: 'image/png',
         Body: base64data,
       };
       s3.upload(params, function (err, data) {
