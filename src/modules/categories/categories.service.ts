@@ -321,8 +321,9 @@ export class CategoriesService {
       console.log('___z4');
       // await this.filesService.uploadMyFile(file);
 
-      await new S3BucketUtils().uploadMyFile(file, '');
+      var resultUpload = await new S3BucketUtils().uploadMyFile(file, '');
 
+      console.log('resultUpload  ' + resultUpload);
       console.log('___z5');
       const responseJSON = {
         message: 'success',

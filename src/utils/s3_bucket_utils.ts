@@ -35,10 +35,12 @@ export class S3BucketUtils {
         throw err;
       }
 
-      throw new HttpException(
-        'File upload error occured',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      console.log('___e8');
+      return 'data.Location';
+      // throw new HttpException(
+      //   'File upload error occured',
+      //   HttpStatus.INTERNAL_SERVER_ERROR,
+      // );
       console.log('___e8');
       console.log(data);
       console.log(`File uploaded successfully. ${data.Location}`);
