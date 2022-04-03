@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as fs from 'fs';
 
 export class S3BucketUtils {
-  public async uploadMyFile(file, path: String) {
+  public async uploadMyFile(file: Object, path: String) {
     return new Promise(function (resolve, reject) {
       const s3 = new AWS.S3({
         accessKeyId: process.env.AWSAccessKeyID,
@@ -14,7 +14,7 @@ export class S3BucketUtils {
 
       let base64data = Buffer.from(file['buffer'], 'binary'); //it was on body that time file was started dowmloading
 
-      const fileContent = fs.readFileSync(file);
+      //const fileContent = fs.readFileSync(file);
 
       console.log('mimetype   ' + file['mimetype']);
       console.log('path    ' + file['path']);
@@ -33,7 +33,7 @@ export class S3BucketUtils {
           false,
         ),
         contentType: file['mimetype'],
-        Body: fileContent,
+        Body: file,
       };
       s3.upload(params, function (err, data) {
         if (err) {
