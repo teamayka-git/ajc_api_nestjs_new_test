@@ -12,7 +12,7 @@ export class S3BucketUtils {
         secretAccessKey: process.env.AWSSecretAccessKey,
       });
 
-      // let base64data = Buffer.from(file['buffer'], 'binary');//it was on body that time file was started dowmloading
+      let base64data = Buffer.from(file['buffer'], 'binary'); //it was on body that time file was started dowmloading
 
       console.log('mimetype   ' + file['mimetype']);
       console.log('path    ' + file['path']);
@@ -24,8 +24,9 @@ export class S3BucketUtils {
           path,
           false,
         ),
+        ACL: 'public-read',
         contentType: file['mimetype'],
-        Body: fs.createReadStream(file['path']),
+        Body: base64data,
       };
       s3.upload(params, function (err, data) {
         if (err) {
