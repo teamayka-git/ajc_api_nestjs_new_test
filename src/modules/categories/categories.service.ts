@@ -323,7 +323,10 @@ export class CategoriesService {
       console.log('___z4');
       // await this.filesService.uploadMyFile(file);
 
-      var resultUpload = await new S3BucketUtils().uploadMyFile(file, '');
+      var resultUpload = await new S3BucketUtils().uploadMyFile(
+        file,
+        UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY,
+      );
 
       console.log('resultUpload  ' + JSON.stringify(resultUpload));
 
