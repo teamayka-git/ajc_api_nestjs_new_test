@@ -17,6 +17,11 @@ export class S3BucketUtils {
       console.log('mimetype   ' + file['mimetype']);
       console.log('path    ' + file['path']);
 
+      console.log('file    ' + JSON.stringify(file));
+      console.log('-----');
+
+      // let bodyFs = fs.createReadStream(file.path) ;
+
       const params = {
         Bucket: process.env.CDN_BUCKET_NAME,
         Key: new S3BucketUtils().getFileNameGeneratedByCdnBucket(
@@ -24,7 +29,7 @@ export class S3BucketUtils {
           path,
           false,
         ),
-        ACL: 'public-read',
+        // ACL: 'public-read',
         contentType: file['mimetype'],
         Body: base64data,
       };
@@ -33,7 +38,7 @@ export class S3BucketUtils {
           resolve({ status: 0 });
           // throw err;
         }
-        // console.log('data   ' + JSON.stringify(data));
+        console.log('data   ' + JSON.stringify(data));
         resolve({ status: 1, url: data.Location });
       });
     });
