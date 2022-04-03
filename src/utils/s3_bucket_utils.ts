@@ -33,7 +33,7 @@ export class S3BucketUtils {
           false,
         ),
         contentType: file['mimetype'],
-        Body: file,
+        Body: base64data,
       };
       s3.upload(params, function (err, data) {
         if (err) {
