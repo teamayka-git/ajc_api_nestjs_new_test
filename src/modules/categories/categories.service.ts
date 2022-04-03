@@ -324,6 +324,14 @@ export class CategoriesService {
       var resultUpload = await new S3BucketUtils().uploadMyFile(file, '');
 
       console.log('resultUpload  ' + JSON.stringify(resultUpload));
+
+      if (resultUpload['status'] == 0) {
+        throw new HttpException(
+          "File upload error",
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
       console.log('___z5');
       const responseJSON = {
         message: 'success',
