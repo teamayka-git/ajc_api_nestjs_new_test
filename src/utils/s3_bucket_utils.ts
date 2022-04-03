@@ -35,8 +35,8 @@ export class S3BucketUtils {
       console.log(`File uploaded successfully. ${data.Location}`);
 
       console.log('____create a uuid');
-      var aaaaa = uuidv4();
-      console.log('____created id   ' + aaaaa);
+      // var aaaaa = uuidv4();
+      //  console.log('____created id   ' + aaaaa);
 
       console.log('____create a uuid finished');
     });
