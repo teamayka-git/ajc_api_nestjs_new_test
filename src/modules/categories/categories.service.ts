@@ -20,6 +20,7 @@ import { Counters } from 'src/tableModels/counters.model';
 import { StringUtils } from 'src/utils/string_utils';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 import { FilesS3Service } from 'src/s3_services/file.s3.services';
+import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 
 @Injectable()
 export class CategoriesService {
@@ -318,7 +319,10 @@ export class CategoriesService {
       console.log('___z3   ' + JSON.stringify(file['originalname']));
 
       console.log('___z4');
-      await this.filesService.uploadMyFile(file);
+      // await this.filesService.uploadMyFile(file);
+
+      await new S3BucketUtils().uploadMyFile(file);
+
       console.log('___z5');
       const responseJSON = {
         message: 'success',
