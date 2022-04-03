@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { S3 } from 'aws-sdk';
 const AWS = require('aws-sdk');
 import { v4 as uuidv4 } from 'uuid';
+import { S3BucketNameGeneratorUtils } from './s3_bucket_name_generator_utils';
 
 export class S3BucketUtils {
   public async uploadMyFile(file: Object, path: String) {
@@ -15,7 +16,10 @@ export class S3BucketUtils {
 
       const params = {
         Bucket: process.env.CDN_BUCKET_NAME,
-        Key: getFileNameGeneratedByCdnBucket(file['originalname'], path),
+        Key: new S3BucketNameGeneratorUtils().getFileNameGeneratedByCdnBucket(
+          file['originalname'],
+          path,
+        ),
         Body: base64data,
       };
       s3.upload(params, function (err, data) {
@@ -28,14 +32,4 @@ export class S3BucketUtils {
       });
     });
   }
-}
-
-function getFileNameGeneratedByCdnBucket(fileName: String, path: String) {
-  return (
-    process.env.CDN_BUCKET_INITIAL_PATH +
-    path +
-    process.env.CDN_BUCKET_FILE_NAME_PREFIX +
-    uuidv4() +
-    fileName
-  );
 }
