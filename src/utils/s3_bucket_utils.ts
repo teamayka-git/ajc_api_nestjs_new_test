@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { S3 } from 'aws-sdk';
 const AWS = require('aws-sdk');
 import { v4 as uuidv4 } from 'uuid';
@@ -35,6 +35,10 @@ export class S3BucketUtils {
         throw err;
       }
 
+      throw new HttpException(
+        'File upload error occured',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
       console.log('___e8');
       console.log(data);
       console.log(`File uploaded successfully. ${data.Location}`);
