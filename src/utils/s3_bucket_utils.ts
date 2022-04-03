@@ -13,6 +13,8 @@ export class S3BucketUtils {
 
       let base64data = Buffer.from(file['buffer'], 'binary');
 
+      console.log('mimetype   ' + file['mimetype']);
+
       const params = {
         Bucket: process.env.CDN_BUCKET_NAME,
         Key: new S3BucketUtils().getFileNameGeneratedByCdnBucket(
@@ -20,7 +22,7 @@ export class S3BucketUtils {
           path,
           false,
         ),
-        contentType: 'image/png',
+        contentType: file['mimetype'],
         Body: base64data,
       };
       s3.upload(params, function (err, data) {
