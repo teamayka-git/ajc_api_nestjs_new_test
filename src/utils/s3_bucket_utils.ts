@@ -14,7 +14,7 @@ export class S3BucketUtils {
 
       let base64data = Buffer.from(file['buffer'], 'binary');
       console.log('aaaaa  ');
-      let aaaaa = this.getFileNameGeneratedByCdnBucket(
+      let aaaaa = new S3BucketUtils().getFileNameGeneratedByCdnBucket(
         file['originalname'],
         path,
       );
