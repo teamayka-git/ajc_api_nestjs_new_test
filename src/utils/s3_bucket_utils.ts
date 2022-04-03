@@ -40,8 +40,8 @@ export class S3BucketUtils {
         }
 
         console.log('___e8');
-        // resolve({ status: 1, url: data.Location });
-        resolve({ status: 0 });
+        resolve({ status: 1, url: data.Location });
+        // resolve({ status: 0 });
         // throw new HttpException(
         //   'File upload error occured',
         //   HttpStatus.INTERNAL_SERVER_ERROR,
