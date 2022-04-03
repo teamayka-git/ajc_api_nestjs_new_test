@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { S3 } from 'aws-sdk';
 const AWS = require('aws-sdk');
 import { v4 as uuidv4 } from 'uuid';
-import { S3BucketNameGeneratorUtils } from './s3_bucket_name_generator_utils';
 
 export class S3BucketUtils {
   public async uploadMyFile(file: Object, path: String) {
