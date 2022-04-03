@@ -19,7 +19,8 @@ export class S3BucketUtils {
     console.log('___e4');
     const params = {
       Bucket: process.env.CDN_BUCKET_NAME,
-      Key: path + process.env.CDN_BUCKET_PREFIX + file['originalname'],
+      Key:
+        path + process.env.CDN_BUCKET_PREFIX + uuidv4() + file['originalname'],
       Body: base64data,
     };
     console.log('___e5');
