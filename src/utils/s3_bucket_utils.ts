@@ -14,11 +14,10 @@ export class S3BucketUtils {
 
       let base64data = Buffer.from(file['buffer'], 'binary');
       console.log('aaaaa  ');
-      let aaaaa =
-        new S3BucketNameGeneratorUtils().getFileNameGeneratedByCdnBucket(
-          file['originalname'],
-          path,
-        );
+      let aaaaa = this.getFileNameGeneratedByCdnBucket(
+        file['originalname'],
+        path,
+      );
       console.log('aaaaa  ' + aaaaa);
 
       const params = {
@@ -38,5 +37,17 @@ export class S3BucketUtils {
         resolve({ status: 1, url: data.Location });
       });
     });
+  }
+  public getFileNameGeneratedByCdnBucket(
+    fileName: String,
+    path: String,
+  ): String {
+    return (
+      process.env.CDN_BUCKET_INITIAL_PATH +
+      path +
+      process.env.CDN_BUCKET_FILE_NAME_PREFIX +
+      uuidv4() +
+      fileName
+    );
   }
 }
