@@ -49,12 +49,12 @@ export class CategoriesController {
           name: 'image',
         },
       ],
-      // {
-      //   storage: diskStorage({
-      // destination: FileMulterHelper.filePathTempCategory,
-      // filename: FileMulterHelper.customFileName,
-      //   }),
-      // },
+      {
+        storage: diskStorage({
+          destination: FileMulterHelper.filePathTempCategory,
+          filename: FileMulterHelper.customFileName,
+        }),
+      },
     ),
   )
   create(
