@@ -38,6 +38,15 @@ export class S3BucketUtils {
     fileName: String,
     path: String,
   ): Promise<String> {
+    console.log(
+      '___P   ' +
+        process.env.CDN_BUCKET_INITIAL_PATH +
+        path +
+        process.env.CDN_BUCKET_FILE_NAME_PREFIX +
+        uuidv4() +
+        fileName,
+    );
+
     return (
       process.env.CDN_BUCKET_INITIAL_PATH +
       path +
