@@ -24,7 +24,7 @@ export class S3BucketUtils {
           path,
           false,
         ),
-        //  ACL: 'public-read',
+        ACL: 'public-read',
         contentType: file['mimetype'],
         Body: base64data,
       };
