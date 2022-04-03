@@ -14,6 +14,8 @@ export class S3BucketUtils {
 
       let base64data = Buffer.from(file['buffer'], 'binary'); //it was on body that time file was started dowmloading
 
+      const fileContent = fs.readFileSync(file);
+
       console.log('mimetype   ' + file['mimetype']);
       console.log('path    ' + file['path']);
 
@@ -31,8 +33,7 @@ export class S3BucketUtils {
           false,
         ),
         contentType: file['mimetype'],
-        Body: base64data,
-        ContentEncoding: 'base64',
+        Body: fileContent,
       };
       s3.upload(params, function (err, data) {
         if (err) {
