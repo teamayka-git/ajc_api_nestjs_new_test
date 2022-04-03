@@ -29,10 +29,10 @@ export class S3BucketUtils {
     });
   }
 
-  public getFileNameGeneratedByCdnBucket(
+  public async getFileNameGeneratedByCdnBucket(
     fileName: String,
     path: String,
-  ): String {
+  ): Promise<String> {
     return (
       process.env.CDN_BUCKET_INITIAL_PATH +
       path +
