@@ -4,7 +4,10 @@ const AWS = require('aws-sdk');
 import { v4 as uuidv4 } from 'uuid';
 
 export class S3BucketNameGeneratorUtils {
-  public async getFileNameGeneratedByCdnBucket(fileName: String, path: String) {
+  public getFileNameGeneratedByCdnBucket(
+    fileName: String,
+    path: String,
+  ): String {
     return (
       process.env.CDN_BUCKET_INITIAL_PATH +
       path +
