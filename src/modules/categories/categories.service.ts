@@ -96,13 +96,7 @@ export class CategoriesService {
           });
 
           var count = dto.array.findIndex(
-            (it) =>
-              it.fileOriginalName ==
-              new S3BucketUtils().getFileNameGeneratedByCdnBucket(
-                file['image'][i]['originalname'],
-                UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY,
-                true,
-              ),
+            (it) => it.fileOriginalName == file['image'][i]['originalname'],
           );
           if (count != -1) {
             dto.array[count]['globalGalleryId'] = globalGalleryId;
