@@ -10,10 +10,10 @@ export class FilesS3Service {
     console.log('___x1');
     const s3 = new S3();
     console.log('___x2');
-    console.log('___x3   ' + process.env.BUCKET_NAME);
+    console.log('___x3   ' + process.env.CDN_BUCKET_NAME);
     return await s3
       .upload({
-        Bucket: process.env.BUCKET_NAME!,
+        Bucket: process.env.CDN_BUCKET_NAME!,
         Body: imageBuffer,
         Key: fileName,
       })
@@ -30,11 +30,11 @@ export class FilesS3Service {
     let base64data = Buffer.from(file['buffer'], 'binary');
     console.log('___f2');
     console.log(
-      '___f3    ' + process.env.BUCKET_NAME + '    ' + file['originalname'],
+      '___f3    ' + process.env.CDN_BUCKET_NAME + '    ' + file['originalname'],
     );
     console.log('___f4');
     const params = {
-      Bucket: process.env.BUCKET_NAME,
+      Bucket: process.env.CDN_BUCKET_NAME,
       Key: 'fayiz1/' + 'qqq' + file['originalname'],
       Body: base64data,
     };
@@ -58,7 +58,7 @@ export class FilesS3Service {
     const s3 = new S3();
     return await s3
       .deleteObject({
-        Bucket: process.env.BUCKET_NAME!,
+        Bucket: process.env.CDN_BUCKET_NAME!,
         Key: key,
       })
       .promise();
