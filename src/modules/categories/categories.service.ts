@@ -54,17 +54,29 @@ export class CategoriesService {
         );
 
         for (var i = 0; i < file['image'].length; i++) {
-          var filePath =
-            __dirname +
-            `/../../../public${file['image'][i]['path'].split('public')[1]}`;
-
-          new ThumbnailUtils().generateThumbnail(
-            filePath,
-            UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY +
-              new StringUtils().makeThumbImageFileName(
-                file['image'][i]['filename'],
-              ),
+          var resultUpload = await new S3BucketUtils().uploadMyFile(
+            file['image'][i],
+            UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY,
           );
+
+          if (resultUpload['status'] == 0) {
+            throw new HttpException(
+              'File upload error',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
+
+          // var filePath =
+          //   __dirname +
+          //   `/../../../public${file['image'][i]['path'].split('public')[1]}`;
+
+          // new ThumbnailUtils().generateThumbnail(
+          //   filePath,
+          //   UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY +
+          //     new StringUtils().makeThumbImageFileName(
+          //       file['image'][i]['filename'],
+          //     ),
+          // );
 
           var globalGalleryId = new mongoose.Types.ObjectId();
           arrayGlobalGalleries.push({
@@ -74,18 +86,8 @@ export class CategoriesService {
             _docType: 0,
             _type: 0,
             _uid: resultCounterPurchase._count - file['image'].length + (i + 1),
-            _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-              process.env.SERVER_DOMAIN
-            }:${process.env.PORT}${
-              file['image'][i]['path'].split('public')[1]
-            }`,
-            _thumbUrl: new StringUtils().makeThumbImageFileName(
-              `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-                process.env.SERVER_DOMAIN
-              }:${process.env.PORT}${
-                file['image'][i]['path'].split('public')[1]
-              }`,
-            ),
+            _url: resultUpload['url'],
+            _thumbUrl: 'nil',
             _created_user_id: _userId_,
             _created_at: dateTime,
             _updated_user_id: null,
@@ -327,7 +329,7 @@ export class CategoriesService {
 
       if (resultUpload['status'] == 0) {
         throw new HttpException(
-          "File upload error",
+          'File upload error',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
