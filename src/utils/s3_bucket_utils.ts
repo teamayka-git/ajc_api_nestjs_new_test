@@ -24,29 +24,25 @@ export class S3BucketUtils {
 
       // let bodyFs = fs.createReadStream(file['originalname']);
       // let bodyFs = fs.readFileSync(file['originalname']);
-      fs.readFile(file['originalname'], function (err, data) {
+
+      const params = {
+        // ACL: 'public-read',
+        Bucket: process.env.CDN_BUCKET_NAME,
+        Key: new S3BucketUtils().getFileNameGeneratedByCdnBucket(
+          file['originalname'],
+          path,
+          false,
+        ),
+        contentType: file['mimetype'],
+        Body: file['buffer'],
+      };
+      s3.upload(params, function (err, data) {
         if (err) {
-          throw err;
+          resolve({ status: 0 });
+          // throw err;
         }
-        const params = {
-          // ACL: 'public-read',
-          Bucket: process.env.CDN_BUCKET_NAME,
-          Key: new S3BucketUtils().getFileNameGeneratedByCdnBucket(
-            file['originalname'],
-            path,
-            false,
-          ),
-          contentType: file['mimetype'],
-          Body: data,
-        };
-        s3.upload(params, function (err, data) {
-          if (err) {
-            resolve({ status: 0 });
-            // throw err;
-          }
-          console.log('data   ' + JSON.stringify(data));
-          resolve({ status: 1, url: data.Location });
-        });
+        console.log('data   ' + JSON.stringify(data));
+        resolve({ status: 1, url: data.Location });
       });
     });
   }
