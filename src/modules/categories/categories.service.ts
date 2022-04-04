@@ -250,7 +250,7 @@ export class CategoriesService {
     }
   }
 
-  async testS3Bucket2(_userId_: string, file) {
+  async testS3Bucket2(_userId_: string, file: Object) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -340,7 +340,7 @@ export class CategoriesService {
       console.log('___z5');
       const responseJSON = {
         message: 'success',
-        data: resultUpload,
+        data: 'aaa',
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&

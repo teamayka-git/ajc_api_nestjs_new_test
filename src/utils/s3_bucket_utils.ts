@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as fs from 'fs';
 
 export class S3BucketUtils {
-  public async uploadMyFile(file, path: String) {
+  public async uploadMyFile(file: Object, path: String) {
     return new Promise(function (resolve, reject) {
       const s3 = new AWS.S3({
         accessKeyId: process.env.AWSAccessKeyID,
@@ -22,19 +22,18 @@ export class S3BucketUtils {
       // console.log('file    ' + JSON.stringify(file));
       console.log('-----'); //
 
-      // let bodyFs = fs.createReadStream(file['originalname']);
-      // let bodyFs = fs.readFileSync(file['originalname']);
-      const { originalname } = file;
+      // let bodyFs = fs.createReadStream(file.path) ;
+
       const params = {
         // ACL: 'public-read',
         Bucket: process.env.CDN_BUCKET_NAME,
         Key: new S3BucketUtils().getFileNameGeneratedByCdnBucket(
-          originalname,
+          file['originalname'],
           path,
           false,
         ),
-        // contentType: file['mimetype'],
-        Body: file.buffer,
+        contentType: file['mimetype'],
+        Body: base64data,
       };
       s3.upload(params, function (err, data) {
         if (err) {
