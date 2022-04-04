@@ -340,7 +340,7 @@ export class CategoriesService {
       console.log('___z5');
       const responseJSON = {
         message: 'success',
-        data: 'aaa',
+        data: resultUpload,
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
