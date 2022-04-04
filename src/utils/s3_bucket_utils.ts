@@ -33,7 +33,7 @@ export class S3BucketUtils {
           false,
         ),
         contentType: file['mimetype'],
-        acl: 'public-read',
+        ACL: 'public-read',
         Body: base64data,
       };
       s3.upload(params, function (err, data) {
