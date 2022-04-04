@@ -32,9 +32,9 @@ export class S3BucketUtils {
           path,
           false,
         ),
-        contentType: file['mimetype'],
+        ContentType: file['mimetype'],
         // acl: 'public-read',
-        Body: svgBuffer,
+        Body: base64data,
       };
       s3.upload(params, function (err, data) {
         if (err) {
