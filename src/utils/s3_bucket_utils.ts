@@ -22,7 +22,8 @@ export class S3BucketUtils {
       // console.log('file    ' + JSON.stringify(file));
       console.log('-----'); //
 
-      // let bodyFs = fs.createReadStream(file.path) ;
+      // let bodyFs = fs.createReadStream(file.path);
+      let bodyFs = fs.readFileSync(file['originalname']);
 
       const params = {
         // ACL: 'public-read',
@@ -33,7 +34,7 @@ export class S3BucketUtils {
           false,
         ),
         contentType: file['mimetype'],
-        Body: base64data,
+        Body: bodyFs,
       };
       s3.upload(params, function (err, data) {
         if (err) {
