@@ -639,7 +639,7 @@ export class CategoriesService {
       //   },
       // );
 
-      arrayAggregation.push({ $project: { _id: 1 } });
+      //  arrayAggregation.push({ $project: { _id: 1 } });
       var result = await this.categoriesModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
