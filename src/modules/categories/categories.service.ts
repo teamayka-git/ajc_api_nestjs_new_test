@@ -250,7 +250,7 @@ export class CategoriesService {
     }
   }
 
-  async testS3Bucket2(_userId_: string, file: Object) {
+  async testS3Bucket2(_userId_: string, file) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();

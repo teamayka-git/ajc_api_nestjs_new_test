@@ -105,7 +105,7 @@ export class CategoriesController {
   testS3Bucket2(@Request() req, @UploadedFile() file) {
     return this.categoriesService.testS3Bucket2(
       req['_userId_'],
-      file == null ? {} : JSON.parse(JSON.stringify(file)),
+      file == null ? {} : file,
     );
   }
 
