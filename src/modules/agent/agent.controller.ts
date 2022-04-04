@@ -81,12 +81,12 @@ export class AgentController {
           name: 'image',
         },
       ],
-      {
+      /*{
         storage: diskStorage({
           destination: FileMulterHelper.filePathTempAgent,
           filename: FileMulterHelper.customFileName,
         }),
-      },
+      },*/
     ),
   )
   create(@Body() dto: AgentCreateDto, @Request() req, @UploadedFiles() file) {
@@ -108,12 +108,12 @@ export class AgentController {
           name: 'image',
         },
       ],
-      {
+      /*{
         storage: diskStorage({
           destination: FileMulterHelper.filePathTempAgent,
           filename: FileMulterHelper.customFileName,
         }),
-      },
+      },*/
     ),
   )
   edit(@Body() dto: AgentEditDto, @Request() req, @UploadedFiles() file) {

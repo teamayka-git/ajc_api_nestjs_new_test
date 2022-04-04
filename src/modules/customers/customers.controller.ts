@@ -57,12 +57,12 @@ var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole'])
           name: 'image',
         },
       ],
-      {
+      /*{
         storage: diskStorage({
           destination: FileMulterHelper.filePathTempCustomer,
           filename: FileMulterHelper.customFileName,
         }),
-      },
+      },*/
     ),
   )
   create(@Body() dto: CustomerCreateDto,@Request() req, @UploadedFiles() file) {
@@ -80,12 +80,12 @@ var userRole=new GuardUserRoleStringGenerate().generate(returnData['_userRole'])
           name: 'image',
         },
       ],
-      {
+      /*{
         storage: diskStorage({
           destination: FileMulterHelper.filePathTempCustomer,
           filename: FileMulterHelper.customFileName,
         }),
-      },
+      },*/
     ),
   )
   edit(@Body() dto: CustomerEditeDto,@Request() req, @UploadedFiles() file) {

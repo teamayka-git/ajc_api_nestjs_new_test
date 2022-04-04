@@ -19,6 +19,7 @@ import { StringUtils } from 'src/utils/string_utils';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { GlobalConfig } from 'src/config/global_config';
+import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 const crypto = require('crypto');
 
 @Injectable()
@@ -138,20 +139,34 @@ export class EmployeesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+      // if (file.hasOwnProperty('image')) {
+      //   var filePath =
+      //     __dirname +
+      //     `/../../../public${file['image'][0]['path'].split('public')[1]}`;
+
+      //   new ThumbnailUtils().generateThumbnail(
+      //     filePath,
+      //     UploadedFileDirectoryPath.GLOBAL_GALLERY_EMPLOYEE +
+      //       new StringUtils().makeThumbImageFileName(
+      //         file['image'][0]['filename'],
+      //       ),
+      //   );
+      // }
+
+      var resultUpload = {};
       if (file.hasOwnProperty('image')) {
-        var filePath =
-          __dirname +
-          `/../../../public${file['image'][0]['path'].split('public')[1]}`;
-
-        new ThumbnailUtils().generateThumbnail(
-          filePath,
-          UploadedFileDirectoryPath.GLOBAL_GALLERY_EMPLOYEE +
-            new StringUtils().makeThumbImageFileName(
-              file['image'][0]['filename'],
-            ),
+        resultUpload = await new S3BucketUtils().uploadMyFile(
+          file['image'][0],
+          UploadedFileDirectoryPath.GLOBAL_GALLERY_EMPLOYEE,
         );
-      }
 
+        if (resultUpload['status'] == 0) {
+          throw new HttpException(
+            'File upload error',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
       var globalGalleryId = null;
       //globalGalleryAdd
       if (file.hasOwnProperty('image')) {
@@ -171,16 +186,7 @@ export class EmployeesService {
           _docType: 0,
           _type: 5,
           _uid: resultCounterPurchase._count,
-          _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-            process.env.SERVER_DOMAIN
-          }:${process.env.PORT}${file['image'][0]['path'].split('public')[1]}`,
-          _thumbUrl: new StringUtils().makeThumbImageFileName(
-            `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-              process.env.SERVER_DOMAIN
-            }:${process.env.PORT}${
-              file['image'][0]['path'].split('public')[1]
-            }`,
-          ),
+          _url: resultUpload['url'],
           _created_user_id: _userId_,
           _created_at: dateTime,
           _updated_user_id: null,
@@ -264,22 +270,21 @@ export class EmployeesService {
         session: transactionSession,
       });
 
-     
-const responseJSON = { message: 'success', data: result1 };
-if (
-  process.env.RESPONSE_RESTRICT == "true" &&
-  JSON.stringify(responseJSON).length >=
-    GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
-) {
-  throw new HttpException(
-    GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-      JSON.stringify(responseJSON).length,
-    HttpStatus.INTERNAL_SERVER_ERROR,
-  );
-}
-await transactionSession.commitTransaction();
-await transactionSession.endSession();
-return responseJSON;
+      const responseJSON = { message: 'success', data: result1 };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
@@ -292,18 +297,33 @@ return responseJSON;
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      if (file.hasOwnProperty('image')) {
-        var filePath =
-          __dirname +
-          `/../../../public${file['image'][0]['path'].split('public')[1]}`;
+      // if (file.hasOwnProperty('image')) {
+      //   var filePath =
+      //     __dirname +
+      //     `/../../../public${file['image'][0]['path'].split('public')[1]}`;
 
-        new ThumbnailUtils().generateThumbnail(
-          filePath,
-          UploadedFileDirectoryPath.GLOBAL_GALLERY_EMPLOYEE +
-            new StringUtils().makeThumbImageFileName(
-              file['image'][0]['filename'],
-            ),
+      //   new ThumbnailUtils().generateThumbnail(
+      //     filePath,
+      //     UploadedFileDirectoryPath.GLOBAL_GALLERY_EMPLOYEE +
+      //       new StringUtils().makeThumbImageFileName(
+      //         file['image'][0]['filename'],
+      //       ),
+      //   );
+      // }
+
+      var resultUpload = {};
+      if (file.hasOwnProperty('image')) {
+        resultUpload = await new S3BucketUtils().uploadMyFile(
+          file['image'][0],
+          UploadedFileDirectoryPath.GLOBAL_GALLERY_EMPLOYEE,
         );
+
+        if (resultUpload['status'] == 0) {
+          throw new HttpException(
+            'File upload error',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
       }
 
       var updateObject = {
@@ -339,16 +359,7 @@ return responseJSON;
           _docType: 0,
           _type: 5,
           _uid: resultCounterPurchase._count,
-          _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-            process.env.SERVER_DOMAIN
-          }:${process.env.PORT}${file['image'][0]['path'].split('public')[1]}`,
-          _thumbUrl: new StringUtils().makeThumbImageFileName(
-            `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-              process.env.SERVER_DOMAIN
-            }:${process.env.PORT}${
-              file['image'][0]['path'].split('public')[1]
-            }`,
-          ),
+          _url: resultUpload['url'],
           _created_user_id: _userId_,
           _created_at: dateTime,
           _updated_user_id: null,
@@ -373,22 +384,21 @@ return responseJSON;
         { new: true, session: transactionSession },
       );
 
-     
-const responseJSON = { message: 'success', data: result };
-if (
-  process.env.RESPONSE_RESTRICT == "true" &&
-  JSON.stringify(responseJSON).length >=
-    GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
-) {
-  throw new HttpException(
-    GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-      JSON.stringify(responseJSON).length,
-    HttpStatus.INTERNAL_SERVER_ERROR,
-  );
-}
-await transactionSession.commitTransaction();
-await transactionSession.endSession();
-return responseJSON;
+      const responseJSON = { message: 'success', data: result };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
@@ -415,22 +425,21 @@ return responseJSON;
         { new: true, session: transactionSession },
       );
 
-     
-const responseJSON ={ message: 'success', data: result };
-if (
-  process.env.RESPONSE_RESTRICT == "true" &&
-  JSON.stringify(responseJSON).length >=
-    GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
-) {
-  throw new HttpException(
-    GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-      JSON.stringify(responseJSON).length,
-    HttpStatus.INTERNAL_SERVER_ERROR,
-  );
-}
-await transactionSession.commitTransaction();
-await transactionSession.endSession();
-return responseJSON;
+      const responseJSON = { message: 'success', data: result };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
@@ -444,7 +453,6 @@ return responseJSON;
     transactionSession.startTransaction();
     try {
       var arrayAggregation = [];
-
 
       if (dto.searchingText != '') {
         //todo
@@ -657,25 +665,24 @@ return responseJSON;
         }
       }
 
-    
-const responseJSON = {
-  message: 'success',
-  data: { list: result, totalCount: totalCount },
-};
-if (
-  process.env.RESPONSE_RESTRICT == "true" &&
-  JSON.stringify(responseJSON).length >=
-    GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
-) {
-  throw new HttpException(
-    GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-      JSON.stringify(responseJSON).length,
-    HttpStatus.INTERNAL_SERVER_ERROR,
-  );
-}
-await transactionSession.commitTransaction();
-await transactionSession.endSession();
-return responseJSON;
+      const responseJSON = {
+        message: 'success',
+        data: { list: result, totalCount: totalCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
@@ -692,26 +699,24 @@ return responseJSON;
         .count({ _email: dto.value, _status: { $in: [1, 0] } })
         .session(transactionSession);
 
-     
-    
-const responseJSON =  {
-  message: 'success',
-  data: { count: resultCount },
-};
-if (
-  process.env.RESPONSE_RESTRICT == "true" &&
-  JSON.stringify(responseJSON).length >=
-    GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
-) {
-  throw new HttpException(
-    GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-      JSON.stringify(responseJSON).length,
-    HttpStatus.INTERNAL_SERVER_ERROR,
-  );
-}
-await transactionSession.commitTransaction();
-await transactionSession.endSession();
-return responseJSON;
+      const responseJSON = {
+        message: 'success',
+        data: { count: resultCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
@@ -728,25 +733,24 @@ return responseJSON;
         .count({ _mobile: dto.value, _status: { $in: [1, 0] } })
         .session(transactionSession);
 
-     
-const responseJSON =  {
-  message: 'success',
-  data: { count: resultCount },
-};
-if (
-  process.env.RESPONSE_RESTRICT == "true" &&
-  JSON.stringify(responseJSON).length >=
-    GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
-) {
-  throw new HttpException(
-    GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-      JSON.stringify(responseJSON).length,
-    HttpStatus.INTERNAL_SERVER_ERROR,
-  );
-}
-await transactionSession.commitTransaction();
-await transactionSession.endSession();
-return responseJSON;
+      const responseJSON = {
+        message: 'success',
+        data: { count: resultCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
@@ -754,4 +758,3 @@ return responseJSON;
     }
   }
 }
- 

@@ -26,6 +26,7 @@ import { Departments } from 'src/tableModels/departments.model';
 import { ProcessMaster } from 'src/tableModels/processMaster.model';
 import { GlobalConfig } from 'src/config/global_config';
 import { OrderSaleSetProcesses } from 'src/tableModels/order_sale_set_processes.model';
+import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 
 @Injectable()
 export class OrderSalesService {
@@ -76,27 +77,49 @@ export class OrderSalesService {
           { new: true, session: transactionSession },
         );
 
-        for (var i = 0; i < dto.arrayDocuments.length; i++) {
-          var count = file['documents'].findIndex(
-            (it) => dto.arrayDocuments[i].fileOriginalName == it.originalname,
+        // for (var i = 0; i < dto.arrayDocuments.length; i++) {
+        //   var count = file['documents'].findIndex(
+        //     (it) => dto.arrayDocuments[i].fileOriginalName == it.originalname,
+        //   );
+
+        //   if (count != -1) {
+        //     if (dto.arrayDocuments[i].docType == 0) {
+        //       var filePath =
+        //         __dirname +
+        //         `/../../../public${
+        //           file['documents'][count]['path'].split('public')[1]
+        //         }`;
+
+        //       new ThumbnailUtils().generateThumbnail(
+        //         filePath,
+        //         UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER +
+        //           new StringUtils().makeThumbImageFileName(
+        //             file['documents'][count]['filename'],
+        //           ),
+        //       );
+        //     }
+        //   }
+        // }
+        for (var i = 0; i < file['documents'].length; i++) {
+          var resultUpload = await new S3BucketUtils().uploadMyFile(
+            file['documents'][i],
+            UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER,
           );
 
-          if (count != -1) {
-            if (dto.arrayDocuments[i].docType == 0) {
-              var filePath =
-                __dirname +
-                `/../../../public${
-                  file['documents'][count]['path'].split('public')[1]
-                }`;
+          if (resultUpload['status'] == 0) {
+            throw new HttpException(
+              'File upload error',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
 
-              new ThumbnailUtils().generateThumbnail(
-                filePath,
-                UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER +
-                  new StringUtils().makeThumbImageFileName(
-                    file['documents'][count]['filename'],
-                  ),
-              );
-            }
+          var count = dto.arrayDocuments.findIndex(
+            (it) => it.fileOriginalName == file['documents'][i]['originalname'],
+          );
+          if (count != -1) {
+            dto.arrayDocuments[count]['url'] = resultUpload['url'];
+          } else {
+            dto.arrayDocuments[count]['url'] = 'nil';
           }
         }
 
@@ -116,21 +139,7 @@ export class OrderSalesService {
                 resultCounterPurchase._count -
                 dto.arrayDocuments.length +
                 (i + 1),
-              _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-                process.env.SERVER_DOMAIN
-              }:${process.env.PORT}${
-                file['documents'][count]['path'].split('public')[1]
-              }`,
-              _thumbUrl:
-                dto.arrayDocuments[i].docType == 0
-                  ? new StringUtils().makeThumbImageFileName(
-                      `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-                        process.env.SERVER_DOMAIN
-                      }:${process.env.PORT}${
-                        file['documents'][count]['path'].split('public')[1]
-                      }`,
-                    )
-                  : 'nil',
+              _url: dto.arrayDocuments[i]['url'],
               _created_user_id: _userId_,
               _created_at: dateTime,
               _updated_user_id: null,
@@ -265,76 +274,79 @@ export class OrderSalesService {
           },
           { new: true, session: transactionSession },
         );
-        for (var i = 0; i < dto.arrayDocuments.length; i++) {
-          var count = file['documents'].findIndex(
-            (it) => dto.arrayDocuments[i].fileOriginalName == it.originalname,
+        // for (var i = 0; i < dto.arrayDocuments.length; i++) {
+        //   var count = file['documents'].findIndex(
+        //     (it) => dto.arrayDocuments[i].fileOriginalName == it.originalname,
+        //   );
+        //   if (count != -1) {
+        //     if (dto.arrayDocuments[i].docType == 0) {
+        //       var filePath =
+        //         __dirname +
+        //         `/../../../public${
+        //           file['documents'][count]['path'].split('public')[1]
+        //         }`;
+
+        //       new ThumbnailUtils().generateThumbnail(
+        //         filePath,
+        //         UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER +
+        //           new StringUtils().makeThumbImageFileName(
+        //             file['documents'][count]['filename'],
+        //           ),
+        //       );
+        //     }
+        //   }
+        // }
+        for (var i = 0; i < file['documents'].length; i++) {
+          var resultUpload = await new S3BucketUtils().uploadMyFile(
+            file['documents'][i],
+            UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER,
+          );
+
+          if (resultUpload['status'] == 0) {
+            throw new HttpException(
+              'File upload error',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
+
+          var count = dto.arrayDocuments.findIndex(
+            (it) => it.fileOriginalName == file['documents'][i]['originalname'],
           );
           if (count != -1) {
-            if (dto.arrayDocuments[i].docType == 0) {
-              var filePath =
-                __dirname +
-                `/../../../public${
-                  file['documents'][count]['path'].split('public')[1]
-                }`;
-
-              new ThumbnailUtils().generateThumbnail(
-                filePath,
-                UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER +
-                  new StringUtils().makeThumbImageFileName(
-                    file['documents'][count]['filename'],
-                  ),
-              );
-            }
+            dto.arrayDocuments[count]['url'] = resultUpload['url'];
+          } else {
+            dto.arrayDocuments[count]['url'] = 'nil';
           }
         }
 
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
-          var count = file['documents'].findIndex(
-            (it) => it.originalname == dto.arrayDocuments[i].fileOriginalName,
-          );
-          if (count != -1) {
-            var globalGalleryId = new mongoose.Types.ObjectId();
-            arrayGlobalGalleries.push({
-              _id: globalGalleryId,
-              _name: dto.arrayDocuments[i].fileOriginalName,
-              _globalGalleryCategoryId: null,
-              _docType: dto.arrayDocuments[i].docType,
-              _type: 7,
-              _uid:
-                resultCounterPurchase._count -
-                dto.arrayDocuments.length +
-                (i + 1),
-              _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-                process.env.SERVER_DOMAIN
-              }:${process.env.PORT}${
-                file['documents'][count]['path'].split('public')[1]
-              }`,
-              _thumbUrl:
-                dto.arrayDocuments[i].docType == 0
-                  ? new StringUtils().makeThumbImageFileName(
-                      `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-                        process.env.SERVER_DOMAIN
-                      }:${process.env.PORT}${
-                        file['documents'][count]['path'].split('public')[1]
-                      }`,
-                    )
-                  : 'nil',
-              _created_user_id: _userId_,
-              _created_at: dateTime,
-              _updated_user_id: null,
-              _updated_at: -1,
-              _status: 1,
-            });
-            arrayGlobalGalleriesDocuments.push({
-              _orderSaleId: dto.orderSaleId,
-              _globalGalleryId: globalGalleryId,
-              _createdUserId: _userId_,
-              _createdAt: dateTime,
-              _updatedUserId: null,
-              _updatedAt: -1,
-              _status: 1,
-            });
-          }
+          var globalGalleryId = new mongoose.Types.ObjectId();
+          arrayGlobalGalleries.push({
+            _id: globalGalleryId,
+            _name: dto.arrayDocuments[i].fileOriginalName,
+            _globalGalleryCategoryId: null,
+            _docType: dto.arrayDocuments[i].docType,
+            _type: 7,
+            _uid:
+              resultCounterPurchase._count -
+              dto.arrayDocuments.length +
+              (i + 1),
+            _url: dto.arrayDocuments[i]['url'],
+            _created_user_id: _userId_,
+            _created_at: dateTime,
+            _updated_user_id: null,
+            _updated_at: -1,
+            _status: 1,
+          });
+          arrayGlobalGalleriesDocuments.push({
+            _orderSaleId: dto.orderSaleId,
+            _globalGalleryId: globalGalleryId,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
         }
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
@@ -515,7 +527,6 @@ export class OrderSalesService {
     transactionSession.startTransaction();
     try {
       var arrayAggregation = [];
-     
 
       if (dto.searchingText != '') {
         //todo
@@ -562,7 +573,6 @@ export class OrderSalesService {
       }
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
-
 
       switch (dto.sortType) {
         case 0:
@@ -1390,10 +1400,6 @@ export class OrderSalesService {
       var arrayAggregation = [];
       var arrayUserIds = [];
 
-    
-
-
-
       if (dto.idsArray.length > 0) {
         var newSettingsId = [];
         dto.idsArray.map((mapItem) => {
@@ -1401,9 +1407,6 @@ export class OrderSalesService {
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
-
-
-
 
       if (dto.employeesArray.length > 0) {
         dto.employeesArray.map((mapItem) => {
@@ -1428,9 +1431,6 @@ export class OrderSalesService {
         },
       });
 
-
-
-
       if (dto.screenType.findIndex((it) => it == 101) != -1) {
         arrayAggregation.push({
           $lookup: {
@@ -1440,7 +1440,9 @@ export class OrderSalesService {
               {
                 $match: {
                   _status: 1,
-                  $expr: { $eq: ['$_orderSaleSetProcessId', '$$orderSaleSetProcessId'] },
+                  $expr: {
+                    $eq: ['$_orderSaleSetProcessId', '$$orderSaleSetProcessId'],
+                  },
                 },
               },
               {
@@ -1453,7 +1455,7 @@ export class OrderSalesService {
                         _status: 1,
                         $expr: { $eq: ['$_id', '$$subProcessId'] },
                       },
-                    }
+                    },
                   ],
                   as: 'subProcessDetails',
                 },
@@ -1524,7 +1526,9 @@ export class OrderSalesService {
                     from: ModelNames.SUB_CATEGORIES,
                     let: { subCategoryId: '$_subCategoryId' },
                     pipeline: [
-                      { $match: { $expr: { $eq: ['$_id', '$$subCategoryId'] } } },
+                      {
+                        $match: { $expr: { $eq: ['$_id', '$$subCategoryId'] } },
+                      },
                     ],
                     as: 'subCategoryDetails',
                   },
@@ -1534,7 +1538,7 @@ export class OrderSalesService {
                     path: '$subCategoryDetails',
                     preserveNullAndEmptyArrays: true,
                   },
-                }
+                },
               ],
               as: 'orderSaleDetails',
             },

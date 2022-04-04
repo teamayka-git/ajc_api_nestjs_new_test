@@ -27,12 +27,12 @@ export class AppController {
           name: 'document',
         },
       ],
-      {
+      /*{
         storage: diskStorage({
           destination: FileMulterHelper.filePathChatDocuments,
           filename: FileMulterHelper.customFileName,
         }),
-      },
+      },*/
     ),
   )
   create(@Body() dto: ChatDocumentCreateDto,@Request() req, @UploadedFiles() file) {

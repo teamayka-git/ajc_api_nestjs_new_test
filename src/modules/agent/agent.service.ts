@@ -21,6 +21,7 @@ import { GlobalConfig } from 'src/config/global_config';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
+import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 
 @Injectable()
 export class AgentService {
@@ -142,18 +143,30 @@ export class AgentService {
     transactionSession.startTransaction();
 
     try {
+      var resultUpload = {};
       if (file.hasOwnProperty('image')) {
-        var filePath =
-          __dirname +
-          `/../../../public${file['image'][0]['path'].split('public')[1]}`;
-
-        new ThumbnailUtils().generateThumbnail(
-          filePath,
-          UploadedFileDirectoryPath.GLOBAL_GALLERY_AGENT +
-            new StringUtils().makeThumbImageFileName(
-              file['image'][0]['filename'],
-            ),
+        resultUpload = await new S3BucketUtils().uploadMyFile(
+          file['image'][0],
+          UploadedFileDirectoryPath.GLOBAL_GALLERY_AGENT,
         );
+
+        if (resultUpload['status'] == 0) {
+          throw new HttpException(
+            'File upload error',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+        // var filePath =
+        //   __dirname +
+        //   `/../../../public${file['image'][0]['path'].split('public')[1]}`;
+
+        // new ThumbnailUtils().generateThumbnail(
+        //   filePath,
+        //   UploadedFileDirectoryPath.GLOBAL_GALLERY_AGENT +
+        //     new StringUtils().makeThumbImageFileName(
+        //       file['image'][0]['filename'],
+        //     ),
+        // );
       }
 
       var globalGalleryId = null;
@@ -175,16 +188,7 @@ export class AgentService {
           _docType: 0,
           _type: 3,
           _uid: resultCounterPurchase._count,
-          _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-            process.env.SERVER_DOMAIN
-          }:${process.env.PORT}${file['image'][0]['path'].split('public')[1]}`,
-          _thumbUrl: new StringUtils().makeThumbImageFileName(
-            `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-              process.env.SERVER_DOMAIN
-            }:${process.env.PORT}${
-              file['image'][0]['path'].split('public')[1]
-            }`,
-          ),
+          _url: resultUpload['url'],
           _created_user_id: _userId_,
           _created_at: dateTime,
           _updated_user_id: null,
@@ -270,7 +274,7 @@ export class AgentService {
 
       const responseJSON = { message: 'success', data: result1 };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -288,25 +292,38 @@ export class AgentService {
       await transactionSession.endSession();
       throw error;
     }
-  } 
+  }
 
   async edit(dto: AgentEditDto, _userId_: string, file: Object) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+      var resultUpload = {};
       if (file.hasOwnProperty('image')) {
-        var filePath =
-          __dirname +
-          `/../../../public${file['image'][0]['path'].split('public')[1]}`;
-
-        new ThumbnailUtils().generateThumbnail(
-          filePath,
-          UploadedFileDirectoryPath.GLOBAL_GALLERY_AGENT +
-            new StringUtils().makeThumbImageFileName(
-              file['image'][0]['filename'],
-            ),
+        resultUpload = await new S3BucketUtils().uploadMyFile(
+          file['image'][0],
+          UploadedFileDirectoryPath.GLOBAL_GALLERY_AGENT,
         );
+
+        if (resultUpload['status'] == 0) {
+          throw new HttpException(
+            'File upload error',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        // var filePath =
+        //   __dirname +
+        //   `/../../../public${file['image'][0]['path'].split('public')[1]}`;
+
+        // new ThumbnailUtils().generateThumbnail(
+        //   filePath,
+        //   UploadedFileDirectoryPath.GLOBAL_GALLERY_AGENT +
+        //     new StringUtils().makeThumbImageFileName(
+        //       file['image'][0]['filename'],
+        //     ),
+        // );
       }
 
       var updateObject = {
@@ -341,16 +358,7 @@ export class AgentService {
           _docType: 0,
           _type: 3,
           _uid: resultCounterPurchase._count,
-          _url: `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-            process.env.SERVER_DOMAIN
-          }:${process.env.PORT}${file['image'][0]['path'].split('public')[1]}`,
-          _thumbUrl: new StringUtils().makeThumbImageFileName(
-            `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-              process.env.SERVER_DOMAIN
-            }:${process.env.PORT}${
-              file['image'][0]['path'].split('public')[1]
-            }`,
-          ),
+          _url: resultUpload['url'],
           _created_user_id: _userId_,
           _created_at: dateTime,
           _updated_user_id: null,
@@ -377,7 +385,7 @@ export class AgentService {
 
       const responseJSON = { message: 'success', data: result };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -418,7 +426,7 @@ export class AgentService {
 
       const responseJSON = { message: 'success', data: result };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -485,7 +493,6 @@ export class AgentService {
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
-      
       switch (dto.sortType) {
         case 0:
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
@@ -599,7 +606,7 @@ export class AgentService {
         data: { list: result, totalCount: totalCount },
       };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -686,7 +693,7 @@ export class AgentService {
         data: { list: result, totalCount: totalCount },
       };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -720,7 +727,7 @@ export class AgentService {
         data: { count: resultCount },
       };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -754,7 +761,7 @@ export class AgentService {
         data: { count: resultCount },
       };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -773,4 +780,4 @@ export class AgentService {
       throw error;
     }
   }
-} 
+}

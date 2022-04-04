@@ -81,12 +81,12 @@ export class CategoriesController {
           name: 'image',
         },
       ],
-      {
+      /*{
         storage: diskStorage({
           destination: FileMulterHelper.filePathTempCategory,
           filename: FileMulterHelper.customFileName,
         }),
-      },
+      },*/
     ),
   )
   testS3Bucket1(@Request() req, @UploadedFiles() file) {
@@ -121,12 +121,12 @@ export class CategoriesController {
           name: 'image',
         },
       ],
-      {
+      /*{
         storage: diskStorage({
           destination: FileMulterHelper.filePathTempCategory,
           filename: FileMulterHelper.customFileName,
         }),
-      },
+      },*/
     ),
   )
   edit(@Body() dto: CategoriesEditDto, @Request() req, @UploadedFiles() file) {

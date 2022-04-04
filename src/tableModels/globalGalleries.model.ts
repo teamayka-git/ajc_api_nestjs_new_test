@@ -4,8 +4,7 @@ import { GlobalConfig } from 'src/config/global_config';
 
 export const GlobalGalleriesSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
-  _name: { type: String, 
-    default: 'nil' },
+  _name: { type: String, default: 'nil' },
   _globalGalleryCategoryId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.GLOBAL_GALLERY_CATEGORIES,
@@ -15,7 +14,6 @@ export const GlobalGalleriesSchema = new mongoose.Schema({
   _uid: { type: Number, required: true, default: -1 },
   _type: { type: Number, required: true, default: -1 },
   _url: { type: String, required: true, default: 'nil' },
-  _thumbUrl: { type: String, required: true, default: 'nil' },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -39,7 +37,6 @@ export interface GlobalGalleries {
   _type: Number;
   _uid: Number;
   _url: String;
-  _thumbUrl: String;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -47,14 +44,14 @@ export interface GlobalGalleries {
   _status: Number;
 }
 
-GlobalGalleriesSchema.index({_status: 1});
-GlobalGalleriesSchema.index({ _name: 1,_id:1 });
-GlobalGalleriesSchema.index({ _type: 1 ,_id:1});
-GlobalGalleriesSchema.index({ _uid: 1 ,_id:1});
+GlobalGalleriesSchema.index({ _status: 1 });
+GlobalGalleriesSchema.index({ _name: 1, _id: 1 });
+GlobalGalleriesSchema.index({ _type: 1, _id: 1 });
+GlobalGalleriesSchema.index({ _uid: 1, _id: 1 });
 GlobalGalleriesSchema.index({ _docType: 1 });
-GlobalGalleriesSchema.index({ _globalGalleryCategoryId: 1,_id:1 });
+GlobalGalleriesSchema.index({ _globalGalleryCategoryId: 1, _id: 1 });
 
-GlobalGalleriesSchema.index({_uid: 1}, {unique: true});
+GlobalGalleriesSchema.index({ _uid: 1 }, { unique: true });
 
 /*GlobalGalleriesSchema.index({_name: 1,_globalGalleryCategoryId:1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 },_globalGalleryCategoryId:{$ne:null} }});
 GlobalGalleriesSchema.post('save', async function(error, doc, next) {

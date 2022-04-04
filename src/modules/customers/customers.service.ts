@@ -6,7 +6,14 @@ import { Customers } from 'src/tableModels/customers.model';
 import { User } from 'src/tableModels/user.model';
 import * as mongoose from 'mongoose';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
-import { CheckEmailExistDto, CheckMobileExistDto, CustomerCreateDto, CustomerEditeDto, CustomerLoginDto, ListCustomersDto } from './customers.dto';
+import {
+  CheckEmailExistDto,
+  CheckMobileExistDto,
+  CustomerCreateDto,
+  CustomerEditeDto,
+  CustomerLoginDto,
+  ListCustomersDto,
+} from './customers.dto';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 import { StringUtils } from 'src/utils/string_utils';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
@@ -14,554 +21,530 @@ import { GlobalGalleryCategories } from 'src/tableModels/globalGallerycategories
 import { CommonNames } from 'src/common/common_names';
 import { GlobalConfig } from 'src/config/global_config';
 const crypto = require('crypto');
+
+import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 @Injectable()
 export class CustomersService {
-    constructor(
-        @InjectModel(ModelNames.USER)
-        private readonly userModel: mongoose.Model<User>,
-        @InjectModel(ModelNames.CUSTOMERS)
-        private readonly customersModel: mongoose.Model<Customers>,
-        @InjectModel(ModelNames.COUNTERS)
-        private readonly counterModel: mongoose.Model<Counters>,
-        
-        @InjectModel(ModelNames.GLOBAL_GALLERY_CATEGORIES) private readonly globalGalleryCategoriesModel: mongoose.Model<GlobalGalleryCategories>,
-      @InjectModel(ModelNames.GLOBAL_GALLERIES) private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
-        @InjectConnection() private readonly connection: mongoose.Connection,
-      ) {}
+  constructor(
+    @InjectModel(ModelNames.USER)
+    private readonly userModel: mongoose.Model<User>,
+    @InjectModel(ModelNames.CUSTOMERS)
+    private readonly customersModel: mongoose.Model<Customers>,
+    @InjectModel(ModelNames.COUNTERS)
+    private readonly counterModel: mongoose.Model<Counters>,
 
+    @InjectModel(ModelNames.GLOBAL_GALLERY_CATEGORIES)
+    private readonly globalGalleryCategoriesModel: mongoose.Model<GlobalGalleryCategories>,
+    @InjectModel(ModelNames.GLOBAL_GALLERIES)
+    private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
+    @InjectConnection() private readonly connection: mongoose.Connection,
+  ) {}
 
-      async login(dto: CustomerLoginDto) {
-        var dateTime = new Date().getTime();
-    
-        const transactionSession = await this.connection.startSession();
-        transactionSession.startTransaction();
-    try{
-          var resultEmployee = await this.customersModel
-          .aggregate([{ $match: { _email: dto.email } }])
-          .session(transactionSession);
-        if (resultEmployee.length == 0) {
-          throw new HttpException(
-            'Wrong, Please check email and password',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        } else if (resultEmployee[0]._status == 0) {
-          throw new HttpException(
-            'User is disabled',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        } else if (resultEmployee[0]._status == 2) {
-          throw new HttpException(
-            'User is deleted',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-    
-        var encryptedPassword = await crypto
-          .pbkdf2Sync(
-            dto.password,
-            process.env.CRYPTO_ENCRYPTION_SALT,
-            1000,
-            64,
-            `sha512`,
-          )
-          .toString(`hex`);
-    
-        let isEqual =
-          encryptedPassword === resultEmployee[0]._password ? true : false;
-    
-        if (!isEqual) {
-          throw new HttpException(
-            'Wrong, Please check password',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-    
-        await this.customersModel.findOneAndUpdate(
-          { _id: resultEmployee[0]._id },
-          { $set: { _lastLogin: dateTime } },
-          { new: true, session:transactionSession },
+  async login(dto: CustomerLoginDto) {
+    var dateTime = new Date().getTime();
+
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var resultEmployee = await this.customersModel
+        .aggregate([{ $match: { _email: dto.email } }])
+        .session(transactionSession);
+      if (resultEmployee.length == 0) {
+        throw new HttpException(
+          'Wrong, Please check email and password',
+          HttpStatus.INTERNAL_SERVER_ERROR,
         );
-    
-        var resultUser = await this.userModel
-          .aggregate([
-            {
-              $match: {
-                _customerId: new mongoose.Types.ObjectId(resultEmployee[0]._id),
-                _type: 3,
-                _status: 1,
-              },
+      } else if (resultEmployee[0]._status == 0) {
+        throw new HttpException(
+          'User is disabled',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      } else if (resultEmployee[0]._status == 2) {
+        throw new HttpException(
+          'User is deleted',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      var encryptedPassword = await crypto
+        .pbkdf2Sync(
+          dto.password,
+          process.env.CRYPTO_ENCRYPTION_SALT,
+          1000,
+          64,
+          `sha512`,
+        )
+        .toString(`hex`);
+
+      let isEqual =
+        encryptedPassword === resultEmployee[0]._password ? true : false;
+
+      if (!isEqual) {
+        throw new HttpException(
+          'Wrong, Please check password',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      await this.customersModel.findOneAndUpdate(
+        { _id: resultEmployee[0]._id },
+        { $set: { _lastLogin: dateTime } },
+        { new: true, session: transactionSession },
+      );
+
+      var resultUser = await this.userModel
+        .aggregate([
+          {
+            $match: {
+              _customerId: new mongoose.Types.ObjectId(resultEmployee[0]._id),
+              _type: 3,
+              _status: 1,
             },
-    
-            { $sort: { _id: -1 } },
-            {
-              $lookup: {
-                from: ModelNames.CUSTOMERS,
-                let: { customerId: '$_customerId' },
-                pipeline: [
-                  { $match: { $expr: { $eq: ['$_id', '$$customerId'] } } },
-                  { $project: { _password: 0 } },
-                ],
-                as: 'userDetails',
-              },
+          },
+
+          { $sort: { _id: -1 } },
+          {
+            $lookup: {
+              from: ModelNames.CUSTOMERS,
+              let: { customerId: '$_customerId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$customerId'] } } },
+                { $project: { _password: 0 } },
+              ],
+              as: 'userDetails',
             },
-            {
-              $unwind: {
-                path: '$userDetails',
-                preserveNullAndEmptyArrays: true,
-              },
+          },
+          {
+            $unwind: {
+              path: '$userDetails',
+              preserveNullAndEmptyArrays: true,
             },
-          ])
-          .session(transactionSession);
-        if (resultUser.length == 0) {
+          },
+        ])
+        .session(transactionSession);
+      if (resultUser.length == 0) {
+        throw new HttpException(
+          'User not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+
+      return resultUser[0];
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async create(dto: CustomerCreateDto, _userId_: string, file: Object) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+
+    try {
+      var resultUpload = {};
+      if (file.hasOwnProperty('image')) {
+        // var filePath =
+        //   __dirname +
+        //   `/../../../public${file['image'][0]['path'].split('public')[1]}`;
+
+        //   new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER +
+        //     new StringUtils().makeThumbImageFileName(
+        //       file['image'][0]['filename'],
+        //     ));
+
+        resultUpload = await new S3BucketUtils().uploadMyFile(
+          file['image'][0],
+          UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER,
+        );
+
+        if (resultUpload['status'] == 0) {
           throw new HttpException(
-            'User not found',
+            'File upload error',
             HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }
-    
-        await transactionSession.commitTransaction();
-        await transactionSession.endSession();
-    
-        return resultUser[0];
-      }catch(error){
-        await transactionSession.abortTransaction();
-        await transactionSession.endSession();
-        throw error;
       }
-    }
-    
 
-
-    async create(dto: CustomerCreateDto, _userId_: string, file: Object) {
-        var dateTime = new Date().getTime();
-        const transactionSession = await this.connection.startSession();
-        transactionSession.startTransaction();
-    
-    try{
-    
-    
-        if (file.hasOwnProperty('image')) {
-          var filePath =
-            __dirname +
-            `/../../../public${file['image'][0]['path'].split('public')[1]}`;
-    
-    
-            new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER +
-              new StringUtils().makeThumbImageFileName(
-                file['image'][0]['filename'],
-              ));
-    
-       
-    
-        }
-    
-    
-        var globalGalleryId=null;
-        //globalGalleryAdd
-        if (file.hasOwnProperty('image')) {
-    
-          var resultCounterPurchase= await this.counterModel.findOneAndUpdate(
-              { _tableName: ModelNames.GLOBAL_GALLERIES},
-              {
-                $inc: {
-                  _count:1,
-                  },
-                },
-              {  new: true,session: transactionSession },
-            );
-    
-        const globalGallery = new this.globalGalleryModel({
-          _name:file['image'][0]['originalname'],
-          _globalGalleryCategoryId:null,
-          _docType:0,
-          _type:7,
-          _uid:resultCounterPurchase._count,
-          _url:`${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
-              process.env.PORT
-            }${file['image'][0]['path'].split('public')[1]}`,
-          _thumbUrl: new StringUtils().makeThumbImageFileName(
-              `${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
-                process.env.PORT
-              }${file['image'][0]['path'].split('public')[1]}`,
-            ),
-          _created_user_id: _userId_,
-          _created_at: dateTime,
-          _updated_user_id: null,
-          _updated_at: -1,
-          _status: 1,
-        });
-      var resultGlobalGallery=  await globalGallery.save({
-          session: transactionSession,
-        });
-        
-        globalGalleryId=resultGlobalGallery._id;
-      }
-    
-    
-    
-    
+      var globalGalleryId = null;
+      //globalGalleryAdd
+      if (file.hasOwnProperty('image')) {
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
-          { _tableName: ModelNames.AGENTS },
+          { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
             $inc: {
               _count: 1,
             },
           },
-          { new: true,session: transactionSession },
+          { new: true, session: transactionSession },
         );
-    
-        var password = '';
-        if (dto.password == '') {
-          password = new StringUtils().makeid(6);
-        }else{
-          password=dto.password;
-        }
-    
-        var encryptedPassword = await crypto
-          .pbkdf2Sync(
-            password,
-            process.env.CRYPTO_ENCRYPTION_SALT,
-            1000,
-            64,
-            `sha512`,
-          )
-          .toString(`hex`);
-    
-        const newsettingsModel = new this.customersModel({
-          _name: dto.name,
-          _gender: dto.gender,
-          _email: dto.email,
-          _password: encryptedPassword,
-          _mobile: dto.mobile,
+
+        const globalGallery = new this.globalGalleryModel({
+          _name: file['image'][0]['originalname'],
+          _globalGalleryCategoryId: null,
+          _docType: 0,
+          _type: 7,
           _uid: resultCounterPurchase._count,
-          _globalGalleryId:globalGalleryId,
-          
-          
-          
+          _url: resultUpload['url'],
+          _created_user_id: _userId_,
+          _created_at: dateTime,
+          _updated_user_id: null,
+          _updated_at: -1,
+          _status: 1,
+        });
+        var resultGlobalGallery = await globalGallery.save({
+          session: transactionSession,
+        });
 
+        globalGalleryId = resultGlobalGallery._id;
+      }
 
+      var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
+        { _tableName: ModelNames.AGENTS },
+        {
+          $inc: {
+            _count: 1,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
 
+      var password = '';
+      if (dto.password == '') {
+        password = new StringUtils().makeid(6);
+      } else {
+        password = dto.password;
+      }
 
-          _orderSaleRate:dto.orderSaleRate,
-          _stockSaleRate:dto.stockSaleRate,
-          _customerType:dto.customerType,
-          _branchId:dto.branchId,
-          _orderHeadId:dto.orderHeadId,
-          _relationshipManagerId:dto.relationshipManagerId,
-          _supplierId:dto.supplierId,
-          _panCardNumber:dto.panCardNumber,
-          _billingModeSale:dto.billingModeSale,
-          _billingModePurchase:dto.billingModePurchase,
-          _hallmarkingMandatoryStatus:dto.hallmarkingMandatoryStatus,
-          _rateCardId:dto.rateCardId,
-          _gstNumber:dto.gstNumber,
-          _cityId:dto.cityId,
-          _tdsId:(dto.tdsId=="nil"||dto.tdsId=="")?null:dto.tdsId,
-          _tcsId:(dto.tcsId=="nil"||dto.tcsId=="")?null:dto.tcsId,
-          _creditAmount:dto.creditAmount,
-          _creditDays:dto.creditDays,
-          _rateBaseMasterId:dto.rateBaseMasterId,
-          _stonePricing:dto.stonePricing,
-          _chatPermissions:dto.chatPermissions,
-          _agentId:dto.agentId,
-          _agentCommision:dto.agentCommision,
+      var encryptedPassword = await crypto
+        .pbkdf2Sync(
+          password,
+          process.env.CRYPTO_ENCRYPTION_SALT,
+          1000,
+          64,
+          `sha512`,
+        )
+        .toString(`hex`);
 
+      const newsettingsModel = new this.customersModel({
+        _name: dto.name,
+        _gender: dto.gender,
+        _email: dto.email,
+        _password: encryptedPassword,
+        _mobile: dto.mobile,
+        _uid: resultCounterPurchase._count,
+        _globalGalleryId: globalGalleryId,
 
+        _orderSaleRate: dto.orderSaleRate,
+        _stockSaleRate: dto.stockSaleRate,
+        _customerType: dto.customerType,
+        _branchId: dto.branchId,
+        _orderHeadId: dto.orderHeadId,
+        _relationshipManagerId: dto.relationshipManagerId,
+        _supplierId: dto.supplierId,
+        _panCardNumber: dto.panCardNumber,
+        _billingModeSale: dto.billingModeSale,
+        _billingModePurchase: dto.billingModePurchase,
+        _hallmarkingMandatoryStatus: dto.hallmarkingMandatoryStatus,
+        _rateCardId: dto.rateCardId,
+        _gstNumber: dto.gstNumber,
+        _cityId: dto.cityId,
+        _tdsId: dto.tdsId == 'nil' || dto.tdsId == '' ? null : dto.tdsId,
+        _tcsId: dto.tcsId == 'nil' || dto.tcsId == '' ? null : dto.tcsId,
+        _creditAmount: dto.creditAmount,
+        _creditDays: dto.creditDays,
+        _rateBaseMasterId: dto.rateBaseMasterId,
+        _stonePricing: dto.stonePricing,
+        _chatPermissions: dto.chatPermissions,
+        _agentId: dto.agentId,
+        _agentCommision: dto.agentCommision,
 
+        _dataGuard: dto.dataGuard,
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _updatedUserId: null,
+        _updatedAt: -1,
+        _status: 1,
+      });
+      var result1 = await newsettingsModel.save({
+        session: transactionSession,
+      });
 
+      const userModel = new this.userModel({
+        _type: 3,
+        _employeeId: null,
+        _agentId: null,
+        _customerId: result1._id,
+        _supplierId: null,
+        _fcmId: '',
+        _deviceUniqueId: '',
+        _permissions: [],
+        _userRole: 1,
+        _created_user_id: _userId_,
+        _created_at: dateTime,
+        _updated_user_id: null,
+        _updated_at: -1,
+        _status: 1,
+      });
+      await userModel.save({
+        session: transactionSession,
+      });
 
+      var globalGalleryManinCategoryForCustomer =
+        await this.globalGalleryCategoriesModel
+          .find(
+            {
+              _status: 1,
+              _name: CommonNames.GLOBAL_GALLERY_CUSTOMER,
+              _type: 1,
+            },
+            { _id: 1 },
+          )
+          .session(transactionSession);
+      if (globalGalleryManinCategoryForCustomer.length == 0) {
+        throw new HttpException(
+          'Global gallery category not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
 
+      var globalGalleryCategory = new this.globalGalleryCategoriesModel({
+        _name: dto.name,
+        _globalGalleryCategoryId: globalGalleryManinCategoryForCustomer[0]._id,
+        _dataGuard: [0, 1, 2],
+        _type: 2,
+        _createdUserId: null,
+        _createdAt: dateTime,
+        _updatedUserId: null,
+        _updatedAt: -1,
+        _status: 1,
+      });
 
+      var globalGallerySpecificCustomer = await globalGalleryCategory.save({
+        session: transactionSession,
+      });
 
-
-
-
-
-          _dataGuard: dto.dataGuard,
-          _createdUserId: _userId_,
+      var globalGalleryCategoryProducts = new this.globalGalleryCategoriesModel(
+        {
+          _name: CommonNames.GLOBAL_GALLERY_CUSTOMER_PRODUCTS,
+          _globalGalleryCategoryId: globalGallerySpecificCustomer._id,
+          _dataGuard: [0, 1, 2],
+          _type: 2,
+          _createdUserId: null,
           _createdAt: dateTime,
           _updatedUserId: null,
           _updatedAt: -1,
           _status: 1,
-        });
-        var result1 = await newsettingsModel.save({ session: transactionSession });
-    
-    
-        const userModel = new this.userModel({
-          _type:3,
-          _employeeId:null,
-          _agentId:null,
-          _customerId:result1._id,
-          _supplierId:null,
-          _fcmId:"",
-          _deviceUniqueId:"",
-          _permissions:[],
-          _userRole:1,
-          _created_user_id: _userId_,
-          _created_at: dateTime,
-          _updated_user_id: null,
-          _updated_at: -1,
-          _status: 1,
-        });
-      await userModel.save({
-          session: transactionSession,
-        });
-    
-    var globalGalleryManinCategoryForCustomer=await this.globalGalleryCategoriesModel.find({_status:1,_name:CommonNames.GLOBAL_GALLERY_CUSTOMER,_type:1},{_id:1}).session(transactionSession);
-    if(globalGalleryManinCategoryForCustomer.length==0){
-      throw new HttpException('Global gallery category not found', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-   
-    var globalGalleryCategory=new this.globalGalleryCategoriesModel({
-      _name:dto.name,
-    _globalGalleryCategoryId:globalGalleryManinCategoryForCustomer[0]._id,
-    _dataGuard:[0,1,2],
-    _type:2,
-    _createdUserId:null,
-    _createdAt:dateTime,
-    _updatedUserId:null,
-    _updatedAt:-1,
-    _status:1
-    });
-    
-    var globalGallerySpecificCustomer=await globalGalleryCategory.save({
-      session: transactionSession,
-    });
-
-
-    var globalGalleryCategoryProducts=new this.globalGalleryCategoriesModel({
-      _name:CommonNames.GLOBAL_GALLERY_CUSTOMER_PRODUCTS,
-    _globalGalleryCategoryId:globalGallerySpecificCustomer._id,
-    _dataGuard:[0,1,2],
-    _type:2,
-    _createdUserId:null,
-    _createdAt:dateTime,
-    _updatedUserId:null,
-    _updatedAt:-1,
-    _status:1
-    });
-    
-    await globalGalleryCategoryProducts.save({
-      session: transactionSession,
-    });
-
-
-
-
-
-    const responseJSON = { message: 'success', data: result1 };
-    if (
-      process.env.RESPONSE_RESTRICT == "true" &&
-      JSON.stringify(responseJSON).length >=
-        GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
-    ) {
-      throw new HttpException(
-        GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-          JSON.stringify(responseJSON).length,
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        },
       );
-    }
-    await transactionSession.commitTransaction();
-    await transactionSession.endSession();
-    return responseJSON;
-        
-      }catch(error){
-        await transactionSession.abortTransaction();
-        await transactionSession.endSession();
-        throw error;
+
+      await globalGalleryCategoryProducts.save({
+        session: transactionSession,
+      });
+
+      const responseJSON = { message: 'success', data: result1 };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
     }
+  }
 
+  async edit(dto: CustomerEditeDto, _userId_: string, file: Object) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      // if (file.hasOwnProperty('image')) {
+      // var filePath =
+      //   __dirname +
+      //   `/../../../public${file['image'][0]['path'].split('public')[1]}`;
+      //   new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_AGENT +
+      //     new StringUtils().makeThumbImageFileName(
+      //       file['image'][0]['filename'],
+      //     ));
+      var resultUpload = {};
+      if (file.hasOwnProperty('image')) {
+        resultUpload = await new S3BucketUtils().uploadMyFile(
+          file['image'][0],
+          UploadedFileDirectoryPath.GLOBAL_GALLERY_AGENT,
+        );
 
-
-    async edit(dto: CustomerEditeDto, _userId_: string, file: Object) {
-        var dateTime = new Date().getTime();
-        const transactionSession = await this.connection.startSession();
-        transactionSession.startTransaction();
-    try{
-
- 
-
-        if (file.hasOwnProperty('image')) {
-          var filePath =
-            __dirname +
-            `/../../../public${file['image'][0]['path'].split('public')[1]}`;
-    
-    
-            new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_AGENT +
-              new StringUtils().makeThumbImageFileName(
-                file['image'][0]['filename'],
-              ));
-    
-    
-       
-    
+        if (resultUpload['status'] == 0) {
+          throw new HttpException(
+            'File upload error',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
         }
-    var resultOldCustomerName=await this.customersModel.find({_id:dto.customerId},{_name:1});
-if(resultOldCustomerName.length==0){
-  throw new HttpException('Old customer data not found', HttpStatus.INTERNAL_SERVER_ERROR);
-}
-    var oldCustomerName=resultOldCustomerName[0]._name;
+      }
+      // }
+      var resultOldCustomerName = await this.customersModel.find(
+        { _id: dto.customerId },
+        { _name: 1 },
+      );
+      if (resultOldCustomerName.length == 0) {
+        throw new HttpException(
+          'Old customer data not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      var oldCustomerName = resultOldCustomerName[0]._name;
 
+      var updateObject = {
+        _name: dto.name,
+        _gender: dto.gender,
+        _mobile: dto.mobile,
+        _globalGalleryId: globalGalleryId,
 
-
-
-
-
-
-
-
-    
-        var updateObject= {
-            _name: dto.name,
-            _gender: dto.gender,
-            _mobile: dto.mobile,
-            _globalGalleryId:globalGalleryId,
-            
-            
-            
-  
-  
-  
-  
-            _orderSaleRate:dto.orderSaleRate,
-            _stockSaleRate:dto.stockSaleRate,
-            _customerType:dto.customerType,
-            _branchId:dto.branchId,
-            _orderHeadId:dto.orderHeadId,
-            _relationshipManagerId:dto.relationshipManagerId,
-            _supplierId:dto.supplierId,
-            _panCardNumber:dto.panCardNumber,
-            _billingModeSale:dto.billingModeSale,
-            _billingModePurchase:dto.billingModePurchase,
-            _hallmarkingMandatoryStatus:dto.hallmarkingMandatoryStatus,
-            _rateCardId:dto.rateCardId,
-            _gstNumber:dto.gstNumber,
-            _cityId:dto.cityId,
-            _tdsId:(dto.tdsId=="nil"||dto.tdsId=="")?null:dto.tdsId,
-            _tcsId:(dto.tcsId=="nil"||dto.tcsId=="")?null:dto.tcsId,
-            _creditAmount:dto.creditAmount,
-            _creditDays:dto.creditDays,
-            _rateBaseMasterId:dto.rateBaseMasterId,
-            _stonePricing:dto.stonePricing,
-            _chatPermissions:dto.chatPermissions,
-            _agentId:dto.agentId,
-            _agentCommision:dto.agentCommision,
+        _orderSaleRate: dto.orderSaleRate,
+        _stockSaleRate: dto.stockSaleRate,
+        _customerType: dto.customerType,
+        _branchId: dto.branchId,
+        _orderHeadId: dto.orderHeadId,
+        _relationshipManagerId: dto.relationshipManagerId,
+        _supplierId: dto.supplierId,
+        _panCardNumber: dto.panCardNumber,
+        _billingModeSale: dto.billingModeSale,
+        _billingModePurchase: dto.billingModePurchase,
+        _hallmarkingMandatoryStatus: dto.hallmarkingMandatoryStatus,
+        _rateCardId: dto.rateCardId,
+        _gstNumber: dto.gstNumber,
+        _cityId: dto.cityId,
+        _tdsId: dto.tdsId == 'nil' || dto.tdsId == '' ? null : dto.tdsId,
+        _tcsId: dto.tcsId == 'nil' || dto.tcsId == '' ? null : dto.tcsId,
+        _creditAmount: dto.creditAmount,
+        _creditDays: dto.creditDays,
+        _rateBaseMasterId: dto.rateBaseMasterId,
+        _stonePricing: dto.stonePricing,
+        _chatPermissions: dto.chatPermissions,
+        _agentId: dto.agentId,
+        _agentCommision: dto.agentCommision,
         _dataGuard: dto.dataGuard,
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
-        }
-    
-    
-    
-    
-    
-        var globalGalleryId=null;
-        //globalGalleryAdd
-        if (file.hasOwnProperty('image')) {
-    
-          var resultCounterPurchase= await this.counterModel.findOneAndUpdate(
-              { _tableName: ModelNames.GLOBAL_GALLERIES},
-              {
-                $inc: {
-                  _count:1,
-                  },
-                },
-              {  new: true,session: transactionSession },
-            );
-    
+      };
+
+      var globalGalleryId = null;
+      //globalGalleryAdd
+      if (file.hasOwnProperty('image')) {
+        var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
+          { _tableName: ModelNames.GLOBAL_GALLERIES },
+          {
+            $inc: {
+              _count: 1,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
         const globalGallery = new this.globalGalleryModel({
-          _name:file['image'][0]['originalname'],
-          _globalGalleryCategoryId:null,
-          _docType:0,
-          _type:7,
-          _uid:resultCounterPurchase._count,
-          _url:`${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
-              process.env.PORT
-            }${file['image'][0]['path'].split('public')[1]}`,
-          _thumbUrl: new StringUtils().makeThumbImageFileName(
-              `${process.env.SSL== 'true'?"https":"http"}://${process.env.SERVER_DOMAIN}:${
-                process.env.PORT
-              }${file['image'][0]['path'].split('public')[1]}`,
-            ),
+          _name: file['image'][0]['originalname'],
+          _globalGalleryCategoryId: null,
+          _docType: 0,
+          _type: 7,
+          _uid: resultCounterPurchase._count,
+          _url: resultUpload['url'],
           _created_user_id: _userId_,
           _created_at: dateTime,
           _updated_user_id: null,
           _updated_at: -1,
           _status: 1,
         });
-      var resultGlobalGallery=  await globalGallery.save({
+        var resultGlobalGallery = await globalGallery.save({
           session: transactionSession,
         });
-        
-        globalGalleryId=resultGlobalGallery._id;
-        updateObject["_globalGalleryId"]=globalGalleryId
+
+        globalGalleryId = resultGlobalGallery._id;
+        updateObject['_globalGalleryId'] = globalGalleryId;
       }
-    
-    
-    
-        var result = await this.customersModel.findOneAndUpdate(
+
+      var result = await this.customersModel.findOneAndUpdate(
+        {
+          _id: dto.customerId,
+        },
+        {
+          $set: updateObject,
+        },
+        { new: true, session: transactionSession },
+      );
+
+      if (oldCustomerName != dto.name) {
+        var globalGalleryManinCategoryForCustomer =
+          await this.globalGalleryCategoriesModel
+            .find(
+              {
+                _status: 1,
+                _name: CommonNames.GLOBAL_GALLERY_CUSTOMER,
+                _type: 1,
+              },
+              { _id: 1 },
+            )
+            .session(transactionSession);
+        if (globalGalleryManinCategoryForCustomer.length == 0) {
+          throw new HttpException(
+            'Global gallery category not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+        await this.globalGalleryCategoriesModel.findOneAndUpdate(
           {
-            _id: dto.customerId,
+            _name: oldCustomerName,
+            _globalGalleryCategoryId:
+              globalGalleryManinCategoryForCustomer[0]._id,
+            _status: 1,
           },
-          {
-            $set: updateObject
-          },
-          { new: true,session: transactionSession },
+          { $set: { _name: dto.name } },
+          { new: true, session: transactionSession },
         );
-    
-
-if(oldCustomerName!=dto.name){
-  var globalGalleryManinCategoryForCustomer=await this.globalGalleryCategoriesModel.find({_status:1,_name:CommonNames.GLOBAL_GALLERY_CUSTOMER,_type:1},{_id:1}).session(transactionSession);
-  if(globalGalleryManinCategoryForCustomer.length==0){
-    throw new HttpException('Global gallery category not found', HttpStatus.INTERNAL_SERVER_ERROR);
-  }
-await this.globalGalleryCategoriesModel.findOneAndUpdate({_name:oldCustomerName,_globalGalleryCategoryId:globalGalleryManinCategoryForCustomer[0]._id,_status:1},{$set:{_name:dto.name}},{ new: true,session: transactionSession });
-}
-
-
-
-
-
-
-
-
-
-
-
-
-const responseJSON = { message: 'success', data: result };
-if (
-  process.env.RESPONSE_RESTRICT == "true" &&
-  JSON.stringify(responseJSON).length >=
-    GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
-) {
-  throw new HttpException(
-    GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-      JSON.stringify(responseJSON).length,
-    HttpStatus.INTERNAL_SERVER_ERROR,
-  );
-}
-await transactionSession.commitTransaction();
-await transactionSession.endSession();
-return responseJSON;
-      }catch(error){
-        await transactionSession.abortTransaction();
-        await transactionSession.endSession();
-        throw error;
       }
+
+      const responseJSON = { message: 'success', data: result };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
     }
-    
+  }
 
-
-
-    async list(dto: ListCustomersDto) {
-      var dateTime = new Date().getTime();
-      const transactionSession = await this.connection.startSession();
-      transactionSession.startTransaction();
-  try{
+  async list(dto: ListCustomersDto) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
       var arrayAggregation = [];
-  
+
       if (dto.searchingText != '') {
         //todo
         arrayAggregation.push({
@@ -571,9 +554,9 @@ return responseJSON;
               { _email: dto.searchingText },
               { _mobile: dto.searchingText },
               { _uid: dto.searchingText },
-              {_panCardNumber:dto.searchingText},
-              {_gstNumber:dto.searchingText},
-              ],
+              { _panCardNumber: dto.searchingText },
+              { _gstNumber: dto.searchingText },
+            ],
           },
         });
       }
@@ -584,221 +567,269 @@ return responseJSON;
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
-  
-      
-    
-        if (dto.gender.length > 0) {
-          
-          arrayAggregation.push({ $match: { _gender: { $in:dto.gender } } });
-        }
-      
-  
-       
 
-        if (dto.orderSaleRates.length > 0) {
-          
-          arrayAggregation.push({ $match: { _orderSaleRate: { $in:dto.orderSaleRates } } });
-        }
-        if (dto.stockSaleRates.length > 0) {
-          
-          arrayAggregation.push({ $match: { _stockSaleRate: { $in:dto.stockSaleRates } } });
-        }
-        if (dto.customerTypes.length > 0) {
-          
-          arrayAggregation.push({ $match: { _customerType: { $in:dto.customerTypes } } });
-        }
-        if (dto.billingModelSales.length > 0) {
-          
-          arrayAggregation.push({ $match: { _billingModeSale: { $in:dto.billingModelSales } } });
-        }
-        if (dto.billingModelPurchases.length > 0) {
-          
-          arrayAggregation.push({ $match: { _billingModePurchase: { $in:dto.billingModelPurchases } } });
-        }
-        if (dto.hallmarkingMandatoryStatuses.length > 0) {
-          
-          arrayAggregation.push({ $match: { _hallmarkingMandatoryStatus: { $in:dto.hallmarkingMandatoryStatuses } } });
-        }
+      if (dto.gender.length > 0) {
+        arrayAggregation.push({ $match: { _gender: { $in: dto.gender } } });
+      }
 
-        arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
-  
-        switch(dto.sortType){
-          case 0: arrayAggregation.push({ $sort: { _id: dto.sortOrder } });              break;
-          case 1:arrayAggregation.push({ $sort: { _status: dto.sortOrder } });               break;
-          case 2: arrayAggregation.push({ $sort: { _name: dto.sortOrder } });               break;
-          case 3: arrayAggregation.push({ $sort: { _uid: dto.sortOrder } });               break;
-          case 4: arrayAggregation.push({ $sort: { _gender: dto.sortOrder } });               break;
-          case 5: arrayAggregation.push({ $sort: { _email: dto.sortOrder } });               break;
-          case 6: arrayAggregation.push({ $sort: { _orderSaleRate: dto.sortOrder } });               break;
-          case 7: arrayAggregation.push({ $sort: { _stockSaleRate: dto.sortOrder } });               break;
-          case 8: arrayAggregation.push({ $sort: { _customerType: dto.sortOrder } });               break;
-          case 9: arrayAggregation.push({ $sort: { _billingModeSale: dto.sortOrder } });               break;
-          case 10: arrayAggregation.push({ $sort: { _billingModePurchase: dto.sortOrder } });               break;
-          case 11: arrayAggregation.push({ $sort: { _hallmarkingMandatoryStatus: dto.sortOrder } });               break;
-          case 12: arrayAggregation.push({ $sort: { _creditAmount: dto.sortOrder } });               break;
-          case 13: arrayAggregation.push({ $sort: { _creditDays: dto.sortOrder } });               break;
-          case 14: arrayAggregation.push({ $sort: { _stonePricing: dto.sortOrder } });               break;
-          case 15: arrayAggregation.push({ $sort: { _agentCommision: dto.sortOrder } });               break;
-          
-        }
-  
+      if (dto.orderSaleRates.length > 0) {
+        arrayAggregation.push({
+          $match: { _orderSaleRate: { $in: dto.orderSaleRates } },
+        });
+      }
+      if (dto.stockSaleRates.length > 0) {
+        arrayAggregation.push({
+          $match: { _stockSaleRate: { $in: dto.stockSaleRates } },
+        });
+      }
+      if (dto.customerTypes.length > 0) {
+        arrayAggregation.push({
+          $match: { _customerType: { $in: dto.customerTypes } },
+        });
+      }
+      if (dto.billingModelSales.length > 0) {
+        arrayAggregation.push({
+          $match: { _billingModeSale: { $in: dto.billingModelSales } },
+        });
+      }
+      if (dto.billingModelPurchases.length > 0) {
+        arrayAggregation.push({
+          $match: { _billingModePurchase: { $in: dto.billingModelPurchases } },
+        });
+      }
+      if (dto.hallmarkingMandatoryStatuses.length > 0) {
+        arrayAggregation.push({
+          $match: {
+            _hallmarkingMandatoryStatus: {
+              $in: dto.hallmarkingMandatoryStatuses,
+            },
+          },
+        });
+      }
+
+      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+
+      switch (dto.sortType) {
+        case 0:
+          arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
+          break;
+        case 1:
+          arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
+          break;
+        case 2:
+          arrayAggregation.push({ $sort: { _name: dto.sortOrder } });
+          break;
+        case 3:
+          arrayAggregation.push({ $sort: { _uid: dto.sortOrder } });
+          break;
+        case 4:
+          arrayAggregation.push({ $sort: { _gender: dto.sortOrder } });
+          break;
+        case 5:
+          arrayAggregation.push({ $sort: { _email: dto.sortOrder } });
+          break;
+        case 6:
+          arrayAggregation.push({ $sort: { _orderSaleRate: dto.sortOrder } });
+          break;
+        case 7:
+          arrayAggregation.push({ $sort: { _stockSaleRate: dto.sortOrder } });
+          break;
+        case 8:
+          arrayAggregation.push({ $sort: { _customerType: dto.sortOrder } });
+          break;
+        case 9:
+          arrayAggregation.push({ $sort: { _billingModeSale: dto.sortOrder } });
+          break;
+        case 10:
+          arrayAggregation.push({
+            $sort: { _billingModePurchase: dto.sortOrder },
+          });
+          break;
+        case 11:
+          arrayAggregation.push({
+            $sort: { _hallmarkingMandatoryStatus: dto.sortOrder },
+          });
+          break;
+        case 12:
+          arrayAggregation.push({ $sort: { _creditAmount: dto.sortOrder } });
+          break;
+        case 13:
+          arrayAggregation.push({ $sort: { _creditDays: dto.sortOrder } });
+          break;
+        case 14:
+          arrayAggregation.push({ $sort: { _stonePricing: dto.sortOrder } });
+          break;
+        case 15:
+          arrayAggregation.push({ $sort: { _agentCommision: dto.sortOrder } });
+          break;
+      }
+
       if (dto.skip != -1) {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
-  
-  
-  
-  
+
       if (dto.screenType.findIndex((it) => it == 50) != -1) {
-  
         arrayAggregation.push(
-            {
-              $lookup: {
-                from: ModelNames.GLOBAL_GALLERIES,
-                let: { globalGalleryId: '$_globalGalleryId' },
-                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } }],
-                as: 'globalGalleryDetails',
-              },
+          {
+            $lookup: {
+              from: ModelNames.GLOBAL_GALLERIES,
+              let: { globalGalleryId: '$_globalGalleryId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+              ],
+              as: 'globalGalleryDetails',
             },
-            {
-              $unwind: { path: '$globalGalleryDetails', preserveNullAndEmptyArrays: true },
+          },
+          {
+            $unwind: {
+              path: '$globalGalleryDetails',
+              preserveNullAndEmptyArrays: true,
             },
-          );
+          },
+        );
       }
-  
 
       if (dto.screenType.findIndex((it) => it == 111) != -1) {
-
         arrayAggregation.push(
-            {
-              $lookup: {
-                from: ModelNames.USER,
-                let: { userId: '$_id' },
-                pipeline: [{ $match: { $expr: { $eq: ['$_customerId', '$$userId'] } } }],
-                as: 'userDetails',
-              },
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { userId: '$_id' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_customerId', '$$userId'] } } },
+              ],
+              as: 'userDetails',
             },
-            {
-              $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true },
-            },
-          );
+          },
+          {
+            $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
       }
-  
-
 
       if (dto.screenType.findIndex((it) => it == 100) != -1) {
-  
         arrayAggregation.push(
-            {
-              $lookup: {
-                from: ModelNames.BRANCHES,
-                let: { branchId: '$_branchId' },
-                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$branchId'] } } }],
-                as: 'branchDetails',
-              },
+          {
+            $lookup: {
+              from: ModelNames.BRANCHES,
+              let: { branchId: '$_branchId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$branchId'] } } },
+              ],
+              as: 'branchDetails',
             },
-            {
-              $unwind: { path: '$branchDetails', preserveNullAndEmptyArrays: true },
+          },
+          {
+            $unwind: {
+              path: '$branchDetails',
+              preserveNullAndEmptyArrays: true,
             },
-          );
+          },
+        );
       }
-     
+
       if (dto.screenType.findIndex((it) => it == 104) != -1) {
-  
         arrayAggregation.push(
-            {
-              $lookup: {
-                from: ModelNames.RATE_CARDS,
-                let: { rateCardId: '$_rateCardId' },
-                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$rateCardId'] } } }],
-                as: 'rateCardDetails',
-              },
+          {
+            $lookup: {
+              from: ModelNames.RATE_CARDS,
+              let: { rateCardId: '$_rateCardId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$rateCardId'] } } },
+              ],
+              as: 'rateCardDetails',
             },
-            {
-              $unwind: { path: '$rateCardDetails', preserveNullAndEmptyArrays: true },
+          },
+          {
+            $unwind: {
+              path: '$rateCardDetails',
+              preserveNullAndEmptyArrays: true,
             },
-          );
+          },
+        );
       }
 
       if (dto.screenType.findIndex((it) => it == 106) != -1) {
-  
         arrayAggregation.push(
-            {
-              $lookup: {
-                from: ModelNames.CITIES,
-                let: { cityId: '$_cityId' },
-                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$cityId'] } } }],
-                as: 'cityDetails',
-              },
+          {
+            $lookup: {
+              from: ModelNames.CITIES,
+              let: { cityId: '$_cityId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$cityId'] } } }],
+              as: 'cityDetails',
             },
-            {
-              $unwind: { path: '$cityDetails', preserveNullAndEmptyArrays: true },
-            },
-          );
+          },
+          {
+            $unwind: { path: '$cityDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
       }
       if (dto.screenType.findIndex((it) => it == 107) != -1) {
-  
         arrayAggregation.push(
-            {
-              $lookup: {
-                from: ModelNames.TDS_MASTERS,
-                let: { tdsId: '$_tdsId' },
-                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$tdsId'] } } }],
-                as: 'tdsDetails',
-              },
+          {
+            $lookup: {
+              from: ModelNames.TDS_MASTERS,
+              let: { tdsId: '$_tdsId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$tdsId'] } } }],
+              as: 'tdsDetails',
             },
-            {
-              $unwind: { path: '$tdsDetails', preserveNullAndEmptyArrays: true },
-            },
-          );
+          },
+          {
+            $unwind: { path: '$tdsDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
       }
       if (dto.screenType.findIndex((it) => it == 108) != -1) {
-  
         arrayAggregation.push(
-            {
-              $lookup: {
-                from: ModelNames.TCS_MASTERS,
-                let: { tcsId: '$_tcsId' },
-                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$tcsId'] } } }],
-                as: 'tcsDetails',
-              },
+          {
+            $lookup: {
+              from: ModelNames.TCS_MASTERS,
+              let: { tcsId: '$_tcsId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$tcsId'] } } }],
+              as: 'tcsDetails',
             },
-            {
-              $unwind: { path: '$tcsDetails', preserveNullAndEmptyArrays: true },
-            },
-          );
+          },
+          {
+            $unwind: { path: '$tcsDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
       }
       if (dto.screenType.findIndex((it) => it == 109) != -1) {
-  
         arrayAggregation.push(
-            {
-              $lookup: {
-                from: ModelNames.RATE_BASE_MASTERS,
-                let: { ratebaseId: '$_rateBaseMasterId' },
-                pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$ratebaseId'] } } }],
-                as: 'ratebaseMasterDetails',
-              },
+          {
+            $lookup: {
+              from: ModelNames.RATE_BASE_MASTERS,
+              let: { ratebaseId: '$_rateBaseMasterId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$ratebaseId'] } } },
+              ],
+              as: 'ratebaseMasterDetails',
             },
-            {
-              $unwind: { path: '$ratebaseMasterDetails', preserveNullAndEmptyArrays: true },
+          },
+          {
+            $unwind: {
+              path: '$ratebaseMasterDetails',
+              preserveNullAndEmptyArrays: true,
             },
-          );
+          },
+        );
       }
-     
+
       if (dto.screenType.findIndex((it) => it == 101) != -1) {
-        arrayAggregation.push( {
-          $lookup: {
-            from: ModelNames.USER,
-            let: { userId: '$_orderHeadId' },
-            pipeline: [
-              {
-                $match: {
-                  $expr: { $eq: ['$_id', '$$userId'] },
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { userId: '$_orderHeadId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$userId'] },
+                  },
                 },
-              },
-  
-              {
+
+                {
                   $lookup: {
                     from: ModelNames.EMPLOYEES,
                     let: { employeeId: '$_employeeId' },
@@ -813,7 +844,11 @@ return responseJSON;
                           from: ModelNames.GLOBAL_GALLERIES,
                           let: { globalGalleryId: '$_globalGalleryId' },
                           pipeline: [
-                            { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+                            {
+                              $match: {
+                                $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                              },
+                            },
                           ],
                           as: 'globalGalleryDetails',
                         },
@@ -823,7 +858,7 @@ return responseJSON;
                           path: '$globalGalleryDetails',
                           preserveNullAndEmptyArrays: true,
                         },
-                      }
+                      },
                     ],
                     as: 'employeeDetails',
                   },
@@ -833,240 +868,221 @@ return responseJSON;
                     path: '$employeeDetails',
                     preserveNullAndEmptyArrays: true,
                   },
-                }
-  
-  
-            ],
-            as: 'orderHeadDetails',
-          },
-        },
-        {
-          $unwind: {
-            path: '$orderHeadDetails',
-            preserveNullAndEmptyArrays: true,
-          },
-        },);
-    }
-    if (dto.screenType.findIndex((it) => it == 102) != -1) {
-      arrayAggregation.push( {
-        $lookup: {
-          from: ModelNames.USER,
-          let: { userId: '$_relationshipManagerId' },
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ['$_id', '$$userId'] },
-              },
-            },
-
-            {
-                $lookup: {
-                  from: ModelNames.EMPLOYEES,
-                  let: { employeeId: '$_employeeId' },
-                  pipeline: [
-                    {
-                      $match: {
-                        $expr: { $eq: ['$_id', '$$employeeId'] },
-                      },
-                    },
-                    {
-                      $lookup: {
-                        from: ModelNames.GLOBAL_GALLERIES,
-                        let: { globalGalleryId: '$_globalGalleryId' },
-                        pipeline: [
-                          { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
-                        ],
-                        as: 'globalGalleryDetails',
-                      },
-                    },
-                    {
-                      $unwind: {
-                        path: '$globalGalleryDetails',
-                        preserveNullAndEmptyArrays: true,
-                      },
-                    }
-                  ],
-                  as: 'employeeDetails',
                 },
-              },
-              {
-                $unwind: {
-                  path: '$employeeDetails',
-                  preserveNullAndEmptyArrays: true,
-                },
-              }
-
-
-          ],
-          as: 'relationshipManagerDetails',
-        },
-      },
-      {
-        $unwind: {
-          path: '$relationshipManagerDetails',
-          preserveNullAndEmptyArrays: true,
-        },
-      },);
-  }
-
-
-  if (dto.screenType.findIndex((it) => it == 103) != -1) {
-    arrayAggregation.push( {
-      $lookup: {
-        from: ModelNames.USER,
-        let: { supplierId: '$_supplierId' },
-        pipeline: [
-          {
-            $match: {
-              $expr: { $eq: ['$_id', '$$supplierId'] },
-            },
-          },
-
-          {
-              $lookup: {
-                from: ModelNames.SUPPLIERS,
-                let: { supplieruerId: '$_supplierId' },
-                pipeline: [
-                  {
-                    $match: {
-                      $expr: { $eq: ['$_id', '$$supplieruerId'] },
-                    },
-                  },
-                  {
-                    $lookup: {
-                      from: ModelNames.GLOBAL_GALLERIES,
-                      let: { globalGalleryId: '$_globalGalleryId' },
-                      pipeline: [
-                        { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
-                      ],
-                      as: 'globalGalleryDetails',
-                    },
-                  },
-                  {
-                    $unwind: {
-                      path: '$globalGalleryDetails',
-                      preserveNullAndEmptyArrays: true,
-                    },
-                  }
-                ],
-                as: 'supplierDetails',
-              },
-            },
-            {
-              $unwind: {
-                path: '$supplierDetails',
-                preserveNullAndEmptyArrays: true,
-              },
-            }
-
-
-        ],
-        as: 'supplierUserDetails',
-      },
-    },
-    {
-      $unwind: {
-        path: '$supplierUserDetails',
-        preserveNullAndEmptyArrays: true,
-      },
-    },);
-}
-
-if (dto.screenType.findIndex((it) => it == 110) != -1) {
-  arrayAggregation.push( {
-    $lookup: {
-      from: ModelNames.USER,
-      let: { agentUserId: '$_agentId' },
-      pipeline: [
-        {
-          $match: {
-            $expr: { $eq: ['$_id', '$$agentUserId'] },
-          },
-        },
-
-        {
-            $lookup: {
-              from: ModelNames.AGENTS,
-              let: { agentId: '$_agentId' },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: { $eq: ['$_id', '$$agentId'] },
-                  },
-                },
-                {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
-                    ],
-                    as: 'globalGalleryDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                }
               ],
-              as: 'agentDetails',
+              as: 'orderHeadDetails',
             },
           },
           {
             $unwind: {
-              path: '$agentDetails',
+              path: '$orderHeadDetails',
               preserveNullAndEmptyArrays: true,
             },
-          }
+          },
+        );
+      }
+      if (dto.screenType.findIndex((it) => it == 102) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { userId: '$_relationshipManagerId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$userId'] },
+                  },
+                },
 
+                {
+                  $lookup: {
+                    from: ModelNames.EMPLOYEES,
+                    let: { employeeId: '$_employeeId' },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: { $eq: ['$_id', '$$employeeId'] },
+                        },
+                      },
+                      {
+                        $lookup: {
+                          from: ModelNames.GLOBAL_GALLERIES,
+                          let: { globalGalleryId: '$_globalGalleryId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                              },
+                            },
+                          ],
+                          as: 'globalGalleryDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$globalGalleryDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    ],
+                    as: 'employeeDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$employeeDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              ],
+              as: 'relationshipManagerDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$relationshipManagerDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
 
-      ],
-      as: 'agentUserDetails',
-    },
-  },
-  {
-    $unwind: {
-      path: '$agentUserDetails',
-      preserveNullAndEmptyArrays: true,
-    },
-  },);
-}
+      if (dto.screenType.findIndex((it) => it == 103) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { supplierId: '$_supplierId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$supplierId'] },
+                  },
+                },
 
+                {
+                  $lookup: {
+                    from: ModelNames.SUPPLIERS,
+                    let: { supplieruerId: '$_supplierId' },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: { $eq: ['$_id', '$$supplieruerId'] },
+                        },
+                      },
+                      {
+                        $lookup: {
+                          from: ModelNames.GLOBAL_GALLERIES,
+                          let: { globalGalleryId: '$_globalGalleryId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                              },
+                            },
+                          ],
+                          as: 'globalGalleryDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$globalGalleryDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    ],
+                    as: 'supplierDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$supplierDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              ],
+              as: 'supplierUserDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$supplierUserDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
 
+      if (dto.screenType.findIndex((it) => it == 110) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { agentUserId: '$_agentId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$agentUserId'] },
+                  },
+                },
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                {
+                  $lookup: {
+                    from: ModelNames.AGENTS,
+                    let: { agentId: '$_agentId' },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: { $eq: ['$_id', '$$agentId'] },
+                        },
+                      },
+                      {
+                        $lookup: {
+                          from: ModelNames.GLOBAL_GALLERIES,
+                          let: { globalGalleryId: '$_globalGalleryId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                              },
+                            },
+                          ],
+                          as: 'globalGalleryDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$globalGalleryDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    ],
+                    as: 'agentDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$agentDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              ],
+              as: 'agentUserDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$agentUserDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
 
       var result = await this.customersModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
-  
+
       var totalCount = 0;
       if (dto.screenType.findIndex((it) => it == 0) != -1) {
         //Get total count
@@ -1082,8 +1098,10 @@ if (dto.screenType.findIndex((it) => it == 110) != -1) {
         if (skipIndexCount != -1) {
           arrayAggregation.splice(skipIndexCount, 1);
         }
-        arrayAggregation.push({ $group: { _id: null, totalCount: { $sum: 1 } } });
-  
+        arrayAggregation.push({
+          $group: { _id: null, totalCount: { $sum: 1 } },
+        });
+
         var resultTotalCount = await this.customersModel
           .aggregate(arrayAggregation)
           .session(transactionSession);
@@ -1091,65 +1109,25 @@ if (dto.screenType.findIndex((it) => it == 110) != -1) {
           totalCount = resultTotalCount[0].totalCount;
         }
       }
-  
-    
 
-const responseJSON =  {
-  message: 'success',
-  data: { list: result, totalCount: totalCount },
-};
-if (
-  process.env.RESPONSE_RESTRICT == "true" &&
-  JSON.stringify(responseJSON).length >=
-    GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
-) {
-  throw new HttpException(
-    GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-      JSON.stringify(responseJSON).length,
-    HttpStatus.INTERNAL_SERVER_ERROR,
-  );
-}
-await transactionSession.commitTransaction();
-await transactionSession.endSession();
-return responseJSON;
-      
-    }catch(error){
-      await transactionSession.abortTransaction();
+      const responseJSON = {
+        message: 'success',
+        data: { list: result, totalCount: totalCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
       await transactionSession.endSession();
-      throw error;
-    }
-  }
-  
-  
-  async checkEmailExisting(dto: CheckEmailExistDto) {
-    var dateTime = new Date().getTime();
-    const transactionSession = await this.connection.startSession();
-    transactionSession.startTransaction();
-    try {
-      var resultCount = await this.customersModel
-        .count({ _email: dto.value,_status:{$in:[1,0]} })
-        .session(transactionSession);
-  
-    
-const responseJSON = {
-  message: 'success',
-  data: { count: resultCount },
-};
-if (
-  process.env.RESPONSE_RESTRICT == "true" &&
-  JSON.stringify(responseJSON).length >=
-    GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
-) {
-  throw new HttpException(
-    GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-      JSON.stringify(responseJSON).length,
-    HttpStatus.INTERNAL_SERVER_ERROR,
-  );
-}
-await transactionSession.commitTransaction();
-await transactionSession.endSession();
-return responseJSON;
-      
+      return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
@@ -1157,6 +1135,39 @@ return responseJSON;
     }
   }
 
+  async checkEmailExisting(dto: CheckEmailExistDto) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var resultCount = await this.customersModel
+        .count({ _email: dto.value, _status: { $in: [1, 0] } })
+        .session(transactionSession);
+
+      const responseJSON = {
+        message: 'success',
+        data: { count: resultCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
 
   async checkMobileExisting(dto: CheckMobileExistDto) {
     var dateTime = new Date().getTime();
@@ -1164,36 +1175,31 @@ return responseJSON;
     transactionSession.startTransaction();
     try {
       var resultCount = await this.customersModel
-        .count({ _mobile: dto.value,_status:{$in:[1,0]} })
+        .count({ _mobile: dto.value, _status: { $in: [1, 0] } })
         .session(transactionSession);
-  
-   
-const responseJSON = {
-  message: 'success',
-  data: { count: resultCount },
-};
-if (
-  process.env.RESPONSE_RESTRICT == "true" &&
-  JSON.stringify(responseJSON).length >=
-    GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
-) {
-  throw new HttpException(
-    GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-      JSON.stringify(responseJSON).length,
-    HttpStatus.INTERNAL_SERVER_ERROR,
-  );
-}
-await transactionSession.commitTransaction();
-await transactionSession.endSession();
-return responseJSON;
+
+      const responseJSON = {
+        message: 'success',
+        data: { count: resultCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
       throw error;
     }
   }
-
-
-
-
-} 
+}

@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import {
   OnGatewayConnection,
@@ -24,6 +24,7 @@ import { ChatDocumentCreateDto } from 'src/app.dto';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
 import { StringUtils } from 'src/utils/string_utils';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
+import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 
 @WebSocketGateway({ cors: true }) //todo add port from env file
 export class ChatGateway
@@ -63,27 +64,30 @@ export class ChatGateway
 
     if (typeof userId == 'undefined' || typeof userId != 'string') {
       client.disconnect();
-      console.log("___a1");
+      console.log('___a1');
       return;
     }
     if (typeof deviceId == 'undefined' || typeof deviceId != 'string') {
       client.disconnect();
-      console.log("___a2");
+      console.log('___a2');
       return;
     }
     if (typeof appType == 'undefined' || typeof appType != 'string') {
       client.disconnect();
-      console.log("___a3");
+      console.log('___a3');
       return;
     }
 
-    if (  typeof lastPendingId == 'undefined' ||  typeof lastPendingId != 'string') {
+    if (
+      typeof lastPendingId == 'undefined' ||
+      typeof lastPendingId != 'string'
+    ) {
       client.disconnect();
-      console.log("___a4");
+      console.log('___a4');
       return;
     }
 
-    console.log("___a5");
+    console.log('___a5');
     this.connectedUsers.push({
       userId: client.handshake.query.userId,
       socket: client,
@@ -251,7 +255,6 @@ export class ChatGateway
                           _type: 1,
                           _uid: 1,
                           _url: 1,
-                          _thumbUrl: 1,
                         },
                       },
                     },
@@ -303,7 +306,6 @@ export class ChatGateway
                           _type: 1,
                           _uid: 1,
                           _url: 1,
-                          _thumbUrl: 1,
                         },
                       },
                     },
@@ -355,7 +357,6 @@ export class ChatGateway
                           _type: 1,
                           _uid: 1,
                           _url: 1,
-                          _thumbUrl: 1,
                         },
                       },
                     },
@@ -407,7 +408,6 @@ export class ChatGateway
                           _type: 1,
                           _uid: 1,
                           _url: 1,
-                          _thumbUrl: 1,
                         },
                       },
                     },
@@ -635,65 +635,61 @@ export class ChatGateway
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-
-
-console.log("___j1  dto "+JSON.stringify(dto));
-
+      console.log('___j1  dto ' + JSON.stringify(dto));
 
       if (file.hasOwnProperty('document')) {
-        console.log("___j2");
-        if (dto.type == 1) {
+        console.log('___j2');
 
-          
-          var filePath =
-            __dirname +
-            `/../../public${file['document'][0]['path'].split('public')[1]}`;
-console.log("___filePath   "+filePath);
-          new ThumbnailUtils().generateThumbnail(
-            filePath,
-            UploadedFileDirectoryPath.CHAT_DOCUMENTS +
-              new StringUtils().makeThumbImageFileName(
-                file['document'][0]['filename'],
-              ),
+        var resultUpload = await new S3BucketUtils().uploadMyFile(
+          file['document'][0],
+          UploadedFileDirectoryPath.CHAT_DOCUMENTS,
+        );
+
+        if (resultUpload['status'] == 0) {
+          throw new HttpException(
+            'File upload error',
+            HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }
-        console.log("___j3");
-        dto.value['fileUrl'] = `${
-          process.env.SSL == 'true' ? 'https' : 'http'
-        }://${process.env.SERVER_DOMAIN}:${process.env.PORT}${
-          file['document'][0]['path'].split('public')[1]
-        }`;
-        
-        console.log("___j3.1");
-        dto.value['fileUrlThumb'] = new StringUtils().makeThumbImageFileName(
-          `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-            process.env.SERVER_DOMAIN
-          }:${process.env.PORT}${
-            file['document'][0]['path'].split('public')[1]
-          }`,
-        );
-        
-        console.log("___j3.2");
+
+        //         if (dto.type == 1) {
+
+        //           var filePath =
+        //             __dirname +
+        //             `/../../public${file['document'][0]['path'].split('public')[1]}`;
+        // console.log("___filePath   "+filePath);
+        //           new ThumbnailUtils().generateThumbnail(
+        //             filePath,
+        //             UploadedFileDirectoryPath.CHAT_DOCUMENTS +
+        //               new StringUtils().makeThumbImageFileName(
+        //                 file['document'][0]['filename'],
+        //               ),
+        //           );
+
+        //         }
+        console.log('___j3');
+        dto.value['fileUrl'] = resultUpload['url'];
+
+        console.log('___j3.2');
       }
-      console.log("___j4");
+      console.log('___j4');
       var personalChatId = '';
 
       //finding personal chat id
 
-      console.log("___j5");
+      console.log('___j5');
       var resultGroupUid = await this.chatPersonalChatsModel.find({
         _groupUid: dto.groupUid,
         _status: 1,
       });
-      console.log("___j5.0");
+      console.log('___j5.0');
       if (resultGroupUid.length != 0) {
-        
-      console.log("___j5.1");
+        console.log('___j5.1');
         personalChatId = resultGroupUid[0]._id;
 
-        console.log("___j5.2");
+        console.log('___j5.2');
       } else {
-        console.log("___j5.3");
+        console.log('___j5.3');
         const personalChat = new this.chatPersonalChatsModel({
           _personalIdOne: _userId_,
           _personalIdTwo: dto.recipientId,
@@ -702,13 +698,13 @@ console.log("___filePath   "+filePath);
         });
         var resultChat = await personalChat.save();
 
-        console.log("___j.4");
-                personalChatId = resultChat._id;
-      
-                console.log("___j5.5");
-              }
+        console.log('___j.4');
+        personalChatId = resultChat._id;
 
-      console.log("___j6");
+        console.log('___j5.5');
+      }
+
+      console.log('___j6');
       const personalMessage = new this.chatPersonalChatMessagesModel({
         _personalChatId: personalChatId,
         _senderId: _userId_,
@@ -722,7 +718,7 @@ console.log("___filePath   "+filePath);
         session: transactionSession,
       });
 
-      console.log("___j7");
+      console.log('___j7');
       const personalPendingMessage = new this.chatPendingMessagesModel({
         _userId: dto.recipientId,
         _createdUserId: _userId_,
@@ -736,7 +732,7 @@ console.log("___filePath   "+filePath);
         session: transactionSession,
       });
 
-      console.log("___j8");
+      console.log('___j8');
       var resultSender = await this.userModel.aggregate([
         { $match: { _id: new mongoose.Types.ObjectId(_userId_) } },
         {
@@ -786,7 +782,6 @@ console.log("___filePath   "+filePath);
                     _type: 1,
                     _uid: 1,
                     _url: 1,
-                    _thumbUrl: 1,
                   },
                 },
               },
@@ -838,7 +833,6 @@ console.log("___filePath   "+filePath);
                     _type: 1,
                     _uid: 1,
                     _url: 1,
-                    _thumbUrl: 1,
                   },
                 },
               },
@@ -890,7 +884,6 @@ console.log("___filePath   "+filePath);
                     _type: 1,
                     _uid: 1,
                     _url: 1,
-                    _thumbUrl: 1,
                   },
                 },
               },
@@ -942,7 +935,6 @@ console.log("___filePath   "+filePath);
                     _type: 1,
                     _uid: 1,
                     _url: 1,
-                    _thumbUrl: 1,
                   },
                 },
               },
@@ -958,9 +950,7 @@ console.log("___filePath   "+filePath);
         },
       ]);
 
-
-      console.log("___j9");
-
+      console.log('___j9');
 
       var jsonString = {
         _personalChatId: personalChatId,
@@ -973,7 +963,7 @@ console.log("___filePath   "+filePath);
         sender: resultSender[0],
         time: dto.time,
       };
-      console.log("_____d1 jsonString "+JSON.stringify(jsonString));
+      console.log('_____d1 jsonString ' + JSON.stringify(jsonString));
       var onlineUsers = new IndexUtils().multipleIndexChat(
         this.connectedUsers,
         dto.recipientId,
@@ -1000,7 +990,7 @@ console.log("___filePath   "+filePath);
         );
       }
 
-      console.log("___j10");
+      console.log('___j10');
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return { message: 'success', data: jsonString };
@@ -1031,7 +1021,16 @@ console.log("___filePath   "+filePath);
             from: ModelNames.USER,
             let: { userId: '$_personalIdOne' },
             pipeline: [
-              { $match: { $expr:{$and:[{ $eq: ['$_id', '$$userId'] },{ $ne: ['$_id', _userId_] }] }  } },
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ['$_id', '$$userId'] },
+                      { $ne: ['$_id', _userId_] },
+                    ],
+                  },
+                },
+              },
               {
                 $project: {
                   _type: 1,
@@ -1079,7 +1078,6 @@ console.log("___filePath   "+filePath);
                           _type: 1,
                           _uid: 1,
                           _url: 1,
-                          _thumbUrl: 1,
                         },
                       },
                     },
@@ -1131,7 +1129,6 @@ console.log("___filePath   "+filePath);
                           _type: 1,
                           _uid: 1,
                           _url: 1,
-                          _thumbUrl: 1,
                         },
                       },
                     },
@@ -1183,7 +1180,6 @@ console.log("___filePath   "+filePath);
                           _type: 1,
                           _uid: 1,
                           _url: 1,
-                          _thumbUrl: 1,
                         },
                       },
                     },
@@ -1235,7 +1231,6 @@ console.log("___filePath   "+filePath);
                           _type: 1,
                           _uid: 1,
                           _url: 1,
-                          _thumbUrl: 1,
                         },
                       },
                     },
@@ -1261,8 +1256,17 @@ console.log("___filePath   "+filePath);
             from: ModelNames.USER,
             let: { userId: '$_personalIdTwo' },
             pipeline: [
-              { $match: { $expr:{$and:[{ $eq: ['$_id', '$$userId'] },{ $ne: ['$_id', _userId_] }] }  } },
-//              { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ['$_id', '$$userId'] },
+                      { $ne: ['$_id', _userId_] },
+                    ],
+                  },
+                },
+              },
+              //              { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
               {
                 $project: {
                   _type: 1,
@@ -1310,7 +1314,6 @@ console.log("___filePath   "+filePath);
                           _type: 1,
                           _uid: 1,
                           _url: 1,
-                          _thumbUrl: 1,
                         },
                       },
                     },
@@ -1362,7 +1365,6 @@ console.log("___filePath   "+filePath);
                           _type: 1,
                           _uid: 1,
                           _url: 1,
-                          _thumbUrl: 1,
                         },
                       },
                     },
@@ -1414,7 +1416,6 @@ console.log("___filePath   "+filePath);
                           _type: 1,
                           _uid: 1,
                           _url: 1,
-                          _thumbUrl: 1,
                         },
                       },
                     },
@@ -1466,7 +1467,6 @@ console.log("___filePath   "+filePath);
                           _type: 1,
                           _uid: 1,
                           _url: 1,
-                          _thumbUrl: 1,
                         },
                       },
                     },
@@ -1635,7 +1635,6 @@ console.log("___filePath   "+filePath);
                         _type: 1,
                         _uid: 1,
                         _url: 1,
-                        _thumbUrl: 1,
                       },
                     },
                   },
@@ -1687,7 +1686,6 @@ console.log("___filePath   "+filePath);
                         _type: 1,
                         _uid: 1,
                         _url: 1,
-                        _thumbUrl: 1,
                       },
                     },
                   },
@@ -1739,7 +1737,6 @@ console.log("___filePath   "+filePath);
                         _type: 1,
                         _uid: 1,
                         _url: 1,
-                        _thumbUrl: 1,
                       },
                     },
                   },
@@ -1791,7 +1788,6 @@ console.log("___filePath   "+filePath);
                         _type: 1,
                         _uid: 1,
                         _url: 1,
-                        _thumbUrl: 1,
                       },
                     },
                   },
@@ -1839,7 +1835,10 @@ console.log("___filePath   "+filePath);
         arrayJsonDatasPersonalMessageCreatedIds.push(mapItem._id);
       }
     });
-console.log("arrayJsonDatasPersonalMessageCreatedIds   "+arrayJsonDatasPersonalMessageCreatedIds.length);
+    console.log(
+      'arrayJsonDatasPersonalMessageCreatedIds   ' +
+        arrayJsonDatasPersonalMessageCreatedIds.length,
+    );
     if (arrayJsonDatasPersonalMessageCreated.length != 0) {
       client.emit(
         SocketChatEvents.EVENT_PERSONAL_MESSAGE_RECEIVED,
@@ -1850,16 +1849,16 @@ console.log("arrayJsonDatasPersonalMessageCreatedIds   "+arrayJsonDatasPersonalM
             isWantToShowNotification: true,
           },
         },
-        async (ack) =>  {
+        async (ack) => {
+          console.log(
+            'arrayJsonDatasPersonalMessageCreatedIds   ' +
+              arrayJsonDatasPersonalMessageCreatedIds.length,
+          );
 
-          console.log("arrayJsonDatasPersonalMessageCreatedIds   "+arrayJsonDatasPersonalMessageCreatedIds.length);
-
-
-       await   this.chatPendingMessagesModel.updateMany(
+          await this.chatPendingMessagesModel.updateMany(
             { _id: { $in: arrayJsonDatasPersonalMessageCreatedIds } },
             { $set: { _deliveredSeen: 1 } },
           );
-
         },
       );
     }

@@ -16,6 +16,7 @@ import { StringUtils } from 'src/utils/string_utils';
 import { Counters } from 'src/tableModels/counters.model';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 import { GlobalGalleryCategories } from 'src/tableModels/globalGallerycategories.model';
+import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 
 @Injectable()
 export class GlobalGalleryService {
@@ -36,69 +37,64 @@ export class GlobalGalleryService {
     try {
       var arrayToStates = [];
 
-      //Doing thumbnail generation
+      var document_location = '';
+      var resultUpload = {};
       if (file.hasOwnProperty('documents')) {
+        switch (Number(dto.type)) {
+          case 0:
+            document_location =
+              UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY;
+            break;
+          case 1:
+            document_location =
+              UploadedFileDirectoryPath.GLOBAL_GALLERY_SUB_CATEGORY;
+            break;
+          case 2:
+            document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_STONE;
+            break;
+          case 3:
+            document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_AGENT;
+            break;
+          case 4:
+            document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH;
+            break;
+          case 5:
+            document_location =
+              UploadedFileDirectoryPath.GLOBAL_GALLERY_EMPLOYEE;
+            break;
+          case 6:
+            document_location =
+              UploadedFileDirectoryPath.GLOBAL_GALLERY_SUPPLIER;
+            break;
+          case 7:
+            document_location =
+              UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER;
+            break;
+          default:
+            document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_OTHERS;
+            break;
+        }
+
         for (var i = 0; i < dto.array.length; i++) {
-          var document_location = '';
+          resultUpload = await new S3BucketUtils().uploadMyFile(
+            file['documents'][i],
+            document_location,
+          );
 
-          if (dto.array[i].docType == 0) {
-            switch (dto.type) {
-              case 0:
-                document_location =
-                  UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY;
-                break;
-              case 1:
-                document_location =
-                  UploadedFileDirectoryPath.GLOBAL_GALLERY_SUB_CATEGORY;
-                break;
-              case 2:
-                document_location =
-                  UploadedFileDirectoryPath.GLOBAL_GALLERY_STONE;
-                break;
-              case 3:
-                document_location =
-                  UploadedFileDirectoryPath.GLOBAL_GALLERY_AGENT;
-                break;
-              case 4:
-                document_location =
-                  UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH;
-                break;
-              case 5:
-                document_location =
-                  UploadedFileDirectoryPath.GLOBAL_GALLERY_EMPLOYEE;
-                break;
-              case 6:
-                document_location =
-                  UploadedFileDirectoryPath.GLOBAL_GALLERY_SUPPLIER;
-              case 7:
-                document_location =
-                  UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER;
-                break;
-              default:
-                document_location =
-                  UploadedFileDirectoryPath.GLOBAL_GALLERY_OTHERS;
-                break;
-            }
-
-            var count = file['documents'].findIndex(
-              (it) => dto.array[i].originalname == it.originalname,
+          if (resultUpload['status'] == 0) {
+            throw new HttpException(
+              'File upload error',
+              HttpStatus.INTERNAL_SERVER_ERROR,
             );
-            if (count != -1) {
-              var filePath =
-                __dirname +
-                `/../../../public${
-                  file['documents'][count]['path'].split('public')[1]
-                }`;
-
-              new ThumbnailUtils().generateThumbnail(
-                filePath,
-                document_location +
-                  new StringUtils().makeThumbImageFileName(
-                    file['documents'][count]['filename'],
-                  ),
-              );
-            }
           }
+        }
+        var count = dto.array.findIndex(
+          (it) => it.originalname == file['documents'][i]['originalname'],
+        );
+        if (count != -1) {
+          dto.array[count]['url'] = resultUpload['url'];
+        } else {
+          dto.array[count]['url'] = 'nil';
         }
       }
 
@@ -113,38 +109,14 @@ export class GlobalGalleryService {
       );
 
       for (var i = 0; i < dto.array.length; i++) {
-        var fileUrl = 'nil';
-        var fileUrlThumb = 'nil';
-
-        //uploaded files here
-        var count = file['documents'].findIndex(
-          (it) => it.originalname == dto.array[i].originalname,
-        );
- 
-
-        if (count != -1) {
-          fileUrl = `${process.env.SSL == 'true' ? 'https' : 'http'}://${
-            process.env.SERVER_DOMAIN
-          }:${process.env.PORT}${
-            file['documents'][count]['path'].split('public')[1]
-          }`;
-        }
-
-        if (dto.array[i].docType == 0) {
-          //if image only thumb url need to generate
-          fileUrlThumb = new StringUtils().makeThumbImageFileName(fileUrl);
-
-        }
-
         arrayToStates.push({
           _name: dto.array[i].name,
           _globalGalleryCategoryId:
             dto.array[i].categoryId == 'nil' ? null : dto.array[i].categoryId,
           _docType: dto.array[i].docType,
           _type: dto.type,
-          _url: fileUrl,
+          _url: dto.array[i]['url'],
           _uid: resultCounterPurchase._count - dto.array.length + (i + 1),
-          _thumbUrl: fileUrlThumb,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
@@ -157,10 +129,9 @@ export class GlobalGalleryService {
         session: transactionSession,
       });
 
-     
-      const responseJSON =   { message: 'success', data: { list: result1 } };
+      const responseJSON = { message: 'success', data: { list: result1 } };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -199,10 +170,9 @@ export class GlobalGalleryService {
         { new: true, session: transactionSession },
       );
 
-      
-      const responseJSON =  { message: 'success', data: result };
+      const responseJSON = { message: 'success', data: result };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -228,7 +198,6 @@ export class GlobalGalleryService {
     transactionSession.startTransaction();
     try {
       var arrayAggregation = [];
-   
 
       if (dto.searchingText != '') {
         //todo
@@ -327,13 +296,12 @@ export class GlobalGalleryService {
         }
       }
 
-    
-      const responseJSON =  {
+      const responseJSON = {
         message: 'success',
         data: { list: result, totalCount: totalCount },
       };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -421,7 +389,6 @@ export class GlobalGalleryService {
             _type: 1,
             _uid: 1,
             _url: 1,
-            _thumbUrl: 1,
           },
         });
 
@@ -430,8 +397,7 @@ export class GlobalGalleryService {
         );
       }
 
-     
-      const responseJSON =  {
+      const responseJSON = {
         message: 'success',
         data: {
           listCategories: resultMainCategories,
@@ -440,7 +406,7 @@ export class GlobalGalleryService {
         },
       };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -484,7 +450,6 @@ export class GlobalGalleryService {
           _type: 1,
           _uid: 1,
           _url: 1,
-          _thumbUrl: 1,
         },
       });
 
@@ -492,15 +457,14 @@ export class GlobalGalleryService {
         arrayAggregationItems,
       );
 
-     
-      const responseJSON =  {
+      const responseJSON = {
         message: 'success',
         data: {
           list: resultItems,
         },
       };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -582,7 +546,6 @@ export class GlobalGalleryService {
           _type: 1,
           _uid: 1,
           _url: 1,
-          _thumbUrl: 1,
           subCategoryDetails: {
             _name: 1,
             _type: 1,
@@ -595,8 +558,7 @@ export class GlobalGalleryService {
         arrayAggregationItems,
       );
 
-    
-      const responseJSON =  {
+      const responseJSON = {
         message: 'success',
         data: {
           listCategories: resultMainCategories,
@@ -604,7 +566,7 @@ export class GlobalGalleryService {
         },
       };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
