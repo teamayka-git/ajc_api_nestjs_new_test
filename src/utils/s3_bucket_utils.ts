@@ -23,7 +23,7 @@ export class S3BucketUtils {
       console.log('-----'); //
 
       // let bodyFs = fs.createReadStream(file.path) ;
-
+      const svgBuffer = Buffer.from(file['buffer'], 'utf-8');
       const params = {
         // ACL: 'public-read',
         Bucket: process.env.CDN_BUCKET_NAME,
@@ -33,8 +33,8 @@ export class S3BucketUtils {
           false,
         ),
         contentType: file['mimetype'],
-        ACL: 'public-read',
-        Body: base64data,
+        // acl: 'public-read',
+        Body: svgBuffer,
       };
       s3.upload(params, function (err, data) {
         if (err) {
