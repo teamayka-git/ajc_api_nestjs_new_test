@@ -30,7 +30,6 @@ export class S3BucketUtils {
         Key: new S3BucketUtils().getFileNameGeneratedByCdnBucket(
           file['originalname'],
           path,
-          false,
         ),
         ContentType: file['mimetype'],
         // acl: 'public-read',
@@ -49,18 +48,13 @@ export class S3BucketUtils {
   public getFileNameGeneratedByCdnBucket(
     fileName: String,
     path: String,
-    isNeedToAddPrefixUrlOfBucket: Boolean,
   ): String {
-    var returnString = '';
-    if (isNeedToAddPrefixUrlOfBucket == true) {
-      returnString += process.env.CDN_BUCKET_PREFIX_URL;
-    }
-
-    return (returnString +=
+    return (
       process.env.CDN_BUCKET_INITIAL_PATH +
       path +
       process.env.CDN_BUCKET_FILE_NAME_PREFIX +
       uuidv4() +
-      fileName);
+      fileName
+    );
   }
 }
