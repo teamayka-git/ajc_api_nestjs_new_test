@@ -45,6 +45,7 @@ export class OrderSaleSetProcessService {
     try {
       var arrayToSetProcess = [];
       var arrayToSetSubProcess = [];
+      var arrayToSetSubProcessHistories = [];
 
       var arrayProcessIds = [];
       var arrayOrdersaleIds = [];
@@ -78,6 +79,15 @@ export class OrderSaleSetProcessService {
             _description: mapItem1.description,
             _orderStatus: 0,
             _processId: mapItem1.processId,
+            _status: 1,
+          });
+
+          arrayToSetSubProcessHistories.push({
+            _orderSaleSetProcessId: processId,
+            _userId: _userId_,
+            _orderStatus: -1,
+            _subProcessId: null,
+            _type: 0,
             _status: 1,
           });
 
@@ -116,7 +126,7 @@ export class OrderSaleSetProcessService {
         },
       );
       await this.orderSaleSetSubProcessHistoriesModel.insertMany(
-        arrayToSetSubProcess,
+        arrayToSetSubProcessHistories,
         {
           session: transactionSession,
         },
@@ -296,7 +306,7 @@ export class OrderSaleSetProcessService {
         },
         {
           $set: {
-            _userId: dto.userId,
+            _userId: _userId_,
             _orderStatus: dto.orderStatus,
             _description: dto.descriptionId,
           },
@@ -304,14 +314,26 @@ export class OrderSaleSetProcessService {
         { new: true, session: transactionSession },
       );
 
-      const orderSaleHistory = new this.orderSaleSetSubProcessHistoriesModel({
+      var objectOrderSaleSubProcessHistory = {
         _orderSaleSetProcessId: result._orderSaleSetProcessId,
         _userId: result._userId,
-        _orderStatus: result._orderStatus,
-        _description: result._description,
-        _processId: result._subProcessId,
-        _status: result._status,
-      });
+        _orderStatus: -1,
+        _type: dto.historyType,
+        _processId: null,
+        _status: 1,
+      };
+
+      switch (dto.historyType) {
+        case 1:
+          break;
+        case 2:
+          objectOrderSaleSubProcessHistory._processId = result._subProcessId;
+          break;
+      }
+
+      const orderSaleHistory = new this.orderSaleSetSubProcessHistoriesModel(
+        objectOrderSaleSubProcessHistory,
+      );
       await orderSaleHistory.save({
         session: transactionSession,
       });

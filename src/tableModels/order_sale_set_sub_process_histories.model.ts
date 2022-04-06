@@ -4,7 +4,7 @@ import { GlobalConfig } from 'src/config/global_config';
 
 export const OrderSaleSetSubProcessHistoriesSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
- 
+
   _orderSaleSetProcessId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.ORDER_SALE_SET_PROCESSES,
@@ -21,22 +21,22 @@ export const OrderSaleSetSubProcessHistoriesSchema = new mongoose.Schema({
     ref: ModelNames.SUB_PROCESS_MASTER,
     default: null,
   },
-  
-  _description: { type: String, default: "" },
+
+  _type: { type: Number, required: true, default: -1 },
   _status: { type: Number, required: true, default: -1 },
 });
 
 export interface OrderSaleSetSubProcessHistories {
   _id: String;
-  _orderSaleSetProcessId:String;
+  _orderSaleSetProcessId: String;
   _userId: String;
-  _orderStatus:number;
-  _subProcessId:String;
-  _description:string;
+  _orderStatus: number;
+  _subProcessId: String;
+  _type: number;
   _status: Number;
 }
 
-OrderSaleSetSubProcessHistoriesSchema.index({ _description: 1 });
+OrderSaleSetSubProcessHistoriesSchema.index({ _type: 1 });
 OrderSaleSetSubProcessHistoriesSchema.index({ _orderSaleSetProcessId: 1 });
 OrderSaleSetSubProcessHistoriesSchema.index({ _userId: 1 });
 OrderSaleSetSubProcessHistoriesSchema.index({ _orderStatus: 1 });
@@ -44,6 +44,12 @@ OrderSaleSetSubProcessHistoriesSchema.index({ _subProcessId: 1 });
 OrderSaleSetSubProcessHistoriesSchema.index({ _status: 1 });
 
 /*
+_type:{
+  0 - created all sub processed
+  1 - process work started
+  2 - finished sub process
+  3 - finished process work
+}
 _orderStatus:{
   0 - pending
   1 - assigned

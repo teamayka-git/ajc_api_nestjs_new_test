@@ -93,9 +93,14 @@ ProductsSchema.index({ _hmSealingStatus: 1 });
 ProductsSchema.index({ _huId: 1 });
 ProductsSchema.index({ _eCommerceStatus: 1 });
 ProductsSchema.index({ _status: 1 });
+
 ProductsSchema.index(
   { _designerId: 1 },
   { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },
+);
+ProductsSchema.index(
+  { _orderId: 1 },
+  { unique: true, partialFilterExpression: { _orderId: { $ne: null } } },
 );
 ProductsSchema.post('save', async function (error, doc, next) {
   schemaPostFunctionForDuplicate(error, doc, next);
@@ -114,7 +119,7 @@ ProductsSchema.post('updateMany', async function (error, doc, next) {
 });
 function schemaPostFunctionForDuplicate(error, doc, next) {
   if (error.code == 11000) {
-    next(new Error('Uuid already existing'));
+    next(new Error('designid or orderId already existing'));
   } else {
     next();
   }
