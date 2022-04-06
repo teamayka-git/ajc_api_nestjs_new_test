@@ -1,6 +1,11 @@
 import { Body, Controller, Post, Request } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CitiesCreateDto, CitiesListDto } from './products.dto';
+import {
+  CitiesCreateDto,
+  CitiesListDto,
+  ProductCreateDto,
+  ProductListDto,
+} from './products.dto';
 import { ProductsService } from './products.service';
 
 @ApiTags('Products Docs')
@@ -9,12 +14,12 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  create(@Body() dto: CitiesCreateDto, @Request() req) {
+  create(@Body() dto: ProductCreateDto, @Request() req) {
     return this.productsService.create(dto, req['_userId_']);
   }
 
   @Post('list')
-  list(@Body() dto: CitiesListDto) {
+  list(@Body() dto: ProductListDto) {
     return this.productsService.list(dto);
   }
 }

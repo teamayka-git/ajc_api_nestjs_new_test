@@ -18,7 +18,6 @@ export const ProductsSchema = new mongoose.Schema({
   },
 
   _grossWeight: { type: Number, required: true, default: -1 },
-  _stones: { type: Object, required: true, default: [] },
   _barcode: { type: String, required: true, default: 'nil' },
   _categoryId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -63,7 +62,6 @@ export interface Products {
   _customerId: String;
   _orderId: String;
   _grossWeight: number;
-  _stones: object;
   _barcode: String;
   _categoryId: String;
   _subCategoryId: String;
@@ -85,7 +83,6 @@ ProductsSchema.index({ _designerId: 1, _id: 1 });
 ProductsSchema.index({ _customerId: 1 });
 ProductsSchema.index({ _orderId: 1 });
 ProductsSchema.index({ _grossWeight: 1 });
-ProductsSchema.index({ _stones: 1 });
 ProductsSchema.index({ _barcode: 1 });
 ProductsSchema.index({ _categoryId: 1 });
 ProductsSchema.index({ _subCategoryId: 1 });

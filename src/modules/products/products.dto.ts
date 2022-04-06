@@ -13,10 +13,10 @@ import { Optional } from '@nestjs/common';
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList =
-  '0-total documents count,100-customer, 101-orderDetails, 102-subCategoryDetails, 103-CategoryDetails, 104-groupDetails';
+  '0-total documents count,100-customer, 101-orderDetails, 102-subCategoryDetails, 103-CategoryDetails, 104-groupDetails, 105-stone details';
 const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType =
-  '0-Created Date, 1-Status,2-Name, 3-uuid, 4-grossWeight, 5-type, 6-purity, 7-designerId, 8-hmSealing, 9-huid, 10-eCommerceStatus';
+  '0-Created Date, 1-Status,2-Name, 3-designerId, 4-grossWeight, 5-type, 6-purity, 7-hmSealing, 8-huid, 9-eCommerceStatus';
 const descriptionType = '0-order sale, 1-Stock sale';
 
 class StonesList {
@@ -89,7 +89,7 @@ class ProductCreateList {
   stonesArray: StonesList[];
 }
 
-export class CitiesCreateDto {
+export class ProductCreateDto {
   @IsArray()
   @ApiProperty({ type: [ProductCreateList] })
   @ValidateNested({ each: true })
@@ -97,7 +97,7 @@ export class CitiesCreateDto {
   productArray: ProductCreateList[];
 }
 
-export class CitiesListDto {
+export class ProductListDto {
   @IsNumber()
   @ApiProperty({ description: descriptionListSortType })
   sortType: number;
@@ -119,11 +119,49 @@ export class CitiesListDto {
 
   @IsArray()
   @ApiProperty({ type: [String] })
-  citiesIds: string[];
+  customerIds: string[];
 
   @IsArray()
   @ApiProperty({ type: [String] })
-  districtIds: string[];
+  orderIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  barcodes: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  subCategoryIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  categoryIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  groupIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  huId: string[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionListScreenTypeForList,
+  })
+  type: number[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+  })
+  eCommerceStatuses: number[];
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+  })
+  hmStealingStatus: number[];
 
   @IsNumber()
   @ApiProperty({})
