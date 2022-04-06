@@ -216,6 +216,7 @@ export class OrderSalesService {
         _weight: dto.weight,
         _stoneColour: dto.stoneColor,
         _dueDate: dto.dueDate,
+        _productData: { _idDone: 0 },
         _salesPersonId: customerDetails[0]._orderHeadId,
         _workStatus: 0,
         _rootCauseId: null,

@@ -62,11 +62,18 @@ export class OrderSaleSetProcessService {
       );
 
       dto.array.map((mapItem) => {
-        mapItem.arrayProcess.map((mapItem1) => {
+        mapItem.arrayProcess.map((mapItem1, index) => {
           var processId = new mongoose.Types.ObjectId();
+          var isLastItem = 0;
+
+          if (dto.array.length - 1 == index) {
+            isLastItem = 1;
+          }
+
           arrayToSetProcess.push({
             _id: processId,
             _orderSaleId: mapItem.orderSaleId,
+            _isLastItem: isLastItem,
             _userId: null,
             _description: mapItem1.description,
             _orderStatus: 0,

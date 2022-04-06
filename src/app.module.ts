@@ -59,6 +59,7 @@ import { CustomersModule } from './modules/customers/customers.module';
 import { OrderSalesModule } from './modules/order-sales/order-sales.module';
 import { OrderSaleRootCausesModule } from './modules/order-sale-root-causes/order-sale-root-causes.module';
 import { OrderSaleSetProcessModule } from './modules/order-sale-set-process/order-sale-set-process.module';
+import { ProductsModule } from './modules/products/products.module';
 
 
 @Module({
@@ -118,6 +119,7 @@ import { OrderSaleSetProcessModule } from './modules/order-sale-set-process/orde
   OrderSalesModule,
   OrderSaleRootCausesModule,
   OrderSaleSetProcessModule,
+  ProductsModule,
   
   
   // SalesReturnRequestStatusesModule,
