@@ -30,6 +30,10 @@ class GeneralsCreateList {
   @ApiProperty({})
   string: string;
 
+  @IsString()
+  @ApiProperty({})
+  name: string;
+
   
   @IsNumber()
   @ApiProperty({description:descriptionListForCodes})
@@ -79,6 +83,10 @@ export class GeneralsEditDto {
   @IsString()
   @ApiProperty({})
   string: string;
+
+  @IsString()
+  @ApiProperty({})
+  name: string;
 
   
   @IsNumber()
