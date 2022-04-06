@@ -4,11 +4,12 @@ import { Model } from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { Products } from 'src/tableModels/products.model';
 import * as mongoose from 'mongoose';
-import { ProductCreateDto, ProductListDto } from './products.dto';
 import { GlobalConfig } from 'src/config/global_config';
 import { Counters } from 'src/tableModels/counters.model';
 import { StringUtils } from 'src/utils/string_utils';
 import { ProductStoneLinkings } from 'src/tableModels/productStoneLinkings.model';
+import { SubCategories } from 'src/tableModels/sub_categories.model';
+import { ProductCreateDto, ProductListDto } from './products.dto';
 
 @Injectable()
 export class ProductsService {
@@ -17,6 +18,8 @@ export class ProductsService {
     private readonly productModel: Model<Products>,
     @InjectModel(ModelNames.PRODUCT_STONE_LINKIGS)
     private readonly productStoneLinkingsModel: Model<ProductStoneLinkings>,
+    @InjectModel(ModelNames.SUB_CATEGORIES)
+    private readonly subCategoriesModel: Model<SubCategories>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: Model<Counters>,
     @InjectConnection() private readonly connection: mongoose.Connection,
@@ -30,58 +33,129 @@ export class ProductsService {
       var arrayToProducts = [];
 
       var arrayStonesLinkings = [];
-      var resultCounterProducts = await this.counterModel.findOneAndUpdate(
-        { _tableName: ModelNames.GLOBAL_GALLERIES },
+
+      var resultSubcategory = await this.subCategoriesModel.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(dto.subCategoryId),
+          },
+        },
+        {
+          $project: {
+            _categoryId: 1,
+            _code: 1,
+          },
+        },
+        {
+          $lookup: {
+            from: ModelNames.CATEGORIES,
+            let: { categoryId: '$_categoryId' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$_id', '$$categoryId'] },
+                },
+              },
+              { $project: { _groupId: 1 } },
+
+              {
+                $lookup: {
+                  from: ModelNames.GROUP_MASTERS,
+                  let: { groupId: '$_groupId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$groupId'] },
+                      },
+                    },
+                    {
+                      $project: {
+                        _purity: 1,
+                      },
+                    },
+                  ],
+                  as: 'groupDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$groupDetails',
+                },
+              },
+            ],
+            as: 'categoryDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$categoryDetails',
+          },
+        },
+      ]);
+
+      if (resultSubcategory.length == 0) {
+        throw new HttpException(
+          'subCategory Is Empty',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      var resultProduct = await this.counterModel.findOneAndUpdate(
+        { _tableName: ModelNames.PRODUCTS },
         {
           $inc: {
-            _count: dto.productArray.length,
+            _count: 1,
           },
         },
         { new: true, session: transactionSession },
       );
-      //resultCounterProducts._count - dto.array.length + (i + 1)
 
-      dto.productArray.map((mapItem, index) => {
-        var autoIncrementNumber =
-          resultCounterProducts._count - dto.productArray.length + (index + 1);
+      var autoIncrementNumber = resultProduct._count;
+      var productId = new mongoose.Types.ObjectId();
+      var customerId = dto.customerId;
+      var orderId = dto.orderId;
+      if (customerId == '' || customerId == 'nil') {
+        customerId = null;
+      }
+      if (orderId == '' || orderId == 'nil') {
+        orderId = null;
+      }
 
-        var productId = new mongoose.Types.ObjectId();
-        mapItem.stonesArray.map((mapItem1) => {
-          arrayStonesLinkings.push({
-            _productId: productId,
-            _stoneId: mapItem1.stoneId,
-            _stoneWeight: mapItem1.stoneWeight,
-            _quantity: mapItem1.quantity,
-            _createdUserId: _userId_,
-            _createdAt: dateTime,
-            _updatedUserId: null,
-            _updatedAt: -1,
-            _status: 1,
-          });
-        });
-
-        arrayToProducts.push({
-          _id: productId,
-          _name: mapItem.name,
-          _designerId: `${mapItem.subCategoryCode}-${autoIncrementNumber}`,
-          _customerId: mapItem.customerId,
-          _orderId: mapItem.orderId,
-          _grossWeight: mapItem.grossWeight,
-          _barcode: new StringUtils().intToDigitString(autoIncrementNumber, 12),
-          _categoryId: mapItem.categoryId,
-          _subCategoryId: mapItem.subCategoryId,
-          _groupId: mapItem.groupId,
-          _type: mapItem.type,
-          _purity: mapItem.purity,
-          _hmSealingStatus: mapItem.hmSealingStatus,
-          _huId: '',
-          _eCommerceStatus: mapItem.eCommerceStatus,
+      dto.stonesArray.map((mapItem1) => {
+        arrayStonesLinkings.push({
+          _productId: productId,
+          _stoneId: mapItem1.stoneId,
+          _stoneWeight: mapItem1.stoneWeight,
+          _quantity: mapItem1.quantity,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
           _updatedAt: -1,
           _status: 1,
         });
+      });
+
+      arrayToProducts.push({
+        _id: productId,
+        _name: dto.name,
+        _designerId: `${resultSubcategory[0]._code}-${autoIncrementNumber}`,
+        _customerId: customerId,
+        _orderId: orderId,
+        _grossWeight: dto.grossWeight,
+        _barcode: new StringUtils().intToDigitString(autoIncrementNumber, 12),
+        _categoryId: resultSubcategory[0]._categoryId,
+        _subCategoryId: dto.subCategoryId,
+        _groupId: resultSubcategory[0].categoryDetails._groupId,
+        _type: dto.type,
+        _purity: resultSubcategory[0].categoryDetails.groupDetails._purity,
+        _hmSealingStatus: dto.hmSealingStatus,
+        _huId: '',
+        _eCommerceStatus: dto.eCommerceStatus,
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _updatedUserId: null,
+        _updatedAt: -1,
+        _status: 1,
       });
 
       var result1 = await this.productModel.insertMany(arrayToProducts, {

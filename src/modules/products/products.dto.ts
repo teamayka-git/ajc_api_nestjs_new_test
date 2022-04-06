@@ -33,7 +33,7 @@ class StonesList {
   quantity: number;
 }
 
-class ProductCreateList {
+export class ProductCreateDto {
   @IsString()
   @ApiProperty({})
   name: string;
@@ -49,14 +49,6 @@ class ProductCreateList {
   @IsString()
   @ApiProperty({})
   orderId: string;
-
-  @IsString()
-  @ApiProperty({})
-  categoryId: string;
-
-  @IsString()
-  @ApiProperty({})
-  groupId: string;
 
   @IsNumber()
   @ApiProperty({})
@@ -74,10 +66,6 @@ class ProductCreateList {
   @ApiProperty({ description: descriptionType })
   type: number;
 
-  @IsNumber()
-  @ApiProperty({ description: descriptionType })
-  purity: number;
-
   @IsString()
   @ApiProperty({})
   subCategoryId: string;
@@ -87,14 +75,6 @@ class ProductCreateList {
   @ValidateNested({ each: true })
   @Type(() => StonesList)
   stonesArray: StonesList[];
-}
-
-export class ProductCreateDto {
-  @IsArray()
-  @ApiProperty({ type: [ProductCreateList] })
-  @ValidateNested({ each: true })
-  @Type(() => ProductCreateList)
-  productArray: ProductCreateList[];
 }
 
 export class ProductListDto {
