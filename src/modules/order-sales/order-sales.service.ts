@@ -1039,8 +1039,8 @@ export class OrderSalesService {
             pipeline: [
               {
                 $match: {
+                  _status: 1,
                   $expr: {
-                    _status: 1,
                     $eq: ['$_orderSaleId', '$$orderSaleId'],
                   },
                 },
@@ -2740,7 +2740,7 @@ export class OrderSalesService {
         },
         {
           $set: {
-            _generalRemark:dto.generalRemark
+            _generalRemark: dto.generalRemark,
           },
         },
         { new: true, session: transactionSession },
@@ -2757,7 +2757,6 @@ export class OrderSalesService {
           _createdAt: dateTime,
           _status: 1,
         };
-   
 
         arraySalesOrderHistories.push(objOrderHistory);
       });
