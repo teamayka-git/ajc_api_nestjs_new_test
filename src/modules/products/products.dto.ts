@@ -59,6 +59,14 @@ export class ProductCreateDto {
   eCommerceStatus: number;
 
   @IsNumber()
+  @ApiProperty({})
+  totalStoneWeight: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  netWeight: number;
+
+  @IsNumber()
   @ApiProperty({ description: descriptionType })
   type: number;
 

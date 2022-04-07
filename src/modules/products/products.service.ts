@@ -141,6 +141,8 @@ export class ProductsService {
         _designerId: `${resultSubcategory[0]._code}-${autoIncrementNumber}`,
         _customerId: customerId,
         _orderId: orderId,
+        _netWeight: dto.netWeight,
+        _totalStoneWeight: dto.totalStoneWeight,
         _grossWeight: dto.grossWeight,
         _barcode: new StringUtils().intToDigitString(autoIncrementNumber, 12),
         _categoryId: resultSubcategory[0]._categoryId,
