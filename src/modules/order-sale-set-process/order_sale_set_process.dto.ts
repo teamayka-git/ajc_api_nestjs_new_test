@@ -19,7 +19,10 @@ const DescriptionAddSubProcessHistory =
   '0-no need to add any history for sub process, 1-add subprocess history like started finished like';
 
 const DescriptionSetProcessHistoryType = 'Refer set process history table type';
-
+const DescriptionOrderSaleSetProcessHistories =
+  ' 0 - created  process, 1 - process work assigned, 2 - process work started, 3 - finished process work, 4 - process work on holding, 5 - process work on reassign request, 6 - process description editted';
+const DescriptionOrderSaleSetSubProcessHistories =
+  ' 0 - created all sub processed, 1 - process work started, 2 - finished sub process, 3 - finished process work';
 class processCreateList {
   @IsString()
   @ApiProperty({})
@@ -65,10 +68,6 @@ export class ChangeProcessOrderStatusDto {
   orderStatus: number;
 
   @IsNumber()
-  @ApiProperty({ description: DescriptionAddSubProcessHistory })
-  addSubProcessHistory: number;
-
-  @IsNumber()
   @ApiProperty({ description: DescriptionSetProcessHistoryType })
   setProcessHistoryType: number;
 }
@@ -97,4 +96,66 @@ export class ChangeSubProcessOrderStatusDto {
   @IsNumber()
   @ApiProperty({ description: DescriptionOrderSaleChangeProcessOrderStatus })
   orderStatus: number;
+}
+
+export class SetProcessHistoryListDto {
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  userIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  processIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  createdUserIds: string[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: DescriptionOrderSaleSetProcessHistories,
+  })
+  types: number[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+  })
+  statusArray: number[];
+}
+
+export class SetSubProcessHistoryListDto {
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleSetProcessIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  userIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  subProcessIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  createdUserIds: string[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: DescriptionOrderSaleSetSubProcessHistories,
+  })
+  types: number[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+  })
+  statusArray: number[];
 }

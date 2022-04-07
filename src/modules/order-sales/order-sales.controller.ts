@@ -15,6 +15,7 @@ import { OrderSalesService } from './order-sales.service';
 import { diskStorage } from 'multer';
 import { FileMulterHelper } from 'src/shared/file_multter_helper';
 import {
+  OrderSaleHistoryListDto,
   OrderSaleListDto,
   OrderSalesChangeDto,
   OrderSalesCreateDto,
@@ -112,5 +113,10 @@ export class OrderSalesController {
       dto,
       req['_userId_'],
     );
+  }
+
+  @Post('orderSaleHistories')
+  orderSaleHistories(@Body() dto: OrderSaleHistoryListDto, @Request() req) {
+    return this.orderSalesService.orderSaleHistories(dto, req['_userId_']);
   }
 }

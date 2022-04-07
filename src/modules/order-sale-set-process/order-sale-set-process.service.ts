@@ -6,6 +6,8 @@ import {
   ChangeProcessOrderStatusDto,
   ChangeSubProcessOrderStatusDto,
   SetProcessCreateDto,
+  SetProcessHistoryListDto,
+  SetSubProcessHistoryListDto,
 } from './order_sale_set_process.dto';
 import * as mongoose from 'mongoose';
 import { OrderSaleSetProcesses } from 'src/tableModels/order_sale_set_processes.model';
@@ -48,6 +50,7 @@ export class OrderSaleSetProcessService {
       var arrayToSetSubProcess = [];
       var arrayToSetSubProcessHistories = [];
 
+      var arrayToOrderSaleHistories = [];
       var arrayProcessIds = [];
       var arrayOrdersaleIds = [];
       dto.array.map((mapItem) => {
@@ -84,16 +87,6 @@ export class OrderSaleSetProcessService {
             _createdAt: dateTime,
             _status: 1,
           });
-          arrayToSetProcessHistories.push({
-            _orderSaleId: mapItem.orderSaleId,
-            _userId: _userId_,
-            _type: 0,
-            _processId: null,
-            _description: '',
-            _createdUserId: _userId_,
-            _createdAt: dateTime,
-            _status: 1,
-          });
           arrayToSetSubProcessHistories.push({
             _orderSaleSetProcessId: processId,
             _userId: null,
@@ -122,6 +115,25 @@ export class OrderSaleSetProcessService {
               _status: 1,
             });
           });
+        });
+        arrayToSetProcessHistories.push({
+          _orderSaleId: mapItem.orderSaleId,
+          _userId: _userId_,
+          _type: 0,
+          _processId: null,
+          _description: '',
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _status: 1,
+        });
+        arrayToOrderSaleHistories.push({
+          _orderSaleId: mapItem.orderSaleId,
+          _userId: null,
+          _type: 3,
+          _description: '',
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _status: 1,
         });
       });
 
@@ -159,6 +171,10 @@ export class OrderSaleSetProcessService {
         },
         { new: true, session: transactionSession },
       );
+
+      await this.orderSaleHistoriesModel.insertMany(arrayToOrderSaleHistories, {
+        session: transactionSession,
+      });
 
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
@@ -250,7 +266,7 @@ export class OrderSaleSetProcessService {
         session: transactionSession,
       });
 
-      if (dto.addSubProcessHistory == 1) {
+      if (dto.orderStatus == 2 || dto.orderStatus == 3) {
         var objSubProcessHistory = {
           _orderSaleSetProcessId: dto.orderSaleSetProcessId,
           _userId: null,
@@ -392,6 +408,1201 @@ export class OrderSaleSetProcessService {
       });
 
       const responseJSON = { message: 'success', data: result };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async setProcessHistories(dto: SetProcessHistoryListDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var arrayAggregation = [];
+
+      if (dto.orderSaleIds.length > 0) {
+        var newSettingsId = [];
+        dto.orderSaleIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _orderSaleId: { $in: newSettingsId } },
+        });
+      }
+
+      if (dto.userIds.length > 0) {
+        var newSettingsId = [];
+        dto.userIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _userId: { $in: newSettingsId } } });
+      }
+      if (dto.processIds.length > 0) {
+        var newSettingsId = [];
+        dto.processIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _processId: { $in: newSettingsId } },
+        });
+      }
+      if (dto.createdUserIds.length > 0) {
+        var newSettingsId = [];
+        dto.createdUserIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _createdUserId: { $in: newSettingsId } },
+        });
+      }
+      if (dto.types.length > 0) {
+        arrayAggregation.push({
+          $match: { _type: { $in: dto.types } },
+        });
+      }
+      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+
+      arrayAggregation.push(
+        {
+          $lookup: {
+            from: ModelNames.PROCESS_MASTER,
+            let: { processId: '$_processId' },
+            pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$processId'] } } }],
+            as: 'processDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$processDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      );
+      arrayAggregation.push(
+        {
+          $lookup: {
+            from: ModelNames.USER,
+            let: { userId: '$_userId' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+              {
+                $project: {
+                  _type: 1,
+                  _employeeId: 1,
+                  _agentId: 1,
+                  _supplierId: 1,
+                  _customerId: 1,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.EMPLOYEES,
+                  let: { employeeId: '$_employeeId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$employeeId'] },
+                      },
+                    },
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$globalGalleryId'],
+                              },
+                            },
+                          },
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                    {
+                      $project: {
+                        _name: 1,
+                        _email: 1,
+                        _mobile: 1,
+                        _uid: 1,
+                        globalGalleryDetails: {
+                          _name: 1,
+                          _docType: 1,
+                          _type: 1,
+                          _uid: 1,
+                          _url: 1,
+                        },
+                      },
+                    },
+                  ],
+                  as: 'employeeDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$employeeDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.AGENTS,
+                  let: { agentId: '$_agentId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$agentId'] } } },
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$globalGalleryId'],
+                              },
+                            },
+                          },
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                    {
+                      $project: {
+                        _name: 1,
+                        _email: 1,
+                        _mobile: 1,
+                        _uid: 1,
+                        globalGalleryDetails: {
+                          _name: 1,
+                          _docType: 1,
+                          _type: 1,
+                          _uid: 1,
+                          _url: 1,
+                        },
+                      },
+                    },
+                  ],
+                  as: 'agentDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$agentDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.SUPPLIERS,
+                  let: { suppliersId: '$_supplierId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$suppliersId'] },
+                      },
+                    },
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$globalGalleryId'],
+                              },
+                            },
+                          },
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                    {
+                      $project: {
+                        _name: 1,
+                        _email: 1,
+                        _mobile: 1,
+                        _uid: 1,
+                        globalGalleryDetails: {
+                          _name: 1,
+                          _docType: 1,
+                          _type: 1,
+                          _uid: 1,
+                          _url: 1,
+                        },
+                      },
+                    },
+                  ],
+                  as: 'supplierDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$supplierDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.CUSTOMERS,
+                  let: { customerId: '$_customerId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$customerId'] },
+                      },
+                    },
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$globalGalleryId'],
+                              },
+                            },
+                          },
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                    {
+                      $project: {
+                        _name: 1,
+                        _email: 1,
+                        _mobile: 1,
+                        _uid: 1,
+                        globalGalleryDetails: {
+                          _name: 1,
+                          _docType: 1,
+                          _type: 1,
+                          _uid: 1,
+                          _url: 1,
+                        },
+                      },
+                    },
+                  ],
+                  as: 'customerDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$customerDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            ],
+            as: 'userDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$userDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+
+        {
+          $lookup: {
+            from: ModelNames.USER,
+            let: { userId: '$_createdUserId' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+              {
+                $project: {
+                  _type: 1,
+                  _employeeId: 1,
+                  _agentId: 1,
+                  _supplierId: 1,
+                  _customerId: 1,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.EMPLOYEES,
+                  let: { employeeId: '$_employeeId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$employeeId'] },
+                      },
+                    },
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$globalGalleryId'],
+                              },
+                            },
+                          },
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                    {
+                      $project: {
+                        _name: 1,
+                        _email: 1,
+                        _mobile: 1,
+                        _uid: 1,
+                        globalGalleryDetails: {
+                          _name: 1,
+                          _docType: 1,
+                          _type: 1,
+                          _uid: 1,
+                          _url: 1,
+                        },
+                      },
+                    },
+                  ],
+                  as: 'employeeDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$employeeDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.AGENTS,
+                  let: { agentId: '$_agentId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$agentId'] } } },
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$globalGalleryId'],
+                              },
+                            },
+                          },
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                    {
+                      $project: {
+                        _name: 1,
+                        _email: 1,
+                        _mobile: 1,
+                        _uid: 1,
+                        globalGalleryDetails: {
+                          _name: 1,
+                          _docType: 1,
+                          _type: 1,
+                          _uid: 1,
+                          _url: 1,
+                        },
+                      },
+                    },
+                  ],
+                  as: 'agentDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$agentDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.SUPPLIERS,
+                  let: { suppliersId: '$_supplierId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$suppliersId'] },
+                      },
+                    },
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$globalGalleryId'],
+                              },
+                            },
+                          },
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                    {
+                      $project: {
+                        _name: 1,
+                        _email: 1,
+                        _mobile: 1,
+                        _uid: 1,
+                        globalGalleryDetails: {
+                          _name: 1,
+                          _docType: 1,
+                          _type: 1,
+                          _uid: 1,
+                          _url: 1,
+                        },
+                      },
+                    },
+                  ],
+                  as: 'supplierDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$supplierDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.CUSTOMERS,
+                  let: { customerId: '$_customerId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$customerId'] },
+                      },
+                    },
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$globalGalleryId'],
+                              },
+                            },
+                          },
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                    {
+                      $project: {
+                        _name: 1,
+                        _email: 1,
+                        _mobile: 1,
+                        _uid: 1,
+                        globalGalleryDetails: {
+                          _name: 1,
+                          _docType: 1,
+                          _type: 1,
+                          _uid: 1,
+                          _url: 1,
+                        },
+                      },
+                    },
+                  ],
+                  as: 'customerDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$customerDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            ],
+            as: 'createdUserDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$createdUserDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      );
+      var result = await this.orderSaleSetProcessHistoriesModel
+        .aggregate(arrayAggregation)
+        .session(transactionSession);
+
+      const responseJSON = {
+        message: 'success',
+        data: { list: result },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async setSubProcessHistories(
+    dto: SetSubProcessHistoryListDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var arrayAggregation = [];
+
+      if (dto.orderSaleSetProcessIds.length > 0) {
+        var newSettingsId = [];
+        dto.orderSaleSetProcessIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _orderSaleSetProcessId: { $in: newSettingsId } },
+        });
+      }
+
+      if (dto.userIds.length > 0) {
+        var newSettingsId = [];
+        dto.userIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _userId: { $in: newSettingsId } } });
+      }
+      if (dto.subProcessIds.length > 0) {
+        var newSettingsId = [];
+        dto.subProcessIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _subProcessId: { $in: newSettingsId } },
+        });
+      }
+      if (dto.createdUserIds.length > 0) {
+        var newSettingsId = [];
+        dto.createdUserIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _createdUserId: { $in: newSettingsId } },
+        });
+      }
+      if (dto.types.length > 0) {
+        arrayAggregation.push({
+          $match: { _type: { $in: dto.types } },
+        });
+      }
+      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+
+      arrayAggregation.push(
+        {
+          $lookup: {
+            from: ModelNames.SUB_PROCESS_MASTER,
+            let: { subProcessId: '$_subProcessId' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$_id', '$$subProcessId'] } } },
+            ],
+            as: 'subProcessDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$subProcessDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      );
+      arrayAggregation.push(
+        {
+          $lookup: {
+            from: ModelNames.USER,
+            let: { userId: '$_userId' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+              {
+                $project: {
+                  _type: 1,
+                  _employeeId: 1,
+                  _agentId: 1,
+                  _supplierId: 1,
+                  _customerId: 1,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.EMPLOYEES,
+                  let: { employeeId: '$_employeeId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$employeeId'] },
+                      },
+                    },
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$globalGalleryId'],
+                              },
+                            },
+                          },
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                    {
+                      $project: {
+                        _name: 1,
+                        _email: 1,
+                        _mobile: 1,
+                        _uid: 1,
+                        globalGalleryDetails: {
+                          _name: 1,
+                          _docType: 1,
+                          _type: 1,
+                          _uid: 1,
+                          _url: 1,
+                        },
+                      },
+                    },
+                  ],
+                  as: 'employeeDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$employeeDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.AGENTS,
+                  let: { agentId: '$_agentId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$agentId'] } } },
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$globalGalleryId'],
+                              },
+                            },
+                          },
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                    {
+                      $project: {
+                        _name: 1,
+                        _email: 1,
+                        _mobile: 1,
+                        _uid: 1,
+                        globalGalleryDetails: {
+                          _name: 1,
+                          _docType: 1,
+                          _type: 1,
+                          _uid: 1,
+                          _url: 1,
+                        },
+                      },
+                    },
+                  ],
+                  as: 'agentDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$agentDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.SUPPLIERS,
+                  let: { suppliersId: '$_supplierId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$suppliersId'] },
+                      },
+                    },
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$globalGalleryId'],
+                              },
+                            },
+                          },
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                    {
+                      $project: {
+                        _name: 1,
+                        _email: 1,
+                        _mobile: 1,
+                        _uid: 1,
+                        globalGalleryDetails: {
+                          _name: 1,
+                          _docType: 1,
+                          _type: 1,
+                          _uid: 1,
+                          _url: 1,
+                        },
+                      },
+                    },
+                  ],
+                  as: 'supplierDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$supplierDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.CUSTOMERS,
+                  let: { customerId: '$_customerId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$customerId'] },
+                      },
+                    },
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$globalGalleryId'],
+                              },
+                            },
+                          },
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                    {
+                      $project: {
+                        _name: 1,
+                        _email: 1,
+                        _mobile: 1,
+                        _uid: 1,
+                        globalGalleryDetails: {
+                          _name: 1,
+                          _docType: 1,
+                          _type: 1,
+                          _uid: 1,
+                          _url: 1,
+                        },
+                      },
+                    },
+                  ],
+                  as: 'customerDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$customerDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            ],
+            as: 'userDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$userDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+
+        {
+          $lookup: {
+            from: ModelNames.USER,
+            let: { userId: '$_createdUserId' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+              {
+                $project: {
+                  _type: 1,
+                  _employeeId: 1,
+                  _agentId: 1,
+                  _supplierId: 1,
+                  _customerId: 1,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.EMPLOYEES,
+                  let: { employeeId: '$_employeeId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$employeeId'] },
+                      },
+                    },
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$globalGalleryId'],
+                              },
+                            },
+                          },
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                    {
+                      $project: {
+                        _name: 1,
+                        _email: 1,
+                        _mobile: 1,
+                        _uid: 1,
+                        globalGalleryDetails: {
+                          _name: 1,
+                          _docType: 1,
+                          _type: 1,
+                          _uid: 1,
+                          _url: 1,
+                        },
+                      },
+                    },
+                  ],
+                  as: 'employeeDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$employeeDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.AGENTS,
+                  let: { agentId: '$_agentId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$agentId'] } } },
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$globalGalleryId'],
+                              },
+                            },
+                          },
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                    {
+                      $project: {
+                        _name: 1,
+                        _email: 1,
+                        _mobile: 1,
+                        _uid: 1,
+                        globalGalleryDetails: {
+                          _name: 1,
+                          _docType: 1,
+                          _type: 1,
+                          _uid: 1,
+                          _url: 1,
+                        },
+                      },
+                    },
+                  ],
+                  as: 'agentDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$agentDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.SUPPLIERS,
+                  let: { suppliersId: '$_supplierId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$suppliersId'] },
+                      },
+                    },
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$globalGalleryId'],
+                              },
+                            },
+                          },
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                    {
+                      $project: {
+                        _name: 1,
+                        _email: 1,
+                        _mobile: 1,
+                        _uid: 1,
+                        globalGalleryDetails: {
+                          _name: 1,
+                          _docType: 1,
+                          _type: 1,
+                          _uid: 1,
+                          _url: 1,
+                        },
+                      },
+                    },
+                  ],
+                  as: 'supplierDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$supplierDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.CUSTOMERS,
+                  let: { customerId: '$_customerId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$customerId'] },
+                      },
+                    },
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$globalGalleryId'],
+                              },
+                            },
+                          },
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                    {
+                      $project: {
+                        _name: 1,
+                        _email: 1,
+                        _mobile: 1,
+                        _uid: 1,
+                        globalGalleryDetails: {
+                          _name: 1,
+                          _docType: 1,
+                          _type: 1,
+                          _uid: 1,
+                          _url: 1,
+                        },
+                      },
+                    },
+                  ],
+                  as: 'customerDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$customerDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            ],
+            as: 'createdUserDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$createdUserDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      );
+      var result = await this.orderSaleSetSubProcessHistoriesModel
+        .aggregate(arrayAggregation)
+        .session(transactionSession);
+
+      const responseJSON = {
+        message: 'success',
+        data: { list: result },
+      };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=

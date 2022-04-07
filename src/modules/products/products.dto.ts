@@ -44,10 +44,6 @@ export class ProductCreateDto {
 
   @IsString()
   @ApiProperty({})
-  subCategoryCode: string;
-
-  @IsString()
-  @ApiProperty({})
   orderId: string;
 
   @IsNumber()
