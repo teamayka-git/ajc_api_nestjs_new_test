@@ -60,92 +60,107 @@ import { OrderSalesModule } from './modules/order-sales/order-sales.module';
 import { OrderSaleRootCausesModule } from './modules/order-sale-root-causes/order-sale-root-causes.module';
 import { OrderSaleSetProcessModule } from './modules/order-sale-set-process/order-sale-set-process.module';
 import { ProductsModule } from './modules/products/products.module';
-
+import { ColourMastersModule } from './modules/colour-masters/colour-masters.module';
+import { ColoursSchema } from './tableModels/colourMasters.model';
 
 @Module({
-  imports: [   ServeStaticModule.forRoot({
-    rootPath: join(__dirname, '..', 'public'),
-  }),
-  JwtModule.register({
-    secret: GlobalConfig().JWT_SECRET_KEY,
-    signOptions: {},
-  }), //jwt implement
-  ConfigModule.forRoot({ isGlobal: true }),
-  MongooseModule.forRoot(process.env.DB_GULL_URL),
-  MongooseModule.forFeature([
-    { name: ModelNames.USER, schema: UserSchema },
-    { name: ModelNames.EMPLOYEES, schema: EmployeeSchema },
-    { name: ModelNames.COUNTERS, schema:CountersSchema },{ name: ModelNames.COMPANIES, schema:CompanySchema },
-    { name: ModelNames.GENERALS, schema:GeneralsSchema },{name:ModelNames.DEPARTMENT,schema:DepartmentsSchema},
-    {name:ModelNames.PURITY,schema:PuritySchema},{name:ModelNames.PROCESS_MASTER,schema:ProcessMasterSchema},
-    {name:ModelNames.GLOBAL_GALLERY_CATEGORIES,schema:GlobalGalleryCategoriesSchema},
+  imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
+    JwtModule.register({
+      secret: GlobalConfig().JWT_SECRET_KEY,
+      signOptions: {},
+    }), //jwt implement
+    ConfigModule.forRoot({ isGlobal: true }),
+    MongooseModule.forRoot(process.env.DB_GULL_URL),
+    MongooseModule.forFeature([
+      { name: ModelNames.USER, schema: UserSchema },
+      { name: ModelNames.EMPLOYEES, schema: EmployeeSchema },
+      { name: ModelNames.COUNTERS, schema: CountersSchema },
+      { name: ModelNames.COMPANIES, schema: CompanySchema },
+      { name: ModelNames.GENERALS, schema: GeneralsSchema },
+      { name: ModelNames.DEPARTMENT, schema: DepartmentsSchema },
+      { name: ModelNames.PURITY, schema: PuritySchema },
+      { name: ModelNames.PROCESS_MASTER, schema: ProcessMasterSchema },
+      {
+        name: ModelNames.GLOBAL_GALLERY_CATEGORIES,
+        schema: GlobalGalleryCategoriesSchema,
+      },
 
-    {name:ModelNames.CHAT_PENDING_MESSAGES,schema:ChatPendingMessagesSchema},
-    {name:ModelNames.CHAT_PERSONAL_CHATS,schema:ChatPersonalChatsSchema},
-    {name:ModelNames.CHAT_PERSONAL_CHAT_MESSAGES,schema:ChatPersonalChatMessagesSchema},
+      {
+        name: ModelNames.CHAT_PENDING_MESSAGES,
+        schema: ChatPendingMessagesSchema,
+      },
+      { name: ModelNames.CHAT_PERSONAL_CHATS, schema: ChatPersonalChatsSchema },
+      {
+        name: ModelNames.CHAT_PERSONAL_CHAT_MESSAGES,
+        schema: ChatPersonalChatMessagesSchema,
+      },
+      { name: ModelNames.COLOUR_MASTERS, schema: ColoursSchema },
+    ]),
+    EmployeesModule,
+    BranchModule,
+    StatesModule,
+    DistrictsModule,
+    CitiesModule,
+    GeneralsModule,
+    GoldRateTimelinesModule,
+    DeliveryHubsModule,
+    GroupMastersModule,
+    CategoriesModule,
+    SubCategoriesModule,
+    StoneModule,
+    PurityModule,
+    DepartmentsModule,
+    ProcessMasterModule,
+    UnitMastersModule,
+    TdsMastersModule,
+    TcsMastersModule,
+    TransportMastersModule,
+    TestCenterMastersModule,
+    TestChargeMastersModule,
+    FactoriesModule,
+    AgentModule,
+    SupplierModule,
+    CompanyModule,
+    GlobalGalleryCategoryModule,
+    BanksModule,
+    GlobalGalleryModule,
+    RateCardModule,
+    RateBaseMastersModule,
+    CustomersModule,
+    OrderSalesModule,
+    OrderSaleRootCausesModule,
+    OrderSaleSetProcessModule,
+    ProductsModule,
+    ColourMastersModule,
 
-  ]),
-  EmployeesModule,
-  BranchModule,
-  StatesModule,
-  DistrictsModule,
-  CitiesModule,
-  GeneralsModule,
-  GoldRateTimelinesModule,
-  DeliveryHubsModule,
-  GroupMastersModule,
-  CategoriesModule,
-  SubCategoriesModule,
-  StoneModule,
-  PurityModule,
-  DepartmentsModule,
-  ProcessMasterModule,
-  UnitMastersModule,
-  TdsMastersModule,
-  TcsMastersModule,
-  TransportMastersModule,
-  TestCenterMastersModule,
-  TestChargeMastersModule,
-  FactoriesModule,
-  AgentModule,
-  SupplierModule,
-  CompanyModule,
-  GlobalGalleryCategoryModule,
-  BanksModule,
-  GlobalGalleryModule,
-  RateCardModule,
-  RateBaseMastersModule,
-  CustomersModule,
-  OrderSalesModule,
-  OrderSaleRootCausesModule,
-  OrderSaleSetProcessModule,
-  ProductsModule,
-  
-  
-  // SalesReturnRequestStatusesModule,
-],
+    // SalesReturnRequestStatusesModule,
+  ],
   controllers: [AppController],
-  providers: [ AppService,
+  providers: [
+    AppService,
     {
       provide: APP_FILTER,
       useClass: HttpErrorFilter,
     },
     { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
-    ChatGateway,],
+    ChatGateway,
+  ],
 })
 export class AppModule {
-    //for middleware
-    configure(consumer: MiddlewareConsumer) {
-      consumer
-        .apply(LoggerMiddleware)
-        .exclude(
-          process.env.GLOBAL_PREFIX_FOR_API + '/project_init',
-          // process.env.GLOBAL_PREFIX_FOR_API + '/(.*)',
-          // process.env.GLOBAL_PREFIX_FOR_API + '/store_front/(.*)',
-          process.env.GLOBAL_PREFIX_FOR_API + '/employees/login',
-          process.env.GLOBAL_PREFIX_FOR_API + '/customers/login',
-       
-        )
-        .forRoutes('*');
-    }
+  //for middleware
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .exclude(
+        process.env.GLOBAL_PREFIX_FOR_API + '/project_init',
+        // process.env.GLOBAL_PREFIX_FOR_API + '/(.*)',
+        // process.env.GLOBAL_PREFIX_FOR_API + '/store_front/(.*)',
+        process.env.GLOBAL_PREFIX_FOR_API + '/employees/login',
+        process.env.GLOBAL_PREFIX_FOR_API + '/customers/login',
+      )
+      .forRoutes('*');
+  }
 }
