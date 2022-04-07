@@ -85,5 +85,6 @@ _type:{
   101- sales order actived
   102- sales order disabled
   103- sales order deleted
+  104- sales order general remark editted
 }
 */

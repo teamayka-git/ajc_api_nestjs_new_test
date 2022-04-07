@@ -38,7 +38,7 @@ const descriptionListScreenTypeForSetProcessOrdersaleList =
 const DescriptionOrderSaleProcessOrderStatus =
   '0-Pending, 1-Assigned, 2-On Working, 3-Completed, 4-Hold, Request To Assign';
 const DescriptionOrderSalesHistoriesType =
-  ' 0 - order created for pending, 1 - order accept, 2 - order reject, 3 - set process done, 4 - finished goods, 5 - product generate request, 6 - product generated , 7 - deliverychalan generated, 8 - halmark issuence requested, 9 - halmark issuence bypassed, 10 - send to halmark issuence, 11 - halmarking issued, 12 - halmark request cancelled, 13 - halmark request rejected, 14 - halmark error occured, 15 - send to reissuence , 16 - invoice generated, 17 - delivery invoice generated, 18 - delivery boy otp verification requested, 19 - delivery boy otp verification accepted, 20 - hub tranfer, 21 - delivery otp to customer requested, 22 - delivery otp to customer verified, 23 - delivery rejected by customer, 24 - delivery reshedule requested, 25 - delivery reshedule rejected, 26 - delivery reshedule accepted, 27 - delivery return to hub, 28 - sale return collected otp requested, 29 - sale return collected otp accepted, 30 - sale return collected otp rejected, 31 - order completed, 32 - order cancelled,, 100 - order editted, 101- sales order actived, 102- sales order disabled, 103- sales order deleted';
+  ' 0 - order created for pending, 1 - order accept, 2 - order reject, 3 - set process done, 4 - finished goods, 5 - product generate request, 6 - product generated , 7 - deliverychalan generated, 8 - halmark issuence requested, 9 - halmark issuence bypassed, 10 - send to halmark issuence, 11 - halmarking issued, 12 - halmark request cancelled, 13 - halmark request rejected, 14 - halmark error occured, 15 - send to reissuence , 16 - invoice generated, 17 - delivery invoice generated, 18 - delivery boy otp verification requested, 19 - delivery boy otp verification accepted, 20 - hub tranfer, 21 - delivery otp to customer requested, 22 - delivery otp to customer verified, 23 - delivery rejected by customer, 24 - delivery reshedule requested, 25 - delivery reshedule rejected, 26 - delivery reshedule accepted, 27 - delivery return to hub, 28 - sale return collected otp requested, 29 - sale return collected otp accepted, 30 - sale return collected otp rejected, 31 - order completed, 32 - order cancelled,, 100 - order editted, 101- sales order actived, 102- sales order disabled, 103- sales order deleted, 104- sales order general remark editted';
 class orderSaleCreateList {
   @IsString()
   @ApiProperty({ description: descriptionFileOriginalName })
@@ -335,4 +335,14 @@ export class OrderSaleHistoryListDto {
     type: [Number],
   })
   statusArray: number[];
+}
+
+export class EditOrderSaleGeneralRemarkDto {
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleIds: string[];
+
+  @IsString()
+  @ApiProperty({})
+  generalRemark: string;
 }

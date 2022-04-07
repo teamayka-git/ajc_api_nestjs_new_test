@@ -6,6 +6,7 @@ import { OrderSales } from 'src/tableModels/order_sales.model';
 import * as mongoose from 'mongoose';
 import { OrderSalesDocuments } from 'src/tableModels/order_sales_documents.model';
 import {
+  EditOrderSaleGeneralRemarkDto,
   OrderSaleHistoryListDto,
   OrderSaleListDto,
   OrderSalesChangeDto,
@@ -222,6 +223,7 @@ export class OrderSalesService {
         _workStatus: 0,
         _rootCauseId: null,
         _rootCause: '',
+        _generalRemark: '',
         _description: dto.description,
         _isRhodium: dto.isRhodium,
         _isMatFinish: dto.isMatFinish,
@@ -2703,6 +2705,67 @@ export class OrderSalesService {
         message: 'success',
         data: { list: result },
       };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async editOrderSaleGeneralRemarks(
+    dto: EditOrderSaleGeneralRemarkDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var result = await this.orderSaleModel.updateMany(
+        {
+          _id: { $in: dto.orderSaleIds },
+        },
+        {
+          $set: {
+            _generalRemark:dto.generalRemark
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      var arraySalesOrderHistories = [];
+      dto.orderSaleIds.map((mapItem) => {
+        var objOrderHistory = {
+          _orderSaleId: mapItem,
+          _userId: null,
+          _type: 104,
+          _description: dto.generalRemark,
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _status: 1,
+        };
+   
+
+        arraySalesOrderHistories.push(objOrderHistory);
+      });
+      await this.orderSaleHistoriesModel.insertMany(arraySalesOrderHistories, {
+        session: transactionSession,
+      });
+
+      const responseJSON = { message: 'success', data: result };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=

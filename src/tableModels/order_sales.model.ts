@@ -31,6 +31,7 @@ export const OrderSalesSchema = new mongoose.Schema({
     default: null,
   },
   _description: { type: String, default: '' },
+  _generalRemark: { type: String, default: '' },
   _isMatFinish: { type: Number, required: true, default: -1 },
   _isRhodium: { type: Number, required: true, default: -1 },
   _workStatus: { type: Number, required: true, default: -1 },
@@ -67,6 +68,7 @@ export interface OrderSales {
   _rootCause: String;
   _salesPersonId: string;
   _description: string;
+  _generalRemark: string;
   _isRhodium: number;
   _isMatFinish: number;
   _createdUserId: String;
@@ -85,6 +87,7 @@ OrderSalesSchema.index({ _stoneColour: 1 });
 OrderSalesSchema.index({ _dueDate: 1 });
 OrderSalesSchema.index({ _salesPerson: 1 });
 OrderSalesSchema.index({ _description: 1 });
+OrderSalesSchema.index({ _generalRemark: 1 });
 OrderSalesSchema.index({ _isRhodium: 1 });
 OrderSalesSchema.index({ _status: 1 });
 OrderSalesSchema.index({ _uid: 1, _id: 1 });

@@ -15,6 +15,7 @@ import { OrderSalesService } from './order-sales.service';
 import { diskStorage } from 'multer';
 import { FileMulterHelper } from 'src/shared/file_multter_helper';
 import {
+  EditOrderSaleGeneralRemarkDto,
   OrderSaleHistoryListDto,
   OrderSaleListDto,
   OrderSalesChangeDto,
@@ -118,5 +119,15 @@ export class OrderSalesController {
   @Post('orderSaleHistories')
   orderSaleHistories(@Body() dto: OrderSaleHistoryListDto, @Request() req) {
     return this.orderSalesService.orderSaleHistories(dto, req['_userId_']);
+  }
+  @Post('editOrderSaleGeneralRemarks')
+  editOrderSaleGeneralRemarks(
+    @Body() dto: EditOrderSaleGeneralRemarkDto,
+    @Request() req,
+  ) {
+    return this.orderSalesService.editOrderSaleGeneralRemarks(
+      dto,
+      req['_userId_'],
+    );
   }
 }
