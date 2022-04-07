@@ -109,6 +109,7 @@ export class StoneService {
             mapItem['globalGalleryId'] == 'nil'
               ? null
               : mapItem['globalGalleryId'],
+          _colourId: mapItem.colourId,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
@@ -183,6 +184,7 @@ export class StoneService {
       var updateObject = {
         _name: dto.name,
         _weight: dto.weight,
+        _colourId: dto.colourId,
         _dataGuard: dto.dataGuard,
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
@@ -353,6 +355,27 @@ export class StoneService {
           {
             $unwind: {
               path: '$globalGalleryDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.COLOUR_MASTERS,
+              let: { colourId: '$_colourId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$colourId'] } } },
+              ],
+              as: 'colourDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$colourDetails',
               preserveNullAndEmptyArrays: true,
             },
           },
