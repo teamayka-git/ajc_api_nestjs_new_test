@@ -15,8 +15,10 @@ const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 
 const DescriptionOrderSaleChangeProcessOrderStatus =
   '0-Pending, 1-Assigned, 2-On Working, 3-Completed, 4-Hold, Request To Assign';
+const DescriptionAddSubProcessHistory =
+  '0-no need to add any history for sub process, 1-add subprocess history like started finished like';
 
-const DescriptionOrderSaleHistoryType = '1-workStarted, 2-finishedWork';
+const DescriptionSetProcessHistoryType = 'Refer set process history table type';
 
 class processCreateList {
   @IsString()
@@ -61,6 +63,14 @@ export class ChangeProcessOrderStatusDto {
   @IsNumber()
   @ApiProperty({ description: DescriptionOrderSaleChangeProcessOrderStatus })
   orderStatus: number;
+
+  @IsNumber()
+  @ApiProperty({ description: DescriptionAddSubProcessHistory })
+  addSubProcessHistory: number;
+
+  @IsNumber()
+  @ApiProperty({ description: DescriptionSetProcessHistoryType })
+  setProcessHistoryType: number;
 }
 export class ChangeProcessDescriptionOrderStatusDto {
   @IsString()
@@ -87,7 +97,4 @@ export class ChangeSubProcessOrderStatusDto {
   @IsNumber()
   @ApiProperty({ description: DescriptionOrderSaleChangeProcessOrderStatus })
   orderStatus: number;
-  @IsNumber()
-  @ApiProperty({ description: DescriptionOrderSaleHistoryType })
-  historyType: number;
 }

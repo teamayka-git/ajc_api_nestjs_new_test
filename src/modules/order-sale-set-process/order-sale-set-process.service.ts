@@ -44,6 +44,7 @@ export class OrderSaleSetProcessService {
     transactionSession.startTransaction();
     try {
       var arrayToSetProcess = [];
+      var arrayToSetProcessHistories = [];
       var arrayToSetSubProcess = [];
       var arrayToSetSubProcessHistories = [];
 
@@ -81,7 +82,15 @@ export class OrderSaleSetProcessService {
             _processId: mapItem1.processId,
             _status: 1,
           });
-
+          arrayToSetProcessHistories.push({
+            _orderSaleId: mapItem.orderSaleId,
+            _userId: _userId_,
+            _orderStatus: -1,
+            _type: 0,
+            _processId: null,
+            _workingUserId: null,
+            _status: 1,
+          });
           arrayToSetSubProcessHistories.push({
             _orderSaleSetProcessId: processId,
             _userId: _userId_,
@@ -120,7 +129,7 @@ export class OrderSaleSetProcessService {
       });
 
       await this.orderSaleSetProcessHistoriesModel.insertMany(
-        arrayToSetProcess,
+        arrayToSetProcessHistories,
         {
           session: transactionSession,
         },
@@ -204,17 +213,79 @@ export class OrderSaleSetProcessService {
         { new: true, session: transactionSession },
       );
 
-      const orderSaleHistory = new this.orderSaleSetProcessHistoriesModel({
+      var objDefaultProcessHistory = {
         _orderSaleId: result._orderSaleId,
-        _userId: result._userId,
-        _orderStatus: result._orderStatus,
-        _description: result._description,
-        _processId: result._processId,
-        _status: result._status,
-      });
-      await orderSaleHistory.save({
+        _userId: _userId_,
+        _orderStatus: -1,
+        _type: dto.setProcessHistoryType,
+        _workingUserId: null,
+        _processId: null,
+        _status: 1,
+      };
+      switch (dto.setProcessHistoryType) {
+        /*
+          0 - created  process
+          1 - process work assigned
+          2 - process work started
+          3 - finished process work
+          4 - process work on holding
+          5 - process work on reassign request
+          6 - process description editted
+        */
+        case 1:
+          objDefaultProcessHistory._workingUserId = dto.userId;
+          break;
+        case 2:
+          objDefaultProcessHistory._workingUserId = dto.userId;
+          objDefaultProcessHistory._processId = result._processId;
+          break;
+        case 3:
+          objDefaultProcessHistory._workingUserId = dto.userId;
+          objDefaultProcessHistory._processId = result._processId;
+          break;
+        case 4:
+          objDefaultProcessHistory._workingUserId = dto.userId;
+          objDefaultProcessHistory._processId = result._processId;
+          break;
+        case 5:
+          objDefaultProcessHistory._workingUserId = dto.userId;
+          objDefaultProcessHistory._processId = result._processId;
+          break;
+        case 6:
+          objDefaultProcessHistory._workingUserId = dto.userId;
+          objDefaultProcessHistory._processId = result._processId;
+          break;
+      }
+
+      const orderSaleSetProcessHistory =
+        new this.orderSaleSetProcessHistoriesModel(objDefaultProcessHistory);
+      await orderSaleSetProcessHistory.save({
         session: transactionSession,
       });
+
+      if (dto.addSubProcessHistory == 1) {
+        var objSubProcessHistory = {
+          _orderSaleSetProcessId: dto.orderSaleSetProcessId,
+          _userId: _userId_,
+          _orderStatus: -1,
+          _subProcessId: null,
+          _type: -1,
+          _status: 1,
+        };
+        if (dto.orderStatus == 2) {
+          //started work
+          objSubProcessHistory._type = 1;
+        } else if (dto.orderStatus == 3) {
+          //finished work
+          objSubProcessHistory._type = 3;
+        }
+
+        const orderSaleSubProcessHistory =
+          new this.orderSaleSetSubProcessHistoriesModel(objSubProcessHistory);
+        await orderSaleSubProcessHistory.save({
+          session: transactionSession,
+        });
+      }
 
       const responseJSON = { message: 'success', data: result };
       if (
@@ -258,15 +329,17 @@ export class OrderSaleSetProcessService {
         { new: true, session: transactionSession },
       );
 
-      const orderSaleHistory = new this.orderSaleSetProcessHistoriesModel({
-        _orderSaleId: result._orderSaleId,
-        _userId: result._userId,
-        _orderStatus: result._orderStatus,
-        _description: result._description,
-        _processId: result._processId,
-        _status: result._status,
-      });
-      await orderSaleHistory.save({
+      const orderSaleSetProcessHistory =
+        new this.orderSaleSetProcessHistoriesModel({
+          _orderSaleId: result._orderSaleId,
+          _userId: _userId_,
+          _orderStatus: -1,
+          _type: 6,
+          _workingUserId: _userId_,
+          _processId: result._processId,
+          _status: 1,
+        });
+      await orderSaleSetProcessHistory.save({
         session: transactionSession,
       });
 
@@ -314,26 +387,14 @@ export class OrderSaleSetProcessService {
         { new: true, session: transactionSession },
       );
 
-      var objectOrderSaleSubProcessHistory = {
+      const orderSaleHistory = new this.orderSaleSetSubProcessHistoriesModel({
         _orderSaleSetProcessId: result._orderSaleSetProcessId,
         _userId: result._userId,
         _orderStatus: -1,
-        _type: dto.historyType,
-        _processId: null,
+        _type: 2, //this api only calling for sub task completed time, no more operation now
+        _subProcessId: result._subProcessId,
         _status: 1,
-      };
-
-      switch (dto.historyType) {
-        case 1:
-          break;
-        case 2:
-          objectOrderSaleSubProcessHistory._processId = result._subProcessId;
-          break;
-      }
-
-      const orderSaleHistory = new this.orderSaleSetSubProcessHistoriesModel(
-        objectOrderSaleSubProcessHistory,
-      );
+      });
       await orderSaleHistory.save({
         session: transactionSession,
       });
