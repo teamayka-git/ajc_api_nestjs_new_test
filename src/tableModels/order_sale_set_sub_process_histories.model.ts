@@ -15,7 +15,6 @@ export const OrderSaleSetSubProcessHistoriesSchema = new mongoose.Schema({
     ref: ModelNames.USER,
     default: null,
   },
-  _orderStatus: { type: Number, required: true, default: -1 },
   _subProcessId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.SUB_PROCESS_MASTER,
@@ -23,6 +22,14 @@ export const OrderSaleSetSubProcessHistoriesSchema = new mongoose.Schema({
   },
 
   _type: { type: Number, required: true, default: -1 },
+
+  _description: { type: String, default: 'nil' },
+  _createdUserId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.USER,
+    default: null,
+  },
+  _createdAt: { type: Number, required: true, default: -1 },
   _status: { type: Number, required: true, default: -1 },
 });
 
@@ -30,17 +37,21 @@ export interface OrderSaleSetSubProcessHistories {
   _id: String;
   _orderSaleSetProcessId: String;
   _userId: String;
-  _orderStatus: number;
   _subProcessId: String;
   _type: number;
+  _description: string;
+  _createdUserId: string;
+  _createdAt: number;
   _status: Number;
 }
 
 OrderSaleSetSubProcessHistoriesSchema.index({ _type: 1 });
 OrderSaleSetSubProcessHistoriesSchema.index({ _orderSaleSetProcessId: 1 });
 OrderSaleSetSubProcessHistoriesSchema.index({ _userId: 1 });
-OrderSaleSetSubProcessHistoriesSchema.index({ _orderStatus: 1 });
 OrderSaleSetSubProcessHistoriesSchema.index({ _subProcessId: 1 });
+OrderSaleSetSubProcessHistoriesSchema.index({ _createdUserId: 1 });
+OrderSaleSetSubProcessHistoriesSchema.index({ _description: 1 });
+OrderSaleSetSubProcessHistoriesSchema.index({ _createdAt: 1 });
 OrderSaleSetSubProcessHistoriesSchema.index({ _status: 1 });
 
 /*
@@ -49,13 +60,5 @@ _type:{
   1 - process work started
   2 - finished sub process
   3 - finished process work
-}
-_orderStatus:{
-  0 - pending
-  1 - assigned
-  2 - onworking
-  3 - completed
-  4 - on holding
-  5 - resigned to reassign
 }
 */

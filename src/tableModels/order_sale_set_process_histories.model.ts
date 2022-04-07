@@ -15,19 +15,20 @@ export const OrderSaleSetProcessHistoriesSchema = new mongoose.Schema({
     ref: ModelNames.USER,
     default: null,
   },
-  _workingUserId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.USER,
-    default: null,
-  },
-  _orderStatus: { type: Number, required: true, default: -1 },
   _processId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.PROCESS_MASTER,
     default: null,
   },
-
   _type: { type: Number, required: true, default: -1 },
+
+  _description: { type: String, default: 'nil' },
+  _createdUserId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.USER,
+    default: null,
+  },
+  _createdAt: { type: Number, required: true, default: -1 },
   _status: { type: Number, required: true, default: -1 },
 });
 
@@ -35,10 +36,11 @@ export interface OrderSaleSetProcessHistories {
   _id: String;
   _orderSaleId: String;
   _userId: String;
-  _workingUserId: string;
-  _orderStatus: number;
-  _type: number;
   _processId: String;
+  _type: number;
+  _description: string;
+  _createdUserId: string;
+  _createdAt: number;
   _status: Number;
 }
 
@@ -46,8 +48,9 @@ OrderSaleSetProcessHistoriesSchema.index({ _type: 1 });
 OrderSaleSetProcessHistoriesSchema.index({ _processId: 1 });
 OrderSaleSetProcessHistoriesSchema.index({ _orderSaleId: 1 });
 OrderSaleSetProcessHistoriesSchema.index({ _userId: 1 });
-OrderSaleSetProcessHistoriesSchema.index({ _workingUserId: 1 });
-OrderSaleSetProcessHistoriesSchema.index({ _orderStatus: 1 });
+OrderSaleSetProcessHistoriesSchema.index({ _createdUserId: 1 });
+OrderSaleSetProcessHistoriesSchema.index({ _description: 1 });
+OrderSaleSetProcessHistoriesSchema.index({ _createdAt: 1 });
 OrderSaleSetProcessHistoriesSchema.index({ _status: 1 });
 
 /*
@@ -59,13 +62,5 @@ _type:{
   4 - process work on holding
   5 - process work on reassign request
   6 - process description editted
-}
-_orderStatus:{
-  0 - pending
-  1 - assigned
-  2 - onworking
-  3 - completed
-  4 - on holding
-  5 - resigned to reassign
 }
 */

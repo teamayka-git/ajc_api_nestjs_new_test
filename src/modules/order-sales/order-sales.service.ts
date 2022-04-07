@@ -482,24 +482,6 @@ export class OrderSalesService {
         { new: true, session: transactionSession },
       );
 
-      var arrayToOrderSaleHistories = [];
-      dto.orderSaleIds.map((mapItem) => {
-        arrayToOrderSaleHistories.push({
-          _orderSaleId: mapItem,
-          _workStatus: dto.workStatus,
-          _rootCauseId:
-            dto.rootCauseId == '' || dto.rootCauseId == 'nil'
-              ? null
-              : dto.rootCauseId,
-          _rootCause: dto.rootCause,
-          _status: 1,
-        });
-      });
-
-      await this.orderSaleHistoriesModel.insertMany(arrayToOrderSaleHistories, {
-        session: transactionSession,
-      });
-
       const responseJSON = { message: 'success', data: result };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&

@@ -4,7 +4,7 @@ import { GlobalConfig } from 'src/config/global_config';
 
 export const OrderSaleSetSubProcessesSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
- 
+
   _orderSaleSetProcessId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.ORDER_SALE_SET_PROCESSES,
@@ -21,18 +21,26 @@ export const OrderSaleSetSubProcessesSchema = new mongoose.Schema({
     ref: ModelNames.SUB_PROCESS_MASTER,
     default: null,
   },
-  
-  _description: { type: String, default: "" },
+
+  _description: { type: String, default: '' },
+  _createdUserId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.USER,
+    default: null,
+  },
+  _createdAt: { type: Number, required: true, default: -1 },
   _status: { type: Number, required: true, default: -1 },
-}); 
+});
 
 export interface OrderSaleSetSubProcesses {
   _id: String;
-  _orderSaleSetProcessId:String;
+  _orderSaleSetProcessId: String;
   _userId: String;
-  _orderStatus:number;
-  _description:string;
-  _subProcessId:String;
+  _orderStatus: number;
+  _description: string;
+  _subProcessId: String;
+  _createdUserId: String;
+  _createdAt: Number;
   _status: Number;
 }
 
@@ -41,6 +49,7 @@ OrderSaleSetSubProcessesSchema.index({ _orderSaleSetProcessId: 1 });
 OrderSaleSetSubProcessesSchema.index({ _userId: 1 });
 OrderSaleSetSubProcessesSchema.index({ _orderStatus: 1 });
 OrderSaleSetSubProcessesSchema.index({ _subProcessId: 1 });
+OrderSaleSetSubProcessesSchema.index({ _createdUserId: 1 });
 OrderSaleSetSubProcessesSchema.index({ _status: 1 });
 
 /*
