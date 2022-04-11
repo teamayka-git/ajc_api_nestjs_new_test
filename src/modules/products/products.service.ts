@@ -125,6 +125,7 @@ export class ProductsService {
         arrayStonesLinkings.push({
           _productId: productId,
           _stoneId: mapItem1.stoneId,
+          _stoneColourId: mapItem1.colourId,
           _stoneWeight: mapItem1.stoneWeight,
           _quantity: mapItem1.quantity,
           _createdUserId: _userId_,
@@ -575,6 +576,26 @@ export class ProductsService {
               {
                 $unwind: {
                   path: '$stoneDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.COLOUR_MASTERS,
+                  let: { stoneColourId: '$_stoneColourId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$stoneColourId'] },
+                      },
+                    },
+                  ],
+                  as: 'stoneColourDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$stoneColourDetails',
                   preserveNullAndEmptyArrays: true,
                 },
               },

@@ -2,25 +2,18 @@ import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { GlobalConfig } from 'src/config/global_config';
 
-export const ProductStoneLinkingsSchema = new mongoose.Schema({
+export const StoneColourLinkingSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
-  _productId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.PRODUCTS,
-    default: null,
-  },
   _stoneId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.STONE,
     default: null,
   },
-  _stoneColourId: {
+  _colourId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.COLOUR_MASTERS,
     default: null,
   },
-  _stoneWeight: { type: Number, required: true, default: -1 },
-  _quantity: { type: Number, required: true, default: -1 },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -36,13 +29,10 @@ export const ProductStoneLinkingsSchema = new mongoose.Schema({
   _status: { type: Number, required: true, default: -1 },
 });
 
-export interface ProductStoneLinkings {
+export interface StoneColourLinking {
   _id: String;
-  _productId: String;
   _stoneId: String;
-  _stoneColourId: string;
-  _stoneWeight: Number;
-  _quantity: Number;
+  _colourId: String;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -50,12 +40,9 @@ export interface ProductStoneLinkings {
   _status: Number;
 }
 
-ProductStoneLinkingsSchema.index({ _quantity: 1 });
-ProductStoneLinkingsSchema.index({ _stoneWeight: 1 });
-ProductStoneLinkingsSchema.index({ _stoneColourId: 1 });
-ProductStoneLinkingsSchema.index({ _productId: 1 });
-ProductStoneLinkingsSchema.index({ _stoneId: 1 });
-ProductStoneLinkingsSchema.index({ _status: 1 });
+StoneColourLinkingSchema.index({ _stoneId: 1 });
+StoneColourLinkingSchema.index({ _colourId: 1 });
+StoneColourLinkingSchema.index({ _status: 1 });
 
 /*
  */

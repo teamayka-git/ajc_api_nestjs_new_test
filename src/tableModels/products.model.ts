@@ -8,12 +8,12 @@ export const ProductsSchema = new mongoose.Schema({
   _designerId: { type: String, required: true, default: 'nil' },
   _customerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.DISTRICTS,
+    ref: ModelNames.CUSTOMERS,
     default: null,
   },
   _orderId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.DISTRICTS,
+    ref: ModelNames.ORDER_SALES,
     default: null,
   },
 
@@ -21,17 +21,17 @@ export const ProductsSchema = new mongoose.Schema({
   _barcode: { type: String, required: true, default: 'nil' },
   _categoryId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.DISTRICTS,
+    ref: ModelNames.CATEGORIES,
     default: null,
   },
   _subCategoryId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.DISTRICTS,
+    ref: ModelNames.SUB_CATEGORIES,
     default: null,
   },
   _groupId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.DISTRICTS,
+    ref: ModelNames.GROUP_MASTERS,
     default: null,
   },
   _type: { type: Number, required: true, default: -1 },

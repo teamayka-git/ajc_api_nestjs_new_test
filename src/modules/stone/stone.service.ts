@@ -17,12 +17,15 @@ import { Counters } from 'src/tableModels/counters.model';
 import { StringUtils } from 'src/utils/string_utils';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
+import { StoneColourLinking } from 'src/tableModels/stoneColourLinking.model';
 
 @Injectable()
 export class StoneService {
   constructor(
     @InjectModel(ModelNames.STONE)
     private readonly stoneModel: mongoose.Model<Stone>,
+    @InjectModel(ModelNames.STONE_COLOUR_LINKINGS)
+    private readonly stoneColourLinkingsModel: mongoose.Model<StoneColourLinking>,
     @InjectModel(ModelNames.GLOBAL_GALLERIES)
     private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
     @InjectModel(ModelNames.COUNTERS)
@@ -35,6 +38,7 @@ export class StoneService {
     transactionSession.startTransaction();
     try {
       var arrayToStates = [];
+      var arrayToStoneColourLinkings = [];
       var arrayGlobalGalleries = [];
 
       if (file.hasOwnProperty('image')) {
@@ -101,7 +105,9 @@ export class StoneService {
       }
 
       dto.array.map((mapItem) => {
+        var stoneId = new mongoose.Types.ObjectId();
         arrayToStates.push({
+          _id: stoneId,
           _name: mapItem.name,
           _weight: mapItem.weight,
           _dataGuard: mapItem.dataGuard,
@@ -109,18 +115,35 @@ export class StoneService {
             mapItem['globalGalleryId'] == 'nil'
               ? null
               : mapItem['globalGalleryId'],
-          _colourId: mapItem.colourId,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
           _updatedAt: -1,
           _status: 1,
         });
+        mapItem.colourIds.map((mapItem1) => {
+          arrayToStoneColourLinkings.push({
+            _stoneId: stoneId,
+            _colourId: mapItem1,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+        });
       });
 
       var result1 = await this.stoneModel.insertMany(arrayToStates, {
         session: transactionSession,
       });
+
+      await this.stoneColourLinkingsModel.insertMany(
+        arrayToStoneColourLinkings,
+        {
+          session: transactionSession,
+        },
+      );
 
       await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
         session: transactionSession,
@@ -184,11 +207,24 @@ export class StoneService {
       var updateObject = {
         _name: dto.name,
         _weight: dto.weight,
-        _colourId: dto.colourId,
         _dataGuard: dto.dataGuard,
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
       };
+
+      var arrayToStoneColourLinkings = [];
+
+      dto.addColourIds.map((mapItem) => {
+        arrayToStoneColourLinkings.push({
+          _stoneId: dto.stoneId,
+          _colourId: mapItem,
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
+        });
+      });
 
       var globalGalleryId = null;
       //globalGalleryAdd
@@ -233,7 +269,23 @@ export class StoneService {
         },
         { new: true, session: transactionSession },
       );
-
+      await this.stoneColourLinkingsModel.updateMany(
+        { _id: { $in: dto.deleteColourLinkingIds } },
+        {
+          $set: {
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+            _status: 2,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+      await this.stoneColourLinkingsModel.insertMany(
+        arrayToStoneColourLinkings,
+        {
+          session: transactionSession,
+        },
+      );
       const responseJSON = { message: 'success', data: result };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -362,24 +414,37 @@ export class StoneService {
       }
 
       if (dto.screenType.findIndex((it) => it == 100) != -1) {
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.COLOUR_MASTERS,
-              let: { colourId: '$_colourId' },
-              pipeline: [
-                { $match: { $expr: { $eq: ['$_id', '$$colourId'] } } },
-              ],
-              as: 'colourDetails',
-            },
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.STONE_COLOUR_LINKINGS,
+            let: { stoneId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_stoneId', '$$stoneId'] },
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.COLOUR_MASTERS,
+                  let: { colourId: '$_colourId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$colourId'] } } },
+                  ],
+                  as: 'colourDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$colourDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            ],
+            as: 'stoneLinkings',
           },
-          {
-            $unwind: {
-              path: '$colourDetails',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-        );
+        });
       }
       var result = await this.stoneModel
         .aggregate(arrayAggregation)

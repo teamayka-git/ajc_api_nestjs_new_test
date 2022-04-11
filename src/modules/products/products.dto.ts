@@ -24,6 +24,10 @@ class StonesList {
   @ApiProperty({})
   stoneId: string;
 
+  @IsString()
+  @ApiProperty({})
+  colourId: string;
+
   @IsNumber()
   @ApiProperty({})
   stoneWeight: number;
