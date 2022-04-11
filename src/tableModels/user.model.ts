@@ -1,51 +1,120 @@
 import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 
-
-
 export const UserSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
-    _type: { type: Number, required: true, default: -1 },
-    _employeeId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.EMPLOYEES, default: null },
-    _agentId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.AGENTS, default: null },
-    _supplierId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.SUPPLIERS, default: null },
-    _customerId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.CUSTOMERS, default: null },
-    _fcmId: { type: String ,default:""},
-    _deviceUniqueId: { type: String ,default: ""},
-    _permissions: { type: Object,required: true, default:[]},
-    _userRole: { type: Number, required: true, default: -1 },
-    _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
-    _createdAt: { type: Number, required: true, default: -1 },
-    _updatedUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
-    _updatedAt: { type: Number, required: true, default: -1 },
-    _status: { type: Number, required: true, default: -1 },
+  _name: { type: String, required: true, default: 'nil' },
+  _gender: { type: Number, required: true, default: -1 },
+  _email: { type: String, required: true, default: 'nil' },
+  _password: { type: String, required: true, default: 'nil' },
+  _mobile: { type: String, required: true, default: 'nil' },
+  _globalGalleryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.GLOBAL_GALLERIES,
+    default: null,
+  },
+  _employeeId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.EMPLOYEES,
+    default: null,
+  },
+  _agentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.AGENTS,
+    default: null,
+  },
+  _supplierId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.SUPPLIERS,
+    default: null,
+  },
+  _customerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.CUSTOMERS,
+    default: null,
+  },
+  _fcmId: { type: String, default: '' },
+  _deviceUniqueId: { type: String, default: '' },
+  _permissions: { type: Object, required: true, default: [] },
+  _userRole: { type: Number, required: true, default: -1 },
+  _createdUserId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.USER,
+    default: null,
+  },
+  _createdAt: { type: Number, required: true, default: -1 },
+  _updatedUserId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.USER,
+    default: null,
+  },
+  _updatedAt: { type: Number, required: true, default: -1 },
+  _status: { type: Number, required: true, default: -1 },
 });
 
- 
 export interface User {
-    _id: String;
-    _type: Number;
-    _employeeId: String;
-    _agentId: String;
-    _supplierId: String;
-    _customerId:String;
-    _fcmId: String;
-    _deviceUniqueId: String;
-    _permissions:Object;
-    _userRole:Number;
-    _createdUserId:String;
-    _createdAt:  Number;
-    _updatedUserId: String;
-    _updatedAt:  Number;
-    _status: Number;
-} 
+  _id: String;
+  _name: String;
+  _gender: Number;
+  _email: String;
+  _password: String;
+  _mobile: String;
+  _globalGalleryId: String;
 
-UserSchema.index({_status: 1});
-UserSchema.index({_employeeId: 1});
-UserSchema.index({_customerId: 1});
-UserSchema.index({_agentId: 1});
-UserSchema.index({_supplierId: 1});
-UserSchema.index({_type: 1}); 
+  _employeeId: String;
+  _agentId: String;
+  _supplierId: String;
+  _customerId: String;
+  _fcmId: String;
+  _deviceUniqueId: String;
+  _permissions: Object;
+  _userRole: Number;
+  _createdUserId: String;
+  _createdAt: Number;
+  _updatedUserId: String;
+  _updatedAt: Number;
+  _status: Number;
+}
+
+UserSchema.index({ _status: 1 });
+UserSchema.index({ _employeeId: 1 });
+UserSchema.index({ _customerId: 1 });
+UserSchema.index({ _agentId: 1 });
+UserSchema.index({ _supplierId: 1 });
+UserSchema.index({ _name: 1 });
+UserSchema.index({ _gender: 1 });
+UserSchema.index({ _mobile: 1, _id: 1 });
+UserSchema.index({ _email: 1, _id: 1 });
+UserSchema.index(
+  { _mobile: 1 },
+  { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },
+);
+UserSchema.index(
+  { _email: 1 },
+  { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },
+);
+UserSchema.post('save', async function (error, doc, next) {
+  schemaPostFunctionForDuplicate(error, doc, next);
+});
+UserSchema.post('insertMany', async function (error, doc, next) {
+  schemaPostFunctionForDuplicate(error, doc, next);
+});
+UserSchema.post('updateOne', async function (error, doc, next) {
+  schemaPostFunctionForDuplicate(error, doc, next);
+});
+UserSchema.post('findOneAndUpdate', async function (error, doc, next) {
+  schemaPostFunctionForDuplicate(error, doc, next);
+});
+UserSchema.post('updateMany', async function (error, doc, next) {
+  schemaPostFunctionForDuplicate(error, doc, next);
+});
+function schemaPostFunctionForDuplicate(error, doc, next) {
+  if (error.code == 11000) {
+    next(new Error('Email or Mobile already existing'));
+  } else {
+    next();
+  }
+}
 /*
 _userRole:{
     0 - super_admin
@@ -54,14 +123,30 @@ _userRole:{
     3 - employee
     4 - customer
 }
-_type:{
-    0 - employee
-    1 - agent
-    2 - supplier
-    3 - customer
-}
+
 _permissions:[
     0 - SUPER ADMIN
 ]
+_gender:{
+  0-male
+  1-female
+  2-other
+}
 
+
+
+
+
+
+
+
+
+
+old and deleted
+// _type:{
+//     0 - employee
+//     1 - agent
+//     2 - supplier
+//     3 - customer
+// }
 */

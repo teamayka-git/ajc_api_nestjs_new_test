@@ -46,7 +46,7 @@ export class CustomersService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var resultEmployee = await this.customersModel
+      var resultEmployee = await this.userModel
         .aggregate([{ $match: { _email: dto.email } }])
         .session(transactionSession);
       if (resultEmployee.length == 0) {
@@ -85,9 +85,14 @@ export class CustomersService {
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-
+      if (resultEmployee[0]._customerId == null) {
+        throw new HttpException(
+          'Not registered as Customer',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
       await this.customersModel.findOneAndUpdate(
-        { _id: resultEmployee[0]._id },
+        { _id: resultEmployee[0]._customerId },
         { $set: { _lastLogin: dateTime } },
         { new: true, session: transactionSession },
       );
@@ -96,8 +101,9 @@ export class CustomersService {
         .aggregate([
           {
             $match: {
-              _customerId: new mongoose.Types.ObjectId(resultEmployee[0]._id),
-              _type: 3,
+              _customerId: new mongoose.Types.ObjectId(
+                resultEmployee[0]._customerId,
+              ),
               _status: 1,
             },
           },
@@ -202,7 +208,18 @@ export class CustomersService {
 
         globalGalleryId = resultGlobalGallery._id;
       }
-
+      var userCheck = await this.userModel.find({
+        _email: dto.email,
+        _status: { $in: [0, 1] },
+      });
+      if (userCheck.length != 0) {
+        if (userCheck[0]._customerId != null) {
+          throw new HttpException(
+            'Customer already existing',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.AGENTS },
         {
@@ -230,15 +247,41 @@ export class CustomersService {
         )
         .toString(`hex`);
 
-      const newsettingsModel = new this.customersModel({
-        _name: dto.name,
-        _gender: dto.gender,
-        _email: dto.email,
-        _password: encryptedPassword,
-        _mobile: dto.mobile,
-        _uid: resultCounterPurchase._count,
-        _globalGalleryId: globalGalleryId,
+      var customerId = new mongoose.Types.ObjectId();
+      var resultUserUpdated = await this.userModel.findOneAndUpdate(
+        { _email: dto.email },
+        {
+          $setOnInsert: {
+            _name: dto.name,
+            _gender: dto.gender,
 
+            _password: encryptedPassword,
+            _mobile: dto.mobile,
+            _globalGalleryId: globalGalleryId,
+
+            _employeeId: null,
+            _agentId: null,
+            _supplierId: null,
+            _customerId: customerId,
+            _fcmId: '',
+            _deviceUniqueId: '',
+            _permissions: [],
+            _userRole: 3,
+            _created_user_id: _userId_,
+            _created_at: dateTime,
+            _updated_user_id: null,
+            _updated_at: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+
+      const newsettingsModel = new this.customersModel({
+        _id: customerId,
+        _uid: resultCounterPurchase._count,
+
+        _userId: resultUserUpdated._id,
         _orderSaleRate: dto.orderSaleRate,
         _stockSaleRate: dto.stockSaleRate,
         _customerType: dto.customerType,
@@ -271,26 +314,6 @@ export class CustomersService {
         _status: 1,
       });
       var result1 = await newsettingsModel.save({
-        session: transactionSession,
-      });
-
-      const userModel = new this.userModel({
-        _type: 3,
-        _employeeId: null,
-        _agentId: null,
-        _customerId: result1._id,
-        _supplierId: null,
-        _fcmId: '',
-        _deviceUniqueId: '',
-        _permissions: [],
-        _userRole: 1,
-        _created_user_id: _userId_,
-        _created_at: dateTime,
-        _updated_user_id: null,
-        _updated_at: -1,
-        _status: 1,
-      });
-      await userModel.save({
         session: transactionSession,
       });
 
@@ -396,8 +419,8 @@ export class CustomersService {
         }
       }
       // }
-      var resultOldCustomerName = await this.customersModel.find(
-        { _id: dto.customerId },
+      var resultOldCustomerName = await this.userModel.find(
+        { _customerId: dto.customerId, _status: { $in: [0, 1] } },
         { _name: 1 },
       );
       if (resultOldCustomerName.length == 0) {
@@ -414,30 +437,6 @@ export class CustomersService {
         _mobile: dto.mobile,
         _globalGalleryId: globalGalleryId,
 
-        _orderSaleRate: dto.orderSaleRate,
-        _stockSaleRate: dto.stockSaleRate,
-        _customerType: dto.customerType,
-        _branchId: dto.branchId,
-        _orderHeadId: dto.orderHeadId,
-        _relationshipManagerId: dto.relationshipManagerId,
-        _supplierId: dto.supplierId,
-        _panCardNumber: dto.panCardNumber,
-        _billingModeSale: dto.billingModeSale,
-        _billingModePurchase: dto.billingModePurchase,
-        _hallmarkingMandatoryStatus: dto.hallmarkingMandatoryStatus,
-        _rateCardId: dto.rateCardId,
-        _gstNumber: dto.gstNumber,
-        _cityId: dto.cityId,
-        _tdsId: dto.tdsId == 'nil' || dto.tdsId == '' ? null : dto.tdsId,
-        _tcsId: dto.tcsId == 'nil' || dto.tcsId == '' ? null : dto.tcsId,
-        _creditAmount: dto.creditAmount,
-        _creditDays: dto.creditDays,
-        _rateBaseMasterId: dto.rateBaseMasterId,
-        _stonePricing: dto.stonePricing,
-        _chatPermissions: dto.chatPermissions,
-        _agentId: dto.agentId,
-        _agentCommision: dto.agentCommision,
-        _dataGuard: dto.dataGuard,
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
       };
@@ -479,6 +478,41 @@ export class CustomersService {
       var result = await this.customersModel.findOneAndUpdate(
         {
           _id: dto.customerId,
+        },
+        {
+          $set: {
+            _orderSaleRate: dto.orderSaleRate,
+            _stockSaleRate: dto.stockSaleRate,
+            _customerType: dto.customerType,
+            _branchId: dto.branchId,
+            _orderHeadId: dto.orderHeadId,
+            _relationshipManagerId: dto.relationshipManagerId,
+            _supplierId: dto.supplierId,
+            _panCardNumber: dto.panCardNumber,
+            _billingModeSale: dto.billingModeSale,
+            _billingModePurchase: dto.billingModePurchase,
+            _hallmarkingMandatoryStatus: dto.hallmarkingMandatoryStatus,
+            _rateCardId: dto.rateCardId,
+            _gstNumber: dto.gstNumber,
+            _cityId: dto.cityId,
+            _tdsId: dto.tdsId == 'nil' || dto.tdsId == '' ? null : dto.tdsId,
+            _tcsId: dto.tcsId == 'nil' || dto.tcsId == '' ? null : dto.tcsId,
+            _creditAmount: dto.creditAmount,
+            _creditDays: dto.creditDays,
+            _rateBaseMasterId: dto.rateBaseMasterId,
+            _stonePricing: dto.stonePricing,
+            _chatPermissions: dto.chatPermissions,
+            _agentId: dto.agentId,
+            _agentCommision: dto.agentCommision,
+            _dataGuard: dto.dataGuard,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      await this.userModel.findOneAndUpdate(
+        {
+          _id: result._userId,
         },
         {
           $set: updateObject,
@@ -547,12 +581,31 @@ export class CustomersService {
 
       if (dto.searchingText != '') {
         //todo
+
+        var resultUserSearch = await this.userModel
+          .aggregate([
+            {
+              $match: {
+                $or: [
+                  { _name: new RegExp(dto.searchingText, 'i') },
+                  { _email: dto.searchingText },
+                  { _mobile: new RegExp(dto.searchingText, 'i') },
+                ],
+                _status: { $in: dto.statusArray },
+              },
+            },
+          ])
+          .session(transactionSession);
+
+        var userIdsSearch = [];
+        resultUserSearch.map((mapItem) => {
+          userIdsSearch.push(new mongoose.Types.ObjectId(mapItem));
+        });
+
         arrayAggregation.push({
           $match: {
             $or: [
-              { _name: new RegExp(dto.searchingText, 'i') },
-              { _email: dto.searchingText },
-              { _mobile: dto.searchingText },
+              { _id: { $in: userIdsSearch } },
               { _uid: dto.searchingText },
               { _panCardNumber: dto.searchingText },
               { _gstNumber: dto.searchingText },
@@ -560,6 +613,7 @@ export class CustomersService {
           },
         });
       }
+
       if (dto.customerIds.length > 0) {
         var newSettingsId = [];
         dto.customerIds.map((mapItem) => {
@@ -616,50 +670,43 @@ export class CustomersService {
         case 1:
           arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
           break;
+
         case 2:
-          arrayAggregation.push({ $sort: { _name: dto.sortOrder } });
-          break;
-        case 3:
           arrayAggregation.push({ $sort: { _uid: dto.sortOrder } });
           break;
-        case 4:
-          arrayAggregation.push({ $sort: { _gender: dto.sortOrder } });
-          break;
-        case 5:
-          arrayAggregation.push({ $sort: { _email: dto.sortOrder } });
-          break;
-        case 6:
+
+        case 3:
           arrayAggregation.push({ $sort: { _orderSaleRate: dto.sortOrder } });
           break;
-        case 7:
+        case 4:
           arrayAggregation.push({ $sort: { _stockSaleRate: dto.sortOrder } });
           break;
-        case 8:
+        case 5:
           arrayAggregation.push({ $sort: { _customerType: dto.sortOrder } });
           break;
-        case 9:
+        case 6:
           arrayAggregation.push({ $sort: { _billingModeSale: dto.sortOrder } });
           break;
-        case 10:
+        case 7:
           arrayAggregation.push({
             $sort: { _billingModePurchase: dto.sortOrder },
           });
           break;
-        case 11:
+        case 8:
           arrayAggregation.push({
             $sort: { _hallmarkingMandatoryStatus: dto.sortOrder },
           });
           break;
-        case 12:
+        case 9:
           arrayAggregation.push({ $sort: { _creditAmount: dto.sortOrder } });
           break;
-        case 13:
+        case 10:
           arrayAggregation.push({ $sort: { _creditDays: dto.sortOrder } });
           break;
-        case 14:
+        case 11:
           arrayAggregation.push({ $sort: { _stonePricing: dto.sortOrder } });
           break;
-        case 15:
+        case 12:
           arrayAggregation.push({ $sort: { _agentCommision: dto.sortOrder } });
           break;
       }
@@ -667,27 +714,6 @@ export class CustomersService {
       if (dto.skip != -1) {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
-      }
-
-      if (dto.screenType.findIndex((it) => it == 50) != -1) {
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.GLOBAL_GALLERIES,
-              let: { globalGalleryId: '$_globalGalleryId' },
-              pipeline: [
-                { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
-              ],
-              as: 'globalGalleryDetails',
-            },
-          },
-          {
-            $unwind: {
-              path: '$globalGalleryDetails',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-        );
       }
 
       if (dto.screenType.findIndex((it) => it == 111) != -1) {
@@ -707,7 +733,26 @@ export class CustomersService {
           },
         );
       }
-
+      if (dto.screenType.findIndex((it) => it == 50) != -1) {
+        arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
+          {
+            $lookup: {
+              from: ModelNames.GLOBAL_GALLERIES,
+              let: { globalGalleryId: '$_globalGalleryId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+              ],
+              as: 'globalGalleryDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$globalGalleryDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
       if (dto.screenType.findIndex((it) => it == 100) != -1) {
         arrayAggregation.push(
           {
@@ -831,41 +876,21 @@ export class CustomersService {
 
                 {
                   $lookup: {
-                    from: ModelNames.EMPLOYEES,
-                    let: { employeeId: '$_employeeId' },
+                    from: ModelNames.GLOBAL_GALLERIES,
+                    let: { globalGalleryId: '$_globalGalleryId' },
                     pipeline: [
                       {
                         $match: {
-                          $expr: { $eq: ['$_id', '$$employeeId'] },
-                        },
-                      },
-                      {
-                        $lookup: {
-                          from: ModelNames.GLOBAL_GALLERIES,
-                          let: { globalGalleryId: '$_globalGalleryId' },
-                          pipeline: [
-                            {
-                              $match: {
-                                $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                              },
-                            },
-                          ],
-                          as: 'globalGalleryDetails',
-                        },
-                      },
-                      {
-                        $unwind: {
-                          path: '$globalGalleryDetails',
-                          preserveNullAndEmptyArrays: true,
+                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
                         },
                       },
                     ],
-                    as: 'employeeDetails',
+                    as: 'globalGalleryDetails',
                   },
                 },
                 {
                   $unwind: {
-                    path: '$employeeDetails',
+                    path: '$globalGalleryDetails',
                     preserveNullAndEmptyArrays: true,
                   },
                 },
@@ -896,41 +921,21 @@ export class CustomersService {
 
                 {
                   $lookup: {
-                    from: ModelNames.EMPLOYEES,
-                    let: { employeeId: '$_employeeId' },
+                    from: ModelNames.GLOBAL_GALLERIES,
+                    let: { globalGalleryId: '$_globalGalleryId' },
                     pipeline: [
                       {
                         $match: {
-                          $expr: { $eq: ['$_id', '$$employeeId'] },
-                        },
-                      },
-                      {
-                        $lookup: {
-                          from: ModelNames.GLOBAL_GALLERIES,
-                          let: { globalGalleryId: '$_globalGalleryId' },
-                          pipeline: [
-                            {
-                              $match: {
-                                $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                              },
-                            },
-                          ],
-                          as: 'globalGalleryDetails',
-                        },
-                      },
-                      {
-                        $unwind: {
-                          path: '$globalGalleryDetails',
-                          preserveNullAndEmptyArrays: true,
+                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
                         },
                       },
                     ],
-                    as: 'employeeDetails',
+                    as: 'globalGalleryDetails',
                   },
                 },
                 {
                   $unwind: {
-                    path: '$employeeDetails',
+                    path: '$globalGalleryDetails',
                     preserveNullAndEmptyArrays: true,
                   },
                 },
@@ -962,41 +967,21 @@ export class CustomersService {
 
                 {
                   $lookup: {
-                    from: ModelNames.SUPPLIERS,
-                    let: { supplieruerId: '$_supplierId' },
+                    from: ModelNames.GLOBAL_GALLERIES,
+                    let: { globalGalleryId: '$_globalGalleryId' },
                     pipeline: [
                       {
                         $match: {
-                          $expr: { $eq: ['$_id', '$$supplieruerId'] },
-                        },
-                      },
-                      {
-                        $lookup: {
-                          from: ModelNames.GLOBAL_GALLERIES,
-                          let: { globalGalleryId: '$_globalGalleryId' },
-                          pipeline: [
-                            {
-                              $match: {
-                                $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                              },
-                            },
-                          ],
-                          as: 'globalGalleryDetails',
-                        },
-                      },
-                      {
-                        $unwind: {
-                          path: '$globalGalleryDetails',
-                          preserveNullAndEmptyArrays: true,
+                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
                         },
                       },
                     ],
-                    as: 'supplierDetails',
+                    as: 'globalGalleryDetails',
                   },
                 },
                 {
                   $unwind: {
-                    path: '$supplierDetails',
+                    path: '$globalGalleryDetails',
                     preserveNullAndEmptyArrays: true,
                   },
                 },
@@ -1028,41 +1013,21 @@ export class CustomersService {
 
                 {
                   $lookup: {
-                    from: ModelNames.AGENTS,
-                    let: { agentId: '$_agentId' },
+                    from: ModelNames.GLOBAL_GALLERIES,
+                    let: { globalGalleryId: '$_globalGalleryId' },
                     pipeline: [
                       {
                         $match: {
-                          $expr: { $eq: ['$_id', '$$agentId'] },
-                        },
-                      },
-                      {
-                        $lookup: {
-                          from: ModelNames.GLOBAL_GALLERIES,
-                          let: { globalGalleryId: '$_globalGalleryId' },
-                          pipeline: [
-                            {
-                              $match: {
-                                $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                              },
-                            },
-                          ],
-                          as: 'globalGalleryDetails',
-                        },
-                      },
-                      {
-                        $unwind: {
-                          path: '$globalGalleryDetails',
-                          preserveNullAndEmptyArrays: true,
+                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
                         },
                       },
                     ],
-                    as: 'agentDetails',
+                    as: 'globalGalleryDetails',
                   },
                 },
                 {
                   $unwind: {
-                    path: '$agentDetails',
+                    path: '$globalGalleryDetails',
                     preserveNullAndEmptyArrays: true,
                   },
                 },
@@ -1140,7 +1105,7 @@ export class CustomersService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var resultCount = await this.customersModel
+      var resultCount = await this.userModel
         .count({ _email: dto.value, _status: { $in: [1, 0] } })
         .session(transactionSession);
 
@@ -1174,7 +1139,7 @@ export class CustomersService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var resultCount = await this.customersModel
+      var resultCount = await this.userModel
         .count({ _mobile: dto.value, _status: { $in: [1, 0] } })
         .session(transactionSession);
 

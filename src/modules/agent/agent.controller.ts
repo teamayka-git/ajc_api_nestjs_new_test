@@ -123,10 +123,6 @@ export class AgentController {
       file == null ? {} : JSON.parse(JSON.stringify(file)),
     );
   }
-  @Delete()
-  status_change(@Body() dto: AgentStatusChangeDto, @Request() req) {
-    return this.agentService.status_change(dto, req['_userId_']);
-  }
 
   @Post('list')
   list(@Body() dto: AgentListDto) {

@@ -131,11 +131,6 @@ export class EmployeesController {
       file == null ? {} : JSON.parse(JSON.stringify(file)),
     );
   }
-  @Delete()
-  @Roles(GuardUserRole.SUPER_ADMIN)
-  status_change(@Body() dto: EmployeeStatusChangeDto, @Request() req) {
-    return this.employeesService.status_change(dto, req['_userId_']);
-  }
 
   @Post('list')
   list(@Body() dto: EmployeeListDto) {

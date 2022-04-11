@@ -128,11 +128,6 @@ export class SupplierController {
       file == null ? {} : JSON.parse(JSON.stringify(file)),
     );
   }
-  @Delete()
-  @Roles(GuardUserRole.SUPER_ADMIN)
-  status_change(@Body() dto: SupplierStatusChangeDto, @Request() req) {
-    return this.supplierService.status_change(dto, req['_userId_']);
-  }
 
   @Post('list')
   list(@Body() dto: SupplierListDto) {

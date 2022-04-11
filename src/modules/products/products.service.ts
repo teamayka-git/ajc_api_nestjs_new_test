@@ -334,63 +334,31 @@ export class ProductsService {
                   },
                 },
                 {
-                  $project: {
-                    _type: 1,
-                    _employeeId: 1,
-                    _agentId: 1,
-                    _supplierId: 1,
-                    _customerId: 1,
-                  },
-                },
-
-                {
                   $lookup: {
-                    from: ModelNames.CUSTOMERS,
-                    let: { customerId: '$_customerId' },
+                    from: ModelNames.GLOBAL_GALLERIES,
+                    let: { globalGalleryId: '$_globalGalleryId' },
                     pipeline: [
-                      { $match: { $expr: { $eq: ['$_id', '$$customerId'] } } },
                       {
-                        $lookup: {
-                          from: ModelNames.GLOBAL_GALLERIES,
-                          let: { globalGalleryId: '$_globalGalleryId' },
-                          pipeline: [
-                            {
-                              $match: {
-                                $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                              },
-                            },
-                          ],
-                          as: 'globalGalleryDetails',
-                        },
-                      },
-                      {
-                        $unwind: {
-                          path: '$globalGalleryDetails',
-                          preserveNullAndEmptyArrays: true,
+                        $match: {
+                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
                         },
                       },
                       {
                         $project: {
                           _name: 1,
-                          _email: 1,
-                          _mobile: 1,
+                          _docType: 1,
+                          _type: 1,
                           _uid: 1,
-                          globalGalleryDetails: {
-                            _name: 1,
-                            _docType: 1,
-                            _type: 1,
-                            _uid: 1,
-                            _url: 1,
-                          },
+                          _url: 1,
                         },
                       },
                     ],
-                    as: 'customerDetails',
+                    as: 'globalGalleryDetails',
                   },
                 },
                 {
                   $unwind: {
-                    path: '$customerDetails',
+                    path: '$globalGalleryDetails',
                     preserveNullAndEmptyArrays: true,
                   },
                 },

@@ -45,6 +45,7 @@ export class AppService {
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   getHello(): string {
+    // throw new HttpException('User not found', HttpStatus.INTERNAL_SERVER_ERROR);
     return 'Hello Worldwwwww!';
   }
 
@@ -258,22 +259,26 @@ export class AppService {
         )
         .toString(`hex`);
 
-      var resultEmployee = await this.employeeModel.findOneAndUpdate(
-        {
-          _email: 'admin@ayka.com',
-        },
+      var employeeId = new mongoose.Types.ObjectId();
+      var resultUser = await this.userModel.findOneAndUpdate(
+        { _email: 'admin@ayka.com' },
         {
           $setOnInsert: {
             _name: 'super admin',
             _gender: 0,
             _password: encryptedPassword,
-            _uid: 1,
             _mobile: '',
-            _lastLogin: -1,
             _globalGalleryId: null,
-            _dataGuard: [1, 2],
+            _employeeId: employeeId,
+            _agentId: null,
+            _supplierId: null,
+            _customerId: null,
+            _fcmId: '',
+            _deviceUniqueId: '',
+            _permissions: [],
+            _userRole: 0,
             _createdUserId: null,
-            _createdAt: dateTime,
+            _createdAt: -1,
             _updatedUserId: null,
             _updatedAt: -1,
           },
@@ -282,17 +287,20 @@ export class AppService {
         { upsert: true, new: true, session: transactionSession },
       );
 
-      var resultUser = await this.userModel.findOneAndUpdate(
-        { _employeeId: resultEmployee._id },
+      var resultEmployee = await this.employeeModel.findOneAndUpdate(
+        {
+          _userId: resultUser._id,
+        },
         {
           $setOnInsert: {
-            _type: 0,
-            _fcmId: '',
-            _deviceUniqueId: '',
-            _permissions: [],
-            _userRole: 0,
+            _id: employeeId,
+            _uid: 1,
+            _departmentId: null,
+            _processMasterId: null,
+            _lastLogin: -1,
+            _dataGuard: [1, 2],
             _createdUserId: null,
-            _createdAt: -1,
+            _createdAt: dateTime,
             _updatedUserId: null,
             _updatedAt: -1,
           },
