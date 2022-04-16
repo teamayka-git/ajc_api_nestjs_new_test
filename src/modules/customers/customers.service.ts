@@ -9,6 +9,7 @@ import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import {
   CheckEmailExistDto,
   CheckMobileExistDto,
+  CustomerAddRemoveUsersDto,
   CustomerCreateDto,
   CustomerEditeDto,
   CustomerLoginDto,
@@ -208,20 +209,9 @@ export class CustomersService {
 
         globalGalleryId = resultGlobalGallery._id;
       }
-      var userCheck = await this.userModel.find({
-        _email: dto.email,
-        _status: { $in: [0, 1] },
-      });
-      if (userCheck.length != 0) {
-        if (userCheck[0]._customerId != null) {
-          throw new HttpException(
-            'Customer already existing',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-      }
+
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
-        { _tableName: ModelNames.AGENTS },
+        { _tableName: ModelNames.CUSTOMERS },
         {
           $inc: {
             _count: 1,
@@ -230,61 +220,12 @@ export class CustomersService {
         { new: true, session: transactionSession },
       );
 
-      var password = '';
-      if (dto.password == '') {
-        password = new StringUtils().makeid(6);
-      } else {
-        password = dto.password;
-      }
-
-      var encryptedPassword = await crypto
-        .pbkdf2Sync(
-          password,
-          process.env.CRYPTO_ENCRYPTION_SALT,
-          1000,
-          64,
-          `sha512`,
-        )
-        .toString(`hex`);
-
       var customerId = new mongoose.Types.ObjectId();
-      var resultUserUpdated = await this.userModel.findOneAndUpdate(
-        { _email: dto.email },
-        {
-          $setOnInsert: {
-            _password: encryptedPassword,
-            _customType: 0,
-            _halmarkId:null,
-
-            _employeeId: null,
-            _agentId: null,
-            _supplierId: null,
-            _fcmId: '',
-            _deviceUniqueId: '',
-            _permissions: [],
-            _userRole: 3,
-            _created_user_id: _userId_,
-            _created_at: dateTime,
-            _updated_user_id: null,
-            _updated_at: -1,
-          },
-          $set: {
-            _name: dto.name,
-            _gender: dto.gender,
-            _customerId: customerId,
-            _mobile: dto.mobile,
-            _globalGalleryId: globalGalleryId,
-            _status: 1,
-          },
-        },
-        { upsert: true, new: true, session: transactionSession },
-      );
 
       const newsettingsModel = new this.customersModel({
         _id: customerId,
         _uid: resultCounterPurchase._count,
-
-        _userId: resultUserUpdated._id,
+        _globalGalleryId: globalGalleryId,
         _orderSaleRate: dto.orderSaleRate,
         _stockSaleRate: dto.stockSaleRate,
         _customerType: dto.customerType,
@@ -319,6 +260,64 @@ export class CustomersService {
       var result1 = await newsettingsModel.save({
         session: transactionSession,
       });
+
+      if (dto.arrayUserIdsEsixting.length > 0) {
+        await this.userModel.updateMany(
+          {
+            _id: { $in: dto.arrayUserIdsEsixting },
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _customerId: customerId,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
+      if (dto.arrayUsersNew.length > 0) {
+        var arrayToUsers = [];
+
+        var encryptedPassword = await crypto
+          .pbkdf2Sync(
+            '123456',
+            process.env.CRYPTO_ENCRYPTION_SALT,
+            1000,
+            64,
+            `sha512`,
+          )
+          .toString(`hex`);
+
+        dto.arrayUsersNew.map((mapItem) => {
+          arrayToUsers.push({
+            _email: mapItem.email,
+            _name: mapItem.name,
+            _gender: mapItem.gender,
+            _password: encryptedPassword,
+            _mobile: mapItem.mobile,
+            _globalGalleryId: null,
+            _employeeId: null,
+            _agentId: null,
+            _supplierId: null,
+            _customerId: customerId,
+            _customType: mapItem.customType,
+            _halmarkId: null,
+            _fcmId: '',
+            _deviceUniqueId: '',
+            _permissions: [],
+            _userRole: 0,
+            _createdUserId: null,
+            _createdAt: -1,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+        });
+        await this.userModel.insertMany(arrayToUsers, {
+          session: transactionSession,
+        });
+      }
 
       var globalGalleryManinCategoryForCustomer =
         await this.globalGalleryCategoriesModel
@@ -422,29 +421,34 @@ export class CustomersService {
         }
       }
       // }
-      var resultOldCustomerName = await this.userModel.find(
-        { _customerId: dto.customerId, _status: { $in: [0, 1] } },
-        { _name: 1 },
-      );
-      if (resultOldCustomerName.length == 0) {
-        throw new HttpException(
-          'Old customer data not found',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      var oldCustomerName = resultOldCustomerName[0]._name;
 
-      var updateObject = {
-        _name: dto.name,
-        _gender: dto.gender,
-        _mobile: dto.mobile,
-        _globalGalleryId: globalGalleryId,
-
-        _updatedUserId: _userId_,
-        _updatedAt: dateTime,
+      var objCustomer = {
+        _orderSaleRate: dto.orderSaleRate,
+        _stockSaleRate: dto.stockSaleRate,
+        _customerType: dto.customerType,
+        _branchId: dto.branchId,
+        _orderHeadId: dto.orderHeadId,
+        _relationshipManagerId: dto.relationshipManagerId,
+        _supplierId: dto.supplierId,
+        _panCardNumber: dto.panCardNumber,
+        _billingModeSale: dto.billingModeSale,
+        _billingModePurchase: dto.billingModePurchase,
+        _hallmarkingMandatoryStatus: dto.hallmarkingMandatoryStatus,
+        _rateCardId: dto.rateCardId,
+        _gstNumber: dto.gstNumber,
+        _cityId: dto.cityId,
+        _tdsId: dto.tdsId == 'nil' || dto.tdsId == '' ? null : dto.tdsId,
+        _tcsId: dto.tcsId == 'nil' || dto.tcsId == '' ? null : dto.tcsId,
+        _creditAmount: dto.creditAmount,
+        _creditDays: dto.creditDays,
+        _rateBaseMasterId: dto.rateBaseMasterId,
+        _stonePricing: dto.stonePricing,
+        _chatPermissions: dto.chatPermissions,
+        _agentId: dto.agentId,
+        _agentCommision: dto.agentCommision,
+        _dataGuard: dto.dataGuard,
       };
 
-      var globalGalleryId = null;
       //globalGalleryAdd
       if (file.hasOwnProperty('image')) {
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
@@ -474,8 +478,7 @@ export class CustomersService {
           session: transactionSession,
         });
 
-        globalGalleryId = resultGlobalGallery._id;
-        updateObject['_globalGalleryId'] = globalGalleryId;
+        objCustomer['_globalGalleryId'] = resultGlobalGallery._id;
       }
 
       var result = await this.customersModel.findOneAndUpdate(
@@ -483,75 +486,111 @@ export class CustomersService {
           _id: dto.customerId,
         },
         {
-          $set: {
-            _orderSaleRate: dto.orderSaleRate,
-            _stockSaleRate: dto.stockSaleRate,
-            _customerType: dto.customerType,
-            _branchId: dto.branchId,
-            _orderHeadId: dto.orderHeadId,
-            _relationshipManagerId: dto.relationshipManagerId,
-            _supplierId: dto.supplierId,
-            _panCardNumber: dto.panCardNumber,
-            _billingModeSale: dto.billingModeSale,
-            _billingModePurchase: dto.billingModePurchase,
-            _hallmarkingMandatoryStatus: dto.hallmarkingMandatoryStatus,
-            _rateCardId: dto.rateCardId,
-            _gstNumber: dto.gstNumber,
-            _cityId: dto.cityId,
-            _tdsId: dto.tdsId == 'nil' || dto.tdsId == '' ? null : dto.tdsId,
-            _tcsId: dto.tcsId == 'nil' || dto.tcsId == '' ? null : dto.tcsId,
-            _creditAmount: dto.creditAmount,
-            _creditDays: dto.creditDays,
-            _rateBaseMasterId: dto.rateBaseMasterId,
-            _stonePricing: dto.stonePricing,
-            _chatPermissions: dto.chatPermissions,
-            _agentId: dto.agentId,
-            _agentCommision: dto.agentCommision,
-            _dataGuard: dto.dataGuard,
-          },
+          $set: objCustomer,
         },
         { new: true, session: transactionSession },
       );
-
-      await this.userModel.findOneAndUpdate(
-        {
-          _id: result._userId,
-        },
-        {
-          $set: updateObject,
-        },
-        { new: true, session: transactionSession },
-      );
-
-      if (oldCustomerName != dto.name) {
-        var globalGalleryManinCategoryForCustomer =
-          await this.globalGalleryCategoriesModel
-            .find(
-              {
-                _status: 1,
-                _name: CommonNames.GLOBAL_GALLERY_CUSTOMER,
-                _type: 1,
-              },
-              { _id: 1 },
-            )
-            .session(transactionSession);
-        if (globalGalleryManinCategoryForCustomer.length == 0) {
-          throw new HttpException(
-            'Global gallery category not found',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-        await this.globalGalleryCategoriesModel.findOneAndUpdate(
+      if (dto.arrayAddUserIdsEsixting.length > 0) {
+        await this.userModel.updateMany(
           {
-            _name: oldCustomerName,
-            _globalGalleryCategoryId:
-              globalGalleryManinCategoryForCustomer[0]._id,
-            _status: 1,
+            _id: { $in: dto.arrayAddUserIdsEsixting },
           },
-          { $set: { _name: dto.name } },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _customerId: dto.customerUserId,
+            },
+          },
           { new: true, session: transactionSession },
         );
       }
+      if (dto.arrayRemoveUserIdsEsixting.length > 0) {
+        await this.userModel.updateMany(
+          {
+            _id: { $in: dto.arrayRemoveUserIdsEsixting },
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _customerId: dto.customerUserId,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
+      if (dto.arrayUsersNew.length > 0) {
+        var arrayToUsers = [];
+
+        var encryptedPassword = await crypto
+          .pbkdf2Sync(
+            '123456',
+            process.env.CRYPTO_ENCRYPTION_SALT,
+            1000,
+            64,
+            `sha512`,
+          )
+          .toString(`hex`);
+
+        dto.arrayUsersNew.map((mapItem) => {
+          arrayToUsers.push({
+            _email: mapItem.email,
+            _name: mapItem.name,
+            _gender: mapItem.gender,
+            _password: encryptedPassword,
+            _mobile: mapItem.mobile,
+            _globalGalleryId: null,
+            _employeeId: null,
+            _agentId: null,
+            _supplierId: null,
+            _customerId: dto.customerUserId,
+            _customType: 4,
+            _halmarkId: null,
+            _fcmId: '',
+            _deviceUniqueId: '',
+            _permissions: [],
+            _userRole: 0,
+            _createdUserId: null,
+            _createdAt: -1,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+        });
+        await this.userModel.insertMany(arrayToUsers, {
+          session: transactionSession,
+        });
+      }
+      // if (oldCustomerName != dto.name) {
+      //   var globalGalleryManinCategoryForCustomer =
+      //     await this.globalGalleryCategoriesModel
+      //       .find(
+      //         {
+      //           _status: 1,
+      //           _name: CommonNames.GLOBAL_GALLERY_CUSTOMER,
+      //           _type: 1,
+      //         },
+      //         { _id: 1 },
+      //       )
+      //       .session(transactionSession);
+      //   if (globalGalleryManinCategoryForCustomer.length == 0) {
+      //     throw new HttpException(
+      //       'Global gallery category not found',
+      //       HttpStatus.INTERNAL_SERVER_ERROR,
+      //     );
+      //   }
+      //   await this.globalGalleryCategoriesModel.findOneAndUpdate(
+      //     {
+      //       _name: oldCustomerName,
+      //       _globalGalleryCategoryId:
+      //         globalGalleryManinCategoryForCustomer[0]._id,
+      //       _status: 1,
+      //     },
+      //     { $set: { _name: dto.name } },
+      //     { new: true, session: transactionSession },
+      //   );
+      // }
 
       const responseJSON = { message: 'success', data: result };
       if (
@@ -624,10 +663,6 @@ export class CustomersService {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
-      }
-
-      if (dto.gender.length > 0) {
-        arrayAggregation.push({ $match: { _gender: { $in: dto.gender } } });
       }
 
       if (dto.orderSaleRates.length > 0) {
@@ -1151,6 +1186,106 @@ export class CustomersService {
         message: 'success',
         data: { count: resultCount },
       };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async addRemoveUsers(dto: CustomerAddRemoveUsersDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      if (dto.arrayAddUserIdsEsixting.length > 0) {
+        await this.userModel.updateMany(
+          {
+            _id: { $in: dto.arrayAddUserIdsEsixting },
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _customerId: dto.customerUserId,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
+      if (dto.arrayRemoveUserIdsEsixting.length > 0) {
+        await this.userModel.updateMany(
+          {
+            _id: { $in: dto.arrayRemoveUserIdsEsixting },
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _customerId: null,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
+      if (dto.arrayUsersNew.length > 0) {
+        var arrayToUsers = [];
+
+        var encryptedPassword = await crypto
+          .pbkdf2Sync(
+            '123456',
+            process.env.CRYPTO_ENCRYPTION_SALT,
+            1000,
+            64,
+            `sha512`,
+          )
+          .toString(`hex`);
+
+        dto.arrayUsersNew.map((mapItem) => {
+          arrayToUsers.push({
+            _email: mapItem.email,
+            _name: mapItem.name,
+            _gender: mapItem.gender,
+            _password: encryptedPassword,
+            _mobile: mapItem.mobile,
+            _globalGalleryId: null,
+            _employeeId: null,
+            _agentId: null,
+            _supplierId: null,
+            _customerId: dto.customerUserId,
+            _customType: mapItem.customType,
+            _halmarkId: null,
+            _fcmId: '',
+            _deviceUniqueId: '',
+            _permissions: [],
+            _userRole: 0,
+            _createdUserId: null,
+            _createdAt: -1,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+        });
+        await this.userModel.insertMany(arrayToUsers, {
+          session: transactionSession,
+        });
+      }
+
+      const responseJSON = { message: 'success', data: {} };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=

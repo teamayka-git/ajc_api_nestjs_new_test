@@ -106,34 +106,34 @@ _workStatus:{
   2 - order reject
   3 - set process done
   4 - finished goods
-  4 - product generate request
-  4 - product generated 
-  5 - deliverychalan generated
-  6 - halmark issuence requested
-  7 - halmark issuence bypassed
-  8 - send to halmark issuence
-  9 - halmarking issued
-  10 - halmark request cancelled
-  11 - halmark request rejected
-  12 - halmark error occured
-  13 - send to reissuence 
-  14 - invoice generated
-  15 - delivery invoice generated
-  16 - delivery boy otp verification requested
-  17 - delivery boy otp verification accepted
-  18 - hub tranfer
-  19 - delivery otp to customer requested
-  20 - delivery otp to customer verified
-  21 - delivery rejected by customer
-  22 - delivery reshedule requested
-  23 - delivery reshedule rejected
-  24 - delivery reshedule accepted
-  25 - delivery return to hub
-  26 - sale return collected otp requested
-  27 - sale return collected otp accepted
-  28 - sale return collected otp rejected
-  29 - order completed
-  30 - order cancelled
+  5 - product generate request
+  6 - product generated 
+  7 - deliverychalan generated
+  8 - halmark issuence requested
+  9 - halmark issuence bypassed
+  10 - send to halmark issuence
+  11 - halmarking issued
+  12 - halmark request cancelled
+  13 - halmark request rejected
+  14 - halmark error occured
+  15 - send to reissuence 
+  16 - invoice generated
+  17 - delivery invoice generated
+  18 - delivery boy otp verification requested
+  19 - delivery boy otp verification accepted
+  20 - hub tranfer
+  21 - delivery otp to customer requested
+  22 - delivery otp to customer verified
+  23 - delivery rejected by customer
+  24 - delivery reshedule requested
+  25 - delivery reshedule rejected
+  26 - delivery reshedule accepted
+  27 - delivery return to hub
+  28 - sale return collected otp requested
+  29 - sale return collected otp accepted
+  30 - sale return collected otp rejected
+  31 - order completed
+  32 - order cancelled
   
 }
 */

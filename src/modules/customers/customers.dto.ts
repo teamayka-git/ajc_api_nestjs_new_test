@@ -34,7 +34,8 @@ const descriptionHallmarkingStatus = '0-No, 1-Yes';
 const descriptionStonePricing = '0-automatic, 1-Manual';
 const descriptionChatPermissions =
   '0-Allow voice message, 1-allow document uploading';
-
+const descriptionCustomType =
+  '1 - customer admin, 2 - customer sales man, 3 - customer casher, 4 - halmark staff';
 export class CustomerLoginDto {
   @IsEmail()
   @ApiProperty({})
@@ -45,28 +46,40 @@ export class CustomerLoginDto {
   password: string;
 }
 
-export class CustomerCreateDto {
+class CustomerNewUsersCreateList {
   @IsString()
-  @ApiProperty({})
-  name: string;
-
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({ description: descriptionListGender })
-  gender: number;
-
-  @IsEmail()
   @ApiProperty({})
   email: string;
 
   @IsString()
   @ApiProperty({})
-  password: string;
+  name: string;
+
+  @IsNumber()
+  @ApiProperty({})
+  gender: number;
+
+  @IsNumber()
+  @ApiProperty({ description: descriptionCustomType })
+  customType: number;
 
   @IsString()
   @ApiProperty({})
   mobile: string;
 
+  @IsString()
+  @ApiProperty({})
+  acHolderName: string;
+
+  @IsString()
+  @ApiProperty({})
+  branchName: string;
+
+  @IsArray()
+  @ApiProperty({ type: [Number], description: descriptionListDataGuard })
+  dataGuard: number[];
+}
+export class CustomerCreateDto {
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
   )
@@ -93,6 +106,9 @@ export class CustomerCreateDto {
   @IsString()
   @ApiProperty({})
   branchId: string;
+  @IsString()
+  @ApiProperty({})
+  name: string;
 
   @IsString()
   @ApiProperty({})
@@ -179,6 +195,15 @@ export class CustomerCreateDto {
   @IsNumber()
   @ApiProperty({})
   agentCommision: number;
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  arrayUserIdsEsixting: string[];
+  @IsArray()
+  @ApiProperty({ type: [CustomerNewUsersCreateList] })
+  @ValidateNested({ each: true })
+  @Type(() => CustomerNewUsersCreateList)
+  arrayUsersNew: CustomerNewUsersCreateList[];
 }
 
 export class CustomerEditeDto {
@@ -189,14 +214,9 @@ export class CustomerEditeDto {
   @ApiProperty({})
   name: string;
 
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({ description: descriptionListGender })
-  gender: number;
-
   @IsString()
   @ApiProperty({})
-  mobile: string;
+  customerUserId: string;
 
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
@@ -310,6 +330,18 @@ export class CustomerEditeDto {
   @IsNumber()
   @ApiProperty({})
   agentCommision: number;
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  arrayAddUserIdsEsixting: string[];
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  arrayRemoveUserIdsEsixting: string[];
+  @IsArray()
+  @ApiProperty({ type: [CustomerNewUsersCreateList] })
+  @ValidateNested({ each: true })
+  @Type(() => CustomerNewUsersCreateList)
+  arrayUsersNew: CustomerNewUsersCreateList[];
 }
 
 export class CustomerStatusChangeDto {
@@ -349,10 +381,6 @@ export class ListCustomersDto {
   @IsNumber()
   @ApiProperty({ description: descriptionListSortOrder })
   sortOrder: number;
-
-  @IsArray()
-  @ApiProperty({ type: [Number], description: descriptionListGender })
-  gender: number[];
 
   @IsString()
   @ApiProperty({})
@@ -436,4 +464,23 @@ export class CheckMobileExistDto {
   @IsString()
   @ApiProperty({})
   value: string;
+}
+
+export class CustomerAddRemoveUsersDto {
+  @IsString()
+  @ApiProperty({})
+  customerUserId: string;
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  arrayAddUserIdsEsixting: string[];
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  arrayRemoveUserIdsEsixting: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [CustomerNewUsersCreateList] })
+  @ValidateNested({ each: true })
+  @Type(() => CustomerNewUsersCreateList)
+  arrayUsersNew: CustomerNewUsersCreateList[];
 }

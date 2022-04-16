@@ -5,14 +5,16 @@ import { GlobalConfig } from 'src/config/global_config';
 export const CustomersSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
   _uid: { type: String, required: true, default: 'nil' },
-  _userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.USER,
-    default: null,
-  },
+  _name: { type: String, required: true, default: 'nil' },
+
   _orderSaleRate: { type: Number, required: true, default: -1 },
   _stockSaleRate: { type: Number, required: true, default: -1 },
   _customerType: { type: Number, required: true, default: -1 },
+  _globalGalleryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.GLOBAL_GALLERIES,
+    default: null,
+  },
   _branchId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.BRANCHES,
@@ -94,8 +96,7 @@ export interface Customers {
   _id: String;
   _cityId: String;
   _uid: String;
-
-  _userId: string;
+  _name: string;
   _orderSaleRate: Number;
   _stockSaleRate: Number;
   _customerType: Number;
@@ -103,6 +104,7 @@ export interface Customers {
   _orderHeadId: String;
   _relationshipManagerId: String;
   _supplierId: String;
+  _globalGalleryId: String;
   _panCardNumber: String;
   _billingModeSale: Number;
   _billingModePurchase: Number;
@@ -127,6 +129,7 @@ export interface Customers {
   _status: Number;
 }
 
+CustomersSchema.index({ _name: 1 });
 CustomersSchema.index({ _rateCardId: 1 });
 CustomersSchema.index({ _agentCommision: 1 });
 CustomersSchema.index({ _agentId: 1 });
@@ -153,13 +156,9 @@ CustomersSchema.index({ _stockSaleRate: 1 });
 CustomersSchema.index({ _orderSaleRate: 1 });
 CustomersSchema.index({ _status: 1 });
 CustomersSchema.index({ _uid: 1, _id: 1 });
-CustomersSchema.index({ _userId: 1, _id: 1 });
 
 CustomersSchema.index({ _uid: 1 }, { unique: true });
-CustomersSchema.index(
-  { _userId: 1 },
-  { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },
-);
+
 CustomersSchema.post('save', async function (error, doc, next) {
   schemaPostFunctionForDuplicate(error, doc, next);
 });
