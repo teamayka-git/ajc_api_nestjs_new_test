@@ -253,6 +253,8 @@ export class CustomersService {
         {
           $setOnInsert: {
             _password: encryptedPassword,
+            _customType: 0,
+            _halmarkId:null,
 
             _employeeId: null,
             _agentId: null,

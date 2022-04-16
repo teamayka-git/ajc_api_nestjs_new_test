@@ -25,7 +25,7 @@ export const RootCausesSchema = new mongoose.Schema({
 export interface RootCausesModel {
   _id: String;
   _name: String;
-  _type: string;
+  _type: number;
   _dataGuard: Object;
   _createdUserId: String;
   _createdAt: Number;

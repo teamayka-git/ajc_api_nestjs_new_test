@@ -62,6 +62,7 @@ import { ProductsModule } from './modules/products/products.module';
 import { ColourMastersModule } from './modules/colour-masters/colour-masters.module';
 import { ColoursSchema } from './tableModels/colourMasters.model';
 import { UserAttendanceModule } from './modules/user-attendance/user-attendance.module';
+import { HalmarkCentersModule } from './modules/halmark-centers/halmark-centers.module';
 
 @Module({
   imports: [
@@ -135,6 +136,7 @@ import { UserAttendanceModule } from './modules/user-attendance/user-attendance.
     ProductsModule,
     ColourMastersModule,
     UserAttendanceModule,
+    HalmarkCentersModule,
 
     // SalesReturnRequestStatusesModule,
   ],

@@ -33,10 +33,16 @@ export const UserSchema = new mongoose.Schema({
     ref: ModelNames.CUSTOMERS,
     default: null,
   },
+  _halmarkId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.HALMARK_CENTERS,
+    default: null,
+  },
   _fcmId: { type: String, default: '' },
   _deviceUniqueId: { type: String, default: '' },
   _permissions: { type: Object, required: true, default: [] },
   _userRole: { type: Number, required: true, default: -1 },
+  _customType: { type: Number, required: true, default: -1 },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -60,11 +66,12 @@ export interface User {
   _password: String;
   _mobile: String;
   _globalGalleryId: String;
-
+  _customType: number;
   _employeeId: String;
   _agentId: String;
   _supplierId: String;
   _customerId: String;
+  _halmarkId: string;
   _fcmId: String;
   _deviceUniqueId: String;
   _permissions: Object;
@@ -76,6 +83,9 @@ export interface User {
   _status: Number;
 }
 
+UserSchema.index({ _halmarkId: 1 });
+UserSchema.index({ _userRole: 1 });
+UserSchema.index({ _customType: 1 });
 UserSchema.index({ _status: 1 });
 UserSchema.index({ _employeeId: 1 });
 UserSchema.index({ _customerId: 1 });
@@ -133,7 +143,13 @@ _gender:{
   2-other
 }
 
-
+_customType:{
+0 - nil
+1 - customer admin
+2 - customer sales man
+3 - customer casher
+4 - halmark staff
+}
 
 
 

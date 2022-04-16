@@ -47,6 +47,7 @@ export enum ModelNames {
   COLOUR_MASTERS = 'colour_masters',
   STONE_COLOUR_LINKINGS = 'stone_colour_linkings',
   USER_ATTENDANCES = 'user_attendaces',
+  HALMARK_CENTERS = 'halmark_centers',
 
   CHAT_PERSONAL_CHAT_MESSAGES = 'chat_personal_chat_messages',
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',

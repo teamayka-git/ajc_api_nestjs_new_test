@@ -248,6 +248,20 @@ export class AppService {
         },
         { upsert: true, new: true, session: transactionSession },
       );
+      await this.countersModel.findOneAndUpdate(
+        { _tableName: ModelNames.HALMARK_CENTERS },
+        {
+          $setOnInsert: {
+            _count: 0,
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
 
       var encryptedPassword = await crypto
         .pbkdf2Sync(
@@ -273,6 +287,8 @@ export class AppService {
             _agentId: null,
             _supplierId: null,
             _customerId: null,
+            _customType: 0,
+            _halmarkId: null,
             _fcmId: '',
             _deviceUniqueId: '',
             _permissions: [],

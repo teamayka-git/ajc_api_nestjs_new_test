@@ -250,7 +250,8 @@ export class AgentService {
         {
           $setOnInsert: {
             _password: encryptedPassword,
-
+            _customType: 0,
+            _halmarkId:null,
             _employeeId: null,
             _customerId: null,
             _supplierId: null,
