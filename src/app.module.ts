@@ -57,7 +57,6 @@ import { RateCardModule } from './modules/rate-card/rate-card.module';
 import { RateBaseMastersModule } from './modules/rate-base-masters/rate-base-masters.module';
 import { CustomersModule } from './modules/customers/customers.module';
 import { OrderSalesModule } from './modules/order-sales/order-sales.module';
-import { OrderSaleRootCausesModule } from './modules/order-sale-root-causes/order-sale-root-causes.module';
 import { OrderSaleSetProcessModule } from './modules/order-sale-set-process/order-sale-set-process.module';
 import { ProductsModule } from './modules/products/products.module';
 import { ColourMastersModule } from './modules/colour-masters/colour-masters.module';
@@ -131,7 +130,6 @@ import { ColoursSchema } from './tableModels/colourMasters.model';
     RateBaseMastersModule,
     CustomersModule,
     OrderSalesModule,
-    OrderSaleRootCausesModule,
     OrderSaleSetProcessModule,
     ProductsModule,
     ColourMastersModule,

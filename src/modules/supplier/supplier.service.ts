@@ -249,16 +249,10 @@ export class SupplierService {
         { _email: dto.email },
         {
           $setOnInsert: {
-            _name: dto.name,
-            _gender: dto.gender,
-
             _password: encryptedPassword,
-            _mobile: dto.mobile,
-            _globalGalleryId: globalGalleryId,
 
             _employeeId: null,
             _agentId: null,
-            _supplierId: supplierId,
             _customerId: null,
             _fcmId: '',
             _deviceUniqueId: '',
@@ -269,7 +263,14 @@ export class SupplierService {
             _updated_user_id: null,
             _updated_at: -1,
           },
-          $set: { _status: 1 },
+          $set: {
+            _name: dto.name,
+            _gender: dto.gender,
+            _mobile: dto.mobile,
+            _globalGalleryId: globalGalleryId,
+            _supplierId: supplierId,
+            _status: 1,
+          },
         },
         { upsert: true, new: true, session: transactionSession },
       );
@@ -456,12 +457,13 @@ export class SupplierService {
                 _status: { $in: dto.statusArray },
               },
             },
+            { $project: { _id: 1 } },
           ])
           .session(transactionSession);
 
         var userIdsSearch = [];
         resultUserSearch.map((mapItem) => {
-          userIdsSearch.push(new mongoose.Types.ObjectId(mapItem));
+          userIdsSearch.push(new mongoose.Types.ObjectId(mapItem._id));
         });
 
         arrayAggregation.push({

@@ -249,16 +249,10 @@ export class AgentService {
         { _email: dto.email },
         {
           $setOnInsert: {
-            _name: dto.name,
-            _gender: dto.gender,
-
             _password: encryptedPassword,
-            _mobile: dto.mobile,
-            _globalGalleryId: globalGalleryId,
 
             _employeeId: null,
             _customerId: null,
-            _agentId: agentId,
             _supplierId: null,
             _fcmId: '',
             _deviceUniqueId: '',
@@ -269,7 +263,14 @@ export class AgentService {
             _updated_user_id: null,
             _updated_at: -1,
           },
-          $set: { _status: 1 },
+          $set: {
+            _name: dto.name,
+            _gender: dto.gender,
+            _agentId: agentId,
+            _mobile: dto.mobile,
+            _globalGalleryId: globalGalleryId,
+            _status: 1,
+          },
         },
         { upsert: true, new: true, session: transactionSession },
       );
@@ -460,12 +461,13 @@ export class AgentService {
                 _status: { $in: dto.statusArray },
               },
             },
+            { $project: { _id: 1 } },
           ])
           .session(transactionSession);
 
         var userIdsSearch = [];
         resultUserSearch.map((mapItem) => {
-          userIdsSearch.push(new mongoose.Types.ObjectId(mapItem));
+          userIdsSearch.push(new mongoose.Types.ObjectId(mapItem._id));
         });
 
         arrayAggregation.push({
