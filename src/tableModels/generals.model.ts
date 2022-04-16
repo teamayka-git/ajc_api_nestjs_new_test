@@ -92,6 +92,7 @@ _code:{
     1015 - order sale new order suffix status, 
     1016 - order sale new order prefix status, 
     1017 - order headname prefix
+    1018 - photo min respond time
 
 }
 _type:{
@@ -100,5 +101,10 @@ _type:{
     2 - currency
     3 - product
     4 - order
+}
+_vlaueType:{
+  0-number
+  1-string
+  2-json
 }
 */

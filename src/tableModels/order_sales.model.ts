@@ -27,7 +27,7 @@ export const OrderSalesSchema = new mongoose.Schema({
   },
   _rootCauseId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.ORDER_SALES_ROOT_CAUSES,
+    ref: ModelNames.ROOT_CAUSES,
     default: null,
   },
   _description: { type: String, default: '' },

@@ -363,6 +363,7 @@ export class AppService {
         {
           $setOnInsert: {
             _string: 'Rs',
+            _name: 'currency denominator text',
             _number: -1,
             _vlaueType: 1,
             _json: { basic: 'basic' },
@@ -383,6 +384,7 @@ export class AppService {
           $setOnInsert: {
             _string: '₹',
             _number: -1,
+            _name: 'currency denominator symbol',
             _json: { basic: 'basic' },
             _vlaueType: 1,
             _type: 2,
@@ -402,6 +404,7 @@ export class AppService {
         {
           $setOnInsert: {
             _string: '',
+            _name: 'product floating digit weight',
             _number: 2,
             _vlaueType: 0,
             _json: { basic: 'basic' },
@@ -421,7 +424,8 @@ export class AppService {
         { _code: 1003 },
         {
           $setOnInsert: {
-            _string: '',
+            _name: '',
+            _string: 'product purity',
             _number: 10,
             _vlaueType: 0,
             _json: { basic: 'basic' },
@@ -440,6 +444,7 @@ export class AppService {
         { _code: 1004 },
         {
           $setOnInsert: {
+            _name: 'customer credit amount limit percentage',
             _string: '',
             _number: 30,
             _vlaueType: 0,
@@ -459,6 +464,7 @@ export class AppService {
         { _code: 1005 },
         {
           $setOnInsert: {
+            _name: 'customer credit days limit',
             _string: '',
             _number: 14,
             _vlaueType: 0,
@@ -479,6 +485,7 @@ export class AppService {
         { _code: 1006 },
         {
           $setOnInsert: {
+            _name: 'tax gold manufacturing tax rate %',
             _string: '',
             _number: 1,
             _vlaueType: 0,
@@ -499,6 +506,7 @@ export class AppService {
         { _code: 1007 },
         {
           $setOnInsert: {
+            _name: 'tax product CGST %',
             _string: '',
             _number: 1,
             _vlaueType: 0,
@@ -518,6 +526,7 @@ export class AppService {
         { _code: 1008 },
         {
           $setOnInsert: {
+            _name: 'tax product SGST %',
             _string: '',
             _number: 1,
             _json: { basic: 'basic' },
@@ -537,6 +546,7 @@ export class AppService {
         { _code: 1009 },
         {
           $setOnInsert: {
+            _name: 'tax product IGST %',
             _string: '',
             _number: 1,
             _vlaueType: 0,
@@ -557,6 +567,7 @@ export class AppService {
         { _code: 1010 },
         {
           $setOnInsert: {
+            _name: 'tax holemarking tax %',
             _string: '',
             _number: 1,
             _vlaueType: 0,
@@ -576,6 +587,7 @@ export class AppService {
         { _code: 1011 },
         {
           $setOnInsert: {
+            _name: 'tax other charge tax %',
             _string: '',
             _number: 1,
             _vlaueType: 0,
@@ -595,6 +607,7 @@ export class AppService {
         { _code: 1012 },
         {
           $setOnInsert: {
+            _name: 'tax job work tax %',
             _string: '',
             _number: 1,
             _vlaueType: 0,
@@ -615,6 +628,7 @@ export class AppService {
         { _code: 1013 },
         {
           $setOnInsert: {
+            _name: 'order sale new order suffix',
             _string: 'AJC',
             _vlaueType: 1,
             _number: -1,
@@ -634,6 +648,7 @@ export class AppService {
         { _code: 1014 },
         {
           $setOnInsert: {
+            _name: 'order sale new order prefix',
             _string: 'GOLD',
             _number: -1,
             _json: { basic: 'basic' },
@@ -654,6 +669,7 @@ export class AppService {
         { _code: 1015 },
         {
           $setOnInsert: {
+            _name: 'order sale new order suffix status',
             _string: '',
             _number: 1,
             _json: { basic: 'basic' },
@@ -674,6 +690,7 @@ export class AppService {
         { _code: 1016 },
         {
           $setOnInsert: {
+            _name: 'order sale new order prefix status',
             _string: '',
             _number: 1,
             _vlaueType: 0,
@@ -694,11 +711,32 @@ export class AppService {
         { _code: 1017 },
         {
           $setOnInsert: {
+            _name: 'order headname prefix',
             _string: 'AJC',
             _number: -1,
             _vlaueType: 1,
             _json: { basic: 'basic' },
             _type: 4,
+            _dataGuard: [0, 1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+      await this.generalsModel.findOneAndUpdate(
+        { _code: 1018 },
+        {
+          $setOnInsert: {
+            _name: 'photo min respond time',
+            _string: '',
+            _number: 24,
+            _vlaueType: 0,
+            _json: { basic: 'basic' },
+            _type: 3,
             _dataGuard: [0, 1, 2],
             _createdUserId: null,
             _createdAt: dateTime,

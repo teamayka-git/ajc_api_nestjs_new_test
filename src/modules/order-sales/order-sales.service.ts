@@ -948,7 +948,7 @@ export class OrderSalesService {
         arrayAggregation.push(
           {
             $lookup: {
-              from: ModelNames.ORDER_SALES_ROOT_CAUSES,
+              from: ModelNames.ROOT_CAUSES,
               let: { rootCauseId: '$_rootCauseId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$rootCauseId'] } } },
@@ -1176,7 +1176,9 @@ export class OrderSalesService {
                                 pipeline: [
                                   {
                                     $match: {
-                                      $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                                      $expr: {
+                                        $eq: ['$_id', '$$globalGalleryId'],
+                                      },
                                     },
                                   },
                                   {
@@ -1226,7 +1228,9 @@ export class OrderSalesService {
                                 pipeline: [
                                   {
                                     $match: {
-                                      $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                                      $expr: {
+                                        $eq: ['$_id', '$$globalGalleryId'],
+                                      },
                                     },
                                   },
                                   {
