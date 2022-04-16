@@ -218,6 +218,8 @@ export class OrderSalesService {
         _weight: dto.weight,
         _stoneColour: dto.stoneColor,
         _dueDate: dto.dueDate,
+        _halmarkOutFlag: 0,
+        _invoiceGeneratedFlag: 0,
         _productData: { _idDone: 0 },
         _salesPersonId: customerDetails[0]._orderHeadId,
         _workStatus: 0,
