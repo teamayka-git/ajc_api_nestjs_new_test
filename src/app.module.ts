@@ -61,6 +61,7 @@ import { OrderSaleSetProcessModule } from './modules/order-sale-set-process/orde
 import { ProductsModule } from './modules/products/products.module';
 import { ColourMastersModule } from './modules/colour-masters/colour-masters.module';
 import { ColoursSchema } from './tableModels/colourMasters.model';
+import { UserAttendanceModule } from './modules/user-attendance/user-attendance.module';
 
 @Module({
   imports: [
@@ -133,6 +134,7 @@ import { ColoursSchema } from './tableModels/colourMasters.model';
     OrderSaleSetProcessModule,
     ProductsModule,
     ColourMastersModule,
+    UserAttendanceModule,
 
     // SalesReturnRequestStatusesModule,
   ],
