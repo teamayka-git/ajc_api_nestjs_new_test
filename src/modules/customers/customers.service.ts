@@ -249,6 +249,7 @@ export class CustomersService {
         _chatPermissions: dto.chatPermissions,
         _agentId: dto.agentId,
         _agentCommision: dto.agentCommision,
+        _location: { type: 'Point', coordinates: dto.location },
 
         _dataGuard: dto.dataGuard,
         _createdUserId: _userId_,
@@ -426,6 +427,7 @@ export class CustomersService {
         _orderSaleRate: dto.orderSaleRate,
         _stockSaleRate: dto.stockSaleRate,
         _customerType: dto.customerType,
+        _location: dto.location,
         _branchId: dto.branchId,
         _orderHeadId: dto.orderHeadId,
         _relationshipManagerId: dto.relationshipManagerId,

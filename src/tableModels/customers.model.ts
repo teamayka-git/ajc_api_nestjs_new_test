@@ -75,7 +75,17 @@ export const CustomersSchema = new mongoose.Schema({
     default: null,
   },
   _agentCommision: { type: Number, required: true, default: -1 },
-
+  _location: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      default: 'Point',
+    },
+    coordinates: {
+      type: [Number],
+      default: [0, 0],
+    },
+  },
   _dataGuard: { type: Object, required: true, default: [] },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -120,6 +130,7 @@ export interface Customers {
   _chatPermissions: Object;
   _agentId: String;
   _agentCommision: Number;
+  _location: object;
 
   _dataGuard: Object;
   _createdUserId: String;
@@ -129,6 +140,7 @@ export interface Customers {
   _status: Number;
 }
 
+CustomersSchema.index({ _location: '2dsphere' });
 CustomersSchema.index({ _name: 1 });
 CustomersSchema.index({ _rateCardId: 1 });
 CustomersSchema.index({ _agentCommision: 1 });

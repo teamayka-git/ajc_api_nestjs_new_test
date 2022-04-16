@@ -3,6 +3,7 @@ import {
   IsArray,
   IsEmail,
   IsNumber,
+  IsObject,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -196,9 +197,22 @@ export class CustomerCreateDto {
   @ApiProperty({})
   agentCommision: number;
 
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
+  @IsArray()
+  @ApiProperty({ type: [Number] })
+  location: number[];
+
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
   @IsArray()
   @ApiProperty({ type: [String] })
   arrayUserIdsEsixting: string[];
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
   @IsArray()
   @ApiProperty({ type: [CustomerNewUsersCreateList] })
   @ValidateNested({ each: true })
@@ -331,12 +345,29 @@ export class CustomerEditeDto {
   @ApiProperty({})
   agentCommision: number;
 
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
+  @IsObject()
+  @ApiProperty({})
+  location: Object;
+
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
   @IsArray()
   @ApiProperty({ type: [String] })
   arrayAddUserIdsEsixting: string[];
+
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
   @IsArray()
   @ApiProperty({ type: [String] })
   arrayRemoveUserIdsEsixting: string[];
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
   @IsArray()
   @ApiProperty({ type: [CustomerNewUsersCreateList] })
   @ValidateNested({ each: true })
