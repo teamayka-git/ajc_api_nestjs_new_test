@@ -491,9 +491,6 @@ export class SupplierService {
         });
         arrayAggregation.push({ $match: { _cityId: { $in: newSettingsId } } });
       }
-      if (dto.genders.length > 0) {
-        arrayAggregation.push({ $match: { _gender: { $in: dto.genders } } });
-      }
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
