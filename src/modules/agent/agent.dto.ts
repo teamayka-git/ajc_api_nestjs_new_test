@@ -147,9 +147,6 @@ export class AgentListDto {
   })
   screenType: number[];
 
-  @IsArray()
-  @ApiProperty({ type: [Number], description: descriptionListGender })
-  genders: number[];
 
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListCommisionType })

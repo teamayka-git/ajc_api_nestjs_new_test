@@ -511,9 +511,6 @@ export class EmployeesService {
         });
       }
 
-      if (dto.genders.length > 0) {
-        arrayAggregation.push({ $match: { _gender: { $in: dto.genders } } });
-      }
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       if (dto.departmenCodes.length != 0) {
         arrayAggregation.push(

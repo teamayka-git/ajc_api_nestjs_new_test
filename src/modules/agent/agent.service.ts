@@ -493,9 +493,6 @@ export class AgentService {
         arrayAggregation.push({ $match: { _cityId: { $in: newSettingsId } } });
       }
 
-      if (dto.genders.length > 0) {
-        arrayAggregation.push({ $match: { _gender: { $in: dto.genders } } });
-      }
       if (dto.commisionType.length > 0) {
         arrayAggregation.push({
           $match: { _commisionType: { $in: dto.commisionType } },
@@ -578,7 +575,7 @@ export class AgentService {
           },
         );
       }
-      console.log('agent aggregation  ' + JSON.stringify(arrayAggregation));
+
       var result = await this.agentModel
         .aggregate(arrayAggregation)
         .session(transactionSession);

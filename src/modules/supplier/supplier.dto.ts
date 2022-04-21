@@ -124,10 +124,6 @@ export class SupplierListDto {
   screenType: number[];
 
   @IsArray()
-  @ApiProperty({ type: [Number], description: descriptionListGender })
-  genders: number[];
-
-  @IsArray()
   @ApiProperty({ type: [String] })
   cityIds: string[];
 
