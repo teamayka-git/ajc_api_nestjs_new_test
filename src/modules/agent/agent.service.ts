@@ -251,7 +251,7 @@ export class AgentService {
           $setOnInsert: {
             _password: encryptedPassword,
             _customType: 0,
-            _halmarkId:null,
+            _halmarkId: null,
             _employeeId: null,
             _customerId: null,
             _supplierId: null,
@@ -559,7 +559,7 @@ export class AgentService {
       }
 
       if (dto.screenType.findIndex((it) => it == 50) != -1) {
-        arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
+        arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
           {
             $lookup: {
               from: ModelNames.GLOBAL_GALLERIES,
