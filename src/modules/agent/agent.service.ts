@@ -578,7 +578,7 @@ export class AgentService {
           },
         );
       }
-
+      console.log('agent aggregation  ' + JSON.stringify(arrayAggregation));
       var result = await this.agentModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
