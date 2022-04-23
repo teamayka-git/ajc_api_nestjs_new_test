@@ -579,7 +579,7 @@ export class EmployeesService {
         );
       }
       if (dto.screenType.findIndex((it) => it == 50) != -1) {
-        arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
+        arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
           {
             $lookup: {
               from: ModelNames.GLOBAL_GALLERIES,
