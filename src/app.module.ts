@@ -63,6 +63,7 @@ import { ColourMastersModule } from './modules/colour-masters/colour-masters.mod
 import { ColoursSchema } from './tableModels/colourMasters.model';
 import { UserAttendanceModule } from './modules/user-attendance/user-attendance.module';
 import { HalmarkCentersModule } from './modules/halmark-centers/halmark-centers.module';
+import { RootCausesModule } from './modules/root-causes/root-causes.module';
 
 @Module({
   imports: [
@@ -124,6 +125,7 @@ import { HalmarkCentersModule } from './modules/halmark-centers/halmark-centers.
     FactoriesModule,
     AgentModule,
     SupplierModule,
+    RootCausesModule,
     CompanyModule,
     GlobalGalleryCategoryModule,
     BanksModule,

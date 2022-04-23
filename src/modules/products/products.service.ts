@@ -207,6 +207,15 @@ export class ProductsService {
           },
         });
       }
+      if (dto.productIds.length > 0) {
+        var newSettingsId = [];
+        dto.productIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _id: { $in: newSettingsId } },
+        });
+      }
       if (dto.customerIds.length > 0) {
         var newSettingsId = [];
         dto.customerIds.map((mapItem) => {

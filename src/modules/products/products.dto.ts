@@ -107,6 +107,10 @@ export class ProductListDto {
 
   @IsArray()
   @ApiProperty({ type: [String] })
+  productIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
   customerIds: string[];
 
   @IsArray()

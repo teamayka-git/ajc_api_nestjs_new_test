@@ -15,4 +15,4 @@ import { RootCausesService } from './root-causes.service';
   controllers: [RootCausesController],
   providers: [RootCausesService],
 })
-export class OrderSaleRootCausesModule {}
+export class RootCausesModule {}
