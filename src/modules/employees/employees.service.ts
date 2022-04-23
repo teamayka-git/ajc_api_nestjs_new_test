@@ -568,7 +568,7 @@ export class EmployeesService {
                 {
                   $match: { $expr: { $eq: ['$_employeeId', '$$employeeId'] } },
                 },
-                { $project: { _id: 1 } },
+               
               ],
               as: 'userDetails',
             },
