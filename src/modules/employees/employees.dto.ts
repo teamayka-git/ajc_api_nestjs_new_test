@@ -16,7 +16,7 @@ const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType = '0-Created Date,1-Status  2-UID';
 const descriptionListScreenTypeForList =
-  '0-total documents count, ,50-populate image global gallery only if user details exist, 100-user id also get, 101-department populate, 102-process master populate';
+  '0-total documents count, ,50-populate image global gallery only if user details exist, 100-user details, 101-department populate, 102-process master populate';
 
 export class EmployeeLoginDto {
   @IsEmail()
