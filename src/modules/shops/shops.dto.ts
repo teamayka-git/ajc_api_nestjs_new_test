@@ -46,7 +46,51 @@ export class ShopLoginDto {
   @ApiProperty({})
   password: string;
 }
+class CustomerNewUsersCreateList {
+  @IsString()
+  @ApiProperty({})
+  email: string;
 
+  @IsString()
+  @ApiProperty({})
+  name: string;
+
+  @IsNumber()
+  @ApiProperty({})
+  gender: number;
+
+  @IsNumber()
+  @ApiProperty({ description: descriptionCustomType })
+  customType: number;
+
+  @IsString()
+  @ApiProperty({})
+  mobile: string;
+
+  @IsString()
+  @ApiProperty({})
+  acHolderName: string;
+
+  @IsString()
+  @ApiProperty({})
+  branchName: string;
+
+  @IsString()
+  @ApiProperty({})
+  field1: string;
+
+  @IsString()
+  @ApiProperty({})
+  field2: string;
+
+  @IsString()
+  @ApiProperty({})
+  field3: string;
+
+  @IsArray()
+  @ApiProperty({ type: [Number], description: descriptionListDataGuard })
+  dataGuard: number[];
+}
 class ShopNewUsersCreateList {
   @IsString()
   @ApiProperty({})
@@ -515,3 +559,36 @@ export class ShopAddRemoveUsersDto {
   @Type(() => ShopNewUsersCreateList)
   arrayUsersNew: ShopNewUsersCreateList[];
 }
+
+export class ShopAddRemoveCustomerDto {
+  @IsString()
+  @ApiProperty({})
+  shopUserId: string;
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  arrayAddUserIdsEsixting: string[];
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  arrayRemoveUserIdsEsixting: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [CustomerNewUsersCreateList] })
+  @ValidateNested({ each: true })
+  @Type(() => CustomerNewUsersCreateList)
+  arrayUsersNew: CustomerNewUsersCreateList[];
+}
+
+// export class ShopAcrossEmployeesAndCustomersDto {
+//   @IsArray()
+//   @ApiProperty({ type: [String] })
+//   shopIds: string[];
+
+//   @IsArray()
+//   @ApiProperty({ type: [String] })
+//   customerIds: string[];
+
+//   @IsArray()
+//   @ApiProperty({ type: [String] })
+//   userIds: string[];
+// }

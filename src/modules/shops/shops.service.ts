@@ -20,11 +20,13 @@ import {
   CheckEmailExistDto,
   CheckMobileExistDto,
   ListShopDto,
+  ShopAddRemoveCustomerDto,
   ShopAddRemoveUsersDto,
   ShopCreateDto,
   ShopEditeDto,
   ShopLoginDto,
 } from './shops.dto';
+import { Customers } from 'src/tableModels/customers.model';
 @Injectable()
 export class ShopsService {
   constructor(
@@ -34,6 +36,8 @@ export class ShopsService {
     private readonly shopsModel: mongoose.Model<Shops>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
+    @InjectModel(ModelNames.CUSTOMERS)
+    private readonly customersModel: mongoose.Model<Customers>,
 
     @InjectModel(ModelNames.GLOBAL_GALLERY_CATEGORIES)
     private readonly globalGalleryCategoriesModel: mongoose.Model<GlobalGalleryCategories>,
@@ -303,6 +307,7 @@ export class ShopsService {
             _shopId: shopId,
             _customType: mapItem.customType,
             _halmarkId: null,
+            _customerId: null,
             _fcmId: '',
             _deviceUniqueId: '',
             _permissions: [],
@@ -549,6 +554,7 @@ export class ShopsService {
             _customType: 4,
             _halmarkId: null,
             _fcmId: '',
+            _customerId: null,
             _deviceUniqueId: '',
             _permissions: [],
             _userRole: 0,
@@ -1267,6 +1273,7 @@ export class ShopsService {
             _employeeId: null,
             _agentId: null,
             _supplierId: null,
+            _customerId: null,
             _shopId: dto.shopUserId,
             _customType: mapItem.customType,
             _halmarkId: null,
@@ -1282,6 +1289,139 @@ export class ShopsService {
           });
         });
         await this.userModel.insertMany(arrayToUsers, {
+          session: transactionSession,
+        });
+      }
+
+      const responseJSON = { message: 'success', data: {} };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async addRemoveCustomers(dto: ShopAddRemoveCustomerDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      if (dto.arrayAddUserIdsEsixting.length > 0) {
+        await this.userModel.updateMany(
+          {
+            _id: { $in: dto.arrayAddUserIdsEsixting },
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _customerId: dto.shopUserId,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
+      if (dto.arrayRemoveUserIdsEsixting.length > 0) {
+        await this.userModel.updateMany(
+          {
+            _id: { $in: dto.arrayRemoveUserIdsEsixting },
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _customerId: null,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
+      if (dto.arrayUsersNew.length > 0) {
+        var arrayToUsers = [];
+        var arrayToCustomers = [];
+
+        var resultCounterCustomers = await this.counterModel.findOneAndUpdate(
+          { _tableName: ModelNames.CUSTOMERS },
+          {
+            $inc: {
+              _count: dto.arrayUsersNew.length,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+        var encryptedPassword = await crypto
+          .pbkdf2Sync(
+            '123456',
+            process.env.CRYPTO_ENCRYPTION_SALT,
+            1000,
+            64,
+            `sha512`,
+          )
+          .toString(`hex`);
+
+        dto.arrayUsersNew.map((mapItem, index) => {
+          var customerId = new mongoose.Types.ObjectId();
+          arrayToCustomers.push({
+            _id: customerId,
+            _uid:
+              resultCounterCustomers._count -
+              dto.arrayUsersNew.length +
+              (index + 1),
+            _field1: mapItem.field1,
+            _field2: mapItem.field2,
+            _field3: mapItem.field3,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+
+          arrayToUsers.push({
+            _email: mapItem.email,
+            _name: mapItem.name,
+            _gender: mapItem.gender,
+            _password: encryptedPassword,
+            _mobile: mapItem.mobile,
+            _globalGalleryId: null,
+            _employeeId: null,
+            _agentId: null,
+            _supplierId: null,
+            _customerId: customerId,
+            _shopId: dto.shopUserId,
+            _customType: mapItem.customType,
+            _halmarkId: null,
+            _fcmId: '',
+            _deviceUniqueId: '',
+            _permissions: [],
+            _userRole: 0,
+            _createdUserId: null,
+            _createdAt: -1,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+        });
+        await this.userModel.insertMany(arrayToUsers, {
+          session: transactionSession,
+        });
+        
+        await this.customersModel.insertMany(arrayToCustomers, {
           session: transactionSession,
         });
       }

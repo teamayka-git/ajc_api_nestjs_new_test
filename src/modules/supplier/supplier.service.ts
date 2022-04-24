@@ -252,6 +252,7 @@ export class SupplierService {
             _password: encryptedPassword,
             _customType: 0,
             _halmarkId: null,
+            _customerId:null,
 
             _employeeId: null,
             _agentId: null,

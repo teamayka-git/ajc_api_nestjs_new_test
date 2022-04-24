@@ -10,6 +10,7 @@ import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
 import { GlobalGalleryCategoriesSchema } from 'src/tableModels/globalGallerycategories.model';
 import { ShopsController } from './shops.controller';
 import { ShopsService } from './shops.service';
+import { CustomersSchema } from 'src/tableModels/customers.model';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ShopsService } from './shops.service';
       { name: ModelNames.USER, schema: UserSchema },
       { name: ModelNames.SHOPS, schema: ShopsSchema },
       { name: ModelNames.COUNTERS, schema: CountersSchema },
+      { name: ModelNames.CUSTOMERS, schema: CustomersSchema },
       {
         name: ModelNames.GLOBAL_GALLERY_CATEGORIES,
         schema: GlobalGalleryCategoriesSchema,

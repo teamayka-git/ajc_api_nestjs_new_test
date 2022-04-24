@@ -110,9 +110,7 @@ export class AppService {
           $lookup: {
             from: ModelNames.SHOPS,
             let: { shopId: '$_shopId' },
-            pipeline: [
-              { $match: { $expr: { $eq: ['$_id', '$$shopId'] } } },
-            ],
+            pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$shopId'] } } }],
             as: 'shopDetails',
           },
         },
@@ -289,6 +287,7 @@ export class AppService {
             _shopId: null,
             _customType: 0,
             _halmarkId: null,
+            _customerId: null,
             _fcmId: '',
             _deviceUniqueId: '',
             _permissions: [],

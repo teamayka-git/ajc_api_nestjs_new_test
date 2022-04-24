@@ -255,6 +255,7 @@ export class AgentService {
             _employeeId: null,
             _shopId: null,
             _supplierId: null,
+            _customerId:null,
             _fcmId: '',
             _deviceUniqueId: '',
             _permissions: [],

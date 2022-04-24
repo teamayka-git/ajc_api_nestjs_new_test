@@ -27,6 +27,7 @@ import {
   CheckEmailExistDto,
   CheckMobileExistDto,
   ListShopDto,
+  ShopAddRemoveCustomerDto,
   ShopAddRemoveUsersDto,
   ShopCreateDto,
   ShopEditeDto,
@@ -143,4 +144,19 @@ export class ShopsController {
   addRemoveUsers(@Body() dto: ShopAddRemoveUsersDto, @Request() req) {
     return this.shopService.addRemoveUsers(dto, req['_userId_']);
   }
+  @Post('addRemoveCustomers')
+  addRemoveCustomers(@Body() dto: ShopAddRemoveCustomerDto, @Request() req) {
+    return this.shopService.addRemoveCustomers(dto, req['_userId_']);
+  }
+
+  // @Post('listShopAcrossCustomersAndEmployee')
+  // listShopAcrossCustomersAndEmployee(
+  //   @Body() dto: ShopAddRemoveCustomerDto,
+  //   @Request() req,
+  // ) {
+  //   return this.shopService.listShopAcrossCustomersAndEmployee(
+  //     dto,
+  //     req['_userId_'],
+  //   );
+  // }
 }
