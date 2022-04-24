@@ -29,7 +29,7 @@ public/upload_files/employee/*
 !.gitkeep
 
 
-public/upload_files/customer/*
+public/upload_files/shop/*
 !.gitkeep
 
 public/upload_files/supplier/*

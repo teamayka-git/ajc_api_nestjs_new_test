@@ -108,17 +108,17 @@ export class AppService {
         // },
         {
           $lookup: {
-            from: ModelNames.CUSTOMERS,
-            let: { customerId: '$_customerId' },
+            from: ModelNames.SHOPS,
+            let: { shopId: '$_shopId' },
             pipeline: [
-              { $match: { $expr: { $eq: ['$_id', '$$customerId'] } } },
+              { $match: { $expr: { $eq: ['$_id', '$$shopId'] } } },
             ],
-            as: 'customerDetails',
+            as: 'shopDetails',
           },
         },
         {
           $unwind: {
-            path: '$customerDetails',
+            path: '$shopDetails',
             preserveNullAndEmptyArrays: true,
           },
         },
@@ -286,7 +286,7 @@ export class AppService {
             _employeeId: employeeId,
             _agentId: null,
             _supplierId: null,
-            _customerId: null,
+            _shopId: null,
             _customType: 0,
             _halmarkId: null,
             _fcmId: '',
@@ -460,7 +460,7 @@ export class AppService {
         { _code: 1004 },
         {
           $setOnInsert: {
-            _name: 'customer credit amount limit percentage',
+            _name: 'shop credit amount limit percentage',
             _string: '',
             _number: 30,
             _vlaueType: 0,
@@ -480,7 +480,7 @@ export class AppService {
         { _code: 1005 },
         {
           $setOnInsert: {
-            _name: 'customer credit days limit',
+            _name: 'shop credit days limit',
             _string: '',
             _number: 14,
             _vlaueType: 0,
@@ -1047,7 +1047,7 @@ export class AppService {
       );
 
       await this.globalGalleryCategoriesModel.findOneAndUpdate(
-        { _name: CommonNames.GLOBAL_GALLERY_CUSTOMER },
+        { _name: CommonNames.GLOBAL_GALLERY_SHOP },
         {
           $setOnInsert: {
             _globalGalleryCategoryId: null,

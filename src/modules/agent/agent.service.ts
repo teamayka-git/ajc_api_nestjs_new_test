@@ -253,7 +253,7 @@ export class AgentService {
             _customType: 0,
             _halmarkId: null,
             _employeeId: null,
-            _customerId: null,
+            _shopId: null,
             _supplierId: null,
             _fcmId: '',
             _deviceUniqueId: '',

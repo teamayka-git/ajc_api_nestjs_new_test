@@ -255,7 +255,7 @@ export class SupplierService {
 
             _employeeId: null,
             _agentId: null,
-            _customerId: null,
+            _shopId: null,
             _fcmId: '',
             _deviceUniqueId: '',
             _permissions: [],

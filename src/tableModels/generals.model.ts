@@ -78,8 +78,8 @@ _code:{
     1001 - currency denominator symbol, 
     1002 - product floating digit weight, 
     1003 - product purity, 
-    1004 - customer credit amount limit percentage, 
-    1005 - customer credit days limit, 
+    1004 - Shop credit amount limit percentage, 
+    1005 - Shop credit days limit, 
     1006 - tax gold manufacturing tax rate %, 
     1007 - tax product CGST %, 
     1008 - tax product SGST %, 
@@ -97,7 +97,7 @@ _code:{
 }
 _type:{
     0 - tax
-    1 - customer
+    1 - Shop
     2 - currency
     3 - product
     4 - order

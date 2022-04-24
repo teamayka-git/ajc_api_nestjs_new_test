@@ -32,7 +32,7 @@ export enum ModelNames {
   RATE_CARDS = 'rate_cards',
   RATE_CARD_PERCENTAGESS = 'rate_card_percentages',
   RATE_BASE_MASTERS = 'rate_base_masters',
-  CUSTOMERS = 'customers',
+  SHOPS = 'shops',
   ORDER_SALES = 'order_sales',
   ROOT_CAUSES = 'root_causes',
   ORDER_SALES_DOCUMENTS = 'order_sales_documents',

@@ -68,7 +68,7 @@ export class GlobalGalleryService {
             break;
           case 7:
             document_location =
-              UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER;
+              UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP;
             break;
           default:
             document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_OTHERS;

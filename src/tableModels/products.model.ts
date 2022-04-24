@@ -6,9 +6,9 @@ export const ProductsSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
   _name: { type: String, required: true, default: 'nil' },
   _designerId: { type: String, required: true, default: 'nil' },
-  _customerId: {
+  _shopId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.CUSTOMERS,
+    ref: ModelNames.SHOPS,
     default: null,
   },
   _orderId: {
@@ -61,7 +61,7 @@ export interface Products {
   _id: String;
   _name: String;
   _designerId: String;
-  _customerId: String;
+  _shopId: String;
   _orderId: String;
   _grossWeight: number;
   _barcode: String;
@@ -84,7 +84,7 @@ export interface Products {
 
 ProductsSchema.index({ _name: 1 });
 ProductsSchema.index({ _designerId: 1, _id: 1 });
-ProductsSchema.index({ _customerId: 1 });
+ProductsSchema.index({ _shopId: 1 });
 ProductsSchema.index({ _orderId: 1 });
 ProductsSchema.index({ _grossWeight: 1 });
 ProductsSchema.index({ _barcode: 1 });

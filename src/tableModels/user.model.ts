@@ -28,9 +28,9 @@ export const UserSchema = new mongoose.Schema({
     ref: ModelNames.SUPPLIERS,
     default: null,
   },
-  _customerId: {
+  _shopId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.CUSTOMERS,
+    ref: ModelNames.SHOPS,
     default: null,
   },
   _halmarkId: {
@@ -70,7 +70,7 @@ export interface User {
   _employeeId: String;
   _agentId: String;
   _supplierId: String;
-  _customerId: String;
+  _shopId: String;
   _halmarkId: string;
   _fcmId: String;
   _deviceUniqueId: String;
@@ -88,7 +88,7 @@ UserSchema.index({ _userRole: 1 });
 UserSchema.index({ _customType: 1 });
 UserSchema.index({ _status: 1 });
 UserSchema.index({ _employeeId: 1 });
-UserSchema.index({ _customerId: 1 });
+UserSchema.index({ _shopId: 1 });
 UserSchema.index({ _agentId: 1 });
 UserSchema.index({ _supplierId: 1 });
 UserSchema.index({ _name: 1 });
@@ -131,7 +131,7 @@ _userRole:{
     1 - agent
     2 - supplier
     3 - employee
-    4 - customer
+    4 - Shop
 }
 
 _permissions:[
@@ -145,9 +145,9 @@ _gender:{
 
 _customType:{
 0 - nil
-1 - customer admin
-2 - customer sales man
-3 - customer casher
+1 - Shop admin
+2 - Shop sales man
+3 - Shop casher
 4 - halmark staff
 }
 
@@ -163,6 +163,6 @@ old and deleted
 //     0 - employee
 //     1 - agent
 //     2 - supplier
-//     3 - customer
+//     3 - Shop
 // }
 */

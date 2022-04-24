@@ -2,19 +2,11 @@ import { HttpException, HttpStatus, Injectable, Session } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { Counters } from 'src/tableModels/counters.model';
-import { Customers } from 'src/tableModels/customers.model';
+import { Shops } from 'src/tableModels/shops.model';
 import { User } from 'src/tableModels/user.model';
 import * as mongoose from 'mongoose';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
-import {
-  CheckEmailExistDto,
-  CheckMobileExistDto,
-  CustomerAddRemoveUsersDto,
-  CustomerCreateDto,
-  CustomerEditeDto,
-  CustomerLoginDto,
-  ListCustomersDto,
-} from './customers.dto';
+
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 import { StringUtils } from 'src/utils/string_utils';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
@@ -24,13 +16,22 @@ import { GlobalConfig } from 'src/config/global_config';
 const crypto = require('crypto');
 
 import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
+import {
+  CheckEmailExistDto,
+  CheckMobileExistDto,
+  ListShopDto,
+  ShopAddRemoveUsersDto,
+  ShopCreateDto,
+  ShopEditeDto,
+  ShopLoginDto,
+} from './shops.dto';
 @Injectable()
-export class CustomersService {
+export class ShopsService {
   constructor(
     @InjectModel(ModelNames.USER)
     private readonly userModel: mongoose.Model<User>,
-    @InjectModel(ModelNames.CUSTOMERS)
-    private readonly customersModel: mongoose.Model<Customers>,
+    @InjectModel(ModelNames.SHOPS)
+    private readonly shopsModel: mongoose.Model<Shops>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
 
@@ -41,7 +42,7 @@ export class CustomersService {
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
-  async login(dto: CustomerLoginDto) {
+  async login(dto: ShopLoginDto) {
     var dateTime = new Date().getTime();
 
     const transactionSession = await this.connection.startSession();
@@ -86,14 +87,14 @@ export class CustomersService {
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-      if (resultEmployee[0]._customerId == null) {
+      if (resultEmployee[0]._shopId == null) {
         throw new HttpException(
-          'Not registered as Customer',
+          'Not registered as Shop',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-      await this.customersModel.findOneAndUpdate(
-        { _id: resultEmployee[0]._customerId },
+      await this.shopsModel.findOneAndUpdate(
+        { _id: resultEmployee[0]._shopId },
         { $set: { _lastLogin: dateTime } },
         { new: true, session: transactionSession },
       );
@@ -102,9 +103,7 @@ export class CustomersService {
         .aggregate([
           {
             $match: {
-              _customerId: new mongoose.Types.ObjectId(
-                resultEmployee[0]._customerId,
-              ),
+              _shopId: new mongoose.Types.ObjectId(resultEmployee[0]._shopId),
               _status: 1,
             },
           },
@@ -112,10 +111,10 @@ export class CustomersService {
           { $sort: { _id: -1 } },
           {
             $lookup: {
-              from: ModelNames.CUSTOMERS,
-              let: { customerId: '$_customerId' },
+              from: ModelNames.SHOPS,
+              let: { shopId: '$_shopId' },
               pipeline: [
-                { $match: { $expr: { $eq: ['$_id', '$$customerId'] } } },
+                { $match: { $expr: { $eq: ['$_id', '$$shopId'] } } },
                 { $project: { _password: 0 } },
               ],
               as: 'userDetails',
@@ -147,7 +146,7 @@ export class CustomersService {
     }
   }
 
-  async create(dto: CustomerCreateDto, _userId_: string, file: Object) {
+  async create(dto: ShopCreateDto, _userId_: string, file: Object) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -159,14 +158,14 @@ export class CustomersService {
         //   __dirname +
         //   `/../../../public${file['image'][0]['path'].split('public')[1]}`;
 
-        //   new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER +
+        //   new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP +
         //     new StringUtils().makeThumbImageFileName(
         //       file['image'][0]['filename'],
         //     ));
 
         resultUpload = await new S3BucketUtils().uploadMyFile(
           file['image'][0],
-          UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER,
+          UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP,
         );
 
         if (resultUpload['status'] == 0) {
@@ -211,7 +210,7 @@ export class CustomersService {
       }
 
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
-        { _tableName: ModelNames.CUSTOMERS },
+        { _tableName: ModelNames.SHOPS },
         {
           $inc: {
             _count: 1,
@@ -220,15 +219,15 @@ export class CustomersService {
         { new: true, session: transactionSession },
       );
 
-      var customerId = new mongoose.Types.ObjectId();
+      var shopId = new mongoose.Types.ObjectId();
 
-      const newsettingsModel = new this.customersModel({
-        _id: customerId,
+      const newsettingsModel = new this.shopsModel({
+        _id: shopId,
         _uid: resultCounterPurchase._count,
         _globalGalleryId: globalGalleryId,
         _orderSaleRate: dto.orderSaleRate,
         _stockSaleRate: dto.stockSaleRate,
-        _customerType: dto.customerType,
+        _shopType: dto.shopType,
         _branchId: dto.branchId,
         _orderHeadId: dto.orderHeadId,
         _relationshipManagerId: dto.relationshipManagerId,
@@ -271,7 +270,7 @@ export class CustomersService {
             $set: {
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
-              _customerId: customerId,
+              _shopId: shopId,
             },
           },
           { new: true, session: transactionSession },
@@ -301,7 +300,7 @@ export class CustomersService {
             _employeeId: null,
             _agentId: null,
             _supplierId: null,
-            _customerId: customerId,
+            _shopId: shopId,
             _customType: mapItem.customType,
             _halmarkId: null,
             _fcmId: '',
@@ -320,18 +319,18 @@ export class CustomersService {
         });
       }
 
-      var globalGalleryManinCategoryForCustomer =
+      var globalGalleryManinCategoryForShop =
         await this.globalGalleryCategoriesModel
           .find(
             {
               _status: 1,
-              _name: CommonNames.GLOBAL_GALLERY_CUSTOMER,
+              _name: CommonNames.GLOBAL_GALLERY_SHOP,
               _type: 1,
             },
             { _id: 1 },
           )
           .session(transactionSession);
-      if (globalGalleryManinCategoryForCustomer.length == 0) {
+      if (globalGalleryManinCategoryForShop.length == 0) {
         throw new HttpException(
           'Global gallery category not found',
           HttpStatus.INTERNAL_SERVER_ERROR,
@@ -340,7 +339,7 @@ export class CustomersService {
 
       var globalGalleryCategory = new this.globalGalleryCategoriesModel({
         _name: dto.name,
-        _globalGalleryCategoryId: globalGalleryManinCategoryForCustomer[0]._id,
+        _globalGalleryCategoryId: globalGalleryManinCategoryForShop[0]._id,
         _dataGuard: [0, 1, 2],
         _type: 2,
         _createdUserId: null,
@@ -350,14 +349,14 @@ export class CustomersService {
         _status: 1,
       });
 
-      var globalGallerySpecificCustomer = await globalGalleryCategory.save({
+      var globalGallerySpecificShop = await globalGalleryCategory.save({
         session: transactionSession,
       });
 
       var globalGalleryCategoryProducts = new this.globalGalleryCategoriesModel(
         {
-          _name: CommonNames.GLOBAL_GALLERY_CUSTOMER_PRODUCTS,
-          _globalGalleryCategoryId: globalGallerySpecificCustomer._id,
+          _name: CommonNames.GLOBAL_GALLERY_SHOP_PRODUCTS,
+          _globalGalleryCategoryId: globalGallerySpecificShop._id,
           _dataGuard: [0, 1, 2],
           _type: 2,
           _createdUserId: null,
@@ -394,7 +393,7 @@ export class CustomersService {
     }
   }
 
-  async edit(dto: CustomerEditeDto, _userId_: string, file: Object) {
+  async edit(dto: ShopEditeDto, _userId_: string, file: Object) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -423,10 +422,10 @@ export class CustomersService {
       }
       // }
 
-      var objCustomer = {
+      var objShop = {
         _orderSaleRate: dto.orderSaleRate,
         _stockSaleRate: dto.stockSaleRate,
-        _customerType: dto.customerType,
+        _shopType: dto.shopType,
         _location: dto.location,
         _branchId: dto.branchId,
         _orderHeadId: dto.orderHeadId,
@@ -480,15 +479,15 @@ export class CustomersService {
           session: transactionSession,
         });
 
-        objCustomer['_globalGalleryId'] = resultGlobalGallery._id;
+        objShop['_globalGalleryId'] = resultGlobalGallery._id;
       }
 
-      var result = await this.customersModel.findOneAndUpdate(
+      var result = await this.shopsModel.findOneAndUpdate(
         {
-          _id: dto.customerId,
+          _id: dto.shopId,
         },
         {
-          $set: objCustomer,
+          $set: objShop,
         },
         { new: true, session: transactionSession },
       );
@@ -501,7 +500,7 @@ export class CustomersService {
             $set: {
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
-              _customerId: dto.customerUserId,
+              _shopId: dto.shopUserId,
             },
           },
           { new: true, session: transactionSession },
@@ -516,7 +515,7 @@ export class CustomersService {
             $set: {
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
-              _customerId: dto.customerUserId,
+              _shopId: dto.shopUserId,
             },
           },
           { new: true, session: transactionSession },
@@ -546,7 +545,7 @@ export class CustomersService {
             _employeeId: null,
             _agentId: null,
             _supplierId: null,
-            _customerId: dto.customerUserId,
+            _shopId: dto.shopUserId,
             _customType: 4,
             _halmarkId: null,
             _fcmId: '',
@@ -564,19 +563,19 @@ export class CustomersService {
           session: transactionSession,
         });
       }
-      // if (oldCustomerName != dto.name) {
-      //   var globalGalleryManinCategoryForCustomer =
+      // if (oldShopName != dto.name) {
+      //   var globalGalleryManinCategoryForShop =
       //     await this.globalGalleryCategoriesModel
       //       .find(
       //         {
       //           _status: 1,
-      //           _name: CommonNames.GLOBAL_GALLERY_CUSTOMER,
+      //           _name: CommonNames.GLOBAL_GALLERY_SHOP,
       //           _type: 1,
       //         },
       //         { _id: 1 },
       //       )
       //       .session(transactionSession);
-      //   if (globalGalleryManinCategoryForCustomer.length == 0) {
+      //   if (globalGalleryManinCategoryForShop.length == 0) {
       //     throw new HttpException(
       //       'Global gallery category not found',
       //       HttpStatus.INTERNAL_SERVER_ERROR,
@@ -584,9 +583,9 @@ export class CustomersService {
       //   }
       //   await this.globalGalleryCategoriesModel.findOneAndUpdate(
       //     {
-      //       _name: oldCustomerName,
+      //       _name: oldShopName,
       //       _globalGalleryCategoryId:
-      //         globalGalleryManinCategoryForCustomer[0]._id,
+      //         globalGalleryManinCategoryForShop[0]._id,
       //       _status: 1,
       //     },
       //     { $set: { _name: dto.name } },
@@ -616,7 +615,7 @@ export class CustomersService {
     }
   }
 
-  async list(dto: ListCustomersDto) {
+  async list(dto: ListShopDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -659,9 +658,9 @@ export class CustomersService {
         });
       }
 
-      if (dto.customerIds.length > 0) {
+      if (dto.shopIds.length > 0) {
         var newSettingsId = [];
-        dto.customerIds.map((mapItem) => {
+        dto.shopIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
@@ -677,9 +676,9 @@ export class CustomersService {
           $match: { _stockSaleRate: { $in: dto.stockSaleRates } },
         });
       }
-      if (dto.customerTypes.length > 0) {
+      if (dto.shopTypes.length > 0) {
         arrayAggregation.push({
-          $match: { _customerType: { $in: dto.customerTypes } },
+          $match: { _shopType: { $in: dto.shopTypes } },
         });
       }
       if (dto.billingModelSales.length > 0) {
@@ -723,7 +722,7 @@ export class CustomersService {
           arrayAggregation.push({ $sort: { _stockSaleRate: dto.sortOrder } });
           break;
         case 5:
-          arrayAggregation.push({ $sort: { _customerType: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _shopType: dto.sortOrder } });
           break;
         case 6:
           arrayAggregation.push({ $sort: { _billingModeSale: dto.sortOrder } });
@@ -764,7 +763,7 @@ export class CustomersService {
               from: ModelNames.USER,
               let: { userId: '$_id' },
               pipeline: [
-                { $match: { $expr: { $eq: ['$_customerId', '$$userId'] } } },
+                { $match: { $expr: { $eq: ['$_shopId', '$$userId'] } } },
               ],
               as: 'userDetails',
             },
@@ -1085,7 +1084,7 @@ export class CustomersService {
         );
       }
 
-      var result = await this.customersModel
+      var result = await this.shopsModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
 
@@ -1108,7 +1107,7 @@ export class CustomersService {
           $group: { _id: null, totalCount: { $sum: 1 } },
         });
 
-        var resultTotalCount = await this.customersModel
+        var resultTotalCount = await this.shopsModel
           .aggregate(arrayAggregation)
           .session(transactionSession);
         if (resultTotalCount.length > 0) {
@@ -1209,7 +1208,7 @@ export class CustomersService {
     }
   }
 
-  async addRemoveUsers(dto: CustomerAddRemoveUsersDto, _userId_: string) {
+  async addRemoveUsers(dto: ShopAddRemoveUsersDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -1223,7 +1222,7 @@ export class CustomersService {
             $set: {
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
-              _customerId: dto.customerUserId,
+              _shopId: dto.shopUserId,
             },
           },
           { new: true, session: transactionSession },
@@ -1238,7 +1237,7 @@ export class CustomersService {
             $set: {
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
-              _customerId: null,
+              _shopId: null,
             },
           },
           { new: true, session: transactionSession },
@@ -1268,7 +1267,7 @@ export class CustomersService {
             _employeeId: null,
             _agentId: null,
             _supplierId: null,
-            _customerId: dto.customerUserId,
+            _shopId: dto.shopUserId,
             _customType: mapItem.customType,
             _halmarkId: null,
             _fcmId: '',

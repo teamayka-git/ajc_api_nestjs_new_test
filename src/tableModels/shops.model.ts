@@ -2,14 +2,14 @@ import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { GlobalConfig } from 'src/config/global_config';
 
-export const CustomersSchema = new mongoose.Schema({
+export const ShopsSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
   _uid: { type: String, required: true, default: 'nil' },
   _name: { type: String, required: true, default: 'nil' },
 
   _orderSaleRate: { type: Number, required: true, default: -1 },
   _stockSaleRate: { type: Number, required: true, default: -1 },
-  _customerType: { type: Number, required: true, default: -1 },
+  _shopType: { type: Number, required: true, default: -1 },
   _globalGalleryId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.GLOBAL_GALLERIES,
@@ -102,14 +102,14 @@ export const CustomersSchema = new mongoose.Schema({
   _status: { type: Number, required: true, default: -1 },
 });
 
-export interface Customers {
+export interface Shops {
   _id: String;
   _cityId: String;
   _uid: String;
   _name: string;
   _orderSaleRate: Number;
   _stockSaleRate: Number;
-  _customerType: Number;
+  _shopType: Number;
   _branchId: String;
   _orderHeadId: String;
   _relationshipManagerId: String;
@@ -140,50 +140,50 @@ export interface Customers {
   _status: Number;
 }
 
-CustomersSchema.index({ _location: '2dsphere' });
-CustomersSchema.index({ _name: 1 });
-CustomersSchema.index({ _rateCardId: 1 });
-CustomersSchema.index({ _agentCommision: 1 });
-CustomersSchema.index({ _agentId: 1 });
-CustomersSchema.index({ _chatPermissions: 1 });
-CustomersSchema.index({ _stonePricing: 1 });
-CustomersSchema.index({ _rateBaseMasterId: 1 });
-CustomersSchema.index({ _creditDays: 1 });
-CustomersSchema.index({ _creditAmount: 1 });
-CustomersSchema.index({ _tcsId: 1 });
-CustomersSchema.index({ _tdsId: 1 });
-CustomersSchema.index({ _districtId: 1 });
-CustomersSchema.index({ _stateId: 1 });
-CustomersSchema.index({ _gstNumber: 1 });
-CustomersSchema.index({ _hallmarkingMandatoryStatus: 1 });
-CustomersSchema.index({ _billingModePurchase: 1 });
-CustomersSchema.index({ _billingModeSale: 1 });
-CustomersSchema.index({ _panCardNumber: 1 });
-CustomersSchema.index({ _supplierId: 1 });
-CustomersSchema.index({ _relationshipManagerId: 1 });
-CustomersSchema.index({ _orderHeadId: 1 });
-CustomersSchema.index({ _branchId: 1 });
-CustomersSchema.index({ _customerType: 1 });
-CustomersSchema.index({ _stockSaleRate: 1 });
-CustomersSchema.index({ _orderSaleRate: 1 });
-CustomersSchema.index({ _status: 1 });
-CustomersSchema.index({ _uid: 1, _id: 1 });
+ShopsSchema.index({ _location: '2dsphere' });
+ShopsSchema.index({ _name: 1 });
+ShopsSchema.index({ _rateCardId: 1 });
+ShopsSchema.index({ _agentCommision: 1 });
+ShopsSchema.index({ _agentId: 1 });
+ShopsSchema.index({ _chatPermissions: 1 });
+ShopsSchema.index({ _stonePricing: 1 });
+ShopsSchema.index({ _rateBaseMasterId: 1 });
+ShopsSchema.index({ _creditDays: 1 });
+ShopsSchema.index({ _creditAmount: 1 });
+ShopsSchema.index({ _tcsId: 1 });
+ShopsSchema.index({ _tdsId: 1 });
+ShopsSchema.index({ _districtId: 1 });
+ShopsSchema.index({ _stateId: 1 });
+ShopsSchema.index({ _gstNumber: 1 });
+ShopsSchema.index({ _hallmarkingMandatoryStatus: 1 });
+ShopsSchema.index({ _billingModePurchase: 1 });
+ShopsSchema.index({ _billingModeSale: 1 });
+ShopsSchema.index({ _panCardNumber: 1 });
+ShopsSchema.index({ _supplierId: 1 });
+ShopsSchema.index({ _relationshipManagerId: 1 });
+ShopsSchema.index({ _orderHeadId: 1 });
+ShopsSchema.index({ _branchId: 1 });
+ShopsSchema.index({ _shopType: 1 });
+ShopsSchema.index({ _stockSaleRate: 1 });
+ShopsSchema.index({ _orderSaleRate: 1 });
+ShopsSchema.index({ _status: 1 });
+ShopsSchema.index({ _uid: 1, _id: 1 });
 
-CustomersSchema.index({ _uid: 1 }, { unique: true });
+ShopsSchema.index({ _uid: 1 }, { unique: true });
 
-CustomersSchema.post('save', async function (error, doc, next) {
+ShopsSchema.post('save', async function (error, doc, next) {
   schemaPostFunctionForDuplicate(error, doc, next);
 });
-CustomersSchema.post('insertMany', async function (error, doc, next) {
+ShopsSchema.post('insertMany', async function (error, doc, next) {
   schemaPostFunctionForDuplicate(error, doc, next);
 });
-CustomersSchema.post('updateOne', async function (error, doc, next) {
+ShopsSchema.post('updateOne', async function (error, doc, next) {
   schemaPostFunctionForDuplicate(error, doc, next);
 });
-CustomersSchema.post('findOneAndUpdate', async function (error, doc, next) {
+ShopsSchema.post('findOneAndUpdate', async function (error, doc, next) {
   schemaPostFunctionForDuplicate(error, doc, next);
 });
-CustomersSchema.post('updateMany', async function (error, doc, next) {
+ShopsSchema.post('updateMany', async function (error, doc, next) {
   schemaPostFunctionForDuplicate(error, doc, next);
 });
 function schemaPostFunctionForDuplicate(error, doc, next) {
@@ -204,9 +204,9 @@ _stockSaleRate:{
     0 - unfix
     1 - fix
 }
-_customerType:{
+_shopType:{
     0-buisiness
-    1-customer
+    1-Shop
 }
 _billingModeSale:{
     0-pure weight

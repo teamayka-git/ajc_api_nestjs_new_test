@@ -18,7 +18,7 @@ const descriptionListScreenTypeForList =
 const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 const descriptionListType =
-  ' 0-Employee, 1-Customer, 2-Supplier, 3-Organisation, 4-Company';
+  ' 0-Employee, 1-Shop, 2-Supplier, 3-Organisation, 4-Company';
 
 class HalmarkNewUsersCreateList {
   @IsString()

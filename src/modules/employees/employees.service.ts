@@ -256,7 +256,7 @@ export class EmployeesService {
 
             _agentId: null,
             _supplierId: null,
-            _customerId: null,
+            _shopId: null,
             _fcmId: '',
             _deviceUniqueId: '',
             _permissions: [],

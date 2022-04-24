@@ -16,37 +16,38 @@ import {
   GuardUserRole,
   GuardUserRoleStringGenerate,
 } from 'src/common/GuardUserRole';
-import {
-  CheckEmailExistDto,
-  CheckMobileExistDto,
-  CustomerAddRemoveUsersDto,
-  CustomerCreateDto,
-  CustomerEditeDto,
-  CustomerLoginDto,
-  ListCustomersDto,
-} from './customers.dto';
-import { CustomersService } from './customers.service';
+
 import { Response } from 'express'; //jwt response store in cookie
 import { Roles } from 'src/Auth/roles.decorator';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { FileMulterHelper } from 'src/shared/file_multter_helper';
 import { diskStorage } from 'multer';
+import { ShopsService } from './shops.service';
+import {
+  CheckEmailExistDto,
+  CheckMobileExistDto,
+  ListShopDto,
+  ShopAddRemoveUsersDto,
+  ShopCreateDto,
+  ShopEditeDto,
+  ShopLoginDto,
+} from './shops.dto';
 
 @UseGuards(RolesGuard)
-@ApiTags('Customers Docs')
-@Controller('customers')
-export class CustomersController {
+@ApiTags('Shops Docs')
+@Controller('shops')
+export class ShopsController {
   constructor(
     private jwtService: JwtService,
-    private readonly customersService: CustomersService,
+    private readonly shopService: ShopsService,
   ) {}
 
   @Post('login')
   async login(
-    @Body() dto: CustomerLoginDto,
+    @Body() dto: ShopLoginDto,
     @Res({ passthrough: true }) response: Response, //jwt response store in cookie
   ) {
-    var returnData: Object = await this.customersService.login(dto);
+    var returnData: Object = await this.shopService.login(dto);
 
     var userRole = new GuardUserRoleStringGenerate().generate(
       returnData['_userRole'],
@@ -55,7 +56,7 @@ export class CustomersController {
     const jwt = await this.jwtService.signAsync(
       {
         _userId_: returnData['_id'],
-        _customerId: returnData['_customerId'],
+        _shopId: returnData['_shopId'],
         _type_: returnData['_type'],
         _userRole_: userRole,
       },
@@ -81,18 +82,14 @@ export class CustomersController {
       ],
       /*{
         storage: diskStorage({
-          destination: FileMulterHelper.filePathTempCustomer,
+          destination: FileMulterHelper.filePathTempShop,
           filename: FileMulterHelper.customFileName,
         }),
       },*/
     ),
   )
-  create(
-    @Body() dto: CustomerCreateDto,
-    @Request() req,
-    @UploadedFiles() file,
-  ) {
-    return this.customersService.create(
+  create(@Body() dto: ShopCreateDto, @Request() req, @UploadedFiles() file) {
+    return this.shopService.create(
       dto,
       req['_userId_'],
       file == null ? {} : JSON.parse(JSON.stringify(file)),
@@ -113,14 +110,14 @@ export class CustomersController {
       ],
       /*{
         storage: diskStorage({
-          destination: FileMulterHelper.filePathTempCustomer,
+          destination: FileMulterHelper.filePathTempShop,
           filename: FileMulterHelper.customFileName,
         }),
       },*/
     ),
   )
-  edit(@Body() dto: CustomerEditeDto, @Request() req, @UploadedFiles() file) {
-    return this.customersService.edit(
+  edit(@Body() dto: ShopEditeDto, @Request() req, @UploadedFiles() file) {
+    return this.shopService.edit(
       dto,
       req['_userId_'],
       file == null ? {} : JSON.parse(JSON.stringify(file)),
@@ -128,22 +125,22 @@ export class CustomersController {
   }
 
   @Post('list')
-  list(@Body() dto: ListCustomersDto) {
-    return this.customersService.list(dto);
+  list(@Body() dto: ListShopDto) {
+    return this.shopService.list(dto);
   }
 
   @Post('checkEmailExisting')
   checkEmailExisting(@Body() dto: CheckEmailExistDto) {
-    return this.customersService.checkEmailExisting(dto);
+    return this.shopService.checkEmailExisting(dto);
   }
 
   @Post('checkMobileExisting')
   checkMobileExisting(@Body() dto: CheckMobileExistDto) {
-    return this.customersService.checkMobileExisting(dto);
+    return this.shopService.checkMobileExisting(dto);
   }
 
   @Post('addRemoveUsers')
-  addRemoveUsers(@Body() dto: CustomerAddRemoveUsersDto, @Request() req) {
-    return this.customersService.addRemoveUsers(dto, req['_userId_']);
+  addRemoveUsers(@Body() dto: ShopAddRemoveUsersDto, @Request() req) {
+    return this.shopService.addRemoveUsers(dto, req['_userId_']);
   }
 }

@@ -43,7 +43,7 @@ export class OrderSalesController {
       ],
       /*{
         storage: diskStorage({
-          destination: FileMulterHelper.filePathTempCustomer,
+          destination: FileMulterHelper.filePathTempShop,
           filename: FileMulterHelper.customFileName,
         }),
       },*/
@@ -74,7 +74,7 @@ export class OrderSalesController {
       ],
       /*{
         storage: diskStorage({
-          destination: FileMulterHelper.filePathTempCustomer,
+          destination: FileMulterHelper.filePathTempShop,
           filename: FileMulterHelper.customFileName,
         }),
       },*/

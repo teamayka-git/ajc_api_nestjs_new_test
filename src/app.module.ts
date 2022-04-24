@@ -55,7 +55,6 @@ import { ChatPersonalChatsSchema } from './tableModels/chatPersonalChats.model';
 import { ChatPersonalChatMessagesSchema } from './tableModels/chatPersonalChatMessages.model';
 import { RateCardModule } from './modules/rate-card/rate-card.module';
 import { RateBaseMastersModule } from './modules/rate-base-masters/rate-base-masters.module';
-import { CustomersModule } from './modules/customers/customers.module';
 import { OrderSalesModule } from './modules/order-sales/order-sales.module';
 import { OrderSaleSetProcessModule } from './modules/order-sale-set-process/order-sale-set-process.module';
 import { ProductsModule } from './modules/products/products.module';
@@ -64,6 +63,7 @@ import { ColoursSchema } from './tableModels/colourMasters.model';
 import { UserAttendanceModule } from './modules/user-attendance/user-attendance.module';
 import { HalmarkCentersModule } from './modules/halmark-centers/halmark-centers.module';
 import { RootCausesModule } from './modules/root-causes/root-causes.module';
+import { ShopsModule } from './modules/shops/shops.module';
 
 @Module({
   imports: [
@@ -132,7 +132,7 @@ import { RootCausesModule } from './modules/root-causes/root-causes.module';
     GlobalGalleryModule,
     RateCardModule,
     RateBaseMastersModule,
-    CustomersModule,
+    ShopsModule,
     OrderSalesModule,
     OrderSaleSetProcessModule,
     ProductsModule,
@@ -163,7 +163,7 @@ export class AppModule {
         // process.env.GLOBAL_PREFIX_FOR_API + '/(.*)',
         // process.env.GLOBAL_PREFIX_FOR_API + '/store_front/(.*)',
         process.env.GLOBAL_PREFIX_FOR_API + '/employees/login',
-        process.env.GLOBAL_PREFIX_FOR_API + '/customers/login',
+        process.env.GLOBAL_PREFIX_FOR_API + '/shops/login',
       )
       .forRoutes('*');
   }

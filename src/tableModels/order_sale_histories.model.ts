@@ -69,9 +69,9 @@ _type:{
   18 - delivery boy otp verification requested
   19 - delivery boy otp verification accepted
   20 - hub tranfer
-  21 - delivery otp to customer requested
-  22 - delivery otp to customer verified
-  23 - delivery rejected by customer
+  21 - delivery otp to Shop requested
+  22 - delivery otp to Shop verified
+  23 - delivery rejected by Shop
   24 - delivery reshedule requested
   25 - delivery reshedule rejected
   26 - delivery reshedule accepted

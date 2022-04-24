@@ -21,13 +21,13 @@ const descriptionListCommisionType =
   '0-Commision Percentage, 1-Commision amount';
 const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType =
-  '0-Created Date,1-Status  2-UID,  3-orderSaleRate, 4-stockSaleRate, 5-customerType, 6-billingModeSale, 7-billingModePurchase, 8-hallmarkingMandatoryStatus,9-creditAmount, 10-creditDays, 11-stonePricing, 12-agentCommision';
+  '0-Created Date,1-Status  2-UID,  3-orderSaleRate, 4-stockSaleRate, 5-shopType, 6-billingModeSale, 7-billingModePurchase, 8-hallmarkingMandatoryStatus,9-creditAmount, 10-creditDays, 11-stonePricing, 12-agentCommision';
 const descriptionListScreenTypeForFilterLoading =
   '0-total documents count, 50-globalGalleryImagePopulate only if user details exist, 100-branch populate, 101-orderHead populate, 102-relationship manager populate, 103-supplier populate, 104-rate card populate, 106-city populate, 107-tds populate, 108-tcs populate, 109-ratebase master populate, 110-agent populate, 111-user details populate';
 
 const descriptionOrderSaleRate = '0 - unfix, 1 - fix';
 const descriptionStockSaleRate = '0 - unfix, 1 - fix';
-const descriptionCustomerType = '0-buisiness, 1-customer';
+const descriptionShopType = '0-buisiness, 1-shop';
 const descriptionBillingModeSale = '0-pure weight, 1-net weight, 2-job work';
 const descriptionBillingModePurchase =
   '0-pure weight, 1-net weight, 2-job work';
@@ -36,8 +36,8 @@ const descriptionStonePricing = '0-automatic, 1-Manual';
 const descriptionChatPermissions =
   '0-Allow voice message, 1-allow document uploading';
 const descriptionCustomType =
-  '1 - customer admin, 2 - customer sales man, 3 - customer casher, 4 - halmark staff';
-export class CustomerLoginDto {
+  '1 - shop admin, 2 - shop sales man, 3 - shop casher, 4 - halmark staff';
+export class ShopLoginDto {
   @IsEmail()
   @ApiProperty({})
   email: string;
@@ -47,7 +47,7 @@ export class CustomerLoginDto {
   password: string;
 }
 
-class CustomerNewUsersCreateList {
+class ShopNewUsersCreateList {
   @IsString()
   @ApiProperty({})
   email: string;
@@ -80,7 +80,7 @@ class CustomerNewUsersCreateList {
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })
   dataGuard: number[];
 }
-export class CustomerCreateDto {
+export class ShopCreateDto {
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
   )
@@ -101,8 +101,8 @@ export class CustomerCreateDto {
 
   @Transform(({ value }) => Number(value))
   @IsNumber()
-  @ApiProperty({ description: descriptionCustomerType })
-  customerType: number;
+  @ApiProperty({ description: descriptionShopType })
+  shopType: number;
 
   @IsString()
   @ApiProperty({})
@@ -214,23 +214,23 @@ export class CustomerCreateDto {
     typeof value == 'string' ? JSON.parse(value) : value,
   )
   @IsArray()
-  @ApiProperty({ type: [CustomerNewUsersCreateList] })
+  @ApiProperty({ type: [ShopNewUsersCreateList] })
   @ValidateNested({ each: true })
-  @Type(() => CustomerNewUsersCreateList)
-  arrayUsersNew: CustomerNewUsersCreateList[];
+  @Type(() => ShopNewUsersCreateList)
+  arrayUsersNew: ShopNewUsersCreateList[];
 }
 
-export class CustomerEditeDto {
+export class ShopEditeDto {
   @IsString()
   @ApiProperty({})
-  customerId: string;
+  shopId: string;
   @IsString()
   @ApiProperty({})
   name: string;
 
   @IsString()
   @ApiProperty({})
-  customerUserId: string;
+  shopUserId: string;
 
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
@@ -252,8 +252,8 @@ export class CustomerEditeDto {
 
   @Transform(({ value }) => Number(value))
   @IsNumber()
-  @ApiProperty({ description: descriptionCustomerType })
-  customerType: number;
+  @ApiProperty({ description: descriptionShopType })
+  shopType: number;
 
   @IsString()
   @ApiProperty({})
@@ -369,13 +369,13 @@ export class CustomerEditeDto {
     typeof value == 'string' ? JSON.parse(value) : value,
   )
   @IsArray()
-  @ApiProperty({ type: [CustomerNewUsersCreateList] })
+  @ApiProperty({ type: [ShopNewUsersCreateList] })
   @ValidateNested({ each: true })
-  @Type(() => CustomerNewUsersCreateList)
-  arrayUsersNew: CustomerNewUsersCreateList[];
+  @Type(() => ShopNewUsersCreateList)
+  arrayUsersNew: ShopNewUsersCreateList[];
 }
 
-export class CustomerStatusChangeDto {
+export class ShopStatusChangeDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   agentIds: string[];
@@ -385,7 +385,7 @@ export class CustomerStatusChangeDto {
   status: number;
 }
 
-export class ListCustomersDto {
+export class ListShopDto {
   @IsArray()
   @ArrayMinSize(1)
   @ApiProperty({ type: [Number], description: descriptionStatus })
@@ -419,7 +419,7 @@ export class ListCustomersDto {
 
   @IsArray()
   @ApiProperty({ type: [String] })
-  customerIds: string[];
+  shopIds: string[];
 
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionOrderSaleRate })
@@ -430,8 +430,8 @@ export class ListCustomersDto {
   stockSaleRates: number[];
 
   @IsArray()
-  @ApiProperty({ type: [Number], description: descriptionCustomerType })
-  customerTypes: number[];
+  @ApiProperty({ type: [Number], description: descriptionShopType })
+  shopTypes: number[];
 
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionBillingModeSale })
@@ -497,10 +497,10 @@ export class CheckMobileExistDto {
   value: string;
 }
 
-export class CustomerAddRemoveUsersDto {
+export class ShopAddRemoveUsersDto {
   @IsString()
   @ApiProperty({})
-  customerUserId: string;
+  shopUserId: string;
 
   @IsArray()
   @ApiProperty({ type: [String] })
@@ -510,8 +510,8 @@ export class CustomerAddRemoveUsersDto {
   arrayRemoveUserIdsEsixting: string[];
 
   @IsArray()
-  @ApiProperty({ type: [CustomerNewUsersCreateList] })
+  @ApiProperty({ type: [ShopNewUsersCreateList] })
   @ValidateNested({ each: true })
-  @Type(() => CustomerNewUsersCreateList)
-  arrayUsersNew: CustomerNewUsersCreateList[];
+  @Type(() => ShopNewUsersCreateList)
+  arrayUsersNew: ShopNewUsersCreateList[];
 }

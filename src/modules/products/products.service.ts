@@ -112,10 +112,10 @@ export class ProductsService {
 
       var autoIncrementNumber = resultProduct._count;
       var productId = new mongoose.Types.ObjectId();
-      var customerId = dto.customerId;
+      var shopId = dto.shopId;
       var orderId = dto.orderId;
-      if (customerId == '' || customerId == 'nil') {
-        customerId = null;
+      if (shopId == '' || shopId == 'nil') {
+        shopId = null;
       }
       if (orderId == '' || orderId == 'nil') {
         orderId = null;
@@ -140,7 +140,7 @@ export class ProductsService {
         _id: productId,
         _name: dto.name,
         _designerId: `${resultSubcategory[0]._code}-${autoIncrementNumber}`,
-        _customerId: customerId,
+        _shopId: shopId,
         _orderId: orderId,
         _netWeight: dto.netWeight,
         _totalStoneWeight: dto.totalStoneWeight,
@@ -216,13 +216,13 @@ export class ProductsService {
           $match: { _id: { $in: newSettingsId } },
         });
       }
-      if (dto.customerIds.length > 0) {
+      if (dto.shopIds.length > 0) {
         var newSettingsId = [];
-        dto.customerIds.map((mapItem) => {
+        dto.shopIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
         arrayAggregation.push({
-          $match: { _customerId: { $in: newSettingsId } },
+          $match: { _shopId: { $in: newSettingsId } },
         });
       }
 
@@ -334,7 +334,7 @@ export class ProductsService {
           {
             $lookup: {
               from: ModelNames.USER,
-              let: { userId: '$_customerId' },
+              let: { userId: '$_shopId' },
               pipeline: [
                 {
                   $match: {
@@ -373,12 +373,12 @@ export class ProductsService {
                   },
                 },
               ],
-              as: 'userDetailsCustomer',
+              as: 'userDetailsShop',
             },
           },
           {
             $unwind: {
-              path: '$userDetailsCustomer',
+              path: '$userDetailsShop',
               preserveNullAndEmptyArrays: true,
             },
           },

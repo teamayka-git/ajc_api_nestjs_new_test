@@ -20,7 +20,7 @@ import { Counters } from 'src/tableModels/counters.model';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
 import { StringUtils } from 'src/utils/string_utils';
-import { Customers } from 'src/tableModels/customers.model';
+import { Shops } from 'src/tableModels/shops.model';
 import { User } from 'src/tableModels/user.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { Employee } from 'src/tableModels/employee.model';
@@ -37,8 +37,8 @@ export class OrderSalesService {
     private readonly orderSaleModel: Model<OrderSales>,
     @InjectModel(ModelNames.ORDER_SALES_DOCUMENTS)
     private readonly orderSaleDocumentsModel: Model<OrderSalesDocuments>,
-    @InjectModel(ModelNames.CUSTOMERS)
-    private readonly customersModel: Model<Customers>,
+    @InjectModel(ModelNames.SHOPS)
+    private readonly shopsModel: Model<Shops>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: Model<Counters>,
     @InjectModel(ModelNames.GLOBAL_GALLERIES)
@@ -94,7 +94,7 @@ export class OrderSalesService {
 
         //       new ThumbnailUtils().generateThumbnail(
         //         filePath,
-        //         UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER +
+        //         UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP +
         //           new StringUtils().makeThumbImageFileName(
         //             file['documents'][count]['filename'],
         //           ),
@@ -105,7 +105,7 @@ export class OrderSalesService {
         for (var i = 0; i < file['documents'].length; i++) {
           var resultUpload = await new S3BucketUtils().uploadMyFile(
             file['documents'][i],
-            UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER,
+            UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP,
           );
 
           if (resultUpload['status'] == 0) {
@@ -180,37 +180,37 @@ export class OrderSalesService {
         { new: true, session: transactionSession },
       );
 
-      var customerUserId = '';
-      if (dto.customerId == '' || dto.customerId == 'nil') {
-        customerUserId = _userId_;
+      var shopUserId = '';
+      if (dto.shopId == '' || dto.shopId == 'nil') {
+        shopUserId = _userId_;
       } else {
-        customerUserId = dto.customerId;
+        shopUserId = dto.shopId;
       }
-      var resultCustomerUser = await this.userModel.find({
-        _id: customerUserId,
+      var resultShopUser = await this.userModel.find({
+        _id: shopUserId,
         _status: 1,
       });
-      if (resultCustomerUser.length == 0) {
+      if (resultShopUser.length == 0) {
         throw new HttpException(
-          'Customer user not found',
+          'Shop user not found',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
 
-      var customerDetails = await this.customersModel.find({
-        _id: resultCustomerUser[0]._customerId,
+      var shopDetails = await this.shopsModel.find({
+        _id: resultShopUser[0]._shopId,
         _status: 1,
       });
-      if (customerDetails.length == 0) {
+      if (shopDetails.length == 0) {
         throw new HttpException(
-          'Customer not found',
+          'Shop not found',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
 
       const newsettingsModel = new this.orderSaleModel({
         _id: orderSaleId,
-        _customerId: customerUserId,
+        _shopId: shopUserId,
         _subCategoryId: dto.subCategoryId,
         _quantity: dto.quantity,
         _size: dto.size,
@@ -221,7 +221,7 @@ export class OrderSalesService {
         _halmarkOutFlag: 0,
         _invoiceGeneratedFlag: 0,
         _productData: { _idDone: 0 },
-        _salesPersonId: customerDetails[0]._orderHeadId,
+        _salesPersonId: shopDetails[0]._orderHeadId,
         _workStatus: 0,
         _rootCauseId: null,
         _rootCause: '',
@@ -241,7 +241,7 @@ export class OrderSalesService {
 
       const orderSaleHistoryModel = new this.orderSaleHistoriesModel({
         _orderSaleId: result1._id,
-        _userId: customerUserId,
+        _userId: shopUserId,
         _type: 0,
         _description: '',
         _createdUserId: _userId_,
@@ -307,7 +307,7 @@ export class OrderSalesService {
 
         //       new ThumbnailUtils().generateThumbnail(
         //         filePath,
-        //         UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER +
+        //         UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP +
         //           new StringUtils().makeThumbImageFileName(
         //             file['documents'][count]['filename'],
         //           ),
@@ -318,7 +318,7 @@ export class OrderSalesService {
         for (var i = 0; i < file['documents'].length; i++) {
           var resultUpload = await new S3BucketUtils().uploadMyFile(
             file['documents'][i],
-            UploadedFileDirectoryPath.GLOBAL_GALLERY_CUSTOMER,
+            UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP,
           );
 
           if (resultUpload['status'] == 0) {
@@ -378,10 +378,8 @@ export class OrderSalesService {
         );
       }
       var updateObject = {
-        _customerId:
-          dto.customerId == '' || dto.customerId == 'nil'
-            ? _userId_
-            : dto.customerId,
+        _shopId:
+          dto.shopId == '' || dto.shopId == 'nil' ? _userId_ : dto.shopId,
         _subCategoryId: dto.subCategoryId,
         _quantity: dto.quantity,
         _size: dto.size,
@@ -610,13 +608,13 @@ export class OrderSalesService {
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
 
-      if (dto.customerIds.length > 0) {
+      if (dto.shopIds.length > 0) {
         var newSettingsId = [];
-        dto.customerIds.map((mapItem) => {
+        dto.shopIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
         arrayAggregation.push({
-          $match: { _customerId: { $in: newSettingsId } },
+          $match: { _shopId: { $in: newSettingsId } },
         });
       }
       if (dto.isMatFinish.length > 0) {
@@ -1126,9 +1124,9 @@ export class OrderSalesService {
           {
             $lookup: {
               from: ModelNames.USER,
-              let: { customerId: '$_customerId' },
+              let: { shopId: '$_shopId' },
               pipeline: [
-                { $match: { $expr: { $eq: ['$_id', '$$customerId'] } } },
+                { $match: { $expr: { $eq: ['$_id', '$$shopId'] } } },
                 {
                   $lookup: {
                     from: ModelNames.GLOBAL_GALLERIES,
@@ -1151,12 +1149,12 @@ export class OrderSalesService {
                 },
                 {
                   $lookup: {
-                    from: ModelNames.CUSTOMERS,
-                    let: { customerUserId: '$_customerId' },
+                    from: ModelNames.SHOPS,
+                    let: { shopUserId: '$_shopId' },
                     pipeline: [
                       {
                         $match: {
-                          $expr: { $eq: ['$_id', '$$customerUserId'] },
+                          $expr: { $eq: ['$_id', '$$shopUserId'] },
                         },
                       },
 
@@ -1275,12 +1273,12 @@ export class OrderSalesService {
                   },
                 },
               ],
-              as: 'customerDetails',
+              as: 'shopDetails',
             },
           },
           {
             $unwind: {
-              path: '$customerDetails',
+              path: '$shopDetails',
               preserveNullAndEmptyArrays: true,
             },
           },
