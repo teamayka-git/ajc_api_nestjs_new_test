@@ -24,9 +24,9 @@ class OrderSaleRootCauseCreateList {
   @ApiProperty({})
   name: string;
 
-  @IsNumber()
-  @ApiProperty({ description: descriptionType })
-  type: number;
+  @IsArray()
+  @ApiProperty({ type: [Number], description: descriptionType })
+  type: number[];
 
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })
@@ -41,9 +41,9 @@ export class OrderSaleRootCauseCreateDto {
   array: OrderSaleRootCauseCreateList[];
 }
 export class OrderSaleRootCauseEditDto {
-  @IsNumber()
-  @ApiProperty({ description: descriptionType })
-  type: number;
+  @IsArray()
+  @ApiProperty({ type: [Number], description: descriptionType })
+  type: number[];
 
   @IsString()
   @ApiProperty({})
@@ -113,8 +113,4 @@ export class OrderSaleRootCauseExistDto {
   @IsString()
   @ApiProperty({})
   value: string;
-
-  @IsNumber()
-  @ApiProperty({ description: descriptionType })
-  type: number;
 }

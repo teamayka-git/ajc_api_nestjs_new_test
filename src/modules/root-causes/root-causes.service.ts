@@ -176,7 +176,7 @@ export class RootCausesService {
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
       if (dto.types.length > 0) {
-        arrayAggregation.push({ $match: { _type: { $in: dto.types } } });
+        arrayAggregation.push({ $match: { _type: { $all: dto.types } } });
       }
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
@@ -259,7 +259,7 @@ export class RootCausesService {
     transactionSession.startTransaction();
     try {
       var resultCount = await this.rootCauseModel
-        .count({ _name: dto.value, _type: dto.type, _status: { $in: [1, 0] } })
+        .count({ _name: dto.value, _status: { $in: [1, 0] } })
         .session(transactionSession);
 
       const responseJSON = {

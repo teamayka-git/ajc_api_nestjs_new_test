@@ -5,7 +5,7 @@ import { GlobalConfig } from 'src/config/global_config';
 export const RootCausesSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
   _name: { type: String, required: true, default: 'nil' },
-  _type: { type: Number, required: true, default: -1 },
+  _type: { type: Object, required: true, default: [] },
   _dataGuard: { type: Object, required: true, default: [] },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -25,7 +25,7 @@ export const RootCausesSchema = new mongoose.Schema({
 export interface RootCausesModel {
   _id: String;
   _name: String;
-  _type: number;
+  _type: Object;
   _dataGuard: Object;
   _createdUserId: String;
   _createdAt: Number;
