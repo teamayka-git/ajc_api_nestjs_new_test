@@ -34,11 +34,11 @@ export interface RootCausesModel {
   _status: Number;
 }
 
-RootCausesSchema.index({ _type: 1, _id: 1 });
+RootCausesSchema.index({ _type: 1 });
 RootCausesSchema.index({ _status: 1 });
 RootCausesSchema.index({ _name: 1, _id: 1 });
 RootCausesSchema.index(
-  { _name: 1, _type: 1 },
+  { _name: 1 },
   { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },
 );
 RootCausesSchema.post('save', async function (error, doc, next) {
