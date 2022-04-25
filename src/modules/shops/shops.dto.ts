@@ -24,6 +24,8 @@ const descriptionListSortType =
   '0-Created Date,1-Status  2-UID,  3-orderSaleRate, 4-stockSaleRate, 5-shopType, 6-billingModeSale, 7-billingModePurchase, 8-hallmarkingMandatoryStatus,9-creditAmount, 10-creditDays, 11-stonePricing, 12-agentCommision';
 const descriptionListScreenTypeForFilterLoading =
   '0-total documents count, 50-globalGalleryImagePopulate only if user details exist, 100-branch populate, 101-orderHead populate, 102-relationship manager populate, 103-supplier populate, 104-rate card populate, 106-city populate, 107-tds populate, 108-tcs populate, 109-ratebase master populate, 110-agent populate, 111-user details populate';
+const descriptionListScreenTypeEmployeeCustomer =
+  '0-total documents count, 50-globalGallery, 51- only customers,100- shop details,101- customer details';
 
 const descriptionOrderSaleRate = '0 - unfix, 1 - fix';
 const descriptionStockSaleRate = '0 - unfix, 1 - fix';
@@ -36,6 +38,8 @@ const descriptionStonePricing = '0-automatic, 1-Manual';
 const descriptionChatPermissions =
   '0-Allow voice message, 1-allow document uploading';
 const descriptionCustomType =
+  '1 - shop admin, 2 - shop sales man, 3 - shop casher, 4 - halmark staff';
+const descriptionCustomTypes =
   '1 - shop admin, 2 - shop sales man, 3 - shop casher, 4 - halmark staff';
 export class ShopLoginDto {
   @IsEmail()
@@ -579,16 +583,52 @@ export class ShopAddRemoveCustomerDto {
   arrayUsersNew: CustomerNewUsersCreateList[];
 }
 
-// export class ShopAcrossEmployeesAndCustomersDto {
-//   @IsArray()
-//   @ApiProperty({ type: [String] })
-//   shopIds: string[];
+export class ShopAcrossEmployeesAndCustomersDto {
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  shopIds: string[];
 
-//   @IsArray()
-//   @ApiProperty({ type: [String] })
-//   customerIds: string[];
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  customerIds: string[];
 
-//   @IsArray()
-//   @ApiProperty({ type: [String] })
-//   userIds: string[];
-// }
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  userIds: string[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionListScreenTypeEmployeeCustomer,
+  })
+  screenType: number[];
+
+  @IsNumber()
+  @ApiProperty({})
+  limit: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  skip: number;
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @ApiProperty({ type: [Number], description: descriptionStatus })
+  statusArray: number[];
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @ApiProperty({ type: [Number], description: descriptionCustomTypes })
+  customType: number[];
+
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortType })
+  sortType: number;
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortOrder })
+  sortOrder: number;
+
+  @IsString()
+  @ApiProperty({})
+  searchingText: string;
+}
