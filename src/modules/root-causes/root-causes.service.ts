@@ -176,7 +176,7 @@ export class RootCausesService {
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
       if (dto.types.length > 0) {
-        arrayAggregation.push({ $match: { _type: { $all: dto.types } } });
+        arrayAggregation.push({ $match: { _type: { $in: dto.types } } });
       }
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
