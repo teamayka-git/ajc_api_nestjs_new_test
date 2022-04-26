@@ -30,11 +30,7 @@ export const ShopsSchema = new mongoose.Schema({
     ref: ModelNames.USER,
     default: null,
   },
-  _supplierId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.USER,
-    default: null,
-  },
+  _isSupplier: { type: Number, required: true, default: -1 },
   _panCardNumber: { type: String, required: true, default: 'nil' },
   _billingModeSale: { type: Number, required: true, default: -1 },
   _billingModePurchase: { type: Number, required: true, default: -1 },
@@ -75,6 +71,7 @@ export const ShopsSchema = new mongoose.Schema({
     default: null,
   },
   _agentCommision: { type: Number, required: true, default: -1 },
+  _commisionType: { type: Number, required: true, default: -1 },
   _location: {
     type: {
       type: String,
@@ -113,7 +110,7 @@ export interface Shops {
   _branchId: String;
   _orderHeadId: String;
   _relationshipManagerId: String;
-  _supplierId: String;
+  _isSupplier: number;
   _globalGalleryId: String;
   _panCardNumber: String;
   _billingModeSale: Number;
@@ -130,6 +127,7 @@ export interface Shops {
   _chatPermissions: Object;
   _agentId: String;
   _agentCommision: Number;
+  _commisionType: number;
   _location: object;
 
   _dataGuard: Object;
@@ -142,6 +140,8 @@ export interface Shops {
 
 ShopsSchema.index({ _location: '2dsphere' });
 ShopsSchema.index({ _name: 1 });
+
+ShopsSchema.index({ _commisionType: 1 });
 ShopsSchema.index({ _rateCardId: 1 });
 ShopsSchema.index({ _agentCommision: 1 });
 ShopsSchema.index({ _agentId: 1 });
@@ -159,7 +159,7 @@ ShopsSchema.index({ _hallmarkingMandatoryStatus: 1 });
 ShopsSchema.index({ _billingModePurchase: 1 });
 ShopsSchema.index({ _billingModeSale: 1 });
 ShopsSchema.index({ _panCardNumber: 1 });
-ShopsSchema.index({ _supplierId: 1 });
+ShopsSchema.index({ _isSupplier: 1 });
 ShopsSchema.index({ _relationshipManagerId: 1 });
 ShopsSchema.index({ _orderHeadId: 1 });
 ShopsSchema.index({ _branchId: 1 });
@@ -195,7 +195,10 @@ function schemaPostFunctionForDuplicate(error, doc, next) {
 }
 
 /*
-
+_commisionType:{
+  0 - amount
+  1 - percentage
+}
 _orderSaleRate:{
     0 - unfix
     1 - fix

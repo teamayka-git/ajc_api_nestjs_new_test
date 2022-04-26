@@ -233,10 +233,11 @@ export class ShopsService {
         _orderSaleRate: dto.orderSaleRate,
         _stockSaleRate: dto.stockSaleRate,
         _shopType: dto.shopType,
+        _commisionType: dto.commisionType,
         _branchId: dto.branchId,
         _orderHeadId: dto.orderHeadId,
         _relationshipManagerId: dto.relationshipManagerId,
-        _supplierId:dto.supplierId == 'nil' || dto.supplierId == '' ? null : dto.supplierId ,
+        _isSupplier: dto.isSupplier,
         _panCardNumber: dto.panCardNumber,
         _billingModeSale: dto.billingModeSale,
         _billingModePurchase: dto.billingModePurchase,
@@ -251,7 +252,8 @@ export class ShopsService {
         _rateBaseMasterId: dto.rateBaseMasterId,
         _stonePricing: dto.stonePricing,
         _chatPermissions: dto.chatPermissions,
-        _agentId:dto.agentId == 'nil' || dto.agentId == '' ? null : dto.agentId ,
+        _agentId:
+          dto.agentId == 'nil' || dto.agentId == '' ? null : dto.agentId,
         _agentCommision: dto.agentCommision,
         _location: { type: 'Point', coordinates: dto.location },
 
@@ -436,7 +438,8 @@ export class ShopsService {
         _branchId: dto.branchId,
         _orderHeadId: dto.orderHeadId,
         _relationshipManagerId: dto.relationshipManagerId,
-        _supplierId: dto.supplierId,
+        _isSupplier: dto.isSupplier,
+        _commisionType: dto.commisionType,
         _panCardNumber: dto.panCardNumber,
         _billingModeSale: dto.billingModeSale,
         _billingModePurchase: dto.billingModePurchase,
@@ -632,32 +635,33 @@ export class ShopsService {
       if (dto.searchingText != '') {
         //todo
 
-        var resultUserSearch = await this.userModel
-          .aggregate([
-            {
-              $match: {
-                $or: [
-                  { _name: new RegExp(dto.searchingText, 'i') },
-                  { _email: dto.searchingText },
-                  { _mobile: new RegExp(dto.searchingText, 'i') },
-                ],
-                _status: { $in: dto.statusArray },
-              },
-            },
-            { $project: { _id: 1 } },
-          ])
-          .session(transactionSession);
+        // var resultUserSearch = await this.userModel
+        //   .aggregate([
+        //     {
+        //       $match: {
+        //         $or: [
+        //           { _name: new RegExp(dto.searchingText, 'i') },
+        //           { _email: dto.searchingText },
+        //           { _mobile: new RegExp(dto.searchingText, 'i') },
+        //         ],
+        //         _status: { $in: dto.statusArray },
+        //       },
+        //     },
+        //     { $project: { _id: 1 } },
+        //   ])
+        //   .session(transactionSession);
 
-        var userIdsSearch = [];
-        resultUserSearch.map((mapItem) => {
-          userIdsSearch.push(new mongoose.Types.ObjectId(mapItem._id));
-        });
+        // var userIdsSearch = [];
+        // resultUserSearch.map((mapItem) => {
+        //   userIdsSearch.push(new mongoose.Types.ObjectId(mapItem._id));
+        // });
 
         arrayAggregation.push({
           $match: {
             $or: [
-              { _id: { $in: userIdsSearch } },
+              // { _id: { $in: userIdsSearch } },
               { _uid: dto.searchingText },
+              { _name: new RegExp(dto.searchingText, 'i') },
               { _panCardNumber: dto.searchingText },
               { _gstNumber: dto.searchingText },
             ],
@@ -678,6 +682,12 @@ export class ShopsService {
           $match: { _orderSaleRate: { $in: dto.orderSaleRates } },
         });
       }
+
+      if (dto.commisionType.length > 0) {
+        arrayAggregation.push({
+          $match: { _commisionType: { $in: dto.commisionType } },
+        });
+      }
       if (dto.stockSaleRates.length > 0) {
         arrayAggregation.push({
           $match: { _stockSaleRate: { $in: dto.stockSaleRates } },
@@ -686,6 +696,12 @@ export class ShopsService {
       if (dto.shopTypes.length > 0) {
         arrayAggregation.push({
           $match: { _shopType: { $in: dto.shopTypes } },
+        });
+      }
+
+      if (dto.isSupplier.length > 0) {
+        arrayAggregation.push({
+          $match: { _isSupplier: { $in: dto.isSupplier } },
         });
       }
       if (dto.billingModelSales.length > 0) {
@@ -993,52 +1009,6 @@ export class ShopsService {
           {
             $unwind: {
               path: '$relationshipManagerDetails',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-        );
-      }
-
-      if (dto.screenType.findIndex((it) => it == 103) != -1) {
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.USER,
-              let: { supplierId: '$_supplierId' },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: { $eq: ['$_id', '$$supplierId'] },
-                  },
-                },
-
-                {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                        },
-                      },
-                    ],
-                    as: 'globalGalleryDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
-              ],
-              as: 'supplierUserDetails',
-            },
-          },
-          {
-            $unwind: {
-              path: '$supplierUserDetails',
               preserveNullAndEmptyArrays: true,
             },
           },

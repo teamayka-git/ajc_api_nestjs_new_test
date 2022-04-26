@@ -23,7 +23,7 @@ const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType =
   '0-Created Date,1-Status  2-UID,  3-orderSaleRate, 4-stockSaleRate, 5-shopType, 6-billingModeSale, 7-billingModePurchase, 8-hallmarkingMandatoryStatus,9-creditAmount, 10-creditDays, 11-stonePricing, 12-agentCommision';
 const descriptionListScreenTypeForFilterLoading =
-  '0-total documents count, 50-globalGalleryImagePopulate only if user details exist, 100-branch populate, 101-orderHead populate, 102-relationship manager populate, 103-supplier populate, 104-rate card populate, 106-city populate, 107-tds populate, 108-tcs populate, 109-ratebase master populate, 110-agent populate, 111-user details populate';
+  '0-total documents count, 50-globalGalleryImagePopulate only if user details exist, 100-branch populate, 101-orderHead populate, 102-relationship manager populate,  104-rate card populate, 106-city populate, 107-tds populate, 108-tcs populate, 109-ratebase master populate, 110-agent populate, 111-user details populate';
 const descriptionListScreenTypeEmployeeCustomer =
   '0-total documents count, 50-globalGallery, 51- only customers,100- shop details,101- customer details';
 
@@ -41,6 +41,8 @@ const descriptionCustomType =
   '1 - shop admin, 2 - shop sales man, 3 - shop casher, 4 - halmark staff';
 const descriptionCustomTypes =
   '1 - shop admin, 2 - shop sales man, 3 - shop casher, 4 - halmark staff';
+const descriptionCommisionType = '  0 - amount, 1 - percentage';
+
 export class ShopLoginDto {
   @IsEmail()
   @ApiProperty({})
@@ -136,6 +138,11 @@ export class ShopCreateDto {
 
   @Transform(({ value }) => Number(value))
   @IsNumber()
+  @ApiProperty({ description: descriptionCommisionType })
+  commisionType: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
   @ApiProperty({ description: descriptionStockSaleRate })
   stockSaleRate: number;
 
@@ -159,9 +166,9 @@ export class ShopCreateDto {
   @ApiProperty({})
   relationshipManagerId: string;
 
-  @IsString()
+  @IsNumber()
   @ApiProperty({})
-  supplierId: string;
+  isSupplier: number;
 
   @IsString()
   @ApiProperty({})
@@ -287,6 +294,11 @@ export class ShopEditeDto {
 
   @Transform(({ value }) => Number(value))
   @IsNumber()
+  @ApiProperty({ description: descriptionCommisionType })
+  commisionType: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
   @ApiProperty({ description: descriptionStockSaleRate })
   stockSaleRate: number;
 
@@ -307,9 +319,9 @@ export class ShopEditeDto {
   @ApiProperty({})
   relationshipManagerId: string;
 
-  @IsString()
+  @IsNumber()
   @ApiProperty({})
-  supplierId: string;
+  isSupplier: number;
 
   @IsString()
   @ApiProperty({})
@@ -438,6 +450,13 @@ export class ListShopDto {
   })
   screenType: number[];
 
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionCommisionType,
+  })
+  commisionType: number[];
+
   @IsNumber()
   @ApiProperty({})
   limit: number;
@@ -460,6 +479,10 @@ export class ListShopDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   shopIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [Number] })
+  isSupplier: number[];
 
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionOrderSaleRate })
@@ -496,10 +519,6 @@ export class ListShopDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   relationshipManagerIds: string[];
-
-  @IsArray()
-  @ApiProperty({ type: [String] })
-  supplierIds: string[];
 
   @IsArray()
   @ApiProperty({ type: [String] })
