@@ -180,25 +180,8 @@ export class OrderSalesService {
         { new: true, session: transactionSession },
       );
 
-      var shopUserId = '';
-      if (dto.shopId == '' || dto.shopId == 'nil') {
-        shopUserId = _userId_;
-      } else {
-        shopUserId = dto.shopId;
-      }
-      var resultShopUser = await this.userModel.find({
-        _id: shopUserId,
-        _status: 1,
-      });
-      if (resultShopUser.length == 0) {
-        throw new HttpException(
-          'Shop user not found',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-
       var shopDetails = await this.shopsModel.find({
-        _id: resultShopUser[0]._shopId,
+        _id: dto.shopId,
         _status: 1,
       });
       if (shopDetails.length == 0) {
@@ -210,7 +193,7 @@ export class OrderSalesService {
 
       const newsettingsModel = new this.orderSaleModel({
         _id: orderSaleId,
-        _shopId: shopUserId,
+        _shopId: dto.shopId,
         _subCategoryId: dto.subCategoryId,
         _quantity: dto.quantity,
         _size: dto.size,
@@ -241,7 +224,8 @@ export class OrderSalesService {
 
       const orderSaleHistoryModel = new this.orderSaleHistoriesModel({
         _orderSaleId: result1._id,
-        _userId: shopUserId,
+        _userId: null,
+        _shopId: dto.shopId,
         _type: 0,
         _description: '',
         _createdUserId: _userId_,
@@ -407,6 +391,7 @@ export class OrderSalesService {
         _orderSaleId: dto.orderSaleId,
         _userId: null,
         _type: 100,
+        _shopId: null,
         _description: '',
         _createdUserId: _userId_,
         _createdAt: dateTime,
@@ -480,6 +465,7 @@ export class OrderSalesService {
           _orderSaleId: mapItem,
           _userId: null,
           _type: type,
+          _shopId: null,
           _description: '',
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -543,6 +529,7 @@ export class OrderSalesService {
           _orderSaleId: mapItem,
           _userId: null,
           _type: dto.workStatus,
+          _shopId: null,
           _description: '',
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -1781,6 +1768,70 @@ export class OrderSalesService {
             preserveNullAndEmptyArrays: true,
           },
         },
+
+        {
+          $lookup: {
+            from: ModelNames.SHOPS,
+            let: { shopId: '$_shopId' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$_id', '$$shopId'] },
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
+                    },
+                    {
+                      $project: {
+                        _name: 1,
+                        _docType: 1,
+                        _type: 1,
+                        _uid: 1,
+                        _url: 1,
+                      },
+                    },
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $project: {
+                  _name: 1,
+                  _uid: 1,
+                  _globalGalleryId: 1,
+                  globalGalleryDetails: {
+                    _name: 1,
+                    _docType: 1,
+                    _type: 1,
+                    _uid: 1,
+                    _url: 1,
+                  }
+                },
+              },
+            ],
+            as: 'shopDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$shopDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
       );
       var result = await this.orderSaleHistoriesModel
         .aggregate(arrayAggregation)
@@ -1837,6 +1888,7 @@ export class OrderSalesService {
           _orderSaleId: mapItem,
           _userId: null,
           _type: 104,
+          _shopId: null,
           _description: dto.generalRemark,
           _createdUserId: _userId_,
           _createdAt: dateTime,

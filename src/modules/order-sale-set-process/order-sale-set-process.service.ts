@@ -129,6 +129,7 @@ export class OrderSaleSetProcessService {
         arrayToOrderSaleHistories.push({
           _orderSaleId: mapItem.orderSaleId,
           _userId: null,
+          _shopId: null,
           _type: 3,
           _description: '',
           _createdUserId: _userId_,

@@ -236,7 +236,7 @@ export class ShopsService {
         _branchId: dto.branchId,
         _orderHeadId: dto.orderHeadId,
         _relationshipManagerId: dto.relationshipManagerId,
-        _supplierId: dto.supplierId,
+        _supplierId:dto.supplierId == 'nil' || dto.supplierId == '' ? null : dto.supplierId ,
         _panCardNumber: dto.panCardNumber,
         _billingModeSale: dto.billingModeSale,
         _billingModePurchase: dto.billingModePurchase,
@@ -251,7 +251,7 @@ export class ShopsService {
         _rateBaseMasterId: dto.rateBaseMasterId,
         _stonePricing: dto.stonePricing,
         _chatPermissions: dto.chatPermissions,
-        _agentId: dto.agentId,
+        _agentId:dto.agentId == 'nil' || dto.agentId == '' ? null : dto.agentId ,
         _agentCommision: dto.agentCommision,
         _location: { type: 'Point', coordinates: dto.location },
 
