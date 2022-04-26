@@ -41,10 +41,6 @@ class HalmarkNewUsersCreateList {
   @ApiProperty({})
   acHolderName: string;
 
-  @IsString()
-  @ApiProperty({})
-  branchName: string;
-
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })
   dataGuard: number[];

@@ -77,10 +77,6 @@ class CustomerNewUsersCreateList {
 
   @IsString()
   @ApiProperty({})
-  branchName: string;
-
-  @IsString()
-  @ApiProperty({})
   field1: string;
 
   @IsString()
@@ -119,10 +115,6 @@ class ShopNewUsersCreateList {
   @IsString()
   @ApiProperty({})
   acHolderName: string;
-
-  @IsString()
-  @ApiProperty({})
-  branchName: string;
 
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })
