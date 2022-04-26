@@ -67,8 +67,7 @@ export class GlobalGalleryService {
               UploadedFileDirectoryPath.GLOBAL_GALLERY_SUPPLIER;
             break;
           case 7:
-            document_location =
-              UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP;
+            document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP;
             break;
           default:
             document_location = UploadedFileDirectoryPath.GLOBAL_GALLERY_OTHERS;
@@ -87,14 +86,14 @@ export class GlobalGalleryService {
               HttpStatus.INTERNAL_SERVER_ERROR,
             );
           }
-        }
-        var count = dto.array.findIndex(
-          (it) => it.originalname == file['documents'][i]['originalname'],
-        );
-        if (count != -1) {
-          dto.array[count]['url'] = resultUpload['url'];
-        } else {
-          dto.array[count]['url'] = 'nil';
+          var count = dto.array.findIndex(
+            (it) => it.originalname == file['documents'][i]['originalname'],
+          );
+          if (count != -1) {
+            dto.array[count]['url'] = resultUpload['url'];
+          } else {
+            dto.array[count]['url'] = 'nil';
+          }
         }
       }
 
