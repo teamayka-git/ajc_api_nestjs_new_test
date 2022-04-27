@@ -1110,7 +1110,7 @@ export class OrderSalesService {
         arrayAggregation.push(
           {
             $lookup: {
-              from: ModelNames.USER,
+              from: ModelNames.SHOPS,
               let: { shopId: '$_shopId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$shopId'] } } },
@@ -1819,7 +1819,7 @@ export class OrderSalesService {
                     _type: 1,
                     _uid: 1,
                     _url: 1,
-                  }
+                  },
                 },
               },
             ],
