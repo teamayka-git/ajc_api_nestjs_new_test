@@ -8,6 +8,8 @@ import { ProductStoneLinkingsSchema } from 'src/tableModels/productStoneLinkings
 import { CountersSchema } from 'src/tableModels/counters.model';
 import { CategoriesSchema } from 'src/tableModels/categories.model';
 import { SubCategoriesSchema } from 'src/tableModels/sub_categories.model';
+import { OrderSalesSchema } from 'src/tableModels/order_sales.model';
+import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.model';
 
 @Module({
   imports: [
@@ -18,6 +20,11 @@ import { SubCategoriesSchema } from 'src/tableModels/sub_categories.model';
       {
         name: ModelNames.PRODUCT_STONE_LINKIGS,
         schema: ProductStoneLinkingsSchema,
+      },
+      { name: ModelNames.ORDER_SALES, schema: OrderSalesSchema },
+      {
+        name: ModelNames.ORDER_SALE_HISTORIES,
+        schema: OrderSaleHistoriesSchema,
       },
     ]),
   ],

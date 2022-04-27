@@ -10,6 +10,8 @@ import { StringUtils } from 'src/utils/string_utils';
 import { ProductStoneLinkings } from 'src/tableModels/productStoneLinkings.model';
 import { SubCategories } from 'src/tableModels/sub_categories.model';
 import { ProductCreateDto, ProductListDto } from './products.dto';
+import { OrderSales } from 'src/tableModels/order_sales.model';
+import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 
 @Injectable()
 export class ProductsService {
@@ -22,6 +24,11 @@ export class ProductsService {
     private readonly subCategoriesModel: Model<SubCategories>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: Model<Counters>,
+    @InjectModel(ModelNames.ORDER_SALES)
+    private readonly orderSaleModel: Model<OrderSales>,
+
+    @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
+    private readonly orderSaleHistoriesModel: Model<OrderSaleHistories>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
@@ -164,6 +171,36 @@ export class ProductsService {
       var result1 = await this.productModel.insertMany(arrayToProducts, {
         session: transactionSession,
       });
+
+      if (orderId != null) {
+        var result = await this.orderSaleModel.findOneAndUpdate(
+          {
+            _id: dto.orderId,
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _workStatus: 6,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+        const orderSaleHistoryModel = new this.orderSaleHistoriesModel({
+          _orderSaleId: null,
+          _userId: null,
+          _type: 6,
+          _shopId: null,
+          _description: '',
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _status: 1,
+        });
+        await orderSaleHistoryModel.save({
+          session: transactionSession,
+        });
+      }
 
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
