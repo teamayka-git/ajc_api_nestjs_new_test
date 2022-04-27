@@ -33,6 +33,7 @@ export const OrderSalesSchema = new mongoose.Schema({
   _description: { type: String, default: '' },
   _generalRemark: { type: String, default: '' },
   _isMatFinish: { type: Number, required: true, default: -1 },
+  _type: { type: Number, required: true, default: -1 },
   _isRhodium: { type: Number, required: true, default: -1 },
   _workStatus: { type: Number, required: true, default: -1 },
   _productData: { type: Object, required: true, default: {} },
@@ -68,6 +69,7 @@ export interface OrderSales {
   _workStatus: number;
   _productData: object;
   _rootCauseId: String;
+  _type: number;
   _rootCause: String;
   _salesPersonId: string;
   _description: string;
@@ -82,6 +84,7 @@ export interface OrderSales {
   _status: Number;
 }
 
+OrderSalesSchema.index({ _type: 1 });
 OrderSalesSchema.index({ _halmarkOutFlag: 1 });
 OrderSalesSchema.index({ _invoiceGeneratedFlag: 1 });
 OrderSalesSchema.index({ _workStatus: 1 });
@@ -135,5 +138,9 @@ _workStatus:{
   31 - order completed
   32 - order cancelled
   
+}
+_type:{
+  0 - order sale
+  1 - stock sale
 }
 */

@@ -197,6 +197,7 @@ export class OrderSalesService {
         _subCategoryId: dto.subCategoryId,
         _quantity: dto.quantity,
         _size: dto.size,
+        _type: dto.type,
         _uid: resultCounterPurchase._count,
         _weight: dto.weight,
         _stoneColour: dto.stoneColor,
@@ -369,6 +370,7 @@ export class OrderSalesService {
         _size: dto.size,
         _weight: dto.weight,
         _stoneColour: dto.stoneColor,
+        _type: dto.type,
         _dueDate: dto.dueDate,
 
         _isMatFinish: dto.isMatFinish,
