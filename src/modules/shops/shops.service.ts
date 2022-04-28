@@ -228,6 +228,7 @@ export class ShopsService {
 
       const newsettingsModel = new this.shopsModel({
         _id: shopId,
+        _name: dto.name,
         _uid: resultCounterPurchase._count,
         _globalGalleryId: globalGalleryId,
         _orderSaleRate: dto.orderSaleRate,
@@ -431,6 +432,7 @@ export class ShopsService {
       // }
 
       var objShop = {
+        _name: dto.name,
         _orderSaleRate: dto.orderSaleRate,
         _stockSaleRate: dto.stockSaleRate,
         _shopType: dto.shopType,
