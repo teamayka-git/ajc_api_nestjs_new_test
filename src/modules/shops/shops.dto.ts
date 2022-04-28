@@ -628,7 +628,6 @@ export class ShopAcrossEmployeesAndCustomersDto {
   statusArray: number[];
 
   @IsArray()
-  @ArrayMinSize(1)
   @ApiProperty({ type: [Number], description: descriptionCustomTypes })
   customType: number[];
 

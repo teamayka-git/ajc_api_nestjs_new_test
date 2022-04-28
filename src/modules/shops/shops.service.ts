@@ -122,12 +122,12 @@ export class ShopsService {
                 { $match: { $expr: { $eq: ['$_id', '$$shopId'] } } },
                 { $project: { _password: 0 } },
               ],
-              as: 'userDetails',
+              as: 'shopDetails',
             },
           },
           {
             $unwind: {
-              path: '$userDetails',
+              path: '$shopDetails',
               preserveNullAndEmptyArrays: true,
             },
           },
