@@ -18,7 +18,8 @@ const DescriptionOrderSaleChangeProcessOrderStatus =
 const DescriptionAddSubProcessHistory =
   '0-no need to add any history for sub process, 1-add subprocess history like started finished like';
 
-const DescriptionSetProcessHistoryType = 'Refer set process history table type';
+const DescriptionSetProcessHistoryType =
+  '/order-sale-set-process/setProcessHistories';
 const DescriptionOrderSaleSetProcessHistories =
   ' 0 - created  process, 1 - process work assigned, 2 - process work started, 3 - finished process work, 4 - process work on holding, 5 - process work on reassign request, 6 - process description editted';
 const DescriptionOrderSaleSetSubProcessHistories =

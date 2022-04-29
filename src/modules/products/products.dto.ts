@@ -167,3 +167,13 @@ export class ProductListDto {
   @ApiProperty({})
   searchingText: string;
 }
+
+export class ProductEcommerceStatusChangeDto {
+  @IsNumber()
+  @ApiProperty({})
+  eCommerceStatus: number;
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  productIds: string[];
+}

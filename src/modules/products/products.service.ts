@@ -9,7 +9,11 @@ import { Counters } from 'src/tableModels/counters.model';
 import { StringUtils } from 'src/utils/string_utils';
 import { ProductStoneLinkings } from 'src/tableModels/productStoneLinkings.model';
 import { SubCategories } from 'src/tableModels/sub_categories.model';
-import { ProductCreateDto, ProductListDto } from './products.dto';
+import {
+  ProductCreateDto,
+  ProductEcommerceStatusChangeDto,
+  ProductListDto,
+} from './products.dto';
 import { OrderSales } from 'src/tableModels/order_sales.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 
@@ -370,13 +374,13 @@ export class ProductsService {
         arrayAggregation.push(
           {
             $lookup: {
-              from: ModelNames.USER,
-              let: { userId: '$_shopId' },
+              from: ModelNames.SHOPS,
+              let: { shopId: '$_shopId' },
               pipeline: [
                 {
                   $match: {
                     $expr: {
-                      $and: [{ $eq: ['$_id', '$$userId'] }],
+                      $and: [{ $eq: ['$_id', '$$shopId'] }],
                     },
                   },
                 },
@@ -410,12 +414,12 @@ export class ProductsService {
                   },
                 },
               ],
-              as: 'userDetailsShop',
+              as: 'shopDetails',
             },
           },
           {
             $unwind: {
-              path: '$userDetailsShop',
+              path: '$shopDetails',
               preserveNullAndEmptyArrays: true,
             },
           },
@@ -686,6 +690,50 @@ export class ProductsService {
         message: 'success',
         data: { list: result, totalCount: totalCount },
       };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async change_e_commerce_status(
+    dto: ProductEcommerceStatusChangeDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var result = await this.productModel.updateMany(
+        {
+          _id: { $in: dto.productIds },
+        },
+        {
+          $set: {
+            _eCommerceStatus: dto.eCommerceStatus,
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      const responseJSON = { message: 'success', data: result };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=

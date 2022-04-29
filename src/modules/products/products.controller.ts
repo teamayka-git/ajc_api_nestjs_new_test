@@ -1,6 +1,10 @@
 import { Body, Controller, Post, Request } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { ProductCreateDto, ProductListDto } from './products.dto';
+import {
+  ProductCreateDto,
+  ProductEcommerceStatusChangeDto,
+  ProductListDto,
+} from './products.dto';
 import { ProductsService } from './products.service';
 
 @ApiTags('Products Docs')
@@ -16,5 +20,13 @@ export class ProductsController {
   @Post('list')
   list(@Body() dto: ProductListDto) {
     return this.productsService.list(dto);
+  }
+
+  @Post('change_e_commerce_status')
+  change_e_commerce_status(
+    @Body() dto: ProductEcommerceStatusChangeDto,
+    @Request() req,
+  ) {
+    return this.productsService.change_e_commerce_status(dto, req['_userId_']);
   }
 }
