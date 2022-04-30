@@ -37,10 +37,6 @@ class HalmarkNewUsersCreateList {
   @ApiProperty({})
   mobile: string;
 
-  @IsString()
-  @ApiProperty({})
-  acHolderName: string;
-
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })
   dataGuard: number[];
