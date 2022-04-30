@@ -1152,6 +1152,39 @@ export class ShopsService {
       throw error;
     }
   }
+  async checkEmailUserGet(dto: CheckEmailExistDto) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var resultCount = await this.userModel
+        .find({ _email: dto.value, _status: { $in: [1, 0] } })
+        .session(transactionSession);
+
+      const responseJSON = {
+        message: 'success',
+        data: { count: resultCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
 
   async checkMobileExisting(dto: CheckMobileExistDto) {
     var dateTime = new Date().getTime();

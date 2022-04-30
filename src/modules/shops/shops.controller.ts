@@ -135,6 +135,10 @@ export class ShopsController {
   checkEmailExisting(@Body() dto: CheckEmailExistDto) {
     return this.shopService.checkEmailExisting(dto);
   }
+  @Post('checkEmailUserGet')
+  checkEmailUserGet(@Body() dto: CheckEmailExistDto) {
+    return this.shopService.checkEmailUserGet(dto);
+  }
 
   @Post('checkMobileExisting')
   checkMobileExisting(@Body() dto: CheckMobileExistDto) {
