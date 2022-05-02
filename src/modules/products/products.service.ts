@@ -176,6 +176,10 @@ export class ProductsService {
         session: transactionSession,
       });
 
+      await this.productStoneLinkingsModel.insertMany(arrayStonesLinkings, {
+        session: transactionSession,
+      });
+
       if (orderId != null) {
         var result = await this.orderSaleModel.findOneAndUpdate(
           {
