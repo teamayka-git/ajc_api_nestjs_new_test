@@ -50,6 +50,13 @@ export enum ModelNames {
   HALMARK_CENTERS = 'halmark_centers',
   CUSTOMERS = 'customers',
 
+  DELIVERY_PROVIDER = 'delivery_providers',
+  PHOTOGRAPHER_REQUESTS = 'photographer_requests',
+  DELIVERY_CHALLANS = 'delivery_challans',
+  DELIVERY_CHALLAN_ITEMS = 'delivery_challan_items',
+  INVOICES = 'invoices',
+  INVOICE_ITEMS = 'invoice_items',
+
   CHAT_PERSONAL_CHAT_MESSAGES = 'chat_personal_chat_messages',
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',
   CHAT_PENDING_MESSAGES = 'chat_pending_messages',

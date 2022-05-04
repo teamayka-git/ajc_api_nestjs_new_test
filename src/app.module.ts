@@ -64,6 +64,7 @@ import { UserAttendanceModule } from './modules/user-attendance/user-attendance.
 import { HalmarkCentersModule } from './modules/halmark-centers/halmark-centers.module';
 import { RootCausesModule } from './modules/root-causes/root-causes.module';
 import { ShopsModule } from './modules/shops/shops.module';
+import { DeliveryProviderModule } from './modules/delivery-provider/delivery-provider.module';
 
 @Module({
   imports: [
@@ -139,6 +140,7 @@ import { ShopsModule } from './modules/shops/shops.module';
     ColourMastersModule,
     UserAttendanceModule,
     HalmarkCentersModule,
+    DeliveryProviderModule,
 
     // SalesReturnRequestStatusesModule,
   ],
