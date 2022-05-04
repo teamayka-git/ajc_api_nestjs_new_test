@@ -125,4 +125,8 @@ export class ColoursCheckNameExistDto {
   @IsString()
   @ApiProperty({})
   value: string;
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  existingIds: string[];
 }

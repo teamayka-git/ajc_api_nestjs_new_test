@@ -792,7 +792,7 @@ export class CategoriesService {
     transactionSession.startTransaction();
     try {
       var resultCount = await this.categoriesModel
-        .count({ _code: dto.value })
+        .count({ _code: dto.value, _id: { $nin: dto.existingIds } })
         .session(transactionSession);
 
       const responseJSON = {
@@ -826,7 +826,11 @@ export class CategoriesService {
     transactionSession.startTransaction();
     try {
       var resultCount = await this.categoriesModel
-        .count({ _name: dto.value, _status: { $in: [1, 0] } })
+        .count({
+          _name: dto.value,
+          _id: { $nin: dto.existingIds },
+          _status: { $in: [1, 0] },
+        })
         .session(transactionSession);
 
       const responseJSON = {

@@ -179,9 +179,17 @@ export class CheckEmailExistDto {
   @IsString()
   @ApiProperty({})
   value: string;
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  existingIds: string[];
 }
 export class CheckMobileExistDto {
   @IsString()
   @ApiProperty({})
   value: string;
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  existingIds: string[];
 }

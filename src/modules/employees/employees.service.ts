@@ -257,7 +257,7 @@ export class EmployeesService {
             _agentId: null,
             _supplierId: null,
             _shopId: null,
-            _customerId:null,
+            _customerId: null,
             _fcmId: '',
             _deviceUniqueId: '',
             _permissions: [],
@@ -569,7 +569,6 @@ export class EmployeesService {
                 {
                   $match: { $expr: { $eq: ['$_employeeId', '$$employeeId'] } },
                 },
-               
               ],
               as: 'userDetails',
             },
@@ -706,7 +705,11 @@ export class EmployeesService {
     transactionSession.startTransaction();
     try {
       var resultCount = await this.userModel
-        .count({ _email: dto.value, _status: { $in: [1, 0] } })
+        .count({
+          _email: dto.value,
+          _id: { $nin: dto.existingIds },
+          _status: { $in: [1, 0] },
+        })
         .session(transactionSession);
 
       const responseJSON = {
@@ -740,7 +743,11 @@ export class EmployeesService {
     transactionSession.startTransaction();
     try {
       var resultCount = await this.userModel
-        .count({ _mobile: dto.value, _status: { $in: [1, 0] } })
+        .count({
+          _mobile: dto.value,
+          _id: { $nin: dto.existingIds },
+          _status: { $in: [1, 0] },
+        })
         .session(transactionSession);
 
       const responseJSON = {

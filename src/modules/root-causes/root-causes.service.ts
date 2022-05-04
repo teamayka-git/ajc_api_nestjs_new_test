@@ -259,7 +259,11 @@ export class RootCausesService {
     transactionSession.startTransaction();
     try {
       var resultCount = await this.rootCauseModel
-        .count({ _name: dto.value, _status: { $in: [1, 0] } })
+        .count({
+          _name: dto.value,
+          _id: { $nin: dto.existingIds },
+          _status: { $in: [1, 0] },
+        })
         .session(transactionSession);
 
       const responseJSON = {

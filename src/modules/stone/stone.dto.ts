@@ -146,4 +146,8 @@ export class CheckNameExistDto {
   @IsString()
   @ApiProperty({})
   value: string;
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  existingIds: string[];
 }

@@ -222,7 +222,7 @@ export class GeneralsService {
     transactionSession.startTransaction();
     try {
       var resultCount = await this.generalsModel
-        .count({ _code: dto.value })
+        .count({ _code: dto.value, _id: { $nin: dto.existingIds } })
         .session(transactionSession);
 
       const responseJSON = {

@@ -259,7 +259,11 @@ export class ColourMastersService {
     transactionSession.startTransaction();
     try {
       var resultCount = await this.coloursModel
-        .count({ _name: dto.value, _status: { $in: [1, 0] } })
+        .count({
+          _name: dto.value,
+          _id: { $nin: dto.existingIds },
+          _status: { $in: [1, 0] },
+        })
         .session(transactionSession);
 
       const responseJSON = {
@@ -292,7 +296,12 @@ export class ColourMastersService {
     transactionSession.startTransaction();
     try {
       var resultCount = await this.coloursModel
-        .count({ _hexCode: dto.value, _type: 0, _status: { $in: [1, 0] } })
+        .count({
+          _hexCode: dto.value,
+          _id: { $nin: dto.existingIds },
+          _type: 0,
+          _status: { $in: [1, 0] },
+        })
         .session(transactionSession);
 
       const responseJSON = {

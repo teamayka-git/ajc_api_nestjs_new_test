@@ -113,4 +113,8 @@ export class OrderSaleRootCauseExistDto {
   @IsString()
   @ApiProperty({})
   value: string;
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  existingIds: string[];
 }

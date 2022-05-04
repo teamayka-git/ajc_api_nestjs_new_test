@@ -252,7 +252,7 @@ export class SupplierService {
             _password: encryptedPassword,
             _customType: 0,
             _halmarkId: null,
-            _customerId:null,
+            _customerId: null,
 
             _employeeId: null,
             _agentId: null,
@@ -715,7 +715,11 @@ export class SupplierService {
     transactionSession.startTransaction();
     try {
       var resultCount = await this.userModel
-        .count({ _email: dto.value, _status: { $in: [1, 0] } })
+        .count({
+          _email: dto.value,
+          _id: { $nin: dto.existingIds },
+          _status: { $in: [1, 0] },
+        })
         .session(transactionSession);
 
       const responseJSON = {
@@ -749,7 +753,11 @@ export class SupplierService {
     transactionSession.startTransaction();
     try {
       var resultCount = await this.userModel
-        .count({ _mobile: dto.value, _status: { $in: [1, 0] } })
+        .count({
+          _mobile: dto.value,
+          _id: { $nin: dto.existingIds },
+          _status: { $in: [1, 0] },
+        })
         .session(transactionSession);
 
       const responseJSON = {

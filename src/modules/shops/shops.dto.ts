@@ -110,7 +110,6 @@ class ShopNewUsersCreateList {
   @ApiProperty({})
   mobile: string;
 
-
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })
   dataGuard: number[];
@@ -542,11 +541,19 @@ export class CheckEmailExistDto {
   @IsString()
   @ApiProperty({})
   value: string;
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  existingIds: string[];
 }
 export class CheckMobileExistDto {
   @IsString()
   @ApiProperty({})
   value: string;
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  existingIds: string[];
 }
 
 export class ShopAddRemoveUsersDto {

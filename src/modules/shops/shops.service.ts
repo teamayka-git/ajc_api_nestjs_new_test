@@ -1125,7 +1125,11 @@ export class ShopsService {
     transactionSession.startTransaction();
     try {
       var resultCount = await this.userModel
-        .count({ _email: dto.value, _status: { $in: [1, 0] } })
+        .count({
+          _email: dto.value,
+          _id: { $nin: dto.existingIds },
+          _status: { $in: [1, 0] },
+        })
         .session(transactionSession);
 
       const responseJSON = {
@@ -1158,7 +1162,11 @@ export class ShopsService {
     transactionSession.startTransaction();
     try {
       var resultCount = await this.userModel
-        .find({ _email: dto.value, _status: { $in: [1, 0] } })
+        .find({
+          _email: dto.value,
+          _id: { $nin: dto.existingIds },
+          _status: { $in: [1, 0] },
+        })
         .session(transactionSession);
 
       const responseJSON = {

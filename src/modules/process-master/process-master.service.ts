@@ -72,14 +72,16 @@ export class ProcessMasterService {
       var result1 = await this.processMasterModel.insertMany(arrayToStates, {
         session: transactionSession,
       });
-      var result11 = await this.subProcessMasterModel.insertMany(arrayToSubProcessMasters, {
-        session: transactionSession,
-      });
+      var result11 = await this.subProcessMasterModel.insertMany(
+        arrayToSubProcessMasters,
+        {
+          session: transactionSession,
+        },
+      );
 
-     
-      const responseJSON =    { message: 'success', data: { list: result1 } };
+      const responseJSON = { message: 'success', data: { list: result1 } };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -104,7 +106,7 @@ export class ProcessMasterService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var arrayToSubProcessMasters=[];
+      var arrayToSubProcessMasters = [];
       var result = await this.processMasterModel.findOneAndUpdate(
         {
           _id: dto.processMasterId,
@@ -125,7 +127,6 @@ export class ProcessMasterService {
         { new: true, session: transactionSession },
       );
 
-
       dto.arraySubProcessMastersAdd.map((mapItem1) => {
         arrayToSubProcessMasters.push({
           _name: mapItem1.name,
@@ -142,11 +143,12 @@ export class ProcessMasterService {
         });
       });
 
-
-
-      var result11 = await this.subProcessMasterModel.insertMany(arrayToSubProcessMasters, {
-        session: transactionSession,
-      });
+      var result11 = await this.subProcessMasterModel.insertMany(
+        arrayToSubProcessMasters,
+        {
+          session: transactionSession,
+        },
+      );
 
       await this.subProcessMasterModel.updateMany(
         {
@@ -162,34 +164,28 @@ export class ProcessMasterService {
         { new: true, session: transactionSession },
       );
 
-for(var i=0;i<dto.arraySubProcessMasterEditList.length;i++){
-  await this.subProcessMasterModel.findOneAndUpdate(
-    {
-      _id:  dto.arraySubProcessMasterEditList[i].subProcessEditId ,
-    },
-    {
-      $set: {
-        _name: dto.arraySubProcessMasterEditList[i].name,
-          _code: dto.arraySubProcessMasterEditList[i].code,
-          _isAutomatic: dto.arraySubProcessMasterEditList[i].isAutomatic,
-          _maxHours: dto.arraySubProcessMasterEditList[i].maxHours,
-          _processMasterId: dto.processMasterId,
-          _priority: dto.arraySubProcessMasterEditList[i].priority,
-      },
-    },
-    { new: true, session: transactionSession },
-  );
-}
+      for (var i = 0; i < dto.arraySubProcessMasterEditList.length; i++) {
+        await this.subProcessMasterModel.findOneAndUpdate(
+          {
+            _id: dto.arraySubProcessMasterEditList[i].subProcessEditId,
+          },
+          {
+            $set: {
+              _name: dto.arraySubProcessMasterEditList[i].name,
+              _code: dto.arraySubProcessMasterEditList[i].code,
+              _isAutomatic: dto.arraySubProcessMasterEditList[i].isAutomatic,
+              _maxHours: dto.arraySubProcessMasterEditList[i].maxHours,
+              _processMasterId: dto.processMasterId,
+              _priority: dto.arraySubProcessMasterEditList[i].priority,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
 
-
-
-
-
-
-     
-      const responseJSON =   { message: 'success', data: result };
+      const responseJSON = { message: 'success', data: result };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -228,10 +224,9 @@ for(var i=0;i<dto.arraySubProcessMasterEditList.length;i++){
         { new: true, session: transactionSession },
       );
 
-     
-      const responseJSON =   { message: 'success', data: result };
+      const responseJSON = { message: 'success', data: result };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -251,7 +246,6 @@ for(var i=0;i<dto.arraySubProcessMasterEditList.length;i++){
     }
   }
 
-  
   async deleteSubProcess(dto: SubProcessMasterDeleteDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
@@ -271,11 +265,9 @@ for(var i=0;i<dto.arraySubProcessMasterEditList.length;i++){
         { new: true, session: transactionSession },
       );
 
-
-     
-      const responseJSON =   { message: 'success', data: {} };
+      const responseJSON = { message: 'success', data: {} };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -301,7 +293,6 @@ for(var i=0;i<dto.arraySubProcessMasterEditList.length;i++){
     transactionSession.startTransaction();
     try {
       var arrayAggregation = [];
-    
 
       if (dto.searchingText != '') {
         //todo
@@ -386,19 +377,21 @@ for(var i=0;i<dto.arraySubProcessMasterEditList.length;i++){
       }
 
       if (dto.screenType.findIndex((it) => it == 101) != -1) {
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.SUB_PROCESS_MASTER,
-              let: { processId: '$_id' },
-              pipeline: [
-                { $match: {_status:1, $expr: { $eq: ['$_processMasterId', '$$processId'] } } },
-              ],
-              as: 'subProcessList',
-            },
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.SUB_PROCESS_MASTER,
+            let: { processId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_processMasterId', '$$processId'] },
+                },
+              },
+            ],
+            as: 'subProcessList',
           },
-          
-        );
+        });
       }
 
       var result = await this.processMasterModel
@@ -432,13 +425,12 @@ for(var i=0;i<dto.arraySubProcessMasterEditList.length;i++){
         }
       }
 
-     
-      const responseJSON =   {
+      const responseJSON = {
         message: 'success',
         data: { list: result, totalCount: totalCount },
       };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -527,13 +519,12 @@ for(var i=0;i<dto.arraySubProcessMasterEditList.length;i++){
         }
       }
 
-     
-      const responseJSON =    {
+      const responseJSON = {
         message: 'success',
         data: { list: result, totalCount: totalCount },
       };
       if (
-        process.env.RESPONSE_RESTRICT == "true" &&
+        process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
           GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
@@ -558,28 +549,27 @@ for(var i=0;i<dto.arraySubProcessMasterEditList.length;i++){
     transactionSession.startTransaction();
     try {
       var resultCount = await this.processMasterModel
-        .count({ _code: dto.value })
+        .count({ _code: dto.value, _id: { $nin: dto.existingIds } })
         .session(transactionSession);
 
-    
-        const responseJSON =    {
-          message: 'success',
-          data: { count: resultCount },
-        };
-        if (
-          process.env.RESPONSE_RESTRICT == "true" &&
-          JSON.stringify(responseJSON).length >=
-            GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
-        ) {
-          throw new HttpException(
-            GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-              JSON.stringify(responseJSON).length,
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-        await transactionSession.commitTransaction();
-        await transactionSession.endSession();
-        return responseJSON;
+      const responseJSON = {
+        message: 'success',
+        data: { count: resultCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
@@ -593,63 +583,70 @@ for(var i=0;i<dto.arraySubProcessMasterEditList.length;i++){
     transactionSession.startTransaction();
     try {
       var resultCount = await this.processMasterModel
-        .count({ _name: dto.value, _status: { $in: [1, 0] } })
+        .count({
+          _name: dto.value,
+          _id: { $nin: dto.existingIds },
+          _status: { $in: [1, 0] },
+        })
         .session(transactionSession);
 
-    
-        const responseJSON =   {
-          message: 'success',
-          data: { count: resultCount },
-        };
-        if (
-          process.env.RESPONSE_RESTRICT == "true" &&
-          JSON.stringify(responseJSON).length >=
-            GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
-        ) {
-          throw new HttpException(
-            GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-              JSON.stringify(responseJSON).length,
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-        await transactionSession.commitTransaction();
-        await transactionSession.endSession();
-        return responseJSON;
+      const responseJSON = {
+        message: 'success',
+        data: { count: resultCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
       throw error;
     }
   }
-  
+
   async checkSubProcessNameExisting(dto: CheckNameExistSubProcessDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
       var resultCount = await this.subProcessMasterModel
-        .count({ _name: dto.value,_processMasterId:dto.processMaster, _status: { $in: [1, 0] } })
+        .count({
+          _name: dto.value,
+          _processMasterId: dto.processMaster,
+          _id: { $nin: dto.existingIds },
+          _status: { $in: [1, 0] },
+        })
         .session(transactionSession);
 
-    
-        const responseJSON =   {
-          message: 'success',
-          data: { count: resultCount },
-        };
-        if (
-          process.env.RESPONSE_RESTRICT == "true" &&
-          JSON.stringify(responseJSON).length >=
-            GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
-        ) {
-          throw new HttpException(
-            GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-              JSON.stringify(responseJSON).length,
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-        await transactionSession.commitTransaction();
-        await transactionSession.endSession();
-        return responseJSON;
+      const responseJSON = {
+        message: 'success',
+        data: { count: resultCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
@@ -662,28 +659,32 @@ for(var i=0;i<dto.arraySubProcessMasterEditList.length;i++){
     transactionSession.startTransaction();
     try {
       var resultCount = await this.subProcessMasterModel
-        .count({ _code: dto.value,_processMasterId:dto.processMaster, _status: { $in: [1, 0] } })
+        .count({
+          _code: dto.value,
+          _processMasterId: dto.processMaster,
+          _id: { $nin: dto.existingIds },
+          _status: { $in: [1, 0] },
+        })
         .session(transactionSession);
 
-     
-        const responseJSON =   {
-          message: 'success',
-          data: { count: resultCount },
-        };
-        if (
-          process.env.RESPONSE_RESTRICT == "true" &&
-          JSON.stringify(responseJSON).length >=
-            GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
-        ) {
-          throw new HttpException(
-            GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-              JSON.stringify(responseJSON).length,
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-        await transactionSession.commitTransaction();
-        await transactionSession.endSession();
-        return responseJSON;
+      const responseJSON = {
+        message: 'success',
+        data: { count: resultCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
