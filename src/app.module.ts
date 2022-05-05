@@ -66,6 +66,7 @@ import { RootCausesModule } from './modules/root-causes/root-causes.module';
 import { ShopsModule } from './modules/shops/shops.module';
 import { DeliveryProviderModule } from './modules/delivery-provider/delivery-provider.module';
 import { PhotographyRequestModule } from './modules/photography-request/photography-request.module';
+import { DeliveryChellanModule } from './modules/delivery-chellan/delivery-chellan.module';
 
 @Module({
   imports: [
@@ -143,6 +144,7 @@ import { PhotographyRequestModule } from './modules/photography-request/photogra
     HalmarkCentersModule,
     DeliveryProviderModule,
     PhotographyRequestModule,
+    DeliveryChellanModule,
 
     // SalesReturnRequestStatusesModule,
   ],

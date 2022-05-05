@@ -4,9 +4,9 @@ import { GlobalConfig } from 'src/config/global_config';
 
 export const DeliveryChallansSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
-  _customerId: {
+  _userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.CUSTOMERS,
+    ref: ModelNames.USER,
     default: null,
   },
   _uid: { type: String, required: true, default: 'nil' },
@@ -24,6 +24,12 @@ export const DeliveryChallansSchema = new mongoose.Schema({
   },
   _referenceUrl: { type: String, default: 'nil' },
   _type: { type: Number, required: true, default: -1 },
+  _rootCauseId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.USER,
+    default: null,
+  },
+  _description: { type: String, default: 'nil' },
   _saleType: { type: Number, required: true, default: -1 },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -42,11 +48,13 @@ export const DeliveryChallansSchema = new mongoose.Schema({
 
 export interface DeliveryChallans {
   _id: String;
-  _customerId: String;
+  _userId: String;
   _uid: String;
   _deliveryMode: number;
   _deliveryProviderId: String;
   _deliveryExicutiveId: String;
+  _rootCauseId: string;
+  _description: string;
   _referenceUrl: String;
   _type: number;
   _saleType: number;
@@ -57,7 +65,9 @@ export interface DeliveryChallans {
   _status: Number;
 }
 
-DeliveryChallansSchema.index({ _customerId: 1 });
+DeliveryChallansSchema.index({ _rootCauseId: 1 });
+DeliveryChallansSchema.index({ _description: 1 });
+DeliveryChallansSchema.index({ _userId: 1 });
 DeliveryChallansSchema.index({ _uid: 1, _id: 1 });
 DeliveryChallansSchema.index({ _deliveryMode: 1 });
 DeliveryChallansSchema.index({ _deliveryProviderId: 1 });

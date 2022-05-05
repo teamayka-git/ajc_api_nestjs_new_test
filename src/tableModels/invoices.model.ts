@@ -4,13 +4,20 @@ import { GlobalConfig } from 'src/config/global_config';
 
 export const InvoicesSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
-  _customerId: {
+  _userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.ROOT_CAUSES,
+    ref: ModelNames.USER,
     default: null,
   },
   _uid: { type: String, required: true, default: 'nil' },
   _saleType: { type: Number, required: true, default: -1 },
+
+  _rootCauseId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.USER,
+    default: null,
+  },
+  _description: { type: String, default: 'nil' },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -28,9 +35,11 @@ export const InvoicesSchema = new mongoose.Schema({
 
 export interface Invoices {
   _id: String;
-  _customerId: String;
+  _userId: String;
   _uid: String;
   _saleType: number;
+  _rootCauseId: string;
+  _description: string;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -38,7 +47,9 @@ export interface Invoices {
   _status: Number;
 }
 
-InvoicesSchema.index({ _customerId: 1 });
+InvoicesSchema.index({ _rootCauseId: 1 });
+InvoicesSchema.index({ _description: 1 });
+InvoicesSchema.index({ _userId: 1 });
 InvoicesSchema.index({ _uid: 1, _id: 1 });
 InvoicesSchema.index({ _saleType: 1 });
 InvoicesSchema.index({ _createdUserId: 1 });

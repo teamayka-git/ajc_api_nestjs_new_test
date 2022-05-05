@@ -50,8 +50,8 @@ export enum ModelNames {
   HALMARK_CENTERS = 'halmark_centers',
   CUSTOMERS = 'customers',
   DELIVERY_PROVIDER = 'delivery_providers',
-
   PHOTOGRAPHER_REQUESTS = 'photographer_requests',
+
   DELIVERY_CHALLANS = 'delivery_challans',
   DELIVERY_CHALLAN_ITEMS = 'delivery_challan_items',
   INVOICES = 'invoices',
