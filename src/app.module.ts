@@ -65,6 +65,7 @@ import { HalmarkCentersModule } from './modules/halmark-centers/halmark-centers.
 import { RootCausesModule } from './modules/root-causes/root-causes.module';
 import { ShopsModule } from './modules/shops/shops.module';
 import { DeliveryProviderModule } from './modules/delivery-provider/delivery-provider.module';
+import { PhotographyRequestModule } from './modules/photography-request/photography-request.module';
 
 @Module({
   imports: [
@@ -141,6 +142,7 @@ import { DeliveryProviderModule } from './modules/delivery-provider/delivery-pro
     UserAttendanceModule,
     HalmarkCentersModule,
     DeliveryProviderModule,
+    PhotographyRequestModule,
 
     // SalesReturnRequestStatusesModule,
   ],
