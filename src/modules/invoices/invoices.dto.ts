@@ -13,12 +13,12 @@ import { Optional } from '@nestjs/common';
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList =
-  '0-total documents count, 100-user details, 101-delivery provider details, 102-delivery executive details, 103-root cause details, 104-created user details, 105-challan items';
+  '0-total documents count, 100-user details, 103-root cause details, 104-created user details, 105-invoice items';
 const descriptionDeliveryMode = '0 - executive,  1 - courier,  2 - third party';
 const descriptionType = '0 - halmark, 1 - hub transfer';
 const descriptionSaleType = ' 0 - order sale, 1 - stock sale, 2 - job work';
 
-class DeliveryChallanCreateListItems {
+class InvoiceCreateListItems {
   @IsString()
   @ApiProperty({})
   orderId: string;
@@ -180,53 +180,35 @@ class DeliveryChallanCreateListItems {
   productId: string;
 }
 
-class DeliveryChallanCreateList {
+class InvoiceCreateList {
   @IsString()
   @ApiProperty({})
   customerId: string;
 
-  @IsNumber()
-  @ApiProperty({ description: descriptionDeliveryMode })
-  deliveryMode: number;
-
-  @IsString()
-  @ApiProperty({})
-  deliveryProviderId: string;
-
-  @IsString()
-  @ApiProperty({})
-  deliveryExecutiveId: string;
   @IsString()
   @ApiProperty({})
   description: string;
 
-  @IsString()
-  @ApiProperty({})
-  referenceUrl: string;
-
-  @IsNumber()
-  @ApiProperty({ description: descriptionType })
-  type: number;
   @IsNumber()
   @ApiProperty({ description: descriptionSaleType })
   saleType: number;
 
   @IsArray()
-  @ApiProperty({ type: [DeliveryChallanCreateListItems] })
+  @ApiProperty({ type: [InvoiceCreateListItems] })
   @ValidateNested({ each: true })
-  @Type(() => DeliveryChallanCreateListItems)
-  arrayDeliveryChallanItems: DeliveryChallanCreateListItems[];
+  @Type(() => InvoiceCreateListItems)
+  arrayInvoiceItems: InvoiceCreateListItems[];
 }
 
-export class DeliveryChallanCreateDto {
+export class InvoiceCreateDto {
   @IsArray()
-  @ApiProperty({ type: [DeliveryChallanCreateList] })
+  @ApiProperty({ type: [InvoiceCreateList] })
   @ValidateNested({ each: true })
-  @Type(() => DeliveryChallanCreateList)
-  arrayDeliveryChallan: DeliveryChallanCreateList[];
+  @Type(() => InvoiceCreateList)
+  arrayInvoiceChallan: InvoiceCreateList[];
 }
 
-export class DeliveryChallanListDto {
+export class InvoiceListDto {
   @IsArray()
   @ArrayMinSize(1)
   @ApiProperty({ type: [Number], description: descriptionStatus })
@@ -234,15 +216,7 @@ export class DeliveryChallanListDto {
 
   @IsArray()
   @ApiProperty({ type: [String] })
-  deliveryChallanIds: string[];
-
-  @IsArray()
-  @ApiProperty({ type: [String] })
-  deliveryProviderIds: string[];
-
-  @IsArray()
-  @ApiProperty({ type: [String] })
-  deliveryExecutiveIds: string[];
+  invoiceIds: string[];
 
   @IsArray()
   @ApiProperty({ type: [String] })
@@ -255,14 +229,6 @@ export class DeliveryChallanListDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   userIds: string[];
-
-  @IsArray()
-  @ApiProperty({ type: [Number], description: descriptionType })
-  types: number[];
-
-  @IsArray()
-  @ApiProperty({ type: [Number], description: descriptionDeliveryMode })
-  deliveryModes: number[];
 
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionSaleType })
@@ -288,10 +254,10 @@ export class DeliveryChallanListDto {
   searchingText: string;
 }
 
-export class DeliveryChallanStatusChangeDto {
+export class InvoiceStatusChangeDto {
   @IsArray()
   @ApiProperty({ type: [String] })
-  deliveryChallanIds: string[];
+  invoiceIds: string[];
 
   @IsString()
   @ApiProperty({})

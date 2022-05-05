@@ -67,6 +67,7 @@ import { ShopsModule } from './modules/shops/shops.module';
 import { DeliveryProviderModule } from './modules/delivery-provider/delivery-provider.module';
 import { PhotographyRequestModule } from './modules/photography-request/photography-request.module';
 import { DeliveryChellanModule } from './modules/delivery-chellan/delivery-chellan.module';
+import { InvoicesModule } from './modules/invoices/invoices.module';
 
 @Module({
   imports: [
@@ -145,6 +146,7 @@ import { DeliveryChellanModule } from './modules/delivery-chellan/delivery-chell
     DeliveryProviderModule,
     PhotographyRequestModule,
     DeliveryChellanModule,
+    InvoicesModule,
 
     // SalesReturnRequestStatusesModule,
   ],

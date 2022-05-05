@@ -2,28 +2,28 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { ModelNames } from 'src/common/model_names';
 import * as mongoose from 'mongoose';
-import { DeliveryChallans } from 'src/tableModels/delivery_challans.model';
-import { DeliveryChallanItems } from 'src/tableModels/delivery_challan_items.model';
+import { Invoices } from 'src/tableModels/invoices.model';
+import { InvoiceItems } from 'src/tableModels/invoice_items.model';
 import { Counters } from 'src/tableModels/counters.model';
 import {
-  DeliveryChallanCreateDto,
-  DeliveryChallanListDto,
-  DeliveryChallanStatusChangeDto,
-} from './delivery_chellan.dto';
+  InvoiceCreateDto,
+  InvoiceListDto,
+  InvoiceStatusChangeDto,
+} from './invoices.dto';
 import { GlobalConfig } from 'src/config/global_config';
 
 @Injectable()
-export class DeliveryChellanService {
+export class InvoicesService {
   constructor(
+    @InjectModel(ModelNames.INVOICES)
+    private readonly invoiceModel: mongoose.Model<Invoices>,
     @InjectModel(ModelNames.DELIVERY_CHALLANS)
-    private readonly deliveryChallansModel: mongoose.Model<DeliveryChallans>,
-    @InjectModel(ModelNames.DELIVERY_CHALLANS)
-    private readonly deliveryChallanItemsModel: mongoose.Model<DeliveryChallanItems>,
+    private readonly invoiceItemsModel: mongoose.Model<InvoiceItems>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
-  async create(dto: DeliveryChallanCreateDto, _userId_: string) {
+  async create(dto: InvoiceCreateDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -35,36 +35,23 @@ export class DeliveryChellanService {
         { _tableName: ModelNames.DELIVERY_CHALLANS },
         {
           $inc: {
-            _count: dto.arrayDeliveryChallan.length,
+            _count: dto.arrayInvoiceChallan.length,
           },
         },
         { new: true, session: transactionSession },
       );
 
-      dto.arrayDeliveryChallan.map((mapItem, index) => {
-        var deliveryChallanId = new mongoose.Types.ObjectId();
+      dto.arrayInvoiceChallan.map((mapItem, index) => {
+        var invoiceId = new mongoose.Types.ObjectId();
         arrayToDeliveryChallan.push({
-          _id: deliveryChallanId,
+          _id: invoiceId,
           _userId: _userId_,
           _uid:
             resultCounterPurchase._count -
-            dto.arrayDeliveryChallan.length +
+            dto.arrayInvoiceChallan.length +
             (index + 1),
-          _deliveryMode: mapItem.deliveryMode,
-          _deliveryProviderId:
-            mapItem.deliveryProviderId == '' ||
-            mapItem.deliveryProviderId == 'nil'
-              ? null
-              : mapItem.deliveryProviderId,
-          _deliveryExicutiveId:
-            mapItem.deliveryExecutiveId == '' ||
-            mapItem.deliveryExecutiveId == 'nil'
-              ? null
-              : mapItem.deliveryExecutiveId,
           _rootCauseId: null,
           _description: mapItem.description,
-          _referenceUrl: mapItem.referenceUrl,
-          _type: mapItem.type,
           _saleType: mapItem.saleType,
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -73,9 +60,9 @@ export class DeliveryChellanService {
           _status: 1,
         });
 
-        mapItem.arrayDeliveryChallanItems.map((mapItem1) => {
+        mapItem.arrayInvoiceItems.map((mapItem1) => {
           arrayToDeliveryChallanItems.push({
-            _deliveryChallanId: deliveryChallanId,
+            _invoiceId: invoiceId,
             _orderId: mapItem1.orderId,
             _categoryName: mapItem1.categoryName,
             _subCategoryName: mapItem1.subCategoryName,
@@ -129,18 +116,12 @@ export class DeliveryChellanService {
         });
       });
 
-      var result1 = await this.deliveryChallansModel.insertMany(
-        arrayToDeliveryChallan,
-        {
-          session: transactionSession,
-        },
-      );
-      await this.deliveryChallanItemsModel.insertMany(
-        arrayToDeliveryChallanItems,
-        {
-          session: transactionSession,
-        },
-      );
+      var result1 = await this.invoiceModel.insertMany(arrayToDeliveryChallan, {
+        session: transactionSession,
+      });
+      await this.invoiceItemsModel.insertMany(arrayToDeliveryChallanItems, {
+        session: transactionSession,
+      });
 
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
@@ -165,16 +146,16 @@ export class DeliveryChellanService {
   }
 
   async deliveryChallanStatusChange(
-    dto: DeliveryChallanStatusChangeDto,
+    dto: InvoiceStatusChangeDto,
     _userId_: string,
   ) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var result = await this.deliveryChallansModel.updateMany(
+      var result = await this.invoiceModel.updateMany(
         {
-          _id: { $in: dto.deliveryChallanIds },
+          _id: { $in: dto.invoiceIds },
         },
         {
           $set: {
@@ -216,7 +197,7 @@ export class DeliveryChellanService {
     }
   }
 
-  async list(dto: DeliveryChallanListDto) {
+  async list(dto: InvoiceListDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -235,31 +216,14 @@ export class DeliveryChellanService {
           },
         });
       }
-      if (dto.deliveryChallanIds.length > 0) {
+      if (dto.invoiceIds.length > 0) {
         var newSettingsId = [];
-        dto.deliveryChallanIds.map((mapItem) => {
+        dto.invoiceIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
-      if (dto.deliveryProviderIds.length > 0) {
-        var newSettingsId = [];
-        dto.deliveryProviderIds.map((mapItem) => {
-          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
-        });
-        arrayAggregation.push({
-          $match: { _deliveryProviderId: { $in: newSettingsId } },
-        });
-      }
-      if (dto.deliveryExecutiveIds.length > 0) {
-        var newSettingsId = [];
-        dto.deliveryExecutiveIds.map((mapItem) => {
-          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
-        });
-        arrayAggregation.push({
-          $match: { _deliveryExicutiveId: { $in: newSettingsId } },
-        });
-      }
+
       if (dto.rootCauseIds.length > 0) {
         var newSettingsId = [];
         dto.rootCauseIds.map((mapItem) => {
@@ -286,14 +250,6 @@ export class DeliveryChellanService {
         arrayAggregation.push({ $match: { _userId: { $in: newSettingsId } } });
       }
 
-      if (dto.types.length > 0) {
-        arrayAggregation.push({ $match: { _type: { $in: dto.types } } });
-      }
-      if (dto.deliveryModes.length > 0) {
-        arrayAggregation.push({
-          $match: { _deliveryMode: { $in: dto.deliveryModes } },
-        });
-      }
       if (dto.saleTypes.length > 0) {
         arrayAggregation.push({
           $match: { _saleType: { $in: dto.saleTypes } },
@@ -345,71 +301,7 @@ export class DeliveryChellanService {
           },
         );
       }
-      if (dto.screenType.findIndex((it) => it == 101) != -1) {
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.DELIVERY_PROVIDER,
-              let: { deliveryProviderId: '$_deliveryProviderId' },
-              pipeline: [
-                {
-                  $match: { $expr: { $eq: ['$_id', '$$deliveryProviderId'] } },
-                },
-              ],
-              as: 'deliveryProviderDetails',
-            },
-          },
-          {
-            $unwind: {
-              path: '$deliveryProviderDetails',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-        );
-      }
-      if (dto.screenType.findIndex((it) => it == 102) != -1) {
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.USER,
-              let: { deliveryExecutiveId: '$_deliveryExicutiveId' },
-              pipeline: [
-                {
-                  $match: { $expr: { $eq: ['$_id', '$$deliveryExecutiveId'] } },
-                },
 
-                {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                        },
-                      },
-                    ],
-                    as: 'globalGalleryDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
-              ],
-              as: 'deliveryExecutiveDetails',
-            },
-          },
-          {
-            $unwind: {
-              path: '$deliveryExecutiveDetails',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-        );
-      }
       if (dto.screenType.findIndex((it) => it == 103) != -1) {
         arrayAggregation.push(
           {
@@ -479,7 +371,7 @@ export class DeliveryChellanService {
       if (dto.screenType.findIndex((it) => it == 105) != -1) {
         arrayAggregation.push({
           $lookup: {
-            from: ModelNames.DELIVERY_CHALLAN_ITEMS,
+            from: ModelNames.INVOICE_ITEMS,
             let: { deliveryChallanId: '$_id' },
             pipeline: [
               {
@@ -491,11 +383,11 @@ export class DeliveryChellanService {
                 },
               },
             ],
-            as: 'deliveryChallanItems',
+            as: 'invoiceItems',
           },
         });
       }
-      var result = await this.deliveryChallansModel
+      var result = await this.invoiceItemsModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
 
@@ -518,7 +410,7 @@ export class DeliveryChellanService {
           $group: { _id: null, totalCount: { $sum: 1 } },
         });
 
-        var resultTotalCount = await this.deliveryChallansModel
+        var resultTotalCount = await this.invoiceItemsModel
           .aggregate(arrayAggregation)
           .session(transactionSession);
         if (resultTotalCount.length > 0) {
