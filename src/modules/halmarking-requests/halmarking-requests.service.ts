@@ -1,146 +1,65 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { ModelNames } from 'src/common/model_names';
 import * as mongoose from 'mongoose';
-import { DeliveryChallans } from 'src/tableModels/delivery_challans.model';
-import { DeliveryChallanItems } from 'src/tableModels/delivery_challan_items.model';
-import { Counters } from 'src/tableModels/counters.model';
-import {
-  DeliveryChallanCreateDto,
-  DeliveryChallanListDto,
-  DeliveryChallanStatusChangeDto,
-} from './delivery_chellan.dto';
+import { ModelNames } from 'src/common/model_names';
 import { GlobalConfig } from 'src/config/global_config';
+import { Counters } from 'src/tableModels/counters.model';
+import { HalmarkingRequests } from 'src/tableModels/halmarking_requests.model';
+import {
+  HalmarkingRequestsCreateDto,
+  HalmarkingRequestsEditDto,
+  HalmarkingRequestsListDto,
+  HalmarkingRequestsStatusChangeDto,
+  HalmarkingRequestsUpdateEditDto,
+} from './halmarking_requests.dto';
 
 @Injectable()
-export class DeliveryChellanService {
+export class HalmarkingRequestsService {
   constructor(
-    @InjectModel(ModelNames.DELIVERY_CHALLANS)
-    private readonly deliveryChallansModel: mongoose.Model<DeliveryChallans>,
-    @InjectModel(ModelNames.DELIVERY_CHALLAN_ITEMS)
-    private readonly deliveryChallanItemsModel: mongoose.Model<DeliveryChallanItems>,
+    @InjectModel(ModelNames.HALMARKING_REQUESTS)
+    private readonly halmarkRequestsModel: mongoose.Model<HalmarkingRequests>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
-  async create(dto: DeliveryChallanCreateDto, _userId_: string) {
+  async create(dto: HalmarkingRequestsCreateDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var arrayToDeliveryChallan = [];
-      var arrayToDeliveryChallanItems = [];
+      var arrayToStates = [];
 
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
-        { _tableName: ModelNames.DELIVERY_CHALLANS },
+        { _tableName: ModelNames.HALMARKING_REQUESTS },
         {
           $inc: {
-            _count: dto.arrayDeliveryChallan.length,
+            _count: dto.array.length,
           },
         },
         { new: true, session: transactionSession },
       );
 
-      dto.arrayDeliveryChallan.map((mapItem, index) => {
-        var deliveryChallanId = new mongoose.Types.ObjectId();
-        arrayToDeliveryChallan.push({
-          _id: deliveryChallanId,
-          _userId: _userId_,
-          _uid:
-            resultCounterPurchase._count -
-            dto.arrayDeliveryChallan.length +
-            (index + 1),
-          _deliveryMode: mapItem.deliveryMode,
-          _deliveryProviderId:
-            mapItem.deliveryProviderId == '' ||
-            mapItem.deliveryProviderId == 'nil'
-              ? null
-              : mapItem.deliveryProviderId,
-          _deliveryExicutiveId:
-            mapItem.deliveryExecutiveId == '' ||
-            mapItem.deliveryExecutiveId == 'nil'
-              ? null
-              : mapItem.deliveryExecutiveId,
+      dto.array.map((mapItem, index) => {
+        arrayToStates.push({
+          _uid: resultCounterPurchase._count - dto.array.length + (index + 1),
+          _orderId: mapItem.orderId,
+          _halmarkCenterId: mapItem.halmarkCenterId,
+          _halmarkCenterUserId: null,
+          _verifyUserId: null,
+          _requestStatus: 0,
           _rootCauseId: null,
           _description: mapItem.description,
-          _referenceUrl: mapItem.referenceUrl,
-          _type: mapItem.type,
-          _saleType: mapItem.saleType,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
           _updatedAt: -1,
           _status: 1,
         });
-
-        mapItem.arrayDeliveryChallanItems.map((mapItem1) => {
-          arrayToDeliveryChallanItems.push({
-            _deliveryChallanId: deliveryChallanId,
-            _orderId: mapItem1.orderId,
-            _categoryName: mapItem1.categoryName,
-            _subCategoryName: mapItem1.subCategoryName,
-            _productName: mapItem1.productName,
-            _purity: mapItem1.purity,
-            _hsnCode: mapItem1.hsnCode,
-            _huid: mapItem1.huid,
-            _grossWeight: mapItem1.grossWeight,
-            _stoneWeight: mapItem1.stoneWeight,
-            _netWeight: mapItem1.netWeight,
-            _tought: mapItem1.tough,
-            _pureWeight: mapItem1.pureWeight,
-            _pureWeightHundredPercentage: mapItem1.pureWeightHundredPercentage,
-            _unitRate: mapItem1.unitRate,
-            _amount: mapItem1.amount,
-            _stoneAmount: mapItem1.stoneAmount,
-            _totalValue: mapItem1.totalValue,
-            _cgst: mapItem1.cgst,
-            _sgst: mapItem1.sgst,
-            _igst: mapItem1.igst,
-            _metalAmount: mapItem1.metalAmount,
-            _stoneAmountGst: mapItem1.stoneAmount,
-            _grossAmount: mapItem1.grossAmount,
-            _halmarkingCharge: mapItem1.halmarkingCharge,
-            _otherCharge: mapItem1.otherCharge,
-            _roundOff: mapItem1.roundOff,
-            _netTotal: mapItem1.netTotal,
-            _tdsReceivable: mapItem1.tdsReceivable,
-            _tdsPayable: mapItem1.tdsPayable,
-            _netReceivableAmount: mapItem1.netReceivableAmount,
-            _cgstHalmarkCharge: mapItem1.cgstHalmarkCharge,
-            _cgstOtherCharge: mapItem1.cgstOtherCharge,
-            _sgstHalmarkCharge: mapItem1.sgstHalmarkCharge,
-            _sgstOtherCharge: mapItem1.sgstOtherCharge,
-            _igstHalmarkCharge: mapItem1.igstHalmarkCharge,
-            _igstOtherCharge: mapItem1.igstOtherCharge,
-            _makingChargeWeightHundredPercentage:
-              mapItem1.makingChargeWithHundredPercentage,
-            _makingChargeAmount: mapItem1.makingChargeAmount,
-            _productBarcode: mapItem1.productBarcide,
-            _productId:
-              mapItem1.productId == '' || mapItem1.productId == 'nil'
-                ? null
-                : mapItem1.productId,
-            _createdUserId: _userId_,
-            _createdAt: dateTime,
-            _updatedUserId: null,
-            _updatedAt: -1,
-            _status: 1,
-          });
-        });
       });
 
-      var result1 = await this.deliveryChallansModel.insertMany(
-        arrayToDeliveryChallan,
-        {
-          session: transactionSession,
-        },
-      );
-      await this.deliveryChallanItemsModel.insertMany(
-        arrayToDeliveryChallanItems,
-        {
-          session: transactionSession,
-        },
-      );
+      var result1 = await this.halmarkRequestsModel.insertMany(arrayToStates, {
+        session: transactionSession,
+      });
 
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
@@ -164,28 +83,63 @@ export class DeliveryChellanService {
     }
   }
 
-  async deliveryChallanStatusChange(
-    dto: DeliveryChallanStatusChangeDto,
+  async edit(dto: HalmarkingRequestsEditDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var result = await this.halmarkRequestsModel.findOneAndUpdate(
+        {
+          _id: dto.halmarkCenterId,
+        },
+        {
+          $set: {
+            _orderId: dto.orderId,
+            _halmarkCenterId: dto.halmarkCenterId,
+            _description: dto.description,
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      const responseJSON = { message: 'success', data: result };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async status_change(
+    dto: HalmarkingRequestsStatusChangeDto,
     _userId_: string,
   ) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var result = await this.deliveryChallansModel.updateMany(
+      var result = await this.halmarkRequestsModel.updateMany(
         {
-          _id: { $in: dto.deliveryChallanIds },
+          _id: { $in: dto.hmRequestIds },
         },
         {
           $set: {
-            _rootCauseId:
-              dto.rootCauseId == '' || dto.rootCauseId == 'nil'
-                ? null
-                : dto.rootCauseId,
-            _description:
-              dto.description == '' || dto.description == 'nil'
-                ? null
-                : dto.description,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
             _status: dto.status,
@@ -216,7 +170,7 @@ export class DeliveryChellanService {
     }
   }
 
-  async list(dto: DeliveryChallanListDto) {
+  async list(dto: HalmarkingRequestsListDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -230,34 +184,50 @@ export class DeliveryChellanService {
             $or: [
               { _description: new RegExp(dto.searchingText, 'i') },
               { _uid: dto.searchingText },
-              { _referenceUrl: dto.searchingText },
             ],
           },
         });
       }
-      if (dto.deliveryChallanIds.length > 0) {
+      if (dto.hmRequestIds.length > 0) {
         var newSettingsId = [];
-        dto.deliveryChallanIds.map((mapItem) => {
+        dto.hmRequestIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
-      if (dto.deliveryProviderIds.length > 0) {
+
+      if (dto.orderIds.length > 0) {
         var newSettingsId = [];
-        dto.deliveryProviderIds.map((mapItem) => {
+        dto.orderIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _orderId: { $in: newSettingsId } } });
+      }
+      if (dto.hmCenterIds.length > 0) {
+        var newSettingsId = [];
+        dto.hmCenterIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
         arrayAggregation.push({
-          $match: { _deliveryProviderId: { $in: newSettingsId } },
+          $match: { _halmarkCenterId: { $in: newSettingsId } },
         });
       }
-      if (dto.deliveryExecutiveIds.length > 0) {
+      if (dto.hmCenterUserIds.length > 0) {
         var newSettingsId = [];
-        dto.deliveryExecutiveIds.map((mapItem) => {
+        dto.hmCenterUserIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
         arrayAggregation.push({
-          $match: { _deliveryExicutiveId: { $in: newSettingsId } },
+          $match: { _halmarkCenterUserId: { $in: newSettingsId } },
+        });
+      }
+      if (dto.verifyUserIds.length > 0) {
+        var newSettingsId = [];
+        dto.verifyUserIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _verifyUserId: { $in: newSettingsId } },
         });
       }
       if (dto.rootCauseIds.length > 0) {
@@ -269,39 +239,26 @@ export class DeliveryChellanService {
           $match: { _rootCauseId: { $in: newSettingsId } },
         });
       }
-      if (dto.createdUserIds.length > 0) {
-        var newSettingsId = [];
-        dto.createdUserIds.map((mapItem) => {
-          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
-        });
+      if (dto.requestStatus.length > 0) {
         arrayAggregation.push({
-          $match: { _createdUserId: { $in: newSettingsId } },
+          $match: { _requestStatus: { $in: dto.requestStatus } },
         });
       }
-      if (dto.userIds.length > 0) {
-        var newSettingsId = [];
-        dto.userIds.map((mapItem) => {
-          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
-        });
-        arrayAggregation.push({ $match: { _userId: { $in: newSettingsId } } });
-      }
-
-      if (dto.types.length > 0) {
-        arrayAggregation.push({ $match: { _type: { $in: dto.types } } });
-      }
-      if (dto.deliveryModes.length > 0) {
-        arrayAggregation.push({
-          $match: { _deliveryMode: { $in: dto.deliveryModes } },
-        });
-      }
-      if (dto.saleTypes.length > 0) {
-        arrayAggregation.push({
-          $match: { _saleType: { $in: dto.saleTypes } },
-        });
-      }
-
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
-      arrayAggregation.push({ $sort: { _id: -1 } });
+      switch (dto.sortType) {
+        case 0:
+          arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
+          break;
+        case 1:
+          arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
+          break;
+        case 2:
+          arrayAggregation.push({ $sort: { _uid: dto.sortOrder } });
+          break;
+        case 3:
+          arrayAggregation.push({ $sort: { _requestStatus: dto.sortOrder } });
+          break;
+      }
 
       if (dto.skip != -1) {
         arrayAggregation.push({ $skip: dto.skip });
@@ -311,37 +268,17 @@ export class DeliveryChellanService {
         arrayAggregation.push(
           {
             $lookup: {
-              from: ModelNames.USER,
-              let: { userId: '$_userId' },
-              pipeline: [
-                { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
-
-                {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                        },
-                      },
-                    ],
-                    as: 'globalGalleryDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
-              ],
-              as: 'userDetails',
+              from: ModelNames.ORDER_SALES,
+              let: { orderId: '$_orderId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$orderId'] } } }],
+              as: 'orderDetails',
             },
           },
           {
-            $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true },
+            $unwind: {
+              path: '$orderDetails',
+              preserveNullAndEmptyArrays: true,
+            },
           },
         );
       }
@@ -349,33 +286,34 @@ export class DeliveryChellanService {
         arrayAggregation.push(
           {
             $lookup: {
-              from: ModelNames.DELIVERY_PROVIDER,
-              let: { deliveryProviderId: '$_deliveryProviderId' },
+              from: ModelNames.HALMARK_CENTERS,
+              let: { halmarkCenterId: '$_halmarkCenterId' },
               pipeline: [
-                {
-                  $match: { $expr: { $eq: ['$_id', '$$deliveryProviderId'] } },
-                },
+                { $match: { $expr: { $eq: ['$_id', '$$halmarkCenterId'] } } },
               ],
-              as: 'deliveryProviderDetails',
+              as: 'halmarkCenterDetails',
             },
           },
           {
             $unwind: {
-              path: '$deliveryProviderDetails',
+              path: '$halmarkCenterDetails',
               preserveNullAndEmptyArrays: true,
             },
           },
         );
       }
+
       if (dto.screenType.findIndex((it) => it == 102) != -1) {
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.USER,
-              let: { deliveryExecutiveId: '$_deliveryExicutiveId' },
+              let: { halmarkCenterUserId: '$_halmarkCenterUserId' },
               pipeline: [
                 {
-                  $match: { $expr: { $eq: ['$_id', '$$deliveryExecutiveId'] } },
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$halmarkCenterUserId'] },
+                  },
                 },
 
                 {
@@ -399,12 +337,12 @@ export class DeliveryChellanService {
                   },
                 },
               ],
-              as: 'deliveryExecutiveDetails',
+              as: 'halmarkCenterUserDetails',
             },
           },
           {
             $unwind: {
-              path: '$deliveryExecutiveDetails',
+              path: '$halmarkCenterUserDetails',
               preserveNullAndEmptyArrays: true,
             },
           },
@@ -414,12 +352,55 @@ export class DeliveryChellanService {
         arrayAggregation.push(
           {
             $lookup: {
+              from: ModelNames.USER,
+              let: { verifyUserId: '$_verifyUserId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$verifyUserId'] },
+                  },
+                },
+
+                {
+                  $lookup: {
+                    from: ModelNames.GLOBAL_GALLERIES,
+                    let: { globalGalleryId: '$_globalGalleryId' },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                        },
+                      },
+                    ],
+                    as: 'globalGalleryDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$globalGalleryDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              ],
+              as: 'verifyUserDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$verifyUserDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.findIndex((it) => it == 104) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
               from: ModelNames.ROOT_CAUSES,
               let: { rootCauseId: '$_rootCauseId' },
               pipeline: [
-                {
-                  $match: { $expr: { $eq: ['$_id', '$$rootCauseId'] } },
-                },
+                { $match: { $expr: { $eq: ['$_id', '$$rootCauseId'] } } },
               ],
               as: 'rootCauseDetails',
             },
@@ -432,7 +413,7 @@ export class DeliveryChellanService {
           },
         );
       }
-      if (dto.screenType.findIndex((it) => it == 104) != -1) {
+      if (dto.screenType.findIndex((it) => it == 105) != -1) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -440,7 +421,9 @@ export class DeliveryChellanService {
               let: { createdUserId: '$_createdUserId' },
               pipeline: [
                 {
-                  $match: { $expr: { $eq: ['$_id', '$$createdUserId'] } },
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$createdUserId'] },
+                  },
                 },
 
                 {
@@ -476,26 +459,7 @@ export class DeliveryChellanService {
         );
       }
 
-      if (dto.screenType.findIndex((it) => it == 105) != -1) {
-        arrayAggregation.push({
-          $lookup: {
-            from: ModelNames.DELIVERY_CHALLAN_ITEMS,
-            let: { deliveryChallanId: '$_id' },
-            pipeline: [
-              {
-                $match: {
-                  _status: 1,
-                  $expr: {
-                    $eq: ['$_deliveryChallanId', '$$deliveryChallanId'],
-                  },
-                },
-              },
-            ],
-            as: 'deliveryChallanItems',
-          },
-        });
-      }
-      var result = await this.deliveryChallansModel
+      var result = await this.halmarkRequestsModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
 
@@ -518,7 +482,7 @@ export class DeliveryChellanService {
           $group: { _id: null, totalCount: { $sum: 1 } },
         });
 
-        var resultTotalCount = await this.deliveryChallansModel
+        var resultTotalCount = await this.halmarkRequestsModel
           .aggregate(arrayAggregation)
           .session(transactionSession);
         if (resultTotalCount.length > 0) {
@@ -530,6 +494,60 @@ export class DeliveryChellanService {
         message: 'success',
         data: { list: result, totalCount: totalCount },
       };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async updateRequest(dto: HalmarkingRequestsUpdateEditDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var result = await this.halmarkRequestsModel.findOneAndUpdate(
+        {
+          _id: dto.hmRequestId,
+        },
+        {
+          $set: {
+            _halmarkCenterUserId:
+              dto.hmCenterUserId == '' || dto.hmCenterUserId == 'nil'
+                ? null
+                : dto.hmCenterUserId,
+            _requestStatus: dto.requestStatus,
+            _verifyUserId:
+              dto.verifyUserId == '' || dto.verifyUserId == 'nil'
+                ? null
+                : dto.verifyUserId,
+            _rootCauseId:
+              dto.rootCauseId == '' || dto.rootCauseId == 'nil'
+                ? null
+                : dto.rootCauseId,
+            _description: dto.description,
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      const responseJSON = { message: 'success', data: result };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=

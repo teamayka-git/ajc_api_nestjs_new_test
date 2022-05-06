@@ -17,7 +17,7 @@ export class InvoicesService {
   constructor(
     @InjectModel(ModelNames.INVOICES)
     private readonly invoiceModel: mongoose.Model<Invoices>,
-    @InjectModel(ModelNames.DELIVERY_CHALLANS)
+    @InjectModel(ModelNames.INVOICE_ITEMS)
     private readonly invoiceItemsModel: mongoose.Model<InvoiceItems>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,

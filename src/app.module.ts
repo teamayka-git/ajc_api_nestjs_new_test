@@ -68,6 +68,7 @@ import { DeliveryProviderModule } from './modules/delivery-provider/delivery-pro
 import { PhotographyRequestModule } from './modules/photography-request/photography-request.module';
 import { DeliveryChellanModule } from './modules/delivery-chellan/delivery-chellan.module';
 import { InvoicesModule } from './modules/invoices/invoices.module';
+import { HalmarkingRequestsModule } from './modules/halmarking-requests/halmarking-requests.module';
 
 @Module({
   imports: [
@@ -147,6 +148,7 @@ import { InvoicesModule } from './modules/invoices/invoices.module';
     PhotographyRequestModule,
     DeliveryChellanModule,
     InvoicesModule,
+    HalmarkingRequestsModule,
 
     // SalesReturnRequestStatusesModule,
   ],

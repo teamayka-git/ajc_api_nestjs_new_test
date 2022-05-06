@@ -48,10 +48,10 @@ export enum ModelNames {
   STONE_COLOUR_LINKINGS = 'stone_colour_linkings',
   USER_ATTENDANCES = 'user_attendaces',
   HALMARK_CENTERS = 'halmark_centers',
+  HALMARKING_REQUESTS = 'halmarking_requests',
   CUSTOMERS = 'customers',
   DELIVERY_PROVIDER = 'delivery_providers',
   PHOTOGRAPHER_REQUESTS = 'photographer_requests',
-
   DELIVERY_CHALLANS = 'delivery_challans',
   DELIVERY_CHALLAN_ITEMS = 'delivery_challan_items',
   INVOICES = 'invoices',
