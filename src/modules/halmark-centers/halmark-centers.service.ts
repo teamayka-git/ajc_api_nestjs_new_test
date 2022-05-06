@@ -32,7 +32,7 @@ export class HalmarkCentersService {
     transactionSession.startTransaction();
     try {
       var arrayToStates = [];
-
+      var arrayToUsers = [];
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.HALMARK_CENTERS },
         {
@@ -78,19 +78,17 @@ export class HalmarkCentersService {
           { new: true, session: transactionSession },
         );
       }
+
+      var encryptedPassword = await crypto
+        .pbkdf2Sync(
+          '123456',
+          process.env.CRYPTO_ENCRYPTION_SALT,
+          1000,
+          64,
+          `sha512`,
+        )
+        .toString(`hex`);
       if (dto.arrayUsersNew.length > 0) {
-        var arrayToUsers = [];
-
-        var encryptedPassword = await crypto
-          .pbkdf2Sync(
-            '123456',
-            process.env.CRYPTO_ENCRYPTION_SALT,
-            1000,
-            64,
-            `sha512`,
-          )
-          .toString(`hex`);
-
         dto.arrayUsersNew.map((mapItem) => {
           arrayToUsers.push({
             _email: mapItem.email,
@@ -103,6 +101,7 @@ export class HalmarkCentersService {
             _agentId: null,
             _supplierId: null,
             _customerId: null,
+            _deliveryHubId: null,
             _shopId: null,
             _customType: 4,
             _halmarkId: halmarkId,
@@ -117,11 +116,37 @@ export class HalmarkCentersService {
             _status: 1,
           });
         });
-        await this.userModel.insertMany(arrayToUsers, {
-          session: transactionSession,
-        });
       }
 
+      arrayToUsers.push({
+        _email: dto.email,
+        _name: dto.name,
+        _gender: dto.gender,
+        _password: encryptedPassword,
+        _mobile: dto.mobile,
+        _globalGalleryId: null,
+        _employeeId: null,
+        _agentId: null,
+        _supplierId: null,
+        _customerId: null,
+        _deliveryHubId: null,
+        _shopId: null,
+        _customType: 7,
+        _halmarkId: halmarkId,
+        _fcmId: '',
+        _deviceUniqueId: '',
+        _permissions: [],
+        _userRole: 0,
+        _createdUserId: null,
+        _createdAt: -1,
+        _updatedUserId: null,
+        _updatedAt: -1,
+        _status: 1,
+      });
+
+      await this.userModel.insertMany(arrayToUsers, {
+        session: transactionSession,
+      });
       const responseJSON = { message: 'success', data: resultHalmark };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -164,6 +189,21 @@ export class HalmarkCentersService {
             _dataGuard: dto.dataGuard,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      await this.userModel.findOneAndUpdate(
+        {
+          _halmarkId: dto.halmarkCenterId,
+          _customType: 7,
+        },
+        {
+          $set: {
+            _name: dto.name,
+            _gender: dto.gender,
+            _mobile: dto.mobile,
           },
         },
         { new: true, session: transactionSession },
@@ -222,6 +262,7 @@ export class HalmarkCentersService {
             _globalGalleryId: null,
             _employeeId: null,
             _agentId: null,
+            _deliveryHubId: null,
             _supplierId: null,
             _shopId: null,
             _customType: 4,
@@ -326,6 +367,7 @@ export class HalmarkCentersService {
             _supplierId: null,
             _shopId: null,
             _customerId: null,
+            _deliveryHubId: null,
             _customType: 4,
             _halmarkId: dto.halmarkCenterId,
             _fcmId: '',

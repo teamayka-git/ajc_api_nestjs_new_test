@@ -32,6 +32,19 @@ class DeliveryHubCreateList {
 
   @IsString()
   @ApiProperty({})
+  email: string;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  gender: number;
+
+  @IsString()
+  @ApiProperty({})
+  mobile: string;
+
+  @IsString()
+  @ApiProperty({})
   cityId: string;
 
   @IsArray()
@@ -61,6 +74,19 @@ export class DeliveryHubEditDto {
   @IsString()
   @ApiProperty({})
   cityId: string;
+
+  @IsString()
+  @ApiProperty({})
+  email: string;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  gender: number;
+
+  @IsString()
+  @ApiProperty({})
+  mobile: string;
 
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })

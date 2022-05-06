@@ -4,6 +4,7 @@ import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { GlobalConfig } from 'src/config/global_config';
 import { DeliveryHubs } from 'src/tableModels/deliveryHubs.model';
+import { User } from 'src/tableModels/user.model';
 import {
   CheckItemExistDto,
   CheckNameExistDto,
@@ -13,12 +14,15 @@ import {
   DeliveryHubStatusChangeDto,
   ListFilterLocadingDeliveryHubDto,
 } from './delivery_hubs.dto';
+const crypto = require('crypto');
 
 @Injectable()
 export class DeliveryHubsService {
   constructor(
     @InjectModel(ModelNames.DELIVERY_HUBS)
     private readonly deliveryHubsModel: mongoose.Model<DeliveryHubs>,
+    @InjectModel(ModelNames.USER)
+    private readonly userModel: mongoose.Model<User>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async create(dto: DeliveryHubCreateDto, _userId_: string) {
@@ -28,8 +32,22 @@ export class DeliveryHubsService {
     try {
       var arrayToStates = [];
 
+      var arrayToUsers = [];
+
+      var encryptedPasswordShop = await crypto
+        .pbkdf2Sync(
+          '123456',
+          process.env.CRYPTO_ENCRYPTION_SALT,
+          1000,
+          64,
+          `sha512`,
+        )
+        .toString(`hex`);
+
       dto.array.map((mapItem) => {
+        var deliveryHubId = new mongoose.Types.ObjectId();
         arrayToStates.push({
+          _id: deliveryHubId,
           _name: mapItem.name,
           _code: mapItem.code,
           _citiesId: mapItem.cityId,
@@ -40,9 +58,39 @@ export class DeliveryHubsService {
           _updatedAt: -1,
           _status: 1,
         });
+
+        arrayToUsers.push({
+          _email: mapItem.email,
+          _name: mapItem.name,
+          _gender: mapItem.gender,
+          _password: encryptedPasswordShop,
+          _mobile: mapItem.mobile,
+          _globalGalleryId: null,
+          _employeeId: null,
+          _agentId: null,
+          _supplierId: null,
+          _deliveryHubId: deliveryHubId,
+          _shopId: null,
+          _customType: 6,
+          _halmarkId: null,
+          _customerId: null,
+          _fcmId: '',
+          _deviceUniqueId: '',
+          _permissions: [],
+          _userRole: 0,
+          _createdUserId: null,
+          _createdAt: -1,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
+        });
       });
 
       var result1 = await this.deliveryHubsModel.insertMany(arrayToStates, {
+        session: transactionSession,
+      });
+
+      await this.userModel.insertMany(arrayToUsers, {
         session: transactionSession,
       });
 
@@ -85,6 +133,21 @@ export class DeliveryHubsService {
             _dataGuard: dto.dataGuard,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      await this.userModel.findOneAndUpdate(
+        {
+          _deliveryHubId: dto.deliveryHubsId,
+          _customType: 6,
+        },
+        {
+          $set: {
+            _name: dto.name,
+            _gender: dto.gender,
+            _mobile: dto.mobile,
           },
         },
         { new: true, session: transactionSession },

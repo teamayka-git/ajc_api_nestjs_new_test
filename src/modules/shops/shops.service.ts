@@ -213,7 +213,7 @@ export class ShopsService {
 
         globalGalleryId = resultGlobalGallery._id;
       }
-
+      var arrayToUsers = [];
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.SHOPS },
         {
@@ -285,8 +285,6 @@ export class ShopsService {
         );
       }
       if (dto.arrayUsersNew.length > 0) {
-        var arrayToUsers = [];
-
         var encryptedPassword = await crypto
           .pbkdf2Sync(
             '123456',
@@ -308,6 +306,7 @@ export class ShopsService {
             _employeeId: null,
             _agentId: null,
             _supplierId: null,
+            _deliveryHubId:null,
             _shopId: shopId,
             _customType: mapItem.customType,
             _halmarkId: null,
@@ -323,10 +322,47 @@ export class ShopsService {
             _status: 1,
           });
         });
-        await this.userModel.insertMany(arrayToUsers, {
-          session: transactionSession,
-        });
       }
+
+
+      var encryptedPasswordShop = await crypto
+      .pbkdf2Sync(
+        '123456',
+        process.env.CRYPTO_ENCRYPTION_SALT,
+        1000,
+        64,
+        `sha512`,
+      )
+      .toString(`hex`);
+      arrayToUsers.push({
+        _email: dto.email,
+        _name: dto.name,
+        _gender: dto.gender,
+        _password: encryptedPasswordShop,
+        _mobile: dto.mobile,
+        _globalGalleryId: globalGalleryId,
+        _employeeId: null,
+        _agentId: null,
+        _supplierId: null,
+        _shopId: shopId,
+        _customType: 5,
+        _deliveryHubId:null,
+        _halmarkId: null,
+        _customerId: null,
+        _fcmId: '',
+        _deviceUniqueId: '',
+        _permissions: [],
+        _userRole: 0,
+        _createdUserId: null,
+        _createdAt: -1,
+        _updatedUserId: null,
+        _updatedAt: -1,
+        _status: 1,
+      });
+
+      await this.userModel.insertMany(arrayToUsers, {
+        session: transactionSession,
+      });
 
       var globalGalleryManinCategoryForShop =
         await this.globalGalleryCategoriesModel
@@ -460,7 +496,12 @@ export class ShopsService {
         _agentCommision: dto.agentCommision,
         _dataGuard: dto.dataGuard,
       };
-
+      var objUser = {
+        _email: dto.email,
+        _name: dto.name,
+        _gender: dto.gender,
+        _mobile: dto.mobile,
+      };
       //globalGalleryAdd
       if (file.hasOwnProperty('image')) {
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
@@ -491,6 +532,7 @@ export class ShopsService {
         });
 
         objShop['_globalGalleryId'] = resultGlobalGallery._id;
+        objUser['_globalGalleryId'] = resultGlobalGallery._id;
       }
 
       var result = await this.shopsModel.findOneAndUpdate(
@@ -502,6 +544,18 @@ export class ShopsService {
         },
         { new: true, session: transactionSession },
       );
+
+      await this.userModel.findOneAndUpdate(
+        {
+          _shopId: dto.shopId,
+          _customType: 5,
+        },
+        {
+          $set: objUser,
+        },
+        { new: true, session: transactionSession },
+      );
+
       if (dto.arrayAddUserIdsEsixting.length > 0) {
         await this.userModel.updateMany(
           {
@@ -559,6 +613,7 @@ export class ShopsService {
             _shopId: dto.shopUserId,
             _customType: 4,
             _halmarkId: null,
+            _deliveryHubId:null,
             _fcmId: '',
             _customerId: null,
             _deviceUniqueId: '',
@@ -1287,6 +1342,7 @@ export class ShopsService {
             _employeeId: null,
             _agentId: null,
             _supplierId: null,
+            _deliveryHubId:null,
             _customerId: null,
             _shopId: dto.shopUserId,
             _customType: mapItem.customType,
@@ -1414,6 +1470,7 @@ export class ShopsService {
             _mobile: mapItem.mobile,
             _globalGalleryId: null,
             _employeeId: null,
+            _deliveryHubId:null,
             _agentId: null,
             _supplierId: null,
             _customerId: customerId,

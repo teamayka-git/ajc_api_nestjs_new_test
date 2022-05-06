@@ -344,6 +344,7 @@ export class AppService {
             _customType: 0,
             _halmarkId: null,
             _customerId: null,
+            _deliveryHubId:null,
             _fcmId: '',
             _deviceUniqueId: '',
             _permissions: [],

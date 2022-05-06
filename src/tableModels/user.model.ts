@@ -38,6 +38,11 @@ export const UserSchema = new mongoose.Schema({
     ref: ModelNames.HALMARK_CENTERS,
     default: null,
   },
+  _deliveryHubId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.DELIVERY_HUBS,
+    default: null,
+  },
   _customerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.CUSTOMERS,
@@ -79,6 +84,7 @@ export interface User {
   _halmarkId: string;
   _customerId: string;
   _fcmId: String;
+  _deliveryHubId: string;
   _deviceUniqueId: String;
   _permissions: Object;
   _userRole: Number;
@@ -89,6 +95,7 @@ export interface User {
   _status: Number;
 }
 
+UserSchema.index({ _deliveryHubId: 1 });
 UserSchema.index({ _halmarkId: 1 });
 UserSchema.index({ _userRole: 1 });
 UserSchema.index({ _customType: 1 });
@@ -156,6 +163,9 @@ _customType:{
 2 - Shop sales man
 3 - Shop casher
 4 - halmark staff
+5 - shop user
+6 - delivery hub
+7 - halmark center
 }
 
 

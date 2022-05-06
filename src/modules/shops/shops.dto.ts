@@ -243,6 +243,19 @@ export class ShopCreateDto {
   @ApiProperty({ type: [Number] })
   location: number[];
 
+  @IsString()
+  @ApiProperty({})
+  email: string;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  gender: number;
+
+  @IsString()
+  @ApiProperty({})
+  mobile: string;
+
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
   )
@@ -395,6 +408,19 @@ export class ShopEditeDto {
   @IsObject()
   @ApiProperty({})
   location: Object;
+
+  @IsString()
+  @ApiProperty({})
+  email: string;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  gender: number;
+
+  @IsString()
+  @ApiProperty({})
+  mobile: string;
 
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
