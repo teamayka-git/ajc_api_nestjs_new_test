@@ -37,10 +37,8 @@ const descriptionHallmarkingStatus = '0-No, 1-Yes';
 const descriptionStonePricing = '0-automatic, 1-Manual';
 const descriptionChatPermissions =
   '0-Allow voice message, 1-allow document uploading';
-const descriptionCustomType =
-  '1 - shop admin, 2 - shop sales man, 3 - shop casher, 4 - halmark staff';
-const descriptionCustomTypes =
-  '1 - shop admin, 2 - shop sales man, 3 - shop casher, 4 - halmark staff';
+const descriptionCustomType = 'refer default module getUser api';
+const descriptionCustomTypes = 'refer default module getUser api';
 const descriptionCommisionType = '  0 - amount, 1 - percentage';
 
 export class ShopLoginDto {

@@ -1,9 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
-import { MeDto } from './app.dto';
+import { GetUserDto, MeDto } from './app.dto';
 import { CommonNames } from './common/common_names';
 import { ModelNames } from './common/model_names';
+import { GlobalConfig } from './config/global_config';
 import { Colours } from './tableModels/colourMasters.model';
 import { Company } from './tableModels/companies.model';
 import { Counters } from './tableModels/counters.model';
@@ -133,6 +134,325 @@ export class AppService {
     return { message: 'success', data: resultEmployee[0] };
   }
 
+  async getUser(dto: GetUserDto) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var arrayAggregation = [];
+
+      if (dto.searchingText != '') {
+        //todo
+        arrayAggregation.push({
+          $match: {
+            $or: [
+              { _name: new RegExp(dto.searchingText, 'i') },
+              { _email: dto.searchingText },
+              { _mobile: dto.searchingText },
+              { _deviceUniqueId: dto.searchingText },
+            ],
+          },
+        });
+      }
+      if (dto.gender.length > 0) {
+        arrayAggregation.push({ $match: { _gender: { $in: dto.gender } } });
+      }
+      if (dto.customType.length > 0) {
+        arrayAggregation.push({
+          $match: { _customType: { $in: dto.customType } },
+        });
+      }
+      if (dto.userIds.length > 0) {
+        var newSettingsId = [];
+        dto.userIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
+      }
+      if (dto.employeeIds.length > 0) {
+        var newSettingsId = [];
+        dto.employeeIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _employeeId: { $in: newSettingsId } },
+        });
+      }
+      if (dto.agentIds.length > 0) {
+        var newSettingsId = [];
+        dto.agentIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _agentId: { $in: newSettingsId } } });
+      }
+      if (dto.supplierIds.length > 0) {
+        var newSettingsId = [];
+        dto.supplierIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _supplierId: { $in: newSettingsId } },
+        });
+      }
+      if (dto.shopIds.length > 0) {
+        var newSettingsId = [];
+        dto.shopIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _shopId: { $in: newSettingsId } } });
+      }
+      if (dto.halmarkIds.length > 0) {
+        var newSettingsId = [];
+        dto.halmarkIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _halmarkId: { $in: newSettingsId } },
+        });
+      }
+      if (dto.deliveryHubIds.length > 0) {
+        var newSettingsId = [];
+        dto.deliveryHubIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _deliveryHubId: { $in: newSettingsId } },
+        });
+      }
+      if (dto.customerIds.length > 0) {
+        var newSettingsId = [];
+        dto.customerIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _customerId: { $in: newSettingsId } },
+        });
+      }
+
+      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+      arrayAggregation.push({ $sort: { _id: -1 } });
+
+      if (dto.skip != -1) {
+        arrayAggregation.push({ $skip: dto.skip });
+        arrayAggregation.push({ $limit: dto.limit });
+      }
+
+      if (dto.screenType.findIndex((it) => it == 50) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.GLOBAL_GALLERIES,
+              let: { globalGalleryId: '$_globalGalleryId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+              ],
+              as: 'globalGalleryDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$globalGalleryDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.EMPLOYEES,
+              let: { employeeId: '$_employeeId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$employeeId'] } } },
+              ],
+              as: 'employeeDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$employeeDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.AGENTS,
+              let: { agentId: '$_agentId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$agentId'] } } }],
+              as: 'agentDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$agentDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.findIndex((it) => it == 102) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.SUPPLIERS,
+              let: { supplierId: '$_supplierId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$supplierId'] } } },
+              ],
+              as: 'supplierDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$supplierDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.findIndex((it) => it == 103) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.SHOPS,
+              let: { shopId: '$_shopId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$shopId'] } } }],
+              as: 'shopDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$shopDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.findIndex((it) => it == 104) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.HALMARK_CENTERS,
+              let: { halmarkId: '$_halmarkId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$halmarkId'] } } },
+              ],
+              as: 'halmarkDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$halmarkDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.findIndex((it) => it == 105) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.DELIVERY_HUBS,
+              let: { deliveryHubId: '$_deliveryHubId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$deliveryHubId'] } } },
+              ],
+              as: 'deliveryHubDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$deliveryHubDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.findIndex((it) => it == 106) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.CUSTOMERS,
+              let: { customerId: '$_customerId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$customerId'] } } },
+              ],
+              as: 'customerDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$customerDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      var result = await this.userModel
+        .aggregate(arrayAggregation)
+        .session(transactionSession);
+
+      var totalCount = 0;
+      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+        //Get total count
+        var limitIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$limit') === true,
+        );
+        if (limitIndexCount != -1) {
+          arrayAggregation.splice(limitIndexCount, 1);
+        }
+        var skipIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$skip') === true,
+        );
+        if (skipIndexCount != -1) {
+          arrayAggregation.splice(skipIndexCount, 1);
+        }
+        arrayAggregation.push({
+          $group: { _id: null, totalCount: { $sum: 1 } },
+        });
+
+        var resultTotalCount = await this.userModel
+          .aggregate(arrayAggregation)
+          .session(transactionSession);
+        if (resultTotalCount.length > 0) {
+          totalCount = resultTotalCount[0].totalCount;
+        }
+      }
+
+      const responseJSON = {
+        message: 'success',
+        data: { list: result, totalCount: totalCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
   async project_init() {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
@@ -344,7 +664,7 @@ export class AppService {
             _customType: 0,
             _halmarkId: null,
             _customerId: null,
-            _deliveryHubId:null,
+            _deliveryHubId: null,
             _fcmId: '',
             _deviceUniqueId: '',
             _permissions: [],
