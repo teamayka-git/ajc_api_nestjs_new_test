@@ -13,7 +13,7 @@ import { Optional } from '@nestjs/common';
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList =
-  '0-total documents count, 100-city details';
+  '0-total documents count, 100-city details, 101-factory calculation type master, 102-factory calculation type master with items';
 const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 const descriptionListSortOrder = '1-ascending, -1-descending';
@@ -29,6 +29,10 @@ class FactoriesCreateList {
   @IsString()
   @ApiProperty({})
   cityId: string;
+
+  @IsString()
+  @ApiProperty({})
+  factoryCalculationTypeMasterId: string;
 
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })
@@ -46,6 +50,10 @@ export class FactoriesEditDto {
   @IsString()
   @ApiProperty({})
   factoryId: string;
+
+  @IsString()
+  @ApiProperty({})
+  factoryCalculationTypeMasterId: string;
 
   @IsString()
   @ApiProperty({})
@@ -83,6 +91,10 @@ export class FactoriesListDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   factoryIds: string[];
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  factoryCalculationTypeMasterIds: string[];
+
   @IsArray()
   @ApiProperty({ type: [String] })
   cityIds: string[];

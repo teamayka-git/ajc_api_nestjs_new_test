@@ -56,6 +56,8 @@ export enum ModelNames {
   DELIVERY_CHALLAN_ITEMS = 'delivery_challan_items',
   INVOICES = 'invoices',
   INVOICE_ITEMS = 'invoice_items',
+  FACTORY_CALCULATION_TYPE_MASTER = 'factory_calculation_type_masters',
+  FACTORY_CALCULATION_TYPE_MASTER_ITEMS = 'factory_calculation_type_master_items',
 
   CHAT_PERSONAL_CHAT_MESSAGES = 'chat_personal_chat_messages',
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',

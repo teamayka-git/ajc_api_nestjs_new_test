@@ -31,6 +31,7 @@ export class FactoriesService {
         arrayToStates.push({
           _name: mapItem.name,
           _cityId: mapItem.cityId,
+          _calculationTypeMasterId: mapItem.factoryCalculationTypeMasterId,
           _dataGuard: mapItem.dataGuard,
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -79,6 +80,7 @@ export class FactoriesService {
           $set: {
             _name: dto.name,
             _cityId: dto.cityId,
+            _calculationTypeMasterId: dto.factoryCalculationTypeMasterId,
             _dataGuard: dto.dataGuard,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
@@ -180,6 +182,15 @@ export class FactoriesService {
         });
         arrayAggregation.push({ $match: { _cityId: { $in: newSettingsId } } });
       }
+      if (dto.factoryCalculationTypeMasterIds.length > 0) {
+        var newSettingsId = [];
+        dto.factoryCalculationTypeMasterIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _calculationTypeMasterId: { $in: newSettingsId } },
+        });
+      }
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {
         case 0:
@@ -209,6 +220,93 @@ export class FactoriesService {
           },
           {
             $unwind: { path: '$cityDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
+      }
+      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.FACTORY_CALCULATION_TYPE_MASTER,
+              let: { calculationMasterId: '$_calculationTypeMasterId' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$calculationMasterId'] } },
+                },
+              ],
+              as: 'calculationMasterDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$calculationMasterDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.findIndex((it) => it == 102) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.FACTORY_CALCULATION_TYPE_MASTER,
+              let: { factoryCalculationMasterId: '$_calculationTypeMasterId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$factoryCalculationMasterId'] },
+                  },
+                },
+                {
+                  $lookup: {
+                    from: ModelNames.FACTORY_CALCULATION_TYPE_MASTER_ITEMS,
+                    let: { itemsId: '$_id' },
+                    pipeline: [
+                      {
+                        $match: {
+                          _status: 1,
+                          $expr: {
+                            $eq: ['$_factoryCalculationMasterId', '$$itemsId'],
+                          },
+                        },
+                      },
+                      {
+                        $lookup: {
+                          from: ModelNames.SUB_CATEGORIES,
+                          let: {
+                            subCategoryId: '$_subCategoryId',
+                          },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: {
+                                  $eq: ['$_id', '$$subCategoryId'],
+                                },
+                              },
+                            },
+                          ],
+                          as: 'subCategoryDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$subCategoryDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    ],
+                    as: 'items',
+                  },
+                },
+              ],
+              as: 'factoryCalculationMasterDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$factoryCalculationMasterDetails',
+              preserveNullAndEmptyArrays: true,
+            },
           },
         );
       }

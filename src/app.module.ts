@@ -69,6 +69,7 @@ import { PhotographyRequestModule } from './modules/photography-request/photogra
 import { DeliveryChellanModule } from './modules/delivery-chellan/delivery-chellan.module';
 import { InvoicesModule } from './modules/invoices/invoices.module';
 import { HalmarkingRequestsModule } from './modules/halmarking-requests/halmarking-requests.module';
+import { FactoryCalculationTypeMasterModule } from './modules/factory-calculation-type-master/factory-calculation-type-master.module';
 
 @Module({
   imports: [
@@ -149,6 +150,7 @@ import { HalmarkingRequestsModule } from './modules/halmarking-requests/halmarki
     DeliveryChellanModule,
     InvoicesModule,
     HalmarkingRequestsModule,
+    FactoryCalculationTypeMasterModule,
 
     // SalesReturnRequestStatusesModule,
   ],
