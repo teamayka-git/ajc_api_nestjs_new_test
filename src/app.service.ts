@@ -124,9 +124,9 @@ export class AppService {
         {
           $lookup: {
             from: ModelNames.USER_ATTENDANCES,
-            let: { userId: '$_userId' },
+            let: { userId: '$_id' },
             pipeline: [
-              { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+              { $match: { $expr: { $eq: ['$_userId', '$$userId'] } } },
               { $sort: { _id: -1 } },
               { $skip: 0 },
               { $limit: 1 },
