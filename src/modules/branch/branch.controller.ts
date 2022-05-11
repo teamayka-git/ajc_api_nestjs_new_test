@@ -35,7 +35,6 @@ export class BranchController {
   constructor(private readonly branchService: BranchService) {}
 
   @Post()
-  @Roles(GuardUserRole.SUPER_ADMIN)
   @ApiCreatedResponse({
     description: 'files upload on these input feilds => [image]',
   })
