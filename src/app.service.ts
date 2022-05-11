@@ -121,6 +121,25 @@ export class AppService {
             preserveNullAndEmptyArrays: true,
           },
         },
+        {
+          $lookup: {
+            from: ModelNames.USER_ATTENDANCES,
+            let: { userId: '$_userId' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+              { $sort: { _id: -1 } },
+              { $skip: 0 },
+              { $limit: 1 },
+            ],
+            as: 'employeeAttendanceDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$employeeAttendanceDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
       ])
       .session(transactionSession);
 

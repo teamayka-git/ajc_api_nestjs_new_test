@@ -166,6 +166,7 @@ _customType:{
 5 - shop user
 6 - delivery hub
 7 - halmark center
+8 - Shop Customer
 }
 
 

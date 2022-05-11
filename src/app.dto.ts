@@ -19,7 +19,7 @@ const descriptionListScreenTypeForFilterLoading =
   '50-global gallery details, 100-employee details, 101-agent detials, 102-supplier details, 103-shop details, 104-halmark details, 105-delivery hub id, 106-customer details ';
 const descriptionGenders = '0-male, 1-female, 2-other';
 const descriptionCustomType =
-  ' 0 - nil, 1 - Shop admin, 2 - Shop sales man, 3 - Shop casher, 4 - halmark staff, 5 - shop user, 6 - delivery hub, 7 - halmark center';
+  ' 0 - nil, 1 - Shop admin, 2 - Shop sales man, 3 - Shop casher, 4 - halmark staff, 5 - shop user, 6 - delivery hub, 7 - halmark center,8-shop customer';
 
 export class MeDto {}
 
