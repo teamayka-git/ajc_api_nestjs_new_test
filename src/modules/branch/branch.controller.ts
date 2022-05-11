@@ -57,7 +57,6 @@ export class BranchController {
   create(@Body() dto: BranchCreateDto, @Request() req, @UploadedFiles() file) {
     return this.branchService.create(
       dto,
-      req['_userId_'],
       file == null ? {} : JSON.parse(JSON.stringify(file)),
     );
   }

@@ -30,7 +30,7 @@ export class BranchService {
     private readonly globalGalleryModel: Model<GlobalGalleries>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
-  async create(dto: BranchCreateDto, _userId_: string, file: Object) {
+  async create(dto: BranchCreateDto,  file: Object) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -78,7 +78,7 @@ export class BranchService {
           _type: 4,
           _uid: resultCounterPurchase._count,
           _url: resultUpload['url'],
-          _created_user_id: _userId_,
+          _created_user_id: null,
           _created_at: dateTime,
           _updated_user_id: null,
           _updated_at: -1,
@@ -107,7 +107,7 @@ export class BranchService {
         _tectCode: dto.textCode,
         _globalGalleryId: globalGalleryId,
         _dataGuard: dto.dataGuard,
-        _createdUserId: _userId_,
+        _createdUserId: null,
         _createdAt: dateTime,
         _updatedUserId: null,
         _updatedAt: -1,
