@@ -5,9 +5,9 @@ import { GlobalConfig } from 'src/config/global_config';
 export const CustomersSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
   _uid: { type: String, required: true, default: 'nil' },
-  _field1: { type: String, required: true, default: 'nil' },
-  _field2: { type: String, required: true, default: 'nil' },
-  _field3: { type: String, required: true, default: 'nil' },
+  _field1: { type: String,  default: 'nil' },
+  _field2: { type: String,  default: 'nil' },
+  _field3: { type: String,  default: 'nil' },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
