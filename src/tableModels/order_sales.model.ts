@@ -131,6 +131,7 @@ _workStatus:{
   30 - sale return collected otp rejected
   31 - order completed
   32 - order cancelled
+  33 - Delivery pending
   
 }
 _type:{
