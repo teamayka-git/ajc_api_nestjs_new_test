@@ -843,7 +843,7 @@ export class ShopsService {
               from: ModelNames.USER,
               let: { userId: '$_id' },
               pipeline: [
-                { $match: { $expr: { $eq: ['$_shopId', '$$userId'] } } },
+                { $match: {_customType:5, $expr: { $eq: ['$_shopId', '$$userId'] } } },
               ],
               as: 'userDetails',
             },
