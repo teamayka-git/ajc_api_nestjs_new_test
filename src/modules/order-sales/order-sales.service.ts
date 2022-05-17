@@ -1134,17 +1134,7 @@ export class OrderSalesService {
                     preserveNullAndEmptyArrays: true,
                   },
                 },
-                {
-                  $lookup: {
-                    from: ModelNames.SHOPS,
-                    let: { shopUserId: '$_shopId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$shopUserId'] },
-                        },
-                      },
-
+               
                       {
                         $lookup: {
                           from: ModelNames.USER,
@@ -1249,16 +1239,8 @@ export class OrderSalesService {
                           preserveNullAndEmptyArrays: true,
                         },
                       },
-                    ],
-                    as: 'userDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$userDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
+                   
+               
               ],
               as: 'shopDetails',
             },
