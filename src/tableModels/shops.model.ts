@@ -46,6 +46,8 @@ export const ShopsSchema = new mongoose.Schema({
     ref: ModelNames.CITIES,
     default: null,
   },
+  
+  _tdsTcsStatus: { type: Number, required: true, default: -1 },
   _tdsId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.TDS_MASTERS,
@@ -114,6 +116,7 @@ export interface Shops {
   _globalGalleryId: String;
   _panCardNumber: String;
   _billingModeSale: Number;
+  _tdsTcsStatus:Number;
   _billingModePurchase: Number;
   _hallmarkingMandatoryStatus: Number;
   _rateCardId: String;
@@ -140,6 +143,7 @@ export interface Shops {
 
 ShopsSchema.index({ _location: '2dsphere' });
 ShopsSchema.index({ _name: 1 });
+ShopsSchema.index({ _tdsTcsStatus: 1 });
 
 ShopsSchema.index({ _commisionType: 1 });
 ShopsSchema.index({ _rateCardId: 1 });
@@ -232,5 +236,9 @@ _stonePricing:{
 _chatPermissions:{
     0-allow voice message,
     1-document uploading
+}
+_tdsTcsStatus:{
+  0-tds
+  1-tcs
 }
 */

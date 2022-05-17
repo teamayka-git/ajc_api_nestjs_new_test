@@ -40,6 +40,7 @@ const descriptionChatPermissions =
 const descriptionCustomType = 'refer default module getUser api';
 const descriptionCustomTypes = 'refer default module getUser api';
 const descriptionCommisionType = '  0 - amount, 1 - percentage';
+const descriptionTdsTcsStatus="0-tds, 1-tcs";
 
 export class ShopLoginDto {
   @IsEmail()
@@ -140,6 +141,11 @@ export class ShopCreateDto {
   @IsNumber()
   @ApiProperty({ description: descriptionShopType })
   shopType: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({ description: descriptionTdsTcsStatus })
+  tdsTcsStatus: number;
 
   @IsString()
   @ApiProperty({})
@@ -313,6 +319,12 @@ export class ShopEditeDto {
   @IsString()
   @ApiProperty({})
   branchId: string;
+  
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({ description: descriptionTdsTcsStatus })
+  tdsTcsStatus: number;
+
 
   @IsString()
   @ApiProperty({})
