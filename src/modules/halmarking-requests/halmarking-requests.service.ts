@@ -42,7 +42,8 @@ export class HalmarkingRequestsService {
       dto.array.map((mapItem, index) => {
         arrayToStates.push({
           _uid: resultCounterPurchase._count - dto.array.length + (index + 1),
-          _orderId: mapItem.orderId,
+          _orderId: (mapItem.orderId==""||mapItem.orderId=="nil")?null:mapItem.orderId,
+          _productId:(mapItem.productId==""||mapItem.productId=="nil")?null:mapItem.productId,
           _halmarkCenterId: mapItem.halmarkCenterId,
           _halmarkCenterUserId: null,
           _verifyUserId: null,
@@ -94,8 +95,9 @@ export class HalmarkingRequestsService {
         },
         {
           $set: {
-            _orderId: dto.orderId,
-            _halmarkCenterId: dto.halmarkCenterId,
+            _orderId: (dto.orderId==""||dto.orderId=="nil")?null:dto.orderId,
+            _productId:(dto.productId==""||dto.productId=="nil")?null:dto.productId,
+                        _halmarkCenterId: dto.halmarkCenterId,
             _description: dto.description,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
@@ -203,6 +205,13 @@ export class HalmarkingRequestsService {
         });
         arrayAggregation.push({ $match: { _orderId: { $in: newSettingsId } } });
       }
+      if (dto.productIds.length > 0) {
+        var newSettingsId = [];
+        dto.productIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _productId: { $in: newSettingsId } } });
+      }
       if (dto.hmCenterIds.length > 0) {
         var newSettingsId = [];
         dto.hmCenterIds.map((mapItem) => {
@@ -282,6 +291,134 @@ export class HalmarkingRequestsService {
           },
         );
       }
+
+      if (dto.screenType.findIndex((it) => it == 107) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.PRODUCTS,
+              let: { productId: '$_productId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$productId'] } } }],
+              as: 'productDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$productDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      
+      if (dto.screenType.findIndex((it) => it == 108) != -1) {
+        arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
+          {
+            $lookup: {
+              from: ModelNames.SHOPS,
+              let: { shopId: '$_shopId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$shopId'] } } }],
+              as: 'shopDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$shopDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.findIndex((it) => it == 109) != -1) {
+        arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
+          {
+            $lookup: {
+              from: ModelNames.CATEGORIES,
+              let: { categoryId: '$_categoryId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$categoryId'] } } }],
+              as: 'categoryDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$categoryDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.findIndex((it) => it == 110) != -1) {
+        arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
+          {
+            $lookup: {
+              from: ModelNames.SUB_CATEGORIES,
+              let: { subCategoryId: '$_subCategoryId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$subCategoryId'] } } }],
+              as: 'subCategoryDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$subCategoryDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.findIndex((it) => it == 111) != -1) {
+        arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
+          {
+            $lookup: {
+              from: ModelNames.GROUP_MASTERS,
+              let: { groupId: '$_groupId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$groupId'] } } }],
+              as: 'groupDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$groupDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.findIndex((it) => it == 106) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_DOCUMENTS,
+              let: { orderId: '$_orderId' },
+              pipeline: [{ $match: {_status:1, $expr: { $eq: ['$_orderSaleId', '$$orderId'] } } },
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            
+            
+            ],
+              as: 'orderSaleDocuments',
+            },
+          },
+          
+        );
+      }
+
+
+
       if (dto.screenType.findIndex((it) => it == 101) != -1) {
         arrayAggregation.push(
           {

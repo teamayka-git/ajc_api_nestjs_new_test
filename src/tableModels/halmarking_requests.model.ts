@@ -10,6 +10,11 @@ export const HalmarkingRequestsSchema = new mongoose.Schema({
     ref: ModelNames.ORDER_SALES,
     default: null,
   },
+  _productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.PRODUCTS,
+    default: null,
+  },
   _halmarkCenterId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.HALMARK_CENTERS,
@@ -51,6 +56,7 @@ export interface HalmarkingRequests {
   _id: String;
   _uid: String;
   _orderId: String;
+  _productId:string;
   _halmarkCenterId: String;
   _halmarkCenterUserId: String;
   _verifyUserId: String;
@@ -64,6 +70,8 @@ export interface HalmarkingRequests {
   _status: Number;
 }
 
+
+HalmarkingRequestsSchema.index({ _productId: 1 });
 HalmarkingRequestsSchema.index({ _uid: 1 });
 HalmarkingRequestsSchema.index({ _orderId: 1 });
 HalmarkingRequestsSchema.index({ _halmarkCenterId: 1 });
