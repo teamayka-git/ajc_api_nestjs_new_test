@@ -27,10 +27,12 @@ class HalmarkingRequestsCreateList {
   @ApiProperty({})
   orderId: string;
 
-  @IsNumber()
-  @ApiProperty({})
-  halmarkCenterId: number;
 
+  @IsString()
+  @ApiProperty({})
+  halmarkCenterId: string;
+
+  
   @IsString()
   @ApiProperty({})
   description: string;
@@ -52,10 +54,12 @@ export class HalmarkingRequestsEditDto {
   @ApiProperty({})
   orderId: string;
 
-  @IsNumber()
+  
+  @IsString()
   @ApiProperty({})
-  halmarkCenterId: number;
+  halmarkCenterId: string;
 
+  
   @IsString()
   @ApiProperty({})
   description: string;
