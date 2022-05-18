@@ -68,6 +68,11 @@ export class ChangeProcessOrderStatusDto {
   @ApiProperty({ description: DescriptionOrderSaleChangeProcessOrderStatus })
   orderStatus: number;
 
+  
+  @IsNumber()
+  @ApiProperty({  })
+  isLastSetProcess: number;
+
   @IsNumber()
   @ApiProperty({ description: DescriptionSetProcessHistoryType })
   setProcessHistoryType: number;

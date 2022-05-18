@@ -293,6 +293,35 @@ export class OrderSaleSetProcessService {
         });
       }
 
+      if (dto.isLastSetProcess == 1 && dto.orderStatus == 3) {
+        //finish process data
+        await this.orderSaleModel.findOneAndUpdate(
+          {
+            _id: result._orderSaleId,
+          },
+          {
+            $set: {
+              _workStatus: 4,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+        const orderSaleHistory = new this.orderSaleHistoriesModel({
+          _orderSaleId: result._orderSaleId,
+          _userId: null,
+          _shopId: null,
+          _type: 4,
+          _description: '',
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _status: 1,
+        });
+        await orderSaleHistory.save({
+          session: transactionSession,
+        });
+      }
+
       const responseJSON = { message: 'success', data: result };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
