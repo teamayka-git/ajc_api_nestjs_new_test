@@ -37,6 +37,7 @@ export const HalmarkingRequestsSchema = new mongoose.Schema({
     default: null,
   },
   _description: { type: String, default: 'nil' },
+  _hmValue: { type: String, default: 'nil' },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -61,6 +62,7 @@ export interface HalmarkingRequests {
   _halmarkCenterUserId: String;
   _verifyUserId: String;
   _requestStatus: Number;
+  _hmValue:String;
   _rootCauseId: String;
   _description: string;
   _createdUserId: String;
@@ -71,6 +73,7 @@ export interface HalmarkingRequests {
 }
 
 
+HalmarkingRequestsSchema.index({ _hmValue: 1 });
 HalmarkingRequestsSchema.index({ _productId: 1 });
 HalmarkingRequestsSchema.index({ _uid: 1 });
 HalmarkingRequestsSchema.index({ _orderId: 1 });

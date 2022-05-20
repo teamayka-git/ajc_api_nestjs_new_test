@@ -42,13 +42,20 @@ export class HalmarkingRequestsService {
       dto.array.map((mapItem, index) => {
         arrayToStates.push({
           _uid: resultCounterPurchase._count - dto.array.length + (index + 1),
-          _orderId: (mapItem.orderId==""||mapItem.orderId=="nil")?null:mapItem.orderId,
-          _productId:(mapItem.productId==""||mapItem.productId=="nil")?null:mapItem.productId,
+          _orderId:
+            mapItem.orderId == '' || mapItem.orderId == 'nil'
+              ? null
+              : mapItem.orderId,
+          _productId:
+            mapItem.productId == '' || mapItem.productId == 'nil'
+              ? null
+              : mapItem.productId,
           _halmarkCenterId: mapItem.halmarkCenterId,
           _halmarkCenterUserId: null,
           _verifyUserId: null,
           _requestStatus: 0,
           _rootCauseId: null,
+          _hmValue: '',
           _description: mapItem.description,
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -95,10 +102,15 @@ export class HalmarkingRequestsService {
         },
         {
           $set: {
-            _orderId: (dto.orderId==""||dto.orderId=="nil")?null:dto.orderId,
-            _productId:(dto.productId==""||dto.productId=="nil")?null:dto.productId,
-                        _halmarkCenterId: dto.halmarkCenterId,
+            _orderId:
+              dto.orderId == '' || dto.orderId == 'nil' ? null : dto.orderId,
+            _productId:
+              dto.productId == '' || dto.productId == 'nil'
+                ? null
+                : dto.productId,
+            _halmarkCenterId: dto.halmarkCenterId,
             _description: dto.description,
+            _hmValue: dto.hmValue,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
           },
@@ -186,6 +198,7 @@ export class HalmarkingRequestsService {
             $or: [
               { _description: new RegExp(dto.searchingText, 'i') },
               { _uid: dto.searchingText },
+              { _hmValue: dto.searchingText },
             ],
           },
         });
@@ -210,7 +223,9 @@ export class HalmarkingRequestsService {
         dto.productIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
-        arrayAggregation.push({ $match: { _productId: { $in: newSettingsId } } });
+        arrayAggregation.push({
+          $match: { _productId: { $in: newSettingsId } },
+        });
       }
       if (dto.hmCenterIds.length > 0) {
         var newSettingsId = [];
@@ -298,7 +313,9 @@ export class HalmarkingRequestsService {
             $lookup: {
               from: ModelNames.PRODUCTS,
               let: { productId: '$_productId' },
-              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$productId'] } } }],
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$productId'] } } },
+              ],
               as: 'productDetails',
             },
           },
@@ -310,7 +327,7 @@ export class HalmarkingRequestsService {
           },
         );
       }
-      
+
       if (dto.screenType.findIndex((it) => it == 108) != -1) {
         arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
           {
@@ -335,7 +352,9 @@ export class HalmarkingRequestsService {
             $lookup: {
               from: ModelNames.CATEGORIES,
               let: { categoryId: '$_categoryId' },
-              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$categoryId'] } } }],
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$categoryId'] } } },
+              ],
               as: 'categoryDetails',
             },
           },
@@ -353,7 +372,9 @@ export class HalmarkingRequestsService {
             $lookup: {
               from: ModelNames.SUB_CATEGORIES,
               let: { subCategoryId: '$_subCategoryId' },
-              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$subCategoryId'] } } }],
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$subCategoryId'] } } },
+              ],
               as: 'subCategoryDetails',
             },
           },
@@ -364,6 +385,76 @@ export class HalmarkingRequestsService {
             },
           },
         );
+      }
+      if (dto.screenType.findIndex((it) => it == 111) != -1) {
+        arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push({
+          $lookup: {
+            from: ModelNames.PRODUCT_STONE_LINKIGS,
+            let: { productId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_productId', '$$productId'] },
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.STONE,
+                  let: { stoneId: '$_stoneId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$stoneId'] } } },
+
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                            },
+                          },
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                  ],
+                  as: 'stoneDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$stoneDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.COLOUR_MASTERS,
+                  let: { colourId: '$_stoneColourId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$colourId'] } } },
+                  ],
+                  as: 'colourDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$colourDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            ],
+            as: 'stoneLinking',
+          },
+        });
       }
       if (dto.screenType.findIndex((it) => it == 111) != -1) {
         arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
@@ -385,18 +476,25 @@ export class HalmarkingRequestsService {
       }
 
       if (dto.screenType.findIndex((it) => it == 106) != -1) {
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.ORDER_SALES_DOCUMENTS,
-              let: { orderId: '$_orderId' },
-              pipeline: [{ $match: {_status:1, $expr: { $eq: ['$_orderSaleId', '$$orderId'] } } },
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.ORDER_SALES_DOCUMENTS,
+            let: { orderId: '$_orderId' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_orderSaleId', '$$orderId'] },
+                },
+              },
               {
                 $lookup: {
                   from: ModelNames.GLOBAL_GALLERIES,
                   let: { globalGalleryId: '$_globalGalleryId' },
                   pipeline: [
-                    { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+                    {
+                      $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } },
+                    },
                   ],
                   as: 'globalGalleryDetails',
                 },
@@ -407,17 +505,11 @@ export class HalmarkingRequestsService {
                   preserveNullAndEmptyArrays: true,
                 },
               },
-            
-            
             ],
-              as: 'orderSaleDocuments',
-            },
+            as: 'orderSaleDocuments',
           },
-          
-        );
+        });
       }
-
-
 
       if (dto.screenType.findIndex((it) => it == 101) != -1) {
         arrayAggregation.push(
@@ -677,6 +769,8 @@ export class HalmarkingRequestsService {
                 ? null
                 : dto.rootCauseId,
             _description: dto.description,
+            _hmValue: dto.hmValue,
+
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
           },

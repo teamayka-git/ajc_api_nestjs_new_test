@@ -29,4 +29,8 @@ export class ProductsController {
   ) {
     return this.productsService.change_e_commerce_status(dto, req['_userId_']);
   }
+  @Post('tempGetMinJobPhotographer')
+  tempGetMinJobPhotographer() {
+    return this.productsService.tempGetMinJobPhotographer();
+  }
 }

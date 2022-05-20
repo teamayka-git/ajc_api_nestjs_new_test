@@ -16,6 +16,9 @@ import {
 } from './products.dto';
 import { OrderSales } from 'src/tableModels/order_sales.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
+import { PhotographerRequests } from 'src/tableModels/photographer_requests.model';
+import { HalmarkingRequests } from 'src/tableModels/halmarking_requests.model';
+import { Departments } from 'src/tableModels/departments.model';
 
 @Injectable()
 export class ProductsService {
@@ -26,10 +29,16 @@ export class ProductsService {
     private readonly productStoneLinkingsModel: Model<ProductStoneLinkings>,
     @InjectModel(ModelNames.SUB_CATEGORIES)
     private readonly subCategoriesModel: Model<SubCategories>,
+    @InjectModel(ModelNames.DEPARTMENT)
+    private readonly departmentsModel: Model<Departments>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: Model<Counters>,
     @InjectModel(ModelNames.ORDER_SALES)
     private readonly orderSaleModel: Model<OrderSales>,
+    @InjectModel(ModelNames.PHOTOGRAPHER_REQUESTS)
+    private readonly photographerRequestModel: Model<PhotographerRequests>,
+    @InjectModel(ModelNames.HALMARKING_REQUESTS)
+    private readonly halmarkRequestModel: Model<HalmarkingRequests>,
 
     @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
     private readonly orderSaleHistoriesModel: Model<OrderSaleHistories>,
@@ -209,6 +218,59 @@ export class ProductsService {
           session: transactionSession,
         });
       }
+      if (dto.eCommerceStatus == 1 && orderId != null) {
+       /* const photographerRequestModel = new this.photographerRequestModel({
+          _rootCauseId: null,
+          _orderId: orderId,
+          _requestStatus: 0,
+          _description: '',
+          _userId: String,
+          _finishedAt: 0,
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: 0,
+          _status: 1,
+        });
+        await photographerRequestModel.save({
+          session: transactionSession,
+        });
+      */}
+
+if(dto.hmSealingStatus==1&& orderId != null){
+/*
+  var resultCounterHalmarkRequest = await this.counterModel.findOneAndUpdate(
+    { _tableName: ModelNames.HALMARKING_REQUESTS },
+    {
+      $inc: {
+        _count: 1,
+      },
+    },
+    { new: true, session: transactionSession },
+  );
+
+
+  const halmarkRequestModel = new this.halmarkRequestModel({
+    _uid: resultCounterHalmarkRequest._count,
+    _orderId: orderId,
+    _productId:productId,
+    _halmarkCenterId: String,
+    _halmarkCenterUserId: String,
+    _verifyUserId: null,
+    _requestStatus: Number,
+    _rootCauseId: null,
+    _description: "",
+    _createdUserId: _userId_,
+    _createdAt: dateTime,
+    _updatedUserId: null,
+    _updatedAt:0,
+    _status:1
+  });
+  await halmarkRequestModel.save({
+    session: transactionSession,
+  });
+  */
+}
 
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
@@ -758,4 +820,46 @@ export class ProductsService {
       throw error;
     }
   }
+
+
+  
+  async tempGetMinJobPhotographer(
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+
+
+
+      var result = await this.departmentsModel.aggregate([{
+        $match:{
+          
+        }
+      }]);
+
+      const responseJSON = { message: 'success', data: {list:result} };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+
+  
 }

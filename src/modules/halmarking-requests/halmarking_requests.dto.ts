@@ -13,7 +13,7 @@ import { Optional } from '@nestjs/common';
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList =
-  '0-total documents count,100-order details, 101-halmark center details, 102-halmark center user details, 103-verify user details,104- root cause details,105- created user details,106-order sale documents,107-product details,108-product shop details if product details exist,109-product category details if product details exist,110-product sub category details if product details exist ';
+  '0-total documents count,100-order details, 101-halmark center details, 102-halmark center user details, 103-verify user details,104- root cause details,105- created user details,106-order sale documents,107-product details,108-product shop details if product details exist,109-product category details if product details exist,110-product sub category details if product details exist,111-product stone list if product details exist ';
 const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 const descriptionListSortOrder = '1-ascending, -1-descending';
@@ -57,6 +57,12 @@ export class HalmarkingRequestsEditDto {
   @IsString()
   @ApiProperty({})
   orderId: string;
+
+  @IsString()
+  @ApiProperty({})
+  hmValue: string;
+
+  
 
   @IsString()
   @ApiProperty({})
@@ -171,4 +177,10 @@ export class HalmarkingRequestsUpdateEditDto {
   @IsString()
   @ApiProperty({})
   rootCauseId: string;
+
+  @IsString()
+  @ApiProperty({})
+  hmValue: string;
+
+  
 }
