@@ -770,6 +770,10 @@ export class HalmarkingRequestsService {
                 : dto.rootCauseId,
             _description: dto.description,
             _hmValue: dto.hmValue,
+            _halmarkCenterId:
+            dto.halmarkCenterId == '' || dto.halmarkCenterId == 'nil'
+              ? null
+              : dto.halmarkCenterId,
 
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
