@@ -860,13 +860,12 @@ export class ProductsService {
                       },
                     },
                     { $project: { _id: 1 } },
-                    {
-                      $group: { _id: null, totalCount: { $sum: 1 } },
-                    }
+                    
                   ],
                   as: 'photographyRequestList',
                 },
               },
+              {$project: { count: { $size:"$photographyRequestList" }}}
             ],
             as: 'employeeList',
           },
