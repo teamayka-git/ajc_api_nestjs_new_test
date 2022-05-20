@@ -174,15 +174,6 @@ export class HalmarkingRequestsUpdateEditDto {
   @IsString()
   @ApiProperty({})
   description: string;
-
-
-  @IsString()
-  @ApiProperty({})
-  halmarkCenterId: string;
-
-
-
-  
   @IsString()
   @ApiProperty({})
   rootCauseId: string;
