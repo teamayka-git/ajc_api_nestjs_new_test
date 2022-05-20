@@ -943,6 +943,7 @@ export class ProductsService {
           },
         },
         { $sort: { 'employeeList.photographyRequestCount': 1 } },
+        { $limit: 1 },
         {
           $group: {
             _id: "$_id",
@@ -951,7 +952,6 @@ export class ProductsService {
             }
           }
         },
-        { $limit: 1 },
       ]);
 
       const responseJSON = { message: 'success', data: { list: result } };
