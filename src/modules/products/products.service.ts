@@ -929,8 +929,8 @@ export class ProductsService {
                 },
               },
               {
-                $project: {
-                  photographyRequestCount: { $size: '$photographyRequestList',_userId:1 },
+                $project: {_userId:1,
+                  photographyRequestCount: { $size: '$photographyRequestList' },
                 },
               },
             ],
