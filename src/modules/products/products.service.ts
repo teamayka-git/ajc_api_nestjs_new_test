@@ -870,6 +870,9 @@ export class ProductsService {
             as: 'employeeList',
           },
         },
+        {
+          $unwind: "$employeeList"
+        },
         {$sort: {'employeeList.photographyRequestCount': 1}},
       ]);
 
