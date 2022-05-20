@@ -874,14 +874,15 @@ export class ProductsService {
           $unwind: "$employeeList"
         },
         {$sort: {'employeeList.photographyRequestCount': 1}},
-        {
-          $group: {
-            _id: "$_id",
-            "employeeList": {
-              $push: "$employeeList"
-            }
-          }
-        }
+        // {
+        //   $group: {
+        //     _id: "$_id",
+        //     "employeeList": {
+        //       $push: "$employeeList"
+        //     }
+        //   }
+        // },
+        {$limit:1},
       ]);
 
       const responseJSON = { message: 'success', data: { list: result } };
