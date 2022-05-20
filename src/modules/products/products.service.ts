@@ -936,9 +936,11 @@ export class ProductsService {
             ],
             as: 'employeeList',
           },
-        },
-        {
-          $unwind: '$employeeList',
+        },{
+          $unwind: {
+            path: '$employeeList',
+            preserveNullAndEmptyArrays: true,
+          },
         },
         { $sort: { 'employeeList.photographyRequestCount': 1 } },
         {
