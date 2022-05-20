@@ -1309,6 +1309,24 @@ export class AppService {
         { upsert: true, new: true, session: transactionSession },
       );
 
+      await this.departmentModel.findOneAndUpdate(
+        { _name: 'Photographer' },
+        {
+          $setOnInsert: {
+            _prefix: 'PG',
+            _processMasterStatus: 1,
+            _code: 1004,
+            _dataGuard: [0, 1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+
       await this.processMastersModel.findOneAndUpdate(
         { _code: 1000 },
         {

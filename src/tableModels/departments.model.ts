@@ -75,6 +75,7 @@ _code:{
     1001-sales executives
     1002-Relationship manager
     1003-Worker,
+    1004-Photographer,
     
 }
  */

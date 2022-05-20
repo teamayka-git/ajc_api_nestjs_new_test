@@ -219,7 +219,7 @@ export class ProductsService {
         });
       }
       if (dto.eCommerceStatus == 1 && orderId != null) {
-       /* const photographerRequestModel = new this.photographerRequestModel({
+        /* const photographerRequestModel = new this.photographerRequestModel({
           _rootCauseId: null,
           _orderId: orderId,
           _requestStatus: 0,
@@ -235,10 +235,11 @@ export class ProductsService {
         await photographerRequestModel.save({
           session: transactionSession,
         });
-      */}
+      */
+      }
 
-if(dto.hmSealingStatus==1&& orderId != null){
-/*
+      if (dto.hmSealingStatus == 1 && orderId != null) {
+        /*
   var resultCounterHalmarkRequest = await this.counterModel.findOneAndUpdate(
     { _tableName: ModelNames.HALMARKING_REQUESTS },
     {
@@ -270,7 +271,7 @@ if(dto.hmSealingStatus==1&& orderId != null){
     session: transactionSession,
   });
   */
-}
+      }
 
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
@@ -821,24 +822,52 @@ if(dto.hmSealingStatus==1&& orderId != null){
     }
   }
 
-
-  
-  async tempGetMinJobPhotographer(
-  ) {
+  async tempGetMinJobPhotographer() {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+      var result = await this.departmentsModel.aggregate([
+        {
+          $match: {
+            _code: 1004,
+            _status: 1,
+          },
+        },
 
+        {
+          $lookup: {
+            from: ModelNames.EMPLOYEES,
+            let: { departmentId: '$_id' },
+            pipeline: [
+              {
+                $match: {_status:1,
+                  $expr: { $eq: ['$_departmentId', '$$departmentId'] },
+                },
+              },
 
+              {
+                $lookup: {
+                  from: ModelNames.PHOTOGRAPHER_REQUESTS,
+                  let: { userId: '$_userId' },
+                  pipeline: [
+                    {
+                      $match: {_status:1,
+                        $expr: { $eq: ['$_userId', '$$userId'] },
+                      },
+                    },
+                  ],
+                  as: 'photographyRequestList',
+                },
+              }
 
-      var result = await this.departmentsModel.aggregate([{
-        $match:{
-          
-        }
-      }]);
+            ],
+            as: 'employeeList',
+          },
+        },
+      ]);
 
-      const responseJSON = { message: 'success', data: {list:result} };
+      const responseJSON = { message: 'success', data: { list: result } };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
@@ -859,7 +888,4 @@ if(dto.hmSealingStatus==1&& orderId != null){
       throw error;
     }
   }
-
-
-  
 }
