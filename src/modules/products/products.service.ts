@@ -834,33 +834,36 @@ export class ProductsService {
             _status: 1,
           },
         },
-
+        { $project: { _id: 1 } },
         {
           $lookup: {
             from: ModelNames.EMPLOYEES,
             let: { departmentId: '$_id' },
             pipeline: [
               {
-                $match: {_status:1,
+                $match: {
+                  _status: 1,
                   $expr: { $eq: ['$_departmentId', '$$departmentId'] },
                 },
               },
 
+              { $project: { _userId: 1 } },
               {
                 $lookup: {
                   from: ModelNames.PHOTOGRAPHER_REQUESTS,
                   let: { userId: '$_userId' },
                   pipeline: [
                     {
-                      $match: {_status:1,
+                      $match: {
+                        _status: 1,
                         $expr: { $eq: ['$_userId', '$$userId'] },
                       },
                     },
+                    { $project: { _id: 1 } },
                   ],
                   as: 'photographyRequestList',
                 },
-              }
-
+              },
             ],
             as: 'employeeList',
           },
