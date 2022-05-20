@@ -911,7 +911,7 @@ export class ProductsService {
                 },
               },
 
-              { $project: { _userId: 1 } },
+             
               {
                 $lookup: {
                   from: ModelNames.PHOTOGRAPHER_REQUESTS,
@@ -930,7 +930,7 @@ export class ProductsService {
               },
               {
                 $project: {
-                  photographyRequestCount: { $size: '$photographyRequestList' },
+                  photographyRequestCount: { $size: '$photographyRequestList',_userId:1 },
                 },
               },
             ],
