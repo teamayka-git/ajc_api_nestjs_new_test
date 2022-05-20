@@ -865,7 +865,7 @@ export class ProductsService {
                   as: 'photographyRequestList',
                 },
               },
-              {$project: { count: { $size:"$photographyRequestList" }}}
+              {$project: { photographyRequestCount: { $size:"$photographyRequestList" }}}
             ],
             as: 'employeeList',
           },
