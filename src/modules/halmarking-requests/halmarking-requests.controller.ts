@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Post, Put, Request } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { HalmarkingRequestsService } from './halmarking-requests.service';
 import {
+  HalmarkCenterAssigntDto,
   HalmarkingRequestsCreateDto,
   HalmarkingRequestsEditDto,
   HalmarkingRequestsListDto,
@@ -40,5 +41,9 @@ export class HalmarkingRequestsController {
   @Post('updateRequest')
   updateRequest(@Body() dto: HalmarkingRequestsUpdateEditDto, @Request() req) {
     return this.halmarkingRequestsService.updateRequest(dto, req['_userId_']);
+  }
+  @Post('assignHalmarkCenter')
+  assignHalmarkCenter(@Body() dto: HalmarkCenterAssigntDto, @Request() req) {
+    return this.halmarkingRequestsService.assignHalmarkCenter(dto, req['_userId_']);
   }
 }

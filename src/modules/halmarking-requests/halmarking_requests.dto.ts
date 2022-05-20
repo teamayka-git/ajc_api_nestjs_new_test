@@ -184,3 +184,15 @@ export class HalmarkingRequestsUpdateEditDto {
 
   
 }
+export class HalmarkCenterAssigntDto {
+  @IsString()
+  @ApiProperty({})
+  hmCenterId: string;
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  hmRequestIds: string[];
+
+
+  
+}

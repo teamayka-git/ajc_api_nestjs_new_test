@@ -6,6 +6,7 @@ import { GlobalConfig } from 'src/config/global_config';
 import { Counters } from 'src/tableModels/counters.model';
 import { HalmarkingRequests } from 'src/tableModels/halmarking_requests.model';
 import {
+  HalmarkCenterAssigntDto,
   HalmarkingRequestsCreateDto,
   HalmarkingRequestsEditDto,
   HalmarkingRequestsListDto,
@@ -771,6 +772,48 @@ export class HalmarkingRequestsService {
             _description: dto.description,
             _hmValue: dto.hmValue,
 
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      const responseJSON = { message: 'success', data: result };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async assignHalmarkCenter(dto: HalmarkCenterAssigntDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      
+      var result = await this.halmarkRequestsModel.updateMany(
+        {
+          _id: dto.hmRequestIds,
+        },
+        {
+          $set: {
+            _halmarkCenterId:dto.hmCenterId,
+            _requestStatus:0,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
           },
