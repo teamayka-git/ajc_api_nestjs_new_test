@@ -88,10 +88,11 @@ HalmarkingRequestsSchema.index({ _status: 1 });
 
 /*
 _requestStatus:{
-    0 - Pending,
-    1 - accept,
-    2 - Complete,
-    3 - Reject,
-    4 - Verification Completed,
+    0 - Pending after assigned halmark center,
+    1 - halmark center accept,
+    2 - halmark center halmark Complete,
+    3 - halmark center Reject,
+    4 - AJC Verification Completed,
+    5 - Pending ,
 }
 */

@@ -219,77 +219,80 @@ export class ProductsService {
         });
       }
       if (dto.eCommerceStatus == 1 && orderId != null) {
-      /*  var resultPhotography = await this.departmentsModel.aggregate([
-          {
-            $match: {
-              _code: 1004,
-              _status: 1,
-            },
+      var resultPhotographer = await this.departmentsModel.aggregate([
+        {
+          $match: {
+            _code: 1004,
+            _status: 1,
           },
-          { $project: { _id: 1 } },
-          {
-            $lookup: {
-              from: ModelNames.EMPLOYEES,
-              let: { departmentId: '$_id' },
-              pipeline: [
-                {
-                  $match: {
-                    _status: 1,
-                    $expr: { $eq: ['$_departmentId', '$$departmentId'] },
-                  },
+        },
+        { $project: { _id: 1 } },
+        {
+          $lookup: {
+            from: ModelNames.EMPLOYEES,
+            let: { departmentId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_departmentId', '$$departmentId'] },
                 },
+              },
 
-                { $project: { _userId: 1 } },
-                {
-                  $lookup: {
-                    from: ModelNames.PHOTOGRAPHER_REQUESTS,
-                    let: { userId: '$_userId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          _status: 1,
-                          $expr: { $eq: ['$_userId', '$$userId'] },
-                        },
+             
+              {
+                $lookup: {
+                  from: ModelNames.PHOTOGRAPHER_REQUESTS,
+                  let: { userId: '$_userId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        _status: 1,
+                        $expr: { $eq: ['$_userId', '$$userId'] },
                       },
-                      { $project: { _id: 1 } },
-                    ],
-                    as: 'photographyRequestList',
-                  },
-                },
-                {
-                  $project: {
-                    photographyRequestCount: {
-                      $size: '$photographyRequestList',
                     },
-                  },
+                    { $project: { _id: 1 } },
+                  ],
+                  as: 'photographyRequestList',
                 },
-              ],
-              as: 'employeeList',
-            },
+              },
+              {
+                $project: {_userId:1,
+                  photographyRequestCount: { $size: '$photographyRequestList' },
+                },
+              },
+            ],
+            as: 'employeeList',
           },
-          {
-            $unwind: '$employeeList',
+        },{
+          $unwind: {
+            path: '$employeeList',
+            preserveNullAndEmptyArrays: true,
           },
-          { $sort: { 'employeeList.photographyRequestCount': 1 } },
-          {
-            $group: {
-              _id: "$_id",
-              "employeeList": {
-                $push: "$employeeList"
-              }
+        },
+        { $sort: { 'employeeList.photographyRequestCount': 1 } },
+        { $limit: 1 },
+        {
+          $group: {
+            _id: "$_id",
+            "employeeList": {
+              $push: "$employeeList"
             }
-          },
-          { $limit: 1 },
-        ]);
-        if (resultPhotography.length == 0) {
-          throw new HttpException('User not found', HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+          }
+        },
+      ]);
+      if (resultPhotographer.length == 0) {
+        throw new HttpException('Photography department not found', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+      if (resultPhotographer[0].employeeList.length == 0) {
+        throw new HttpException('Photography employees not found', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
         const photographerRequestModel = new this.photographerRequestModel({
           _rootCauseId: null,
           _orderId: orderId,
           _requestStatus: 0,
           _description: '',
-          _userId: String,
+          _userId: resultPhotographer[0].employeeList[0]._userId,
           _finishedAt: 0,
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -299,11 +302,11 @@ export class ProductsService {
         });
         await photographerRequestModel.save({
           session: transactionSession,
-        });*/
+        });
       }
 
       if (dto.hmSealingStatus == 1 && orderId != null) {
-        /*
+        
   var resultCounterHalmarkRequest = await this.counterModel.findOneAndUpdate(
     { _tableName: ModelNames.HALMARKING_REQUESTS },
     {
@@ -319,10 +322,10 @@ export class ProductsService {
     _uid: resultCounterHalmarkRequest._count,
     _orderId: orderId,
     _productId:productId,
-    _halmarkCenterId: String,
-    _halmarkCenterUserId: String,
+    _halmarkCenterId: null,
+    _halmarkCenterUserId: null,
     _verifyUserId: null,
-    _requestStatus: Number,
+    _requestStatus: 5,
     _rootCauseId: null,
     _description: "",
     _createdUserId: _userId_,
@@ -334,7 +337,7 @@ export class ProductsService {
   await halmarkRequestModel.save({
     session: transactionSession,
   });
-  */
+  
       }
 
       const responseJSON = { message: 'success', data: { list: result1 } };
