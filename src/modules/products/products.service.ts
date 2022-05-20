@@ -219,7 +219,7 @@ export class ProductsService {
         });
       }
       if (dto.eCommerceStatus == 1 && orderId != null) {
-        var resultPhotography = await this.departmentsModel.aggregate([
+      /*  var resultPhotography = await this.departmentsModel.aggregate([
           {
             $match: {
               _code: 1004,
@@ -299,7 +299,7 @@ export class ProductsService {
         });
         await photographerRequestModel.save({
           session: transactionSession,
-        });
+        });*/
       }
 
       if (dto.hmSealingStatus == 1 && orderId != null) {
@@ -941,14 +941,14 @@ export class ProductsService {
           $unwind: '$employeeList',
         },
         { $sort: { 'employeeList.photographyRequestCount': 1 } },
-        // {
-        //   $group: {
-        //     _id: "$_id",
-        //     "employeeList": {
-        //       $push: "$employeeList"
-        //     }
-        //   }
-        // },
+        {
+          $group: {
+            _id: "$_id",
+            "employeeList": {
+              $push: "$employeeList"
+            }
+          }
+        },
         { $limit: 1 },
       ]);
 
