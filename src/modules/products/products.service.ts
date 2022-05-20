@@ -870,7 +870,7 @@ export class ProductsService {
             as: 'employeeList',
           },
         },
-        {$sort: {'$employeeList.photographyRequestCount': 1}},
+        {$sort: {'employeeList.photographyRequestCount': -1}},
       ]);
 
       const responseJSON = { message: 'success', data: { list: result } };
