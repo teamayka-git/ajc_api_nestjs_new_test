@@ -54,7 +54,7 @@ export class ShopsService {
     transactionSession.startTransaction();
     try {
       var resultEmployee = await this.userModel
-        .aggregate([{ $match: { _email: dto.email } }])
+        .aggregate([{ $match: { _email: dto.email,_shopId:{$ne:null} } }])
         .session(transactionSession);
       if (resultEmployee.length == 0) {
         throw new HttpException(
