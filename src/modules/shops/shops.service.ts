@@ -28,6 +28,7 @@ import {
   ShopLoginDto,
 } from './shops.dto';
 import { Customers } from 'src/tableModels/customers.model';
+import { Generals } from 'src/tableModels/generals.model';
 @Injectable()
 export class ShopsService {
   constructor(
@@ -37,6 +38,8 @@ export class ShopsService {
     private readonly shopsModel: mongoose.Model<Shops>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
+    @InjectModel(ModelNames.GENERALS)
+    private readonly generalsModel: mongoose.Model<Generals>,
     @InjectModel(ModelNames.CUSTOMERS)
     private readonly customersModel: mongoose.Model<Customers>,
 
@@ -56,7 +59,7 @@ export class ShopsService {
       var resultEmployee = await this.userModel
         .aggregate([{ $match: { _email: dto.email } }])
         .session(transactionSession);
-        console.log("___shop login "+JSON.stringify(resultEmployee));
+      console.log('___shop login ' + JSON.stringify(resultEmployee));
       if (resultEmployee.length == 0) {
         throw new HttpException(
           'Wrong, Please check email and password',
@@ -246,7 +249,7 @@ export class ShopsService {
         _hallmarkingMandatoryStatus: dto.hallmarkingMandatoryStatus,
         _rateCardId: dto.rateCardId,
         _gstNumber: dto.gstNumber,
-        _tdsTcsStatus:dto.tdsTcsStatus,
+        _tdsTcsStatus: dto.tdsTcsStatus,
         _cityId: dto.cityId,
         _tdsId: dto.tdsId == 'nil' || dto.tdsId == '' ? null : dto.tdsId,
         _tcsId: dto.tcsId == 'nil' || dto.tcsId == '' ? null : dto.tcsId,
@@ -308,7 +311,7 @@ export class ShopsService {
             _employeeId: null,
             _agentId: null,
             _supplierId: null,
-            _deliveryHubId:null,
+            _deliveryHubId: null,
             _shopId: shopId,
             _customType: mapItem.customType,
             _halmarkId: null,
@@ -326,16 +329,15 @@ export class ShopsService {
         });
       }
 
-
       var encryptedPasswordShop = await crypto
-      .pbkdf2Sync(
-        '123456',
-        process.env.CRYPTO_ENCRYPTION_SALT,
-        1000,
-        64,
-        `sha512`,
-      )
-      .toString(`hex`);
+        .pbkdf2Sync(
+          '123456',
+          process.env.CRYPTO_ENCRYPTION_SALT,
+          1000,
+          64,
+          `sha512`,
+        )
+        .toString(`hex`);
       arrayToUsers.push({
         _email: dto.email,
         _name: dto.name,
@@ -348,7 +350,7 @@ export class ShopsService {
         _supplierId: null,
         _shopId: shopId,
         _customType: 5,
-        _deliveryHubId:null,
+        _deliveryHubId: null,
         _halmarkId: null,
         _customerId: null,
         _fcmId: '',
@@ -487,7 +489,7 @@ export class ShopsService {
         _rateCardId: dto.rateCardId,
         _gstNumber: dto.gstNumber,
         _cityId: dto.cityId,
-        _tdsTcsStatus:dto.tdsTcsStatus,
+        _tdsTcsStatus: dto.tdsTcsStatus,
         _tdsId: dto.tdsId == 'nil' || dto.tdsId == '' ? null : dto.tdsId,
         _tcsId: dto.tcsId == 'nil' || dto.tcsId == '' ? null : dto.tcsId,
         _creditAmount: dto.creditAmount,
@@ -616,7 +618,7 @@ export class ShopsService {
             _shopId: dto.shopUserId,
             _customType: 4,
             _halmarkId: null,
-            _deliveryHubId:null,
+            _deliveryHubId: null,
             _fcmId: '',
             _customerId: null,
             _deviceUniqueId: '',
@@ -846,7 +848,12 @@ export class ShopsService {
               from: ModelNames.USER,
               let: { userId: '$_id' },
               pipeline: [
-                { $match: {_customType:5, $expr: { $eq: ['$_shopId', '$$userId'] } } },
+                {
+                  $match: {
+                    _customType: 5,
+                    $expr: { $eq: ['$_shopId', '$$userId'] },
+                  },
+                },
               ],
               as: 'userDetails',
             },
@@ -900,7 +907,7 @@ export class ShopsService {
       if (dto.screenType.findIndex((it) => it == 104) != -1) {
         arrayAggregation.push(
           {
-            $lookup: {
+            $lookup: { 
               from: ModelNames.RATE_CARDS,
               let: { rateCardId: '$_rateCardId' },
               pipeline: [
@@ -916,6 +923,44 @@ export class ShopsService {
             },
           },
         );
+
+
+        if (dto.screenType.findIndex((it) => it == 112) != -1) {
+          arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
+            {
+              $lookup: {
+                from: ModelNames.RATE_CARD_PERCENTAGESS,
+                let: { ratecardIdId: '$_id' },
+                pipeline: [{ $match: { $expr: { $eq: ['$_rateCardId', '$$ratecardId'] } } },
+              
+              
+              
+                {
+                  $lookup: { 
+                    from: ModelNames.SUB_CATEGORIES,
+                    let: { subCategoryId: '$_subCategoryId' },
+                    pipeline: [
+                      { $match: { $expr: { $eq: ['$_id', '$$subCategoryId'] } } },
+                    ],
+                    as: 'subCategoryDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$subCategoryDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              
+              
+              ],
+                as: 'rateCardPercentages',
+              },
+            },
+            
+          );
+        }
+
       }
 
       if (dto.screenType.findIndex((it) => it == 106) != -1) {
@@ -1152,9 +1197,52 @@ export class ShopsService {
         }
       }
 
+      var resultGenerals = [];
+      var arrayAggregationGenerals = [];
+      var generalSettingsTypes = [];
+      /*
+         0 - tax
+    1 - Shop
+    2 - currency
+    3 - product
+    4 - order
+      */
+
+      if (dto.screenType.findIndex((it) => it == 200) != -1) {
+        generalSettingsTypes.push(0);
+      }
+      if (dto.screenType.findIndex((it) => it == 201) != -1) {
+        generalSettingsTypes.push(1);
+      }
+      if (dto.screenType.findIndex((it) => it == 202) != -1) {
+        generalSettingsTypes.push(2);
+      }
+      if (dto.screenType.findIndex((it) => it == 203) != -1) {
+        generalSettingsTypes.push(3);
+      }
+      if (dto.screenType.findIndex((it) => it == 204) != -1) {
+        generalSettingsTypes.push(4);
+      }
+      if (generalSettingsTypes.length != 0) {
+        arrayAggregationGenerals.push({
+          $match: {
+            _type: { $in: generalSettingsTypes },
+            _status: 1,
+          },
+        });
+
+        resultGenerals = await this.generalsModel.aggregate(
+          arrayAggregationGenerals,
+        );
+      }
+
       const responseJSON = {
         message: 'success',
-        data: { list: result, totalCount: totalCount },
+        data: {
+          list: result,
+          totalCount: totalCount,
+          generals: resultGenerals,
+        },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -1345,7 +1433,7 @@ export class ShopsService {
             _employeeId: null,
             _agentId: null,
             _supplierId: null,
-            _deliveryHubId:null,
+            _deliveryHubId: null,
             _customerId: null,
             _shopId: dto.shopUserId,
             _customType: mapItem.customType,
@@ -1473,7 +1561,7 @@ export class ShopsService {
             _mobile: mapItem.mobile,
             _globalGalleryId: null,
             _employeeId: null,
-            _deliveryHubId:null,
+            _deliveryHubId: null,
             _agentId: null,
             _supplierId: null,
             _customerId: customerId,

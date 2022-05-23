@@ -11,6 +11,7 @@ import { GlobalGalleryCategoriesSchema } from 'src/tableModels/globalGallerycate
 import { ShopsController } from './shops.controller';
 import { ShopsService } from './shops.service';
 import { CustomersSchema } from 'src/tableModels/customers.model';
+import { GeneralsSchema } from 'src/tableModels/generals.model';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { CustomersSchema } from 'src/tableModels/customers.model';
       { name: ModelNames.SHOPS, schema: ShopsSchema },
       { name: ModelNames.COUNTERS, schema: CountersSchema },
       { name: ModelNames.CUSTOMERS, schema: CustomersSchema },
+      { name: ModelNames.GENERALS, schema: GeneralsSchema },
       {
         name: ModelNames.GLOBAL_GALLERY_CATEGORIES,
         schema: GlobalGalleryCategoriesSchema,
