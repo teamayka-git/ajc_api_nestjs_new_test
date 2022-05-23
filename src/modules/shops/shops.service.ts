@@ -54,8 +54,9 @@ export class ShopsService {
     transactionSession.startTransaction();
     try {
       var resultEmployee = await this.userModel
-        .aggregate([{ $match: { _email: dto.email,_shopId:{$ne:null} } }])
+        .aggregate([{ $match: { _email: dto.email } }])
         .session(transactionSession);
+        console.log("___shop login "+resultEmployee);
       if (resultEmployee.length == 0) {
         throw new HttpException(
           'Wrong, Please check email and password',
