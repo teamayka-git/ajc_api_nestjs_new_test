@@ -142,7 +142,7 @@ export class ChatGateway
       client.disconnect();
       return;
     }
-
+console.log("___personal chat");
     var personalChatId = '';
 
     //finding personal chat id
