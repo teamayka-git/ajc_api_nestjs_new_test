@@ -109,7 +109,7 @@ export class ShopsService {
         .aggregate([
           {
             $match: {
-              _shopId: new mongoose.Types.ObjectId(resultEmployee[0]._shopId),
+              _id: new mongoose.Types.ObjectId(resultEmployee[0]._id),
               _status: 1,
             },
           },
