@@ -609,6 +609,16 @@ export class OrderSalesService {
           $match: { _isMatFinish: { $in: dto.isMatFinish } },
         });
       }
+      if (dto.isInvoiceGenerated.length > 0) {
+        arrayAggregation.push({
+          $match: { _isInvoiceGenerated: { $in: dto.isInvoiceGenerated } },
+        });
+      }
+
+      
+
+
+
       if (dto.isRhodium.length > 0) {
         arrayAggregation.push({
           $match: { _isRhodium: { $in: dto.isRhodium } },

@@ -254,6 +254,9 @@ export class OrderSaleListDto {
   @IsArray()
   @ApiProperty({ type: [Number] })
   isRhodium: number[];
+  @IsArray()
+  @ApiProperty({ type: [Number] })
+  isInvoiceGenerated: number[];
 
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionWorkStatus })
