@@ -16,7 +16,7 @@ const descriptionListScreenTypeForList =
   '0-total documents count, 100-user details, 103-root cause details, 104-created user details, 105-invoice items';
 const descriptionDeliveryMode = '0 - executive,  1 - courier,  2 - third party';
 const descriptionType = '0 - halmark, 1 - hub transfer';
-const descriptionSaleType = ' 0 - order sale, 1 - stock sale, 2 - job work';
+const descriptionBillMode = ' 0 - PureWeight, 1 - net weight, 2 - job work';
 
 class InvoiceCreateListItems {
   @IsString()
@@ -190,8 +190,8 @@ class InvoiceCreateList {
   description: string;
 
   @IsNumber()
-  @ApiProperty({ description: descriptionSaleType })
-  saleType: number;
+  @ApiProperty({ description: descriptionBillMode })
+  billMode: number;
 
   @IsArray()
   @ApiProperty({ type: [InvoiceCreateListItems] })
@@ -231,8 +231,8 @@ export class InvoiceListDto {
   userIds: string[];
 
   @IsArray()
-  @ApiProperty({ type: [Number], description: descriptionSaleType })
-  saleTypes: number[];
+  @ApiProperty({ type: [Number], description: descriptionBillMode })
+  billMode: number[];
 
   @IsArray()
   @ApiProperty({

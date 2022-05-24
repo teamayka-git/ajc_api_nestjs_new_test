@@ -931,7 +931,7 @@ export class ShopsService {
               $lookup: {
                 from: ModelNames.RATE_CARD_PERCENTAGESS,
                 let: { ratecardIdId: '$_id' },
-                pipeline: [{ $match: { $expr: { $eq: ['$_rateCardId', '$$ratecardId'] } } },
+                pipeline: [{ $match: { $expr: { $eq: ['$_rateCardId', '$$ratecardIdId'] } } },
               
               
               

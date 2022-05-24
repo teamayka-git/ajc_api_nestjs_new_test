@@ -10,7 +10,7 @@ export const InvoicesSchema = new mongoose.Schema({
     default: null,
   },
   _uid: { type: String, required: true, default: 'nil' },
-  _saleType: { type: Number, required: true, default: -1 },
+  _billMode: { type: Number, required: true, default: -1 },
 
   _rootCauseId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -37,7 +37,7 @@ export interface Invoices {
   _id: String;
   _userId: String;
   _uid: String;
-  _saleType: number;
+  _billMode: number;
   _rootCauseId: string;
   _description: string;
   _createdUserId: String;
@@ -51,7 +51,7 @@ InvoicesSchema.index({ _rootCauseId: 1 });
 InvoicesSchema.index({ _description: 1 });
 InvoicesSchema.index({ _userId: 1 });
 InvoicesSchema.index({ _uid: 1, _id: 1 });
-InvoicesSchema.index({ _saleType: 1 });
+InvoicesSchema.index({ _billMode: 1 });
 InvoicesSchema.index({ _createdUserId: 1 });
 InvoicesSchema.index({ _status: 1 });
 InvoicesSchema.index(
@@ -91,9 +91,9 @@ _type:{
     0 - halmark
     1 - hub transfer
 }
-_saleType:{
-    0 - order sale
-    1 - stock sale
+_billMode:{
+    0 - PureWeight
+    1 - net weight
     2 - job work
 }
 

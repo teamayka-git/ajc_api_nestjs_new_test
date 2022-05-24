@@ -52,7 +52,7 @@ export class InvoicesService {
             (index + 1),
           _rootCauseId: null,
           _description: mapItem.description,
-          _saleType: mapItem.saleType,
+          _billMode: mapItem.billMode,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
@@ -250,9 +250,9 @@ export class InvoicesService {
         arrayAggregation.push({ $match: { _userId: { $in: newSettingsId } } });
       }
 
-      if (dto.saleTypes.length > 0) {
+      if (dto.billMode.length > 0) {
         arrayAggregation.push({
-          $match: { _saleType: { $in: dto.saleTypes } },
+          $match: { _billMode: { $in: dto.billMode } },
         });
       }
 
