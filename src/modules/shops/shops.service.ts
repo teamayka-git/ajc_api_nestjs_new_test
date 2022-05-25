@@ -29,6 +29,7 @@ import {
 } from './shops.dto';
 import { Customers } from 'src/tableModels/customers.model';
 import { Generals } from 'src/tableModels/generals.model';
+import { Company } from 'src/tableModels/companies.model';
 @Injectable()
 export class ShopsService {
   constructor(
@@ -43,6 +44,8 @@ export class ShopsService {
     @InjectModel(ModelNames.CUSTOMERS)
     private readonly customersModel: mongoose.Model<Customers>,
 
+    @InjectModel(ModelNames.COMPANIES)
+    private readonly companyModel: mongoose.Model<Company>,
     @InjectModel(ModelNames.GLOBAL_GALLERY_CATEGORIES)
     private readonly globalGalleryCategoriesModel: mongoose.Model<GlobalGalleryCategories>,
     @InjectModel(ModelNames.GLOBAL_GALLERIES)
@@ -237,7 +240,7 @@ export class ShopsService {
         _globalGalleryId: globalGalleryId,
         _orderSaleRate: dto.orderSaleRate,
         _stockSaleRate: dto.stockSaleRate,
-        _address:dto.address,
+        _address: dto.address,
         _shopType: dto.shopType,
         _commisionType: dto.commisionType,
         _branchId: dto.branchId,
@@ -314,7 +317,7 @@ export class ShopsService {
             _supplierId: null,
             _deliveryHubId: null,
             _shopId: shopId,
-            _testCenterId:null,
+            _testCenterId: null,
             _customType: mapItem.customType,
             _halmarkId: null,
             _customerId: null,
@@ -351,7 +354,7 @@ export class ShopsService {
         _agentId: null,
         _supplierId: null,
         _shopId: shopId,
-        _testCenterId:null,
+        _testCenterId: null,
         _customType: 5,
         _deliveryHubId: null,
         _halmarkId: null,
@@ -622,7 +625,7 @@ export class ShopsService {
             _shopId: dto.shopUserId,
             _customType: 4,
             _halmarkId: null,
-            _testCenterId:null,
+            _testCenterId: null,
             _deliveryHubId: null,
             _fcmId: '',
             _customerId: null,
@@ -913,7 +916,7 @@ export class ShopsService {
       if (dto.screenType.findIndex((it) => it == 104) != -1) {
         arrayAggregation.push(
           {
-            $lookup: { 
+            $lookup: {
               from: ModelNames.RATE_CARDS,
               let: { rateCardId: '$_rateCardId' },
               pipeline: [
@@ -930,43 +933,22 @@ export class ShopsService {
           },
         );
 
-
         if (dto.screenType.findIndex((it) => it == 112) != -1) {
-          arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
-            {
-              $lookup: {
-                from: ModelNames.RATE_CARD_PERCENTAGESS,
-                let: { ratecardIdId: '$_id' },
-                pipeline: [{ $match: { $expr: { $eq: ['$_rateCardId', '$$ratecardIdId'] } } },
-              
-              
-              
+          arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push({
+            $lookup: {
+              from: ModelNames.RATE_CARD_PERCENTAGESS,
+              let: { ratecardIdId: '$_id' },
+              pipeline: [
                 {
-                  $lookup: { 
-                    from: ModelNames.SUB_CATEGORIES,
-                    let: { subCategoryId: '$_subCategoryId' },
-                    pipeline: [
-                      { $match: { $expr: { $eq: ['$_id', '$$subCategoryId'] } } },
-                    ],
-                    as: 'subCategoryDetails',
+                  $match: {
+                    $expr: { $eq: ['$_rateCardId', '$$ratecardIdId'] },
                   },
                 },
-                {
-                  $unwind: {
-                    path: '$subCategoryDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
-              
-              
               ],
-                as: 'rateCardPercentages',
-              },
+              as: 'rateCardPercentages',
             },
-            
-          );
+          });
         }
-
       }
 
       if (dto.screenType.findIndex((it) => it == 106) != -1) {
@@ -1206,6 +1188,7 @@ export class ShopsService {
       var resultGenerals = [];
       var arrayAggregationGenerals = [];
       var generalSettingsTypes = [];
+      var resultCompany={};
       /*
          0 - tax
     1 - Shop
@@ -1247,6 +1230,16 @@ export class ShopsService {
           arrayAggregationGenerals,
         );
       }
+      
+      if (dto.screenType.findIndex((it) => it == 250) != -1) {
+var resultCompanyList=await this.companyModel.aggregate([{$match:{_status:1}}]);
+     if(resultCompanyList.length==0){
+      throw new HttpException('Company not found', HttpStatus.INTERNAL_SERVER_ERROR);
+     }
+
+resultCompany=resultCompanyList[0];
+}
+
 
       const responseJSON = {
         message: 'success',
@@ -1254,6 +1247,7 @@ export class ShopsService {
           list: result,
           totalCount: totalCount,
           generals: resultGenerals,
+          company: resultCompany,
         },
       };
       if (
@@ -1442,7 +1436,7 @@ export class ShopsService {
             _password: encryptedPassword,
             _mobile: mapItem.mobile,
             _globalGalleryId: null,
-            _testCenterId:null,
+            _testCenterId: null,
             _employeeId: null,
             _agentId: null,
             _supplierId: null,
@@ -1575,7 +1569,7 @@ export class ShopsService {
             _globalGalleryId: null,
             _employeeId: null,
             _deliveryHubId: null,
-            _testCenterId:null,
+            _testCenterId: null,
             _agentId: null,
             _supplierId: null,
             _customerId: customerId,

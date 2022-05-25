@@ -12,6 +12,7 @@ import { ShopsController } from './shops.controller';
 import { ShopsService } from './shops.service';
 import { CustomersSchema } from 'src/tableModels/customers.model';
 import { GeneralsSchema } from 'src/tableModels/generals.model';
+import { CompanySchema } from 'src/tableModels/companies.model';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { GeneralsSchema } from 'src/tableModels/generals.model';
       { name: ModelNames.SHOPS, schema: ShopsSchema },
       { name: ModelNames.COUNTERS, schema: CountersSchema },
       { name: ModelNames.CUSTOMERS, schema: CustomersSchema },
-      { name: ModelNames.GENERALS, schema: GeneralsSchema },
+      { name: ModelNames.GENERALS, schema: GeneralsSchema },{name:ModelNames.COMPANIES,schema:CompanySchema},
       {
         name: ModelNames.GLOBAL_GALLERY_CATEGORIES,
         schema: GlobalGalleryCategoriesSchema,

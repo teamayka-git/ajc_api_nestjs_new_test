@@ -59,6 +59,8 @@ export enum ModelNames {
   INVOICE_ITEMS = 'invoice_items',
   FACTORY_CALCULATION_TYPE_MASTER = 'factory_calculation_type_masters',
   FACTORY_CALCULATION_TYPE_MASTER_ITEMS = 'factory_calculation_type_master_items',
+  GOLD_TESTING_REQUESTS = 'gold_testing_requests',
+  GOLD_TESTING_REQUEST_ITEMS = 'gold_testing_request_items',
 
   CHAT_PERSONAL_CHAT_MESSAGES = 'chat_personal_chat_messages',
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',

@@ -1194,6 +1194,70 @@ export class AppService {
         { upsert: true, new: true, session: transactionSession },
       );
 
+
+
+      await this.generalsModel.findOneAndUpdate(
+        { _code: 1020 },
+        {
+          $setOnInsert: {
+            _name: 'Halmarking charge',
+            _string: '',
+            _number: 30,
+            _vlaueType: 0,
+            _json: { basic:"Basic" },
+            _type: 3,
+            _dataGuard: [0, 1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+
+      await this.generalsModel.findOneAndUpdate(
+        { _code: 1021 },
+        {
+          $setOnInsert: {
+            _name: 'Metal amount gst percentage',
+            _string: '',
+            _number: 10,
+            _vlaueType: 0,
+            _json: { basic:"Basic" },
+            _type: 0,
+            _dataGuard: [0, 1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+      await this.generalsModel.findOneAndUpdate(
+        { _code: 1022 },
+        {
+          $setOnInsert: {
+            _name: 'Stone amount gst percentage',
+            _string: '',
+            _number: 10,
+            _vlaueType: 0,
+            _json: { basic:"Basic" },
+            _type: 0,
+            _dataGuard: [0, 1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+
       await this.purityModel.findOneAndUpdate(
         { _name: '916' },
         {

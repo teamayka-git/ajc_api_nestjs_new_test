@@ -95,6 +95,10 @@ _code:{
     1018 - photo min respond time
     1019 - invoice template
 
+    1020 - Halmarking charge
+    1021 - Metal amount gst %
+    1022 - Stone amount gst %
+
 }
 _type:{
     0 - tax
