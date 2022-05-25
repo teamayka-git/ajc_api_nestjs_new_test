@@ -209,6 +209,8 @@ export class OrderSalesService {
         _rootCause: '',
         _generalRemark: '',
         _description: dto.description,
+        _isInvoiceGenerated: 0,
+        _isProductGenerated: 0,
         _isRhodium: dto.isRhodium,
         _isMatFinish: dto.isMatFinish,
         _createdUserId: _userId_,
@@ -612,6 +614,11 @@ export class OrderSalesService {
       if (dto.isInvoiceGenerated.length > 0) {
         arrayAggregation.push({
           $match: { _isInvoiceGenerated: { $in: dto.isInvoiceGenerated } },
+        });
+      }
+      if (dto.isProductGenerated.length > 0) {
+        arrayAggregation.push({
+          $match: { _isProductGenerated: { $in: dto.isProductGenerated } },
         });
       }
 

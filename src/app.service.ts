@@ -1172,6 +1172,26 @@ export class AppService {
         },
         { upsert: true, new: true, session: transactionSession },
       );
+      await this.generalsModel.findOneAndUpdate(
+        { _code: 1019 },
+        {
+          $setOnInsert: {
+            _name: 'invoice template',
+            _string: '',
+            _number: 0,
+            _vlaueType: 2,
+            _json: { item: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22] },
+            _type: 5,
+            _dataGuard: [0, 1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
 
       await this.purityModel.findOneAndUpdate(
         { _name: '916' },

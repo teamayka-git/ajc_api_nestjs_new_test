@@ -1223,6 +1223,12 @@ export class ShopsService {
       if (dto.screenType.findIndex((it) => it == 204) != -1) {
         generalSettingsTypes.push(4);
       }
+      if (dto.screenType.findIndex((it) => it == 205) != -1) {
+        generalSettingsTypes.push(5);
+      }
+      if (dto.screenType.findIndex((it) => it == 206) != -1) {
+        generalSettingsTypes.push(6);
+      }
       if (generalSettingsTypes.length != 0) {
         arrayAggregationGenerals.push({
           $match: {

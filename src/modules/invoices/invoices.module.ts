@@ -6,6 +6,7 @@ import { ModelNames } from 'src/common/model_names';
 import { InvoicesSchema } from 'src/tableModels/invoices.model';
 import { InvoiceItemsSchema } from 'src/tableModels/invoice_items.model';
 import { CountersSchema } from 'src/tableModels/counters.model';
+import { OrderSalesSchema } from 'src/tableModels/order_sales.model';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CountersSchema } from 'src/tableModels/counters.model';
         schema: InvoiceItemsSchema,
       },
       { name: ModelNames.COUNTERS, schema: CountersSchema },
+      { name: ModelNames.ORDER_SALES, schema: OrderSalesSchema },
     ]),
   ],
   controllers: [InvoicesController],

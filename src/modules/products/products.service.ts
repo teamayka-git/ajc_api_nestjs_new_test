@@ -198,11 +198,16 @@ export class ProductsService {
             $set: {
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
+              _isProductGenerated:1,
               _workStatus: 6,
             },
           },
           { new: true, session: transactionSession },
         );
+
+
+
+
 
         const orderSaleHistoryModel = new this.orderSaleHistoriesModel({
           _orderSaleId: null,

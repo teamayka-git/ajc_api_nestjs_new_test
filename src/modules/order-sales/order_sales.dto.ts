@@ -259,6 +259,10 @@ export class OrderSaleListDto {
   isInvoiceGenerated: number[];
 
   @IsArray()
+  @ApiProperty({ type: [Number] })
+  isProductGenerated: number[];
+
+  @IsArray()
   @ApiProperty({ type: [Number], description: descriptionWorkStatus })
   workStatus: number[];
 

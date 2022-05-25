@@ -11,6 +11,7 @@ import {
   InvoiceStatusChangeDto,
 } from './invoices.dto';
 import { GlobalConfig } from 'src/config/global_config';
+import { OrderSales } from 'src/tableModels/order_sales.model';
 
 @Injectable()
 export class InvoicesService {
@@ -21,6 +22,8 @@ export class InvoicesService {
     private readonly invoiceItemsModel: mongoose.Model<InvoiceItems>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
+    @InjectModel(ModelNames.ORDER_SALES)
+    private readonly orderSaleModel: mongoose.Model<OrderSales>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async create(dto: InvoiceCreateDto, _userId_: string) {
@@ -30,6 +33,7 @@ export class InvoicesService {
     try {
       var arrayToDeliveryChallan = [];
       var arrayToDeliveryChallanItems = [];
+      var orderIds = [];
 
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.DELIVERY_CHALLANS },
@@ -61,6 +65,7 @@ export class InvoicesService {
         });
 
         mapItem.arrayInvoiceItems.map((mapItem1) => {
+          orderIds.push(mapItem1.orderId);
           arrayToDeliveryChallanItems.push({
             _invoiceId: invoiceId,
             _orderId: mapItem1.orderId,
@@ -115,6 +120,12 @@ export class InvoicesService {
           });
         });
       });
+
+      await this.orderSaleModel.updateMany(
+        { _id: { $in: orderIds } },
+        { $set: { _isInvoiceGenerated: 1 } },
+        { new: true, session: transactionSession },
+      );
 
       var result1 = await this.invoiceModel.insertMany(arrayToDeliveryChallan, {
         session: transactionSession,

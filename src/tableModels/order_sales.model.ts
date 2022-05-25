@@ -39,6 +39,7 @@ export const OrderSalesSchema = new mongoose.Schema({
   _productData: { type: Object, required: true, default: {} },
   _uid: { type: String, required: true, default: 'nil' },
   _isInvoiceGenerated: { type: Number, required: true, default: -1 },
+  _isProductGenerated: { type: Number, required: true, default: -1 },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -66,6 +67,7 @@ export interface OrderSales {
   _dueDate: number;
   _workStatus: number;
   _isInvoiceGenerated:number;
+  _isProductGenerated:number;
   _productData: object;
   _rootCauseId: String;
   _type: number;
@@ -82,6 +84,7 @@ export interface OrderSales {
   _status: Number;
 }
 
+OrderSalesSchema.index({ _isProductGenerated: 1 });
 OrderSalesSchema.index({ _isInvoiceGenerated: 1 });
 OrderSalesSchema.index({ _type: 1 });
 OrderSalesSchema.index({ _workStatus: 1 });
