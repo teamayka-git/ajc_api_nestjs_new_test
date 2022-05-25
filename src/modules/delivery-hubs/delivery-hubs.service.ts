@@ -69,6 +69,7 @@ export class DeliveryHubsService {
           _employeeId: null,
           _agentId: null,
           _supplierId: null,
+          _testCenterId:null,
           _deliveryHubId: deliveryHubId,
           _shopId: null,
           _customType: 6,

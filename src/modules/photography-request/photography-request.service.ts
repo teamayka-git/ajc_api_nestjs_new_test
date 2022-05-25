@@ -123,7 +123,10 @@ export class PhotographyRequestService {
       throw error;
     }
   }
-  async status_change_product_documents(dto: ProductDocumentsStatusChangeDto, _userId_: string) {
+  async status_change_product_documents(
+    dto: ProductDocumentsStatusChangeDto,
+    _userId_: string,
+  ) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -217,26 +220,26 @@ export class PhotographyRequestService {
             _status: 1,
           });
         }
-      }
 
-      arrayGlobalGalleries.map((mapItem) => {
-        arrayProductsDocuments.push({
-          _productId: dto.productId,
-          _globalGalleryId: mapItem._id,
-          _createdUserId: _userId_,
-          _createdAt: dateTime,
-          _updatedUserId: null,
-          _updatedAt: 0,
-          _status: 1,
+        arrayGlobalGalleries.map((mapItem) => {
+          arrayProductsDocuments.push({
+            _productId: dto.productId,
+            _globalGalleryId: mapItem._id,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: 0,
+            _status: 1,
+          });
         });
-      });
 
-      await this.productDocumentsModel.insertMany(arrayProductsDocuments, {
-        session: transactionSession,
-      });
-      await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
-        session: transactionSession,
-      });
+        await this.productDocumentsModel.insertMany(arrayProductsDocuments, {
+          session: transactionSession,
+        });
+        await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
+          session: transactionSession,
+        });
+      }
 
       var objUpdate = {
         _requestStatus: dto.requestStatus,

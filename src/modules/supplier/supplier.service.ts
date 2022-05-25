@@ -253,6 +253,7 @@ export class SupplierService {
             _customType: 0,
             _halmarkId: null,
             _customerId: null,
+            _testCenterId:null,
 
             _employeeId: null,
             _deliveryHubId: null,

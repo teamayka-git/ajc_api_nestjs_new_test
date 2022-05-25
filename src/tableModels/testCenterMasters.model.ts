@@ -6,9 +6,14 @@ export const TestCenterMastersSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
   _name: { type: String, required: true, default: 'nil' },
   _code: { type: Number, required: true, default: -1 },
-  _place: { type: String, required: true, default: 'nil' },
+  _address: { type: String, required: true, default: 'nil' },
   _allowerWastage: { type: Number, required: true, default: -1 },
   _dataGuard: { type: Object, required: true, default: [] },
+  _cityId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.CITIES,
+    default: null,
+  },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -28,7 +33,8 @@ export interface TestCenterMasters {
   _id: String;
   _name: String;
   _code: Number;
-  _place: String;
+  _address:string;
+  _cityId:string;
   _allowerWastage: Number;
   _dataGuard: Object;
   _createdUserId: String;
@@ -41,8 +47,9 @@ export interface TestCenterMasters {
 
 
 
+TestCenterMastersSchema.index({_cityId: 1});
+TestCenterMastersSchema.index({_address: 1});
 TestCenterMastersSchema.index({_status: 1});
-TestCenterMastersSchema.index({ _place: 1 });
 TestCenterMastersSchema.index({ _allowerWastage: 1 });
 TestCenterMastersSchema.index({ _code: 1,_id:1 });
 TestCenterMastersSchema.index(

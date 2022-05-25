@@ -4,6 +4,8 @@ import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { GlobalConfig } from 'src/config/global_config';
 import { TestCenterMasters } from 'src/tableModels/testCenterMasters.model';
+import { User } from 'src/tableModels/user.model';
+const crypto = require('crypto');
 import {
   CheckItemExistDto,
   CheckNameExistDto,
@@ -18,6 +20,8 @@ export class TestCenterMastersService {
   constructor(
     @InjectModel(ModelNames.TEST_CENTER_MASTERS)
     private readonly testCenterMastersModel: mongoose.Model<TestCenterMasters>,
+    @InjectModel(ModelNames.USER)
+    private readonly userModel: mongoose.Model<User>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async create(dto: TestCenterMastersCreateDto, _userId_: string) {
@@ -26,16 +30,56 @@ export class TestCenterMastersService {
     transactionSession.startTransaction();
     try {
       var arrayToStates = [];
+      var arrayToUsers = [];
+
+      var encryptedPassword = await crypto
+        .pbkdf2Sync(
+          '123456',
+          process.env.CRYPTO_ENCRYPTION_SALT,
+          1000,
+          64,
+          `sha512`,
+        )
+        .toString(`hex`);
 
       dto.array.map((mapItem) => {
+        var testCenterId = new mongoose.Types.ObjectId();
         arrayToStates.push({
+          _id: testCenterId,
           _name: mapItem.name,
           _code: mapItem.code,
-          _place: mapItem.place,
+          _address: mapItem.address,
+          _cityId: mapItem.cityId,
           _allowerWastage: mapItem.allowedWastage,
           _dataGuard: mapItem.dataGuard,
           _createdUserId: _userId_,
           _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
+        });
+        arrayToUsers.push({
+          _name: mapItem.name,
+          _gender: 2,
+          _email: mapItem.email,
+          _password: encryptedPassword,
+          _mobile: mapItem.mobile,
+          _globalGalleryId: null,
+          _customType: 9,
+          _employeeId: null,
+          _agentId: null,
+          _testCenterId: null,
+          _supplierId: null,
+          _shopId: null,
+          _halmarkId: null,
+          _customerId: null,
+          _fcmId: '',
+          _deliveryHubId: null,
+          _deviceUniqueId: '',
+          _permissions: [],
+          _userRole: 0,
+          _createdUserId: null,
+          _createdAt: -1,
           _updatedUserId: null,
           _updatedAt: -1,
           _status: 1,
@@ -48,7 +92,9 @@ export class TestCenterMastersService {
           session: transactionSession,
         },
       );
-
+      await this.userModel.insertMany(arrayToUsers, {
+        session: transactionSession,
+      });
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -84,11 +130,26 @@ export class TestCenterMastersService {
           $set: {
             _name: dto.name,
             _code: dto.code,
-            _place: dto.place,
+            _address: dto.address,
+            _cityId: dto.cityId,
             _allowerWastage: dto.allowedWastage,
             _dataGuard: dto.dataGuard,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      await this.userModel.findOneAndUpdate(
+        {
+          _testCenterId: dto.testCenterMasterId,
+          _customType: 9,
+        },
+        {
+          $set: {
+            _name: dto.name,
+            _mobile: dto.mobile,
           },
         },
         { new: true, session: transactionSession },
@@ -170,7 +231,7 @@ export class TestCenterMastersService {
           $match: {
             $or: [
               { _name: new RegExp(dto.searchingText, 'i') },
-              { _place: new RegExp(dto.searchingText, 'i') },
+              { _address: new RegExp(dto.searchingText, 'i') },
               { _code: dto.searchingText },
             ],
           },
@@ -182,6 +243,13 @@ export class TestCenterMastersService {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
+      }
+      if (dto.cityIds.length > 0) {
+        var newSettingsId = [];
+        dto.cityIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _cityId: { $in: newSettingsId } } });
       }
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {
@@ -198,9 +266,6 @@ export class TestCenterMastersService {
           arrayAggregation.push({ $sort: { _code: dto.sortOrder } });
           break;
         case 4:
-          arrayAggregation.push({ $sort: { _place: dto.sortOrder } });
-          break;
-        case 5:
           arrayAggregation.push({ $sort: { _allowerWastage: dto.sortOrder } });
           break;
       }
@@ -209,7 +274,28 @@ export class TestCenterMastersService {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
-
+      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { userId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    _customType: 9,
+                    $expr: { $eq: ['$_testCenterId', '$$userId'] },
+                  },
+                },
+              ],
+              as: 'userDetails',
+            },
+          },
+          {
+            $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
+      }
       var result = await this.testCenterMastersModel
         .aggregate(arrayAggregation)
         .session(transactionSession);

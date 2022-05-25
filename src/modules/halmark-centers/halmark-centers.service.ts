@@ -102,6 +102,7 @@ export class HalmarkCentersService {
             _supplierId: null,
             _customerId: null,
             _deliveryHubId: null,
+            _testCenterId:null,
             _shopId: null,
             _customType: 4,
             _halmarkId: halmarkId,
@@ -121,7 +122,7 @@ export class HalmarkCentersService {
       arrayToUsers.push({
         _email: dto.email,
         _name: dto.name,
-        _gender: dto.gender,
+        _gender: 2,
         _password: encryptedPassword,
         _mobile: dto.mobile,
         _globalGalleryId: null,
@@ -130,6 +131,7 @@ export class HalmarkCentersService {
         _supplierId: null,
         _customerId: null,
         _deliveryHubId: null,
+        _testCenterId:null,
         _shopId: null,
         _customType: 7,
         _halmarkId: halmarkId,
@@ -202,7 +204,6 @@ export class HalmarkCentersService {
         {
           $set: {
             _name: dto.name,
-            _gender: dto.gender,
             _mobile: dto.mobile,
           },
         },
@@ -264,6 +265,7 @@ export class HalmarkCentersService {
             _agentId: null,
             _deliveryHubId: null,
             _supplierId: null,
+            _testCenterId:null,
             _shopId: null,
             _customType: 4,
             _customerId: null,
@@ -364,6 +366,7 @@ export class HalmarkCentersService {
             _globalGalleryId: null,
             _employeeId: null,
             _agentId: null,
+            _testCenterId:null,
             _supplierId: null,
             _shopId: null,
             _customerId: null,

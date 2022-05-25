@@ -12,13 +12,13 @@ import { Transform, Type, Type as ValidateTypes } from 'class-transformer';
 import { Optional } from '@nestjs/common';
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
-const descriptionListScreenTypeForList = '0-total documents count';
+const descriptionListScreenTypeForList = '0-total documents count, 100-test center user data populate';
 const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 
 const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType =
-  '0-Created Date, 1-Status,2-Name, 3-Code, 4-place, 5-Allowed wastage';
+  '0-Created Date, 1-Status,2-Name, 3-Code, 4-Allowed wastage';
 
 class TestCenterMastersCreateList {
   @IsString()
@@ -27,7 +27,18 @@ class TestCenterMastersCreateList {
 
   @IsString()
   @ApiProperty({})
-  place: string;
+  email: string;
+
+  @IsString()
+  @ApiProperty({})
+  mobile: string;
+
+  @IsString()
+  @ApiProperty({})
+  address: string;
+  @IsString()
+  @ApiProperty({})
+  cityId: string;
 
   @IsNumber()
   @ApiProperty({})
@@ -57,10 +68,19 @@ export class TestCenterMastersEditDto {
   @IsString()
   @ApiProperty({})
   name: string;
+  @IsString()
+  @ApiProperty({})
+  address: string;
 
   @IsString()
   @ApiProperty({})
-  place: string;
+  cityId: string;
+
+  @IsString()
+  @ApiProperty({})
+  mobile: string;
+
+
 
   @IsNumber()
   @ApiProperty({})
@@ -98,6 +118,10 @@ export class TestCenterMastersListDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   testCenterMastersIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  cityIds: string[];
 
   @IsNumber()
   @ApiProperty({})

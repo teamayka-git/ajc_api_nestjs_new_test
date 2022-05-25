@@ -693,6 +693,7 @@ export class AppService {
             _employeeId: employeeId,
             _agentId: null,
             _supplierId: null,
+            _testCenterId:null,
             _shopId: null,
             _customType: 0,
             _halmarkId: null,

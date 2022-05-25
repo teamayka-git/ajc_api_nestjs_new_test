@@ -257,6 +257,7 @@ export class AgentService {
             _supplierId: null,
             _customerId: null,
             _deliveryHubId: null,
+            _testCenterId:null,
             _fcmId: '',
             _deviceUniqueId: '',
             _permissions: [],

@@ -58,10 +58,6 @@ export class HalmarkCreateDto {
   @ApiProperty({})
   email: string;
 
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({})
-  gender: number;
 
   @IsString()
   @ApiProperty({})
@@ -98,10 +94,6 @@ export class HalmarkEditDto {
   @ApiProperty({})
   email: string;
 
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({})
-  gender: number;
 
   @IsString()
   @ApiProperty({})
