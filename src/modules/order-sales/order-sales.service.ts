@@ -683,6 +683,44 @@ export class OrderSalesService {
             },
           },
         );
+
+        if (dto.screenType.findIndex((it) => it == 109) != -1) {
+          arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
+            {
+              $lookup: {
+                from: ModelNames.CATEGORIES,
+                let: { categoryId: '$_categoryId' },
+                pipeline: [
+                  { $match: { $expr: { $eq: ['$_id', '$$categoryId'] } } },
+
+                  {
+                    $lookup: {
+                      from: ModelNames.GROUP_MASTERS,
+                      let: { groupId: '$_groupId' },
+                      pipeline: [
+                        { $match: { $expr: { $eq: ['$_id', '$$groupId'] } } },
+                      ],
+                      as: 'groupDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$groupDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                ],
+                as: 'categoryDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$categoryDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          );
+        }
       }
 
       if (dto.screenType.findIndex((it) => it == 108) != -1) {
