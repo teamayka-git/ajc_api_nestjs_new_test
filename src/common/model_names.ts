@@ -44,6 +44,7 @@ export enum ModelNames {
   ORDER_SALE_SET_SUB_PROCESS_HISTORIES = 'order_sale_set_sub_process_histories',
   PRODUCTS = 'products',
   PRODUCT_STONE_LINKIGS = 'product_stone_linkings',
+  PRODUCT_DOCUMENTS_LINKIGS = 'product_documents_linkings',
   COLOUR_MASTERS = 'colour_masters',
   STONE_COLOUR_LINKINGS = 'stone_colour_linkings',
   USER_ATTENDANCES = 'user_attendaces',

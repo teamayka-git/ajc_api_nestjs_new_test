@@ -20,6 +20,9 @@ class PhotographyRequestCreateList {
   @IsString()
   @ApiProperty({})
   orderId: string;
+  @IsString()
+  @ApiProperty({})
+  productId: string;
 
   @IsString()
   @ApiProperty({})
@@ -96,8 +99,20 @@ export class PhotographyStatusChangeDto {
   @ApiProperty({ description: descriptionStatus })
   status: number;
 }
+export class ProductDocumentsStatusChangeDto {
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  productDocumentsIds: string[];
+
+  @IsNumber()
+  @ApiProperty({ description: descriptionStatus })
+  status: number;
+}
 
 export class PhotographyRequestStatusChangeDto {
+  @Transform(({ value }) =>
+  typeof value == 'string' ? JSON.parse(value) : value,
+)
   @IsArray()
   @ApiProperty({ type: [String] })
   photographyIds: string[];
@@ -108,8 +123,14 @@ export class PhotographyRequestStatusChangeDto {
 
   @IsString()
   @ApiProperty({})
+  productId: string;
+
+  @IsString()
+  @ApiProperty({})
   rootCauseId: string;
 
+  
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({ description: descriptionRequestStatus })
   requestStatus: number;

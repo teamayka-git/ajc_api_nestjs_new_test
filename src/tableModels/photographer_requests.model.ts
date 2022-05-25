@@ -14,6 +14,11 @@ export const PhotographerRequestsSchema = new mongoose.Schema({
     ref: ModelNames.ORDER_SALES,
     default: null,
   },
+  _productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.PRODUCTS,
+    default: null,
+  },
   _requestStatus: { type: Number, required: true, default: -1 },
   _description: { type: String, default: 'nil' },
   _userId: {
@@ -41,6 +46,7 @@ export interface PhotographerRequests {
   _id: String;
   _rootCauseId: String;
   _orderId: String;
+  _productId:string;
   _requestStatus: number;
   _description: String;
   _userId: String;
@@ -52,6 +58,7 @@ export interface PhotographerRequests {
   _status: Number;
 }
 
+PhotographerRequestsSchema.index({ _productId: 1 });
 PhotographerRequestsSchema.index({ _rootCauseId: 1 });
 PhotographerRequestsSchema.index({ _orderId: 1 });
 PhotographerRequestsSchema.index({ _requestStatus: 1 });

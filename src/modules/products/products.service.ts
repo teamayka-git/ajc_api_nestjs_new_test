@@ -290,6 +290,7 @@ export class ProductsService {
         const photographerRequestModel = new this.photographerRequestModel({
           _rootCauseId: null,
           _orderId: orderId,
+          _productId: productId,
           _requestStatus: 0,
           _description: '',
           _userId: resultPhotographer[0].employeeList[0]._userId,
@@ -789,6 +790,55 @@ export class ProductsService {
         });
       }
 
+      if (dto.screenType.findIndex((it) => it == 106) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.PRODUCT_DOCUMENTS_LINKIGS,
+              let: { productId: '$_id' },
+              pipeline: [
+                {
+                  $match: {_status:1,
+                    $expr: {
+                      $and: [{ $eq: ['$_productId', '$$productId'] }],
+                    },
+                  },
+                },
+                {
+                  $lookup: {
+                    from: ModelNames.GLOBAL_GALLERIES,
+                    let: { globalGalleryId: '$_globalGalleryId' },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                        },
+                      },
+                      {
+                        $project: {
+                          _name: 1,
+                          _docType: 1,
+                          _type: 1,
+                          _uid: 1,
+                          _url: 1,
+                        },
+                      },
+                    ],
+                    as: 'globalGalleryDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$globalGalleryDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              ],
+              as: 'documentList',
+            },
+          },
+        );
+      }
       var result = await this.productModel
         .aggregate(arrayAggregation)
         .session(transactionSession);

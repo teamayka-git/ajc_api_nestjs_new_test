@@ -3,6 +3,7 @@ export enum UploadedFileDirectoryPath {
   GLOBAL_GALLERY_CATEGORY = 'upload_files/category/',
   GLOBAL_GALLERY_SUB_CATEGORY = 'upload_files/subCategory/',
   GLOBAL_GALLERY_STONE = 'upload_files/stone/',
+  GLOBAL_GALLERY_PRODUCT = 'upload_files/product/',
   GLOBAL_GALLERY_AGENT = 'upload_files/agent/',
   GLOBAL_GALLERY_SHOP = 'upload_files/shop/',
   GLOBAL_GALLERY_BRANCH = 'upload_files/branch/',
