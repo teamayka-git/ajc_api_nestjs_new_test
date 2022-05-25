@@ -169,6 +169,9 @@ export class ShopCreateDto {
   @IsString()
   @ApiProperty({})
   panCardNumber: string;
+  @IsString()
+  @ApiProperty({})
+  address: string;
 
   @Transform(({ value }) => Number(value))
   @IsNumber()
@@ -319,6 +322,9 @@ export class ShopEditeDto {
   @IsString()
   @ApiProperty({})
   branchId: string;
+  @IsString()
+  @ApiProperty({})
+  address: string;
   
   @Transform(({ value }) => Number(value))
   @IsNumber()

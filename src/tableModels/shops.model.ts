@@ -32,6 +32,7 @@ export const ShopsSchema = new mongoose.Schema({
   },
   _isSupplier: { type: Number, required: true, default: -1 },
   _panCardNumber: { type: String, required: true, default: 'nil' },
+  _address: { type: String, required: true, default: 'nil' },
   _billingModeSale: { type: Number, required: true, default: -1 },
   _billingModePurchase: { type: Number, required: true, default: -1 },
   _hallmarkingMandatoryStatus: { type: Number, required: true, default: -1 },
@@ -111,6 +112,7 @@ export interface Shops {
   _shopType: Number;
   _branchId: String;
   _orderHeadId: String;
+  _address: String;
   _relationshipManagerId: String;
   _isSupplier: number;
   _globalGalleryId: String;
@@ -144,6 +146,7 @@ export interface Shops {
 ShopsSchema.index({ _location: '2dsphere' });
 ShopsSchema.index({ _name: 1 });
 ShopsSchema.index({ _tdsTcsStatus: 1 });
+ShopsSchema.index({ _address: 1 });
 
 ShopsSchema.index({ _commisionType: 1 });
 ShopsSchema.index({ _rateCardId: 1 });
