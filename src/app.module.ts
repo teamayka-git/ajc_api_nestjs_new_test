@@ -70,6 +70,7 @@ import { DeliveryChellanModule } from './modules/delivery-chellan/delivery-chell
 import { InvoicesModule } from './modules/invoices/invoices.module';
 import { HalmarkingRequestsModule } from './modules/halmarking-requests/halmarking-requests.module';
 import { FactoryCalculationTypeMasterModule } from './modules/factory-calculation-type-master/factory-calculation-type-master.module';
+import { GoldTestingRequestModule } from './modules/gold-testing-request/gold-testing-request.module';
 
 @Module({
   imports: [
@@ -151,6 +152,7 @@ import { FactoryCalculationTypeMasterModule } from './modules/factory-calculatio
     InvoicesModule,
     HalmarkingRequestsModule,
     FactoryCalculationTypeMasterModule,
+    GoldTestingRequestModule,
 
     // SalesReturnRequestStatusesModule,
   ],

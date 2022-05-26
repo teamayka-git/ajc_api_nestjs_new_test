@@ -93,10 +93,10 @@ export class SubCategoriesService {
             _type: 1,
             _uid: resultCounterPurchase._count - file['image'].length + (i + 1),
             _url: resultUpload['url'],
-            _created_user_id: _userId_,
-            _created_at: dateTime,
-            _updated_user_id: null,
-            _updated_at: -1,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
             _status: 1,
           });
 
@@ -255,10 +255,10 @@ export class SubCategoriesService {
           _type: 1,
           _uid: resultCounterPurchase._count,
           _url: resultUpload['url'],
-          _created_user_id: _userId_,
-          _created_at: dateTime,
-          _updated_user_id: null,
-          _updated_at: -1,
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
           _status: 1,
         });
         var resultGlobalGallery = await globalGallery.save({

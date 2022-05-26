@@ -94,10 +94,8 @@ _code:{
     1017 - order headname prefix
     1018 - photo min respond time
     1019 - invoice template
-
     1020 - Halmarking charge
-    1021 - Metal amount gst %
-    1022 - Stone amount gst %
+    1021 - General tax
 
 }
 _type:{

@@ -669,6 +669,20 @@ export class AppService {
         },
         { upsert: true, new: true, session: transactionSession },
       );
+      await this.countersModel.findOneAndUpdate(
+        { _tableName: ModelNames.GOLD_TESTING_REQUESTS },
+        {
+          $setOnInsert: {
+            _count: 0,
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
 
       var encryptedPassword = await crypto
         .pbkdf2Sync(
@@ -1221,7 +1235,7 @@ export class AppService {
         { _code: 1021 },
         {
           $setOnInsert: {
-            _name: 'Metal amount gst percentage',
+            _name: 'General tax',
             _string: '',
             _number: 10,
             _vlaueType: 0,
@@ -1237,26 +1251,7 @@ export class AppService {
         },
         { upsert: true, new: true, session: transactionSession },
       );
-      await this.generalsModel.findOneAndUpdate(
-        { _code: 1022 },
-        {
-          $setOnInsert: {
-            _name: 'Stone amount gst percentage',
-            _string: '',
-            _number: 10,
-            _vlaueType: 0,
-            _json: { basic:"Basic" },
-            _type: 0,
-            _dataGuard: [0, 1, 2],
-            _createdUserId: null,
-            _createdAt: dateTime,
-            _updatedUserId: null,
-            _updatedAt: -1,
-          },
-          $set: { _status: 1 },
-        },
-        { upsert: true, new: true, session: transactionSession },
-      );
+    
 
       await this.purityModel.findOneAndUpdate(
         { _name: '916' },
