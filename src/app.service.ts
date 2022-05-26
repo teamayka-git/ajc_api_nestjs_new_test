@@ -5,15 +5,18 @@ import { GetUserDto, MeDto } from './app.dto';
 import { CommonNames } from './common/common_names';
 import { ModelNames } from './common/model_names';
 import { GlobalConfig } from './config/global_config';
+import { Cities } from './tableModels/cities.model';
 import { Colours } from './tableModels/colourMasters.model';
 import { Company } from './tableModels/companies.model';
 import { Counters } from './tableModels/counters.model';
 import { Departments } from './tableModels/departments.model';
+import { Districts } from './tableModels/districts.model';
 import { Employee } from './tableModels/employee.model';
 import { Generals } from './tableModels/generals.model';
 import { GlobalGalleryCategories } from './tableModels/globalGallerycategories.model';
 import { ProcessMaster } from './tableModels/processMaster.model';
 import { Purity } from './tableModels/purity.model';
+import { States } from './tableModels/states.model';
 import { User } from './tableModels/user.model';
 import { IndexUtils } from './utils/IndexUtils';
 const crypto = require('crypto');
@@ -21,6 +24,12 @@ const crypto = require('crypto');
 @Injectable()
 export class AppService {
   constructor(
+    @InjectModel(ModelNames.STATES)
+    private readonly stateModel: mongoose.Model<States>,
+    @InjectModel(ModelNames.DISTRICTS)
+    private readonly districtModel: mongoose.Model<Districts>,
+    @InjectModel(ModelNames.CITIES)
+    private readonly cityModel: mongoose.Model<Cities>,
     @InjectModel(ModelNames.USER)
     private readonly userModel: mongoose.Model<User>,
     @InjectModel(ModelNames.GENERALS)
@@ -707,7 +716,7 @@ export class AppService {
             _employeeId: employeeId,
             _agentId: null,
             _supplierId: null,
-            _testCenterId:null,
+            _testCenterId: null,
             _shopId: null,
             _customType: 0,
             _halmarkId: null,
@@ -751,12 +760,61 @@ export class AppService {
 
       userId = resultUser._id;
 
+      var resultState = await this.stateModel.findOneAndUpdate(
+        { _code: 1 },
+        {
+          $setOnInsert: {
+            _name: 'Kerala',
+            _dataGuard: [0, 1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+      var resultDistrict = await this.districtModel.findOneAndUpdate(
+        { _code: 1 },
+        {
+          $setOnInsert: {
+            _name: 'Malappuram',
+            _statesId:resultState._id,
+            _dataGuard: [0, 1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+      var resultCity = await this.cityModel.findOneAndUpdate(
+        { _code: 1 },
+        {
+          $setOnInsert: {
+            _name: 'Malappuram',
+            _districtsId:resultDistrict._id,
+            _dataGuard: [0, 1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+
       await this.companyModel.findOneAndUpdate(
         { _email: 'ajc@gmail.com' },
         {
           $setOnInsert: {
             _name: 'AJC',
             _place: 'Malappuram',
+            resultCity._id,
             _dataGuard: [0, 1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
@@ -1195,7 +1253,12 @@ export class AppService {
             _string: '',
             _number: 0,
             _vlaueType: 2,
-            _json: { item: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22] },
+            _json: {
+              item: [
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                19, 20, 21, 22,
+              ],
+            },
             _type: 5,
             _dataGuard: [0, 1, 2],
             _createdUserId: null,
@@ -1208,8 +1271,6 @@ export class AppService {
         { upsert: true, new: true, session: transactionSession },
       );
 
-
-
       await this.generalsModel.findOneAndUpdate(
         { _code: 1020 },
         {
@@ -1218,7 +1279,7 @@ export class AppService {
             _string: '',
             _number: 30,
             _vlaueType: 0,
-            _json: { basic:"Basic" },
+            _json: { basic: 'Basic' },
             _type: 3,
             _dataGuard: [0, 1, 2],
             _createdUserId: null,
@@ -1239,7 +1300,7 @@ export class AppService {
             _string: '',
             _number: 10,
             _vlaueType: 0,
-            _json: { basic:"Basic" },
+            _json: { basic: 'Basic' },
             _type: 0,
             _dataGuard: [0, 1, 2],
             _createdUserId: null,
@@ -1251,7 +1312,6 @@ export class AppService {
         },
         { upsert: true, new: true, session: transactionSession },
       );
-    
 
       await this.purityModel.findOneAndUpdate(
         { _name: '916' },

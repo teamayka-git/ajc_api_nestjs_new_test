@@ -34,6 +34,7 @@ export class CompanyService {
           _name: mapItem.name,
           _place: mapItem.place,
           _email: mapItem.email,
+          _cityId: mapItem.cityId,
           _dataGuard: mapItem.dataGuard,
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -83,6 +84,7 @@ export class CompanyService {
             _name: dto.name,
             _place: dto.place,
             _email: dto.email,
+            _cityId: dto.cityId,
             _dataGuard: dto.dataGuard,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
@@ -186,6 +188,62 @@ export class CompanyService {
       if (dto.skip != -1) {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
+      }
+
+      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.CITIES,
+              let: { cityId: '$_cityId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$cityId'] } } }],
+              as: 'cityDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$cityDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+
+        if (dto.screenType.findIndex((it) => it == 101) != -1) {
+          arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
+            {
+              $lookup: {
+                from: ModelNames.DISTRICTS,
+                let: { districtId: '$_districtsId' },
+                pipeline: [
+                  { $match: { $expr: { $eq: ['$_id', '$$districtId'] } } },
+                  {
+                    $lookup: {
+                      from: ModelNames.STATES,
+                      let: { stateId: '$_statesId' },
+                      pipeline: [
+                        { $match: { $expr: { $eq: ['$_id', '$$stateId'] } } },
+                      ],
+                      as: 'stateDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$stateDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                ],
+                as: 'districtDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$districtDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          );
+        }
       }
 
       var result = await this.companyModel

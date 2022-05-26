@@ -12,7 +12,7 @@ import { Transform, Type, Type as ValidateTypes } from 'class-transformer';
 import { Optional } from '@nestjs/common';
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
-const descriptionListScreenTypeForList = '0-total documents count';
+const descriptionListScreenTypeForList = '0-total documents count, 100-city details, 101-district details and state details only if city details exist,';
 const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 
@@ -28,6 +28,13 @@ class CompanyCreateList {
   @IsEmail()
   @ApiProperty({})
   email: string;
+
+  
+  @IsEmail()
+  @ApiProperty({})
+  cityId: string;
+
+  
 
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })
@@ -57,6 +64,13 @@ export class CompanyEditDto {
   @ApiProperty({})
   email: string;
 
+  @IsEmail()
+  @ApiProperty({})
+  cityId: string;
+
+
+
+  
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })
   dataGuard: number[];

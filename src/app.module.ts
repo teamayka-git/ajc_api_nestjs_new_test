@@ -71,6 +71,9 @@ import { InvoicesModule } from './modules/invoices/invoices.module';
 import { HalmarkingRequestsModule } from './modules/halmarking-requests/halmarking-requests.module';
 import { FactoryCalculationTypeMasterModule } from './modules/factory-calculation-type-master/factory-calculation-type-master.module';
 import { GoldTestingRequestModule } from './modules/gold-testing-request/gold-testing-request.module';
+import { StatesSchema } from './tableModels/states.model';
+import { DistrictsSchema } from './tableModels/districts.model';
+import { CitiesSchema } from './tableModels/cities.model';
 
 @Module({
   imports: [
@@ -89,6 +92,9 @@ import { GoldTestingRequestModule } from './modules/gold-testing-request/gold-te
       { name: ModelNames.COUNTERS, schema: CountersSchema },
       { name: ModelNames.COMPANIES, schema: CompanySchema },
       { name: ModelNames.GENERALS, schema: GeneralsSchema },
+      { name: ModelNames.STATES, schema:StatesSchema },
+      { name: ModelNames.DISTRICTS, schema:DistrictsSchema },
+      { name: ModelNames.CITIES, schema:CitiesSchema },
       { name: ModelNames.DEPARTMENT, schema: DepartmentsSchema },
       { name: ModelNames.PURITY, schema: PuritySchema },
       { name: ModelNames.PROCESS_MASTER, schema: ProcessMasterSchema },
