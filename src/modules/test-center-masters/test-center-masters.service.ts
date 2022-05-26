@@ -68,7 +68,7 @@ export class TestCenterMastersService {
           _customType: 9,
           _employeeId: null,
           _agentId: null,
-          _testCenterId: null,
+          _testCenterId: testCenterId,
           _supplierId: null,
           _shopId: null,
           _halmarkId: null,
