@@ -14,11 +14,13 @@ import {
   ListFilterLocadingCityDto,
 } from './cities.dto';
 import { GlobalConfig } from 'src/config/global_config';
+import { Company } from 'src/tableModels/companies.model';
 
 @Injectable()
 export class CitiesService {
   constructor(
     @InjectModel(ModelNames.CITIES) private readonly citiesModel: Model<Cities>,
+    @InjectModel(ModelNames.COMPANIES) private readonly companyModel: Model<Company>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async create(dto: CitiesCreateDto, _userId_: string) {
@@ -217,6 +219,24 @@ export class CitiesService {
               let: { districtId: '$_districtsId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$districtId'] } } },
+                {
+                  $lookup: {
+                    from: ModelNames.STATES,
+                    let: { stateId: '$_statesId' },
+                    pipeline: [
+                      {
+                        $match: { $expr: { $eq: ['$_id', '$$stateId'] } },
+                      },
+                    ],
+                    as: 'stateDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$stateDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
               ],
               as: 'districtDetails',
             },
@@ -260,10 +280,76 @@ export class CitiesService {
           totalCount = resultTotalCount[0].totalCount;
         }
       }
+      var resultCompany={};
+      if (dto.screenType.findIndex((it) => it == 200) != -1) {
+        var resultCompanyList = await this.companyModel.aggregate([
+          { $match: { _status: 1 } },
 
+          {
+            $lookup: {
+              from: ModelNames.CITIES,
+              let: { cityId: '$_cityId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$cityId'] } } },
+
+                {
+                  $lookup: {
+                    from: ModelNames.DISTRICTS,
+                    let: { districtId: '$_districtsId' },
+                    pipeline: [
+                      { $match: { $expr: { $eq: ['$_id', '$$districtId'] } } },
+                      {
+                        $lookup: {
+                          from: ModelNames.STATES,
+                          let: { stateId: '$_statesId' },
+                          pipeline: [
+                            {
+                              $match: { $expr: { $eq: ['$_id', '$$stateId'] } },
+                            },
+                          ],
+                          as: 'stateDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$stateDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    ],
+                    as: 'districtDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$districtDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              ],
+              as: 'cityDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$cityDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        ]);
+        if (resultCompanyList.length == 0) {
+          throw new HttpException(
+            'Company not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        resultCompany = resultCompanyList[0];
+      }
       const responseJSON = {
         message: 'success',
-        data: { list: result, totalCount: totalCount },
+        data: { list: result, totalCount: totalCount ,
+          company: resultCompany,},
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&

@@ -147,6 +147,11 @@ export class ShopCreateDto {
   @ApiProperty({ description: descriptionTdsTcsStatus })
   tdsTcsStatus: number;
 
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({  })
+  isTaxIgstEnabled: number;
+
   @IsString()
   @ApiProperty({})
   branchId: string;
@@ -352,7 +357,11 @@ export class ShopEditeDto {
   @IsNumber()
   @ApiProperty({ description: descriptionBillingModeSale })
   billingModeSale: number;
-
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({ description: descriptionBillingModeSale })
+  isTaxIgstEnabled: number;
+  
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({ description: descriptionBillingModePurchase })

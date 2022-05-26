@@ -67,6 +67,7 @@ export const ShopsSchema = new mongoose.Schema({
     default: null,
   },
   _stonePricing: { type: Number, required: true, default: -1 },
+  _isTaxIgstEnabled: { type: Number, required: true, default: -1 },
   _chatPermissions: { type: Object, required: true, default: [] },
   _agentId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -118,6 +119,7 @@ export interface Shops {
   _globalGalleryId: String;
   _panCardNumber: String;
   _billingModeSale: Number;
+  _isTaxIgstEnabled:number;
   _tdsTcsStatus:Number;
   _billingModePurchase: Number;
   _hallmarkingMandatoryStatus: Number;
@@ -147,6 +149,7 @@ ShopsSchema.index({ _location: '2dsphere' });
 ShopsSchema.index({ _name: 1 });
 ShopsSchema.index({ _tdsTcsStatus: 1 });
 ShopsSchema.index({ _address: 1 });
+ShopsSchema.index({ _isTaxIgstEnabled: 1 });
 
 ShopsSchema.index({ _commisionType: 1 });
 ShopsSchema.index({ _rateCardId: 1 });
