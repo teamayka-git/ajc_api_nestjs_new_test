@@ -814,7 +814,7 @@ export class AppService {
           $setOnInsert: {
             _name: 'AJC',
             _place: 'Malappuram',
-            resultCity._id,
+            _cityId: resultCity._id,
             _dataGuard: [0, 1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
