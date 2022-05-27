@@ -36,20 +36,6 @@ export const InvoiceItemsSchema = new mongoose.Schema({
   _igst: { type: Number, required: true, default: -1 },
   _metalAmount: { type: Number, required: true, default: -1 },
   _stoneAmountGst: { type: Number, required: true, default: -1 },
-  _grossAmount: { type: Number, required: true, default: -1 },
-  _halmarkingCharge: { type: Number, required: true, default: -1 },
-  _otherCharge: { type: Number, required: true, default: -1 },
-  _roundOff: { type: Number, required: true, default: -1 },
-  _netTotal: { type: Number, required: true, default: -1 },
-  _tdsReceivable: { type: Number, required: true, default: -1 },
-  _tdsPayable: { type: Number, required: true, default: -1 },
-  _netReceivableAmount: { type: Number, required: true, default: -1 },
-  _cgstHalmarkCharge: { type: Number, required: true, default: -1 },
-  _cgstOtherCharge: { type: Number, required: true, default: -1 },
-  _sgstHalmarkCharge: { type: Number, required: true, default: -1 },
-  _sgstOtherCharge: { type: Number, required: true, default: -1 },
-  _igstHalmarkCharge: { type: Number, required: true, default: -1 },
-  _igstOtherCharge: { type: Number, required: true, default: -1 },
   _makingChargeWeightHundredPercentage: {
     type: Number,
     required: true,
@@ -103,20 +89,7 @@ export interface InvoiceItems {
   _igst: number;
   _metalAmount: number;
   _stoneAmountGst: number;
-  _grossAmount: number;
-  _halmarkingCharge: number;
-  _otherCharge: number;
-  _roundOff: number;
-  _netTotal: number;
-  _tdsReceivable: number;
-  _tdsPayable: number;
-  _netReceivableAmount: number;
-  _cgstHalmarkCharge: number;
-  _cgstOtherCharge: number;
-  _sgstHalmarkCharge: number;
-  _sgstOtherCharge: number;
-  _igstHalmarkCharge: number;
-  _igstOtherCharge: number;
+
   _makingChargeWeightHundredPercentage: number;
   _makingChargeAmount: number;
   _productBarcode: String;
@@ -153,20 +126,6 @@ InvoiceItemsSchema.index({ _sgst: 1 });
 InvoiceItemsSchema.index({ _igst: 1 });
 InvoiceItemsSchema.index({ _metalAmount: 1 });
 InvoiceItemsSchema.index({ _stoneAmountGst: 1 });
-InvoiceItemsSchema.index({ _grossAmount: 1 });
-InvoiceItemsSchema.index({ _halmarkingCharge: 1 });
-InvoiceItemsSchema.index({ _otherCharge: 1 });
-InvoiceItemsSchema.index({ _roundOff: 1 });
-InvoiceItemsSchema.index({ _netTotal: 1 });
-InvoiceItemsSchema.index({ _tdsReceivable: 1 });
-InvoiceItemsSchema.index({ _tdsPayable: 1 });
-InvoiceItemsSchema.index({ _netReceivableAmount: 1 });
-InvoiceItemsSchema.index({ _cgstHalmarkCharge: 1 });
-InvoiceItemsSchema.index({ _cgstOtherCharge: 1 });
-InvoiceItemsSchema.index({ _sgstHalmarkCharge: 1 });
-InvoiceItemsSchema.index({ _sgstOtherCharge: 1 });
-InvoiceItemsSchema.index({ _igstHalmarkCharge: 1 });
-InvoiceItemsSchema.index({ _igstOtherCharge: 1 });
 InvoiceItemsSchema.index({ _makingChargeWeightHundredPercentage: 1 });
 InvoiceItemsSchema.index({ _makingChargeAmount: 1 });
 InvoiceItemsSchema.index({ _productBarcode: 1 });

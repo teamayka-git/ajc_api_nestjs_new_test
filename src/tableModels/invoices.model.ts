@@ -11,6 +11,20 @@ export const InvoicesSchema = new mongoose.Schema({
   },
   _uid: { type: String, required: true, default: 'nil' },
   _billMode: { type: Number, required: true, default: -1 },
+  _grossAmount: { type: Number, required: true, default: -1 },
+  _halmarkingCharge: { type: Number, required: true, default: -1 },
+  _otherCharge: { type: Number, required: true, default: -1 },
+  _roundOff: { type: Number, required: true, default: -1 },
+  _netTotal: { type: Number, required: true, default: -1 },
+  _tdsReceivable: { type: Number, required: true, default: -1 },
+  _tdsPayable: { type: Number, required: true, default: -1 },
+  _netReceivableAmount: { type: Number, required: true, default: -1 },
+  _cgstHalmarkCharge: { type: Number, required: true, default: -1 },
+  _cgstOtherCharge: { type: Number, required: true, default: -1 },
+  _sgstHalmarkCharge: { type: Number, required: true, default: -1 },
+  _sgstOtherCharge: { type: Number, required: true, default: -1 },
+  _igstHalmarkCharge: { type: Number, required: true, default: -1 },
+  _igstOtherCharge: { type: Number, required: true, default: -1 },
 
   _rootCauseId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -38,6 +52,20 @@ export interface Invoices {
   _userId: String;
   _uid: String;
   _billMode: number;
+  _grossAmount: number;
+  _halmarkingCharge: number;
+  _otherCharge: number;
+  _roundOff: number;
+  _netTotal: number;
+  _tdsReceivable: number;
+  _tdsPayable: number;
+  _netReceivableAmount: number;
+  _cgstHalmarkCharge: number;
+  _cgstOtherCharge: number;
+  _sgstHalmarkCharge: number;
+  _sgstOtherCharge: number;
+  _igstHalmarkCharge: number;
+  _igstOtherCharge: number;
   _rootCauseId: string;
   _description: string;
   _createdUserId: String;
@@ -47,6 +75,20 @@ export interface Invoices {
   _status: Number;
 }
 
+InvoicesSchema.index({ _grossAmount: 1 });
+InvoicesSchema.index({ _halmarkingCharge: 1 });
+InvoicesSchema.index({ _otherCharge: 1 });
+InvoicesSchema.index({ _roundOff: 1 });
+InvoicesSchema.index({ _netTotal: 1 });
+InvoicesSchema.index({ _tdsReceivable: 1 });
+InvoicesSchema.index({ _tdsPayable: 1 });
+InvoicesSchema.index({ _netReceivableAmount: 1 });
+InvoicesSchema.index({ _cgstHalmarkCharge: 1 });
+InvoicesSchema.index({ _cgstOtherCharge: 1 });
+InvoicesSchema.index({ _sgstHalmarkCharge: 1 });
+InvoicesSchema.index({ _sgstOtherCharge: 1 });
+InvoicesSchema.index({ _igstHalmarkCharge: 1 });
+InvoicesSchema.index({ _igstOtherCharge: 1 });
 InvoicesSchema.index({ _rootCauseId: 1 });
 InvoicesSchema.index({ _description: 1 });
 InvoicesSchema.index({ _userId: 1 });

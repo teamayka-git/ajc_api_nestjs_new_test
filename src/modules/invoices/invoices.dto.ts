@@ -110,6 +110,38 @@ class InvoiceCreateListItems {
   @ApiProperty({})
   stoneAmountGst: number;
 
+
+  @IsNumber()
+  @ApiProperty({})
+  makingChargeWithHundredPercentage: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  makingChargeAmount: number;
+
+  @IsString()
+  @ApiProperty({})
+  productBarcide: string;
+
+  @IsString()
+  @ApiProperty({})
+  productId: string;
+}
+
+class InvoiceCreateList {
+  @IsString()
+  @ApiProperty({})
+  customerId: string;
+
+  @IsString()
+  @ApiProperty({})
+  description: string;
+
+  @IsNumber()
+  @ApiProperty({ description: descriptionBillMode })
+  billMode: number;
+
+  
   @IsNumber()
   @ApiProperty({})
   grossAmount: number;
@@ -165,36 +197,6 @@ class InvoiceCreateListItems {
   @IsNumber()
   @ApiProperty({})
   igstOtherCharge: number;
-
-  @IsNumber()
-  @ApiProperty({})
-  makingChargeWithHundredPercentage: number;
-
-  @IsNumber()
-  @ApiProperty({})
-  makingChargeAmount: number;
-
-  @IsString()
-  @ApiProperty({})
-  productBarcide: string;
-
-  @IsString()
-  @ApiProperty({})
-  productId: string;
-}
-
-class InvoiceCreateList {
-  @IsString()
-  @ApiProperty({})
-  customerId: string;
-
-  @IsString()
-  @ApiProperty({})
-  description: string;
-
-  @IsNumber()
-  @ApiProperty({ description: descriptionBillMode })
-  billMode: number;
 
   @IsArray()
   @ApiProperty({ type: [InvoiceCreateListItems] })
