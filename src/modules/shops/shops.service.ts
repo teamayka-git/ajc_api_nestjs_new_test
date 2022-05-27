@@ -875,7 +875,7 @@ export class ShopsService {
         );
       }
       if (dto.screenType.findIndex((it) => it == 50) != -1) {
-        arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
+        arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.GLOBAL_GALLERIES,
