@@ -1,8 +1,11 @@
 import { Body, Controller, Delete, Post, Put, Request } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CompanyListDto, CompanyStatusChangeDto } from '../company/company.dto';
 import { GoldTestingRequestService } from './gold-testing-request.service';
 import { GoldTestRequestCreateDto, GoldTestRequestEditDto, GoldTestRequestItemEditFromManufactorDto, GoldTestRequestItemEditFromTestCenterDto, GoldTestRequestListDto, GoldTestRequestStatusChangeDto } from './gold_test_requests.dto';
 
+
+@ApiTags('Gold test Requests Docs')
 @Controller('gold-testing-request')
 export class GoldTestingRequestController {
   constructor(private readonly goldTestingRequestService: GoldTestingRequestService) {}

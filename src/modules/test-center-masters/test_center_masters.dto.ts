@@ -36,6 +36,7 @@ class TestCenterMastersCreateList {
   @IsString()
   @ApiProperty({})
   address: string;
+
   @IsString()
   @ApiProperty({})
   cityId: string;
@@ -47,6 +48,10 @@ class TestCenterMastersCreateList {
   @IsNumber()
   @ApiProperty({})
   allowedWastage: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  isTaxIgstEnabled: number;
 
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })
@@ -89,7 +94,11 @@ export class TestCenterMastersEditDto {
   @IsNumber()
   @ApiProperty({})
   allowedWastage: number;
-
+  
+  @IsNumber()
+  @ApiProperty({})
+  isTaxIgstEnabled: number;
+  
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })
   dataGuard: number[];
