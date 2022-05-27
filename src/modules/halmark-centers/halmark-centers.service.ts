@@ -74,6 +74,9 @@ export class HalmarkCentersService {
               _updatedAt: dateTime,
               _halmarkId: halmarkId,
             },
+            $push: {
+              _customType: 4,
+            },
           },
           { new: true, session: transactionSession },
         );
@@ -102,9 +105,9 @@ export class HalmarkCentersService {
             _supplierId: null,
             _customerId: null,
             _deliveryHubId: null,
-            _testCenterId:null,
+            _testCenterId: null,
             _shopId: null,
-            _customType: 4,
+            _customType: [4],
             _halmarkId: halmarkId,
             _fcmId: '',
             _deviceUniqueId: '',
@@ -131,9 +134,9 @@ export class HalmarkCentersService {
         _supplierId: null,
         _customerId: null,
         _deliveryHubId: null,
-        _testCenterId:null,
+        _testCenterId: null,
         _shopId: null,
-        _customType: 7,
+        _customType: [7],
         _halmarkId: halmarkId,
         _fcmId: '',
         _deviceUniqueId: '',
@@ -199,7 +202,7 @@ export class HalmarkCentersService {
       await this.userModel.findOneAndUpdate(
         {
           _halmarkId: dto.halmarkCenterId,
-          _customType: 7,
+          _customType: [7],
         },
         {
           $set: {
@@ -236,6 +239,9 @@ export class HalmarkCentersService {
               _updatedAt: dateTime,
               _halmarkId: null,
             },
+            $push: {
+              _customType: 4,
+            },
           },
           { new: true, session: transactionSession },
         );
@@ -265,9 +271,9 @@ export class HalmarkCentersService {
             _agentId: null,
             _deliveryHubId: null,
             _supplierId: null,
-            _testCenterId:null,
+            _testCenterId: null,
             _shopId: null,
-            _customType: 4,
+            _customType: [4],
             _customerId: null,
             _halmarkId: dto.halmarkCenterId,
             _fcmId: '',
@@ -339,6 +345,9 @@ export class HalmarkCentersService {
               _updatedAt: dateTime,
               _halmarkId: null,
             },
+            $push: {
+              _customType: 4,
+            },
           },
           { new: true, session: transactionSession },
         );
@@ -366,12 +375,12 @@ export class HalmarkCentersService {
             _globalGalleryId: null,
             _employeeId: null,
             _agentId: null,
-            _testCenterId:null,
+            _testCenterId: null,
             _supplierId: null,
             _shopId: null,
             _customerId: null,
             _deliveryHubId: null,
-            _customType: 4,
+            _customType: [4],
             _halmarkId: dto.halmarkCenterId,
             _fcmId: '',
             _deviceUniqueId: '',

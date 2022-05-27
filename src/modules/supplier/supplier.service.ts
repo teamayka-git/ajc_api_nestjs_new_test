@@ -250,7 +250,7 @@ export class SupplierService {
         {
           $setOnInsert: {
             _password: encryptedPassword,
-            _customType: 0,
+            _customType: [],
             _halmarkId: null,
             _customerId: null,
             _testCenterId:null,

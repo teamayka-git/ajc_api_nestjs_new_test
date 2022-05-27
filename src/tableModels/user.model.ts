@@ -57,7 +57,7 @@ export const UserSchema = new mongoose.Schema({
   _deviceUniqueId: { type: String, default: '' },
   _permissions: { type: Object, required: true, default: [] },
   _userRole: { type: Number, required: true, default: -1 },
-  _customType: { type: Number, required: true, default: -1 },
+  _customType: { type: Object, required: true, default: [] },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -81,7 +81,7 @@ export interface User {
   _password: String;
   _mobile: String;
   _globalGalleryId: String;
-  _customType: number;
+  _customType: Object;
   _employeeId: String;
   _agentId: String;
   _supplierId: String;

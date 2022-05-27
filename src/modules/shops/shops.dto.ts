@@ -113,6 +113,26 @@ class ShopNewUsersCreateList {
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })
   dataGuard: number[];
 }
+
+
+
+class ShopExistingUsersList {
+  @IsString()
+  @ApiProperty({})
+  userId: string;
+
+
+
+  @IsNumber()
+  @ApiProperty({ description: descriptionCustomType })
+  customType: number;
+
+
+}
+
+
+
+
 export class ShopCreateDto {
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
@@ -269,11 +289,17 @@ export class ShopCreateDto {
   mobile: string;
 
   @Transform(({ value }) =>
-    typeof value == 'string' ? JSON.parse(value) : value,
-  )
-  @IsArray()
-  @ApiProperty({ type: [String] })
-  arrayUserIdsEsixting: string[];
+  typeof value == 'string' ? JSON.parse(value) : value,
+)
+@IsArray()
+@ApiProperty({ type: [ShopExistingUsersList] })
+@ValidateNested({ each: true })
+@Type(() => ShopExistingUsersList)
+arrayUserIdsEsixting: ShopExistingUsersList[];
+
+
+  
+
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
   )
@@ -612,9 +638,14 @@ export class ShopAddRemoveUsersDto {
   @ApiProperty({})
   shopUserId: string;
 
-  @IsArray()
-  @ApiProperty({ type: [String] })
-  arrayAddUserIdsEsixting: string[];
+
+@IsArray()
+@ApiProperty({ type: [ShopExistingUsersList] })
+@ValidateNested({ each: true })
+@Type(() => ShopExistingUsersList)
+arrayUserIdsEsixting: ShopExistingUsersList[];
+
+
   @IsArray()
   @ApiProperty({ type: [String] })
   arrayRemoveUserIdsEsixting: string[];
@@ -631,9 +662,14 @@ export class ShopAddRemoveCustomerDto {
   @ApiProperty({})
   shopUserId: string;
 
-  @IsArray()
-  @ApiProperty({ type: [String] })
-  arrayAddUserIdsEsixting: string[];
+
+@IsArray()
+@ApiProperty({ type: [ShopExistingUsersList] })
+@ValidateNested({ each: true })
+@Type(() => ShopExistingUsersList)
+arrayUserIdsEsixting: ShopExistingUsersList[];
+
+
   @IsArray()
   @ApiProperty({ type: [String] })
   arrayRemoveUserIdsEsixting: string[];

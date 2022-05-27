@@ -72,7 +72,7 @@ export class DeliveryHubsService {
           _testCenterId:null,
           _deliveryHubId: deliveryHubId,
           _shopId: null,
-          _customType: 6,
+          _customType: [6],
           _halmarkId: null,
           _customerId: null,
           _fcmId: '',
@@ -142,7 +142,7 @@ export class DeliveryHubsService {
       await this.userModel.findOneAndUpdate(
         {
           _deliveryHubId: dto.deliveryHubsId,
-          _customType: 6,
+          _customType: {$in:[6]},
         },
         {
           $set: {

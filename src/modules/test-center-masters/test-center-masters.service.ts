@@ -66,7 +66,7 @@ export class TestCenterMastersService {
           _password: encryptedPassword,
           _mobile: mapItem.mobile,
           _globalGalleryId: null,
-          _customType: 9,
+          _customType: [9],
           _employeeId: null,
           _agentId: null,
           _testCenterId: testCenterId,
@@ -146,7 +146,7 @@ export class TestCenterMastersService {
       await this.userModel.findOneAndUpdate(
         {
           _testCenterId: dto.testCenterMasterId,
-          _customType: 9,
+          _customType: {$in:[9]},
         },
         {
           $set: {
@@ -285,7 +285,7 @@ export class TestCenterMastersService {
               pipeline: [
                 {
                   $match: {
-                    _customType: 9,
+                    _customType: {$in:[9]},
                     $expr: { $eq: ['$_testCenterId', '$$userId'] },
                   },
                 },

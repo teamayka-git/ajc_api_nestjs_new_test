@@ -718,7 +718,7 @@ export class AppService {
             _supplierId: null,
             _testCenterId: null,
             _shopId: null,
-            _customType: 0,
+            _customType: [],
             _halmarkId: null,
             _customerId: null,
             _deliveryHubId: null,

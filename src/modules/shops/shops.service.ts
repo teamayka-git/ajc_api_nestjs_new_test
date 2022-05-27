@@ -280,19 +280,29 @@ export class ShopsService {
       });
 
       if (dto.arrayUserIdsEsixting.length > 0) {
-        await this.userModel.updateMany(
-          {
-            _id: { $in: dto.arrayUserIdsEsixting },
-          },
-          {
-            $set: {
-              _updatedUserId: _userId_,
-              _updatedAt: dateTime,
-              _shopId: shopId,
-            },
-          },
-          { new: true, session: transactionSession },
-        );
+
+
+
+for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
+  await this.userModel.findOneAndUpdate(
+    {
+      _id: { $in: dto.arrayUserIdsEsixting[i].userId },
+    },
+    {
+      $set: {
+        _updatedUserId: _userId_,
+        _updatedAt: dateTime,
+        _shopId: shopId,
+      },
+      $push: {
+        _customType: dto.arrayUserIdsEsixting[i].customType,
+      },
+    },
+    { new: true, session: transactionSession },
+  );
+}
+
+       
       }
       if (dto.arrayUsersNew.length > 0) {
         var encryptedPassword = await crypto
@@ -319,7 +329,7 @@ export class ShopsService {
             _deliveryHubId: null,
             _shopId: shopId,
             _testCenterId: null,
-            _customType: mapItem.customType,
+            _customType: [mapItem.customType],
             _halmarkId: null,
             _customerId: null,
             _fcmId: '',
@@ -356,7 +366,7 @@ export class ShopsService {
         _supplierId: null,
         _shopId: shopId,
         _testCenterId: null,
-        _customType: 5,
+        _customType: [5],
         _deliveryHubId: null,
         _halmarkId: null,
         _customerId: null,
@@ -562,7 +572,7 @@ export class ShopsService {
       await this.userModel.findOneAndUpdate(
         {
           _shopId: dto.shopId,
-          _customType: 5,
+          _customType: { $in: [5] },
         },
         {
           $set: objUser,
@@ -596,6 +606,9 @@ export class ShopsService {
               _updatedAt: dateTime,
               _shopId: dto.shopUserId,
             },
+            $push: {
+              _customType: 4,
+            },
           },
           { new: true, session: transactionSession },
         );
@@ -625,7 +638,7 @@ export class ShopsService {
             _agentId: null,
             _supplierId: null,
             _shopId: dto.shopUserId,
-            _customType: 4,
+            _customType: [4],
             _halmarkId: null,
             _testCenterId: null,
             _deliveryHubId: null,
@@ -861,7 +874,7 @@ export class ShopsService {
               pipeline: [
                 {
                   $match: {
-                    _customType: 5,
+                    _customType: { $in: [5] },
                     $expr: { $eq: ['$_shopId', '$$userId'] },
                   },
                 },
@@ -1443,20 +1456,27 @@ export class ShopsService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      if (dto.arrayAddUserIdsEsixting.length > 0) {
-        await this.userModel.updateMany(
-          {
-            _id: { $in: dto.arrayAddUserIdsEsixting },
-          },
-          {
-            $set: {
-              _updatedUserId: _userId_,
-              _updatedAt: dateTime,
-              _shopId: dto.shopUserId,
+      if (dto.arrayUserIdsEsixting.length > 0) {
+
+        for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
+          await this.userModel.findOneAndUpdate(
+            {
+              _id: { $in: dto.arrayUserIdsEsixting[i].userId },
             },
-          },
-          { new: true, session: transactionSession },
-        );
+            {
+              $set: {
+                _updatedUserId: _userId_,
+                _updatedAt: dateTime,
+                _shopId: dto.shopUserId,
+              },
+              $push: {
+                _customType: dto.arrayUserIdsEsixting[i].customType,
+              },
+            },
+            { new: true, session: transactionSession },
+          );
+        }
+
       }
       if (dto.arrayRemoveUserIdsEsixting.length > 0) {
         await this.userModel.updateMany(
@@ -1501,7 +1521,7 @@ export class ShopsService {
             _deliveryHubId: null,
             _customerId: null,
             _shopId: dto.shopUserId,
-            _customType: mapItem.customType,
+            _customType: [mapItem.customType],
             _halmarkId: null,
             _fcmId: '',
             _deviceUniqueId: '',
@@ -1546,20 +1566,27 @@ export class ShopsService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      if (dto.arrayAddUserIdsEsixting.length > 0) {
-        await this.userModel.updateMany(
-          {
-            _id: { $in: dto.arrayAddUserIdsEsixting },
-          },
-          {
-            $set: {
-              _updatedUserId: _userId_,
-              _updatedAt: dateTime,
-              _customerId: dto.shopUserId,
+      if (dto.arrayUserIdsEsixting.length > 0) {
+
+        for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
+          await this.userModel.findOneAndUpdate(
+            {
+              _id: { $in: dto.arrayUserIdsEsixting[i].userId },
             },
-          },
-          { new: true, session: transactionSession },
-        );
+            {
+              $set: {
+                _updatedUserId: _userId_,
+                _updatedAt: dateTime,
+                _shopId: dto.shopUserId,
+              },
+              $push: {
+                _customType: dto.arrayUserIdsEsixting[i].customType,
+              },
+            },
+            { new: true, session: transactionSession },
+          );
+        }
+
       }
       if (dto.arrayRemoveUserIdsEsixting.length > 0) {
         await this.userModel.updateMany(
@@ -1632,7 +1659,7 @@ export class ShopsService {
             _supplierId: null,
             _customerId: customerId,
             _shopId: dto.shopUserId,
-            _customType: mapItem.customType,
+            _customType: [mapItem.customType],
             _halmarkId: null,
             _fcmId: '',
             _deviceUniqueId: '',
@@ -1775,9 +1802,6 @@ export class ShopsService {
           break;
         case 5:
           arrayAggregation.push({ $sort: { _mobile: dto.sortOrder } });
-          break;
-        case 6:
-          arrayAggregation.push({ $sort: { _customType: dto.sortOrder } });
           break;
       }
 

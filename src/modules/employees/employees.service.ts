@@ -251,7 +251,7 @@ export class EmployeesService {
         {
           $setOnInsert: {
             _password: encryptedPassword,
-            _customType: 0,
+            _customType: [0],
             _halmarkId: null,
 
             _testCenterId:null,
