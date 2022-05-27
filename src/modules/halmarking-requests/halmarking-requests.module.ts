@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { HalmarkingRequestsSchema } from 'src/tableModels/halmarking_requests.model';
 import { CountersSchema } from 'src/tableModels/counters.model';
+import { OrderSalesSchema } from 'src/tableModels/order_sales.model';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { CountersSchema } from 'src/tableModels/counters.model';
         schema: HalmarkingRequestsSchema,
       },
       { name: ModelNames.COUNTERS, schema: CountersSchema },
+      { name: ModelNames.ORDER_SALES, schema: OrderSalesSchema },
     ]),
   ],
   controllers: [HalmarkingRequestsController],

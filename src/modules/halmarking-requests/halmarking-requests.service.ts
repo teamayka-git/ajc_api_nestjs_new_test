@@ -5,6 +5,7 @@ import { ModelNames } from 'src/common/model_names';
 import { GlobalConfig } from 'src/config/global_config';
 import { Counters } from 'src/tableModels/counters.model';
 import { HalmarkingRequests } from 'src/tableModels/halmarking_requests.model';
+import { OrderSales } from 'src/tableModels/order_sales.model';
 import {
   HalmarkCenterAssigntDto,
   HalmarkingRequestsCreateDto,
@@ -19,6 +20,8 @@ export class HalmarkingRequestsService {
   constructor(
     @InjectModel(ModelNames.HALMARKING_REQUESTS)
     private readonly halmarkRequestsModel: mongoose.Model<HalmarkingRequests>,
+    @InjectModel(ModelNames.ORDER_SALES)
+    private readonly orderSaleModel: mongoose.Model<OrderSales>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
     @InjectConnection() private readonly connection: mongoose.Connection,
@@ -779,6 +782,20 @@ export class HalmarkingRequestsService {
         { new: true, session: transactionSession },
       );
 
+      if (dto.requestStatus == 4) {
+        await this.orderSaleModel.findOneAndUpdate(
+          { _id: dto.orderId },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _workStatus: 33,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
+
       const responseJSON = { message: 'success', data: result };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -805,15 +822,14 @@ export class HalmarkingRequestsService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      
       var result = await this.halmarkRequestsModel.updateMany(
         {
           _id: dto.hmRequestIds,
         },
         {
           $set: {
-            _halmarkCenterId:dto.hmCenterId,
-            _requestStatus:0,
+            _halmarkCenterId: dto.hmCenterId,
+            _requestStatus: 0,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
           },

@@ -182,6 +182,10 @@ export class HalmarkingRequestsUpdateEditDto {
   @ApiProperty({})
   hmValue: string;
 
+  @IsString()
+  @ApiProperty({})
+  orderId: string;
+
   
 }
 export class HalmarkCenterAssigntDto {
