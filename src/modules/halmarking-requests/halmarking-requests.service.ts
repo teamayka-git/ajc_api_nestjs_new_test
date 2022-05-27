@@ -6,6 +6,7 @@ import { GlobalConfig } from 'src/config/global_config';
 import { Counters } from 'src/tableModels/counters.model';
 import { HalmarkingRequests } from 'src/tableModels/halmarking_requests.model';
 import { OrderSales } from 'src/tableModels/order_sales.model';
+import { Products } from 'src/tableModels/products.model';
 import {
   HalmarkCenterAssigntDto,
   HalmarkingRequestsCreateDto,
@@ -18,6 +19,8 @@ import {
 @Injectable()
 export class HalmarkingRequestsService {
   constructor(
+    @InjectModel(ModelNames.PRODUCTS)
+    private readonly productModel: mongoose.Model<Products>,
     @InjectModel(ModelNames.HALMARKING_REQUESTS)
     private readonly halmarkRequestsModel: mongoose.Model<HalmarkingRequests>,
     @InjectModel(ModelNames.ORDER_SALES)
@@ -771,7 +774,7 @@ export class HalmarkingRequestsService {
             _rootCauseId:
               dto.rootCauseId == '' || dto.rootCauseId == 'nil'
                 ? null
-                : dto.rootCauseId, 
+                : dto.rootCauseId,
             _description: dto.description,
             _hmValue: dto.hmValue,
 
@@ -782,7 +785,7 @@ export class HalmarkingRequestsService {
         { new: true, session: transactionSession },
       );
 
-      if (dto.requestStatus == 4 && dto.orderId != '') {
+      if (dto.requestStatus == 4 && dto.orderId != '' && dto.orderId != 'nil') {
         await this.orderSaleModel.findOneAndUpdate(
           { _id: dto.orderId },
           {
@@ -795,7 +798,23 @@ export class HalmarkingRequestsService {
           { new: true, session: transactionSession },
         );
       }
-
+      if (
+        dto.requestStatus == 4 &&
+        dto.productId != '' &&
+        dto.productId != 'nil'
+      ) {
+        await this.productModel.findOneAndUpdate(
+          { _id: dto.productId },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _huId: dto.hmValue,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
       const responseJSON = { message: 'success', data: result };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
