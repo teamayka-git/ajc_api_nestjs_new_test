@@ -296,6 +296,69 @@ export class TestCenterMastersService {
           },
         );
       }
+      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.CITIES,
+              let: { cityId: '$_cityId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$cityId'] },
+                  },
+                },
+              ],
+              as: 'cityDetails',
+            },
+          },
+          {
+            $unwind: { path: '$cityDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
+      }
+
+
+      if (dto.screenType.findIndex((it) => it == 102) != -1) {
+        arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
+          {
+            $lookup: {
+              from: ModelNames.DISTRICTS,
+              let: { districtId: '$_districtsId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$districtId'] } } },
+                {
+                  $lookup: {
+                    from: ModelNames.STATES,
+                    let: { stateId: '$_statesId' },
+                    pipeline: [
+                      {
+                        $match: { $expr: { $eq: ['$_id', '$$stateId'] } },
+                      },
+                    ],
+                    as: 'stateDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$stateDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              ],
+              as: 'districtDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$districtDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+
       var result = await this.testCenterMastersModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
