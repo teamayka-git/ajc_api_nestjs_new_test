@@ -198,16 +198,12 @@ export class ProductsService {
             $set: {
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
-              _isProductGenerated:1,
+              _isProductGenerated: 1,
               _workStatus: 6,
             },
           },
           { new: true, session: transactionSession },
         );
-
-
-
-
 
         const orderSaleHistoryModel = new this.orderSaleHistoriesModel({
           _orderSaleId: null,
@@ -224,74 +220,83 @@ export class ProductsService {
         });
       }
       if (dto.eCommerceStatus == 1 && orderId != null) {
-      var resultPhotographer = await this.departmentsModel.aggregate([
-        {
-          $match: {
-            _code: 1004,
-            _status: 1,
+        var resultPhotographer = await this.departmentsModel.aggregate([
+          {
+            $match: {
+              _code: 1004,
+              _status: 1,
+            },
           },
-        },
-        { $project: { _id: 1 } },
-        {
-          $lookup: {
-            from: ModelNames.EMPLOYEES,
-            let: { departmentId: '$_id' },
-            pipeline: [
-              {
-                $match: {
-                  _status: 1,
-                  $expr: { $eq: ['$_departmentId', '$$departmentId'] },
+          { $project: { _id: 1 } },
+          {
+            $lookup: {
+              from: ModelNames.EMPLOYEES,
+              let: { departmentId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    _status: 1,
+                    $expr: { $eq: ['$_departmentId', '$$departmentId'] },
+                  },
                 },
-              },
 
-             
-              {
-                $lookup: {
-                  from: ModelNames.PHOTOGRAPHER_REQUESTS,
-                  let: { userId: '$_userId' },
-                  pipeline: [
-                    {
-                      $match: {
-                        _status: 1,
-                        $expr: { $eq: ['$_userId', '$$userId'] },
+                {
+                  $lookup: {
+                    from: ModelNames.PHOTOGRAPHER_REQUESTS,
+                    let: { userId: '$_userId' },
+                    pipeline: [
+                      {
+                        $match: {
+                          _status: 1,
+                          $expr: { $eq: ['$_userId', '$$userId'] },
+                        },
                       },
+                      { $project: { _id: 1 } },
+                    ],
+                    as: 'photographyRequestList',
+                  },
+                },
+                {
+                  $project: {
+                    _userId: 1,
+                    photographyRequestCount: {
+                      $size: '$photographyRequestList',
                     },
-                    { $project: { _id: 1 } },
-                  ],
-                  as: 'photographyRequestList',
+                  },
                 },
-              },
-              {
-                $project: {_userId:1,
-                  photographyRequestCount: { $size: '$photographyRequestList' },
-                },
-              },
-            ],
-            as: 'employeeList',
+              ],
+              as: 'employeeList',
+            },
           },
-        },{
-          $unwind: {
-            path: '$employeeList',
-            preserveNullAndEmptyArrays: true,
+          {
+            $unwind: {
+              path: '$employeeList',
+              preserveNullAndEmptyArrays: true,
+            },
           },
-        },
-        { $sort: { 'employeeList.photographyRequestCount': 1 } },
-        { $limit: 1 },
-        {
-          $group: {
-            _id: "$_id",
-            "employeeList": {
-              $push: "$employeeList"
-            }
-          }
-        },
-      ]);
-      if (resultPhotographer.length == 0) {
-        throw new HttpException('Photography department not found', HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-      if (resultPhotographer[0].employeeList.length == 0) {
-        throw new HttpException('Photography employees not found', HttpStatus.INTERNAL_SERVER_ERROR);
-      }
+          { $sort: { 'employeeList.photographyRequestCount': 1 } },
+          { $limit: 1 },
+          {
+            $group: {
+              _id: '$_id',
+              employeeList: {
+                $push: '$employeeList',
+              },
+            },
+          },
+        ]);
+        if (resultPhotographer.length == 0) {
+          throw new HttpException(
+            'Photography department not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+        if (resultPhotographer[0].employeeList.length == 0) {
+          throw new HttpException(
+            'Photography employees not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
         const photographerRequestModel = new this.photographerRequestModel({
           _rootCauseId: null,
           _orderId: orderId,
@@ -311,39 +316,42 @@ export class ProductsService {
         });
       }
 
+
+
+
+      console.log("___s1 dto.hmSealingStatus "+dto.hmSealingStatus);
+      console.log("___s1 orderId "+orderId);
       if (dto.hmSealingStatus == 1 && orderId != null) {
-        
-  var resultCounterHalmarkRequest = await this.counterModel.findOneAndUpdate(
-    { _tableName: ModelNames.HALMARKING_REQUESTS },
-    {
-      $inc: {
-        _count: 1,
-      },
-    },
-    { new: true, session: transactionSession },
-  );
+        var resultCounterHalmarkRequest =
+          await this.counterModel.findOneAndUpdate(
+            { _tableName: ModelNames.HALMARKING_REQUESTS },
+            {
+              $inc: {
+                _count: 1,
+              },
+            },
+            { new: true, session: transactionSession },
+          );
 
-
-  const halmarkRequestModel = new this.halmarkRequestModel({
-    _uid: resultCounterHalmarkRequest._count,
-    _orderId: orderId,
-    _productId:productId,
-    _halmarkCenterId: null,
-    _halmarkCenterUserId: null,
-    _verifyUserId: null,
-    _requestStatus: 5,
-    _rootCauseId: null,
-    _description: "",
-    _createdUserId: _userId_,
-    _createdAt: dateTime,
-    _updatedUserId: null,
-    _updatedAt:0,
-    _status:1
-  });
-  await halmarkRequestModel.save({
-    session: transactionSession,
-  });
-  
+        const halmarkRequestModel = new this.halmarkRequestModel({
+          _uid: resultCounterHalmarkRequest._count,
+          _orderId: orderId,
+          _productId: productId,
+          _halmarkCenterId: null,
+          _halmarkCenterUserId: null,
+          _verifyUserId: null,
+          _requestStatus: 5,
+          _rootCauseId: null,
+          _description: '',
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: 0,
+          _status: 1,
+        });
+        await halmarkRequestModel.save({
+          session: transactionSession,
+        });
       }
 
       const responseJSON = { message: 'success', data: { list: result1 } };
@@ -796,53 +804,52 @@ export class ProductsService {
       }
 
       if (dto.screenType.findIndex((it) => it == 106) != -1) {
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.PRODUCT_DOCUMENTS_LINKIGS,
-              let: { productId: '$_id' },
-              pipeline: [
-                {
-                  $match: {_status:1,
-                    $expr: {
-                      $and: [{ $eq: ['$_productId', '$$productId'] }],
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.PRODUCT_DOCUMENTS_LINKIGS,
+            let: { productId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: {
+                    $and: [{ $eq: ['$_productId', '$$productId'] }],
+                  },
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
                     },
-                  },
-                },
-                {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                        },
+                    {
+                      $project: {
+                        _name: 1,
+                        _docType: 1,
+                        _type: 1,
+                        _uid: 1,
+                        _url: 1,
                       },
-                      {
-                        $project: {
-                          _name: 1,
-                          _docType: 1,
-                          _type: 1,
-                          _uid: 1,
-                          _url: 1,
-                        },
-                      },
-                    ],
-                    as: 'globalGalleryDetails',
-                  },
+                    },
+                  ],
+                  as: 'globalGalleryDetails',
                 },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
                 },
-              ],
-              as: 'documentList',
-            },
+              },
+            ],
+            as: 'documentList',
           },
-        );
+        });
       }
       var result = await this.productModel
         .aggregate(arrayAggregation)
@@ -969,7 +976,6 @@ export class ProductsService {
                 },
               },
 
-             
               {
                 $lookup: {
                   from: ModelNames.PHOTOGRAPHER_REQUESTS,
@@ -987,14 +993,16 @@ export class ProductsService {
                 },
               },
               {
-                $project: {_userId:1,
+                $project: {
+                  _userId: 1,
                   photographyRequestCount: { $size: '$photographyRequestList' },
                 },
               },
             ],
             as: 'employeeList',
           },
-        },{
+        },
+        {
           $unwind: {
             path: '$employeeList',
             preserveNullAndEmptyArrays: true,
@@ -1004,11 +1012,11 @@ export class ProductsService {
         { $limit: 1 },
         {
           $group: {
-            _id: "$_id",
-            "employeeList": {
-              $push: "$employeeList"
-            }
-          }
+            _id: '$_id',
+            employeeList: {
+              $push: '$employeeList',
+            },
+          },
         },
       ]);
 
