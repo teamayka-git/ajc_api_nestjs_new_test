@@ -372,7 +372,7 @@ export class OrderSaleSetProcessService {
           _processId: result._processId,
           _description: '',
           _createdUserId: _userId_,
-          _createdAt: _userId_,
+          _createdAt: dateTime,
           _status: 1,
         });
       await orderSaleSetProcessHistory.save({
