@@ -782,7 +782,7 @@ export class HalmarkingRequestsService {
         { new: true, session: transactionSession },
       );
 
-      if (dto.requestStatus == 4) {
+      if (dto.requestStatus == 4 && dto.orderId != '') {
         await this.orderSaleModel.findOneAndUpdate(
           { _id: dto.orderId },
           {
