@@ -771,7 +771,7 @@ export class HalmarkingRequestsService {
             _rootCauseId:
               dto.rootCauseId == '' || dto.rootCauseId == 'nil'
                 ? null
-                : dto.rootCauseId,
+                : dto.rootCauseId, 
             _description: dto.description,
             _hmValue: dto.hmValue,
 
