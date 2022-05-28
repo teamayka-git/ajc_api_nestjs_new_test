@@ -81,8 +81,6 @@ _code:{
     1004 - Shop credit amount limit percentage, 
     1005 - Shop credit days limit, 
     1006 - tax gold manufacturing tax rate %, 
-    1007 - tax product CGST %, 
-    1008 - tax product SGST %, 
     1009 - tax product IGST %, 
     1010 - tax holemarking tax %, 
     1011 - tax other charge tax %, 

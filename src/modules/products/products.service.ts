@@ -297,12 +297,25 @@ export class ProductsService {
             HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }
+
+
+
+        var resultCounterPhotographer = await this.counterModel.findOneAndUpdate(
+          { _tableName: ModelNames.PHOTOGRAPHER_REQUESTS },
+          {
+            $inc: {
+              _count:1,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
         const photographerRequestModel = new this.photographerRequestModel({
           _rootCauseId: null,
           _orderId: orderId,
           _productId: productId,
           _requestStatus: 0,
           _description: '',
+          _uid:resultCounterPhotographer._count,
           _userId: resultPhotographer[0].employeeList[0]._userId,
           _finishedAt: 0,
           _createdUserId: _userId_,

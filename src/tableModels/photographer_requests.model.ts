@@ -4,7 +4,7 @@ import { GlobalConfig } from 'src/config/global_config';
 
 export const PhotographerRequestsSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
-  _rootCauseId: {
+  _rootCauseId: { 
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.ROOT_CAUSES,
     default: null,
@@ -27,6 +27,8 @@ export const PhotographerRequestsSchema = new mongoose.Schema({
     default: null,
   },
   _finishedAt: { type: Number, required: true, default: -1 },
+  
+  _uid: { type: String, required: true, default: 'nil' },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -50,6 +52,7 @@ export interface PhotographerRequests {
   _requestStatus: number;
   _description: String;
   _userId: String;
+  _uid: string;
   _finishedAt: number;
   _createdUserId: String;
   _createdAt: Number;
@@ -67,6 +70,7 @@ PhotographerRequestsSchema.index({ _userId: 1 });
 PhotographerRequestsSchema.index({ _finishedAt: 1 });
 PhotographerRequestsSchema.index({ _createdUserId: 1 });
 PhotographerRequestsSchema.index({ _status: 1 });
+PhotographerRequestsSchema.index({ _uid: 1, _id: 1 });
 
 /*
 _requestStatus:{

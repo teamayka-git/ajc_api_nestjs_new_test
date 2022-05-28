@@ -693,6 +693,21 @@ export class AppService {
         { upsert: true, new: true, session: transactionSession },
       );
 
+      await this.countersModel.findOneAndUpdate(
+        { _tableName: ModelNames.PHOTOGRAPHER_REQUESTS },
+        {
+          $setOnInsert: {
+            _count: 0,
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+
       var encryptedPassword = await crypto
         .pbkdf2Sync(
           '123456',
@@ -1000,46 +1015,7 @@ export class AppService {
         { upsert: true, new: true, session: transactionSession },
       );
 
-      await this.generalsModel.findOneAndUpdate(
-        { _code: 1007 },
-        {
-          $setOnInsert: {
-            _name: 'tax product CGST %',
-            _string: '',
-            _number: 1,
-            _vlaueType: 0,
-            _json: { basic: 'basic' },
-            _type: 0,
-            _dataGuard: [0, 1, 2],
-            _createdUserId: null,
-            _createdAt: dateTime,
-            _updatedUserId: null,
-            _updatedAt: -1,
-          },
-          $set: { _status: 1 },
-        },
-        { upsert: true, new: true, session: transactionSession },
-      );
-      await this.generalsModel.findOneAndUpdate(
-        { _code: 1008 },
-        {
-          $setOnInsert: {
-            _name: 'tax product SGST %',
-            _string: '',
-            _number: 1,
-            _json: { basic: 'basic' },
-            _vlaueType: 0,
-            _type: 0,
-            _dataGuard: [0, 1, 2],
-            _createdUserId: null,
-            _createdAt: dateTime,
-            _updatedUserId: null,
-            _updatedAt: -1,
-          },
-          $set: { _status: 1 },
-        },
-        { upsert: true, new: true, session: transactionSession },
-      );
+    
       await this.generalsModel.findOneAndUpdate(
         { _code: 1009 },
         {

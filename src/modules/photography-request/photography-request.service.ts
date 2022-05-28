@@ -37,7 +37,21 @@ export class PhotographyRequestService {
     try {
       var arrayToStates = [];
 
-      dto.array.map((mapItem) => {
+
+      var resultCounterPhotographer = await this.counterModel.findOneAndUpdate(
+        { _tableName: ModelNames.PHOTOGRAPHER_REQUESTS },
+        {
+          $inc: {
+            _count:dto.array.length,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+
+
+
+      dto.array.map((mapItem,index) => {
         arrayToStates.push({
           _rootCauseId: null,
           _orderId: mapItem.orderId,
@@ -45,6 +59,7 @@ export class PhotographyRequestService {
           _requestStatus: 0,
           _description: mapItem.description,
           _userId: mapItem.assignUserId,
+          _uid:resultCounterPhotographer._count-index,
           _finishedAt: -1,
           _createdUserId: _userId_,
           _createdAt: dateTime,
