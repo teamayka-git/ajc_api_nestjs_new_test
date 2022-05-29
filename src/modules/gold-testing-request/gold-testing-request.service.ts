@@ -140,7 +140,7 @@ export class GoldTestingRequestService {
           {
             $set: {
               _workStatus: dto.arrayItems[i].workStatus,
-              _rootCauseId: dto.arrayItems[i].rootCauseId,
+              _rootCauseId:  (dto.arrayItems[i].rootCauseId==""||dto.arrayItems[i].rootCauseId=="nil")?null:dto.arrayItems[i].rootCauseId,
               _description: dto.arrayItems[i].description,
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
