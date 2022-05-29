@@ -83,9 +83,6 @@ export class GoldTestRequestEditList {
 }
 export class GoldTestRequestEditDto {
 
-  @IsString()
-  @ApiProperty({})
-  testCenterId: string;
 
 
 
