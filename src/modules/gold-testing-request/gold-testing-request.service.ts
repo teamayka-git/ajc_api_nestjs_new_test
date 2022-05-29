@@ -171,53 +171,6 @@ export class GoldTestingRequestService {
       throw error;
     }
   }
-  async updateGoldRequestStatus(dto: GoldTestRequestEditDto, _userId_: string) {
-    var dateTime = new Date().getTime();
-    const transactionSession = await this.connection.startSession();
-    transactionSession.startTransaction();
-    try {
-
-
-
-      for(var i=0;i<dto.arrayItems.length;i++){
-        await this.goldTestRequestModel.findOneAndUpdate(
-          {
-            _id: dto.arrayItems[i].goldTestRequestId,
-          },
-          {
-            $set: {
-              _workStatus: dto.arrayItems[i].workStatus,
-              _rootCauseId: dto.arrayItems[i].rootCauseId,
-              _description: dto.arrayItems[i].description,
-              _updatedUserId: _userId_,
-              _updatedAt: dateTime,
-            },
-          },
-          { new: true, session: transactionSession },
-        );
-  
-      }
-      const responseJSON = { message: 'success', data: {} };
-      if (
-        process.env.RESPONSE_RESTRICT == 'true' &&
-        JSON.stringify(responseJSON).length >=
-          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
-      ) {
-        throw new HttpException(
-          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-            JSON.stringify(responseJSON).length,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      await transactionSession.commitTransaction();
-      await transactionSession.endSession();
-      return responseJSON;
-    } catch (error) {
-      await transactionSession.abortTransaction();
-      await transactionSession.endSession();
-      throw error;
-    }
-  }
 
   async updateGoldRequestItemFromTestCenter(
     dto: GoldTestRequestItemEditFromTestCenterDto,

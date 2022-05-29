@@ -19,10 +19,6 @@ export class GoldTestingRequestController {
   updateGoldRequest(@Body() dto: GoldTestRequestEditDto,@Request() req) {
     return this.goldTestingRequestService.updateGoldRequest(dto,req["_userId_"]);
   }
-  @Put("updateGoldRequestStatus")
-  updateGoldRequestStatus(@Body() dto: GoldTestRequestEditDto,@Request() req) {
-    return this.goldTestingRequestService.updateGoldRequestStatus(dto,req["_userId_"]);
-  }
   @Put("updateGoldRequestItemFromTestCenter")
   updateGoldRequestItemFromTestCenter(@Body() dto: GoldTestRequestItemEditFromTestCenterDto,@Request() req) {
     return this.goldTestingRequestService.updateGoldRequestItemFromTestCenter(dto,req["_userId_"]);
