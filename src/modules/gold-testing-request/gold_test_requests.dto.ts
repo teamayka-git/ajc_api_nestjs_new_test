@@ -62,7 +62,7 @@ export class GoldTestRequestCreateDto {
   @Type(() => GoldTestRequestCreateList)
   arrayItems: GoldTestRequestCreateList[];
 }
-export class GoldTestRequestEditDto {
+export class GoldTestRequestEditList {
   @IsString()
   @ApiProperty({})
   goldTestRequestId: string;
@@ -81,7 +81,21 @@ export class GoldTestRequestEditDto {
   workStatus: number;
 
 }
+export class GoldTestRequestEditDto {
 
+  @IsString()
+  @ApiProperty({})
+  testCenterId: string;
+
+
+
+
+  @IsArray()
+  @ApiProperty({ type: [GoldTestRequestEditList] })
+  @ValidateNested({ each: true })
+  @Type(() => GoldTestRequestEditList)
+  arrayItems: GoldTestRequestEditList[];
+}
 export class GoldTestRequestItemEditFromTestCenterDto {
   @IsString()
   @ApiProperty({})

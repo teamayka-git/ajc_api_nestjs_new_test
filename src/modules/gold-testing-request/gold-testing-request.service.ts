@@ -129,23 +129,28 @@ export class GoldTestingRequestService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var result = await this.goldTestRequestModel.findOneAndUpdate(
-        {
-          _id: dto.goldTestRequestId,
-        },
-        {
-          $set: {
-            _workStatus: dto.workStatus,
-            _rootCauseId: dto.rootCauseId,
-            _description: dto.description,
-            _updatedUserId: _userId_,
-            _updatedAt: dateTime,
-          },
-        },
-        { new: true, session: transactionSession },
-      );
 
-      const responseJSON = { message: 'success', data: result };
+
+
+      for(var i=0;i<dto.arrayItems.length;i++){
+        await this.goldTestRequestModel.findOneAndUpdate(
+          {
+            _id: dto.arrayItems[i].goldTestRequestId,
+          },
+          {
+            $set: {
+              _workStatus: dto.arrayItems[i].workStatus,
+              _rootCauseId: dto.arrayItems[i].rootCauseId,
+              _description: dto.arrayItems[i].description,
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+  
+      }
+      const responseJSON = { message: 'success', data: {} };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
