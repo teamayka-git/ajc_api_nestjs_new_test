@@ -103,7 +103,7 @@ OrderSalesSchema.index({ _uid: 1, _id: 1 });
 
 OrderSalesSchema.index({ _uid: 1 }, { unique: true });
 /*
-_workStatus:{
+_workStatus:{ 
   0 - order pending
   1 - order accept
   2 - order reject

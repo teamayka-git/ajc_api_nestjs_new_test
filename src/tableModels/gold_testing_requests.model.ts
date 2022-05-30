@@ -88,7 +88,7 @@ _workStatus:{
     3 - completed in test center
     4 - test in at manufacture
     5 - verification done at manufacture
-    6 - verification completed at manufacture
+    6 - verification completed at manufacture(this one have little doubt why v done like)
     7 - rejected from test center
 }
 */

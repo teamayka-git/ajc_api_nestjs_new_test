@@ -69,7 +69,7 @@ export interface HalmarkingRequests {
   _createdAt: Number;
   _updatedUserId: String;
   _updatedAt: Number;
-  _status: Number;
+  _status: Number; 
 }
 
 

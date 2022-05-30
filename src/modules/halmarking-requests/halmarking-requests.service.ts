@@ -6,6 +6,7 @@ import { GlobalConfig } from 'src/config/global_config';
 import { Counters } from 'src/tableModels/counters.model';
 import { HalmarkingRequests } from 'src/tableModels/halmarking_requests.model';
 import { OrderSales } from 'src/tableModels/order_sales.model';
+import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { Products } from 'src/tableModels/products.model';
 import {
   HalmarkCenterAssigntDto,
@@ -25,6 +26,8 @@ export class HalmarkingRequestsService {
     private readonly halmarkRequestsModel: mongoose.Model<HalmarkingRequests>,
     @InjectModel(ModelNames.ORDER_SALES)
     private readonly orderSaleModel: mongoose.Model<OrderSales>,
+    @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
+    private readonly orderSaleHistoriesModel: mongoose.Model<OrderSaleHistories>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
     @InjectConnection() private readonly connection: mongoose.Connection,

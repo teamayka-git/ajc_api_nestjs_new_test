@@ -7,6 +7,7 @@ import { HalmarkingRequestsSchema } from 'src/tableModels/halmarking_requests.mo
 import { CountersSchema } from 'src/tableModels/counters.model';
 import { OrderSalesSchema } from 'src/tableModels/order_sales.model';
 import { ProductsSchema } from 'src/tableModels/products.model';
+import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.model';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ProductsSchema } from 'src/tableModels/products.model';
       },
       { name: ModelNames.COUNTERS, schema: CountersSchema },
       { name: ModelNames.ORDER_SALES, schema: OrderSalesSchema },
+      { name: ModelNames.ORDER_SALE_HISTORIES, schema: OrderSaleHistoriesSchema },
       { name: ModelNames.PRODUCTS, schema: ProductsSchema },
     ]),
   ],

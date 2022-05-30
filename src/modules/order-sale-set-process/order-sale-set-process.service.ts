@@ -81,6 +81,7 @@ export class OrderSaleSetProcessService {
             _isLastItem: isLastItem,
             _userId: null,
             _description: mapItem1.description,
+            _index:mapItem1.index,
             _orderStatus: 0,
             _processId: mapItem1.processId,
             _createdUserId: _userId_,

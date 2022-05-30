@@ -32,6 +32,9 @@ class processCreateList {
   @IsString()
   @ApiProperty({})
   description: string;
+  @IsNumber()
+  @ApiProperty({})
+  index: string;
 }
 class SetProcessCreateList {
   @IsString()

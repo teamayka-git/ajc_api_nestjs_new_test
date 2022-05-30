@@ -15,6 +15,7 @@ export const OrderSaleSetProcessesSchema = new mongoose.Schema({
     ref: ModelNames.USER,
     default: null,
   },
+  _index: { type: Number, required: true, default: -1 },
   _isLastItem: { type: Number, required: true, default: -1 },
   _orderStatus: { type: Number, required: true, default: -1 },
   _processId: {
@@ -39,6 +40,7 @@ export interface OrderSaleSetProcesses {
   _orderSaleId: String;
   _userId: String;
   _orderStatus: number;
+  _index:number;
   _description: string;
   _processId: String;
   _isLastItem: number;
@@ -47,6 +49,7 @@ export interface OrderSaleSetProcesses {
   _status: Number;
 }
 
+OrderSaleSetProcessesSchema.index({ _index: 1 });
 OrderSaleSetProcessesSchema.index({ _isLastItem: 1 });
 OrderSaleSetProcessesSchema.index({ _description: 1 });
 OrderSaleSetProcessesSchema.index({ _processId: 1 });
