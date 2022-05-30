@@ -81,6 +81,8 @@ export class GoldTestingRequestService {
           _testCharge: -1,
           _total: -1,
           _cgst: -1,
+          _isUpdateManufacureItemVerificationComplete:0,
+          _isUpdateTestCenterItemVerificationComplete:0,
           _sgst: -1,
           _igst: -1,
           _tcDoneUserId: null,
@@ -189,6 +191,7 @@ export class GoldTestingRequestService {
         _cgst: dto.cgst,
         _sgst: dto.sgst,
         _igst: dto.igst,
+        _isUpdateTestCenterItemVerificationComplete:dto.isUpdateTestCenterItemVerificationComplete,
 
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
@@ -242,7 +245,7 @@ export class GoldTestingRequestService {
       var objectForUpdate = {
         _receivedWeight: dto.receivedWeight,
         _actualFineWeight: dto.actualFineWeight,
-
+        _isUpdateManufacureItemVerificationComplete:dto.isUpdateManufacureItemVerificationComplete,
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
       };

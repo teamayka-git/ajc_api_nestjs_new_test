@@ -28,6 +28,8 @@ export const GoldTestRequestItemsSchema = new mongoose.Schema({
   _cgst: { type: Number, required: true, default: -1 },
   _sgst: { type: Number, required: true, default: -1 },
   _igst: { type: Number, required: true, default: -1 },
+  _isUpdateManufacureItemVerificationComplete: { type: Number, required: true, default: -1 },
+  _isUpdateTestCenterItemVerificationComplete: { type: Number, required: true, default: -1 },
   _tcDoneUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -67,6 +69,8 @@ export interface GoldTestRequestItems {
   _receivedWeight: Number;
   _testedPurity: Number;
   _actualFineWeight: Number;
+  _isUpdateManufacureItemVerificationComplete: Number;
+  _isUpdateTestCenterItemVerificationComplete: Number;
   _weightLoss: Number;
   _allowedWeightLoss: Number;
   _testCharge: Number;
