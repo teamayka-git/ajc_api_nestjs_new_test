@@ -23,8 +23,6 @@ export const GoldTestRequestItemsSchema = new mongoose.Schema({
   _actualFineWeight: { type: Number, required: true, default: -1 },
   _weightLoss: { type: Number, required: true, default: -1 },
   _allowedWeightLoss: { type: Number, required: true, default: -1 },
-  _isUpdateManufacureItemVerificationComplete: { type: Number, required: true, default: -1 },
-  _isUpdateTestCenterItemVerificationComplete: { type: Number, required: true, default: -1 },
   _testCharge: { type: Number, required: true, default: -1 },
   _total: { type: Number, required: true, default: -1 },
   _cgst: { type: Number, required: true, default: -1 },
@@ -71,8 +69,6 @@ export interface GoldTestRequestItems {
   _actualFineWeight: Number;
   _weightLoss: Number;
   _allowedWeightLoss: Number;
-  _isUpdateManufacureItemVerificationComplete:number;
-  _isUpdateTestCenterItemVerificationComplete:number;
   _testCharge: Number;
   _total: Number;
   _cgst: Number;
@@ -87,8 +83,6 @@ export interface GoldTestRequestItems {
   _status: Number;
 }
 
-GoldTestRequestItemsSchema.index({ _isUpdateManufacureItemVerificationComplete: 1 });
-GoldTestRequestItemsSchema.index({ _isUpdateTestCenterItemVerificationComplete: 1 });
 GoldTestRequestItemsSchema.index({ _goldTestRequesId: 1 });
 GoldTestRequestItemsSchema.index({ _groupId: 1 });
 GoldTestRequestItemsSchema.index({ _weight: 1 });
