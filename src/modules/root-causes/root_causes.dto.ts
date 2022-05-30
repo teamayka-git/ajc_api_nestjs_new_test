@@ -17,7 +17,7 @@ const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType = '0-Created Date, 1-Status,2-Name';
-const descriptionType = '0 - order sale, 1 - halmark, 2 - photography';
+const descriptionType = '0 - order sale, 1 - halmark, 2 - photography, 3-Gold testing ';
 
 class OrderSaleRootCauseCreateList {
   @IsString()
