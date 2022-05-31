@@ -304,6 +304,54 @@ export class AppService {
             },
           },
         );
+
+
+        if (dto.screenType.findIndex((it) => it == 108) != -1) {
+          arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
+            {
+              $lookup: {
+                from: ModelNames.DEPARTMENT,
+                let: { departmentId: '$_departmentId' },
+                pipeline: [
+                  { $match: { $expr: { $eq: ['$_id', '$$departmentId'] } } },
+                ],
+                as: 'departmentDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$departmentDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          );
+        }
+
+
+        if (dto.screenType.findIndex((it) => it == 109) != -1) {
+          arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
+            {
+              $lookup: {
+                from: ModelNames.PROCESS_MASTER,
+                let: { processMasterId: '$_processMasterId' },
+                pipeline: [
+                  { $match: { $expr: { $eq: ['$_id', '$$processMasterId'] } } },
+                ],
+                as: 'processMasterDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$processMasterDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          );
+        }
+
+
+
+
       }
       if (dto.screenType.findIndex((it) => it == 101) != -1) {
         arrayAggregation.push(
@@ -322,6 +370,28 @@ export class AppService {
             },
           },
         );
+
+        if (dto.screenType.findIndex((it) => it == 110) != -1) {
+          arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
+            {
+              $lookup: {
+                from: ModelNames.CITIES,
+                let: { cityId: '$_cityId' },
+                pipeline: [
+                  { $match: { $expr: { $eq: ['$_id', '$$cityId'] } } },
+                ],
+                as: 'cityDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$cityDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          );
+        }
+
       }
       if (dto.screenType.findIndex((it) => it == 102) != -1) {
         arrayAggregation.push(
@@ -342,6 +412,26 @@ export class AppService {
             },
           },
         );
+        if (dto.screenType.findIndex((it) => it == 111) != -1) {
+          arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
+            {
+              $lookup: {
+                from: ModelNames.CITIES,
+                let: { cityId: '$_cityId' },
+                pipeline: [
+                  { $match: { $expr: { $eq: ['$_id', '$$cityId'] } } },
+                ],
+                as: 'cityDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$cityDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          );
+        }
       }
       if (dto.screenType.findIndex((it) => it == 107) != -1) {
         arrayAggregation.push(
