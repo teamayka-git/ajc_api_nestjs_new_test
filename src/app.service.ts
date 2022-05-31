@@ -392,7 +392,7 @@ export class AppService {
           );
         }
 
-      }
+      } 
       if (dto.screenType.findIndex((it) => it == 102) != -1) {
         arrayAggregation.push(
           {
