@@ -290,7 +290,7 @@ export class AppService {
           {
             $lookup: {
               from: ModelNames.EMPLOYEES,
-              let: { employeeId: '$_employeeId' },
+              let: { employeeId: '$_employeeId' }, 
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$employeeId'] } } },
               ],
@@ -338,6 +338,26 @@ export class AppService {
           {
             $unwind: {
               path: '$supplierDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.findIndex((it) => it == 107) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.TEST_CENTER_MASTERS,
+              let: { testCenterId: '$_testCenterId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$testCenterId'] } } },
+              ],
+              as: 'testCenterDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$testCenterDetails',
               preserveNullAndEmptyArrays: true,
             },
           },
