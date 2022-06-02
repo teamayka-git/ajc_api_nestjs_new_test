@@ -1675,6 +1675,15 @@ export class OrderSalesService {
         aaa.push(result[0]);
         aaa.push(result[0]);
         aaa.push(result[0]);
+        aaa.push(result[0]);
+        aaa.push(result[0]);
+        aaa.push(result[0]);
+        aaa.push(result[0]);
+        aaa.push(result[0]);
+        aaa.push(result[0]);
+        aaa.push(result[0]);
+        aaa.push(result[0]);
+        aaa.push(result[0]);
       }
 
       const responseJSON = {
