@@ -1672,31 +1672,11 @@ export class OrderSalesService {
       }
 
 
-      var aaa=[];
-      if(result.length>0){
-        aaa.push(result[0]);
-        aaa.push(result[0]);
-        aaa.push(result[0]);
-        aaa.push(result[0]);
-        aaa.push(result[0]);
-        aaa.push(result[0]);
-        aaa.push(result[0]);
-        aaa.push(result[0]);
-        aaa.push(result[0]);
-        aaa.push(result[0]);
-        aaa.push(result[0]);
-        aaa.push(result[0]);
-        aaa.push(result[0]);
-        aaa.push(result[0]);
-        aaa.push(result[0]);
-        aaa.push(result[0]);
-        aaa.push(result[0]);
-      }
-
+     
       const responseJSON = {
         message: 'success',
         data: {
-          list: aaa,
+          list: result,
           totalCount: totalCount,
         },
       };
