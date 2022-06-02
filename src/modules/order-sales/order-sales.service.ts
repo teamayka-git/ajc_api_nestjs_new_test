@@ -1470,7 +1470,7 @@ export class OrderSalesService {
     }
   }
 
-  async set_proccess_assigned_order_sale_list(
+  async set_proccess_assigned_order_sale_list( 
     dto: SetProcessAssignedOrderSaleListDto,
     _userId_: string,
   ) {
@@ -1511,6 +1511,13 @@ export class OrderSalesService {
           _status: 1,
         },
       });
+
+
+      if (dto.skip != -1) {
+        arrayAggregation.push({ $skip: dto.skip });
+        arrayAggregation.push({ $limit: dto.limit });
+      }
+
 
       if (dto.screenType.findIndex((it) => it == 101) != -1) {
         arrayAggregation.push({

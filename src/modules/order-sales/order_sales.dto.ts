@@ -317,6 +317,15 @@ export class SetProcessAssignedOrderSaleListDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   employeesArray: string[];
+
+  @IsNumber()
+  @ApiProperty({})
+  limit: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  skip: number;
+
   @IsArray()
   @ApiProperty({ type: [String] })
   idsArray: string[];
