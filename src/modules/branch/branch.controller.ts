@@ -61,7 +61,6 @@ export class BranchController {
   }
 
   @Put()
-  @Roles(GuardUserRole.SUPER_ADMIN)
   @ApiCreatedResponse({
     description: 'files upload on these input feilds => [image]',
   })
