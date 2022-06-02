@@ -38,7 +38,7 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   @ApiCreatedResponse({
     description: 'files upload on these input feilds => [image]',
   })
@@ -70,7 +70,7 @@ export class CategoriesController {
   }
 
   @Post('testS3Bucket1')
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   @ApiCreatedResponse({
     description: 'files upload on these input feilds => [image]',
   })
@@ -97,7 +97,7 @@ export class CategoriesController {
   }
 
   @Post('testS3Bucket2')
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   @ApiCreatedResponse({
     description: 'files upload on these input feilds => [image]',
   })
@@ -110,7 +110,7 @@ export class CategoriesController {
   }
 
   @Put()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   @ApiCreatedResponse({
     description: 'files upload on these input feilds => [image]',
   })
@@ -137,7 +137,7 @@ export class CategoriesController {
     );
   }
   @Delete()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   status_change(@Body() dto: CategoriesStatusChangeDto, @Request() req) {
     return this.categoriesService.status_change(dto, req['_userId_']);
   }

@@ -15,7 +15,7 @@ export class GoldRateTimelinesController {
 
 
   @Post()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   create(@Body() dto: GoldRateTimelinesCreateDto,@Request() req) {
     return this.goldRateTimelinesService.create(dto,req["_userId_"]);
   }

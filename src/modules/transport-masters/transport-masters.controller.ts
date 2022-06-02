@@ -14,18 +14,18 @@ export class TransportMastersController {
 
 
   @Post()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   create(@Body() dto: TransportMastersCreateDto,@Request() req) {
     return this.transportMastersService.create(dto,req["_userId_"]);
   }
   
   @Put()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   edit(@Body() dto: TransportMastersEditDto,@Request() req) {
     return this.transportMastersService.edit(dto,req["_userId_"]);
   }
   @Delete()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   status_change(@Body() dto: TransportMastersStatusChangeDto,@Request() req) {
     return this.transportMastersService.status_change(dto,req["_userId_"]);
   }

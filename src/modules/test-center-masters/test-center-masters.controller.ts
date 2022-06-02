@@ -14,18 +14,18 @@ export class TestCenterMastersController {
 
 
   @Post()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   create(@Body() dto: TestCenterMastersCreateDto,@Request() req) {
     return this.testCenterMastersService.create(dto,req["_userId_"]);
   }
   
   @Put()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   edit(@Body() dto: TestCenterMastersEditDto,@Request() req) {
     return this.testCenterMastersService.edit(dto,req["_userId_"]);
   }
   @Delete()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   status_change(@Body() dto: TestCenterMastersStatusChangeDto,@Request() req) {
     return this.testCenterMastersService.status_change(dto,req["_userId_"]);
   }

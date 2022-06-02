@@ -14,18 +14,18 @@ export class GlobalGalleryCategoryController {
 
 
   @Post()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   create(@Body() dto: GlobalGalleryCategoryCreateDto,@Request() req) {
     return this.globalGalleryCategoryService.create(dto,req["_userId_"]);
   }
   
   @Put()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   edit(@Body() dto: GlobalGalleryCategoryEditDto,@Request() req) {
     return this.globalGalleryCategoryService.edit(dto,req["_userId_"]);
   }
   @Delete()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   status_change(@Body() dto: GlobalGalleryCategoryStatusChangeDto,@Request() req) {
     return this.globalGalleryCategoryService.status_change(dto,req["_userId_"]);
   }

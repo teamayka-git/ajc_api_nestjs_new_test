@@ -13,18 +13,18 @@ export class DeliveryHubsController {
   constructor(private readonly deliveryHubsService: DeliveryHubsService) {}
 
   @Post()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   create(@Body() dto: DeliveryHubCreateDto,@Request() req) {
     return this.deliveryHubsService.create(dto,req["_userId_"]);
   }
   
   @Put()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   edit(@Body() dto: DeliveryHubEditDto,@Request() req) {
     return this.deliveryHubsService.edit(dto,req["_userId_"]);
   }
   @Delete()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   status_change(@Body() dto: DeliveryHubStatusChangeDto,@Request() req) {
     return this.deliveryHubsService.status_change(dto,req["_userId_"]);
   }

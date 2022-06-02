@@ -15,18 +15,18 @@ export class TcsMastersController {
 
 
   @Post()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   create(@Body() dto: TcsMastersCreateDto,@Request() req) {
     return this.tcsMastersService.create(dto,req["_userId_"]);
   }
   
   @Put()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   edit(@Body() dto: TcsMastersEditDto,@Request() req) {
     return this.tcsMastersService.edit(dto,req["_userId_"]);
   }
   @Delete()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   status_change(@Body() dto: TcsMastersStatusChangeDto,@Request() req) {
     return this.tcsMastersService.status_change(dto,req["_userId_"]);
   }

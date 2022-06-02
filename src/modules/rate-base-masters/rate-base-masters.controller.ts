@@ -13,18 +13,18 @@ export class RateBaseMastersController {
 
 
   @Post()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   create(@Body() dto: RateBaseMastersCreateDto,@Request() req) {
     return this.rateBaseMastersService.create(dto,req["_userId_"]);
   }
   
   @Put()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   edit(@Body() dto: RateBaseMastersEditDto,@Request() req) {
     return this.rateBaseMastersService.edit(dto,req["_userId_"]);
   }
   @Delete()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   status_change(@Body() dto: RateBaseMastersStatusChangeDto,@Request() req) {
     return this.rateBaseMastersService.status_change(dto,req["_userId_"]);
   }

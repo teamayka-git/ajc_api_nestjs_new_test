@@ -14,18 +14,18 @@ export class FactoriesController {
 
 
   @Post()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   create(@Body() dto: FactoriesCreateDto,@Request() req) {
     return this.factoriesService.create(dto,req["_userId_"]);
   }
   
   @Put()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   edit(@Body() dto: FactoriesEditDto,@Request() req) {
     return this.factoriesService.edit(dto,req["_userId_"]);
   }
   @Delete()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   status_change(@Body() dto: FactoriesStatusChangeDto,@Request() req) {
     return this.factoriesService.status_change(dto,req["_userId_"]);
   }

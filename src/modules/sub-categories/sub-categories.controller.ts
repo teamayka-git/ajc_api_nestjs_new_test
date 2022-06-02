@@ -35,7 +35,7 @@ export class SubCategoriesController {
   constructor(private readonly subCategoriesService: SubCategoriesService) {}
 
   @Post()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   @ApiCreatedResponse({
     description: 'files upload on these input feilds => [image]',
   })
@@ -67,7 +67,7 @@ export class SubCategoriesController {
   }
 
   @Put()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   @ApiCreatedResponse({
     description: 'files upload on these input feilds => [image]',
   })
@@ -98,7 +98,7 @@ export class SubCategoriesController {
     );
   }
   @Delete()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   status_change(@Body() dto: SubCategoriesStatusChangeDto, @Request() req) {
     return this.subCategoriesService.status_change(dto, req['_userId_']);
   }

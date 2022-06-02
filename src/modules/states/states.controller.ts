@@ -18,18 +18,18 @@ export class StatesController {
   constructor(private readonly statesService: StatesService) {}
 
   @Post()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   create(@Body() dto: StatesCreateDto,@Request() req) {
     return this.statesService.create(dto,req["_userId_"]);
   }
   
   @Put()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   edit(@Body() dto: StatesEditDto,@Request() req) {
     return this.statesService.edit(dto,req["_userId_"]);
   }
   @Delete()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   status_change(@Body() dto: StatesStatusChangeDto,@Request() req) {
     return this.statesService.status_change(dto,req["_userId_"]);
   }

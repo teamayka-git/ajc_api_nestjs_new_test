@@ -14,18 +14,18 @@ export class CompanyController {
 
 
   @Post()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   create(@Body() dto: CompanyCreateDto,@Request() req) {
     return this.companyService.create(dto,req["_userId_"]);
   }
   
   @Put()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   edit(@Body() dto: CompanyEditDto,@Request() req) {
     return this.companyService.edit(dto,req["_userId_"]);
   }
   @Delete()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   status_change(@Body() dto: CompanyStatusChangeDto,@Request() req) {
     return this.companyService.status_change(dto,req["_userId_"]);
   }

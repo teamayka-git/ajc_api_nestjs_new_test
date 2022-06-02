@@ -13,18 +13,18 @@ export class DepartmentsController {
   constructor(private readonly departmentsService: DepartmentsService) {}
 
   @Post()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   create(@Body() dto: DepartmentCreateDto,@Request() req) {
     return this.departmentsService.create(dto,req["_userId_"]);
   }
   
   @Put()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   edit(@Body() dto: DepartmentEditDto,@Request() req) {
     return this.departmentsService.edit(dto,req["_userId_"]);
   }
   @Delete()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   status_change(@Body() dto: DepartmentStatusChangeDto,@Request() req) {
     return this.departmentsService.status_change(dto,req["_userId_"]);
   }

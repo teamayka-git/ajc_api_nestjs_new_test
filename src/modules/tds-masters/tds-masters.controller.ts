@@ -14,18 +14,18 @@ export class TdsMastersController {
 
 
   @Post()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   create(@Body() dto: TdsMastersCreateDto,@Request() req) {
     return this.tdsMastersService.create(dto,req["_userId_"]);
   }
   
   @Put()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   edit(@Body() dto: TdsMastersEditDto,@Request() req) {
     return this.tdsMastersService.edit(dto,req["_userId_"]);
   }
   @Delete()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   status_change(@Body() dto: TdsMastersStatusChangeDto,@Request() req) {
     return this.tdsMastersService.status_change(dto,req["_userId_"]);
   }

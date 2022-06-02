@@ -70,7 +70,7 @@ export class SupplierController {
   }
 
   @Post()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   @ApiCreatedResponse({
     description: 'files upload on these input feilds => [image]',
   })
@@ -102,7 +102,7 @@ export class SupplierController {
   }
 
   @Put()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   @ApiCreatedResponse({
     description: 'files upload on these input feilds => [image]',
   })

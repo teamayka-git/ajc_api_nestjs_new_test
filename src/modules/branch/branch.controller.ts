@@ -87,7 +87,6 @@ export class BranchController {
     );
   }
   @Delete()
-  @Roles(GuardUserRole.SUPER_ADMIN)
   status_change(@Body() dto: BranchStatusChangeDto, @Request() req) {
     return this.branchService.status_change(dto, req['_userId_']);
   }

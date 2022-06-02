@@ -32,7 +32,7 @@ export class StoneController {
   constructor(private readonly stoneService: StoneService) {}
 
   @Post()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   @ApiCreatedResponse({
     description: 'files upload on these input feilds => [image]',
   })
@@ -60,7 +60,7 @@ export class StoneController {
   }
 
   @Put()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   @ApiCreatedResponse({
     description: 'files upload on these input feilds => [image]',
   })
@@ -87,7 +87,7 @@ export class StoneController {
     );
   }
   @Delete()
-  @Roles(GuardUserRole.SUPER_ADMIN)
+   
   status_change(@Body() dto: StoneStatusChangeDto, @Request() req) {
     return this.stoneService.status_change(dto, req['_userId_']);
   }
