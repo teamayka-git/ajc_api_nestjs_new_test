@@ -9,12 +9,10 @@ export const DeliveryHubsSchema = new mongoose.Schema({
     type: Number,
     required: true,
     default: -1,
-    validate: {
-      validator: function(value){
-        return ((typeof value==='number')&&(value%1!==0))
+    set:  function(value){
+        return Number.parseInt(value);
       },
-      message: '{VALUE} is not an integer value',
-    },
+     
   },
   _dataGuard: { type: Object, required: true, default: [] },
   _citiesId: {
