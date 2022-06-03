@@ -1,6 +1,7 @@
 import {
   ArrayMinSize,
   IsArray,
+  IsDecimal,
   IsEmail,
   IsNumber,
   isNumber,
@@ -26,7 +27,7 @@ class DeliveryHubCreateList {
   @ApiProperty({})
   name: string;
 
-  @IsNumber()
+  @IsDecimal()
   @ApiProperty({})
   code: number;
 
