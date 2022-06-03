@@ -10,7 +10,7 @@ export const DeliveryHubsSchema = new mongoose.Schema({
     required: true,
     default: -1,
     validate: {
-      validator: Number.isInteger,
+      validator: (Number.parseFloat),
       message: '{VALUE} is not an integer value',
     },
   },
