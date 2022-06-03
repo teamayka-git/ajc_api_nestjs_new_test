@@ -6,7 +6,7 @@ import { GlobalConfig } from 'src/config/global_config';
 export const DeliveryHubsSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
     _name: { type: String, required: true, default: "nil" },
-    _code:  { type: Number, required: true, default: -1 },
+    _code:  { type: mongoose.Types.Decimal128, required: true, default: -1 },
     _dataGuard: { type:Object, required: true, default: [] },
     _citiesId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.CITIES, default: null },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
@@ -19,7 +19,7 @@ export const DeliveryHubsSchema = new mongoose.Schema({
 export interface DeliveryHubs {
     _id: String;
     _name: String;
-    _code: Number;
+    _code: mongoose.Types.Decimal128;
     _citiesId:String;
     _dataGuard:Object;
     _createdUserId:String;
