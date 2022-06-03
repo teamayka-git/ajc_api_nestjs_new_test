@@ -3,7 +3,6 @@ import {
   IsArray,
   IsDecimal,
   IsEmail,
-  IsInt,
   IsNumber,
   isNumber,
   IsString,
@@ -28,7 +27,9 @@ class DeliveryHubCreateList {
   @ApiProperty({})
   name: string;
 
-  @IsInt()
+  
+  @Transform(({ value }) => parseFloat(value))
+  @IsNumber()
   @ApiProperty({})
   code: number;
 
