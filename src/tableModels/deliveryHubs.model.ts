@@ -9,10 +9,6 @@ export const DeliveryHubsSchema = new mongoose.Schema({
     type: Number,
     required: true,
     default: -1,
-    set:  function(value){
-        return Number.parseInt(value);
-      },
-     
   },
   _dataGuard: { type: Object, required: true, default: [] },
   _citiesId: {
