@@ -22,6 +22,12 @@ const descriptionListScreenTypeForFilterLoading =
   '0-total documents count, 100-item details';
   const descriptionListScreenTypeEmployeeCustomer =
   '0-total documents count, 50-globalGallery, 51- only customers,100- shop details,101- customer details';
+
+
+  const descriptionCustomTypes = 'refer default module getUser api';
+
+
+
 class DeliveryHubCreateList {
   @IsString()
   @ApiProperty({})
