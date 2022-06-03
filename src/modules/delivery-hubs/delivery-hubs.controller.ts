@@ -4,7 +4,7 @@ import { Roles } from 'src/Auth/roles.decorator';
 import { RolesGuard } from 'src/Auth/roles.guard';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { DeliveryHubsService } from './delivery-hubs.service';
-import { CheckItemExistDto, CheckNameExistDto, DeliveryHubCreateDto, DeliveryHubEditDto, DeliveryHubListDto, DeliveryHubStatusChangeDto, ListFilterLocadingDeliveryHubDto } from './delivery_hubs.dto';
+import { CheckItemExistDto, CheckNameExistDto, DeliveryHubAcrossEmployeesAndCustomersDto, DeliveryHubCreateDto, DeliveryHubEditDto, DeliveryHubListDto, DeliveryHubStatusChangeDto, ListFilterLocadingDeliveryHubDto } from './delivery_hubs.dto';
 
 @ApiTags("Delivery_hubs Docs") 
 @Controller('delivery-hubs')
@@ -37,7 +37,16 @@ export class DeliveryHubsController {
   listFilterLoadingDeliveryHub(@Body() dto:ListFilterLocadingDeliveryHubDto) {
     return this.deliveryHubsService.listFilterLoadingDeliveryHub(dto);
   }
-
+  @Post('listUsersDeliveryHubAcross')
+  listUsersDeliveryHubAcross(
+    @Body() dto: DeliveryHubAcrossEmployeesAndCustomersDto,
+    @Request() req,
+  ) {
+    return this.deliveryHubsService.listUsersDeliveryHubAcross(
+      dto,
+      req['_userId_'],
+    );
+  }
 
   @Post("checkCodeExisting")
   checkCodeExisting(@Body() dto:CheckItemExistDto) {

@@ -8,6 +8,7 @@ import { User } from 'src/tableModels/user.model';
 import {
   CheckItemExistDto,
   CheckNameExistDto,
+  DeliveryHubAcrossEmployeesAndCustomersDto,
   DeliveryHubCreateDto,
   DeliveryHubEditDto,
   DeliveryHubListDto,
@@ -481,6 +482,205 @@ export class DeliveryHubsService {
       const responseJSON = {
         message: 'success',
         data: { count: resultCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  
+  async listUsersDeliveryHubAcross(
+    dto: DeliveryHubAcrossEmployeesAndCustomersDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var arrayAggregation = [];
+
+      if (dto.searchingText != '') {
+        //todo
+
+ 
+
+        arrayAggregation.push({
+          $match: {
+            $or: [
+              { _email: dto.searchingText },
+              { _name: new RegExp(dto.searchingText, 'i') },
+              { _mobile: dto.searchingText },
+            ],
+          },
+        });
+      }
+
+      if (dto.deliveryHubIds.length > 0) {
+        var newSettingsId = [];
+        dto.deliveryHubIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _deliveryHubId: { $in: newSettingsId } } });
+      }
+      if (dto.userIds.length > 0) {
+        var newSettingsId = [];
+        dto.userIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
+      }
+
+      if (dto.customType.length > 0) {
+        arrayAggregation.push({
+          $match: { _customType: { $in: dto.customType } },
+        });
+      }
+
+      if (dto.screenType.findIndex((it) => it == 52) != -1) {
+        arrayAggregation.push({
+          $match: { _customerId: { $ne: null } },
+        });
+      }
+
+      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+
+      switch (dto.sortType) {
+        case 0:
+          arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
+          break;
+        case 1:
+          arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
+          break;
+
+        case 2:
+          arrayAggregation.push({ $sort: { _name: dto.sortOrder } });
+          break;
+
+        case 3:
+          arrayAggregation.push({ $sort: { _gender: dto.sortOrder } });
+          break;
+        case 4:
+          arrayAggregation.push({ $sort: { _email: dto.sortOrder } });
+          break;
+        case 5:
+          arrayAggregation.push({ $sort: { _mobile: dto.sortOrder } });
+          break;
+      }
+
+      if (dto.skip != -1) {
+        arrayAggregation.push({ $skip: dto.skip });
+        arrayAggregation.push({ $limit: dto.limit });
+      }
+
+      if (dto.screenType.findIndex((it) => it == 50) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.GLOBAL_GALLERIES,
+              let: { globalGalleryId: '$_globalGalleryId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+              ],
+              as: 'globalGalleryDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$globalGalleryDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.SHOPS,
+              let: { shopId: '$_shopId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$shopId'] } } }],
+              as: 'shopDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$shopDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.CUSTOMERS,
+              let: { customerId: '$_customerId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$customerId'] } } },
+              ],
+              as: 'customerDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$customerDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      var result = await this.userModel
+        .aggregate(arrayAggregation)
+        .session(transactionSession);
+
+      var totalCount = 0;
+      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+        //Get total count
+        var limitIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$limit') === true,
+        );
+        if (limitIndexCount != -1) {
+          arrayAggregation.splice(limitIndexCount, 1);
+        }
+        var skipIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$skip') === true,
+        );
+        if (skipIndexCount != -1) {
+          arrayAggregation.splice(skipIndexCount, 1);
+        }
+        arrayAggregation.push({
+          $group: { _id: null, totalCount: { $sum: 1 } },
+        });
+
+        var resultTotalCount = await this.userModel
+          .aggregate(arrayAggregation)
+          .session(transactionSession);
+        if (resultTotalCount.length > 0) {
+          totalCount = resultTotalCount[0].totalCount;
+        }
+      }
+
+      const responseJSON = {
+        message: 'success',
+        data: { list: result, totalCount: totalCount },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&

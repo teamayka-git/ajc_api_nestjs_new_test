@@ -20,7 +20,8 @@ const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType = '0-Created Date, 1-Status,2-Name, 3-Code';
 const descriptionListScreenTypeForFilterLoading =
   '0-total documents count, 100-item details';
-
+  const descriptionListScreenTypeEmployeeCustomer =
+  '0-total documents count, 50-globalGallery, 51- only customers,100- shop details,101- customer details';
 class DeliveryHubCreateList {
   @IsString()
   @ApiProperty({})
@@ -181,4 +182,49 @@ export class CheckNameExistDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   existingIds: string[];
+}
+
+export class DeliveryHubAcrossEmployeesAndCustomersDto {
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  deliveryHubIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  userIds: string[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionListScreenTypeEmployeeCustomer,
+  })
+  screenType: number[];
+
+  @IsNumber()
+  @ApiProperty({})
+  limit: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  skip: number;
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @ApiProperty({ type: [Number], description: descriptionStatus })
+  statusArray: number[];
+
+  @IsArray()
+  @ApiProperty({ type: [Number], description: descriptionCustomTypes })
+  customType: number[];
+
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortType })
+  sortType: number;
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortOrder })
+  sortOrder: number;
+
+  @IsString()
+  @ApiProperty({})
+  searchingText: string;
 }
