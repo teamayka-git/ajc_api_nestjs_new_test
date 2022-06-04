@@ -71,7 +71,7 @@ export class OrderSaleSetProcessService {
           var processId = new mongoose.Types.ObjectId();
           var isLastItem = 0;
 
-          if (dto.array.length - 1 == index) {
+          if (mapItem.arrayProcess.length - 1 == index) {
             isLastItem = 1;
           }
 
