@@ -74,6 +74,7 @@ function schemaPostFunctionForDuplicate(error, doc, next) {
 
 /*
 _code:{
+    100  - Mobile application Build number
     1000 - currency denominator text, 
     1001 - currency denominator symbol, 
     1002 - product floating digit weight, 
@@ -104,6 +105,7 @@ _type:{
     4 - order
     5 - invoice
     6 - others
+    7 - Software settings
 }
 _vlaueType:{
   0-number
