@@ -289,6 +289,28 @@ export class DeliveryHubsService {
           },
         );
       }
+      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { userId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    _customType: { $in: [6] },
+                    $expr: { $eq: ['$_deliveryHubId', '$$userId'] },
+                  },
+                },
+              ],
+              as: 'userDetails',
+            },
+          },
+          {
+            $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
+      }
 
       var result = await this.deliveryHubsModel
         .aggregate(arrayAggregation)
