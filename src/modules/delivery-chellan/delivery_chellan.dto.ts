@@ -101,7 +101,7 @@ class DeliveryChallanCreateListItems {
 
   @IsNumber()
   @ApiProperty({})
-  metalAmount: number;
+  metalAmountGst: number;
 
   @IsNumber()
   @ApiProperty({})

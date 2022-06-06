@@ -104,7 +104,7 @@ export class InvoicesService {
             _cgst: mapItem1.cgst,
             _sgst: mapItem1.sgst,
             _igst: mapItem1.igst,
-            _metalAmount: mapItem1.metalAmount,
+            _metalAmountGst: mapItem1.metalAmountGst,
             _stoneAmountGst: mapItem1.stoneAmount,
         
             _makingChargeWeightHundredPercentage:

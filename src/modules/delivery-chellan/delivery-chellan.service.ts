@@ -96,7 +96,7 @@ export class DeliveryChellanService {
             _cgst: mapItem1.cgst,
             _sgst: mapItem1.sgst,
             _igst: mapItem1.igst,
-            _metalAmount: mapItem1.metalAmount,
+            _metalAmountGst: mapItem1.metalAmountGst,
             _stoneAmountGst: mapItem1.stoneAmount,
             _grossAmount: mapItem1.grossAmount,
             _halmarkingCharge: mapItem1.halmarkingCharge,

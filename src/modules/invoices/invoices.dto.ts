@@ -104,7 +104,7 @@ class InvoiceCreateListItems {
 
   @IsNumber()
   @ApiProperty({})
-  metalAmount: number;
+  metalAmountGst: number;
 
   @IsNumber()
   @ApiProperty({})

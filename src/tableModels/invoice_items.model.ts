@@ -34,7 +34,7 @@ export const InvoiceItemsSchema = new mongoose.Schema({
   _cgst: { type: Number, required: true, default: -1 },
   _sgst: { type: Number, required: true, default: -1 },
   _igst: { type: Number, required: true, default: -1 },
-  _metalAmount: { type: Number, required: true, default: -1 },
+  _metalAmountGst: { type: Number, required: true, default: -1 },
   _stoneAmountGst: { type: Number, required: true, default: -1 },
   _makingChargeWeightHundredPercentage: {
     type: Number,
@@ -87,7 +87,7 @@ export interface InvoiceItems {
   _cgst: number;
   _sgst: number;
   _igst: number;
-  _metalAmount: number;
+  _metalAmountGst: number;
   _stoneAmountGst: number;
 
   _makingChargeWeightHundredPercentage: number;
@@ -124,7 +124,7 @@ InvoiceItemsSchema.index({ _totalValue: 1 });
 InvoiceItemsSchema.index({ _cgst: 1 });
 InvoiceItemsSchema.index({ _sgst: 1 });
 InvoiceItemsSchema.index({ _igst: 1 });
-InvoiceItemsSchema.index({ _metalAmount: 1 });
+InvoiceItemsSchema.index({ _metalAmountGst: 1 });
 InvoiceItemsSchema.index({ _stoneAmountGst: 1 });
 InvoiceItemsSchema.index({ _makingChargeWeightHundredPercentage: 1 });
 InvoiceItemsSchema.index({ _makingChargeAmount: 1 });

@@ -33,7 +33,7 @@ export const DeliveryChallanItemsSchema = new mongoose.Schema({
   _cgst: { type: Number, required: true, default: -1 },
   _sgst: { type: Number, required: true, default: -1 },
   _igst: { type: Number, required: true, default: -1 },
-  _metalAmount: { type: Number, required: true, default: -1 },
+  _metalAmountGst: { type: Number, required: true, default: -1 },
   _stoneAmountGst: { type: Number, required: true, default: -1 },
   _grossAmount: { type: Number, required: true, default: -1 },
   _halmarkingCharge: { type: Number, required: true, default: -1 },
@@ -99,7 +99,7 @@ export interface DeliveryChallanItems {
   _cgst: number;
   _sgst: number;
   _igst: number;
-  _metalAmount: number;
+  _metalAmountGst: number;
   _stoneAmountGst: number;
   _grossAmount: number;
   _halmarkingCharge: number;
@@ -148,7 +148,7 @@ DeliveryChallanItemsSchema.index({ _totalValue: 1 });
 DeliveryChallanItemsSchema.index({ _cgst: 1 });
 DeliveryChallanItemsSchema.index({ _sgst: 1 });
 DeliveryChallanItemsSchema.index({ _igst: 1 });
-DeliveryChallanItemsSchema.index({ _metalAmount: 1 });
+DeliveryChallanItemsSchema.index({ _metalAmountGst: 1 });
 DeliveryChallanItemsSchema.index({ _stoneAmountGst: 1 });
 DeliveryChallanItemsSchema.index({ _grossAmount: 1 });
 DeliveryChallanItemsSchema.index({ _halmarkingCharge: 1 });
