@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Post, Put,Request } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { DeliveryTempService } from './delivery-temp.service';
-import { DeliveryTempCreateDto, DeliveryTempListDto } from './delivery_temp.dto';
+import { DeliveryTempCreateDto, DeliveryTempEmployeeAssignDto, DeliveryTempListDto } from './delivery_temp.dto';
 
 
 @ApiTags("Delivery temp Docs") 
@@ -12,11 +12,16 @@ export class DeliveryTempController {
 
 
 
-    @Post()
-    create(@Body() dto: DeliveryTempCreateDto,@Request() req) {
-      return this.deliveryTempService.create(dto,req["_userId_"]);
-    }
+  @Post()
+  create(@Body() dto: DeliveryTempCreateDto,@Request() req) {
+    return this.deliveryTempService.create(dto,req["_userId_"]);
+  }
     
+  
+  @Post("employeeAssign")
+  employeeAssign(@Body() dto: DeliveryTempEmployeeAssignDto,@Request() req) {
+    return this.deliveryTempService.employeeAssign(dto,req["_userId_"]);
+  }
     
     @Post("list")
     list(@Body() dto:DeliveryTempListDto) {

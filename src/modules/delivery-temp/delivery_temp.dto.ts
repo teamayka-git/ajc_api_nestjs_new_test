@@ -121,3 +121,15 @@ export class DeliveryTempListDto {
   skip: number;
 
 }
+
+export class DeliveryTempEmployeeAssignDto {
+  
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  deliveryTempIds: string[];
+
+  @IsString()
+  @ApiProperty({})
+  employeeId: string;
+
+}
