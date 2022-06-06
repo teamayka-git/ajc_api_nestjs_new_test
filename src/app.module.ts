@@ -74,6 +74,7 @@ import { GoldTestingRequestModule } from './modules/gold-testing-request/gold-te
 import { StatesSchema } from './tableModels/states.model';
 import { DistrictsSchema } from './tableModels/districts.model';
 import { CitiesSchema } from './tableModels/cities.model';
+import { DeliveryTempModule } from './modules/delivery-temp/delivery-temp.module';
 
 @Module({
   imports: [
@@ -159,6 +160,7 @@ import { CitiesSchema } from './tableModels/cities.model';
     HalmarkingRequestsModule,
     FactoryCalculationTypeMasterModule,
     GoldTestingRequestModule,
+    DeliveryTempModule,
 
     // SalesReturnRequestStatusesModule,
   ],

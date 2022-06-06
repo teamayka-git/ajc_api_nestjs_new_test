@@ -15,18 +15,15 @@ export class CitiesController {
   constructor(private readonly citiesService: CitiesService) {}
 
   @Post()
-   
   create(@Body() dto: CitiesCreateDto,@Request() req) {
     return this.citiesService.create(dto,req["_userId_"]);
   }
   
   @Put()
-   
   edit(@Body() dto: CitiesEditDto,@Request() req) {
     return this.citiesService.edit(dto,req["_userId_"]);
   }
   @Delete()
-   
   status_change(@Body() dto: CitiesStatusChangeDto,@Request() req) {
     return this.citiesService.status_change(dto,req["_userId_"]);
   }

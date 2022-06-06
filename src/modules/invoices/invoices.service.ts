@@ -386,13 +386,13 @@ export class InvoicesService {
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.INVOICE_ITEMS,
-            let: { deliveryChallanId: '$_id' },
+            let: { invoiceId: '$_id' },
             pipeline: [
               {
                 $match: {
                   _status: 1,
                   $expr: {
-                    $eq: ['$_deliveryChallanId', '$$deliveryChallanId'],
+                    $eq: ['$_invoiceId', '$$invoiceId'],
                   },
                 },
               },
