@@ -55,14 +55,14 @@ OrderSaleHistoriesSchema.index({ _status: 1 });
 
 /*
 _type:{
-  0 - order created for pending
+  0 - order pending
   1 - order accept
   2 - order reject
   3 - set process done
   4 - finished goods
   5 - product generate request
   6 - product generated 
-  7 - deliverychalan generated
+  7 - deliverychalan generated//need to discuss
   8 - halmark issuence requested
   9 - halmark issuence bypassed
   10 - send to halmark issuence
@@ -71,23 +71,26 @@ _type:{
   13 - halmark request rejected
   14 - halmark error occured
   15 - send to reissuence 
-  16 - invoice generated
-  17 - delivery invoice generated
-  18 - delivery boy otp verification requested
-  19 - delivery boy otp verification accepted
-  20 - hub tranfer
-  21 - delivery otp to Shop requested
-  22 - delivery otp to Shop verified
-  23 - delivery rejected by Shop
-  24 - delivery reshedule requested
-  25 - delivery reshedule rejected
-  26 - delivery reshedule accepted
-  27 - delivery return to hub
-  28 - sale return collected otp requested
-  29 - sale return collected otp accepted
-  30 - sale return collected otp rejected
-  31 - order completed
-  32 - order cancelled,
+  16 - invoice pending
+  17 - invoice generated
+  18 - outof delivery pending
+  19 - hub transfer pending
+  20 - delivery job assigned
+  21 - delivery in transit
+  22 - delivered to customer          
+  23 - delivey accepted
+  24 - order declined collection pending 
+  25 - order declined collected
+  26 - order declined inscan
+  27 - order cancelled
+  28 - delivery reshedule requested
+
+  29 - hub tranfer pending
+  30 - hub assigned
+  31 - hub tranfer intransit
+  32 - hub transfer delivered
+  33 - hub transfer accepted
+  
   100 - order editted
   101- sales order actived
   102- sales order disabled

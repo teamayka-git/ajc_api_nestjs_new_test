@@ -32,6 +32,7 @@ export const OrderSalesSchema = new mongoose.Schema({
   },
   _description: { type: String, default: '' },
   _generalRemark: { type: String, default: '' },
+  _isReWork: { type: Number, required: true, default: -1 },
   _isMatFinish: { type: Number, required: true, default: -1 },
   _type: { type: Number, required: true, default: -1 },
   _isRhodium: { type: Number, required: true, default: -1 },
@@ -71,6 +72,7 @@ export interface OrderSales {
   _productData: object;
   _rootCauseId: String;
   _type: number;
+  _isReWork:number;
   _rootCause: String;
   _salesPersonId: string;
   _description: string;
@@ -84,6 +86,7 @@ export interface OrderSales {
   _status: Number;
 }
 
+OrderSalesSchema.index({ _isReWork: 1 });
 OrderSalesSchema.index({ _isProductGenerated: 1 });
 OrderSalesSchema.index({ _isInvoiceGenerated: 1 });
 OrderSalesSchema.index({ _type: 1 });
@@ -111,7 +114,7 @@ _workStatus:{
   4 - finished goods
   5 - product generate request
   6 - product generated 
-  7 - deliverychalan generated
+  7 - deliverychalan generated//need to discuss
   8 - halmark issuence requested
   9 - halmark issuence bypassed
   10 - send to halmark issuence
@@ -120,24 +123,26 @@ _workStatus:{
   13 - halmark request rejected
   14 - halmark error occured
   15 - send to reissuence 
-  16 - invoice generated
-  17 - delivery invoice generated
-  18 - delivery boy otp verification requested
-  19 - delivery boy otp verification accepted
-  20 - hub tranfer
-  21 - delivery otp to Shop requested
-  22 - delivery otp to Shop verified
-  23 - delivery rejected by Shop
-  24 - delivery reshedule requested
-  25 - delivery reshedule rejected
-  26 - delivery reshedule accepted
-  27 - delivery return to hub
-  28 - sale return collected otp requested
-  29 - sale return collected otp accepted
-  30 - sale return collected otp rejected
-  31 - order completed
-  32 - order cancelled
-  33 - Delivery pending
+  16 - invoice pending
+  17 - invoice generated
+  18 - outof delivery pending
+  19 - hub transfer pending
+  20 - delivery job assigned
+  21 - delivery in transit
+  22 - delivered to customer          
+  23 - delivey accepted
+  24 - order declined collection pending || descrption, erorr type*(Int) ,rework status(Int)
+  25 - order declined collected
+  26 - order declined inscan
+  27 - order cancelled
+  28 - delivery reshedule requested(shop closed -> ajc inscan)
+
+  29 - hub tranfer pending
+  30 - hub assigned
+  31 - hub tranfer intransit
+  32 - hub transfer delivered
+  33 - hub transfer accepted
+  
   
 }
 _type:{
