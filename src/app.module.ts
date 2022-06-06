@@ -75,6 +75,7 @@ import { StatesSchema } from './tableModels/states.model';
 import { DistrictsSchema } from './tableModels/districts.model';
 import { CitiesSchema } from './tableModels/cities.model';
 import { DeliveryTempModule } from './modules/delivery-temp/delivery-temp.module';
+import { DeliveryModule } from './modules/delivery/delivery.module';
 
 @Module({
   imports: [
@@ -161,6 +162,7 @@ import { DeliveryTempModule } from './modules/delivery-temp/delivery-temp.module
     FactoryCalculationTypeMasterModule,
     GoldTestingRequestModule,
     DeliveryTempModule,
+    DeliveryModule,
 
     // SalesReturnRequestStatusesModule,
   ],
