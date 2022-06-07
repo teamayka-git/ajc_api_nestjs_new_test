@@ -13,7 +13,7 @@ import { Optional } from '@nestjs/common';
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList =
-  '0-total documents count,100-filter not employee assigned, 101-employee details, 102-hub details, 103-invoice details, 104-invoice items only if invoice details existing';
+  '0-total documents count,100-filter not employee assigned, 101-employee details, 102-hub details, 103-invoice details, 104-invoice items only if invoice details existing, 105-filer employee with my id also';
 const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 const descriptionListSortOrder = '1-ascending, -1-descending';

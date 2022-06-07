@@ -24,8 +24,8 @@ export class DeliveryTempController {
   }
     
     @Post("list")
-    list(@Body() dto:DeliveryTempListDto) {
-      return this.deliveryTempService.list(dto);
+    list(@Body() dto:DeliveryTempListDto,@Request() req) {
+      return this.deliveryTempService.list(dto,req["_userId_"]);
     }
 
 }

@@ -71,7 +71,7 @@ export class DeliveryTempService {
       throw error;
     }
   }
-  
+
   async employeeAssign(dto: DeliveryTempEmployeeAssignDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
@@ -113,13 +113,13 @@ export class DeliveryTempService {
     }
   }
 
-  async list(dto: DeliveryTempListDto) {
+  async list(dto: DeliveryTempListDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
       var arrayAggregation = [];
-
+      var arrayEmployeeIds = [];
       if (dto.deliveryTempIds.length > 0) {
         var newSettingsId = [];
         dto.deliveryTempIds.map((mapItem) => {
@@ -128,13 +128,17 @@ export class DeliveryTempService {
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
 
+      if (dto.screenType.findIndex((it) => it == 105) != -1) {
+        arrayEmployeeIds.push(new mongoose.Types.ObjectId(_userId_));
+      }
       if (dto.employeeIds.length > 0) {
-        var newSettingsId = [];
         dto.employeeIds.map((mapItem) => {
-          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+          arrayEmployeeIds.push(new mongoose.Types.ObjectId(mapItem));
         });
+      }
+      if (arrayEmployeeIds.length > 0) {
         arrayAggregation.push({
-          $match: { _employeeId: { $in: newSettingsId } },
+          $match: { _employeeId: { $in: arrayEmployeeIds } },
         });
       }
       if (dto.invoiceIds.length > 0) {
