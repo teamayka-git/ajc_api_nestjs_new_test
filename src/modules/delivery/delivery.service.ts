@@ -299,6 +299,26 @@ export class DeliveryService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
+      if (dto.responseFormat.length != 0) {
+        if (dto.responseFormat.includes(0) == true) {
+          arrayAggregation.push({
+            $project: new ModelWeight().deliveryTableLight(),
+          });
+        } else if (dto.responseFormat.includes(1) == true) {
+          arrayAggregation.push({
+            $project: new ModelWeight().deliveryTableMinimum(),
+          });
+        } else if (dto.responseFormat.includes(2) == true) {
+          arrayAggregation.push({
+            $project: new ModelWeight().deliveryTableMedium(),
+          });
+        } else if (dto.responseFormat.includes(3) == true) {
+          arrayAggregation.push({
+            $project: new ModelWeight().deliveryTableMaximum(),
+          });
+        }
+      }
+
       if (dto.screenType.findIndex((it) => it == 101) != -1) {
         arrayAggregation.push(
           {
