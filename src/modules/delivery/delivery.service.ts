@@ -393,30 +393,7 @@ export class DeliveryService {
         );
       }
 
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.SHOPS,
-              let: { shopId: '$_shopId' },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: { $eq: ['$_id', '$$shopId'] },
-                  },
-                },
-              ],
-              as: 'shopDetails',
-            },
-          },
-          {
-            $unwind: {
-              path: '$shopDetails',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-        );
-      }
+      
 
       if (dto.screenType.findIndex((it) => it == 103) != -1) {
         arrayAggregation.push({
