@@ -389,8 +389,8 @@ export class DeliveryService {
           );
 
           if (dto.responseFormat.length != 0) {
-
-
+console.log("___11111");
+console.log("___a1111 "+arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.length);
 
             arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline[
                   2 ].$lookup.pipeline.push({
