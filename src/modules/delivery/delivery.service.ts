@@ -57,7 +57,7 @@ export class DeliveryService {
           arrayToDelivery.push({
             _id: new mongoose.Types.ObjectId(),
             _employeeId: dto.employeeId,
-            _shopId: { $in: shopIds },
+            _shopId: mapItem,
             _hubId: dto.hubId == '' || dto.hubId == 'nil' ? null : dto.hubId,
             _type: dto.type,
             _workStatus: 0,
