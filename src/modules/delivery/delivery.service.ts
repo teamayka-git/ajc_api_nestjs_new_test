@@ -57,19 +57,46 @@ export class DeliveryService {
         _status: 1,
       });
 
+      //for generating uid
+      var countUid = 0;
+      shopIds.map((mapItem) => {
+        if (resultOldDelivery.findIndex((it) => it._shopId == mapItem) == -1) {
+          ++countUid;
+        }
+      });
+
+      var resultCounterDelivery = await this.counterModel.findOneAndUpdate(
+        { _tableName: ModelNames.DELIVERY },
+        {
+          $inc: {
+            _count: countUid,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+      countUid = 0;
+
       shopIds.map((mapItem) => {
         if (resultOldDelivery.findIndex((it) => it._shopId == mapItem) == -1) {
           arrayToDelivery.push({
             _id: new mongoose.Types.ObjectId(),
             _employeeId: dto.employeeId,
+            _uid: resultCounterDelivery._count - countUid,
             _shopId: mapItem,
             _hubId: dto.hubId == '' || dto.hubId == 'nil' ? null : dto.hubId,
             _type: dto.type,
             _workStatus: 0,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
             _status: 1,
           });
+
+          ++countUid;
         }
       });
+
       resultOldDelivery.push(...arrayToDelivery);
       await this.deliveryModel.insertMany(arrayToDelivery, {
         session: transactionSession,
@@ -99,25 +126,26 @@ export class DeliveryService {
         }
       });
 
-      var result1 = await this.deliveryItemsModel.insertMany(arrayToDeliveryItems, {
-        session: transactionSession,
-      });
+      var result1 = await this.deliveryItemsModel.insertMany(
+        arrayToDeliveryItems,
+        {
+          session: transactionSession,
+        },
+      );
 
-await this.deliveryTempModel.updateMany(
-  {
-    _id: { $in: deliveryTempIds },
-  },
-  {
-    $set: {
-      _updatedUserId: _userId_,
-      _updatedAt: dateTime,
-      _status: 0
-    },
-  },
-  { new: true, session: transactionSession },
-);
-
-
+      await this.deliveryTempModel.updateMany(
+        {
+          _id: { $in: deliveryTempIds },
+        },
+        {
+          $set: {
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+            _status: 0,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
 
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
