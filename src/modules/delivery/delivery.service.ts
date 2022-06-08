@@ -58,7 +58,7 @@ export class DeliveryService {
             _id: new mongoose.Types.ObjectId(),
             _employeeId: dto.employeeId,
             _shopId: { $in: shopIds },
-            _hubId: dto.hubId,
+            _hubId: dto.hubId == '' || dto.hubId == 'nil' ? null : dto.hubId,
             _type: dto.type,
             _workStatus: 0,
             _status: 1,
