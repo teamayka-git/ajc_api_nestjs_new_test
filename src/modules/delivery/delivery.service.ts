@@ -596,28 +596,28 @@ export class DeliveryService {
             if (dto.responseFormat.includes(1040) == true) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
-                  .length - 1
+                  .length - 2
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().orderSaleTableLight(),
               });
             } else if (dto.responseFormat.includes(1041) == true) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
-                  .length - 1
+                  .length - 2
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().orderSaleTableMinimum(),
               });
             } else if (dto.responseFormat.includes(1042) == true) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
-                  .length - 1
+                  .length - 2
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().orderSaleTableMedium(),
               });
             } else if (dto.responseFormat.includes(1043) == true) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
-                  .length - 1
+                  .length - 2
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().orderSaleTableMaximum(),
               });
@@ -671,28 +671,28 @@ export class DeliveryService {
             if (dto.responseFormat.includes(1050) == true) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
-                  .length - 1
+                  .length - 2
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().invoiceTableLight(),
               });
             } else if (dto.responseFormat.includes(1051) == true) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
-                  .length - 1
+                  .length - 2
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().invoiceTableMinimum(),
               });
             } else if (dto.responseFormat.includes(1052) == true) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
-                  .length - 1
+                  .length - 2
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().invoiceTableMedium(),
               });
             } else if (dto.responseFormat.includes(1053) == true) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
-                  .length - 1
+                  .length - 2
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().invoiceTableMaximum(),
               });
