@@ -17,35 +17,30 @@ const descriptionListScreenTypeForList =
 const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 const descriptionListSortOrder = '1-ascending, -1-descending';
-const descriptionListSortType = '0-Created Date, 1-Status,2-type,3-uid,4-work status';
+const descriptionListSortType =
+  '0-Created Date, 1-Status,2-type,3-uid,4-work status';
 const descriptionListScreenTypeForFilterLoading =
   '0-total documents count, 100-item details';
-const descriptionWorkStatus="  0 - intransit,1 - delivery pending,2 - delivery accept,3 - delivery reject,";
+const descriptionWorkStatus =
+  '  0 - intransit,1 - delivery pending,2 - delivery accept,3 - delivery reject,';
 
-const descriptionType="0 - delivery to shop, 1 - hub transfer";
+const descriptionType = '0 - delivery to shop, 1 - hub transfer';
 
 class DeliveryCreateList {
   @IsString()
   @ApiProperty({})
   invoiceId: string;
 
-
-  
-
   @IsString()
   @ApiProperty({})
   orderId: string;
 
-}
-
-export class DeliveryCreateDto {
-
-
-
   @IsString()
   @ApiProperty({})
   shopId: string;
+}
 
+export class DeliveryCreateDto {
   @IsString()
   @ApiProperty({})
   employeeId: string;
@@ -54,13 +49,9 @@ export class DeliveryCreateDto {
   @ApiProperty({})
   hubId: string;
 
-
   @IsNumber()
   @ApiProperty({ description: descriptionType })
   type: number;
-
-
-
 
   @IsArray()
   @ApiProperty({ type: [DeliveryCreateList] })
@@ -114,7 +105,6 @@ export class DeliveryListDto {
   @ApiProperty({ type: [Number], description: descriptionWorkStatus })
   workStatus: number[];
 
-
   @IsString()
   @ApiProperty({})
   searchingText: string;
@@ -126,18 +116,14 @@ export class DeliveryListDto {
   @IsNumber()
   @ApiProperty({})
   skip: number;
-
 }
 
 export class DeliveryEmployeeAssignDto {
-  
   @IsArray()
   @ApiProperty({ type: [String] })
   deliveryIds: string[];
 
- 
   @IsNumber()
-  @ApiProperty({description:descriptionWorkStatus})
+  @ApiProperty({ description: descriptionWorkStatus })
   workStatus: number;
-
 }

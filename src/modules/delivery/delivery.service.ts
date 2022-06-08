@@ -31,75 +31,70 @@ export class DeliveryService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var arrayToStates = [];
+      var arrayToDelivery = [];
+      var arrayToDeliveryItems = [];
 
-      var deliveryId = '';
+      var shopIds = [];
+
+      dto.array.map((mapItem) => {
+        shopIds.push(mapItem.shopId);
+      });
 
       var resultOldDelivery = await this.deliveryModel.find({
-        _employeeId: dto.employeeId,
-        _shopId: dto.shopId,
-        _hubId: dto.hubId,
+        _employeeId:
+          dto.employeeId == '' || dto.employeeId == 'nil'
+            ? null
+            : dto.employeeId,
+        _shopId: { $in: shopIds },
+        _hubId: dto.hubId == '' || dto.hubId == 'nil' ? null : dto.hubId,
         _type: dto.type,
         _workStatus: 0,
         _status: 1,
       });
 
-      if (resultOldDelivery.length == 0) {
-        var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
-          { _tableName: ModelNames.DELIVERY },
-          {
-            $inc: {
-              _count: 1,
-            },
-          },
-          { new: true, session: transactionSession },
-        );
-
-        const deliveryModel = new this.deliveryModel({
-          _uid: resultCounterPurchase._count,
-          _type: dto.type,
-          _workStatus: 0,
-          _employeeId:
-            dto.employeeId != '' && dto.employeeId != 'nil'
-              ? dto.employeeId
-              : null,
-          _hubId: dto.hubId != '' && dto.hubId != 'nil' ? dto.hubId : null,
-          _shopId: dto.shopId != '' && dto.shopId != 'nil' ? dto.shopId : null,
-          _createdUserId: _userId_,
-          _createdAt: dateTime,
-          _updatedUserId: null,
-          _updatedAt: -1,
-          _status: 1,
-        });
-        var resultDeliveryModel = await deliveryModel.save({
-          session: transactionSession,
-        });
-        deliveryId = resultDeliveryModel._id;
-      } else {
-        deliveryId = resultOldDelivery[0]._id;
-      }
-
-      dto.array.map((mapItem) => {
-        arrayToStates.push({
-          _deliveryId: deliveryId,
-          _orderId:
-            mapItem.orderId != '' && mapItem.orderId != 'nil'
-              ? mapItem.orderId
-              : null,
-          _invoiceId:
-            mapItem.invoiceId != '' && mapItem.invoiceId != 'nil'
-              ? mapItem.invoiceId
-              : null,
-
-          _createdUserId: _userId_,
-          _createdAt: dateTime,
-          _updatedUserId: null,
-          _updatedAt: -1,
-          _status: 1,
-        });
+      shopIds.map((mapItem) => {
+        if (resultOldDelivery.findIndex((it) => it._shopId == mapItem) == -1) {
+          arrayToDelivery.push({
+            _id: new mongoose.Types.ObjectId(),
+            _employeeId: dto.employeeId,
+            _shopId: { $in: shopIds },
+            _hubId: dto.hubId,
+            _type: dto.type,
+            _workStatus: 0,
+            _status: 1,
+          });
+        }
+      });
+      resultOldDelivery.push(...arrayToDelivery);
+      await this.deliveryModel.insertMany(arrayToDelivery, {
+        session: transactionSession,
       });
 
-      var result1 = await this.deliveryItemsModel.insertMany(arrayToStates, {
+      dto.array.map((mapItem) => {
+        var indexChild = resultOldDelivery.findIndex(
+          (it) => it._shopId == mapItem.shopId,
+        );
+        if (indexChild != -1) {
+          arrayToDeliveryItems.push({
+            _deliveryId: resultOldDelivery[indexChild]._id,
+            _orderId:
+              mapItem.orderId == '' || mapItem.orderId == 'nil'
+                ? null
+                : mapItem.orderId,
+            _invoiceId:
+              mapItem.invoiceId == '' || mapItem.invoiceId == 'nil'
+                ? null
+                : mapItem.invoiceId,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+        }
+      });
+
+      var result1 = await this.deliveryItemsModel.insertMany(arrayToDeliveryItems, {
         session: transactionSession,
       });
 
@@ -176,18 +171,14 @@ export class DeliveryService {
     try {
       var arrayAggregation = [];
 
-
       if (dto.searchingText != '') {
         //todo
         arrayAggregation.push({
           $match: {
-            $or: [
-              { _uid: dto.searchingText },
-            ],
+            $or: [{ _uid: dto.searchingText }],
           },
         });
       }
-
 
       if (dto.deliveryIds.length > 0) {
         var newSettingsId = [];
@@ -234,8 +225,6 @@ export class DeliveryService {
           $match: { _workStatus: { $in: dto.typeArray } },
         });
       }
-
-      
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {
@@ -355,8 +344,6 @@ export class DeliveryService {
         );
       }
 
-
-
       if (dto.screenType.findIndex((it) => it == 100) != -1) {
         arrayAggregation.push(
           {
@@ -382,135 +369,112 @@ export class DeliveryService {
         );
       }
 
-
-
-      
       if (dto.screenType.findIndex((it) => it == 103) != -1) {
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.DELIVERY_ITEMS,
-              let: { deliveryId: '$_id' },
-              pipeline: [
-                {
-                  $match: {_status:1,
-                    $expr: { $eq: ['$_deliveryId', '$$deliveryId'] },
-                  },
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.DELIVERY_ITEMS,
+            let: { deliveryId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_deliveryId', '$$deliveryId'] },
                 },
-              ],
-              as: 'deliveryItems',
-            },
+              },
+            ],
+            as: 'deliveryItems',
           },
-      
-        );
+        });
 
-
-        
         if (dto.screenType.findIndex((it) => it == 104) != -1) {
-            arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
-                {
+          arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
+            {
+              $lookup: {
+                from: ModelNames.ORDER_SALES,
+                let: { orderId: '$_orderId' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$_id', '$$orderId'] },
+                    },
+                  },
+
+                  {
                     $lookup: {
-                      from: ModelNames.ORDER_SALES,
-                      let: { orderId: '$_orderId' },
+                      from: ModelNames.SUB_CATEGORIES,
+                      let: { subCategoryId: '$_subCategoryId' },
                       pipeline: [
                         {
                           $match: {
-                            $expr: { $eq: ['$_id', '$$orderId'] },
+                            $expr: { $eq: ['$_id', '$$subCategoryId'] },
                           },
                         },
-
-
-                        {
-                            $lookup: {
-                              from: ModelNames.SUB_CATEGORIES,
-                              let: { subCategoryId: '$_subCategoryId' },
-                              pipeline: [
-                                {
-                                  $match: {
-                                    $expr: { $eq: ['$_id', '$$subCategoryId'] },
-                                  },
-                                },
-                              ],
-                              as: 'subCategoryDetails',
-                            },
-                          },
-                          {
-                            $unwind: {
-                              path: '$subCategoryDetails',
-                              preserveNullAndEmptyArrays: true,
-                            },
-                          },
                       ],
-                      as: 'orderDetails',
+                      as: 'subCategoryDetails',
                     },
                   },
                   {
                     $unwind: {
-                      path: '$orderDetails',
+                      path: '$subCategoryDetails',
                       preserveNullAndEmptyArrays: true,
                     },
                   },
-            );
-          }
-    
-          if (dto.screenType.findIndex((it) => it == 105) != -1) {
-            arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
-                {
+                ],
+                as: 'orderDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$orderDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          );
+        }
+
+        if (dto.screenType.findIndex((it) => it == 105) != -1) {
+          arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
+            {
+              $lookup: {
+                from: ModelNames.INVOICES,
+                let: { invoiceId: '$_invoiceId' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$_id', '$$invoiceId'] },
+                    },
+                  },
+
+                  {
                     $lookup: {
-                      from: ModelNames.INVOICES,
-                      let: { invoiceId: '$_invoiceId' },
+                      from: ModelNames.INVOICE_ITEMS,
+                      let: { invoiceId: '$_id' },
                       pipeline: [
                         {
                           $match: {
-                            $expr: { $eq: ['$_id', '$$invoiceId'] },
+                            _status: 1,
+                            $expr: {
+                              $eq: ['$_invoiceId', '$$invoiceId'],
+                            },
                           },
                         },
-
-                        {
-                            $lookup: {
-                              from: ModelNames.INVOICE_ITEMS,
-                              let: { invoiceId: '$_id' },
-                              pipeline: [
-                                {
-                                  $match: {
-                                    _status: 1,
-                                    $expr: {
-                                      $eq: ['$_invoiceId', '$$invoiceId'],
-                                    },
-                                  },
-                                },
-                
-                              
-                              ],
-                              as: 'invoiceItems',
-                            },
-                          }
-
-
-
                       ],
-                      as: 'invoiceDetails',
+                      as: 'invoiceItems',
                     },
                   },
-                  {
-                    $unwind: {
-                      path: '$invoiceDetails',
-                      preserveNullAndEmptyArrays: true,
-                    },
-                  },
-            );
-          }
-    
-
-
+                ],
+                as: 'invoiceDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$invoiceDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          );
+        }
       }
-
-
-
-
-
-
-
 
       var result = await this.deliveryModel
         .aggregate(arrayAggregation)
