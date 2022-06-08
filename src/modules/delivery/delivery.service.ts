@@ -331,28 +331,6 @@ export class DeliveryService {
                     $expr: { $eq: ['$_id', '$$userId'] },
                   },
                 },
-
-                {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                        },
-                      },
-                      { $project: new ModelWeight().globalGalleryTableLight() },
-                    ],
-                    as: 'globalGalleryDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
               ],
               as: 'employeeDetails',
             },
@@ -383,6 +361,37 @@ export class DeliveryService {
               { $project: new ModelWeight().userTableMaximum() },
             );
           }
+        }
+
+        if (dto.screenType.findIndex((it) => it == 101) != -1) {
+          arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
+            {
+              $lookup: {
+                from: ModelNames.GLOBAL_GALLERIES,
+                let: { globalGalleryId: '$_globalGalleryId' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                    },
+                  },
+                  { $project: new ModelWeight().globalGalleryTableLight() },
+                ],
+                as: 'globalGalleryDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$globalGalleryDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          );
+
+
+
+
+          
         }
       }
 
