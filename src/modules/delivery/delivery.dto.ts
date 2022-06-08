@@ -38,6 +38,10 @@ class DeliveryCreateList {
   @IsString()
   @ApiProperty({})
   shopId: string;
+
+  @IsString()
+  @ApiProperty({})
+  deliveryTempId: string;
 }
 
 export class DeliveryCreateDto {

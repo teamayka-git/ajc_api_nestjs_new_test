@@ -13,12 +13,15 @@ import { GlobalConfig } from 'src/config/global_config';
 import { DeliveryTempListDto } from '../delivery-temp/delivery_temp.dto';
 import { DeliveryItems } from 'src/tableModels/delivery_items.model';
 import { Counters } from 'src/tableModels/counters.model';
+import { DeliveryTemp } from 'src/tableModels/delivery_temp.model';
 
 @Injectable()
 export class DeliveryService {
   constructor(
     @InjectModel(ModelNames.DELIVERY)
     private readonly deliveryModel: Model<Delivery>,
+    @InjectModel(ModelNames.DELIVERY_TEMP)
+    private readonly deliveryTempModel: Model<DeliveryTemp>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: Model<Counters>,
     @InjectModel(ModelNames.DELIVERY_ITEMS)
@@ -35,9 +38,11 @@ export class DeliveryService {
       var arrayToDeliveryItems = [];
 
       var shopIds = [];
+      var deliveryTempIds = [];
 
       dto.array.map((mapItem) => {
         shopIds.push(mapItem.shopId);
+        deliveryTempIds.push(mapItem.deliveryTempId);
       });
 
       var resultOldDelivery = await this.deliveryModel.find({
@@ -97,6 +102,22 @@ export class DeliveryService {
       var result1 = await this.deliveryItemsModel.insertMany(arrayToDeliveryItems, {
         session: transactionSession,
       });
+
+await this.deliveryTempModel.updateMany(
+  {
+    _id: { $in: deliveryTempIds },
+  },
+  {
+    $set: {
+      _updatedUserId: _userId_,
+      _updatedAt: dateTime,
+      _status: 0
+    },
+  },
+  { new: true, session: transactionSession },
+);
+
+
 
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
