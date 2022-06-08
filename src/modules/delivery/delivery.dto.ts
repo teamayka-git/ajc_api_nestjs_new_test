@@ -79,6 +79,10 @@ export class DeliveryListDto {
   statusArray: number[];
 
   @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+
+  @IsArray()
   @ApiProperty({
     type: [Number],
     description: descriptionListScreenTypeForList,

@@ -136,7 +136,6 @@ export interface Shops {
   _agentCommision: Number;
   _commisionType: number;
   _location: object;
-
   _dataGuard: Object;
   _createdUserId: String;
   _createdAt: Number;

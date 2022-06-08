@@ -14,7 +14,6 @@ export class RateCardController {
 
 
   @Post()
-   
   create(@Body() dto: RateCardCreateDto,@Request() req) {
     return this.rateCardService.create(dto,req["_userId_"]);
   }

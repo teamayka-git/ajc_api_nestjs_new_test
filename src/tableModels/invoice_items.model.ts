@@ -89,7 +89,6 @@ export interface InvoiceItems {
   _igst: number;
   _metalAmountGst: number;
   _stoneAmountGst: number;
-
   _makingChargeWeightHundredPercentage: number;
   _makingChargeAmount: number;
   _productBarcode: String;

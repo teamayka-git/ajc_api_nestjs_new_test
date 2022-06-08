@@ -14,6 +14,7 @@ import { DeliveryTempListDto } from '../delivery-temp/delivery_temp.dto';
 import { DeliveryItems } from 'src/tableModels/delivery_items.model';
 import { Counters } from 'src/tableModels/counters.model';
 import { DeliveryTemp } from 'src/tableModels/delivery_temp.model';
+import { ModelWeight } from 'src/model_weight/model_weight';
 
 @Injectable()
 export class DeliveryService {
@@ -321,6 +322,7 @@ export class DeliveryService {
                           $expr: { $eq: ['$_id', '$$globalGalleryId'] },
                         },
                       },
+//                      {$project:new ModelWeight().userTableLight()}
                     ],
                     as: 'globalGalleryDetails',
                   },
