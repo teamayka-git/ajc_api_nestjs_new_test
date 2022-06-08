@@ -394,28 +394,28 @@ export class DeliveryService {
                 arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline
                   .length - 2
               ].$lookup.pipeline.push({
-                $project: new ModelWeight().userTableLight(),
+                $project: new ModelWeight().globalGalleryTableLight(),
               });
             } else if (dto.responseFormat.includes(1061) == true) {
               arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline
                   .length - 2
               ].$lookup.pipeline.push({
-                $project: new ModelWeight().userTableMinimum(),
+                $project: new ModelWeight().globalGalleryTableMinimum(),
               });
             } else if (dto.responseFormat.includes(1062) == true) {
               arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline
                   .length - 2
               ].$lookup.pipeline.push({
-                $project: new ModelWeight().userTableMedium(),
+                $project: new ModelWeight().globalGalleryTableMedium(),
               });
             } else if (dto.responseFormat.includes(1063) == true) {
               arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline
                   .length - 2
               ].$lookup.pipeline.push({
-                $project: new ModelWeight().userTableMaximum(),
+                $project: new ModelWeight().globalGalleryTableMaximum(),
               });
             }
           }
