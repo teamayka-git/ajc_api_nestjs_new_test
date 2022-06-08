@@ -322,7 +322,7 @@ export class DeliveryService {
                           $expr: { $eq: ['$_id', '$$globalGalleryId'] },
                         },
                       },
-                     {$project:new ModelWeight().userTableLight()}
+                     {$project:new ModelWeight().globalGalleryTableLight()}
                     ],
                     as: 'globalGalleryDetails',
                   },
