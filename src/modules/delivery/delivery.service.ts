@@ -363,7 +363,7 @@ export class DeliveryService {
           }
         }
 
-        if (dto.screenType.findIndex((it) => it == 101) != -1) {
+        if (dto.screenType.findIndex((it) => it == 106) != -1) {
           arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
             {
               $lookup: {
