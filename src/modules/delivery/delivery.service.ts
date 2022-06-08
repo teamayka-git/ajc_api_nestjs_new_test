@@ -392,11 +392,14 @@ export class DeliveryService {
 console.log("___11111");
 console.log("___a1111 "+arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.length);
 
+console.log("___11111"+arrayAggregation);
+
             arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline[
                   2 ].$lookup.pipeline.push({
                   $project: new ModelWeight().userTableLight(),
                 });
 
+                console.log("___11112"+arrayAggregation);
 
             // if (dto.responseFormat.includes(1060) == true) {
             //   arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline[
