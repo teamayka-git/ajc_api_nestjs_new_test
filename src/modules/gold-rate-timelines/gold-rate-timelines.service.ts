@@ -80,7 +80,7 @@ export class GoldRateTimelinesService {
 
   arrayAggregation.push({ $match: { _status: 1} });
   
-  if (dto.screenType.findIndex((it) => it == 0) != -1) {
+  if (dto.screenType.includes( 0)) {
       arrayAggregation.push( {
         $lookup: {
           from: ModelNames.USER,
@@ -140,7 +140,7 @@ export class GoldRateTimelinesService {
   
   
         var totalCount = 0;
-        if (dto.screenType.findIndex((it) => it == 0) != -1) {
+        if (dto.screenType.includes( 0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(it => it.hasOwnProperty("$limit") === true)
         if (limitIndexCount != -1) {

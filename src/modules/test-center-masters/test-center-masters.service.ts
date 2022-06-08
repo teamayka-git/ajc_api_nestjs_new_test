@@ -276,7 +276,7 @@ export class TestCenterMastersService {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.includes( 100)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -298,7 +298,7 @@ export class TestCenterMastersService {
           },
         );
       }
-      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+      if (dto.screenType.includes( 101)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -321,7 +321,7 @@ export class TestCenterMastersService {
       }
 
 
-      if (dto.screenType.findIndex((it) => it == 102) != -1) {
+      if (dto.screenType.includes( 102)) {
         arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
           {
             $lookup: {
@@ -366,7 +366,7 @@ export class TestCenterMastersService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+      if (dto.screenType.includes( 0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,

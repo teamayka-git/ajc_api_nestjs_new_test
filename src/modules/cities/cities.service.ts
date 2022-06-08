@@ -211,7 +211,7 @@ export class CitiesService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.includes( 100) ) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -255,7 +255,7 @@ export class CitiesService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+      if (dto.screenType.includes( 0) ) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
@@ -281,7 +281,7 @@ export class CitiesService {
         }
       }
       var resultCompany={};
-      if (dto.screenType.findIndex((it) => it == 200) != -1) {
+      if (dto.screenType.includes(200) ) {
         var resultCompanyList = await this.companyModel.aggregate([
           { $match: { _status: 1 } },
 
@@ -387,7 +387,7 @@ export class CitiesService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.includes( 100) ) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -413,7 +413,7 @@ export class CitiesService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+      if (dto.screenType.includes( 0) ) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,

@@ -567,7 +567,7 @@ export class CategoriesService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.includes( 100) ) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -586,7 +586,7 @@ export class CategoriesService {
         );
       }
 
-      if (dto.screenType.findIndex((it) => it == 50) != -1) {
+      if (dto.screenType.includes( 50) ) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -645,7 +645,7 @@ export class CategoriesService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+      if (dto.screenType.includes( 0) ) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
@@ -711,7 +711,7 @@ export class CategoriesService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.includes(100) ) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -735,7 +735,7 @@ export class CategoriesService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+      if (dto.screenType.includes( 0) ) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,

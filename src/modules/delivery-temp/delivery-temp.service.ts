@@ -128,7 +128,7 @@ export class DeliveryTempService {
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
 
-      if (dto.screenType.findIndex((it) => it == 105) != -1) {
+      if (dto.screenType.includes(105)) {
         arrayEmployeeIds.push(new mongoose.Types.ObjectId(_userId_));
       }
       if (dto.employeeIds.length > 0) {
@@ -165,7 +165,7 @@ export class DeliveryTempService {
         });
       }
 
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.includes( 100) ) {
         arrayAggregation.push({
           $match: { _employeeId: null },
         });
@@ -191,7 +191,7 @@ export class DeliveryTempService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+      if (dto.screenType.includes(101) ) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -237,7 +237,7 @@ export class DeliveryTempService {
         );
       }
 
-      if (dto.screenType.findIndex((it) => it == 102) != -1) {
+      if (dto.screenType.includes( 102) ) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -262,7 +262,7 @@ export class DeliveryTempService {
         );
       }
 
-      if (dto.screenType.findIndex((it) => it == 103) != -1) {
+      if (dto.screenType.includes( 103) ) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -286,7 +286,7 @@ export class DeliveryTempService {
           },
         );
 
-        if (dto.screenType.findIndex((it) => it == 104) != -1) {
+        if (dto.screenType.includes(104) ) {
           arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push({
             $lookup: {
               from: ModelNames.INVOICE_ITEMS,
@@ -374,7 +374,7 @@ export class DeliveryTempService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+      if (dto.screenType.includes( 0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,

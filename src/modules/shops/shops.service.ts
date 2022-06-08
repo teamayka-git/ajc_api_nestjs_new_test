@@ -865,7 +865,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.findIndex((it) => it == 111) != -1) {
+      if (dto.screenType.includes( 111)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -887,7 +887,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
           },
         );
       }
-      if (dto.screenType.findIndex((it) => it == 50) != -1) {
+      if (dto.screenType.includes( 50)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -907,7 +907,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
           },
         );
       }
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.includes( 100)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -928,7 +928,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         );
       }
 
-      if (dto.screenType.findIndex((it) => it == 104) != -1) {
+      if (dto.screenType.includes( 104)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -948,7 +948,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
           },
         );
 
-        if (dto.screenType.findIndex((it) => it == 112) != -1) {
+        if (dto.screenType.includes(112)) {
           arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push({
             $lookup: {
               from: ModelNames.RATE_CARD_PERCENTAGESS,
@@ -966,7 +966,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         }
       }
 
-      if (dto.screenType.findIndex((it) => it == 106) != -1) {
+      if (dto.screenType.includes( 106)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -981,7 +981,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
           },
         );
       }
-      if (dto.screenType.findIndex((it) => it == 107) != -1) {
+      if (dto.screenType.includes( 107)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -996,7 +996,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
           },
         );
       }
-      if (dto.screenType.findIndex((it) => it == 108) != -1) {
+      if (dto.screenType.includes( 108)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -1011,7 +1011,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
           },
         );
       }
-      if (dto.screenType.findIndex((it) => it == 109) != -1) {
+      if (dto.screenType.includes( 109)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -1032,7 +1032,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         );
       }
 
-      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+      if (dto.screenType.includes( 101)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -1077,7 +1077,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
           },
         );
       }
-      if (dto.screenType.findIndex((it) => it == 102) != -1) {
+      if (dto.screenType.includes( 102)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -1123,7 +1123,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         );
       }
 
-      if (dto.screenType.findIndex((it) => it == 110) != -1) {
+      if (dto.screenType.includes( 110)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -1174,7 +1174,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+      if (dto.screenType.includes( 0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
@@ -1212,25 +1212,25 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
     4 - order
       */
 
-      if (dto.screenType.findIndex((it) => it == 200) != -1) {
+      if (dto.screenType.includes( 200)) {
         generalSettingsTypes.push(0);
       }
-      if (dto.screenType.findIndex((it) => it == 201) != -1) {
+      if (dto.screenType.includes( 201)) {
         generalSettingsTypes.push(1);
       }
-      if (dto.screenType.findIndex((it) => it == 202) != -1) {
+      if (dto.screenType.includes(202)) {
         generalSettingsTypes.push(2);
       }
-      if (dto.screenType.findIndex((it) => it == 203) != -1) {
+      if (dto.screenType.includes( 203)) {
         generalSettingsTypes.push(3);
       }
-      if (dto.screenType.findIndex((it) => it == 204) != -1) {
+      if (dto.screenType.includes(204)) {
         generalSettingsTypes.push(4);
       }
-      if (dto.screenType.findIndex((it) => it == 205) != -1) {
+      if (dto.screenType.includes( 205)) {
         generalSettingsTypes.push(5);
       }
-      if (dto.screenType.findIndex((it) => it == 206) != -1) {
+      if (dto.screenType.includes(206)) {
         generalSettingsTypes.push(6);
       }
       if (generalSettingsTypes.length != 0) {
@@ -1246,7 +1246,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         );
       }
 
-      if (dto.screenType.findIndex((it) => it == 250) != -1) {
+      if (dto.screenType.includes( 250)) {
         var resultCompanyList = await this.companyModel.aggregate([
           { $match: { _status: 1 } },
 
@@ -1774,7 +1774,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         });
       }
 
-      if (dto.screenType.findIndex((it) => it == 52) != -1) {
+      if (dto.screenType.includes( 52)) {
         arrayAggregation.push({
           $match: { _customerId: { $ne: null } },
         });
@@ -1810,7 +1810,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.findIndex((it) => it == 50) != -1) {
+      if (dto.screenType.includes( 50)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -1830,7 +1830,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
           },
         );
       }
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.includes(100)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -1849,7 +1849,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         );
       }
 
-      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+      if (dto.screenType.includes( 101)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -1875,7 +1875,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+      if (dto.screenType.includes( 0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,

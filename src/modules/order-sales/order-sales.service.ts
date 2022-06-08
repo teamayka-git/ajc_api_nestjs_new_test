@@ -665,7 +665,7 @@ export class OrderSalesService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.includes( 100) ) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -685,7 +685,7 @@ export class OrderSalesService {
           },
         );
 
-        if (dto.screenType.findIndex((it) => it == 109) != -1) {
+        if (dto.screenType.includes(109)) {
           arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
             {
               $lookup: {
@@ -724,7 +724,7 @@ export class OrderSalesService {
         }
       }
 
-      if (dto.screenType.findIndex((it) => it == 108) != -1) {
+      if (dto.screenType.includes(108)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -750,7 +750,7 @@ export class OrderSalesService {
         );
       }
 
-      if (dto.screenType.findIndex((it) => it == 105) != -1) {
+      if (dto.screenType.includes(105)) {
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.ORDER_SALE_SET_PROCESSES,
@@ -835,7 +835,7 @@ export class OrderSalesService {
         });
       }
 
-      if (dto.screenType.findIndex((it) => it == 106) != -1) {
+      if (dto.screenType.includes( 106)) {
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.ORDER_SALE_SET_PROCESSES,
@@ -1009,7 +1009,7 @@ export class OrderSalesService {
         });
       }
 
-      if (dto.screenType.findIndex((it) => it == 103) != -1) {
+      if (dto.screenType.includes( 103)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -1030,7 +1030,7 @@ export class OrderSalesService {
         );
       }
 
-      if (dto.screenType.findIndex((it) => it == 104) != -1) {
+      if (dto.screenType.includes( 104)) {
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.ORDER_SALE_HISTORIES,
@@ -1142,7 +1142,7 @@ export class OrderSalesService {
         });
       }
 
-      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+      if (dto.screenType.includes( 101)) {
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.ORDER_SALES_DOCUMENTS,
@@ -1184,7 +1184,7 @@ export class OrderSalesService {
         });
       }
 
-      if (dto.screenType.findIndex((it) => it == 102) != -1) {
+      if (dto.screenType.includes( 102)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -1333,7 +1333,7 @@ export class OrderSalesService {
       var resultWorkets = [];
       var resultProcessMasters = [];
 
-      if (dto.screenType.findIndex((it) => it == 105) != -1) {
+      if (dto.screenType.includes( 105)) {
         var resultDepartment = await this.departmentModel.find({
           _code: 1003,
           _status: 1,
@@ -1415,7 +1415,7 @@ export class OrderSalesService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+      if (dto.screenType.includes( 0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
@@ -1496,7 +1496,7 @@ export class OrderSalesService {
         });
       }
 
-      if (dto.screenType.findIndex((it) => it == 500) != -1) {
+      if (dto.screenType.includes( 500)) {
         arrayUserIds.push(new mongoose.Types.ObjectId(_userId_));
       }
       if (arrayUserIds.length > 0) {
@@ -1520,7 +1520,7 @@ export class OrderSalesService {
       }
 
 
-      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+      if (dto.screenType.includes( 101)) {
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.ORDER_SALE_SET_SUB_PROCESSES,
@@ -1561,7 +1561,7 @@ export class OrderSalesService {
         });
       }
 
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.includes( 100)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -1646,7 +1646,7 @@ export class OrderSalesService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,

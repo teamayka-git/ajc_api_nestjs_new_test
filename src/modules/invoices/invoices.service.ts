@@ -277,7 +277,7 @@ export class InvoicesService {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.includes( 100)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -316,7 +316,7 @@ export class InvoicesService {
         );
       }
 
-      if (dto.screenType.findIndex((it) => it == 103) != -1) {
+      if (dto.screenType.includes( 103)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -338,7 +338,7 @@ export class InvoicesService {
           },
         );
       }
-      if (dto.screenType.findIndex((it) => it == 104) != -1) {
+      if (dto.screenType.includes( 104)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -382,7 +382,7 @@ export class InvoicesService {
         );
       }
 
-      if (dto.screenType.findIndex((it) => it == 105) != -1) {
+      if (dto.screenType.includes( 105) ) {
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.INVOICE_ITEMS,
@@ -406,7 +406,7 @@ export class InvoicesService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+      if (dto.screenType.includes( 0) ) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,

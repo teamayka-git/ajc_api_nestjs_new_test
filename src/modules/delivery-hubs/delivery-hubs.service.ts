@@ -274,7 +274,7 @@ export class DeliveryHubsService {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.includes(100) ) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -289,7 +289,7 @@ export class DeliveryHubsService {
           },
         );
       }
-      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+      if (dto.screenType.includes( 101) ) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -317,7 +317,7 @@ export class DeliveryHubsService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+      if (dto.screenType.includes( 0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
@@ -383,7 +383,7 @@ export class DeliveryHubsService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.includes( 100)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -404,7 +404,7 @@ export class DeliveryHubsService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+      if (dto.screenType.includes( 0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
@@ -573,7 +573,7 @@ export class DeliveryHubsService {
         });
       }
 
-      if (dto.screenType.findIndex((it) => it == 52) != -1) {
+      if (dto.screenType.includes( 52)) {
         arrayAggregation.push({
           $match: { _customerId: { $ne: null } },
         });
@@ -609,7 +609,7 @@ export class DeliveryHubsService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.findIndex((it) => it == 50) != -1) {
+      if (dto.screenType.includes( 50)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -629,7 +629,7 @@ export class DeliveryHubsService {
           },
         );
       }
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.includes( 100)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -648,7 +648,7 @@ export class DeliveryHubsService {
         );
       }
 
-      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+      if (dto.screenType.includes( 101)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -674,7 +674,7 @@ export class DeliveryHubsService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+      if (dto.screenType.includes( 0) ) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,

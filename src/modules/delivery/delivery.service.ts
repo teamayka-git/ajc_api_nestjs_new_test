@@ -300,26 +300,26 @@ export class DeliveryService {
       }
 
       if (dto.responseFormat.length != 0) {
-        if (dto.responseFormat.includes(0) == true) {
+        if (dto.responseFormat.includes(0)) {
           arrayAggregation.push({
             $project: new ModelWeight().deliveryTableLight(),
           });
-        } else if (dto.responseFormat.includes(1) == true) {
+        } else if (dto.responseFormat.includes(1)) {
           arrayAggregation.push({
             $project: new ModelWeight().deliveryTableMinimum(),
           });
-        } else if (dto.responseFormat.includes(2) == true) {
+        } else if (dto.responseFormat.includes(2)) {
           arrayAggregation.push({
             $project: new ModelWeight().deliveryTableMedium(),
           });
-        } else if (dto.responseFormat.includes(3) == true) {
+        } else if (dto.responseFormat.includes(3)) {
           arrayAggregation.push({
             $project: new ModelWeight().deliveryTableMaximum(),
           });
         }
       }
 
-      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+      if (dto.screenType.includes( 101) ) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -344,26 +344,26 @@ export class DeliveryService {
         );
 
         if (dto.responseFormat.length != 0) {
-          if (dto.responseFormat.includes(1010) == true) {
+          if (dto.responseFormat.includes(1010)) {
             arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
               { $project: new ModelWeight().userTableLight() },
             );
-          } else if (dto.responseFormat.includes(1011) == true) {
+          } else if (dto.responseFormat.includes(1011)) {
             arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
               { $project: new ModelWeight().userTableMinimum() },
             );
-          } else if (dto.responseFormat.includes(1012) == true) {
+          } else if (dto.responseFormat.includes(1012)) {
             arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
               { $project: new ModelWeight().userTableMedium() },
             );
-          } else if (dto.responseFormat.includes(1013) == true) {
+          } else if (dto.responseFormat.includes(1013)) {
             arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
               { $project: new ModelWeight().userTableMaximum() },
             );
           }
         }
 
-        if (dto.screenType.findIndex((it) => it == 106) != -1) {
+        if (dto.screenType.includes(106) ) {
           arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
             {
               $lookup: {
@@ -389,28 +389,28 @@ export class DeliveryService {
 
           if (dto.responseFormat.length != 0) {
         
-            if (dto.responseFormat.includes(1060) == true) {
+            if (dto.responseFormat.includes(1060)) {
               arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline
                   .length - 2
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().globalGalleryTableLight(),
               });
-            } else if (dto.responseFormat.includes(1061) == true) {
+            } else if (dto.responseFormat.includes(1061)) {
               arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline
                   .length - 2
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().globalGalleryTableMinimum(),
               });
-            } else if (dto.responseFormat.includes(1062) == true) {
+            } else if (dto.responseFormat.includes(1062)) {
               arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline
                   .length - 2
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().globalGalleryTableMedium(),
               });
-            } else if (dto.responseFormat.includes(1063) == true) {
+            } else if (dto.responseFormat.includes(1063)) {
               arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline
                   .length - 2
@@ -422,7 +422,7 @@ export class DeliveryService {
         }
       }
 
-      if (dto.screenType.findIndex((it) => it == 102) != -1) {
+      if (dto.screenType.includes( 102) ) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -446,26 +446,26 @@ export class DeliveryService {
           },
         );
         if (dto.responseFormat.length != 0) {
-          if (dto.responseFormat.includes(1020) == true) {
+          if (dto.responseFormat.includes(1020)) {
             arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
               { $project: new ModelWeight().deliveryHubTableLight() },
             );
-          } else if (dto.responseFormat.includes(1021) == true) {
+          } else if (dto.responseFormat.includes(1021)) {
             arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
               { $project: new ModelWeight().deliveryHubTableMinimum() },
             );
-          } else if (dto.responseFormat.includes(1022) == true) {
+          } else if (dto.responseFormat.includes(1022)) {
             arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
               { $project: new ModelWeight().deliveryHubTableMedium() },
             );
-          } else if (dto.responseFormat.includes(1023) == true) {
+          } else if (dto.responseFormat.includes(1023)) {
             arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
               { $project: new ModelWeight().deliveryHubTableMaximum() },
             );
           }
         }
       }
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.includes( 100) ) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -489,19 +489,19 @@ export class DeliveryService {
           },
         );
         if (dto.responseFormat.length != 0) {
-          if (dto.responseFormat.includes(1000) == true) {
+          if (dto.responseFormat.includes(1000)) {
             arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
               { $project: new ModelWeight().shopTableLight() },
             );
-          } else if (dto.responseFormat.includes(1001) == true) {
+          } else if (dto.responseFormat.includes(1001)) {
             arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
               { $project: new ModelWeight().shopTableMinimum() },
             );
-          } else if (dto.responseFormat.includes(1002) == true) {
+          } else if (dto.responseFormat.includes(1002)) {
             arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
               { $project: new ModelWeight().shopTableMedium() },
             );
-          } else if (dto.responseFormat.includes(1003) == true) {
+          } else if (dto.responseFormat.includes(1003)) {
             arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
               { $project: new ModelWeight().shopTableMaximum() },
             );
@@ -509,7 +509,7 @@ export class DeliveryService {
         }
       }
 
-      if (dto.screenType.findIndex((it) => it == 103) != -1) {
+      if (dto.screenType.includes( 103) ) {
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.DELIVERY_ITEMS,
@@ -527,26 +527,26 @@ export class DeliveryService {
         });
 
         if (dto.responseFormat.length != 0) {
-          if (dto.responseFormat.includes(1030) == true) {
+          if (dto.responseFormat.includes(1030)) {
             arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
               { $project: new ModelWeight().deliveryItemsTableLight() },
             );
-          } else if (dto.responseFormat.includes(1031) == true) {
+          } else if (dto.responseFormat.includes(1031)) {
             arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
               { $project: new ModelWeight().deliveryItemsTableMinimum() },
             );
-          } else if (dto.responseFormat.includes(1032) == true) {
+          } else if (dto.responseFormat.includes(1032)) {
             arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
               { $project: new ModelWeight().deliveryItemsTableMedium() },
             );
-          } else if (dto.responseFormat.includes(1033) == true) {
+          } else if (dto.responseFormat.includes(1033)) {
             arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
               { $project: new ModelWeight().deliveryItemsTableMaximum() },
             );
           }
         }
 
-        if (dto.screenType.findIndex((it) => it == 104) != -1) {
+        if (dto.screenType.includes(104) ) {
           arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
             {
               $lookup: {
@@ -593,28 +593,28 @@ export class DeliveryService {
           );
 
           if (dto.responseFormat.length != 0) {
-            if (dto.responseFormat.includes(1040) == true) {
+            if (dto.responseFormat.includes(1040)) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
                   .length - 2
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().orderSaleTableLight(),
               });
-            } else if (dto.responseFormat.includes(1041) == true) {
+            } else if (dto.responseFormat.includes(1041)) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
                   .length - 2
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().orderSaleTableMinimum(),
               });
-            } else if (dto.responseFormat.includes(1042) == true) {
+            } else if (dto.responseFormat.includes(1042)) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
                   .length - 2
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().orderSaleTableMedium(),
               });
-            } else if (dto.responseFormat.includes(1043) == true) {
+            } else if (dto.responseFormat.includes(1043)) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
                   .length - 2
@@ -625,7 +625,7 @@ export class DeliveryService {
           }
         }
 
-        if (dto.screenType.findIndex((it) => it == 105) != -1) {
+        if (dto.screenType.includes(105) ) {
           arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
             {
               $lookup: {
@@ -668,28 +668,28 @@ export class DeliveryService {
             },
           );
           if (dto.responseFormat.length != 0) {
-            if (dto.responseFormat.includes(1050) == true) {
+            if (dto.responseFormat.includes(1050)) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
                   .length - 2
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().invoiceTableLight(),
               });
-            } else if (dto.responseFormat.includes(1051) == true) {
+            } else if (dto.responseFormat.includes(1051)) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
                   .length - 2
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().invoiceTableMinimum(),
               });
-            } else if (dto.responseFormat.includes(1052) == true) {
+            } else if (dto.responseFormat.includes(1052)) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
                   .length - 2
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().invoiceTableMedium(),
               });
-            } else if (dto.responseFormat.includes(1053) == true) {
+            } else if (dto.responseFormat.includes(1053)) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
                   .length - 2
@@ -706,7 +706,7 @@ export class DeliveryService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+      if (dto.screenType.includes( 0) ) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,

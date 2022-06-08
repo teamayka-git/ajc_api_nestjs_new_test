@@ -84,7 +84,7 @@ export class UserAttendanceService {
         });
       }
 
-      if (dto.screenType.findIndex((it) => it == 50) != -1) {
+      if (dto.screenType.includes( 50)) {
         userIds.push(new mongoose.Types.ObjectId(_userId_));
       }
       if (userIds.length != 0) {
@@ -117,7 +117,7 @@ export class UserAttendanceService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+      if (dto.screenType.includes( 0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,

@@ -371,7 +371,7 @@ export class PhotographyRequestService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.findIndex((it) => it == 100) != -1) {
+      if (dto.screenType.includes( 100)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -389,7 +389,7 @@ export class PhotographyRequestService {
           },
         );
       }
-      if (dto.screenType.findIndex((it) => it == 101) != -1) {
+      if (dto.screenType.includes( 101)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -409,7 +409,7 @@ export class PhotographyRequestService {
           },
         );
       }
-      if (dto.screenType.findIndex((it) => it == 102) != -1) {
+      if (dto.screenType.includes( 102)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -455,7 +455,7 @@ export class PhotographyRequestService {
         );
       }
 
-      if (dto.screenType.findIndex((it) => it == 103) != -1) {
+      if (dto.screenType.includes( 103)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -506,7 +506,7 @@ export class PhotographyRequestService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.findIndex((it) => it == 0) != -1) {
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
