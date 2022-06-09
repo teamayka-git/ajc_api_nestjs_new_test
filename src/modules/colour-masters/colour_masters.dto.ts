@@ -91,6 +91,11 @@ export class ColoursListDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsArray()
   @ArrayMinSize(1)
   @ApiProperty({ type: [Number], description: descriptionType })

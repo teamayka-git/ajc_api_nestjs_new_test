@@ -120,6 +120,11 @@ export class DeliveryHubListDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsArray()
   @ApiProperty({ type: [String] })
   deliveryHubsIds: string[];
@@ -163,6 +168,11 @@ export class ListFilterLocadingDeliveryHubDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsNumber()
   @ApiProperty({})
   limit: number;
@@ -206,6 +216,11 @@ export class DeliveryHubAcrossEmployeesAndCustomersDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsNumber()
   @ApiProperty({})
   limit: number;

@@ -89,6 +89,11 @@ export class RateBaseMastersListDto {
   
 
   @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
+
+  @IsArray()
   @ApiProperty({ type: [String] })
   rateBaseMasterIds: string[];
 

@@ -117,6 +117,11 @@ export class GroupMastersListDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsArray()
   @ApiProperty({ type: [String] })
   groupMasterIds: string[];

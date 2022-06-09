@@ -112,6 +112,11 @@ export class CategoriesListDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsArray()
   @ApiProperty({ type: [String] })
   categoryIds: string[];
@@ -155,6 +160,11 @@ export class ListFilterLocadingCategoryDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsNumber()
   @ApiProperty({})
   limit: number;

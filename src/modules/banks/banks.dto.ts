@@ -103,6 +103,11 @@ export class BanksListDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListType })
   types: number[];

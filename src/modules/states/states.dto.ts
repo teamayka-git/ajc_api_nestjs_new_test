@@ -76,6 +76,11 @@ export class StatesListDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsArray()
   @ApiProperty({ type: [String] })
   stateIds: string[];

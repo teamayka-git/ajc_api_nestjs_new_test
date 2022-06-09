@@ -88,6 +88,11 @@ export class FactoriesListDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsArray()
   @ApiProperty({ type: [String] })
   factoryIds: string[];
@@ -134,6 +139,11 @@ export class ListFilterLocadingFactoryDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsNumber()
   @ApiProperty({})
   limit: number;

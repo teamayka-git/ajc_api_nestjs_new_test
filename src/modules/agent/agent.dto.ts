@@ -147,6 +147,11 @@ export class AgentListDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListCommisionType })
   commisionType: number[];
@@ -195,6 +200,11 @@ export class ListFilterLocadingAgentDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsNumber()
   @ApiProperty({})
   limit: number;

@@ -87,6 +87,11 @@ export class CitiesListDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsArray()
   @ApiProperty({ type: [String] })
   citiesIds: string[];
@@ -130,6 +135,11 @@ export class ListFilterLocadingCityDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsNumber()
   @ApiProperty({})
   limit: number;

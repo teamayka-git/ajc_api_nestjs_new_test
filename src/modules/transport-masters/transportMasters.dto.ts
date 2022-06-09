@@ -79,6 +79,11 @@ export class TransportMastersListDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionType })
   types: number[];

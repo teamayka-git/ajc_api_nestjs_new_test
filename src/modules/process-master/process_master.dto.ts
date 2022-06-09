@@ -180,6 +180,11 @@ export class ProcessMasterListDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsArray()
   @ApiProperty({ type: [Number] })
   isAutomatic: number[];
@@ -227,6 +232,11 @@ export class ListFilterLocadingProcessMasterDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsNumber()
   @ApiProperty({})
   limit: number;

@@ -124,6 +124,11 @@ export class TestCenterMastersListDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsArray()
   @ApiProperty({ type: [String] })
   testCenterMastersIds: string[];

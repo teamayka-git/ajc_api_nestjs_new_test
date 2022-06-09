@@ -88,6 +88,11 @@ export class DistrictsListDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsArray()
   @ApiProperty({ type: [String] })
   districtIds: string[];
@@ -135,6 +140,11 @@ export class ListFilterLocadingDistrictDto {
   @ApiProperty({})
   limit: number;
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsNumber()
   @ApiProperty({})
   skip: number;

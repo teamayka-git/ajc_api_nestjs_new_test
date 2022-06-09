@@ -215,6 +215,11 @@ export class OrderSaleListDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsArray()
   @ApiProperty({ type: [String] })
   orderSaleIdsIds: string[];
@@ -314,6 +319,11 @@ export class SetProcessAssignedOrderSaleListDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsArray()
   @ApiProperty({ type: [String] })
   employeesArray: string[];

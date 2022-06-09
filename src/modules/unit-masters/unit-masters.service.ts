@@ -224,7 +224,7 @@ export class UnitMastersService {
           totalCount = resultTotalCount[0].totalCount;
         }
       }
-
+  
       const responseJSON = {
         message: 'success',
         data: { list: result, totalCount: totalCount },

@@ -99,6 +99,11 @@ export class HalmarkingRequestsListDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsArray()
   @ApiProperty({ type: [String] })
   hmRequestIds: string[];

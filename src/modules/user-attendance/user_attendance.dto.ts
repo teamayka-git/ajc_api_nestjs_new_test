@@ -38,4 +38,9 @@ export class UserAttendanceListDto {
     description: descriptionListScreenTypeForList,
   })
   screenType: number[];
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
 }

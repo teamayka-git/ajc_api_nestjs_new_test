@@ -38,6 +38,11 @@ export class GoldRateTimelinesListDto {
   
 
   @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
+
+  @IsArray()
   @ApiProperty({ type: [String] })
   goldRateTimelinesIds: string[];
 

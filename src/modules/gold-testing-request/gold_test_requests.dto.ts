@@ -185,6 +185,11 @@ export class GoldTestRequestListDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsArray()
   @ApiProperty({ type: [String] })
   goldRequestIdsIds: string[];

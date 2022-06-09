@@ -86,6 +86,11 @@ export class TcsMastersListDto {
   
 
   @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
+
+  @IsArray()
   @ApiProperty({ type: [String] })
   tcsMasterIds: string[];
 

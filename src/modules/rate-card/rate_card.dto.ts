@@ -114,6 +114,11 @@ export class RateCardListDto {
   
 
   @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
+
+  @IsArray()
   @ApiProperty({ type: [String] })
   rateCardIds: string[];
 

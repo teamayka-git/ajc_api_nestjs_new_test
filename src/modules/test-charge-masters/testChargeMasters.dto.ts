@@ -96,6 +96,11 @@ export class TestChargeMastersListDto {
   
 
   @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
+
+  @IsArray()
   @ApiProperty({ type: [String] })
   testChargeMastersIds: string[];
 
@@ -135,6 +140,11 @@ export class ListFilterLocadingTestChargeDto {
   @IsArray()
   @ApiProperty({ type: [Number],description:descriptionListScreenTypeForFilterLoading })
   screenType:number[];
+  
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
   
   @IsNumber()
   @ApiProperty({})

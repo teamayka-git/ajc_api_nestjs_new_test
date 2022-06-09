@@ -93,6 +93,11 @@ export class GetUserDto {
     description: descriptionListScreenTypeForFilterLoading,
   })
   screenType: number[];
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
 }
 
 export class ChatDocumentCreateDto {

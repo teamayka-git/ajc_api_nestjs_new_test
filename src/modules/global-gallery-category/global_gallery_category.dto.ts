@@ -87,6 +87,11 @@ export class GlobalGalleryCategoryListDto {
   })
   screenType: number[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionType })
   type: number[];
