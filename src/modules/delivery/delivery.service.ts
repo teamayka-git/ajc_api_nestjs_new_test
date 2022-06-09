@@ -651,7 +651,7 @@ export class DeliveryService {
                             },
                           },
                         },
-                        { $project: new ModelWeight().invoiceItemsTableMaximum() },
+                        { $project: new ModelWeight().invoiceItemsTableMedium() },
                       ],
                       as: 'invoiceItems',
                     },
