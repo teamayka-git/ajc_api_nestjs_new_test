@@ -671,28 +671,28 @@ export class DeliveryService {
             if (dto.responseFormat.includes(1050)) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
-                  .length - 2
+                  .length - 1
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().invoiceTableLight(),
               });
             } else if (dto.responseFormat.includes(1051)) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
-                  .length - 2
+                  .length - 1
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().invoiceTableMinimum(),
               });
             } else if (dto.responseFormat.includes(1052)) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
-                  .length - 2
+                  .length - 1
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().invoiceTableMedium(),
               });
             } else if (dto.responseFormat.includes(1053)) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
-                  .length - 2
+                  .length - 1
               ].$lookup.pipeline.push({
                 $project: new ModelWeight().invoiceTableMaximum(),
               });
