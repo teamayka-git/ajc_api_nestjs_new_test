@@ -637,7 +637,7 @@ export class DeliveryService {
                       $expr: { $eq: ['$_id', '$$invoiceId'] },
                     },
                   },
-                  {$project: new ModelWeight().invoiceTableMedium()},
+                  {$project: new ModelWeight().invoiceTableMinimum()},
                   {
                     $lookup: {
                       from: ModelNames.INVOICE_ITEMS,
@@ -651,7 +651,7 @@ export class DeliveryService {
                             },
                           },
                         },
-                        { $project: new ModelWeight().invoiceItemsTableMedium() },
+                        { $project: new ModelWeight().invoiceItemsTableMinimum() },
                       ],
                       as: 'invoiceItems',
                     },
