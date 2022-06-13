@@ -460,6 +460,26 @@ export class AppService {
           },
         );
       }
+      if (dto.screenType.includes(112)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.LOGISTICS_PARTNERS,
+              let: { logisticsPartnerId: '$_logisticPartnerId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$logisticsPartnerId'] } } },
+              ],
+              as: 'logisticsPartnerDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$logisticsPartnerDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
 
       if (dto.screenType.includes(103)) {
         arrayAggregation.push(
@@ -863,6 +883,7 @@ export class AppService {
             _agentId: null,
             _supplierId: null,
             _testCenterId: null,
+            _logisticPartnerId:null,
             _shopId: null,
             _customType: [],
             _halmarkId: null,

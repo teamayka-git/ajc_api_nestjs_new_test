@@ -255,6 +255,7 @@ export class EmployeesService {
             _halmarkId: null,
 
             _testCenterId:null,
+            _logisticPartnerId:null,
             _agentId: null,
             _supplierId: null,
             _shopId: null,

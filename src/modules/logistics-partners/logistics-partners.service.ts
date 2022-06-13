@@ -1,25 +1,25 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
+import { LogisticsPartners } from 'src/tableModels/logistics_partners.model';
+import * as mongoose from 'mongoose';
 import { GlobalConfig } from 'src/config/global_config';
-import { TransportMasters } from 'src/tableModels/transportMasters.model';
-import {
-  CheckNameExistDto,
-  TransportMastersCreateDto,
-  TransportMastersEditDto,
-  TransportMastersListDto,
-  TransportMastersStatusChangeDto,
-} from './transportMasters.dto';
+import { CheckNameExistDto, LogisticsPartnersCreateDto, LogisticsPartnersEditDto, LogisticsPartnersListDto, LogisticsPartnersStatusChangeDto } from './logistics_partners.dto';
+import { User } from 'src/tableModels/user.model';
 
 @Injectable()
-export class TransportMastersService {
+export class LogisticsPartnersService {
+
+
+    
   constructor(
-    @InjectModel(ModelNames.TRANSPORT_MASTERS)
-    private readonly transportMastersModel: mongoose.Model<TransportMasters>,
+    @InjectModel(ModelNames.LOGISTICS_PARTNERS)
+    private readonly logisticsPartnersModel: mongoose.Model<LogisticsPartners>,
+    @InjectModel(ModelNames.USER)
+    private readonly userModel: mongoose.Model<User>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
-  async create(dto: TransportMastersCreateDto, _userId_: string) {
+  async create(dto: LogisticsPartnersCreateDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -29,7 +29,7 @@ export class TransportMastersService {
       dto.array.map((mapItem) => {
         arrayToStates.push({
           _name: mapItem.name,
-          _type: mapItem.type,
+          _trackingUrl:mapItem.trackingUrl,
           _dataGuard: mapItem.dataGuard,
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -39,7 +39,7 @@ export class TransportMastersService {
         });
       });
 
-      var result1 = await this.transportMastersModel.insertMany(arrayToStates, {
+      var result1 = await this.logisticsPartnersModel.insertMany(arrayToStates, {
         session: transactionSession,
       });
 
@@ -65,19 +65,19 @@ export class TransportMastersService {
     }
   }
 
-  async edit(dto: TransportMastersEditDto, _userId_: string) {
+  async edit(dto: LogisticsPartnersEditDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var result = await this.transportMastersModel.findOneAndUpdate(
+      var result = await this.logisticsPartnersModel.findOneAndUpdate(
         {
           _id: dto.transportMasterId,
         },
         {
           $set: {
             _name: dto.name,
-            _type: dto.type,
+            _trackingUrl:dto.trackingUrl,
             _dataGuard: dto.dataGuard,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
@@ -108,12 +108,12 @@ export class TransportMastersService {
     }
   }
 
-  async status_change(dto: TransportMastersStatusChangeDto, _userId_: string) {
+  async status_change(dto: LogisticsPartnersStatusChangeDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var result = await this.transportMastersModel.updateMany(
+      var result = await this.logisticsPartnersModel.updateMany(
         {
           _id: { $in: dto.transportMasterIds },
         },
@@ -149,7 +149,7 @@ export class TransportMastersService {
     }
   }
 
-  async list(dto: TransportMastersListDto) {
+  async list(dto: LogisticsPartnersListDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -160,7 +160,12 @@ export class TransportMastersService {
         //todo
         arrayAggregation.push({
           $match: {
-            $or: [{ _name: new RegExp(dto.searchingText, 'i') }],
+            $or: [
+                
+                { _name: new RegExp(dto.searchingText, 'i') },
+                { _trackingUrl: dto.searchingText },
+            
+            ],
           },
         });
       }
@@ -170,9 +175,6 @@ export class TransportMastersService {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
-      }
-      if (dto.types.length > 0) {
-        arrayAggregation.push({ $match: { _type: { $in: dto.types } } });
       }
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {
@@ -195,7 +197,7 @@ export class TransportMastersService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      var result = await this.transportMastersModel
+      var result = await this.logisticsPartnersModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
 
@@ -218,7 +220,7 @@ export class TransportMastersService {
           $group: { _id: null, totalCount: { $sum: 1 } },
         });
 
-        var resultTotalCount = await this.transportMastersModel
+        var resultTotalCount = await this.logisticsPartnersModel
           .aggregate(arrayAggregation)
           .session(transactionSession);
         if (resultTotalCount.length > 0) {
@@ -256,7 +258,7 @@ export class TransportMastersService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var resultCount = await this.transportMastersModel
+      var resultCount = await this.logisticsPartnersModel
         .count({
           _name: dto.value,
           _id: { $nin: dto.existingIds },
@@ -288,4 +290,6 @@ export class TransportMastersService {
       throw error;
     }
   }
+
+
 }

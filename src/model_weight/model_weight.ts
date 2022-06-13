@@ -617,6 +617,8 @@ export class ModelWeight {
       _agentId: 1,
       _supplierId: 1,
       _testCenterId: 1,
+      
+      _logisticPartnerId:1,
       _shopId: 1,
       _halmarkId: 1,
       _customerId: 1,
@@ -640,6 +642,7 @@ export class ModelWeight {
       _agentId: 1,
       _supplierId: 1,
       _testCenterId: 1,
+      _logisticPartnerId:1,
       _shopId: 1,
       _halmarkId: 1,
       _customerId: 1,

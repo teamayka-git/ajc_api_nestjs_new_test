@@ -11,7 +11,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type, Type as ValidateTypes } from 'class-transformer';
 import { Optional } from '@nestjs/common';
 
-const descriptionType = '0-Courier, 1-By Hand';
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList = '0-total documents count';
 const descriptionListDataGuard =
@@ -20,28 +19,28 @@ const descriptionListDataGuard =
 const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType = '0-Created Date, 1-Status,2-Name, 3-Type';
 
-class TransportMastersCreateList {
+class LogisticsPartnersCreateList {
   @IsString()
   @ApiProperty({})
   name: string;
 
-  @IsNumber()
-  @ApiProperty({ description: descriptionType })
-  type: number;
+  @IsString()
+  @ApiProperty({})
+  trackingUrl: string;
 
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })
   dataGuard: number[];
 }
 
-export class TransportMastersCreateDto {
+export class LogisticsPartnersCreateDto {
   @IsArray()
-  @ApiProperty({ type: [TransportMastersCreateList] })
+  @ApiProperty({ type: [LogisticsPartnersCreateList] })
   @ValidateNested({ each: true })
-  @Type(() => TransportMastersCreateList)
-  array: TransportMastersCreateList[];
+  @Type(() => LogisticsPartnersCreateList)
+  array: LogisticsPartnersCreateList[];
 }
-export class TransportMastersEditDto {
+export class LogisticsPartnersEditDto {
   @IsString()
   @ApiProperty({})
   transportMasterId: string;
@@ -50,16 +49,18 @@ export class TransportMastersEditDto {
   @ApiProperty({})
   name: string;
 
-  @IsNumber()
-  @ApiProperty({ description: descriptionType })
-  type: number;
+  
+  @IsString()
+  @ApiProperty({})
+  trackingUrl: string;
+
 
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })
   dataGuard: number[];
 }
 
-export class TransportMastersListDto {
+export class LogisticsPartnersListDto {
   @IsNumber()
   @ApiProperty({ description: descriptionListSortType })
   sortType: number;
@@ -85,10 +86,6 @@ export class TransportMastersListDto {
   responseFormat: number[];
   
   @IsArray()
-  @ApiProperty({ type: [Number], description: descriptionType })
-  types: number[];
-
-  @IsArray()
   @ApiProperty({ type: [String] })
   transportMasterIds: string[];
 
@@ -105,7 +102,7 @@ export class TransportMastersListDto {
   searchingText: string;
 }
 
-export class TransportMastersStatusChangeDto {
+export class LogisticsPartnersStatusChangeDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   transportMasterIds: string[];

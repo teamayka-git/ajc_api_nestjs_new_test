@@ -19,7 +19,7 @@ export enum ModelNames {
   UNIT_MASTER = 'unit_masters',
   TDS_MASTERS = 'tds_masters',
   TCS_MASTERS = 'tcs_masters',
-  TRANSPORT_MASTERS = 'transport_masters',
+  LOGISTICS_PARTNERS = 'logistics_partners',
   TEST_CENTER_MASTERS = 'test_center_masters',
   TEST_CHARGE_MASTERS = 'test_charge_masters',
   FACTORIES = 'factories',

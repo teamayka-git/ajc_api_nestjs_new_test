@@ -71,6 +71,7 @@ export class TestCenterMastersService {
           _agentId: null,
           _testCenterId: testCenterId,
           _supplierId: null,
+          _logisticPartnerId:null,
           _shopId: null,
           _halmarkId: null,
           _customerId: null,

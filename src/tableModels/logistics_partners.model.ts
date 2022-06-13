@@ -3,10 +3,10 @@ import { ModelNames } from 'src/common/model_names';
 import { GlobalConfig } from 'src/config/global_config';
 
 
-export const TransportMastersSchema = new mongoose.Schema({
+export const LogisticsPartnersSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
     _name: { type: String, required: true, default: "nil" },
-    _type:  { type: Number, required: true, default: -1 },
+    _trackingUrl: { type: String, default: "nil" },
     _dataGuard: { type:Object, required: true, default: [] },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
@@ -15,10 +15,10 @@ export const TransportMastersSchema = new mongoose.Schema({
     _status: { type: Number, required: true, default: -1 },
 });
  
-export interface TransportMasters {
+export interface LogisticsPartners {
     _id: String;
     _name: String;
-    _type: Number;
+    _trackingUrl: String;
     _dataGuard:Object;
     _createdUserId:String;
     _createdAt:  Number;
@@ -27,23 +27,23 @@ export interface TransportMasters {
     _status: Number;
 }
 
-TransportMastersSchema.index({_status: 1});
-TransportMastersSchema.index({_type: 1});
-TransportMastersSchema.index({_name: 1,_id:1});
-TransportMastersSchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
-TransportMastersSchema.post('save', async function(error, doc, next) {
+LogisticsPartnersSchema.index({_trackingUrl: 1});
+LogisticsPartnersSchema.index({_status: 1});
+LogisticsPartnersSchema.index({_name: 1,_id:1});
+LogisticsPartnersSchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
+LogisticsPartnersSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
 });
-TransportMastersSchema.post('insertMany', async function(error, doc, next) {
+LogisticsPartnersSchema.post('insertMany', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
 });
-TransportMastersSchema.post('updateOne', async function(error, doc, next) {
+LogisticsPartnersSchema.post('updateOne', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
 });
-TransportMastersSchema.post('findOneAndUpdate', async function(error, doc, next) {
+LogisticsPartnersSchema.post('findOneAndUpdate', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
 });
-TransportMastersSchema.post('updateMany', async function(error, doc, next) {
+LogisticsPartnersSchema.post('updateMany', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);
 });
 function schemaPostFunctionForDuplicate(error, doc, next) {
@@ -55,9 +55,3 @@ function schemaPostFunctionForDuplicate(error, doc, next) {
 }
 
 
-/*
-_type:{
-    0-Courier
-    1-By Hand
-}
-*/

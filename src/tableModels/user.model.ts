@@ -53,6 +53,11 @@ export const UserSchema = new mongoose.Schema({
     ref: ModelNames.TEST_CENTER_MASTERS,
     default: null,
   },
+  _logisticPartnerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.LOGISTICS_PARTNERS,
+    default: null,
+  },
   _fcmId: { type: String, default: '' },
   _deviceUniqueId: { type: String, default: '' },
   _permissions: { type: Object, required: true, default: [] },
@@ -91,6 +96,7 @@ export interface User {
   _customerId: string;
   _fcmId: String;
   _deliveryHubId: string;
+  _logisticPartnerId:String;
   _deviceUniqueId: String;
   _permissions: Object;
   _userRole: Number;
@@ -101,6 +107,7 @@ export interface User {
   _status: Number;
 }
 
+UserSchema.index({ _logisticPartnerId: 1 });
 UserSchema.index({ _testCenterId: 1 });
 UserSchema.index({ _deliveryHubId: 1 });
 UserSchema.index({ _halmarkId: 1 });
