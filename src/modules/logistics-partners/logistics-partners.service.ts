@@ -6,6 +6,7 @@ import * as mongoose from 'mongoose';
 import { GlobalConfig } from 'src/config/global_config';
 import { CheckNameExistDto, LogisticsPartnersCreateDto, LogisticsPartnersEditDto, LogisticsPartnersListDto, LogisticsPartnersStatusChangeDto } from './logistics_partners.dto';
 import { User } from 'src/tableModels/user.model';
+const crypto = require('crypto');
 
 @Injectable()
 export class LogisticsPartnersService {
@@ -26,24 +27,76 @@ export class LogisticsPartnersService {
     try {
       var arrayToStates = [];
 
-      dto.array.map((mapItem) => {
-        arrayToStates.push({
-          _name: mapItem.name,
-          _trackingUrl:mapItem.trackingUrl,
-          _dataGuard: mapItem.dataGuard,
-          _createdUserId: _userId_,
-          _createdAt: dateTime,
-          _updatedUserId: null,
-          _updatedAt: -1,
-          _status: 1,
-        });
+
+      var encryptedPassword = await crypto
+      .pbkdf2Sync(
+        '123456',
+        process.env.CRYPTO_ENCRYPTION_SALT,
+        1000,
+        64,
+        `sha512`,
+      )
+      .toString(`hex`);
+
+      var logisticsId = new mongoose.Types.ObjectId();
+      const logisticPartnerModel = new this.logisticsPartnersModel({
+        _id: logisticsId,
+        _name: dto.name,
+        _trackingUrl:dto.trackingUrl,
+        _dataGuard: dto.dataGuard,
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _updatedUserId: null,
+        _updatedAt: -1,
+        _status: 1,
       });
 
-      var result1 = await this.logisticsPartnersModel.insertMany(arrayToStates, {
+
+
+      var resultLogistics = await logisticPartnerModel.save({
         session: transactionSession,
       });
 
-      const responseJSON = { message: 'success', data: { list: result1 } };
+      await this.userModel.findOneAndUpdate(
+        { _email: dto.email },
+        {
+          $setOnInsert: {
+            _password: encryptedPassword,
+            _customType: [],
+            _halmarkId: null,
+
+            _testCenterId:null,
+            _employeeId   :null,
+            _agentId: null,
+            _supplierId: null,
+            _shopId: null,
+            _customerId: null,
+            _deliveryHubId: null,
+            _globalGalleryId:null,
+            _fcmId: '',
+            _deviceUniqueId: '',
+            _permissions: [],
+            _userRole: 3,
+            _gender: 2,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: {
+            _name: dto.name,
+            _mobile: dto.mobile,
+            _logisticPartnerId: logisticsId,
+            _status: 1,
+          },
+          $push:{
+            _customType: 10,
+          }
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+  
+      const responseJSON = { message: 'success', data:resultLogistics };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
@@ -86,6 +139,31 @@ export class LogisticsPartnersService {
         { new: true, session: transactionSession },
       );
 
+
+
+
+
+      await this.userModel.updateMany(
+        {
+          _logisticPartnerId: result._id,
+        },
+        {
+          $set: {  _name: dto.name,
+            _mobile: dto.mobile,
+         
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+
+
+
+
+
+
       const responseJSON = { message: 'success', data: result };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -126,6 +204,9 @@ export class LogisticsPartnersService {
         },
         { new: true, session: transactionSession },
       );
+
+
+
 
       const responseJSON = { message: 'success', data: result };
       if (
@@ -187,15 +268,44 @@ export class LogisticsPartnersService {
         case 2:
           arrayAggregation.push({ $sort: { _name: dto.sortOrder } });
           break;
-        case 3:
-          arrayAggregation.push({ $sort: { _type: dto.sortOrder } });
-          break;
       }
 
       if (dto.skip != -1) {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
+
+
+
+
+
+      if (dto.screenType.includes( 100)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { logisticId: '$_logisticPartnerId' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$logisticId'] } },
+                },
+              ],
+              as: 'logisticPartnerDetails',
+            },
+          },
+          {
+            $unwind: { path: '$logisticPartnerDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
+      }
+
+
+
+
+
+
+
+
 
       var result = await this.logisticsPartnersModel
         .aggregate(arrayAggregation)

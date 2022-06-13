@@ -182,6 +182,7 @@ _customType:{
 7 - halmark center
 8 - Shop Customer
 9 - Test center user
+10 - logistics partner
 }
 
 
