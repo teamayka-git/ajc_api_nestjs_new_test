@@ -64,7 +64,7 @@ class InvoiceCreateListItems {
 
   @IsNumber()
   @ApiProperty({})
-  tough: number;
+  touch: number;
 
   @IsNumber()
   @ApiProperty({})
@@ -121,7 +121,7 @@ class InvoiceCreateListItems {
 
   @IsString()
   @ApiProperty({})
-  productBarcide: string;
+  productBarcode: string;
 
   @IsString()
   @ApiProperty({})

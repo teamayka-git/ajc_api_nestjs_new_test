@@ -94,7 +94,7 @@ export class InvoicesService {
             _grossWeight: mapItem1.grossWeight,
             _stoneWeight: mapItem1.stoneWeight,
             _netWeight: mapItem1.netWeight,
-            _tought: mapItem1.tough,
+            _touch: mapItem1.touch,
             _pureWeight: mapItem1.pureWeight,
             _pureWeightHundredPercentage: mapItem1.pureWeightHundredPercentage,
             _unitRate: mapItem1.unitRate,
@@ -110,7 +110,7 @@ export class InvoicesService {
             _makingChargeWeightHundredPercentage:
               mapItem1.makingChargeWithHundredPercentage,
             _makingChargeAmount: mapItem1.makingChargeAmount,
-            _productBarcode: mapItem1.productBarcide,
+            _productBarcode: mapItem1.productBarcode,
             _productId:
               mapItem1.productId == '' || mapItem1.productId == 'nil'
                 ? null

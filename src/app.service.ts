@@ -14,6 +14,7 @@ import { Districts } from './tableModels/districts.model';
 import { Employee } from './tableModels/employee.model';
 import { Generals } from './tableModels/generals.model';
 import { GlobalGalleryCategories } from './tableModels/globalGallerycategories.model';
+import { GoldRateTimelines } from './tableModels/gold_rate_timelines.model';
 import { ProcessMaster } from './tableModels/processMaster.model';
 import { Purity } from './tableModels/purity.model';
 import { States } from './tableModels/states.model';
@@ -45,6 +46,8 @@ export class AppService {
     @InjectModel(ModelNames.GLOBAL_GALLERY_CATEGORIES)
     private readonly globalGalleryCategoriesModel: mongoose.Model<GlobalGalleryCategories>,
 
+    @InjectModel(ModelNames.GOLD_RATE_TIMELINES)
+    private readonly goldRateTimelinesModel: mongoose.Model<GoldRateTimelines>,
     @InjectModel(ModelNames.COLOUR_MASTERS)
     private readonly coloursModel: mongoose.Model<Colours>,
     @InjectModel(ModelNames.COUNTERS)
@@ -57,7 +60,7 @@ export class AppService {
   getHello(): string {
     // throw new HttpException('User not found', HttpStatus.INTERNAL_SERVER_ERROR);
     return 'Hello Worldwwwww!';
-  }
+  } 
 
   async me(dto: MeDto, _userId_: string) {
     var dateTime = new Date().getTime();
@@ -156,10 +159,14 @@ export class AppService {
       throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
     }
 
+
+
+    var listGoldTimelines=await this.goldRateTimelinesModel.find({_status:1}).sort({_id:-1}).limit(1);
+
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
 
-    return { message: 'success', data: resultEmployee[0] };
+    return { message: 'success', data: resultEmployee[0] ,goldTimelinesList:listGoldTimelines};
   }
 
   async getUser(dto: GetUserDto) {

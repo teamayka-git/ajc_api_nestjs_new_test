@@ -24,7 +24,7 @@ export const InvoiceItemsSchema = new mongoose.Schema({
   _grossWeight: { type: Number, required: true, default: -1 },
   _stoneWeight: { type: Number, required: true, default: -1 },
   _netWeight: { type: Number, required: true, default: -1 },
-  _tought: { type: Number, required: true, default: -1 },
+  _touch: { type: Number, required: true, default: -1 },
   _pureWeight: { type: Number, required: true, default: -1 },
   _pureWeightHundredPercentage: { type: Number, required: true, default: -1 },
   _unitRate: { type: Number, required: true, default: -1 },

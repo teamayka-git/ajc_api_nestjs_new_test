@@ -77,6 +77,7 @@ import { CitiesSchema } from './tableModels/cities.model';
 import { DeliveryTempModule } from './modules/delivery-temp/delivery-temp.module';
 import { DeliveryModule } from './modules/delivery/delivery.module';
 import { ResponseFormatModule } from './modules/response-format/response-format.module';
+import { GoldRateTimelinesSchema } from './tableModels/gold_rate_timelines.model';
 
 @Module({
   imports: [
@@ -111,6 +112,7 @@ import { ResponseFormatModule } from './modules/response-format/response-format.
         schema: ChatPendingMessagesSchema,
       },
       { name: ModelNames.CHAT_PERSONAL_CHATS, schema: ChatPersonalChatsSchema },
+      { name: ModelNames.GOLD_RATE_TIMELINES, schema: GoldRateTimelinesSchema },
       {
         name: ModelNames.CHAT_PERSONAL_CHAT_MESSAGES,
         schema: ChatPersonalChatMessagesSchema,
