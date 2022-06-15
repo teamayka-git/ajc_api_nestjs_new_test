@@ -387,7 +387,14 @@ export class OrderSaleSetProcessService {
                 as: 'setProcessWorkList',
               },
             },
-
+            {
+              $project: {
+                _id: 1,
+                _userId: 1,
+                userAttendance:{_id:1},
+                workCount:{$count: "setProcessWorkList"}
+              },
+            },
 
 
 
