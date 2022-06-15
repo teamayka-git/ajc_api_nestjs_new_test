@@ -7,7 +7,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { SocketIoAdapter } from './socket/socket_adapter';
 import { config } from 'aws-sdk';
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 
 async function bootstrap() {
   config.update({
@@ -27,7 +26,7 @@ async function bootstrap() {
     };
   }
 
-  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), { httpsOptions });
+  const app = await NestFactory.create(AppModule, { httpsOptions });
   app.use(cookieParser()); //jwt read from cookie
   app.enableCors({
     origin: '*',
