@@ -247,6 +247,7 @@ export class OrderSaleSetProcessService {
         */
         case 1:
           objDefaultProcessHistory._userId = dto.userId;
+          objDefaultProcessHistory._processId = result._processId;
           break;
         case 2:
           objDefaultProcessHistory._processId = result._processId;
@@ -405,9 +406,46 @@ export class OrderSaleSetProcessService {
 
           
 let sortedArray=resultEmployees.sort((n1,n2) => n2.workCount <n1.workCount ? 1 : -1);
+if(sortedArray.length!=0){
+  await this.orderSaleSetProcessModel.findOneAndUpdate(
+    {
+      _id: orderSaleSetProcess[0]._id
+    },
+    {
+      $set: {
+        _userId: sortedArray[0]._userId,
+        _orderStatus: 1,
+      },
+    },
+    { new: true, session: transactionSession },
+  );
 
-console.log('____a4 4 ' + JSON.stringify(resultEmployees));
-console.log('____a4 5 ' + JSON.stringify(sortedArray));
+
+
+  const orderSaleSetProcessHistoryAutomation =
+        new this.orderSaleSetProcessHistoriesModel({
+          _orderSaleId: result._orderSaleId,
+        _userId: sortedArray[0]._userId,
+        _type: 1,
+        _processId: orderSaleSetProcess[0]._processId,
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _description: '',
+        _status: 1,
+        });
+      await orderSaleSetProcessHistoryAutomation.save({
+        session: transactionSession,
+      });
+
+
+      
+
+
+
+
+
+
+}
         }
       }
 
@@ -452,7 +490,7 @@ console.log('____a4 5 ' + JSON.stringify(sortedArray));
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-   //   await transactionSession.commitTransaction();
+     await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return responseJSON;
     } catch (error) {
