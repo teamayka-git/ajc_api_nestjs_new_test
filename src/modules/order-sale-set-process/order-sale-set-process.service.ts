@@ -400,7 +400,14 @@ export class OrderSaleSetProcessService {
 
 
           ]);
-          console.log('____a4 4 ' + JSON.stringify(resultEmployees));
+
+
+
+          
+let sortedArray=resultEmployees.sort((n1,n2) => n2.workCount <n1.workCount ? 1 : -1);
+
+console.log('____a4 4 ' + JSON.stringify(resultEmployees));
+console.log('____a4 5 ' + JSON.stringify(sortedArray));
         }
       }
 
