@@ -182,7 +182,7 @@ export class FactoriesService {
         });
         arrayAggregation.push({ $match: { _cityId: { $in: newSettingsId } } });
       }
-      if (dto.factoryCalculationTypeMasterIds.length > 0) {
+      if (dto.factoryCalculationTypeMasterIds.length > 0) { 
         var newSettingsId = [];
         dto.factoryCalculationTypeMasterIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));

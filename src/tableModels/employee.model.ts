@@ -16,8 +16,8 @@ export const EmployeeSchema = new mongoose.Schema({
     ref: ModelNames.DEPARTMENT,
     default: null,
   },
-  _processMasterId: {
-    type: mongoose.Schema.Types.ObjectId,
+  _processMasterId: { 
+    type: mongoose.Schema.Types.ObjectId, 
     ref: ModelNames.PROCESS_MASTER,
     default: null,
   },

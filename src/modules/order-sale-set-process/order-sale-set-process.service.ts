@@ -19,6 +19,7 @@ import { IndexUtils } from 'src/utils/IndexUtils';
 import { OrderSales } from 'src/tableModels/order_sales.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { GlobalConfig } from 'src/config/global_config';
+import { Employee } from 'src/tableModels/employee.model';
 
 @Injectable()
 export class OrderSaleSetProcessService {
@@ -31,6 +32,8 @@ export class OrderSaleSetProcessService {
     private readonly orderSaleSetSubProcessModel: mongoose.Model<OrderSaleSetSubProcesses>,
     @InjectModel(ModelNames.ORDER_SALE_SET_SUB_PROCESS_HISTORIES)
     private readonly orderSaleSetSubProcessHistoriesModel: mongoose.Model<OrderSaleSetSubProcessHistories>,
+    @InjectModel(ModelNames.EMPLOYEES)
+    private readonly employeeModel: mongoose.Model<Employee>,
     @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
     private readonly orderSaleHistoriesModel: mongoose.Model<OrderSaleHistories>,
 
@@ -81,7 +84,7 @@ export class OrderSaleSetProcessService {
             _isLastItem: isLastItem,
             _userId: null,
             _description: mapItem1.description,
-            _index:mapItem1.index,
+            _index: mapItem1.index,
             _orderStatus: 0,
             _processId: mapItem1.processId,
             _createdUserId: _userId_,
@@ -292,6 +295,88 @@ export class OrderSaleSetProcessService {
         await orderSaleSubProcessHistory.save({
           session: transactionSession,
         });
+      }
+
+      if (dto.isLastSetProcess == 0 && dto.orderStatus == 3) {
+        console.log('____a4 1');
+        var orderSaleSetProcess = await this.orderSaleSetProcessModel.aggregate(
+          [
+            {
+              $match: {
+                _orderSaleId: new mongoose.Types.ObjectId(
+                  dto.orderSaleSetProcessId,
+                ),
+                _userId: null,
+                _status: 1,
+              },
+            },
+            { $sort: { _index: 1 } },
+            { $limit: 1 },
+            {
+              $lookup: {
+                from: ModelNames.PROCESS_MASTER,
+                let: { processId: '$_processId' },
+                pipeline: [
+                  { $match: { $expr: { $eq: ['$_id', '$$processId'] } } },
+                ],
+                as: 'processDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$processDetails',
+              },
+            },
+          ],
+        );
+
+        if (orderSaleSetProcess.length == 0) {
+          throw new HttpException(
+            'Next set process not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+        console.log('____a4 2');
+        if (orderSaleSetProcess[0].processDetails._isAutomatic == 1) {
+          console.log('____a4 3');
+          var resultEmployees = await this.employeeModel.aggregate([
+            {
+              $match: {
+                _processMasterId: new mongoose.Types.ObjectId(
+                  orderSaleSetProcess[0]._processId,
+                ),
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                _userId: 1,
+              },
+            },
+            {
+              $lookup: {
+                from: ModelNames.USER_ATTENDANCES,
+                let: { userId: '$_userId' },
+                pipeline: [
+                  {
+                    $match: {
+                      _stopTime: 0,
+                      _status: 1,
+                      $expr: { $eq: ['$_userId', '$$userId'] },
+                    },
+                  },
+                ],
+                as: 'userAttendance',
+              },
+            },
+            {
+              $unwind: {
+                path: '$processDetails',
+              },
+            },
+          ]);
+          console.log('____a4 4 ' + JSON.stringify(resultEmployees));
+        }
       }
 
       if (dto.isLastSetProcess == 1 && dto.orderStatus == 3) {
