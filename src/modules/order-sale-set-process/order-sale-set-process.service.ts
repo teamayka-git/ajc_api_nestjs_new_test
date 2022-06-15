@@ -392,7 +392,7 @@ export class OrderSaleSetProcessService {
                 _id: 1,
                 _userId: 1,
                 userAttendance:{_id:1},
-                workCount:{$size: "setProcessWorkList"}
+                workCount:{$size: "$setProcessWorkList"}
               },
             },
 
