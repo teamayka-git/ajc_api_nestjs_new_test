@@ -303,9 +303,8 @@ export class OrderSaleSetProcessService {
           [
             {
               $match: {
-                _orderSaleId: new mongoose.Types.ObjectId(
+                _orderSaleId: 
                   dto.orderSaleSetProcessId,
-                ),
                 _userId: null,
                 _status: 1,
               },
