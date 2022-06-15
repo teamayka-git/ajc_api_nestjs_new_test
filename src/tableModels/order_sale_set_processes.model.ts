@@ -39,7 +39,7 @@ export interface OrderSaleSetProcesses {
   _id: String; 
   _orderSaleId: String;
   _userId: String;
-  _orderStatus: number;
+  _orderStatus: number; 
   _index:number;
   _description: string;
   _processId: String;

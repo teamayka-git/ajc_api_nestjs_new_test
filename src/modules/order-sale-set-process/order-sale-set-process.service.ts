@@ -370,7 +370,28 @@ export class OrderSaleSetProcessService {
             },
             {
               $match: { 'userAttendance': { $ne: [] } },
-            }
+            },
+            {
+              $lookup: {
+                from: ModelNames.ORDER_SALE_SET_PROCESSES,
+                let: { userId: '$_userId' },
+                pipeline: [
+                  {
+                    $match: {
+                      _orderStatus: {$in:[0,1,2]},
+                      _status: 1,
+                      $expr: { $eq: ['$_userId', '$$userId'] },
+                    },
+                  },
+                ],
+                as: 'userAttendance',
+              },
+            },
+
+
+
+
+
           ]);
           console.log('____a4 4 ' + JSON.stringify(resultEmployees));
         }
