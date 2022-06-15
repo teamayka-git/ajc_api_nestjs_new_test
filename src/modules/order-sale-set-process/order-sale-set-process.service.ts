@@ -352,27 +352,27 @@ export class OrderSaleSetProcessService {
                 _userId: 1,
               },
             },
-            {
-              $lookup: {
-                from: ModelNames.USER_ATTENDANCES,
-                let: { userId: '$_userId' },
-                pipeline: [
-                  {
-                    $match: {
-                      _stopTime: 0,
-                      _status: 1,
-                      $expr: { $eq: ['$_userId', '$$userId'] },
-                    },
-                  },
-                ],
-                as: 'userAttendance',
-              },
-            },
-            {
-              $unwind: {
-                path: '$processDetails',
-              },
-            },
+            // {
+            //   $lookup: {
+            //     from: ModelNames.USER_ATTENDANCES,
+            //     let: { userId: '$_userId' },
+            //     pipeline: [
+            //       {
+            //         $match: {
+            //           _stopTime: 0,
+            //           _status: 1,
+            //           $expr: { $eq: ['$_userId', '$$userId'] },
+            //         },
+            //       },
+            //     ],
+            //     as: 'userAttendance',
+            //   },
+            // },
+            // {
+            //   $unwind: {
+            //     path: '$processDetails',
+            //   },
+            // },
           ]);
           console.log('____a4 4 ' + JSON.stringify(resultEmployees));
         }
