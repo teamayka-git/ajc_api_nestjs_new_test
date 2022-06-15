@@ -368,9 +368,9 @@ export class OrderSaleSetProcessService {
                 as: 'userAttendance',
               },
             },
-            // {
-            //   $match: { 'userAttendance': { $ne: [] } },
-            // }
+            {
+              $match: { 'userAttendance': { $ne: [] } },
+            }
           ]);
           console.log('____a4 4 ' + JSON.stringify(resultEmployees));
         }
