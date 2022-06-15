@@ -346,12 +346,12 @@ export class OrderSaleSetProcessService {
                 ),
               },
             },
-            // {
-            //   $project: {
-            //     _id: 1,
-            //     _userId: 1,
-            //   },
-            // },
+            {
+              $project: {
+                _id: 1,
+                _userId: 1,
+              },
+            },
             {
               $lookup: {
                 from: ModelNames.USER_ATTENDANCES,
