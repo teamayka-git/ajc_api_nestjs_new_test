@@ -304,7 +304,7 @@ export class OrderSaleSetProcessService {
             {
               $match: {
                 _orderSaleId: 
-                  dto.orderSaleSetProcessId,
+                result._orderSaleId,
                 _userId: null,
                 _status: 1,
               },
