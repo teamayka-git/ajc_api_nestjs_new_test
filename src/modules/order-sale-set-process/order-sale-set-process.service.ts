@@ -310,22 +310,22 @@ export class OrderSaleSetProcessService {
               },
             },
             { $sort: { _index: 1 } },
-            // { $limit: 1 },
-            // {
-            //   $lookup: {
-            //     from: ModelNames.PROCESS_MASTER,
-            //     let: { processId: '$_processId' },
-            //     pipeline: [
-            //       { $match: { $expr: { $eq: ['$_id', '$$processId'] } } },
-            //     ],
-            //     as: 'processDetails',
-            //   },
-            // },
-            // {
-            //   $unwind: {
-            //     path: '$processDetails',
-            //   },
-            // },
+            { $limit: 1 },
+            {
+              $lookup: {
+                from: ModelNames.PROCESS_MASTER,
+                let: { processId: '$_processId' },
+                pipeline: [
+                  { $match: { $expr: { $eq: ['$_id', '$$processId'] } } },
+                ],
+                as: 'processDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$processDetails',
+              },
+            },
           ],
         );
 
