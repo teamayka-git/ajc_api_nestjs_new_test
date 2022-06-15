@@ -384,7 +384,7 @@ export class OrderSaleSetProcessService {
                     },
                   },
                 ],
-                as: 'userAttendance',
+                as: 'setProcessWorkList',
               },
             },
 
