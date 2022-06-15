@@ -368,11 +368,9 @@ export class OrderSaleSetProcessService {
                 as: 'userAttendance',
               },
             },
-            {
-              $unwind: {
-                path: '$processDetails',
-              },
-            },
+            // {
+            //   $match: { 'userAttendance': { $ne: [] } },
+            // }
           ]);
           console.log('____a4 4 ' + JSON.stringify(resultEmployees));
         }
