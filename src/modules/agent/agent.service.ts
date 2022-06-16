@@ -229,7 +229,8 @@ export class AgentService {
 
       var password = '';
       if (dto.password == '') {
-        password = new StringUtils().makeid(6);
+          // password = new StringUtils().makeid(6);
+          password ="123456";
       } else {
         password = dto.password;
       }
@@ -286,9 +287,6 @@ export class AgentService {
         _cityId: dto.cityId,
         _lastLogin: 0,
         _userId: resultUserUpdated._id,
-        _commisionAmount: dto.commisionAmount,
-        _commisionPercentage: dto.commisionPercentage,
-        _commisionType: dto.commisionType,
         _dataGuard: dto.dataGuard,
         _createdUserId: _userId_,
         _createdAt: dateTime,
@@ -403,9 +401,6 @@ export class AgentService {
         {
           $set: {
             _cityId: dto.cityId,
-            _commisionAmount: dto.commisionAmount,
-            _commisionPercentage: dto.commisionPercentage,
-            _commisionType: dto.commisionType,
             _dataGuard: dto.dataGuard,
           },
         },
@@ -497,11 +492,7 @@ export class AgentService {
         arrayAggregation.push({ $match: { _cityId: { $in: newSettingsId } } });
       }
 
-      if (dto.commisionType.length > 0) {
-        arrayAggregation.push({
-          $match: { _commisionType: { $in: dto.commisionType } },
-        });
-      }
+      
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
@@ -511,10 +502,6 @@ export class AgentService {
           break;
         case 1:
           arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
-          break;
-
-        case 2:
-          arrayAggregation.push({ $sort: { _commisionType: dto.sortOrder } });
           break;
         case 3:
           arrayAggregation.push({ $sort: { _uid: dto.sortOrder } });

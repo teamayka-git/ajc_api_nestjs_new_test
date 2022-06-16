@@ -59,21 +59,6 @@ export class AgentCreateDto {
   @ApiProperty({})
   cityId: string;
 
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({ description: descriptionListCommisionType })
-  commisionType: number;
-
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({})
-  commisionAmount: number;
-
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({})
-  commisionPercentage: number;
-
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
   )
@@ -104,21 +89,8 @@ export class AgentEditDto {
   @ApiProperty({})
   cityId: string;
 
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({ description: descriptionListCommisionType })
-  commisionType: number;
-
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({})
-  commisionAmount: number;
-
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({})
-  commisionPercentage: number;
-
+  
+  
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
   )
@@ -152,10 +124,7 @@ export class AgentListDto {
   @ApiProperty({ type: [Number], })
   responseFormat: number[];
   
-  @IsArray()
-  @ApiProperty({ type: [Number], description: descriptionListCommisionType })
-  commisionType: number[];
-
+  
   @IsArray()
   @ApiProperty({ type: [String] })
   cityIds: string[];

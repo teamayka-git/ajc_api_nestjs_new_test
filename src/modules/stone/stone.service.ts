@@ -109,7 +109,6 @@ export class StoneService {
         arrayToStates.push({
           _id: stoneId,
           _name: mapItem.name,
-          _weight: mapItem.weight,
           _dataGuard: mapItem.dataGuard,
           _globalGalleryId:
             mapItem['globalGalleryId'] == 'nil'
@@ -206,7 +205,6 @@ export class StoneService {
       }
       var updateObject = {
         _name: dto.name,
-        _weight: dto.weight,
         _dataGuard: dto.dataGuard,
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
@@ -381,9 +379,6 @@ export class StoneService {
           break;
         case 2:
           arrayAggregation.push({ $sort: { _name: dto.sortOrder } });
-          break;
-        case 3:
-          arrayAggregation.push({ $sort: { _weight: dto.sortOrder } });
           break;
       }
 

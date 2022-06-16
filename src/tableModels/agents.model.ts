@@ -11,9 +11,6 @@ export const AgentsSchema = new mongoose.Schema({
     default: null,
   },
   _lastLogin: { type: Number, required: true, default: -1 },
-  _commisionAmount: { type: Number, required: true, default: -1 },
-  _commisionPercentage: { type: Number, required: true, default: -1 },
-  _commisionType: { type: Number, required: true, default: -1 },
   _userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -40,9 +37,6 @@ export interface Agents {
   _cityId: String;
   _uid: String;
   _lastLogin: Number;
-  _commisionAmount: Number;
-  _commisionPercentage: Number;
-  _commisionType: Number;
   _dataGuard: Object;
   _userId: string;
   _createdUserId: String;
@@ -53,7 +47,6 @@ export interface Agents {
 }
 
 AgentsSchema.index({ _status: 1 });
-AgentsSchema.index({ _commisionType: 1 });
 AgentsSchema.index({ _uid: 1, _id: 1 });
 AgentsSchema.index({ _cityId: 1 });
 AgentsSchema.index({ _userId: 1, _id: 1 });
@@ -88,8 +81,5 @@ function schemaPostFunctionForDuplicate(error, doc, next) {
 
 /*
 
-_commisionType:{
-    0 - Percentage
-    1 - Amount
-}
+
 */

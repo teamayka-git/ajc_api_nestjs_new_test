@@ -37,11 +37,6 @@ class StoneCreateList {
   @ApiProperty({ description: descriptionFileOriginalName })
   fileOriginalName: string;
 
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({})
-  weight: number;
-
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
   )
@@ -82,11 +77,7 @@ export class StoneEditDto {
   @ApiProperty({ type: [String] })
   deleteColourLinkingIds: string[];
 
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({})
-  weight: number;
-
+  
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
   )

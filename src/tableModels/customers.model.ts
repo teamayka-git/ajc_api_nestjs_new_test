@@ -37,7 +37,6 @@ export interface Customers {
 }
 
 CustomersSchema.index({ _status: 1 });
-CustomersSchema.index({ _commisionType: 1 });
 CustomersSchema.index({ _uid: 1, _id: 1 });
 CustomersSchema.index({ _cityId: 1 });
 CustomersSchema.index({ _userId: 1, _id: 1 });

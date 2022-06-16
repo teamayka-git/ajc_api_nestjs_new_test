@@ -5,7 +5,6 @@ import { GlobalConfig } from 'src/config/global_config';
 export const StoneSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
   _name: { type: String, required: true, default: 'nil' },
-  _weight: { type: Number, required: true, default: -1 },
   _dataGuard: { type: Object, required: true, default: [] },
   _globalGalleryId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -35,7 +34,6 @@ export const StoneSchema = new mongoose.Schema({
 export interface Stone {
   _id: String;
   _name: String;
-  _weight: Number;
   _globalGalleryId: String;
   _colourId: string;
   _dataGuard: Object;
@@ -48,7 +46,6 @@ export interface Stone {
 
 StoneSchema.index({ _status: 1 });
 StoneSchema.index({ _name: 1, _id: 1 });
-StoneSchema.index({ _weight: 1 });
 StoneSchema.index(
   { _name: 1 },
   { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },

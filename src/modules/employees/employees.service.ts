@@ -231,7 +231,9 @@ export class EmployeesService {
 
       var password = '';
       if (dto.password == '') {
-        password = new StringUtils().makeid(6);
+        // password = new StringUtils().makeid(6);
+        password ="123456";
+
       } else {
         password = dto.password;
       }
