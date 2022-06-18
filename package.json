@@ -38,6 +38,8 @@
     "class-validator": "^0.13.2",
     "cookie-parser": "^1.4.6",
     "express-basic-auth": "^1.2.1",
+    "fastify-static": "^4.7.0",
+    "fastify-swagger": "^5.2.0",
     "image-size": "^1.0.1",
     "mongoose": "^6.1.6",
     "nodemailer": "^6.7.2",

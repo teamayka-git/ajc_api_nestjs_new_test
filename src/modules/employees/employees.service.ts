@@ -121,6 +121,23 @@ export class EmployeesService {
               preserveNullAndEmptyArrays: true,
             },
           },
+          {
+            $lookup: {
+              from: ModelNames.DEPARTMENT,
+              let: { departmentId: '$_departmentId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$departmentId'] } } },
+                { $project: { _password: 0 } },
+              ],
+              as: 'departmentDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$departmentDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
         ])
         .session(transactionSession);
       if (resultUser.length == 0) {
@@ -678,6 +695,9 @@ export class EmployeesService {
           totalCount = resultTotalCount[0].totalCount;
         }
       }
+
+      throw new HttpException('User not found', HttpStatus.INTERNAL_SERVER_ERROR);
+
 
       const responseJSON = {
         message: 'success',
