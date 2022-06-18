@@ -27,7 +27,7 @@ async function bootstrap() {
     };
   }
 
-  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), { httpsOptions });
+  const app = await NestFactory.create(AppModule, { httpsOptions });
   app.use(cookieParser()); //jwt read from cookie
   app.enableCors({
     origin: '*',
