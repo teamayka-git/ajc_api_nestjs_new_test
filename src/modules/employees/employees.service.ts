@@ -111,6 +111,26 @@ export class EmployeesService {
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$employeeId'] } } },
                 { $project: { _password: 0 } },
+
+
+                {
+                  $lookup: {
+                    from: ModelNames.DEPARTMENT,
+                    let: { departmentId: '$_departmentId' },
+                    pipeline: [
+                      { $match: { $expr: { $eq: ['$_id', '$$departmentId'] } } },
+                      { $project: { _password: 0 } },
+                    ],
+                    as: 'departmentDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$departmentDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+
               ],
               as: 'userDetails',
             },
@@ -121,23 +141,7 @@ export class EmployeesService {
               preserveNullAndEmptyArrays: true,
             },
           },
-          {
-            $lookup: {
-              from: ModelNames.DEPARTMENT,
-              let: { departmentId: '$_departmentId' },
-              pipeline: [
-                { $match: { $expr: { $eq: ['$_id', '$$departmentId'] } } },
-                { $project: { _password: 0 } },
-              ],
-              as: 'departmentDetails',
-            },
-          },
-          {
-            $unwind: {
-              path: '$departmentDetails',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
+       
         ])
         .session(transactionSession);
       if (resultUser.length == 0) {
