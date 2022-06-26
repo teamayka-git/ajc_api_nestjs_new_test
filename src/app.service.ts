@@ -166,7 +166,7 @@ export class AppService {
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
 
-    return { message: 'success', data: resultEmployee[0] ,goldTimelinesList:listGoldTimelines,currentDateTime:dateTime};
+    return { message: 'success', data:{userDetails:resultEmployee[0] ,goldTimelinesList:listGoldTimelines,currentDateTime:dateTime} };
   }
 
   async getUser(dto: GetUserDto) {
