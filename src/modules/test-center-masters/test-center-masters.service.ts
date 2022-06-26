@@ -50,6 +50,7 @@ export class TestCenterMastersService {
           _code: mapItem.code,
           _address: mapItem.address,
           _isTaxIgstEnabled: mapItem.isTaxIgstEnabled,
+          _testChargeId: mapItem.testChargeId,
           _cityId: mapItem.cityId,
           _allowerWastage: mapItem.allowedWastage,
           _dataGuard: mapItem.dataGuard,
@@ -133,6 +134,7 @@ export class TestCenterMastersService {
             _name: dto.name,
             _code: dto.code,
             _address: dto.address,
+            _testChargeId: dto.testChargeId,
             _isTaxIgstEnabled: dto.isTaxIgstEnabled,
             _cityId: dto.cityId,
             _allowerWastage: dto.allowedWastage,
@@ -247,6 +249,15 @@ export class TestCenterMastersService {
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
+      
+      if (dto.testChargeIds.length > 0) {
+        var newSettingsId = [];
+        dto.testChargeIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _testChargeId: { $in: newSettingsId } } });
+      }
+
       if (dto.cityIds.length > 0) {
         var newSettingsId = [];
         dto.cityIds.map((mapItem) => {
@@ -299,6 +310,33 @@ export class TestCenterMastersService {
           },
         );
       }
+
+      if (dto.screenType.includes( 103)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.TEST_CHARGE_MASTERS,
+              let: { testChargeId: '$_testChargeId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$testChargeId'] },
+                  },
+                },
+              ],
+              as: 'testChargeDetails',
+            },
+          },
+          {
+            $unwind: { path: '$testChargeDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
+      }
+
+
+
+
+
       if (dto.screenType.includes( 101)) {
         arrayAggregation.push(
           {

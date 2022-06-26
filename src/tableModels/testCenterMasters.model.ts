@@ -9,6 +9,11 @@ export const TestCenterMastersSchema = new mongoose.Schema({
   _address: { type: String, required: true, default: 'nil' },
   _allowerWastage: { type: Number, required: true, default: -1 },
   _isTaxIgstEnabled: { type: Number, required: true, default: -1 },
+  _testChargeId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.TEST_CHARGE_MASTERS,
+    default: null,
+  },
   _dataGuard: { type: Object, required: true, default: [] },
   _cityId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -36,6 +41,7 @@ export interface TestCenterMasters {
   _code: Number;
   _address:string;
   _cityId:string;
+  _testChargeId: String;
   _allowerWastage: Number;
   _isTaxIgstEnabled:number;
   _dataGuard: Object;
@@ -49,6 +55,7 @@ export interface TestCenterMasters {
 
 
 
+TestCenterMastersSchema.index({_testChargeId: 1});
 TestCenterMastersSchema.index({_isTaxIgstEnabled: 1});
 TestCenterMastersSchema.index({_cityId: 1});
 TestCenterMastersSchema.index({_address: 1});
