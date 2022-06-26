@@ -1802,7 +1802,7 @@ export class OrderSalesService {
             pipeline: [
               { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
               {
-                $project: new ModelWeight().userTableLight,
+                $project: new ModelWeight().userTableLight(),
               },
               {
                 $lookup: {
