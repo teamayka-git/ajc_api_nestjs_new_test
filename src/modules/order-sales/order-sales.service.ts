@@ -1588,7 +1588,7 @@ export class OrderSalesService {
         },);
       }
 
-      if (dto.screenType.includes( 100)) {
+      if (dto.screenType.includes( 100)) { 
         arrayAggregation.push(
           {
             $lookup: {
@@ -1596,6 +1596,29 @@ export class OrderSalesService {
               let: { orderSaleId: '$_orderSaleId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$orderSaleId'] } } },
+                {
+                  $lookup: {
+                    from: ModelNames.SHOPS,
+                    let: { shopId: '$_shopId' },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: { $eq: ['$_id', '$$shopId'] },
+                        },
+                      },{$project:{
+                        _name:1,
+                        _uid:1
+                      }}
+                    ],
+                    as: 'shopDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$shopDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
                 {
                   $lookup: {
                     from: ModelNames.ORDER_SALES_DOCUMENTS,
