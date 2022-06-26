@@ -718,9 +718,8 @@ if(sortedArray.length!=0){
                       $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } },
                     },
                     {
-                      $project: {
                         $project: new ModelWeight().globalGalleryTableLight(),
-                      },
+                      
                     },
                   ],
                   as: 'globalGalleryDetails',
@@ -761,9 +760,8 @@ if(sortedArray.length!=0){
                       $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } },
                     },
                     {
-                      $project: {
                         $project: new ModelWeight().globalGalleryTableLight(),
-                      },
+                      
                     },
                   ],
                   as: 'globalGalleryDetails',
