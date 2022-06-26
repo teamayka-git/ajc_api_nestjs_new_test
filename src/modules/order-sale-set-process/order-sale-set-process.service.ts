@@ -20,6 +20,7 @@ import { OrderSales } from 'src/tableModels/order_sales.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { GlobalConfig } from 'src/config/global_config';
 import { Employee } from 'src/tableModels/employee.model';
+import { ModelWeight } from 'src/model_weight/model_weight';
 
 @Injectable()
 export class OrderSaleSetProcessService {
@@ -691,7 +692,7 @@ if(sortedArray.length!=0){
             as: 'processDetails',
           },
         },
-        {
+        { 
           $unwind: {
             path: '$processDetails',
             preserveNullAndEmptyArrays: true,
@@ -706,6 +707,9 @@ if(sortedArray.length!=0){
             pipeline: [
               { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
               {
+                $project: new ModelWeight().userTableLight(),
+              },
+              {
                 $lookup: {
                   from: ModelNames.GLOBAL_GALLERIES,
                   let: { globalGalleryId: '$_globalGalleryId' },
@@ -715,11 +719,7 @@ if(sortedArray.length!=0){
                     },
                     {
                       $project: {
-                        _name: 1,
-                        _docType: 1,
-                        _type: 1,
-                        _uid: 1,
-                        _url: 1,
+                        $project: new ModelWeight().globalGalleryTableLight(),
                       },
                     },
                   ],
@@ -750,6 +750,9 @@ if(sortedArray.length!=0){
             pipeline: [
               { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
               {
+                $project: new ModelWeight().userTableLight(),
+              },
+              {
                 $lookup: {
                   from: ModelNames.GLOBAL_GALLERIES,
                   let: { globalGalleryId: '$_globalGalleryId' },
@@ -759,11 +762,7 @@ if(sortedArray.length!=0){
                     },
                     {
                       $project: {
-                        _name: 1,
-                        _docType: 1,
-                        _type: 1,
-                        _uid: 1,
-                        _url: 1,
+                        $project: new ModelWeight().globalGalleryTableLight(),
                       },
                     },
                   ],
