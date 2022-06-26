@@ -1845,6 +1845,9 @@ export class OrderSalesService {
             pipeline: [
               { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
               {
+                $project: new ModelWeight().userTableLight,
+              },
+              {
                 $lookup: {
                   from: ModelNames.GLOBAL_GALLERIES,
                   let: { globalGalleryId: '$_globalGalleryId' },
@@ -1854,17 +1857,9 @@ export class OrderSalesService {
                         $expr: { $eq: ['$_id', '$$globalGalleryId'] },
                       },
                     },
+                   
                     {
-                      $project: new ModelWeight().userTableLight,
-                    },
-                    {
-                      $project: {
-                        _name: 1,
-                        _docType: 1,
-                        _type: 1,
-                        _uid: 1,
-                        _url: 1,
-                      },
+                      $project: new ModelWeight().globalGalleryTableLight,
                     },
                   ],
                   as: 'globalGalleryDetails',
