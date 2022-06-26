@@ -60,7 +60,7 @@ export class AppService {
   getHello(): string {
     // throw new HttpException('User not found', HttpStatus.INTERNAL_SERVER_ERROR);
     return 'Hello Worldwwwww!';
-  } 
+  }
 
   async me(dto: MeDto, _userId_: string) {
     var dateTime = new Date().getTime();
@@ -159,14 +159,22 @@ export class AppService {
       throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
     }
 
-
-
-    var listGoldTimelines=await this.goldRateTimelinesModel.find({_status:1}).sort({_id:-1}).limit(1);
+    var listGoldTimelines = await this.goldRateTimelinesModel
+      .find({ _status: 1 })
+      .sort({ _id: -1 })
+      .limit(1);
 
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
 
-    return { message: 'success', data: resultEmployee[0] ,goldTimelinesList:listGoldTimelines,currentDateTime:dateTime};
+    return {
+      message: 'success',
+      data: {
+        userDetails: resultEmployee[0],
+        goldTimelinesList: listGoldTimelines,
+        currentDateTime: dateTime,
+      },
+    };
   }
 
   async getUser(dto: GetUserDto) {
@@ -297,7 +305,7 @@ export class AppService {
           {
             $lookup: {
               from: ModelNames.EMPLOYEES,
-              let: { employeeId: '$_employeeId' }, 
+              let: { employeeId: '$_employeeId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$employeeId'] } } },
               ],
@@ -312,8 +320,7 @@ export class AppService {
           },
         );
 
-
-        if (dto.screenType.includes( 108)) {
+        if (dto.screenType.includes(108)) {
           arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
             {
               $lookup: {
@@ -334,8 +341,7 @@ export class AppService {
           );
         }
 
-
-        if (dto.screenType.includes( 109)) {
+        if (dto.screenType.includes(109)) {
           arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
             {
               $lookup: {
@@ -355,12 +361,8 @@ export class AppService {
             },
           );
         }
-
-
-
-
       }
-      if (dto.screenType.includes( 101)) {
+      if (dto.screenType.includes(101)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -378,7 +380,7 @@ export class AppService {
           },
         );
 
-        if (dto.screenType.includes( 110)) {
+        if (dto.screenType.includes(110)) {
           arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
             {
               $lookup: {
@@ -398,9 +400,8 @@ export class AppService {
             },
           );
         }
-
-      } 
-      if (dto.screenType.includes(102) ) {
+      }
+      if (dto.screenType.includes(102)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -419,7 +420,7 @@ export class AppService {
             },
           },
         );
-        if (dto.screenType.includes( 111) ) {
+        if (dto.screenType.includes(111)) {
           arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
             {
               $lookup: {
@@ -467,7 +468,9 @@ export class AppService {
               from: ModelNames.LOGISTICS_PARTNERS,
               let: { logisticsPartnerId: '$_logisticPartnerId' },
               pipeline: [
-                { $match: { $expr: { $eq: ['$_id', '$$logisticsPartnerId'] } } },
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$logisticsPartnerId'] } },
+                },
               ],
               as: 'logisticsPartnerDetails',
             },
@@ -500,7 +503,7 @@ export class AppService {
         );
       }
 
-      if (dto.screenType.includes( 104) ) {
+      if (dto.screenType.includes(104)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -521,7 +524,7 @@ export class AppService {
         );
       }
 
-      if (dto.screenType.includes( 105)) {
+      if (dto.screenType.includes(105)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -542,7 +545,7 @@ export class AppService {
         );
       }
 
-      if (dto.screenType.includes( 106)) {
+      if (dto.screenType.includes(106)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -883,7 +886,7 @@ export class AppService {
             _agentId: null,
             _supplierId: null,
             _testCenterId: null,
-            _logisticPartnerId:null,
+            _logisticPartnerId: null,
             _shopId: null,
             _customType: [],
             _halmarkId: null,
@@ -932,7 +935,7 @@ export class AppService {
         {
           $setOnInsert: {
             _name: 'Kerala',
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -947,8 +950,8 @@ export class AppService {
         {
           $setOnInsert: {
             _name: 'Malappuram',
-            _statesId:resultState._id,
-            _dataGuard: [ 1, 2],
+            _statesId: resultState._id,
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -963,8 +966,8 @@ export class AppService {
         {
           $setOnInsert: {
             _name: 'Malappuram',
-            _districtsId:resultDistrict._id,
-            _dataGuard: [ 1, 2],
+            _districtsId: resultDistrict._id,
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -997,7 +1000,7 @@ export class AppService {
         {
           $setOnInsert: {
             _name: 'White',
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1012,7 +1015,7 @@ export class AppService {
         {
           $setOnInsert: {
             _name: 'White',
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1074,7 +1077,7 @@ export class AppService {
             _vlaueType: 1,
             _json: { basic: 'basic' },
             _type: 2,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1094,7 +1097,7 @@ export class AppService {
             _json: { basic: 'basic' },
             _vlaueType: 1,
             _type: 2,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1115,7 +1118,7 @@ export class AppService {
             _vlaueType: 0,
             _json: { basic: 'basic' },
             _type: 3,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1136,7 +1139,7 @@ export class AppService {
             _vlaueType: 0,
             _json: { basic: 'basic' },
             _type: 3,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1156,7 +1159,7 @@ export class AppService {
             _vlaueType: 0,
             _json: { basic: 'basic' },
             _type: 1,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1176,7 +1179,7 @@ export class AppService {
             _vlaueType: 0,
             _json: { basic: 'basic' },
             _type: 1,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1197,7 +1200,7 @@ export class AppService {
             _vlaueType: 0,
             _json: { basic: 'basic' },
             _type: 0,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1208,7 +1211,6 @@ export class AppService {
         { upsert: true, new: true, session: transactionSession },
       );
 
-    
       await this.generalsModel.findOneAndUpdate(
         { _code: 1009 },
         {
@@ -1219,7 +1221,7 @@ export class AppService {
             _vlaueType: 0,
             _json: { basic: 'basic' },
             _type: 0,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1240,7 +1242,7 @@ export class AppService {
             _vlaueType: 0,
             _json: { basic: 'basic' },
             _type: 0,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1260,7 +1262,7 @@ export class AppService {
             _vlaueType: 0,
             _json: { basic: 'basic' },
             _type: 0,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1280,7 +1282,7 @@ export class AppService {
             _vlaueType: 0,
             _json: { basic: 'basic' },
             _type: 0,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1301,7 +1303,7 @@ export class AppService {
             _number: -1,
             _json: { basic: 'basic' },
             _type: 4,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1321,7 +1323,7 @@ export class AppService {
             _json: { basic: 'basic' },
             _vlaueType: 1,
             _type: 4,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1342,7 +1344,7 @@ export class AppService {
             _json: { basic: 'basic' },
             _vlaueType: 0,
             _type: 4,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1363,7 +1365,7 @@ export class AppService {
             _vlaueType: 0,
             _json: { basic: 'basic' },
             _type: 4,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1384,7 +1386,7 @@ export class AppService {
             _vlaueType: 1,
             _json: { basic: 'basic' },
             _type: 4,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1404,7 +1406,7 @@ export class AppService {
             _vlaueType: 0,
             _json: { basic: 'basic' },
             _type: 3,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1429,7 +1431,7 @@ export class AppService {
               ],
             },
             _type: 5,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1450,7 +1452,7 @@ export class AppService {
             _vlaueType: 0,
             _json: { basic: 'Basic' },
             _type: 3,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1471,7 +1473,7 @@ export class AppService {
             _vlaueType: 0,
             _json: { basic: 'Basic' },
             _type: 0,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1487,7 +1489,7 @@ export class AppService {
         {
           $setOnInsert: {
             _purity: 916,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1503,7 +1505,7 @@ export class AppService {
         {
           $setOnInsert: {
             _purity: 22,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1519,7 +1521,7 @@ export class AppService {
         {
           $setOnInsert: {
             _purity: 18,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1535,7 +1537,7 @@ export class AppService {
         {
           $setOnInsert: {
             _purity: 144,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1553,7 +1555,7 @@ export class AppService {
             _prefix: 'OH',
             _processMasterStatus: 0,
             _code: 1000,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1571,7 +1573,7 @@ export class AppService {
             _prefix: 'SE',
             _processMasterStatus: 0,
             _code: 1001,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1589,7 +1591,7 @@ export class AppService {
             _prefix: 'RM',
             _processMasterStatus: 0,
             _code: 1002,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1607,7 +1609,7 @@ export class AppService {
             _prefix: 'WK',
             _processMasterStatus: 1,
             _code: 1003,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1625,7 +1627,7 @@ export class AppService {
             _prefix: 'PG',
             _processMasterStatus: 0,
             _code: 1004,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1642,7 +1644,7 @@ export class AppService {
             _prefix: 'DV',
             _processMasterStatus: 0,
             _code: 1005,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1661,7 +1663,7 @@ export class AppService {
             _isAutomatic: 0,
             _parentId: null,
             _maxHours: 2,
-            _dataGuard: [ 1, 2],
+            _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
