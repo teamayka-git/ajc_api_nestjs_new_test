@@ -874,6 +874,12 @@ if(sortedArray.length!=0){
             let: { subProcessId: '$_subProcessId' },
             pipeline: [
               { $match: { $expr: { $eq: ['$_id', '$$subProcessId'] } } },
+              {$project:{
+                _id: 1,
+                _name:1,
+                _code: 1,
+                _maxHours: 1,
+              }}
             ],
             as: 'subProcessDetails',
           },
@@ -893,6 +899,10 @@ if(sortedArray.length!=0){
             pipeline: [
               { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
               {
+                $project: new ModelWeight().userTableLight(),
+              
+            },
+              {
                 $lookup: {
                   from: ModelNames.GLOBAL_GALLERIES,
                   let: { globalGalleryId: '$_globalGalleryId' },
@@ -901,13 +911,10 @@ if(sortedArray.length!=0){
                       $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } },
                     },
                     {
-                      $project: {
-                        _name: 1,
-                        _docType: 1,
-                        _type: 1,
-                        _uid: 1,
-                        _url: 1,
-                      },
+                      $project:  {
+                        $project: new ModelWeight().globalGalleryTableLight(),
+                      
+                    },
                     },
                   ],
                   as: 'globalGalleryDetails',
@@ -937,6 +944,10 @@ if(sortedArray.length!=0){
             pipeline: [
               { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
               {
+                $project: new ModelWeight().userTableLight(),
+              
+            },
+              {
                 $lookup: {
                   from: ModelNames.GLOBAL_GALLERIES,
                   let: { globalGalleryId: '$_globalGalleryId' },
@@ -945,13 +956,10 @@ if(sortedArray.length!=0){
                       $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } },
                     },
                     {
-                      $project: {
-                        _name: 1,
-                        _docType: 1,
-                        _type: 1,
-                        _uid: 1,
-                        _url: 1,
-                      },
+                      $project:  {
+                        $project: new ModelWeight().globalGalleryTableLight(),
+                      
+                    },
                     },
                   ],
                   as: 'globalGalleryDetails',
