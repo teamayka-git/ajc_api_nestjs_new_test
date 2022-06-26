@@ -1561,6 +1561,33 @@ export class OrderSalesService {
         });
       }
 
+      if (dto.screenType.includes( 102)) {
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.PROCESS_MASTER,
+            let: { processId: '$_processId' },
+            pipeline: [
+              {
+                $match: {
+                  
+                  $expr: {
+                    $eq: ['$_id', '$$processId'],
+                  },
+                },
+              },
+       
+              
+            ],
+            as: 'pocessMastedDetails',
+          },
+        } ,   {
+          $unwind: {
+            path: '$pocessMastedDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },);
+      }
+
       if (dto.screenType.includes( 100)) {
         arrayAggregation.push(
           {
@@ -1634,7 +1661,7 @@ export class OrderSalesService {
           },
           {
             $unwind: {
-              path: '$orderSaleDetails',
+              path: '$orderSaleDetails', 
               preserveNullAndEmptyArrays: true,
             },
           },

@@ -16,6 +16,9 @@ export const OrderSaleSetProcessesSchema = new mongoose.Schema({
     default: null,
   },
   _index: { type: Number, required: true, default: -1 },
+  _workAssignedTime: { type: Number, required: true, default: -1 },
+  _workCompletedTime: { type: Number, required: true, default: -1 },
+  _workStartedTime: { type: Number, required: true, default: -1 },
   _isLastItem: { type: Number, required: true, default: -1 },
   _orderStatus: { type: Number, required: true, default: -1 },
   _processId: {
@@ -40,6 +43,9 @@ export interface OrderSaleSetProcesses {
   _orderSaleId: String;
   _userId: String;
   _orderStatus: number; 
+  _workAssignedTime: number; 
+  _workStartedTime: number; 
+  _workCompletedTime: number; 
   _index:number;
   _description: string;
   _processId: String;
