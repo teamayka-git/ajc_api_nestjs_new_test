@@ -249,6 +249,7 @@ switch(dto.orderStatus){
         _userId: null,
         _type: dto.setProcessHistoryType,
         _processId: null,
+        _orderSaleSetProcessId: null,
         _createdUserId: _userId_,
         _createdAt: dateTime,
         _description: '',
@@ -267,6 +268,7 @@ switch(dto.orderStatus){
         case 1:
           objDefaultProcessHistory._userId = dto.userId;
           objDefaultProcessHistory._processId = result._processId;
+          objDefaultProcessHistory._orderSaleSetProcessId = dto.orderSaleSetProcessId;
           break;
         case 2:
           objDefaultProcessHistory._processId = result._processId;

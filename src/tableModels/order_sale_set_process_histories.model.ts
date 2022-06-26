@@ -20,6 +20,11 @@ export const OrderSaleSetProcessHistoriesSchema = new mongoose.Schema({
     ref: ModelNames.PROCESS_MASTER,
     default: null,
   },
+  _orderSaleSetProcessId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.ORDER_SALE_SET_PROCESSES,
+    default: null,
+  },
   _type: { type: Number, required: true, default: -1 },
 
   _description: { type: String, default: 'nil' },
@@ -37,6 +42,7 @@ export interface OrderSaleSetProcessHistories {
   _orderSaleId: String;
   _userId: String;
   _processId: String;
+  _orderSaleSetProcessId: String;
   _type: number;
   _description: string;
   _createdUserId: string;
@@ -44,6 +50,7 @@ export interface OrderSaleSetProcessHistories {
   _status: Number;
 }
 
+OrderSaleSetProcessHistoriesSchema.index({ _orderSaleSetProcessId: 1 });
 OrderSaleSetProcessHistoriesSchema.index({ _type: 1 });
 OrderSaleSetProcessHistoriesSchema.index({ _processId: 1 });
 OrderSaleSetProcessHistoriesSchema.index({ _orderSaleId: 1 });
