@@ -211,16 +211,34 @@ export class OrderSaleSetProcessService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+
+var objectUpdateOrderSaleSetProcess={
+  _userId: dto.userId,
+  _orderStatus: dto.orderStatus,
+  _description: dto.descriptionId,
+};
+
+
+switch(dto.orderStatus){
+  case 1:
+    objectUpdateOrderSaleSetProcess["_workAssignedTime"] = dateTime;
+    break;
+    case 2:
+      objectUpdateOrderSaleSetProcess["_workStartedTime"] = dateTime;
+      break;
+      case 3:
+        objectUpdateOrderSaleSetProcess["_workCompletedTime"] = dateTime;
+        break;
+}
+
+
       var result = await this.orderSaleSetProcessModel.findOneAndUpdate(
         {
           _id: dto.orderSaleSetProcessId,
         },
         {
-          $set: {
-            _userId: dto.userId,
-            _orderStatus: dto.orderStatus,
-            _description: dto.descriptionId,
-          },
+          $set:objectUpdateOrderSaleSetProcess ,
         },
         { new: true, session: transactionSession },
       );
