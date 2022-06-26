@@ -1801,9 +1801,9 @@ export class OrderSalesService {
             let: { userId: '$_userId' },
             pipeline: [
               { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
-              {
-                $project: new ModelWeight().userTableLight,
-              },
+              // {
+              //   $project: new ModelWeight().userTableLight,
+              // },
               {
                 $lookup: {
                   from: ModelNames.GLOBAL_GALLERIES,
@@ -1814,9 +1814,9 @@ export class OrderSalesService {
                         $expr: { $eq: ['$_id', '$$globalGalleryId'] },
                       },
                     },
-                    {
-                      $project: new ModelWeight().globalGalleryTableLight,
-                    },
+                    // {
+                    //   $project: new ModelWeight().globalGalleryTableLight,
+                    // },
                   ],
                   as: 'globalGalleryDetails',
                 },
@@ -1844,9 +1844,9 @@ export class OrderSalesService {
             let: { userId: '$_createdUserId' },
             pipeline: [
               { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
-              {
-                $project: new ModelWeight().userTableLight,
-              },
+              // {
+              //   $project: new ModelWeight().userTableLight,
+              // },
               {
                 $lookup: {
                   from: ModelNames.GLOBAL_GALLERIES,
@@ -1858,9 +1858,9 @@ export class OrderSalesService {
                       },
                     },
                    
-                    {
-                      $project: new ModelWeight().globalGalleryTableLight,
-                    },
+                    // {
+                    //   $project: new ModelWeight().globalGalleryTableLight,
+                    // },
                   ],
                   as: 'globalGalleryDetails',
                 },
