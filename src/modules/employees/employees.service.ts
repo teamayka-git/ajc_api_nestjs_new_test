@@ -700,7 +700,6 @@ export class EmployeesService {
         }
       }
 
-      throw new HttpException('User not found', HttpStatus.INTERNAL_SERVER_ERROR);
 
 
       const responseJSON = {
