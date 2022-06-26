@@ -29,6 +29,7 @@ import { ProcessMaster } from 'src/tableModels/processMaster.model';
 import { GlobalConfig } from 'src/config/global_config';
 import { OrderSaleSetProcesses } from 'src/tableModels/order_sale_set_processes.model';
 import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
+import { ModelWeight } from 'src/model_weight/model_weight';
 
 @Injectable()
 export class OrderSalesService {
@@ -1801,6 +1802,9 @@ export class OrderSalesService {
             pipeline: [
               { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
               {
+                $project: new ModelWeight().userTableLight,
+              },
+              {
                 $lookup: {
                   from: ModelNames.GLOBAL_GALLERIES,
                   let: { globalGalleryId: '$_globalGalleryId' },
@@ -1811,13 +1815,7 @@ export class OrderSalesService {
                       },
                     },
                     {
-                      $project: {
-                        _name: 1,
-                        _docType: 1,
-                        _type: 1,
-                        _uid: 1,
-                        _url: 1,
-                      },
+                      $project: new ModelWeight().globalGalleryTableLight,
                     },
                   ],
                   as: 'globalGalleryDetails',
@@ -1855,6 +1853,9 @@ export class OrderSalesService {
                       $match: {
                         $expr: { $eq: ['$_id', '$$globalGalleryId'] },
                       },
+                    },
+                    {
+                      $project: new ModelWeight().userTableLight,
                     },
                     {
                       $project: {
