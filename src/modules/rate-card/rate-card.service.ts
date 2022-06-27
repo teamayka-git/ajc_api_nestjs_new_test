@@ -119,19 +119,22 @@ export class RateCardService {
         session: transactionSession,
       });
 
-      await this.rateCardPercentagessModel.updateMany(
-        {
-          _id: { $in: dto.removePercentageIds },
-        },
-        {
-          $set: {
-            _updatedUserId: _userId_,
-            _updatedAt: dateTime,
-            _status: 2,
+      for (var i = 0; i < dto.arrayUpdate.length; i++) {
+        await this.rateCardPercentagessModel.findOneAndUpdate(
+          {
+            _id: dto.arrayUpdate[i].ratecardPercentageId,
           },
-        },
-        { new: true, session: transactionSession },
-      );
+          {
+            $set: {
+              _subCategoryId: dto.arrayUpdate[i].subCategoryId,
+              _percentage: dto.arrayUpdate[i].percentage,
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
 
       const responseJSON = { message: 'success', data: result };
       if (
@@ -269,7 +272,7 @@ export class RateCardService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.includes( 100)) {
+      if (dto.screenType.includes(100)) {
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.RATE_CARD_PERCENTAGESS,
@@ -308,7 +311,7 @@ export class RateCardService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.includes( 0)) {
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,

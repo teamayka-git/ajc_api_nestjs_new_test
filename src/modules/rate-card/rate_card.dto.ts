@@ -45,6 +45,22 @@ class RateCardEditList {
 
 }
 
+class RateCardPercentageEditList {
+
+  @IsNumber()
+  @ApiProperty({})
+  ratecardPercentageId: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  percentage: number;
+  
+  @IsString()
+  @ApiProperty({})
+  subCategoryId:string;
+
+}
+
 
 export class RateCardCreateDto {
   @IsArray()
@@ -85,11 +101,15 @@ export class RateCardEditDto {
   @Type(() => RateCardEditList)
   arrayAdd: RateCardEditList[];
   
+
   
   @IsArray()
-  @ApiProperty({ type: [String] })
-  removePercentageIds: string[];
-
+  @ApiProperty({type:[RateCardPercentageEditList]})
+  @ValidateNested({ each: true })
+  @Type(() => RateCardPercentageEditList)
+  arrayUpdate: RateCardPercentageEditList[];
+  
+  
 }
 
 export class RateCardListDto {
