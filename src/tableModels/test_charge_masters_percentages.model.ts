@@ -3,7 +3,7 @@ import { ModelNames } from 'src/common/model_names';
 import { GlobalConfig } from 'src/config/global_config';
 
 
-export const TestChargersMastersSchema = new mongoose.Schema({
+export const TestChargePercentagesSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
     _testChargeId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.TEST_CHARGE_MASTERS, default: null },
     _groupId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.GROUP_MASTERS, default: null },
@@ -16,7 +16,7 @@ export const TestChargersMastersSchema = new mongoose.Schema({
     _status: { type: Number, required: true, default: -1 },
 });
  
-export interface TestChargersMasters {
+export interface TestChargePercentages {
     _id: String;
     _testChargeId: String;
     _groupId: String;
@@ -29,10 +29,10 @@ export interface TestChargersMasters {
     _status: Number;
 }
 
-TestChargersMastersSchema.index({_testChargeId: 1});
-TestChargersMastersSchema.index({_status: 1});
-TestChargersMastersSchema.index({_percentage: 1});
-TestChargersMastersSchema.index({_name: 1});
+TestChargePercentagesSchema.index({_testChargeId: 1});
+TestChargePercentagesSchema.index({_status: 1});
+TestChargePercentagesSchema.index({_percentage: 1});
+TestChargePercentagesSchema.index({_name: 1});
 
 
 

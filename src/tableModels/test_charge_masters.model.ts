@@ -3,7 +3,7 @@ import { ModelNames } from 'src/common/model_names';
 import { GlobalConfig } from 'src/config/global_config';
 
 
-export const TestChargersPercentagesSchema = new mongoose.Schema({
+export const TestChargersMastersSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
   
   _name: { type: String, required: true, default: 'nil' },
@@ -14,7 +14,7 @@ export const TestChargersPercentagesSchema = new mongoose.Schema({
     _status: { type: Number, required: true, default: -1 },
 });
  
-export interface TestChargersPercentages {
+export interface TestChargersMasters {
     _id: String;
     _name: String;
     _createdUserId:String;
@@ -24,8 +24,8 @@ export interface TestChargersPercentages {
     _status: Number;
 }
 
-TestChargersPercentagesSchema.index({_status: 1});
-TestChargersPercentagesSchema.index({_name: 1});
+TestChargersMastersSchema.index({_status: 1});
+TestChargersMastersSchema.index({_name: 1});
 
 
 

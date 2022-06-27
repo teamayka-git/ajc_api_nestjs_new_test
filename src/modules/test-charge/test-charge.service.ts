@@ -2,10 +2,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { ModelNames } from 'src/common/model_names';
 import * as mongoose from 'mongoose';
-import { TestChargersMasters } from 'src/tableModels/test_charge_masters_percentages.model';
-import { TestChargersPercentages } from 'src/tableModels/test_charge_masters.model';
 import { RemovePercentagesDto, TestChargeCreateDto, TestChargeEditDto, TestChargeListDto, TestChargeStatusChangeDto } from './test_charge.dto';
 import { GlobalConfig } from 'src/config/global_config';
+import { TestChargersMasters } from 'src/tableModels/test_charge_masters.model';
+import { TestChargePercentages } from 'src/tableModels/test_charge_masters_percentages.model';
 
 @Injectable()
 export class TestChargeService {
@@ -16,7 +16,7 @@ export class TestChargeService {
     @InjectModel(ModelNames.TEST_CHARGE_MASTERS)
     private readonly testChargeModel: mongoose.Model<TestChargersMasters>,
     @InjectModel(ModelNames.TEST_CHARGE_ITEMS_MASTERS)
-    private readonly testChargePercentagessModel: mongoose.Model<TestChargersPercentages>,
+    private readonly testChargePercentagessModel: mongoose.Model<TestChargePercentages>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async create(dto: TestChargeCreateDto, _userId_: string) {
