@@ -55,10 +55,7 @@ class TestChargePercentageEditList {
   @ApiProperty({})
   percentage: number;
   
-  @IsString()
-  @ApiProperty({})
-  groupId:string;
-
+  
 }
 
 

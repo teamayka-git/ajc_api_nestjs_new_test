@@ -55,9 +55,6 @@ class RateCardPercentageEditList {
   @ApiProperty({})
   percentage: number;
   
-  @IsString()
-  @ApiProperty({})
-  subCategoryId:string;
 
 }
 

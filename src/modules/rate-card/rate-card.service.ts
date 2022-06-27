@@ -126,7 +126,6 @@ export class RateCardService {
           },
           {
             $set: {
-              _subCategoryId: dto.arrayUpdate[i].subCategoryId,
               _percentage: dto.arrayUpdate[i].percentage,
               _updatedUserId: _userId_,
               _updatedAt: dateTime,

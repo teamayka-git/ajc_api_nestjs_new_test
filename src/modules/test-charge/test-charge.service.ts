@@ -123,7 +123,6 @@ export class TestChargeService {
           },
           {
             $set: {
-                _groupId: dto.arrayUpdate[i].groupId,
               _percentage: dto.arrayUpdate[i].percentage,
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
