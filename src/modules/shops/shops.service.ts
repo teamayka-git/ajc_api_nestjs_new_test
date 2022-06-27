@@ -358,7 +358,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
       arrayToUsers.push({
         _email: dto.email,
         _name: dto.name,
-        _gender: dto.gender,
+        _gender: 2,
         _password: encryptedPasswordShop,
         _mobile: dto.mobile,
         _globalGalleryId: globalGalleryId,
@@ -518,14 +518,14 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         _rateBaseMasterId: dto.rateBaseMasterId,
         _stonePricing: dto.stonePricing,
         _chatPermissions: dto.chatPermissions,
-        _agentId: dto.agentId,
+        _agentId: 
+        dto.agentId == 'nil' || dto.agentId == '' ? null : dto.agentId,
         _agentCommision: dto.agentCommision,
         _dataGuard: dto.dataGuard,
       };
       var objUser = {
         _email: dto.email,
         _name: dto.name,
-        _gender: dto.gender,
         _mobile: dto.mobile,
       };
       //globalGalleryAdd

@@ -279,11 +279,6 @@ export class ShopCreateDto {
   @ApiProperty({})
   email: string;
 
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({})
-  gender: number;
-
   @IsString()
   @ApiProperty({})
   mobile: string;
@@ -463,11 +458,6 @@ export class ShopEditeDto {
   @IsString()
   @ApiProperty({})
   email: string;
-
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({})
-  gender: number;
 
   @IsString()
   @ApiProperty({})

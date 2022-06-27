@@ -43,7 +43,7 @@ export class FactoryCalculationTypeMasterService {
 
         mapItem.arrayItems.map((mapitem1) => {
           arrayToCalculationMasterItems.push({
-            _subCategoryId: mapitem1.subCategoryName,
+            _subCategoryId: mapitem1.subCategoryId,
             _factoryCalculationMasterId: calculationMasterId,
             _percentage: mapitem1.percentage,
             _createdUserId: _userId_,
@@ -111,7 +111,7 @@ export class FactoryCalculationTypeMasterService {
       var arrayToCalculationMasterItems = [];
       dto.newItems.map((mapitem1) => {
         arrayToCalculationMasterItems.push({
-          _subCategoryId: mapitem1.subCategoryName,
+          _subCategoryId: mapitem1.subCategoryId,
           _factoryCalculationMasterId: dto.calculationMasterId,
           _percentage: mapitem1.percentage,
           _createdUserId: _userId_,
@@ -139,7 +139,7 @@ for(var i=0;i<dto.arrayUpdate.length;i++){
     },
     {
       $set: {
-        _subCategoryId: dto.arrayUpdate[i].subCategoryName,
+        _subCategoryId: dto.arrayUpdate[i].subCategoryId,
         _percentage: dto.arrayUpdate[i].percentage,
         _updatedUserId: _userId_,
         _updatedAt: dateTime,

@@ -23,7 +23,7 @@ const descriptionType = '0-Percentage, 1-Amount';
 class FactoryCalculationMasterItemsCreateItemsList {
   @IsString()
   @ApiProperty({})
-  subCategoryName: string;
+  subCategoryId: string;
 
   @IsNumber()
   @ApiProperty({})
@@ -37,7 +37,7 @@ class FactoryCalculationMasterItemsEditItemsList {
   
   @IsString()
   @ApiProperty({})
-  subCategoryName: string;
+  subCategoryId: string;
 
 
   @IsNumber()
