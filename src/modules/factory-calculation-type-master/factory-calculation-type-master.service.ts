@@ -45,8 +45,7 @@ export class FactoryCalculationTypeMasterService {
           arrayToCalculationMasterItems.push({
             _subCategoryId: mapitem1.subCategoryName,
             _factoryCalculationMasterId: calculationMasterId,
-            _labourCharge: mapitem1.labourCharge,
-            _type: mapitem1.type,
+            _percentage: mapitem1.percentage,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -114,8 +113,7 @@ export class FactoryCalculationTypeMasterService {
         arrayToCalculationMasterItems.push({
           _subCategoryId: mapitem1.subCategoryName,
           _factoryCalculationMasterId: dto.calculationMasterId,
-          _labourCharge: mapitem1.labourCharge,
-          _type: mapitem1.type,
+          _percentage: mapitem1.percentage,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
@@ -142,8 +140,7 @@ for(var i=0;i<dto.arrayUpdate.length;i++){
     {
       $set: {
         _subCategoryId: dto.arrayUpdate[i].subCategoryName,
-        _labourCharge: dto.arrayUpdate[i].labourCharge,
-        _type: dto.arrayUpdate[i].type,
+        _percentage: dto.arrayUpdate[i].percentage,
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
       },

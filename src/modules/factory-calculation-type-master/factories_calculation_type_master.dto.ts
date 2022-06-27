@@ -26,12 +26,8 @@ class FactoryCalculationMasterItemsCreateItemsList {
   subCategoryName: string;
 
   @IsNumber()
-  @ApiProperty({ description: descriptionType })
-  type: number;
-
-  @IsNumber()
   @ApiProperty({})
-  labourCharge: number;
+  percentage: number;
 }
 
 class FactoryCalculationMasterItemsEditItemsList {
@@ -43,13 +39,10 @@ class FactoryCalculationMasterItemsEditItemsList {
   @ApiProperty({})
   subCategoryName: string;
 
-  @IsNumber()
-  @ApiProperty({ description: descriptionType })
-  type: number;
 
   @IsNumber()
   @ApiProperty({})
-  labourCharge: number;
+  percentage: number;
 }
 
 class FactoriesCalculationMasterCreateList {

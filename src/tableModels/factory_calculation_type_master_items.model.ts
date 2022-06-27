@@ -14,8 +14,7 @@ export const FactoryCalculationTypeMasterItemsSchema = new mongoose.Schema({
     ref: ModelNames.SUB_CATEGORIES,
     default: null,
   },
-  _labourCharge: { type: Number, required: true, default: -1 },
-  _type: { type: Number, required: true, default: -1 },
+  _percentage: { type: Number, required: true, default: -1 },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -35,8 +34,7 @@ export interface FactoryCalculationTypeMasterItems {
   _id: String;
   _subCategoryId: String;
   _factoryCalculationMasterId: string;
-  _labourCharge: Number;
-  _type: Number;
+  _percentage: Number;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -50,12 +48,7 @@ FactoryCalculationTypeMasterItemsSchema.index({
 });
 FactoryCalculationTypeMasterItemsSchema.index({ _subCategoryId: 1 });
 FactoryCalculationTypeMasterItemsSchema.index({ _labourCharge: 1 });
-FactoryCalculationTypeMasterItemsSchema.index({ _type: 1 });
 FactoryCalculationTypeMasterItemsSchema.index({ _createdUserId: 1 });
 
 /*
-_type:{
-  0 - percentage
-  1 - amount
-}
  */
