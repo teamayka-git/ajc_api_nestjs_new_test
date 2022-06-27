@@ -472,7 +472,7 @@ export class AgentService {
 
         arrayAggregation.push({
           $match: {
-            $or: [{ _id: { $in: userIdsSearch } }, { _uid: dto.searchingText }],
+            $or: [{ _userId: { $in: userIdsSearch } }, { _uid: dto.searchingText }],
           },
         });
       }
