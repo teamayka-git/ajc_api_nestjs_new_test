@@ -54,6 +54,11 @@ class SubCategoriesCreateList {
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
+  rewardPoint: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
   defaultValueAdditionPercentage: number;
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
@@ -104,6 +109,10 @@ export class SubCategoriesEditDto {
   @IsNumber()
   @ApiProperty({})
   hmsealing: number;
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  rewardPoint: number;
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})

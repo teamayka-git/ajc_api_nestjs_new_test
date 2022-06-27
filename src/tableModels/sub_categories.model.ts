@@ -15,6 +15,7 @@ export const SubCategoriesSchema = new mongoose.Schema({
   _hmSealing: { type: Number, required: true, default: -1 },
   _defaultValueAdditionPercentage: { type: Number, required: true, default: -1 },
   _globalGalleryId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.GLOBAL_GALLERIES, default: null },
+  _rewardPoint: { type: Number, required: true, default: -1 },
   _dataGuard: { type:Object, required: true, default: [] },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -39,6 +40,7 @@ export interface SubCategories {
   _categoryId: String;
   _hmSealing: Number;
   _defaultValueAdditionPercentage: Number;
+  _rewardPoint: Number;
   _globalGalleryId:String;
   _dataGuard:Object;
   _createdUserId: String;
@@ -48,6 +50,7 @@ export interface SubCategories {
   _status: Number;
 }
 
+SubCategoriesSchema.index({_rewardPoint: 1});
 SubCategoriesSchema.index({_status: 1});
 SubCategoriesSchema.index({ _description: 1 });
 SubCategoriesSchema.index({ _categoryId: 1 });

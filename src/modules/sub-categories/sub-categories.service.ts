@@ -124,6 +124,7 @@ export class SubCategoriesService {
           _code: mapItem.code,
           _description: mapItem.description,
           _categoryId: mapItem.categoryId,
+          _rewardPoint:mapItem.rewardPoint,
           _hmSealing: mapItem.hmsealing,
           _defaultValueAdditionPercentage:
             mapItem.defaultValueAdditionPercentage,
@@ -229,6 +230,7 @@ export class SubCategoriesService {
         _description: dto.description,
         _categoryId: dto.categoryId,
         _hmSealing: dto.hmsealing,
+        _rewardPoint:dto.rewardPoint,
         _defaultValueAdditionPercentage: dto.defaultValueAdditionPercentage,
         _dataGuard: dto.dataGuard,
         _updatedUserId: _userId_,
