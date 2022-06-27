@@ -537,7 +537,7 @@ export class SupplierService {
           {
             $lookup: {
               from: ModelNames.USER,
-              let: { userId: '$_id' },
+              let: { userId: '$_userId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_supplierId', '$$userId'] } } },
               ],
