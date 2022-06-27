@@ -47,9 +47,10 @@ class TestChargeEditList {
 
 class TestChargePercentageEditList {
 
-  @IsNumber()
+  
+  @IsString()
   @ApiProperty({})
-  testChargePercentageId: number;
+  testChargePercentageId:string;
 
   @IsNumber()
   @ApiProperty({})
