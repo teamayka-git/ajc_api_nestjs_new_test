@@ -476,7 +476,7 @@ export class SupplierService {
         arrayAggregation.push({
           $match: {
             $or: [
-              { _id: { $in: userIdsSearch } },
+              { _userId: { $in: userIdsSearch } },
               { _address: dto.searchingText },
             ],
           },

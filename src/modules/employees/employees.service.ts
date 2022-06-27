@@ -495,7 +495,7 @@ export class EmployeesService {
                 _status: { $in: dto.statusArray },
               },
             },
-            { $project: { _id: 1 } },
+            { $project: { _id: 1 } }, 
           ])
           .session(transactionSession);
 
@@ -506,7 +506,7 @@ export class EmployeesService {
 
         arrayAggregation.push({
           $match: {
-            $or: [{ _id: { $in: userIdsSearch } }, { _uid: dto.searchingText }],
+            $or: [{ _userId: { $in: userIdsSearch } }, { _uid: dto.searchingText }],
           },
         });
       }
