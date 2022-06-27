@@ -115,7 +115,7 @@ export class RateCardService {
         });
       });
 
-      var result11 = await this.rateCardsModel.insertMany(arrayToStates, {
+      var result11 = await this.rateCardPercentagessModel.insertMany(arrayToStates, {
         session: transactionSession,
       });
 

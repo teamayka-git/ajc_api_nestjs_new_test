@@ -47,9 +47,9 @@ class RateCardEditList {
 
 class RateCardPercentageEditList {
 
-  @IsNumber()
+  @IsString()
   @ApiProperty({})
-  ratecardPercentageId: number;
+  ratecardPercentageId:string;
 
   @IsNumber()
   @ApiProperty({})

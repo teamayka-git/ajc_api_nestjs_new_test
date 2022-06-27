@@ -22,6 +22,7 @@ export enum ModelNames {
   LOGISTICS_PARTNERS = 'logistics_partners',
   TEST_CENTER_MASTERS = 'test_center_masters',
   TEST_CHARGE_MASTERS = 'test_charge_masters',
+  TEST_CHARGE_ITEMS_MASTERS = 'test_charge_items_masters',
   FACTORIES = 'factories',
   AGENTS = 'agents',
   SUPPLIERS = 'suppliers',

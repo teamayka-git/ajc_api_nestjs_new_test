@@ -34,6 +34,24 @@ class FactoryCalculationMasterItemsCreateItemsList {
   labourCharge: number;
 }
 
+class FactoryCalculationMasterItemsEditItemsList {
+  @IsString()
+  @ApiProperty({})
+  factoryCalculationItemId: string;
+  
+  @IsString()
+  @ApiProperty({})
+  subCategoryName: string;
+
+  @IsNumber()
+  @ApiProperty({ description: descriptionType })
+  type: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  labourCharge: number;
+}
+
 class FactoriesCalculationMasterCreateList {
   @IsString()
   @ApiProperty({})
@@ -68,9 +86,15 @@ export class FactoryCalculationMasterEditDto {
   @Type(() => FactoryCalculationMasterItemsCreateItemsList)
   newItems: FactoryCalculationMasterItemsCreateItemsList[];
 
+  
   @IsArray()
-  @ApiProperty({ type: [String] })
-  removeCalculationItemsIds: string[];
+  @ApiProperty({ type: [FactoryCalculationMasterItemsEditItemsList] })
+  @ValidateNested({ each: true })
+  @Type(() => FactoryCalculationMasterItemsEditItemsList)
+  arrayUpdate: FactoryCalculationMasterItemsEditItemsList[];
+
+  
+  
 }
 
 export class FactoryCalculationMasterListDto {

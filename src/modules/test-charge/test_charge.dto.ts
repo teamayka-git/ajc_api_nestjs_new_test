@@ -13,68 +13,106 @@ import { Optional } from '@nestjs/common';
 
 
 const descriptionStatus="0-Inactive, 1-Active, 2-Delete";
-const descriptionListScreenTypeForList="0-total documents count, 100-group details";
+const descriptionListScreenTypeForList="0-total documents count, 100-list linked percentages";
 const descriptionListDataGuard="0-edit protect, 1-disabe protect, 2-delete protect";
-
 const descriptionListSortOrder="1-ascending, -1-descending";
-const descriptionListSortType="0-Created Date, 1-Status,2-Charge";
-const descriptionListScreenTypeForFilterLoading="0-total documents count, 100-item details";
+const descriptionListSortType="0-Created Date, 1-Status,2-name";
 
 
 
 
-class TestChargeMastersCreateList {
 
-  @IsString()
-  @ApiProperty({})
-  groupId: string;
+class TestChargeCreateList {
 
-  
   @IsNumber()
   @ApiProperty({})
-  charge: number;
+  percentage: number;
+  
+  @IsString()
+  @ApiProperty({})
+  groupId:string;
 
-  @IsArray()
-  @ApiProperty({ type: [Number],description:descriptionListDataGuard })
-  dataGuard:number[];
+}
+class TestChargeEditList {
+
+  @IsNumber()
+  @ApiProperty({})
+  percentage: number;
   
+  @IsString()
+  @ApiProperty({})
+  groupId:string;
+
+}
+
+class TestChargePercentageEditList {
+
+  @IsNumber()
+  @ApiProperty({})
+  testChargePercentageId: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  percentage: number;
   
+  @IsString()
+  @ApiProperty({})
+  groupId:string;
+
 }
 
 
-export class TestChargeMastersCreateDto {
+export class TestChargeCreateDto {
   @IsArray()
-  @ApiProperty({type:[TestChargeMastersCreateList]})
+  @ApiProperty({type:[TestChargeCreateList]})
   @ValidateNested({ each: true })
-  @Type(() => TestChargeMastersCreateList)
-  array: TestChargeMastersCreateList[];
+  @Type(() => TestChargeCreateList)
+  array: TestChargeCreateList[];
+
+  
+  @IsString()
+  @ApiProperty({})
+  testChargeName:string;
 
   
 }
-export class TestChargeMastersEditDto {
+export class RemovePercentagesDto {
+ 
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  removePercentageIds: string[];
+
+  
+}
+export class TestChargeEditDto {
+
 
 
   @IsString()
   @ApiProperty({})
-  testChargeMastersId: string;
-
-  
+  testChargeId:string;
   @IsString()
   @ApiProperty({})
-  groupId: string;
-
-  
-  @IsNumber()
-  @ApiProperty({})
-  charge: number;
+  testChargeName:string;
 
   @IsArray()
-  @ApiProperty({ type: [Number],description:descriptionListDataGuard })
-  dataGuard:number[];
+  @ApiProperty({type:[TestChargeEditList]})
+  @ValidateNested({ each: true })
+  @Type(() => TestChargeEditList)
+  arrayAdd: TestChargeEditList[];
+  
+
+  
+  @IsArray()
+  @ApiProperty({type:[TestChargePercentageEditList]})
+  @ValidateNested({ each: true })
+  @Type(() => TestChargePercentageEditList)
+  arrayUpdate: TestChargePercentageEditList[];
+  
   
 }
 
-export class TestChargeMastersListDto {
+export class TestChargeListDto {
 
   @IsNumber()
   @ApiProperty({description:descriptionListSortType})
@@ -102,8 +140,9 @@ export class TestChargeMastersListDto {
 
   @IsArray()
   @ApiProperty({ type: [String] })
-  testChargeMastersIds: string[];
+  testChargeIds: string[];
 
+  
   @IsNumber()
   @ApiProperty({})
   limit: number;
@@ -118,41 +157,16 @@ export class TestChargeMastersListDto {
 }
 
 
-export class TestChargeMastersStatusChangeDto {
+export class TestChargeStatusChangeDto {
 
 
   @IsArray()
   @ApiProperty({ type: [String] })
-  testChargeMastersIds: string[];
+  testChargeIds: string[];
 
 
   @IsNumber()
   @ApiProperty({description:descriptionStatus})
   status: number;
-
-}
-export class ListFilterLocadingTestChargeDto {
-  @IsArray()
-  @ArrayMinSize(1)
-  @ApiProperty({ type: [Number],description:descriptionStatus })
-  statusArray:number[];
-
-  @IsArray()
-  @ApiProperty({ type: [Number],description:descriptionListScreenTypeForFilterLoading })
-  screenType:number[];
-  
-
-  @IsArray()
-  @ApiProperty({ type: [Number], })
-  responseFormat: number[];
-  
-  @IsNumber()
-  @ApiProperty({})
-  limit: number;
-
-
-  @IsNumber()
-  @ApiProperty({})
-  skip: number;
 
 }

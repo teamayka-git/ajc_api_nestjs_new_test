@@ -132,21 +132,29 @@ export class FactoryCalculationTypeMasterService {
           },
         );
       }
-      if (dto.removeCalculationItemsIds.length > 0) {
-        await this.factoryCalculationMasterItemsModel.updateMany(
-          {
-            _id: { $in: dto.removeCalculationItemsIds },
-          },
-          {
-            $set: {
-              _updatedUserId: _userId_,
-              _updatedAt: dateTime,
-              _status: 2,
-            },
-          },
-          { new: true, session: transactionSession },
-        );
-      }
+      
+
+for(var i=0;i<dto.arrayUpdate.length;i++){
+  await this.factoryCalculationMasterItemsModel.findOneAndUpdate(
+    {
+      _id: dto.arrayUpdate[i].factoryCalculationItemId,
+    },
+    {
+      $set: {
+        _subCategoryId: dto.arrayUpdate[i].subCategoryName,
+        _labourCharge: dto.arrayUpdate[i].labourCharge,
+        _type: dto.arrayUpdate[i].type,
+        _updatedUserId: _userId_,
+        _updatedAt: dateTime,
+      },
+    },
+    { new: true, session: transactionSession },
+  );
+}
+
+
+
+
 
       const responseJSON = { message: 'success', data: result };
       if (

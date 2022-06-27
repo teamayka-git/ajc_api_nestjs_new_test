@@ -37,7 +37,6 @@ import { UnitMastersModule } from './modules/unit-masters/unit-masters.module';
 import { TdsMastersModule } from './modules/tds-masters/tds-masters.module';
 import { TcsMastersModule } from './modules/tcs-masters/tcs-masters.module';
 import { TestCenterMastersModule } from './modules/test-center-masters/test-center-masters.module';
-import { TestChargeMastersModule } from './modules/test-charge-masters/test-charge-masters.module';
 import { FactoriesModule } from './modules/factories/factories.module';
 import { AgentModule } from './modules/agent/agent.module';
 import { SupplierModule } from './modules/supplier/supplier.module';
@@ -78,6 +77,7 @@ import { DeliveryModule } from './modules/delivery/delivery.module';
 import { ResponseFormatModule } from './modules/response-format/response-format.module';
 import { GoldRateTimelinesSchema } from './tableModels/gold_rate_timelines.model';
 import { LogisticsPartnersModule } from './modules/logistics-partners/logistics-partners.module';
+import { TestChargeModule } from './modules/test-charge/test-charge.module';
 
 @Module({
   imports: [
@@ -138,7 +138,6 @@ import { LogisticsPartnersModule } from './modules/logistics-partners/logistics-
     TdsMastersModule,
     TcsMastersModule,
     TestCenterMastersModule,
-    TestChargeMastersModule,
     FactoriesModule,
     AgentModule,
     SupplierModule,
@@ -167,6 +166,7 @@ import { LogisticsPartnersModule } from './modules/logistics-partners/logistics-
     DeliveryModule,
     ResponseFormatModule,
     LogisticsPartnersModule,
+    TestChargeModule,
 
     // SalesReturnRequestStatusesModule,
   ],

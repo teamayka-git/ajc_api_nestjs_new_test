@@ -3,11 +3,10 @@ import { ModelNames } from 'src/common/model_names';
 import { GlobalConfig } from 'src/config/global_config';
 
 
-export const TestChargersMastersStoneSchema = new mongoose.Schema({
+export const TestChargersPercentagesSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
-    _groupId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.GROUP_MASTERS, default: null },
-    _charge:  { type: Number, required: true, default: -1 },
-    _dataGuard: { type:Object, required: true, default: [] },
+  
+  _name: { type: String, required: true, default: 'nil' },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
     _updatedUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
@@ -15,11 +14,9 @@ export const TestChargersMastersStoneSchema = new mongoose.Schema({
     _status: { type: Number, required: true, default: -1 },
 });
  
-export interface TestChargersMasters {
+export interface TestChargersPercentages {
     _id: String;
-    _groupId: String;
-    _charge: Number;
-    _dataGuard:Object;
+    _name: String;
     _createdUserId:String;
     _createdAt:  Number;
     _updatedUserId: String;
@@ -27,9 +24,8 @@ export interface TestChargersMasters {
     _status: Number;
 }
 
-TestChargersMastersStoneSchema.index({_status: 1});
-TestChargersMastersStoneSchema.index({_charge: 1});
-TestChargersMastersStoneSchema.index({_name: 1});
+TestChargersPercentagesSchema.index({_status: 1});
+TestChargersPercentagesSchema.index({_name: 1});
 
 
 
