@@ -7,7 +7,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { SocketIoAdapter } from './socket/socket_adapter';
 import { config } from 'aws-sdk';
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 
 async function bootstrap() {
   config.update({
