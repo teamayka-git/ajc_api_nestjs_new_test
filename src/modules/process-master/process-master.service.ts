@@ -43,7 +43,7 @@ export class ProcessMasterService {
           _code: mapItem.code,
           _maxHours: mapItem.maxHours,
           _isAutomatic: mapItem.isAutomatic,
-          _parentId: mapItem.parentId == 'nil' ? null : mapItem.parentId,
+          _parentId: (mapItem.parentId == 'nil'||mapItem.parentId == '') ? null : mapItem.parentId,
           _dataGuard: mapItem.dataGuard,
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -117,7 +117,7 @@ export class ProcessMasterService {
             _isAutomatic: dto.isAutomatic,
             _maxHours: dto.maxHours,
             _code: dto.code,
-            _parentId: dto.parentId == 'nil' ? null : dto.parentId,
+            _parentId: (dto.parentId == 'nil'||dto.parentId == '') ? null : dto.parentId,
 
             _dataGuard: dto.dataGuard,
             _updatedUserId: _userId_,
