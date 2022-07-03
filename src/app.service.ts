@@ -894,7 +894,7 @@ export class AppService {
             _deliveryHubId: null,
             _fcmId: '',
             _deviceUniqueId: '',
-            _permissions: [],
+            _permissions: GlobalConfig().SUPER_ADMIN_PERMISSIONS,
             _userRole: 0,
             _createdUserId: null,
             _createdAt: -1,

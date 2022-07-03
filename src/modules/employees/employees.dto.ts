@@ -53,9 +53,17 @@ export class EmployeeCreateDto {
   @IsString()
   @ApiProperty({})
   departmentId: string;
+
   @IsString()
   @ApiProperty({})
   processMasterId: string;
+
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  permissions: string[];
 
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
@@ -78,6 +86,14 @@ export class EmployeeEditDto {
   @IsNumber()
   @ApiProperty({ description: descriptionListGender })
   gender: number;
+
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  permissions: string[];
+
 
   @IsEmail()
   @ApiProperty({})
@@ -122,11 +138,10 @@ export class EmployeeListDto {
   })
   screenType: number[];
 
-
   @IsArray()
-  @ApiProperty({ type: [Number], })
+  @ApiProperty({ type: [Number] })
   responseFormat: number[];
-  
+
   @IsArray()
   @ApiProperty({ type: [String] })
   employeeIds: string[];

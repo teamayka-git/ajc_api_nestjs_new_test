@@ -9,6 +9,7 @@ export const DepartmentsSchema = new mongoose.Schema({
   _processMasterStatus: { type: Number, required: true, default: -1 },
   _code: { type: Number, required: true, default: -1 },
   _dataGuard: { type: Object, required: true, default: [] },
+  _permissions: { type: Object, required: true, default: [] },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -30,6 +31,7 @@ export interface Departments {
   _prefix: String;
   _processMasterStatus: Number;
   _code: Number;
+  _permissions:Object;
   _dataGuard: Object;
   _createdUserId: String;
   _createdAt: Number;
@@ -38,6 +40,7 @@ export interface Departments {
   _status: Number;
 }
 
+DepartmentsSchema.index({ _permissions: 1 });
 DepartmentsSchema.index({ _status: 1 });
 DepartmentsSchema.index({ _code: 1, _id: 1 });
 DepartmentsSchema.index({ _name: 1, _id: 1 });

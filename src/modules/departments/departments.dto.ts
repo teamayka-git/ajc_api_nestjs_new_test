@@ -36,6 +36,11 @@ class DepartmentCreateList {
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })
   dataGuard: number[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  permissions: string[];
+
 }
 
 export class DepartmentCreateDto {
@@ -61,6 +66,11 @@ export class DepartmentEditDto {
   @IsString()
   @ApiProperty({})
   prefix: string;
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  permissions: string[];
+
 
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })
