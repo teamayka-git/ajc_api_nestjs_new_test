@@ -34,25 +34,41 @@ export class InvoicesService {
       var arrayToDeliveryChallan = [];
       var arrayToDeliveryChallanItems = [];
       var orderIds = [];
+      var invoiceLocalIds = [];
+
+      dto.invoices.map(mapItem=>{
+        invoiceLocalIds.push(mapItem.localId);
+      });
+
+
+      let invoiceListLocalItems=await this.invoiceModel.find({_localId:{$in:invoiceLocalIds}})
+if(invoiceListLocalItems.length !=0){
+  throw new HttpException('Invoice already existing', HttpStatus.INTERNAL_SERVER_ERROR);
+}
+
+
+
+
+
 
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.DELIVERY_CHALLANS },
         {
           $inc: {
-            _count: dto.arrayInvoiceChallan.length,
+            _count: dto.invoices.length,
           },
         },
         { new: true, session: transactionSession },
       );
 
-      dto.arrayInvoiceChallan.map((mapItem, index) => {
+      dto.invoices.map((mapItem, index) => {
         var invoiceId = new mongoose.Types.ObjectId();
         arrayToDeliveryChallan.push({
           _id: invoiceId,
           _userId: _userId_,
           _uid:
             resultCounterPurchase._count -
-            dto.arrayInvoiceChallan.length +
+            dto.invoices.length +
             (index + 1),
             _grossAmount: mapItem.grossAmount,
             _halmarkingCharge: mapItem.halmarkingCharge,

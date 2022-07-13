@@ -141,7 +141,7 @@ _workStatus:{
   30 - hub assigned
   31 - hub tranfer intransit
   32 - hub transfer delivered
-  33 - hub transfer accepted
+  33 - hub transfer accepted(invoice pending)
   
   
 }

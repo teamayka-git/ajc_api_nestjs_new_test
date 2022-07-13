@@ -131,6 +131,10 @@ class InvoiceCreateListItems {
 class InvoiceCreateList {
   @IsString()
   @ApiProperty({})
+  localId: string;
+
+  @IsString()
+  @ApiProperty({})
   customerId: string;
 
   @IsString()
@@ -210,7 +214,7 @@ export class InvoiceCreateDto {
   @ApiProperty({ type: [InvoiceCreateList] })
   @ValidateNested({ each: true })
   @Type(() => InvoiceCreateList)
-  arrayInvoiceChallan: InvoiceCreateList[];
+  invoices: InvoiceCreateList[];
 }
 
 export class InvoiceListDto {

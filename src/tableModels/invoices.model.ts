@@ -33,6 +33,7 @@ export const InvoicesSchema = new mongoose.Schema({
     default: null,
   },
   _description: { type: String, default: 'nil' },
+  _localId: { type: String, default: 'nil' },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -70,6 +71,7 @@ export interface Invoices {
   _igstOtherCharge: number;
   _rootCauseId: string;
   _description: string;
+  _localId: String;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -77,6 +79,7 @@ export interface Invoices {
   _status: Number;
 }
 
+InvoicesSchema.index({ _localId: 1 });
 InvoicesSchema.index({ _isDelivered: 1 });
 InvoicesSchema.index({ _grossAmount: 1 });
 InvoicesSchema.index({ _halmarkingCharge: 1 });
