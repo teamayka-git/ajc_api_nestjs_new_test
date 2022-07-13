@@ -83,6 +83,7 @@ export class DeliveryTempService {
         },
         {
           $set: {
+            _type: dto.type,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
             _employeeId: dto.employeeId,
@@ -165,7 +166,7 @@ export class DeliveryTempService {
         });
       }
 
-      if (dto.screenType.includes( 100) ) {
+      if (dto.screenType.includes(100)) {
         arrayAggregation.push({
           $match: { _employeeId: null },
         });
@@ -191,7 +192,7 @@ export class DeliveryTempService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.includes(101) ) {
+      if (dto.screenType.includes(101)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -237,7 +238,7 @@ export class DeliveryTempService {
         );
       }
 
-      if (dto.screenType.includes( 102) ) {
+      if (dto.screenType.includes(102)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -262,7 +263,7 @@ export class DeliveryTempService {
         );
       }
 
-      if (dto.screenType.includes( 103) ) {
+      if (dto.screenType.includes(103)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -286,7 +287,7 @@ export class DeliveryTempService {
           },
         );
 
-        if (dto.screenType.includes(104) ) {
+        if (dto.screenType.includes(104)) {
           arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push({
             $lookup: {
               from: ModelNames.INVOICE_ITEMS,
@@ -374,7 +375,7 @@ export class DeliveryTempService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.includes( 0)) {
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,

@@ -137,4 +137,10 @@ export class DeliveryTempEmployeeAssignDto {
   @ApiProperty({})
   employeeId: string;
 
+  
+  @IsNumber()
+  @ApiProperty({description:descriptionType})
+  type: number;
+
+
 }
