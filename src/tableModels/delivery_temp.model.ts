@@ -40,6 +40,7 @@ DeliveryTempSchema.index({_createdUserId: 1});
 
 /*
 _type:{
+    -1- not assigned
     0 - delivery to shop
     1 - hub transfer
 }

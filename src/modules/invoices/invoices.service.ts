@@ -12,10 +12,17 @@ import {
 } from './invoices.dto';
 import { GlobalConfig } from 'src/config/global_config';
 import { OrderSales } from 'src/tableModels/order_sales.model';
+import { DeliveryTemp } from 'src/tableModels/delivery_temp.model';
+import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 
 @Injectable()
 export class InvoicesService {
   constructor(
+    
+    @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
+    private readonly orderSaleHistoriesModel: mongoose.Model<OrderSaleHistories>,
+    @InjectModel(ModelNames.DELIVERY_TEMP)
+    private readonly deliveryTempModel: mongoose.Model<DeliveryTemp>,
     @InjectModel(ModelNames.INVOICES)
     private readonly invoiceModel: mongoose.Model<Invoices>,
     @InjectModel(ModelNames.INVOICE_ITEMS)
@@ -35,21 +42,22 @@ export class InvoicesService {
       var arrayToDeliveryChallanItems = [];
       var orderIds = [];
       var invoiceLocalIds = [];
+      var arrayToDeliveryTemp = [];
+      var arraySalesOrderHistories = [];
 
-      dto.invoices.map(mapItem=>{
+      dto.invoices.map((mapItem) => {
         invoiceLocalIds.push(mapItem.localId);
       });
 
-
-      let invoiceListLocalItems=await this.invoiceModel.find({_localId:{$in:invoiceLocalIds}})
-if(invoiceListLocalItems.length !=0){
-  throw new HttpException('Invoice already existing', HttpStatus.INTERNAL_SERVER_ERROR);
-}
-
-
-
-
-
+      let invoiceListLocalItems = await this.invoiceModel.find({
+        _localId: { $in: invoiceLocalIds },
+      });
+      if (invoiceListLocalItems.length != 0) {
+        throw new HttpException(
+          'Invoice already existing',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
 
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.DELIVERY_CHALLANS },
@@ -67,23 +75,21 @@ if(invoiceListLocalItems.length !=0){
           _id: invoiceId,
           _userId: _userId_,
           _uid:
-            resultCounterPurchase._count -
-            dto.invoices.length +
-            (index + 1),
-            _halmarkingCharge: mapItem.halmarkingCharge,
-            _otherCharge: mapItem.otherCharge,
-            _roundOff: mapItem.roundOff,
-            _netTotal: mapItem.netTotal, 
-            _isDelivered:0,
-            _tdsReceivable: mapItem.tdsReceivable,
-            _tdsPayable: mapItem.tdsPayable,
-            _netReceivableAmount: mapItem.netReceivableAmount,
-            _cgstHalmarkCharge: mapItem.cgstHalmarkCharge,
-            _cgstOtherCharge: mapItem.cgstOtherCharge,
-            _sgstHalmarkCharge: mapItem.sgstHalmarkCharge,
-            _sgstOtherCharge: mapItem.sgstOtherCharge,
-            _igstHalmarkCharge: mapItem.igstHalmarkCharge,
-            _igstOtherCharge: mapItem.igstOtherCharge,
+            resultCounterPurchase._count - dto.invoices.length + (index + 1),
+          _halmarkingCharge: mapItem.halmarkingCharge,
+          _otherCharge: mapItem.otherCharge,
+          _roundOff: mapItem.roundOff,
+          _netTotal: mapItem.netTotal,
+          _isDelivered: 0,
+          _tdsReceivable: mapItem.tdsReceivable,
+          _tdsPayable: mapItem.tdsPayable,
+          _netReceivableAmount: mapItem.netReceivableAmount,
+          _cgstHalmarkCharge: mapItem.cgstHalmarkCharge,
+          _cgstOtherCharge: mapItem.cgstOtherCharge,
+          _sgstHalmarkCharge: mapItem.sgstHalmarkCharge,
+          _sgstOtherCharge: mapItem.sgstOtherCharge,
+          _igstHalmarkCharge: mapItem.igstHalmarkCharge,
+          _igstOtherCharge: mapItem.igstOtherCharge,
           _rootCauseId: null,
           _description: mapItem.description,
           _billMode: mapItem.billMode,
@@ -99,7 +105,7 @@ if(invoiceListLocalItems.length !=0){
           arrayToDeliveryChallanItems.push({
             _invoiceId: invoiceId,
             _orderId: mapItem1.orderId,
-            _orderUid:mapItem1.orderUid,
+            _orderUid: mapItem1.orderUid,
             _categoryName: mapItem1.categoryName,
             _subCategoryName: mapItem1.subCategoryName,
             _productName: mapItem1.productName,
@@ -124,7 +130,7 @@ if(invoiceListLocalItems.length !=0){
             _igst: mapItem1.igst,
             _metalAmountGst: mapItem1.metalAmountGst,
             _stoneAmountGst: mapItem1.stoneAmount,
-        
+
             _makingChargeWeightHundredPercentage:
               mapItem1.makingChargeWithHundredPercentage,
             _makingChargeAmount: mapItem1.makingChargeAmount,
@@ -139,14 +145,56 @@ if(invoiceListLocalItems.length !=0){
             _updatedAt: -1,
             _status: 1,
           });
+          arraySalesOrderHistories.push({
+            _orderSaleId: mapItem1.orderId,
+            _userId: null,
+            _type: 17,
+            _shopId: null,
+            _description: '',
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _status: 1,
+          });
+          arraySalesOrderHistories.push({
+            _orderSaleId: mapItem1.orderId,
+            _userId: null,
+            _type: 106,
+            _shopId: null,
+            _description: '',
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _status: 1,
+          });
         });
+
+        arrayToDeliveryTemp.push({
+          _type: -1,
+          _invoiceId: invoiceId,
+          _employeeId: null,
+          _hubId: null,
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
+        });
+       
       });
 
       await this.orderSaleModel.updateMany(
         { _id: { $in: orderIds } },
-        { $set: { _isInvoiceGenerated: 1 } },
+        { $set: { _isInvoiceGenerated: 1, _workStatus: 17 } },
         { new: true, session: transactionSession },
       );
+
+      await this.orderSaleHistoriesModel.insertMany(arraySalesOrderHistories, {
+        session: transactionSession,
+      });
+
+
+      await this.deliveryTempModel.insertMany(arrayToDeliveryTemp, {
+        session: transactionSession,
+      });
 
       var result1 = await this.invoiceModel.insertMany(arrayToDeliveryChallan, {
         session: transactionSession,
@@ -295,7 +343,7 @@ if(invoiceListLocalItems.length !=0){
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
-      if (dto.screenType.includes( 100)) {
+      if (dto.screenType.includes(100)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -334,7 +382,7 @@ if(invoiceListLocalItems.length !=0){
         );
       }
 
-      if (dto.screenType.includes( 103)) {
+      if (dto.screenType.includes(103)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -356,7 +404,7 @@ if(invoiceListLocalItems.length !=0){
           },
         );
       }
-      if (dto.screenType.includes( 104)) {
+      if (dto.screenType.includes(104)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -400,7 +448,7 @@ if(invoiceListLocalItems.length !=0){
         );
       }
 
-      if (dto.screenType.includes( 105) ) {
+      if (dto.screenType.includes(105)) {
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.INVOICE_ITEMS,
@@ -444,7 +492,7 @@ if(invoiceListLocalItems.length !=0){
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.includes( 0) ) {
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
