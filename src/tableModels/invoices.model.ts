@@ -11,7 +11,6 @@ export const InvoicesSchema = new mongoose.Schema({
   },
   _uid: { type: String, required: true, default: 'nil' },
   _billMode: { type: Number, required: true, default: -1 },
-  _grossAmount: { type: Number, required: true, default: -1 },
   _halmarkingCharge: { type: Number, required: true, default: -1 },
   _otherCharge: { type: Number, required: true, default: -1 },
   _roundOff: { type: Number, required: true, default: -1 },
@@ -54,7 +53,6 @@ export interface Invoices {
   _userId: String;
   _uid: String;
   _billMode: number;
-  _grossAmount: number;
   _halmarkingCharge: number;
   _otherCharge: number;
   _roundOff: number;
@@ -81,7 +79,6 @@ export interface Invoices {
 
 InvoicesSchema.index({ _localId: 1 });
 InvoicesSchema.index({ _isDelivered: 1 });
-InvoicesSchema.index({ _grossAmount: 1 });
 InvoicesSchema.index({ _halmarkingCharge: 1 });
 InvoicesSchema.index({ _otherCharge: 1 });
 InvoicesSchema.index({ _roundOff: 1 });

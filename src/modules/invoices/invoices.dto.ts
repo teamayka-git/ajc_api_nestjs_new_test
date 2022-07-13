@@ -13,7 +13,7 @@ import { Optional } from '@nestjs/common';
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList =
-  '0-total documents count, 100-user details, 103-root cause details, 104-created user details, 105-invoice items';
+  '0-total documents count, 100-user details, 103-root cause details, 104-created user details, 105-invoice items, 106-sub category only if invoice items exist';
 const descriptionDeliveryMode = '0 - executive,  1 - courier,  2 - third party';
 const descriptionType = '0 - halmark, 1 - hub transfer';
 const descriptionBillMode = ' 0 - PureWeight, 1 - net weight, 2 - job work';
@@ -28,11 +28,21 @@ class InvoiceCreateListItems {
 
   @IsString()
   @ApiProperty({})
+  subCategoryId: string;
+
+  @IsString()
+  @ApiProperty({})
   categoryName: string;
 
   @IsString()
   @ApiProperty({})
   subCategoryName: string;
+
+  
+  @IsNumber()
+  @ApiProperty({})
+  grossAmount: number;
+
 
   @IsString()
   @ApiProperty({})
@@ -41,6 +51,10 @@ class InvoiceCreateListItems {
   @IsNumber()
   @ApiProperty({})
   purity: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  makingChargeGst: number;
 
   @IsString()
   @ApiProperty({})
@@ -138,7 +152,7 @@ class InvoiceCreateList {
   customerId: string;
 
   @IsString()
-  @ApiProperty({})
+  @ApiProperty({}) 
   description: string;
 
   @IsNumber()
@@ -146,10 +160,6 @@ class InvoiceCreateList {
   billMode: number;
 
   
-  @IsNumber()
-  @ApiProperty({})
-  grossAmount: number;
-
   @IsNumber()
   @ApiProperty({})
   halmarkingCharge: number;

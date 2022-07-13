@@ -14,6 +14,13 @@ export const InvoiceItemsSchema = new mongoose.Schema({
     ref: ModelNames.ORDER_SALES,
     default: null,
   },
+  _subCategoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.SUB_CATEGORIES,
+    default: null,
+  },
+  
+  _grossAmount: { type: Number, required: true, default: -1 },
   _orderUid: { type: String, required: true, default: 'nil' },
   _categoryName: { type: String, required: true, default: 'nil' },
   _subCategoryName: { type: String, required: true, default: 'nil' },
@@ -31,6 +38,7 @@ export const InvoiceItemsSchema = new mongoose.Schema({
   _amount: { type: Number, required: true, default: -1 },
   _stoneAmount: { type: Number, required: true, default: -1 },
   _totalValue: { type: Number, required: true, default: -1 },
+  _makingChargeGst: { type: Number, required: true, default: -1 },
   _cgst: { type: Number, required: true, default: -1 },
   _sgst: { type: Number, required: true, default: -1 },
   _igst: { type: Number, required: true, default: -1 },
@@ -66,7 +74,9 @@ export const InvoiceItemsSchema = new mongoose.Schema({
 export interface InvoiceItems {
   _id: String;
   _invoiceId: String;
+  _subCategoryId: String;
   _orderId: String;
+  _grossAmount: number;
   _orderUid:string;
   _categoryName: String;
   _subCategoryName: String;
@@ -84,6 +94,7 @@ export interface InvoiceItems {
   _amount: number;
   _stoneAmount: number;
   _totalValue: number;
+  _makingChargeGst: number;
   _cgst: number;
   _sgst: number;
   _igst: number;
@@ -100,6 +111,9 @@ export interface InvoiceItems {
   _status: Number;
 }
 
+InvoiceItemsSchema.index({ _grossAmount: 1 });
+InvoiceItemsSchema.index({ _subCategoryId: 1 });
+InvoiceItemsSchema.index({ _makingChargeGst: 1 });
 InvoiceItemsSchema.index({ _orderUid: 1 });
 InvoiceItemsSchema.index({ _status: 1 });
 InvoiceItemsSchema.index({ _invoiceId: 1 });

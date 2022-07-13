@@ -70,7 +70,6 @@ if(invoiceListLocalItems.length !=0){
             resultCounterPurchase._count -
             dto.invoices.length +
             (index + 1),
-            _grossAmount: mapItem.grossAmount,
             _halmarkingCharge: mapItem.halmarkingCharge,
             _otherCharge: mapItem.otherCharge,
             _roundOff: mapItem.roundOff,
@@ -111,6 +110,9 @@ if(invoiceListLocalItems.length !=0){
             _stoneWeight: mapItem1.stoneWeight,
             _netWeight: mapItem1.netWeight,
             _touch: mapItem1.touch,
+            _grossAmount: mapItem1.grossAmount,
+            _subCategoryId: mapItem1.subCategoryId,
+            _makingChargeGst: mapItem1.makingChargeGst,
             _pureWeight: mapItem1.pureWeight,
             _pureWeightHundredPercentage: mapItem1.pureWeightHundredPercentage,
             _unitRate: mapItem1.unitRate,
@@ -416,6 +418,26 @@ if(invoiceListLocalItems.length !=0){
             as: 'invoiceItems',
           },
         });
+      }
+      if (dto.screenType.includes(106)) {
+        arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
+          {
+            $lookup: {
+              from: ModelNames.SUB_CATEGORIES,
+              let: { subCategoryId: '$_subCategoryId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$subCategoryId'] } } },
+              ],
+              as: 'subCategoryDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$subCategoryDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
       }
       var result = await this.invoiceItemsModel
         .aggregate(arrayAggregation)
