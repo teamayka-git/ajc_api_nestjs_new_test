@@ -53,6 +53,7 @@ export class ProductsService {
       var arrayToProducts = [];
 
       var arrayStonesLinkings = [];
+      var arrayOrderSaleHistory = [];
 
       var resultSubcategory = await this.subCategoriesModel.aggregate([
         {
@@ -199,14 +200,13 @@ export class ProductsService {
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
               _isProductGenerated: 1,
-              _workStatus: 6,
+              _workStatus: 16,
             },
           },
           { new: true, session: transactionSession },
         );
-
-        const orderSaleHistoryModel = new this.orderSaleHistoriesModel({
-          _orderSaleId: null,
+        arrayOrderSaleHistory.push({
+          _orderSaleId: dto.orderId,
           _userId: null,
           _type: 6,
           _shopId: null,
@@ -215,8 +215,15 @@ export class ProductsService {
           _createdAt: dateTime,
           _status: 1,
         });
-        await orderSaleHistoryModel.save({
-          session: transactionSession,
+        arrayOrderSaleHistory.push({
+          _orderSaleId: dto.orderId,
+          _userId: null,
+          _type: 16,
+          _shopId: null,
+          _description: '',
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _status: 1,
         });
       }
       if (dto.eCommerceStatus == 1 && orderId != null) {
@@ -298,24 +305,23 @@ export class ProductsService {
           );
         }
 
-
-
-        var resultCounterPhotographer = await this.counterModel.findOneAndUpdate(
-          { _tableName: ModelNames.PHOTOGRAPHER_REQUESTS },
-          {
-            $inc: {
-              _count:1,
+        var resultCounterPhotographer =
+          await this.counterModel.findOneAndUpdate(
+            { _tableName: ModelNames.PHOTOGRAPHER_REQUESTS },
+            {
+              $inc: {
+                _count: 1,
+              },
             },
-          },
-          { new: true, session: transactionSession },
-        );
+            { new: true, session: transactionSession },
+          );
         const photographerRequestModel = new this.photographerRequestModel({
           _rootCauseId: null,
           _orderId: orderId,
           _productId: productId,
           _requestStatus: 0,
           _description: '',
-          _uid:resultCounterPhotographer._count,
+          _uid: resultCounterPhotographer._count,
           _userId: resultPhotographer[0].employeeList[0]._userId,
           _finishedAt: 0,
           _createdUserId: _userId_,
@@ -327,13 +333,20 @@ export class ProductsService {
         await photographerRequestModel.save({
           session: transactionSession,
         });
+        arrayOrderSaleHistory.push({
+          _orderSaleId: dto.orderId,
+          _userId: resultPhotographer[0].employeeList[0]._userId,
+          _type: 105,
+          _shopId: null,
+          _description: '',
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _status: 1,
+        });
       }
 
-
-
-
-      console.log("___s1 dto.hmSealingStatus "+dto.hmSealingStatus);
-      console.log("___s1 orderId "+orderId);
+      console.log('___s1 dto.hmSealingStatus ' + dto.hmSealingStatus);
+      console.log('___s1 orderId ' + orderId);
       if (dto.hmSealingStatus == 1 && orderId != null) {
         var resultCounterHalmarkRequest =
           await this.counterModel.findOneAndUpdate(
@@ -365,8 +378,25 @@ export class ProductsService {
         await halmarkRequestModel.save({
           session: transactionSession,
         });
+        arrayOrderSaleHistory.push({
+          _orderSaleId: dto.orderId,
+          _userId: null,
+          _type: 8,
+          _shopId: null,
+          _description: '',
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _status: 1,
+        });
       }
-
+if(arrayOrderSaleHistory.length!=0){
+  await this.orderSaleHistoriesModel.insertMany(
+    arrayOrderSaleHistory,
+    {
+      session: transactionSession,
+    },
+  )
+}
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -531,7 +561,7 @@ export class ProductsService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.includes( 100) ) {
+      if (dto.screenType.includes(100)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -587,7 +617,7 @@ export class ProductsService {
         );
       }
 
-      if (dto.screenType.includes( 101)) {
+      if (dto.screenType.includes(101)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -655,7 +685,7 @@ export class ProductsService {
         );
       }
 
-      if (dto.screenType.includes( 102)) {
+      if (dto.screenType.includes(102)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -681,7 +711,7 @@ export class ProductsService {
           },
         );
       }
-      if (dto.screenType.includes( 103)) {
+      if (dto.screenType.includes(103)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -708,7 +738,7 @@ export class ProductsService {
         );
       }
 
-      if (dto.screenType.includes( 104)) {
+      if (dto.screenType.includes(104)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -816,7 +846,7 @@ export class ProductsService {
         });
       }
 
-      if (dto.screenType.includes( 106)) {
+      if (dto.screenType.includes(106)) {
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.PRODUCT_DOCUMENTS_LINKIGS,
