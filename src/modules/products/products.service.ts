@@ -19,6 +19,7 @@ import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { PhotographerRequests } from 'src/tableModels/photographer_requests.model';
 import { HalmarkingRequests } from 'src/tableModels/halmarking_requests.model';
 import { Departments } from 'src/tableModels/departments.model';
+import { BarCodeQrCodePrefix } from 'src/common/barcode_qrcode_prefix';
 
 @Injectable()
 export class ProductsService {
@@ -166,7 +167,7 @@ export class ProductsService {
         _netWeight: dto.netWeight,
         _totalStoneWeight: dto.totalStoneWeight,
         _grossWeight: dto.grossWeight,
-        _barcode: new StringUtils().intToDigitString(autoIncrementNumber, 12),
+        _barcode:BarCodeQrCodePrefix.PRODUCT+ new StringUtils().intToDigitString(autoIncrementNumber, 12), 
         _categoryId: resultSubcategory[0]._categoryId,
         _subCategoryId: dto.subCategoryId,
         _groupId: resultSubcategory[0].categoryDetails._groupId,
