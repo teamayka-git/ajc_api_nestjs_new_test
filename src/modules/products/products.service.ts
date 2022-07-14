@@ -203,7 +203,7 @@ export class ProductsService {
             $set: {
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
-              _isProductGenerated: 1,
+              _isProductGenerated: 1, 
               _workStatus:(dto.hmSealingStatus == 1)?8: 16, 
             },
           },
@@ -219,6 +219,7 @@ export class ProductsService {
           _createdAt: dateTime,
           _status: 1,
         });
+        if(dto.hmSealingStatus == 0){
         arrayOrderSaleHistory.push({
           _orderSaleId: dto.orderId,
           _userId: null,
@@ -229,6 +230,7 @@ export class ProductsService {
           _createdAt: dateTime,
           _status: 1,
         });
+      }
       }
       if (dto.eCommerceStatus == 1 && orderId != null) {
         var resultPhotographer = await this.departmentsModel.aggregate([
