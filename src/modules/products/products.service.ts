@@ -191,6 +191,10 @@ export class ProductsService {
       });
 
       if (orderId != null) {
+
+     
+
+
         var result = await this.orderSaleModel.findOneAndUpdate(
           {
             _id: dto.orderId,
@@ -200,7 +204,7 @@ export class ProductsService {
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
               _isProductGenerated: 1,
-              _workStatus: 16,
+              _workStatus:(dto.hmSealingStatus == 1)?8: 16, 
             },
           },
           { new: true, session: transactionSession },
