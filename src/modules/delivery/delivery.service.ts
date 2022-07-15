@@ -178,6 +178,22 @@ export class DeliveryService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+
+if(dto.fromWorkStatus!=-1){
+  var getDeliveryItemsForCheck= await this.deliveryModel.find({_workStatus:dto.fromWorkStatus,_status:1});
+if(getDeliveryItemsForCheck.length!=dto.deliveryIds.length){
+  throw new HttpException('Delivery wrong status', HttpStatus.INTERNAL_SERVER_ERROR);
+}
+
+
+
+}
+
+
+
+
+
       var result = await this.deliveryModel.updateMany(
         {
           _id: { $in: dto.deliveryIds },

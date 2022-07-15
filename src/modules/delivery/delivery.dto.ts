@@ -136,4 +136,9 @@ export class DeliveryEmployeeAssignDto {
   @IsNumber()
   @ApiProperty({ description: descriptionWorkStatus })
   workStatus: number;
+
+  
+  @IsNumber()
+  @ApiProperty({ description: descriptionWorkStatus })
+  fromWorkStatus: number;
 }

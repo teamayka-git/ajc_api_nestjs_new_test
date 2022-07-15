@@ -1,6 +1,6 @@
 
 export enum BarCodeQrCodePrefix {
-    PRODUCT="991-",
+    PRODUCT_AND_INVOICE="991-",
    
     
 
