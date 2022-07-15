@@ -288,7 +288,7 @@ if(getDeliveryItemsForCheck.length!=dto.deliveryIds.length){
       }
       if (dto.workStatus.length > 0) {
         arrayAggregation.push({
-          $match: { _workStatus: { $in: dto.typeArray } },
+          $match: { _workStatus: { $in: dto.workStatus } },
         });
       }
 
