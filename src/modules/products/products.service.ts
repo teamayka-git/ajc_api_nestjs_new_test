@@ -167,7 +167,7 @@ export class ProductsService {
         _netWeight: dto.netWeight,
         _totalStoneWeight: dto.totalStoneWeight,
         _grossWeight: dto.grossWeight,
-        _barcode:BarCodeQrCodePrefix.PRODUCT_AND_INVOICE+ new StringUtils().intToDigitString(autoIncrementNumber, 12), 
+        _barcode:BarCodeQrCodePrefix.PRODUCT_AND_INVOICE+ new StringUtils().intToDigitString(autoIncrementNumber, 8), 
         _categoryId: resultSubcategory[0]._categoryId,
         _subCategoryId: dto.subCategoryId,
         _groupId: resultSubcategory[0].categoryDetails._groupId,
