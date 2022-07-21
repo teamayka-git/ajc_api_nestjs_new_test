@@ -106,6 +106,10 @@ OrderSalesSchema.index({ _uid: 1, _id: 1 });
 
 OrderSalesSchema.index({ _uid: 1 }, { unique: true });
 /*
+
+//_productData - For order last process finish time taking data from mobile app, (like : netweight, stoneweight)
+
+
 _workStatus:{ 
   0 - order pending
   1 - order accept
