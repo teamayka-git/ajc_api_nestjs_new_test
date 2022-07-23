@@ -30,12 +30,16 @@ import { GlobalConfig } from 'src/config/global_config';
 import { OrderSaleSetProcesses } from 'src/tableModels/order_sale_set_processes.model';
 import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 import { ModelWeight } from 'src/model_weight/model_weight';
+import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
+import { OrderSalesItems } from 'src/tableModels/order_sales_items.model';
 
 @Injectable()
 export class OrderSalesService {
   constructor(
-    @InjectModel(ModelNames.ORDER_SALES)
-    private readonly orderSaleModel: Model<OrderSales>,
+    @InjectModel(ModelNames.ORDER_SALES_MAIN)
+    private readonly orderSaleMainModel: Model<OrderSalesMain>,
+    @InjectModel(ModelNames.ORDER_SALES_ITEMS)
+    private readonly orderSaleItemsModel: Model<OrderSalesItems>,
     @InjectModel(ModelNames.ORDER_SALES_DOCUMENTS)
     private readonly orderSaleDocumentsModel: Model<OrderSalesDocuments>,
     @InjectModel(ModelNames.SHOPS)
@@ -172,7 +176,7 @@ export class OrderSalesService {
         );
       }
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
-        { _tableName: ModelNames.ORDER_SALES },
+        { _tableName: ModelNames.ORDER_SALES_MAIN },
         {
           $inc: {
             _count: 1,
@@ -192,42 +196,93 @@ export class OrderSalesService {
         );
       }
 
-      const newsettingsModel = new this.orderSaleModel({
+      let uidSalesOrder = resultCounterPurchase._count;
+
+      const newsettingsModel = new this.orderSaleMainModel({
         _id: orderSaleId,
         _shopId: dto.shopId,
-        _subCategoryId: dto.subCategoryId,
-        _quantity: dto.quantity,
-        _size: dto.size,
-        _type: dto.type,
-        _uid: resultCounterPurchase._count,
-        _weight: dto.weight,
-        _stoneColour: dto.stoneColor,
+        _uid: uidSalesOrder,
         _dueDate: dto.dueDate,
-        _productData: { _idDone: 0 }, 
-        _salesPersonId: shopDetails[0]._orderHeadId,
         _workStatus: 0,
-        _isReWork:0,
         _rootCauseId: null,
+        _deliveryType: dto.deliveryType,
+        _type: dto.type,
+        _isReWork: 0,
         _rootCause: '',
-        _generalRemark: '',
+        _orderHeadId: shopDetails[0]._orderHeadId,
         _description: dto.description,
-        _isInvoiceGenerated: 0,
-        _isProductGenerated: 0,
-        _isRhodium: dto.isRhodium,
-        _isMatFinish: dto.isMatFinish,
+        _generalRemark: '',
         _createdUserId: _userId_,
         _createdAt: dateTime,
         _updatedUserId: null,
         _updatedAt: -1,
         _status: 1,
       });
+      // const newsettingsModel = new this.orderSaleModel({
+      //   _id: orderSaleId,
+      //   _shopId: dto.shopId,
+      // _subCategoryId: dto.subCategoryId,
+      //   _quantity: dto.quantity,
+      //   _size: dto.size,
+      //   _type: dto.type,
+      //   _uid: resultCounterPurchase._count,
+      //   _weight: dto.weight,
+      //   _stoneColour: dto.stoneColor,
+      //   _dueDate: dto.dueDate,
+      //   _productData: { _idDone: 0 },
+      //   _orderHeadId: shopDetails[0]._orderHeadId,
+      //   _workStatus: 0,
+      //   _isReWork:0,
+      //   _rootCauseId: null,
+      //   _rootCause: '',
+      //   _generalRemark: '',
+      //   _description: dto.description,
+      //   _isInvoiceGenerated: 0,
+      //   _isProductGenerated: 0,
+      //   _isRhodium: dto.isRhodium,
+      //   _isMatFinish: dto.isMatFinish,
+      //   _createdUserId: _userId_,
+      //   _createdAt: dateTime,
+      //   _updatedUserId: null,
+      //   _updatedAt: -1,
+      //   _status: 1,
+      // });
       var result1 = await newsettingsModel.save({
         session: transactionSession,
       });
 
+      var arraySalesItems = [];
+      dto.arrayItems.forEach((eachItem,index) => {
+        arraySalesItems.push({
+          _orderSaleId: orderSaleId,
+          _subCategoryId: eachItem.subCategoryId,
+          _quantity: eachItem.quantity,
+          _size: eachItem.size,
+          _weight: eachItem.weight,
+          _uid: uidSalesOrder+new StringUtils().numberToEncodedLetter(index),
+          _stoneColour: eachItem.stoneColor,
+          _isInvoiceGenerated: 0,
+          _isProductGenerated: 0,
+          _productData: { _idDone: 0 },
+          _productId: null,
+          _designId: null,
+          _stockStatus: eachItem.stockStatus,
+          _isRhodium: eachItem.isRhodium,
+          _isMatFinish: eachItem.isMatFinish,
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
+        });
+      });
+      await this.orderSaleItemsModel.insertMany(arraySalesItems, {
+        session: transactionSession,
+      });
       const orderSaleHistoryModel = new this.orderSaleHistoriesModel({
         _orderSaleId: result1._id,
         _userId: null,
+        _orderSaleItemId: null,
         _shopId: dto.shopId,
         _type: 0,
         _description: '',
@@ -364,24 +419,18 @@ export class OrderSalesService {
           },
         );
       }
+
       var updateObject = {
         _shopId:
           dto.shopId == '' || dto.shopId == 'nil' ? _userId_ : dto.shopId,
-        _subCategoryId: dto.subCategoryId,
-        _quantity: dto.quantity,
-        _size: dto.size,
-        _weight: dto.weight,
-        _stoneColour: dto.stoneColor,
         _type: dto.type,
         _dueDate: dto.dueDate,
 
-        _isMatFinish: dto.isMatFinish,
         _description: dto.description,
-        _isRhodium: dto.isRhodium,
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
       };
-      var result = await this.orderSaleModel.findOneAndUpdate(
+      var result = await this.orderSaleMainModel.findOneAndUpdate(
         {
           _id: dto.orderSaleId,
         },
@@ -391,12 +440,33 @@ export class OrderSalesService {
         { new: true, session: transactionSession },
       );
 
+      for (var i = 0; i < dto.arrayItemEdit.length; i++) {
+        await this.orderSaleItemsModel.findOneAndUpdate(
+          {
+            _id: dto.arrayItemEdit[i].orderSaleItemId,
+          },
+          {
+            $set: {
+              _subCategoryId: dto.arrayItemEdit[i].subCategoryId,
+              _quantity: dto.arrayItemEdit[i].quantity,
+              _size: dto.arrayItemEdit[i].size,
+              _weight: dto.arrayItemEdit[i].weight,
+              _stoneColour: dto.arrayItemEdit[i].stoneColor,
+              _isMatFinish: dto.arrayItemEdit[i].isMatFinish,
+              _isRhodium: dto.arrayItemEdit[i].isRhodium,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
+
       const orderSaleHistoryModel = new this.orderSaleHistoriesModel({
         _orderSaleId: dto.orderSaleId,
         _userId: null,
         _type: 100,
         _shopId: null,
-        _description: '',
+        _orderSaleItemId: null,
+        _description: dto.ordderSaleHistoryDescription,
         _createdUserId: _userId_,
         _createdAt: dateTime,
         _status: 1,
@@ -440,7 +510,7 @@ export class OrderSalesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var result = await this.orderSaleModel.updateMany(
+      var result = await this.orderSaleMainModel.updateMany(
         {
           _id: { $in: dto.orderSaleIds },
         },
@@ -470,6 +540,7 @@ export class OrderSalesService {
           _userId: null,
           _type: type,
           _shopId: null,
+          _orderSaleItemId: null,
           _description: '',
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -510,7 +581,7 @@ export class OrderSalesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var result = await this.orderSaleModel.updateMany(
+      var result = await this.orderSaleMainModel.updateMany(
         {
           _id: { $in: dto.orderSaleIds },
         },
@@ -533,6 +604,7 @@ export class OrderSalesService {
           _orderSaleId: mapItem,
           _userId: null,
           _type: dto.workStatus,
+          _orderSaleItemId: null,
           _shopId: null,
           _description: '',
           _createdUserId: _userId_,
@@ -608,27 +680,16 @@ export class OrderSalesService {
           $match: { _shopId: { $in: newSettingsId } },
         });
       }
-      if (dto.isMatFinish.length > 0) {
+      if (dto.orderHeadIds.length > 0) {
+        var newSettingsId = [];
+        dto.orderHeadIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
         arrayAggregation.push({
-          $match: { _isMatFinish: { $in: dto.isMatFinish } },
+          $match: { _orderHeadId: { $in: newSettingsId } },
         });
       }
-      if (dto.isInvoiceGenerated.length > 0) {
-        arrayAggregation.push({
-          $match: { _isInvoiceGenerated: { $in: dto.isInvoiceGenerated } },
-        });
-      }
-      if (dto.isProductGenerated.length > 0) {
-        arrayAggregation.push({
-          $match: { _isProductGenerated: { $in: dto.isProductGenerated } },
-        });
-      }
-
-      if (dto.isRhodium.length > 0) {
-        arrayAggregation.push({
-          $match: { _isRhodium: { $in: dto.isRhodium } },
-        });
-      }
+      
       if (dto.workStatus.length > 0) {
         arrayAggregation.push({
           $match: { _workStatus: { $in: dto.workStatus } },
@@ -647,18 +708,7 @@ export class OrderSalesService {
         case 2:
           arrayAggregation.push({ $sort: { _dueDate: dto.sortOrder } });
           break;
-        case 3:
-          arrayAggregation.push({ $sort: { _isRhodium: dto.sortOrder } });
-          break;
-        case 4:
-          arrayAggregation.push({ $sort: { _quantity: dto.sortOrder } });
-          break;
-        case 5:
-          arrayAggregation.push({ $sort: { _size: dto.sortOrder } });
-          break;
-        case 6:
-          arrayAggregation.push({ $sort: { _weight: dto.sortOrder } });
-          break;
+       
       }
 
       if (dto.skip != -1) {
@@ -666,90 +716,7 @@ export class OrderSalesService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.includes( 100) ) {
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.SUB_CATEGORIES,
-              let: { subCategoryId: '$_subCategoryId' },
-              pipeline: [
-                { $match: { $expr: { $eq: ['$_id', '$$subCategoryId'] } } },
-              ],
-              as: 'subCategoryDetails',
-            },
-          },
-          {
-            $unwind: {
-              path: '$subCategoryDetails',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-        );
-
-        if (dto.screenType.includes(109)) {
-          arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
-            {
-              $lookup: {
-                from: ModelNames.CATEGORIES,
-                let: { categoryId: '$_categoryId' },
-                pipeline: [
-                  { $match: { $expr: { $eq: ['$_id', '$$categoryId'] } } },
-
-                  {
-                    $lookup: {
-                      from: ModelNames.GROUP_MASTERS,
-                      let: { groupId: '$_groupId' },
-                      pipeline: [
-                        { $match: { $expr: { $eq: ['$_id', '$$groupId'] } } },
-                      ],
-                      as: 'groupDetails',
-                    },
-                  },
-                  {
-                    $unwind: {
-                      path: '$groupDetails',
-                      preserveNullAndEmptyArrays: true,
-                    },
-                  },
-                ],
-                as: 'categoryDetails',
-              },
-            },
-            {
-              $unwind: {
-                path: '$categoryDetails',
-                preserveNullAndEmptyArrays: true,
-              },
-            },
-          );
-        }
-      }
-
-      if (dto.screenType.includes(108)) {
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.PRODUCTS,
-              let: { orderId: '$_id' },
-              pipeline: [
-                {
-                  $match: {
-                    _status: 1,
-                    $expr: { $eq: ['$_orderId', '$$orderId'] },
-                  },
-                },
-              ],
-              as: 'productDetails',
-            },
-          },
-          {
-            $unwind: {
-              path: '$productDetails',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-        );
-      }
+     
 
       if (dto.screenType.includes(105)) {
         arrayAggregation.push({
@@ -836,7 +803,7 @@ export class OrderSalesService {
         });
       }
 
-      if (dto.screenType.includes( 106)) {
+      if (dto.screenType.includes(106)) {
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.ORDER_SALE_SET_PROCESSES,
@@ -1010,7 +977,7 @@ export class OrderSalesService {
         });
       }
 
-      if (dto.screenType.includes( 103)) {
+      if (dto.screenType.includes(103)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -1031,7 +998,7 @@ export class OrderSalesService {
         );
       }
 
-      if (dto.screenType.includes( 104)) {
+      if (dto.screenType.includes(104)) {
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.ORDER_SALE_HISTORIES,
@@ -1143,7 +1110,7 @@ export class OrderSalesService {
         });
       }
 
-      if (dto.screenType.includes( 101)) {
+      if (dto.screenType.includes(101)) {
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.ORDER_SALES_DOCUMENTS,
@@ -1185,7 +1152,7 @@ export class OrderSalesService {
         });
       }
 
-      if (dto.screenType.includes( 102)) {
+      if (dto.screenType.includes(102)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -1334,7 +1301,7 @@ export class OrderSalesService {
       var resultWorkets = [];
       var resultProcessMasters = [];
 
-      if (dto.screenType.includes( 105)) {
+      if (dto.screenType.includes(105)) {
         var resultDepartment = await this.departmentModel.find({
           _code: 1003,
           _status: 1,
@@ -1411,12 +1378,12 @@ export class OrderSalesService {
         });
       }
 
-      var result = await this.orderSaleModel
+      var result = await this.orderSaleMainModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.includes( 0)) {
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
@@ -1434,7 +1401,7 @@ export class OrderSalesService {
           $group: { _id: null, totalCount: { $sum: 1 } },
         });
 
-        var resultTotalCount = await this.orderSaleModel
+        var resultTotalCount = await this.orderSaleMainModel
           .aggregate(arrayAggregation)
           .session(transactionSession);
         if (resultTotalCount.length > 0) {
@@ -1472,7 +1439,7 @@ export class OrderSalesService {
     }
   }
 
-  async set_proccess_assigned_order_sale_list( 
+  async set_proccess_assigned_order_sale_list(
     dto: SetProcessAssignedOrderSaleListDto,
     _userId_: string,
   ) {
@@ -1497,7 +1464,7 @@ export class OrderSalesService {
         });
       }
 
-      if (dto.screenType.includes( 500)) {
+      if (dto.screenType.includes(500)) {
         arrayUserIds.push(new mongoose.Types.ObjectId(_userId_));
       }
       if (arrayUserIds.length > 0) {
@@ -1514,14 +1481,12 @@ export class OrderSalesService {
         },
       });
 
-
       if (dto.skip != -1) {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-
-      if (dto.screenType.includes( 101)) {
+      if (dto.screenType.includes(101)) {
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.ORDER_SALE_SET_SUB_PROCESSES,
@@ -1562,38 +1527,38 @@ export class OrderSalesService {
         });
       }
 
-      if (dto.screenType.includes( 102)) {
-        arrayAggregation.push({
-          $lookup: {
-            from: ModelNames.PROCESS_MASTER,
-            let: { processId: '$_processId' },
-            pipeline: [
-              {
-                $match: {
-                  
-                  $expr: {
-                    $eq: ['$_id', '$$processId'],
-                  },
-                },
-              },
-       
-              
-            ],
-            as: 'pocessMastedDetails',
-          },
-        } ,   {
-          $unwind: {
-            path: '$pocessMastedDetails',
-            preserveNullAndEmptyArrays: true,
-          },
-        },);
-      }
-
-      if (dto.screenType.includes( 100)) { 
+      if (dto.screenType.includes(102)) {
         arrayAggregation.push(
           {
             $lookup: {
-              from: ModelNames.ORDER_SALES,
+              from: ModelNames.PROCESS_MASTER,
+              let: { processId: '$_processId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $eq: ['$_id', '$$processId'],
+                    },
+                  },
+                },
+              ],
+              as: 'pocessMastedDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$pocessMastedDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.includes(100)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_MAIN,
               let: { orderSaleId: '$_orderSaleId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$orderSaleId'] } } },
@@ -1606,10 +1571,13 @@ export class OrderSalesService {
                         $match: {
                           $expr: { $eq: ['$_id', '$$shopId'] },
                         },
-                      },{$project:{
-                        _name:1,
-                        _uid:1
-                      }}
+                      },
+                      {
+                        $project: {
+                          _name: 1,
+                          _uid: 1,
+                        },
+                      },
                     ],
                     as: 'shopDetails',
                   },
@@ -1685,7 +1653,7 @@ export class OrderSalesService {
           },
           {
             $unwind: {
-              path: '$orderSaleDetails', 
+              path: '$orderSaleDetails',
               preserveNullAndEmptyArrays: true,
             },
           },
@@ -1723,8 +1691,6 @@ export class OrderSalesService {
         }
       }
 
-
-     
       const responseJSON = {
         message: 'success',
         data: {
@@ -1857,7 +1823,7 @@ export class OrderSalesService {
                         $expr: { $eq: ['$_id', '$$globalGalleryId'] },
                       },
                     },
-                   
+
                     {
                       $project: new ModelWeight().globalGalleryTableLight(),
                     },
@@ -1945,6 +1911,28 @@ export class OrderSalesService {
             preserveNullAndEmptyArrays: true,
           },
         },
+
+        {
+          $lookup: {
+            from: ModelNames.ORDER_SALES_ITEMS,
+            let: { orderSaleItemId: '$_orderSaleItemId' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$_id', '$$orderSaleItemId'] },
+                },
+              },
+            
+            ],
+            as: 'orderSaleItemDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$orderSaleItemDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
       );
       var result = await this.orderSaleHistoriesModel
         .aggregate(arrayAggregation)
@@ -1983,7 +1971,7 @@ export class OrderSalesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var result = await this.orderSaleModel.updateMany(
+      var result = await this.orderSaleMainModel.updateMany(
         {
           _id: { $in: dto.orderSaleIds },
         },
@@ -2000,6 +1988,7 @@ export class OrderSalesService {
         var objOrderHistory = {
           _orderSaleId: mapItem,
           _userId: null,
+          _orderSaleItemId: null,
           _type: 104,
           _shopId: null,
           _description: dto.generalRemark,

@@ -14,6 +14,8 @@ import { EmployeeSchema } from 'src/tableModels/employee.model';
 import { DepartmentsSchema } from 'src/tableModels/departments.model';
 import { ProcessMasterSchema } from 'src/tableModels/processMaster.model';
 import { OrderSaleSetProcessesSchema } from 'src/tableModels/order_sale_set_processes.model';
+import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
+import { OrderSalesItemsSchema } from 'src/tableModels/order_sales_items.model';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { OrderSaleSetProcessesSchema } from 'src/tableModels/order_sale_set_proc
       { name: ModelNames.EMPLOYEES, schema: EmployeeSchema },
       { name: ModelNames.DEPARTMENT, schema: DepartmentsSchema },
       { name: ModelNames.PROCESS_MASTER, schema: ProcessMasterSchema },
+      { name: ModelNames.ORDER_SALES_MAIN, schema:OrderSalesMainSchema },
+      { name: ModelNames.ORDER_SALES_ITEMS, schema:OrderSalesItemsSchema },
       { name: ModelNames.SHOPS, schema: ShopsSchema },
       {
         name: ModelNames.ORDER_SALE_HISTORIES,

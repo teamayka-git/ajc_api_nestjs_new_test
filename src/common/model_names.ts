@@ -34,7 +34,8 @@ export enum ModelNames {
   RATE_CARD_PERCENTAGESS = 'rate_card_percentages',
   RATE_BASE_MASTERS = 'rate_base_masters',
   SHOPS = 'shops',
-  ORDER_SALES = 'order_sales',
+  ORDER_SALES_MAIN = 'order_sales',
+  ORDER_SALES_ITEMS = 'order_sales_items',
   ROOT_CAUSES = 'root_causes',
   ORDER_SALES_DOCUMENTS = 'order_sales_documents',
   SUB_PROCESS_MASTER = 'sub_process_masters',
@@ -69,4 +70,12 @@ export enum ModelNames {
   CHAT_PERSONAL_CHAT_MESSAGES = 'chat_personal_chat_messages',
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',
   CHAT_PENDING_MESSAGES = 'chat_pending_messages',
+
+
+
+
+
+
+  
+  ORDER_SALES = 'zzzzzz_order_sale',
 }

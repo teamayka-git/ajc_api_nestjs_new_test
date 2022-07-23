@@ -242,102 +242,159 @@ export class ModelWeight {
   public orderSaleTableLight(): Object {
     return {
       _id: 1,
-      _shopId: 1,
-      _subCategoryId: 1,
-      _quantity: 1,
-      _size: 1,
-      _weight: 1,
-      _uid: 1,
-      _description: 1,
+      _shopId:1,
+      _uid:1,
+      _dueDate:1,
+      _workStatus:1,
+      _type:1,
+
+     
     };
   }
   public orderSaleTableMinimum(): Object {
     return {
+
       _id: 1,
-      _shopId: 1,
-      _subCategoryId: 1,
-      _quantity: 1,
-      _size: 1,
-      _weight: 1,
-      _uid: 1,
-      _stoneColour: 1,
-      _dueDate: 1,
-      _workStatus: 1,
-      _isInvoiceGenerated: 1,
-      _isProductGenerated: 1,
-      _productData: 1,
-      _rootCauseId: 1,
-      _type: 1,
-      _isReWork: 1,
-      _rootCause: 1,
-      _salesPersonId: 1,
-      _description: 1,
-      _generalRemark: 1,
-      _isRhodium: 1,
-      _isMatFinish: 1,
-      _createdUserId: 1,
-      _status: 1,
+      _shopId:1,
+      _uid:1,
+      _dueDate:1,
+      _workStatus:1,
+      _type:1,
+      _rootCauseId:1,
+      _createdUserId:1,
+      _orderHeadId:1,
+      _description:1,
+      _rootCause:1,
+      _status:1,
+
+
+
+
+
+     
     };
   }
   public orderSaleTableMedium(): Object {
     return {
+
       _id: 1,
-      _shopId: 1,
-      _subCategoryId: 1,
-      _quantity: 1,
-      _size: 1,
-      _weight: 1,
-      _uid: 1,
-      _stoneColour: 1,
-      _dueDate: 1,
-      _workStatus: 1,
-      _isInvoiceGenerated: 1,
-      _isProductGenerated: 1,
-      _productData: 1,
-      _rootCauseId: 1,
-      _type: 1,
-      _isReWork: 1,
-      _rootCause: 1,
-      _salesPersonId: 1,
-      _description: 1,
-      _generalRemark: 1,
-      _isRhodium: 1,
-      _isMatFinish: 1,
-      _createdUserId: 1,
-      _status: 1,
+      _shopId:1,
+      _uid:1,
+      _dueDate:1,
+      _workStatus:1,
+      _type:1,
+      _rootCauseId:1,
+      _createdUserId:1,
+      _orderHeadId:1,
+      _description:1,
+      _deliveryType:1,
+      _rootCause:1,
+      _generalRemark:1,
+      _status:1,
     };
   }
   public orderSaleTableMaximum(): Object {
     return {
-      _id: 1,
-      _shopId: 1,
-      _subCategoryId: 1,
-      _quantity: 1,
-      _size: 1,
-      _weight: 1,
-      _uid: 1,
-      _stoneColour: 1,
-      _dueDate: 1,
-      _workStatus: 1,
-      _isInvoiceGenerated: 1,
-      _isProductGenerated: 1,
-      _productData: 1,
-      _rootCauseId: 1,
-      _type: 1,
-      _isReWork: 1,
-      _rootCause: 1,
-      _salesPersonId: 1,
-      _description: 1,
-      _generalRemark: 1,
-      _isRhodium: 1,
-      _isMatFinish: 1,
-      _createdUserId: 1,
-      _createdAt: 1,
-      _updatedUserId: 1,
-      _updatedAt: 1,
-      _status: 1,
+      _id:1,
+      _shopId:1,
+      _uid:1,
+      _dueDate:1,
+      _workStatus:1,
+      _rootCauseId:1,
+      _deliveryType:1,
+      _type:1,
+      _isReWork:1,
+      _rootCause:1,
+      _orderHeadId:1,
+      _description:1,
+      _generalRemark:1,
+      _createdUserId:1,
+      _createdAt:1,
+      _updatedUserId:1,
+      _updatedAt:1,
+      _status:1,
     };
   }
+
+  public orderSaleItemsTableLight(): Object {
+    return {
+      _id:1,
+      _quantity:1,
+      _size:1,
+      _weight:1,
+      _uid:1,
+      _stoneColour:1,
+    };
+  }
+  public orderSaleItemsTableMinimum(): Object {
+    return {
+      _id:1,
+      _quantity:1,
+      _size:1,
+      _weight:1,
+      _uid:1,
+      _stoneColour:1,
+      _orderSaleId:1,
+      _subCategoryId:1,
+      _createdUserId:1,
+      _updatedUserId:1,
+      _productId:1,
+      _designId:1,
+      _status:1,
+    };
+  }
+  public orderSaleItemsTableMedium(): Object {
+    return {
+      _id:1,
+      _quantity:1,
+      _size:1,
+      _weight:1,
+      _uid:1,
+      _stoneColour:1,
+      _orderSaleId:1,
+      _subCategoryId:1,
+      _createdUserId:1,
+      _updatedUserId:1,
+      _isInvoiceGenerated:1,
+      _isProductGenerated:1,
+      _productId:1,
+      _designId:1,
+      _status:1,
+      _stockStatus:1,
+      _isRhodium:1,
+      _isMatFinish:1,
+
+    };
+  }
+  public orderSaleItemsTableMaximum(): Object {
+    return {
+      _id:1,
+      _orderSaleId:1,
+      _subCategoryId:1,
+      _quantity:1,
+      _size:1,
+      _weight:1,
+      _uid:1,
+      _stoneColour:1,
+      _isInvoiceGenerated:1,
+      _isProductGenerated:1,
+      _productData:1,
+      _productId:1,
+      _designId:1,
+      _stockStatus:1,
+      _isRhodium:1,
+      _isMatFinish:1,
+      _createdUserId:1,
+      _createdAt:1,
+      _updatedUserId:1,
+      _updatedAt:1,
+      _status:1,
+    };
+  }
+
+
+
+
   public deliveryItemsTableLight(): Object {
     return {
       _id: 1,

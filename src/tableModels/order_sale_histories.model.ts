@@ -8,7 +8,12 @@ export const OrderSaleHistoriesSchema = new mongoose.Schema({
 
   _orderSaleId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.ORDER_SALES,
+    ref: ModelNames.ORDER_SALES_MAIN,
+    default: null,
+  },
+  _orderSaleItemId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.ORDER_SALES_ITEMS,
     default: null,
   },
   _userId: {
@@ -35,6 +40,7 @@ export const OrderSaleHistoriesSchema = new mongoose.Schema({
 export interface OrderSaleHistories {
   _id: String;
   _orderSaleId: String;
+  _orderSaleItemId: String;
   _shopId: string;
   _userId: String;
   _type: number;
@@ -46,6 +52,7 @@ export interface OrderSaleHistories {
 
 OrderSaleHistoriesSchema.index({ _shopId: 1 });
 OrderSaleHistoriesSchema.index({ _orderSaleId: 1 });
+OrderSaleHistoriesSchema.index({ _orderSaleItemId: 1 });
 OrderSaleHistoriesSchema.index({ _userId: 1 });
 OrderSaleHistoriesSchema.index({ _description: 1 });
 OrderSaleHistoriesSchema.index({ _type: 1 });

@@ -4,9 +4,9 @@ import { GlobalConfig } from 'src/config/global_config';
 
 export const OrderSalesSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
-  _shopId: {
+  _customerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.SHOPS,
+    ref: ModelNames.USER,
     default: null,
   },
   _subCategoryId: {
@@ -32,15 +32,13 @@ export const OrderSalesSchema = new mongoose.Schema({
   },
   _description: { type: String, default: '' },
   _generalRemark: { type: String, default: '' },
-  _isReWork: { type: Number, required: true, default: -1 },
   _isMatFinish: { type: Number, required: true, default: -1 },
-  _type: { type: Number, required: true, default: -1 },
   _isRhodium: { type: Number, required: true, default: -1 },
   _workStatus: { type: Number, required: true, default: -1 },
   _productData: { type: Object, required: true, default: {} },
   _uid: { type: String, required: true, default: 'nil' },
-  _isInvoiceGenerated: { type: Number, required: true, default: -1 },
-  _isProductGenerated: { type: Number, required: true, default: -1 },
+  _invoiceGeneratedFlag: { type: Number, required: true, default: -1 },
+  _halmarkOutFlag: { type: Number, required: true, default: -1 },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -58,7 +56,7 @@ export const OrderSalesSchema = new mongoose.Schema({
 
 export interface OrderSales {
   _id: String;
-  _shopId: string;
+  _customerId: string;
   _subCategoryId: string;
   _quantity: number;
   _size: number;
@@ -66,19 +64,17 @@ export interface OrderSales {
   _uid: string;
   _stoneColour: string;
   _dueDate: number;
+  _invoiceGeneratedFlag: number;
   _workStatus: number;
-  _isInvoiceGenerated:number;
-  _isProductGenerated:number;
   _productData: object;
   _rootCauseId: String;
-  _type: number;
-  _isReWork:number;
   _rootCause: String;
   _salesPersonId: string;
   _description: string;
   _generalRemark: string;
   _isRhodium: number;
   _isMatFinish: number;
+  _halmarkOutFlag: number;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -86,10 +82,8 @@ export interface OrderSales {
   _status: Number;
 }
 
-OrderSalesSchema.index({ _isReWork: 1 });
-OrderSalesSchema.index({ _isProductGenerated: 1 });
-OrderSalesSchema.index({ _isInvoiceGenerated: 1 });
-OrderSalesSchema.index({ _type: 1 });
+OrderSalesSchema.index({ _halmarkOutFlag: 1 });
+OrderSalesSchema.index({ _invoiceGeneratedFlag: 1 });
 OrderSalesSchema.index({ _workStatus: 1 });
 OrderSalesSchema.index({ _rootCause: 1 });
 OrderSalesSchema.index({ _rootCauseId: 1 });
@@ -106,11 +100,7 @@ OrderSalesSchema.index({ _uid: 1, _id: 1 });
 
 OrderSalesSchema.index({ _uid: 1 }, { unique: true });
 /*
-
-//_productData - For order last process finish time taking data from mobile app, (like : netweight, stoneweight)
-
-
-_workStatus:{ 
+_workStatus:{
   0 - order pending
   1 - order accept
   2 - order reject
@@ -118,7 +108,7 @@ _workStatus:{
   4 - finished goods
   5 - product generate request
   6 - product generated 
-  7 - deliverychalan generated//need to discuss
+  7 - deliverychalan generated
   8 - halmark issuence requested
   9 - halmark issuence bypassed
   10 - send to halmark issuence
@@ -127,30 +117,23 @@ _workStatus:{
   13 - halmark request rejected
   14 - halmark error occured
   15 - send to reissuence 
-  16 - invoice pending
-  17 - invoice generated
-  18 - outof delivery pending
-  19 - hub transfer pending
-  20 - delivery job assigned
-  21 - delivery in transit
-  22 - delivered to customer          
-  23 - delivey accepted
-  24 - order declined collection pending || descrption, erorr type*(Int) ,rework status(Int)
-  25 - order declined collected
-  26 - order declined inscan
-  27 - order cancelled
-  28 - delivery reshedule requested(shop closed -> ajc inscan)
-
-  29 - hub tranfer pending
-  30 - hub assigned
-  31 - hub tranfer intransit
-  32 - hub transfer delivered
-  33 - hub transfer accepted(invoice pending)
+  16 - invoice generated
+  17 - delivery invoice generated
+  18 - delivery boy otp verification requested
+  19 - delivery boy otp verification accepted
+  20 - hub tranfer
+  21 - delivery otp to customer requested
+  22 - delivery otp to customer verified
+  23 - delivery rejected by customer
+  24 - delivery reshedule requested
+  25 - delivery reshedule rejected
+  26 - delivery reshedule accepted
+  27 - delivery return to hub
+  28 - sale return collected otp requested
+  29 - sale return collected otp accepted
+  30 - sale return collected otp rejected
+  31 - order completed
+  32 - order cancelled
   
-  
-}
-_type:{
-  0 - order sale
-  1 - stock sale
 }
 */
