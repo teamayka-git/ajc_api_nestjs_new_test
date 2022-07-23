@@ -600,7 +600,7 @@ export class CategoriesService {
               },
 
 
-
+              
 
 
 
@@ -625,7 +625,7 @@ export class CategoriesService {
           },
         );
       }
-
+console.log("arrayAggregation  "+JSON.stringify(arrayAggregation));
       if (dto.screenType.includes( 50) ) {
         arrayAggregation.push(
           {
