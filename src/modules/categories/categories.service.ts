@@ -582,7 +582,7 @@ export class CategoriesService {
 
 
 
-              dto.screenType.includes( 150)? {
+              dto.screenType.includes( 150)&& {
                 $lookup: {
                   from: ModelNames.USER,
                   let: { userId: '$_createdUserId' },
@@ -591,13 +591,13 @@ export class CategoriesService {
                   ],
                   as: 'userDetails',
                 },
-              }:false,
-              dto.screenType.includes( 150)?{
+              },
+              dto.screenType.includes( 150)&&{
                 $unwind: {
                   path: '$userDetails',
                   preserveNullAndEmptyArrays: true,
                 },
-              }:false,
+              },
 
 
               
@@ -613,7 +613,7 @@ export class CategoriesService {
             
             
             
-            ].filter((e)=>e !== false),
+            ].filter((e)=>Boolean(e) !== false),
               as: 'groupDetails',
             },
           },
