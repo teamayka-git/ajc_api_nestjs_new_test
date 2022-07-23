@@ -573,7 +573,47 @@ export class CategoriesService {
             $lookup: {
               from: ModelNames.GROUP_MASTERS,
               let: { groupId: '$_groupId' },
-              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$groupId'] } } }],
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$groupId'] } } },
+            
+            
+            
+
+
+
+
+
+              {
+                $lookup: {
+                  from: ModelNames.USER,
+                  let: { userId: '$_createdUserId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+                  ],
+                  as: 'userDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$userDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+            ],
               as: 'groupDetails',
             },
           },
