@@ -135,6 +135,7 @@ export class OrderSaleSetProcessService {
           _orderSaleId: mapItem.orderSaleId,
           _userId: null,
           _shopId: null,
+          _orderSaleItemId:null,
           _type: 3,
           _description: '',
           _createdUserId: _userId_,
