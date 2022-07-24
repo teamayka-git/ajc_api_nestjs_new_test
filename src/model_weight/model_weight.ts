@@ -1594,7 +1594,6 @@ export class ModelWeight {
     return {
       _id: 1,
       _name: 1,
-      
     };
   }
   public rateBaseMasterTableMinimum(): Object {
@@ -1618,6 +1617,228 @@ export class ModelWeight {
     return {
       _id: 1,
       _name: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+  public groupTableLight(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+    };
+  }
+  public groupTableMinimum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _rawMaterialStatus: 1,
+      _hsnCode: 1,
+      _dataGuard: 1,
+      _updatedUserId: 1,
+      _status: 1,
+    };
+  }
+  public groupTableMedium(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _rawMaterialStatus: 1,
+      _hsnCode: 1,
+      _descriptionArray: 1,
+      _meltingPurity: 1,
+      _taxPercentage: 1,
+      _purity: 1,
+      _dataGuard: 1,
+      _status: 1,
+    };
+  }
+  public groupTableMaximum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _rawMaterialStatus: 1,
+      _hsnCode: 1,
+      _descriptionArray: 1,
+      _meltingPurity: 1,
+      _taxPercentage: 1,
+      _purity: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+  public productDocumentLinkingTableLight(): Object {
+    return {
+      _id: 1,
+      _productId: 1,
+      _globalGalleryId: 1,
+
+      _status: 1,
+    };
+  }
+  public productDocumentLinkingTableMinimum(): Object {
+    return {
+      _id: 1,
+      _productId: 1,
+      _globalGalleryId: 1,
+
+      _status: 1,
+    };
+  }
+  public productDocumentLinkingTableMedium(): Object {
+    return {
+      _id: 1,
+      _productId: 1,
+      _globalGalleryId: 1,
+      _status: 1,
+    };
+  }
+  public productDocumentLinkingTableMaximum(): Object {
+    return {
+      _id: 1,
+      _productId: 1,
+      _globalGalleryId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+  public productStonelinkingTableLight(): Object {
+    return {
+      _id: 1,
+      _stoneWeight: 1,
+      _quantity: 1,
+      _status: 1,
+    };
+  }
+  public productStonelinkingTableMinimum(): Object {
+    return {
+      _id: 1,
+      _productId: 1,
+      _stoneId: 1,
+      _stoneColourId: 1,
+      _stoneWeight: 1,
+      _quantity: 1,
+      _status: 1,
+    };
+  }
+  public productStonelinkingTableMedium(): Object {
+    return {
+      _id: 1,
+      _productId: 1,
+      _stoneId: 1,
+      _stoneColourId: 1,
+      _stoneWeight: 1,
+      _quantity: 1,
+      _status: 1,
+    };
+  }
+  public productStonelinkingTableMaximum(): Object {
+    return {
+      _id: 1,
+      _productId: 1,
+      _stoneId: 1,
+      _stoneColourId: 1,
+      _stoneWeight: 1,
+      _quantity: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+  public stoneMasterTableLight(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _globalGalleryId: 1,
+    };
+  }
+  public stoneMasterTableMinimum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _globalGalleryId: 1,
+      _dataGuard: 1,
+
+      _status: 1,
+    };
+  }
+  public stoneMasterTableMedium(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _globalGalleryId: 1,
+      _colourId: 1,
+      _dataGuard: 1,
+      _status: 1,
+    };
+  }
+  public stoneMasterTableMaximum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _globalGalleryId: 1,
+      _colourId: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+  public colourMasterTableLight(): Object {
+    return {
+      
+      _id: 1,
+      _name: 1,
+      _hexCode: 1,
+      _hexCodeSecond: 1,
+     
+    };
+  }
+  public colourMasterTableMinimum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _hexCode: 1,
+      _hexCodeSecond: 1,
+      _type: 1,
+     
+    };
+  }
+  public colourMasterTableMedium(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _hexCode: 1,
+      _hexCodeSecond: 1,
+      _type: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+     
+      _status: 1,
+    };
+  }
+  public colourMasterTableMaximum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _hexCode: 1,
+      _hexCodeSecond: 1,
+      _type: 1,
       _dataGuard: 1,
       _createdUserId: 1,
       _createdAt: 1,

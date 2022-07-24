@@ -606,5 +606,102 @@ export class ModelWeightResponseFormat {
     }
   }
 
+  public groupMasterTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().groupTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().groupTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().groupTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().groupTableMedium() };
+    } else {
+      return { $project: new ModelWeight().groupTableMaximum() };
+    }
+  }
+  public productDocumentLinkingTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().productDocumentLinkingTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().productDocumentLinkingTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().productDocumentLinkingTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().productDocumentLinkingTableMedium() };
+    } else {
+      return { $project: new ModelWeight().productDocumentLinkingTableMaximum() };
+    }
+  }
+
+
+
+  
+  public productStoneLinkingTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().productStonelinkingTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().productStonelinkingTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().productStonelinkingTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().productStonelinkingTableMedium() };
+    } else {
+      return { $project: new ModelWeight().productStonelinkingTableMaximum() };
+    }
+  }
+
+  public stoneMasterTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().stoneMasterTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().stoneMasterTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().stoneMasterTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().stoneMasterTableMedium() };
+    } else {
+      return { $project: new ModelWeight().stoneMasterTableMaximum() };
+    }
+  }
+
+  public colourMasterTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().colourMasterTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().colourMasterTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().colourMasterTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().colourMasterTableMedium() };
+    } else {
+      return { $project: new ModelWeight().colourMasterTableMaximum() };
+    }
+  }
+
 
 }
