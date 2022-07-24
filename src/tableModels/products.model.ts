@@ -11,9 +11,9 @@ export const ProductsSchema = new mongoose.Schema({
     ref: ModelNames.SHOPS,
     default: null,
   }, 
-  _orderId: {
+  _orderItemId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.ORDER_SALES,
+    ref: ModelNames.ORDER_SALES_ITEMS,
     default: null,
   },
 
@@ -62,7 +62,7 @@ export interface Products {
   _name: String;
   _designerId: String;
   _shopId: String;
-  _orderId: String;
+  _orderItemId: String;
   _grossWeight: number;
   _barcode: String;
   _categoryId: String;
@@ -85,7 +85,7 @@ export interface Products {
 ProductsSchema.index({ _name: 1 });
 ProductsSchema.index({ _designerId: 1, _id: 1 });
 ProductsSchema.index({ _shopId: 1 });
-ProductsSchema.index({ _orderId: 1 });
+ProductsSchema.index({ _orderItemId: 1 });
 ProductsSchema.index({ _grossWeight: 1 });
 ProductsSchema.index({ _barcode: 1 });
 ProductsSchema.index({ _categoryId: 1 });

@@ -19,7 +19,7 @@ const descriptionRequestStatus =
 class PhotographyRequestCreateList {
   @IsString()
   @ApiProperty({})
-  orderId: string;
+  orderItemId: string;
   @IsString()
   @ApiProperty({})
   productId: string;

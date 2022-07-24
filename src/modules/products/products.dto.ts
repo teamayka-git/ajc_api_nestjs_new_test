@@ -13,7 +13,7 @@ import { Optional } from '@nestjs/common';
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList =
-  '0-total documents count,100-shop, 101-orderDetails, 102-subCategoryDetails, 103-CategoryDetails, 104-groupDetails, 105-stone details, 106-product documents';
+  '0-total documents count,100-shop, 101-order item Details, 102-subCategoryDetails, 103-CategoryDetails, 104-groupDetails, 105-stone details, 106-product documents';
 const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType =
   '0-Created Date, 1-Status,2-Name, 3-designerId, 4-grossWeight, 5-type, 6-purity, 7-hmSealing, 8-huid, 9-eCommerceStatus';
@@ -49,6 +49,10 @@ export class ProductCreateDto {
   @IsString()
   @ApiProperty({})
   orderId: string;
+
+  @IsString()
+  @ApiProperty({})
+  orderItemId: string;
 
   @IsNumber()
   @ApiProperty({})

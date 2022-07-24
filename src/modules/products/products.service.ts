@@ -136,11 +136,15 @@ export class ProductsService {
       var productId = new mongoose.Types.ObjectId();
       var shopId = dto.shopId;
       var orderId = dto.orderId;
+      var orderItemId = dto.orderItemId;
       if (shopId == '' || shopId == 'nil') {
         shopId = null;
       }
       if (orderId == '' || orderId == 'nil') {
         orderId = null;
+      }
+      if (orderItemId == '' || orderItemId == 'nil') {
+        orderItemId = null;
       }
 
       dto.stonesArray.map((mapItem1) => {
@@ -163,7 +167,7 @@ export class ProductsService {
         _name: dto.name,
         _designerId: `${resultSubcategory[0]._code}-${autoIncrementNumber}`,
         _shopId: shopId,
-        _orderId: orderId,
+        _orderItemId: orderItemId,
         _netWeight: dto.netWeight,
         _totalStoneWeight: dto.totalStoneWeight,
         _grossWeight: dto.grossWeight,
@@ -324,7 +328,7 @@ export class ProductsService {
           );
         const photographerRequestModel = new this.photographerRequestModel({
           _rootCauseId: null,
-          _orderId: orderId,
+          _orderItemId: orderItemId,
           _productId: productId,
           _requestStatus: 0,
           _description: '',
@@ -628,64 +632,88 @@ if(arrayOrderSaleHistory.length!=0){
         arrayAggregation.push(
           {
             $lookup: {
-              from: ModelNames.ORDER_SALES,
-              let: { orderId: '$_orderId' },
+              from: ModelNames.ORDER_SALES_ITEMS,
+              let: { orderItemId: '$_orderItemId' },
               pipeline: [
                 {
                   $match: {
                     $expr: {
-                      $and: [{ $eq: ['$_id', '$$orderId'] }],
+                      $and: [{ $eq: ['$_id', '$$orderItemId'] }],
                     },
                   },
                 },
                 {
                   $lookup: {
-                    from: ModelNames.ORDER_SALES_DOCUMENTS,
-                    let: { orderSaleIdId: '$_id' },
+                    from: ModelNames.ORDER_SALES_MAIN,
+                    let: { orderId: '$_orderSaleId' },
                     pipeline: [
                       {
                         $match: {
-                          _status: 1,
-                          $expr: { $eq: ['$_orderSaleId', '$$orderSaleIdId'] },
+                          $expr: {
+                            $and: [{ $eq: ['$_id', '$$orderId'] }],
+                          },
                         },
                       },
-                      {
-                        $project: {
-                          _orderSaleId: 1,
-                          _globalGalleryId: 1,
-                        },
-                      },
+
                       {
                         $lookup: {
-                          from: ModelNames.GLOBAL_GALLERIES,
-                          let: { globalGalleryId: '$_globalGalleryId' },
+                          from: ModelNames.ORDER_SALES_DOCUMENTS,
+                          let: { orderSaleIdId: '$_id' },
                           pipeline: [
                             {
                               $match: {
-                                $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                                _status: 1,
+                                $expr: { $eq: ['$_orderSaleId', '$$orderSaleIdId'] },
+                              },
+                            },
+                            {
+                              $project: {
+                                _orderSaleId: 1,
+                                _globalGalleryId: 1,
+                              },
+                            },
+                            {
+                              $lookup: {
+                                from: ModelNames.GLOBAL_GALLERIES,
+                                let: { globalGalleryId: '$_globalGalleryId' },
+                                pipeline: [
+                                  {
+                                    $match: {
+                                      $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                                    },
+                                  },
+                                ],
+                                as: 'globalGalleryDetails',
+                              },
+                            },
+                            {
+                              $unwind: {
+                                path: '$globalGalleryDetails',
+                                preserveNullAndEmptyArrays: true,
                               },
                             },
                           ],
-                          as: 'globalGalleryDetails',
+                          as: 'orderSaleDocumentList',
                         },
                       },
-                      {
-                        $unwind: {
-                          path: '$globalGalleryDetails',
-                          preserveNullAndEmptyArrays: true,
-                        },
-                      },
+                     
                     ],
-                    as: 'orderSaleDocumentList',
+                    as: 'orderDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$orderDetails',
+                    preserveNullAndEmptyArrays: true,
                   },
                 },
               ],
-              as: 'orderDetails',
+              as: 'orderItemDetails',
             },
           },
           {
             $unwind: {
-              path: '$orderDetails',
+              path: '$orderItemDetails',
               preserveNullAndEmptyArrays: true,
             },
           },

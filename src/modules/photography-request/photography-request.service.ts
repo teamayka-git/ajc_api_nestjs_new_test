@@ -51,7 +51,7 @@ export class PhotographyRequestService {
       dto.array.map((mapItem, index) => {
         arrayToStates.push({
           _rootCauseId: null,
-          _orderId: mapItem.orderId,
+          _orderItemId: mapItem.orderItemId,
           _productId: mapItem.productId,
           _requestStatus: 0,
           _description: mapItem.description,
@@ -372,8 +372,8 @@ export class PhotographyRequestService {
         arrayAggregation.push(
           {
             $lookup: {
-              from: ModelNames.ORDER_SALES_MAIN,
-              let: { orderId: '$_orderId' },
+              from: ModelNames.ORDER_SALES_ITEMS,
+              let: { orderId: '$_orderItemId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$orderId'] } } },
                 new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
