@@ -104,7 +104,7 @@ export class InvoicesService {
           orderIds.push(mapItem1.orderId);
           arrayToDeliveryChallanItems.push({
             _invoiceId: invoiceId,
-            _orderId: mapItem1.orderId,
+            _orderSaleItemId: mapItem1.orderSaleItemId,
             _orderUid: mapItem1.orderUid,
             _categoryName: mapItem1.categoryName,
             _subCategoryName: mapItem1.subCategoryName,

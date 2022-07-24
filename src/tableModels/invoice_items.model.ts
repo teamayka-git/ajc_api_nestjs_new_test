@@ -9,9 +9,9 @@ export const InvoiceItemsSchema = new mongoose.Schema({
     ref: ModelNames.INVOICES,
     default: null,
   },
-  _orderId: {
+  _orderSaleItemId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.ORDER_SALES,
+    ref: ModelNames.ORDER_SALES_ITEMS,
     default: null,
   },
   _subCategoryId: {
@@ -75,7 +75,7 @@ export interface InvoiceItems {
   _id: String;
   _invoiceId: String;
   _subCategoryId: String;
-  _orderId: String;
+  _orderSaleItemId: String;
   _grossAmount: number;
   _orderUid:string;
   _categoryName: String;
@@ -117,7 +117,7 @@ InvoiceItemsSchema.index({ _makingChargeGst: 1 });
 InvoiceItemsSchema.index({ _orderUid: 1 });
 InvoiceItemsSchema.index({ _status: 1 });
 InvoiceItemsSchema.index({ _invoiceId: 1 });
-InvoiceItemsSchema.index({ _orderId: 1 });
+InvoiceItemsSchema.index({ _orderSaleItemId: 1 });
 InvoiceItemsSchema.index({ _categoryName: 1 });
 InvoiceItemsSchema.index({ _subCategoryName: 1 });
 InvoiceItemsSchema.index({ _productName: 1 });

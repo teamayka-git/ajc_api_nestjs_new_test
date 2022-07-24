@@ -24,6 +24,9 @@ class InvoiceCreateListItems {
   orderId: string;
   @IsString()
   @ApiProperty({})
+  orderSaleItemId: string;
+  @IsString()
+  @ApiProperty({})
   orderUid: string;
 
   @IsString()

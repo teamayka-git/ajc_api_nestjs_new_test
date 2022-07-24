@@ -3,7 +3,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _invoiceId: 1,
-      _orderId: 1,
+      _orderSaleItemId: 1,
       _orderUid: 1,
       _categoryName: 1,
       _subCategoryName: 1,
@@ -20,7 +20,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _invoiceId: 1,
-      _orderId: 1,
+      _orderSaleItemId: 1,
       _orderUid: 1,
       _categoryName: 1,
       _subCategoryName: 1,
@@ -42,7 +42,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _invoiceId: 1,
-      _orderId: 1,
+      _orderSaleItemId: 1,
       _orderUid: 1,
       _categoryName: 1,
       _subCategoryName: 1,
@@ -77,7 +77,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _invoiceId: 1,
-      _orderId: 1,
+      _orderSaleItemId: 1,
       _orderUid: 1,
       _categoryName: 1,
       _subCategoryName: 1,

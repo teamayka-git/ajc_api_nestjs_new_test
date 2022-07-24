@@ -304,65 +304,87 @@ export class DeliveryTempService {
 
                 {
                   $lookup: {
-                    from: ModelNames.ORDER_SALES,
-                    let: { orderId: '$_orderId' },
+                    from: ModelNames.ORDER_SALES_ITEMS,
+                    let: { orderSaleItemId: '$_orderSaleItemId' },
                     pipeline: [
                       {
                         $match: {
-                          $expr: { $eq: ['$_id', '$$orderId'] },
+                          $expr: { $eq: ['$_id', '$$orderSaleItemId'] },
                         },
                       },
 
                       {
                         $lookup: {
-                          from: ModelNames.SHOPS,
-                          let: { shopId: '$_shopId' },
+                          from: ModelNames.ORDER_SALES,
+                          let: { orderId: '$_orderSaleId' },
                           pipeline: [
                             {
                               $match: {
-                                $expr: { $eq: ['$_id', '$$shopId'] },
+                                $expr: { $eq: ['$_id', '$$orderId'] },
+                              },
+                            },
+      
+                            {
+                              $lookup: {
+                                from: ModelNames.SHOPS,
+                                let: { shopId: '$_shopId' },
+                                pipeline: [
+                                  {
+                                    $match: {
+                                      $expr: { $eq: ['$_id', '$$shopId'] },
+                                    },
+                                  },
+                                ],
+                                as: 'shopDetails',
+                              },
+                            },
+                            {
+                              $unwind: {
+                                path: '$shopDetails',
+                                preserveNullAndEmptyArrays: true,
+                              },
+                            },
+                            {
+                              $lookup: {
+                                from: ModelNames.SUB_CATEGORIES,
+                                let: { subCategoryId: '$_subCategoryId' },
+                                pipeline: [
+                                  {
+                                    $match: {
+                                      $expr: { $eq: ['$_id', '$$subCategoryId'] },
+                                    },
+                                  },
+                                ],
+                                as: 'subCategoryDetails',
+                              },
+                            },
+                            {
+                              $unwind: {
+                                path: '$subCategoryDetails',
+                                preserveNullAndEmptyArrays: true,
                               },
                             },
                           ],
-                          as: 'shopDetails',
+                          as: 'orderDetails',
                         },
                       },
                       {
                         $unwind: {
-                          path: '$shopDetails',
-                          preserveNullAndEmptyArrays: true,
-                        },
-                      },
-                      {
-                        $lookup: {
-                          from: ModelNames.SUB_CATEGORIES,
-                          let: { subCategoryId: '$_subCategoryId' },
-                          pipeline: [
-                            {
-                              $match: {
-                                $expr: { $eq: ['$_id', '$$subCategoryId'] },
-                              },
-                            },
-                          ],
-                          as: 'subCategoryDetails',
-                        },
-                      },
-                      {
-                        $unwind: {
-                          path: '$subCategoryDetails',
+                          path: '$orderDetails',
                           preserveNullAndEmptyArrays: true,
                         },
                       },
                     ],
-                    as: 'orderDetails',
+                    as: 'ordersaleItemDetails',
                   },
                 },
                 {
                   $unwind: {
-                    path: '$orderDetails',
+                    path: '$ordersaleItemDetails',
                     preserveNullAndEmptyArrays: true,
                   },
                 },
+                
               ],
               as: 'invoiceItems',
             },
