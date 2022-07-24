@@ -11,13 +11,14 @@ import { SubProcessMasterSchema } from 'src/tableModels/subProcessMaster.model';
 import { OrderSalesSchema } from 'src/tableModels/order_sales.model';
 import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.model';
 import { EmployeeSchema } from 'src/tableModels/employee.model';
+import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
 
 @Module({
   imports:[MongooseModule.forFeature([
     {name:ModelNames.ORDER_SALE_SET_PROCESSES,schema:OrderSaleSetProcessesSchema},
     {name:ModelNames.ORDER_SALE_SET_PROCESS_HISTORIES,schema:OrderSaleSetProcessHistoriesSchema},
     {name:ModelNames.SUB_PROCESS_MASTER,schema:SubProcessMasterSchema},
-    {name:ModelNames.ORDER_SALES,schema:OrderSalesSchema},
+    {name:ModelNames.ORDER_SALES_MAIN,schema:OrderSalesMainSchema},
     {name:ModelNames.ORDER_SALE_HISTORIES,schema:OrderSaleHistoriesSchema},
     {name:ModelNames.ORDER_SALE_SET_SUB_PROCESSES,schema:OrderSaleSetSubProcessesSchema},
     {name:ModelNames.ORDER_SALE_SET_SUB_PROCESS_HISTORIES,schema:OrderSaleSetSubProcessHistoriesSchema},

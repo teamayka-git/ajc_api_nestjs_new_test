@@ -21,7 +21,6 @@ import { OrderSalesItemsSchema } from 'src/tableModels/order_sales_items.model';
   imports: [
     MongooseModule.forFeature([
       { name: ModelNames.USER, schema: UserSchema },
-      { name: ModelNames.ORDER_SALES, schema: OrderSalesSchema },
       { name: ModelNames.GLOBAL_GALLERIES, schema: GlobalGalleriesSchema },
       { name: ModelNames.COUNTERS, schema: CountersSchema },
       { name: ModelNames.EMPLOYEES, schema: EmployeeSchema },

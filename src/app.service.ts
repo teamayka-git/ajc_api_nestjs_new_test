@@ -706,7 +706,7 @@ export class AppService {
       );
 
       await this.countersModel.findOneAndUpdate(
-        { _tableName: ModelNames.ORDER_SALES },
+        { _tableName: ModelNames.ORDER_SALES_MAIN },
         {
           $setOnInsert: {
             _count: 0,

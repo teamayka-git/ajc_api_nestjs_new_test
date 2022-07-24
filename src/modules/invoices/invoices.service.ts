@@ -14,6 +14,7 @@ import { GlobalConfig } from 'src/config/global_config';
 import { OrderSales } from 'src/tableModels/order_sales.model';
 import { DeliveryTemp } from 'src/tableModels/delivery_temp.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
+import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
 
 @Injectable()
 export class InvoicesService {
@@ -29,8 +30,8 @@ export class InvoicesService {
     private readonly invoiceItemsModel: mongoose.Model<InvoiceItems>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
-    @InjectModel(ModelNames.ORDER_SALES)
-    private readonly orderSaleModel: mongoose.Model<OrderSales>,
+    @InjectModel(ModelNames.ORDER_SALES_MAIN)
+    private readonly orderSaleMainModel: mongoose.Model<OrderSalesMain>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async create(dto: InvoiceCreateDto, _userId_: string) {
@@ -183,7 +184,7 @@ export class InvoicesService {
        
       });
 
-      await this.orderSaleModel.updateMany(
+      await this.orderSaleMainModel.updateMany(
         { _id: { $in: orderIds } },
         { $set: { _isInvoiceGenerated: 1, _workStatus: 17 } },
         { new: true, session: transactionSession },

@@ -20,6 +20,7 @@ import { PhotographerRequests } from 'src/tableModels/photographer_requests.mode
 import { HalmarkingRequests } from 'src/tableModels/halmarking_requests.model';
 import { Departments } from 'src/tableModels/departments.model';
 import { BarCodeQrCodePrefix } from 'src/common/barcode_qrcode_prefix';
+import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
 
 @Injectable()
 export class ProductsService {
@@ -34,8 +35,8 @@ export class ProductsService {
     private readonly departmentsModel: Model<Departments>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: Model<Counters>,
-    @InjectModel(ModelNames.ORDER_SALES)
-    private readonly orderSaleModel: Model<OrderSales>,
+    @InjectModel(ModelNames.ORDER_SALES_MAIN)
+    private readonly orderSaleMainModel: Model<OrderSalesMain>,
     @InjectModel(ModelNames.PHOTOGRAPHER_REQUESTS)
     private readonly photographerRequestModel: Model<PhotographerRequests>,
     @InjectModel(ModelNames.HALMARKING_REQUESTS)
@@ -200,7 +201,7 @@ export class ProductsService {
      
 
 
-        var result = await this.orderSaleModel.findOneAndUpdate(
+        var result = await this.orderSaleMainModel.findOneAndUpdate(
           {
             _id: dto.orderId,
           },

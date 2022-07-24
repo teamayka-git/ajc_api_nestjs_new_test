@@ -315,7 +315,7 @@ export class DeliveryTempService {
 
                       {
                         $lookup: {
-                          from: ModelNames.ORDER_SALES,
+                          from: ModelNames.ORDER_SALES_MAIN,
                           let: { orderId: '$_orderSaleId' },
                           pipeline: [
                             {

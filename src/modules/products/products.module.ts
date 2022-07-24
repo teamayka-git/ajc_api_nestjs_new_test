@@ -13,6 +13,7 @@ import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.m
 import { PhotographerRequestsSchema } from 'src/tableModels/photographer_requests.model';
 import { HalmarkingRequestsSchema } from 'src/tableModels/halmarking_requests.model';
 import { DepartmentsSchema } from 'src/tableModels/departments.model';
+import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { DepartmentsSchema } from 'src/tableModels/departments.model';
         name: ModelNames.PRODUCT_STONE_LINKIGS,
         schema: ProductStoneLinkingsSchema,
       },{name:ModelNames.DEPARTMENT,schema:DepartmentsSchema},
-      { name: ModelNames.ORDER_SALES, schema: OrderSalesSchema },
+      { name: ModelNames.ORDER_SALES_MAIN, schema: OrderSalesMainSchema },
       {
         name: ModelNames.ORDER_SALE_HISTORIES,
         schema: OrderSaleHistoriesSchema,

@@ -6,6 +6,7 @@ import { GlobalConfig } from 'src/config/global_config';
 import { Counters } from 'src/tableModels/counters.model';
 import { HalmarkingRequests } from 'src/tableModels/halmarking_requests.model';
 import { OrderSales } from 'src/tableModels/order_sales.model';
+import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { Products } from 'src/tableModels/products.model';
 import {
@@ -24,8 +25,8 @@ export class HalmarkingRequestsService {
     private readonly productModel: mongoose.Model<Products>,
     @InjectModel(ModelNames.HALMARKING_REQUESTS)
     private readonly halmarkRequestsModel: mongoose.Model<HalmarkingRequests>,
-    @InjectModel(ModelNames.ORDER_SALES)
-    private readonly orderSaleModel: mongoose.Model<OrderSales>,
+    @InjectModel(ModelNames.ORDER_SALES_MAIN)
+    private readonly orderSaleMainModel: mongoose.Model<OrderSalesMain>,
     @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
     private readonly orderSaleHistoriesModel: mongoose.Model<OrderSaleHistories>,
     @InjectModel(ModelNames.COUNTERS)
@@ -309,7 +310,7 @@ export class HalmarkingRequestsService {
             
               {
                 $lookup: {
-                  from: ModelNames.ORDER_SALES,
+                  from: ModelNames.ORDER_SALES_MAIN,
                   let: { orderId: '$_orderSaleId' },
                   pipeline: [
                     {
@@ -818,7 +819,7 @@ export class HalmarkingRequestsService {
       );
 
       if (dto.requestStatus == 4 && dto.orderId != '' && dto.orderId != 'nil') {
-        await this.orderSaleModel.findOneAndUpdate(
+        await this.orderSaleMainModel.findOneAndUpdate(
           { _id: dto.orderId },
           {
             $set: {

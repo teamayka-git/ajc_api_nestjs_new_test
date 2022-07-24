@@ -77,5 +77,5 @@ export enum ModelNames {
 
 
   
-  ORDER_SALES = 'zzzzzz_order_sale',
+  
 }

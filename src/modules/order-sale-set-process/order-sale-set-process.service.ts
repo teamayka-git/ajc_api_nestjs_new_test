@@ -21,6 +21,7 @@ import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { GlobalConfig } from 'src/config/global_config';
 import { Employee } from 'src/tableModels/employee.model';
 import { ModelWeight } from 'src/model_weight/model_weight';
+import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
 
 @Injectable()
 export class OrderSaleSetProcessService {
@@ -38,8 +39,8 @@ export class OrderSaleSetProcessService {
     @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
     private readonly orderSaleHistoriesModel: mongoose.Model<OrderSaleHistories>,
 
-    @InjectModel(ModelNames.ORDER_SALES)
-    private readonly orderSaleModel: mongoose.Model<OrderSales>,
+    @InjectModel(ModelNames.ORDER_SALES_MAIN)
+    private readonly orderSaleMainModel: mongoose.Model<OrderSalesMain>,
     @InjectModel(ModelNames.SUB_PROCESS_MASTER)
     private readonly subProcessModel: mongoose.Model<SubProcessMaster>,
     @InjectConnection() private readonly connection: mongoose.Connection,
@@ -167,7 +168,7 @@ export class OrderSaleSetProcessService {
         },
       );
 
-      await this.orderSaleModel.updateMany(
+      await this.orderSaleMainModel.updateMany(
         {
           _id: { $in: arrayOrdersaleIds },
         },
@@ -453,7 +454,7 @@ export class OrderSaleSetProcessService {
 
       if (dto.isLastSetProcess == 1 && dto.orderStatus == 3) {
         //finish process data
-        await this.orderSaleModel.findOneAndUpdate(
+        await this.orderSaleMainModel.findOneAndUpdate(
           {
             _id: result._orderSaleId,
           },
