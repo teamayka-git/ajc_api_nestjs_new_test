@@ -212,34 +212,30 @@ export class OrderSaleSetProcessService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+      var objectUpdateOrderSaleSetProcess = {
+        _userId: dto.userId,
+        _orderStatus: dto.orderStatus,
+        _description: dto.descriptionId,
+      };
 
-
-var objectUpdateOrderSaleSetProcess={
-  _userId: dto.userId,
-  _orderStatus: dto.orderStatus,
-  _description: dto.descriptionId,
-};
-
-
-switch(dto.orderStatus){
-  case 1:
-    objectUpdateOrderSaleSetProcess["_workAssignedTime"] = dateTime;
-    break;
-    case 2:
-      objectUpdateOrderSaleSetProcess["_workStartedTime"] = dateTime;
-      break;
-      case 3:
-        objectUpdateOrderSaleSetProcess["_workCompletedTime"] = dateTime;
-        break;
-}
-
+      switch (dto.orderStatus) {
+        case 1:
+          objectUpdateOrderSaleSetProcess['_workAssignedTime'] = dateTime;
+          break;
+        case 2:
+          objectUpdateOrderSaleSetProcess['_workStartedTime'] = dateTime;
+          break;
+        case 3:
+          objectUpdateOrderSaleSetProcess['_workCompletedTime'] = dateTime;
+          break;
+      }
 
       var result = await this.orderSaleSetProcessModel.findOneAndUpdate(
         {
           _id: dto.orderSaleSetProcessId,
         },
         {
-          $set:objectUpdateOrderSaleSetProcess ,
+          $set: objectUpdateOrderSaleSetProcess,
         },
         { new: true, session: transactionSession },
       );
@@ -268,7 +264,8 @@ switch(dto.orderStatus){
         case 1:
           objDefaultProcessHistory._userId = dto.userId;
           objDefaultProcessHistory._processId = result._processId;
-          objDefaultProcessHistory._orderSaleSetProcessId = dto.orderSaleSetProcessId;
+          objDefaultProcessHistory._orderSaleSetProcessId =
+            dto.orderSaleSetProcessId;
           break;
         case 2:
           objDefaultProcessHistory._processId = result._processId;
@@ -325,8 +322,7 @@ switch(dto.orderStatus){
           [
             {
               $match: {
-                _orderSaleId: 
-                result._orderSaleId,
+                _orderSaleId: result._orderSaleId,
                 _userId: null,
                 _status: 1,
               },
@@ -391,7 +387,7 @@ switch(dto.orderStatus){
               },
             },
             {
-              $match: { 'userAttendance': { $ne: [] } },
+              $match: { userAttendance: { $ne: [] } },
             },
             {
               $lookup: {
@@ -400,7 +396,7 @@ switch(dto.orderStatus){
                 pipeline: [
                   {
                     $match: {
-                      _orderStatus: {$in:[0,1,2]},
+                      _orderStatus: { $in: [0, 1, 2] },
                       _status: 1,
                       $expr: { $eq: ['$_userId', '$$userId'] },
                     },
@@ -413,60 +409,44 @@ switch(dto.orderStatus){
               $project: {
                 _id: 1,
                 _userId: 1,
-                userAttendance:{_id:1},
-                workCount:{$size: "$setProcessWorkList"}
+                userAttendance: { _id: 1 },
+                workCount: { $size: '$setProcessWorkList' },
               },
             },
-
-
-
-
           ]);
 
+          let sortedArray = resultEmployees.sort((n1, n2) =>
+            n2.workCount < n1.workCount ? 1 : -1,
+          );
+          if (sortedArray.length != 0) {
+            await this.orderSaleSetProcessModel.findOneAndUpdate(
+              {
+                _id: orderSaleSetProcess[0]._id,
+              },
+              {
+                $set: {
+                  _userId: sortedArray[0]._userId,
+                  _orderStatus: 1,
+                },
+              },
+              { new: true, session: transactionSession },
+            );
 
-
-          
-let sortedArray=resultEmployees.sort((n1,n2) => n2.workCount <n1.workCount ? 1 : -1);
-if(sortedArray.length!=0){
-  await this.orderSaleSetProcessModel.findOneAndUpdate(
-    {
-      _id: orderSaleSetProcess[0]._id
-    },
-    {
-      $set: {
-        _userId: sortedArray[0]._userId,
-        _orderStatus: 1,
-      },
-    },
-    { new: true, session: transactionSession },
-  );
-
-
-
-  const orderSaleSetProcessHistoryAutomation =
-        new this.orderSaleSetProcessHistoriesModel({
-          _orderSaleId: result._orderSaleId,
-        _userId: sortedArray[0]._userId,
-        _type: 1,
-        _processId: orderSaleSetProcess[0]._processId,
-        _createdUserId: _userId_,
-        _createdAt: dateTime,
-        _description: '',
-        _status: 1,
-        });
-      await orderSaleSetProcessHistoryAutomation.save({
-        session: transactionSession,
-      });
-
-
-      
-
-
-
-
-
-
-}
+            const orderSaleSetProcessHistoryAutomation =
+              new this.orderSaleSetProcessHistoriesModel({
+                _orderSaleId: result._orderSaleId,
+                _userId: sortedArray[0]._userId,
+                _type: 1,
+                _processId: orderSaleSetProcess[0]._processId,
+                _createdUserId: _userId_,
+                _createdAt: dateTime,
+                _description: '',
+                _status: 1,
+              });
+            await orderSaleSetProcessHistoryAutomation.save({
+              session: transactionSession,
+            });
+          }
         }
       }
 
@@ -511,7 +491,7 @@ if(sortedArray.length!=0){
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-     await transactionSession.commitTransaction();
+      await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return responseJSON;
     } catch (error) {
@@ -694,7 +674,7 @@ if(sortedArray.length!=0){
             as: 'processDetails',
           },
         },
-        { 
+        {
           $unwind: {
             path: '$processDetails',
             preserveNullAndEmptyArrays: true,
@@ -720,8 +700,7 @@ if(sortedArray.length!=0){
                       $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } },
                     },
                     {
-                        $project: new ModelWeight().globalGalleryTableLight(),
-                      
+                      $project: new ModelWeight().globalGalleryTableLight(),
                     },
                   ],
                   as: 'globalGalleryDetails',
@@ -762,8 +741,7 @@ if(sortedArray.length!=0){
                       $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } },
                     },
                     {
-                        $project: new ModelWeight().globalGalleryTableLight(),
-                      
+                      $project: new ModelWeight().globalGalleryTableLight(),
                     },
                   ],
                   as: 'globalGalleryDetails',
@@ -874,12 +852,14 @@ if(sortedArray.length!=0){
             let: { subProcessId: '$_subProcessId' },
             pipeline: [
               { $match: { $expr: { $eq: ['$_id', '$$subProcessId'] } } },
-              {$project:{
-                _id: 1,
-                _name:1,
-                _code: 1,
-                _maxHours: 1,
-              }}
+              {
+                $project: {
+                  _id: 1,
+                  _name: 1,
+                  _code: 1,
+                  _maxHours: 1,
+                },
+              },
             ],
             as: 'subProcessDetails',
           },
@@ -900,8 +880,7 @@ if(sortedArray.length!=0){
               { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
               {
                 $project: new ModelWeight().userTableLight(),
-              
-            },
+              },
               {
                 $lookup: {
                   from: ModelNames.GLOBAL_GALLERIES,
@@ -911,9 +890,7 @@ if(sortedArray.length!=0){
                       $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } },
                     },
                     {
-                        $project: new ModelWeight().globalGalleryTableLight(),
-                      
-                    
+                      $project: new ModelWeight().globalGalleryTableLight(),
                     },
                   ],
                   as: 'globalGalleryDetails',
@@ -944,8 +921,7 @@ if(sortedArray.length!=0){
               { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
               {
                 $project: new ModelWeight().userTableLight(),
-              
-            },
+              },
               {
                 $lookup: {
                   from: ModelNames.GLOBAL_GALLERIES,
@@ -955,9 +931,7 @@ if(sortedArray.length!=0){
                       $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } },
                     },
                     {
-                        $project: new ModelWeight().globalGalleryTableLight(),
-                      
-                    
+                      $project: new ModelWeight().globalGalleryTableLight(),
                     },
                   ],
                   as: 'globalGalleryDetails',

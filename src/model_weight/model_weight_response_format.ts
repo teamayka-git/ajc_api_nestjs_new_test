@@ -203,4 +203,102 @@ export class ModelWeightResponseFormat {
       return { $project: new ModelWeight().orderSaleTableMaximum() };
     }
   }
+
+   
+  public orderSaleItemsTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().orderSaleItemsTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().orderSaleItemsTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().orderSaleItemsTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().orderSaleItemsTableMedium() };
+    } else {
+      return { $project: new ModelWeight().orderSaleItemsTableMaximum() };
+    }
+  }
+
+   
+  public productTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().productTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().productTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().productTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().productTableMedium() };
+    } else {
+      return { $project: new ModelWeight().productTableMaximum() };
+    }
+  }
+
+   
+  public subCategoryTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().subCategoryTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().subCategoryTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().subCategoryTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().subCategoryTableMedium() };
+    } else {
+      return { $project: new ModelWeight().subCategoryTableMaximum() };
+    }
+  }
+
+   
+  public categoryTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().categoryTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().categoryTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().categoryTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().categoryTableMedium() };
+    } else {
+      return { $project: new ModelWeight().categoryTableMaximum() };
+    }
+  }
+  public rootcauseTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().rootCauseTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().rootCauseTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().rootCauseTableMinimumn() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().rootCauseTableMedium() };
+    } else {
+      return { $project: new ModelWeight().rootCauseTableMaximum() };
+    }
+  }
 }

@@ -11,7 +11,7 @@ export const PhotographerRequestsSchema = new mongoose.Schema({
   },
   _orderId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.ORDER_SALES,
+    ref: ModelNames.ORDER_SALES_MAIN,
     default: null,
   },
   _productId: {

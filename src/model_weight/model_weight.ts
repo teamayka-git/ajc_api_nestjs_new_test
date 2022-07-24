@@ -994,4 +994,181 @@ export class ModelWeight {
       _status: 1,
     };
   }
+
+  public productTableLight(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _barcode: 1,
+      _type: 1,
+      _purity: 1,
+      _hmSealingStatus: 1,
+      _huId: 1,
+      _eCommerceStatus: 1,
+      _status: 1,
+    };
+  }
+
+  public productTableMinimum(): Object {
+    return {
+
+
+      _id: 1,
+      _name: 1,
+      _barcode: 1,
+      _type: 1,
+      _purity: 1,
+      _hmSealingStatus: 1,
+      _huId: 1,
+      _eCommerceStatus: 1,
+      _designerId: 1,
+      _status: 1,
+      _shopId: 1,
+      _orderId: 1,
+      _categoryId: 1,
+      _subCategoryId: 1,
+      _groupId: 1,
+
+    };
+  }
+
+  public productTableMedium(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _designerId: 1,
+      _shopId: 1,
+      _orderId: 1,
+      _grossWeight: 1,
+      _barcode: 1,
+      _categoryId: 1,
+      _subCategoryId: 1,
+      _groupId: 1,
+      _type: 1,
+      _purity: 1,
+      _hmSealingStatus: 1,
+      _totalStoneWeight: 1,
+      _netWeight: 1,
+      _huId: 1,
+      _eCommerceStatus: 1,
+      _status: 1,
+    };
+  }
+
+  public productTableMaximum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _designerId: 1,
+      _shopId: 1,
+      _orderId: 1,
+      _grossWeight: 1,
+      _barcode: 1,
+      _categoryId: 1,
+      _subCategoryId: 1,
+      _groupId: 1,
+      _type: 1,
+      _purity: 1,
+      _hmSealingStatus: 1,
+      _totalStoneWeight: 1,
+      _netWeight: 1,
+      _huId: 1,
+      _eCommerceStatus: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+  public categoryTableLight(): Object {
+    return {
+      _id:1,
+      _name:1,
+      _code:1,
+      _status:1,
+    };
+  }
+
+  public categoryTableMinimum(): Object {
+    return {
+      _id:1,
+      _name:1,
+      _code:1,
+      _description:1,
+      _dataGuard:1,
+      _status:1,
+    };
+  }
+
+  public categoryTableMedium(): Object {
+    return {
+      _id:1,
+      _name:1,
+      _code:1,
+      _description:1,
+      _groupId:1,
+      _globalGalleryId:1,
+      _dataGuard:1,
+      _status:1,
+    };
+  }
+
+  public categoryTableMaximum(): Object {
+    return {
+      _id:1,
+      _name:1,
+      _code:1,
+      _description:1,
+      _groupId:1,
+      _globalGalleryId:1,
+      _dataGuard:1,
+      _createdUserId:1,
+      _createdAt:1,
+      _updatedUserId:1,
+      _updatedAt:1,
+      _status:1,
+    };
+  }
+  public rootCauseTableLight(): Object {
+    return {
+      _id:1,
+      _name:1,
+     
+    };
+  }
+  public rootCauseTableMinimumn(): Object {
+    return {
+      _id:1,
+      _name:1,
+      _type:1,
+      _dataGuard:1,
+      
+      _status:1,
+    };
+  }
+  public rootCauseTableMedium(): Object {
+    return {
+      _id:1,
+      _name:1,
+      _type:1,
+      _dataGuard:1,
+      _createdUserId:1,
+      _status:1,
+    };
+  }
+  public rootCauseTableMaximum(): Object {
+    return {
+      _id:1,
+      _name:1,
+      _type:1,
+      _dataGuard:1,
+      _createdUserId:1,
+      _createdAt:1,
+      _updatedUserId:1,
+      _updatedAt:1,
+      _status:1,
+    };
+  }
 }

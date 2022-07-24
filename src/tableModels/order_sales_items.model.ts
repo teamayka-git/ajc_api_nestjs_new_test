@@ -9,7 +9,7 @@ export const OrderSalesItemsSchema = new mongoose.Schema({
     ref: ModelNames.ORDER_SALES_MAIN,
     default: null,
   },
-  _subCategoryId: {
+  _subCategoryId: { 
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.SUB_CATEGORIES,
     default: null,

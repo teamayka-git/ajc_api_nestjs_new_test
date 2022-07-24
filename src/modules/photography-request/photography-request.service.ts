@@ -16,6 +16,7 @@ import { Counters } from 'src/tableModels/counters.model';
 import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
 import { ProductsDocuments } from 'src/tableModels/products_documents.model';
+import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 
 @Injectable()
 export class PhotographyRequestService {
@@ -37,21 +38,17 @@ export class PhotographyRequestService {
     try {
       var arrayToStates = [];
 
-
       var resultCounterPhotographer = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.PHOTOGRAPHER_REQUESTS },
         {
           $inc: {
-            _count:dto.array.length,
+            _count: dto.array.length,
           },
         },
         { new: true, session: transactionSession },
       );
 
-
-
-
-      dto.array.map((mapItem,index) => {
+      dto.array.map((mapItem, index) => {
         arrayToStates.push({
           _rootCauseId: null,
           _orderId: mapItem.orderId,
@@ -59,7 +56,7 @@ export class PhotographyRequestService {
           _requestStatus: 0,
           _description: mapItem.description,
           _userId: mapItem.assignUserId,
-          _uid:resultCounterPhotographer._count-index,
+          _uid: resultCounterPhotographer._count - index,
           _finishedAt: -1,
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -371,13 +368,19 @@ export class PhotographyRequestService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.includes( 100)) {
+      if (dto.screenType.includes(100)) {
         arrayAggregation.push(
           {
             $lookup: {
-              from: ModelNames.ORDER_SALES,
+              from: ModelNames.ORDER_SALES_MAIN,
               let: { orderId: '$_orderId' },
-              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$orderId'] } } }],
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$orderId'] } } },
+                new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+                  1000,
+                  dto.responseFormat,
+                ),
+              ],
               as: 'orderDetails',
             },
           },
@@ -389,7 +392,7 @@ export class PhotographyRequestService {
           },
         );
       }
-      if (dto.screenType.includes( 101)) {
+      if (dto.screenType.includes(101)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -397,6 +400,11 @@ export class PhotographyRequestService {
               let: { rootCauseId: '$_rootCauseId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$rootCauseId'] } } },
+
+                new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                  1010,
+                  dto.responseFormat,
+                ),
               ],
               as: 'rootCauseDetails',
             },
@@ -409,40 +417,55 @@ export class PhotographyRequestService {
           },
         );
       }
-      if (dto.screenType.includes( 102)) {
+      if (dto.screenType.includes(102)) {
+        const photographyUserPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$userId'] },
+              },
+            },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1020,
+              dto.responseFormat,
+            ),);
+            const photographerUserGlobalGallery = dto.screenType.includes(104);
+            if (photographerUserGlobalGallery) {
+            pipeline.push( {
+              $lookup: {
+                from: ModelNames.GLOBAL_GALLERIES,
+                let: { globalGalleryId: '$_globalGalleryId' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                    },
+                  },
+                  new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                    1040,
+                    dto.responseFormat,
+                  )
+                ],
+                as: 'globalGalleryDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$globalGalleryDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          );}
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.USER,
               let: { userId: '$_userId' },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: { $eq: ['$_id', '$$userId'] },
-                  },
-                },
-
-                {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                        },
-                      },
-                    ],
-                    as: 'globalGalleryDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
-              ],
+              pipeline: photographyUserPipeline(),
               as: 'assignedUserDetails',
             },
           },
@@ -455,40 +478,58 @@ export class PhotographyRequestService {
         );
       }
 
-      if (dto.screenType.includes( 103)) {
+
+
+
+      if (dto.screenType.includes(103)) {
+        const photographyCreatedUserPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$createdUserId'] },
+              },
+            },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1030,
+              dto.responseFormat,
+            ),);
+            const photographerUserGlobalGallery = dto.screenType.includes(105);
+            if (photographerUserGlobalGallery) {
+            pipeline.push( {
+              $lookup: {
+                from: ModelNames.GLOBAL_GALLERIES,
+                let: { globalGalleryId: '$_globalGalleryId' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                    },
+                  },
+                  new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                    1050,
+                    dto.responseFormat,
+                  )
+                ],
+                as: 'globalGalleryDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$globalGalleryDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          );}
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.USER,
               let: { createdUserId: '$_createdUserId' },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: { $eq: ['$_id', '$$createdUserId'] },
-                  },
-                },
-
-                {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                        },
-                      },
-                    ],
-                    as: 'globalGalleryDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
-              ],
+              pipeline: photographyCreatedUserPipeline(),
               as: 'createdUserDetails',
             },
           },
@@ -500,6 +541,7 @@ export class PhotographyRequestService {
           },
         );
       }
+
 
       var result = await this.photographyRequestModel
         .aggregate(arrayAggregation)
