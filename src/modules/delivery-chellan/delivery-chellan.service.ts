@@ -76,7 +76,7 @@ export class DeliveryChellanService {
         mapItem.arrayDeliveryChallanItems.map((mapItem1) => {
           arrayToDeliveryChallanItems.push({
             _deliveryChallanId: deliveryChallanId,
-            _orderId: mapItem1.orderId,
+            _orderSaleItemId: mapItem1.orderSaleItemId,
             _categoryName: mapItem1.categoryName,
             _subCategoryName: mapItem1.subCategoryName,
             _productName: mapItem1.productName,

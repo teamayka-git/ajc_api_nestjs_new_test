@@ -9,9 +9,9 @@ export const DeliveryChallanItemsSchema = new mongoose.Schema({
     ref: ModelNames.DELIVERY_CHALLANS,
     default: null,
   },
-  _orderId: {
+  _orderSaleItemId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.ORDER_SALES,
+    ref: ModelNames.ORDER_SALES_ITEMS,
     default: null,
   },
   _categoryName: { type: String, required: true, default: 'nil' },
@@ -79,7 +79,7 @@ export const DeliveryChallanItemsSchema = new mongoose.Schema({
 export interface DeliveryChallanItems {
   _id: String;
   _deliveryChallanId: String;
-  _orderId: String;
+  _orderSaleItemId: String;
   _categoryName: String;
   _subCategoryName: String;
   _productName: String;
@@ -128,7 +128,7 @@ export interface DeliveryChallanItems {
 
 DeliveryChallanItemsSchema.index({ _status: 1 });
 DeliveryChallanItemsSchema.index({ _deliveryChallanId: 1 });
-DeliveryChallanItemsSchema.index({ _orderId: 1 });
+DeliveryChallanItemsSchema.index({ _orderSaleItemId: 1 });
 DeliveryChallanItemsSchema.index({ _categoryName: 1 });
 DeliveryChallanItemsSchema.index({ _subCategoryName: 1 });
 DeliveryChallanItemsSchema.index({ _productName: 1 });

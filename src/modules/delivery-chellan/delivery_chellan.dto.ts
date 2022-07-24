@@ -21,7 +21,7 @@ const descriptionSaleType = ' 0 - order sale, 1 - stock sale, 2 - job work';
 class DeliveryChallanCreateListItems {
   @IsString()
   @ApiProperty({})
-  orderId: string;
+  orderSaleItemId: string;
 
   @IsString()
   @ApiProperty({})
