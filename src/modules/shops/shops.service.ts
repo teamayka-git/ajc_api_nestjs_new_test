@@ -30,6 +30,7 @@ import {
 import { Customers } from 'src/tableModels/customers.model';
 import { Generals } from 'src/tableModels/generals.model';
 import { Company } from 'src/tableModels/companies.model';
+import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 @Injectable()
 export class ShopsService {
   constructor(
@@ -280,29 +281,24 @@ export class ShopsService {
       });
 
       if (dto.arrayUserIdsEsixting.length > 0) {
-
-
-
-for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
-  await this.userModel.findOneAndUpdate(
-    {
-      _id: { $in: dto.arrayUserIdsEsixting[i].userId },
-    },
-    {
-      $set: {
-        _updatedUserId: _userId_,
-        _updatedAt: dateTime,
-        _shopId: shopId,
-      },
-      $push: {
-        _customType: dto.arrayUserIdsEsixting[i].customType,
-      },
-    },
-    { new: true, session: transactionSession },
-  );
-}
-
-       
+        for (var i = 0; i < dto.arrayUserIdsEsixting.length; i++) {
+          await this.userModel.findOneAndUpdate(
+            {
+              _id: { $in: dto.arrayUserIdsEsixting[i].userId },
+            },
+            {
+              $set: {
+                _updatedUserId: _userId_,
+                _updatedAt: dateTime,
+                _shopId: shopId,
+              },
+              $push: {
+                _customType: dto.arrayUserIdsEsixting[i].customType,
+              },
+            },
+            { new: true, session: transactionSession },
+          );
+        }
       }
       if (dto.arrayUsersNew.length > 0) {
         var encryptedPassword = await crypto
@@ -327,7 +323,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
             _agentId: null,
             _supplierId: null,
             _deliveryHubId: null,
-            _logisticPartnerId:null,
+            _logisticPartnerId: null,
             _shopId: shopId,
             _testCenterId: null,
             _customType: [mapItem.customType],
@@ -366,7 +362,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         _agentId: null,
         _supplierId: null,
         _shopId: shopId,
-        _logisticPartnerId:null,
+        _logisticPartnerId: null,
         _testCenterId: null,
         _customType: [5],
         _deliveryHubId: null,
@@ -518,8 +514,8 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         _rateBaseMasterId: dto.rateBaseMasterId,
         _stonePricing: dto.stonePricing,
         _chatPermissions: dto.chatPermissions,
-        _agentId: 
-        dto.agentId == 'nil' || dto.agentId == '' ? null : dto.agentId,
+        _agentId:
+          dto.agentId == 'nil' || dto.agentId == '' ? null : dto.agentId,
         _agentCommision: dto.agentCommision,
         _dataGuard: dto.dataGuard,
       };
@@ -641,7 +637,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
             _supplierId: null,
             _shopId: dto.shopUserId,
             _customType: [4],
-            _logisticPartnerId:null,
+            _logisticPartnerId: null,
             _halmarkId: null,
             _testCenterId: null,
             _deliveryHubId: null,
@@ -868,7 +864,13 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.includes( 111)) {
+      arrayAggregation.push(
+        new ModelWeightResponseFormat().shopTableResponseFormat(
+          0,
+          dto.responseFormat,
+        ),
+      );
+      if (dto.screenType.includes(111)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -881,6 +883,11 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
                     $expr: { $eq: ['$_shopId', '$$userId'] },
                   },
                 },
+
+                new ModelWeightResponseFormat().userTableResponseFormat(
+                  1110,
+                  dto.responseFormat,
+                ),
               ],
               as: 'userDetails',
             },
@@ -890,7 +897,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
           },
         );
       }
-      if (dto.screenType.includes( 50)) {
+      if (dto.screenType.includes(50)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -898,6 +905,11 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
               let: { globalGalleryId: '$_globalGalleryId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+
+                new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                  500,
+                  dto.responseFormat,
+                ),
               ],
               as: 'globalGalleryDetails',
             },
@@ -910,7 +922,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
           },
         );
       }
-      if (dto.screenType.includes( 100)) {
+      if (dto.screenType.includes(100)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -918,6 +930,11 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
               let: { branchId: '$_branchId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$branchId'] } } },
+
+                new ModelWeightResponseFormat().branchTableResponseFormat(
+                  1000,
+                  dto.responseFormat,
+                ),
               ],
               as: 'branchDetails',
             },
@@ -931,15 +948,47 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         );
       }
 
-      if (dto.screenType.includes( 104)) {
+      if (dto.screenType.includes(104)) {
+        const ratecardPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            { $match: { $expr: { $eq: ['$_id', '$$rateCardId'] } } },
+            new ModelWeightResponseFormat().ratecardTableResponseFormat(
+              1040,
+              dto.responseFormat,
+            ),
+          );
+          const ratecardPercentages = dto.screenType.includes(112);
+          if (ratecardPercentages) {
+            pipeline.push({
+              $lookup: {
+                from: ModelNames.RATE_CARD_PERCENTAGESS,
+                let: { ratecardIdId: '$_id' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$_rateCardId', '$$ratecardIdId'] },
+                    },
+                  },
+
+                  new ModelWeightResponseFormat().ratecardPercentagesTableResponseFormat(
+                    1120,
+                    dto.responseFormat,
+                  ),
+                ],
+                as: 'rateCardPercentages',
+              },
+            });
+          }
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.RATE_CARDS,
               let: { rateCardId: '$_rateCardId' },
-              pipeline: [
-                { $match: { $expr: { $eq: ['$_id', '$$rateCardId'] } } },
-              ],
+              pipeline: ratecardPipeline(),
               as: 'rateCardDetails',
             },
           },
@@ -950,32 +999,22 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
             },
           },
         );
-
-        if (dto.screenType.includes(112)) {
-          arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push({
-            $lookup: {
-              from: ModelNames.RATE_CARD_PERCENTAGESS,
-              let: { ratecardIdId: '$_id' },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: { $eq: ['$_rateCardId', '$$ratecardIdId'] },
-                  },
-                },
-              ],
-              as: 'rateCardPercentages',
-            },
-          });
-        }
       }
 
-      if (dto.screenType.includes( 106)) {
+      if (dto.screenType.includes(106)) {
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.CITIES,
               let: { cityId: '$_cityId' },
-              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$cityId'] } } }],
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$cityId'] } } },
+
+                new ModelWeightResponseFormat().cityTableResponseFormat(
+                  1060,
+                  dto.responseFormat,
+                ),
+              ],
               as: 'cityDetails',
             },
           },
@@ -984,13 +1023,20 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
           },
         );
       }
-      if (dto.screenType.includes( 107)) {
+      if (dto.screenType.includes(107)) {
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.TDS_MASTERS,
               let: { tdsId: '$_tdsId' },
-              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$tdsId'] } } }],
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$tdsId'] } } },
+
+                new ModelWeightResponseFormat().tdsMasterTableResponseFormat(
+                  1070,
+                  dto.responseFormat,
+                ),
+              ],
               as: 'tdsDetails',
             },
           },
@@ -999,13 +1045,19 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
           },
         );
       }
-      if (dto.screenType.includes( 108)) {
+      if (dto.screenType.includes(108)) {
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.TCS_MASTERS,
               let: { tcsId: '$_tcsId' },
-              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$tcsId'] } } }],
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$tcsId'] } } },
+                new ModelWeightResponseFormat().tcsMasterTableResponseFormat(
+                  1080,
+                  dto.responseFormat,
+                ),
+              ],
               as: 'tcsDetails',
             },
           },
@@ -1014,7 +1066,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
           },
         );
       }
-      if (dto.screenType.includes( 109)) {
+      if (dto.screenType.includes(109)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -1022,6 +1074,10 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
               let: { ratebaseId: '$_rateBaseMasterId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$ratebaseId'] } } },
+                new ModelWeightResponseFormat().rateBaseMasterTableResponseFormat(
+                  1090,
+                  dto.responseFormat,
+                ),
               ],
               as: 'ratebaseMasterDetails',
             },
@@ -1035,40 +1091,59 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         );
       }
 
-      if (dto.screenType.includes( 101)) {
+      if (dto.screenType.includes(101)) {
+        const orderHeadPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$userId'] },
+              },
+            },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1010,
+              dto.responseFormat,
+            ),
+          );
+
+          const orderHeadGlobalGallery = dto.screenType.includes(113);
+          if (orderHeadGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1130,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.USER,
               let: { userId: '$_orderHeadId' },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: { $eq: ['$_id', '$$userId'] },
-                  },
-                },
-
-                {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                        },
-                      },
-                    ],
-                    as: 'globalGalleryDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
-              ],
+              pipeline: orderHeadPipeline(),
               as: 'orderHeadDetails',
             },
           },
@@ -1080,40 +1155,58 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
           },
         );
       }
-      if (dto.screenType.includes( 102)) {
+      if (dto.screenType.includes(102)) {
+        const relationshipManagerPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$userId'] },
+              },
+            },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1020,
+              dto.responseFormat,
+            ),
+          );
+          const relationshipManagerGlobalGallery = dto.screenType.includes(114);
+          if (relationshipManagerGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1140,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.USER,
               let: { userId: '$_relationshipManagerId' },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: { $eq: ['$_id', '$$userId'] },
-                  },
-                },
-
-                {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                        },
-                      },
-                    ],
-                    as: 'globalGalleryDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
-              ],
+              pipeline: relationshipManagerPipeline(),
               as: 'relationshipManagerDetails',
             },
           },
@@ -1126,40 +1219,58 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         );
       }
 
-      if (dto.screenType.includes( 110)) {
+      if (dto.screenType.includes(110)) {
+        const agentPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$agentUserId'] },
+              },
+            },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1100,
+              dto.responseFormat,
+            ),
+          );
+          const agentGlobalGallery = dto.screenType.includes(115);
+          if (agentGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1150,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.USER,
               let: { agentUserId: '$_agentId' },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: { $eq: ['$_id', '$$agentUserId'] },
-                  },
-                },
-
-                {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                        },
-                      },
-                    ],
-                    as: 'globalGalleryDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
-              ],
+              pipeline: agentPipeline(),
               as: 'agentUserDetails',
             },
           },
@@ -1177,7 +1288,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.includes( 0)) {
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
@@ -1215,22 +1326,22 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
     4 - order
       */
 
-      if (dto.screenType.includes( 200)) {
+      if (dto.screenType.includes(200)) {
         generalSettingsTypes.push(0);
       }
-      if (dto.screenType.includes( 201)) {
+      if (dto.screenType.includes(201)) {
         generalSettingsTypes.push(1);
       }
       if (dto.screenType.includes(202)) {
         generalSettingsTypes.push(2);
       }
-      if (dto.screenType.includes( 203)) {
+      if (dto.screenType.includes(203)) {
         generalSettingsTypes.push(3);
       }
       if (dto.screenType.includes(204)) {
         generalSettingsTypes.push(4);
       }
-      if (dto.screenType.includes( 205)) {
+      if (dto.screenType.includes(205)) {
         generalSettingsTypes.push(5);
       }
       if (dto.screenType.includes(206)) {
@@ -1249,7 +1360,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         );
       }
 
-      if (dto.screenType.includes( 250)) {
+      if (dto.screenType.includes(250)) {
         var resultCompanyList = await this.companyModel.aggregate([
           { $match: { _status: 1 } },
 
@@ -1259,6 +1370,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
               let: { cityId: '$_cityId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$cityId'] } } },
+                
 
                 {
                   $lookup: {
@@ -1460,8 +1572,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
     transactionSession.startTransaction();
     try {
       if (dto.arrayUserIdsEsixting.length > 0) {
-
-        for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
+        for (var i = 0; i < dto.arrayUserIdsEsixting.length; i++) {
           await this.userModel.findOneAndUpdate(
             {
               _id: { $in: dto.arrayUserIdsEsixting[i].userId },
@@ -1479,7 +1590,6 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
             { new: true, session: transactionSession },
           );
         }
-
       }
       if (dto.arrayRemoveUserIdsEsixting.length > 0) {
         await this.userModel.updateMany(
@@ -1520,7 +1630,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
             _testCenterId: null,
             _employeeId: null,
             _agentId: null,
-            _logisticPartnerId:null,
+            _logisticPartnerId: null,
             _supplierId: null,
             _deliveryHubId: null,
             _customerId: null,
@@ -1571,8 +1681,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
     transactionSession.startTransaction();
     try {
       if (dto.arrayUserIdsEsixting.length > 0) {
-
-        for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
+        for (var i = 0; i < dto.arrayUserIdsEsixting.length; i++) {
           await this.userModel.findOneAndUpdate(
             {
               _id: { $in: dto.arrayUserIdsEsixting[i].userId },
@@ -1590,7 +1699,6 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
             { new: true, session: transactionSession },
           );
         }
-
       }
       if (dto.arrayRemoveUserIdsEsixting.length > 0) {
         await this.userModel.updateMany(
@@ -1661,7 +1769,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
             _testCenterId: null,
             _agentId: null,
             _supplierId: null,
-            _logisticPartnerId:null,
+            _logisticPartnerId: null,
             _customerId: customerId,
             _shopId: dto.shopUserId,
             _customType: [mapItem.customType],
@@ -1779,7 +1887,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         });
       }
 
-      if (dto.screenType.includes( 52)) {
+      if (dto.screenType.includes(52)) {
         arrayAggregation.push({
           $match: { _customerId: { $ne: null } },
         });
@@ -1815,7 +1923,13 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.includes( 50)) {
+      arrayAggregation.push(
+        new ModelWeightResponseFormat().userTableResponseFormat(
+          0,
+          dto.responseFormat,
+        ),
+      );
+      if (dto.screenType.includes(50)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -1823,6 +1937,11 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
               let: { globalGalleryId: '$_globalGalleryId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+
+                new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                  500,
+                  dto.responseFormat,
+                ),
               ],
               as: 'globalGalleryDetails',
             },
@@ -1841,7 +1960,14 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
             $lookup: {
               from: ModelNames.SHOPS,
               let: { shopId: '$_shopId' },
-              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$shopId'] } } }],
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$shopId'] } } },
+
+                new ModelWeightResponseFormat().shopTableResponseFormat(
+                  1000,
+                  dto.responseFormat,
+                ),
+              ],
               as: 'shopDetails',
             },
           },
@@ -1854,7 +1980,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         );
       }
 
-      if (dto.screenType.includes( 101)) {
+      if (dto.screenType.includes(101)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -1862,6 +1988,11 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
               let: { customerId: '$_customerId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$customerId'] } } },
+
+                new ModelWeightResponseFormat().customerTableResponseFormat(
+                  1010,
+                  dto.responseFormat,
+                ),
               ],
               as: 'customerDetails',
             },
@@ -1880,7 +2011,7 @@ for(var i=0;i<dto.arrayUserIdsEsixting.length;i++){
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.includes( 0)) {
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,

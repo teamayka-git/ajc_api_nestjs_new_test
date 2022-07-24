@@ -193,6 +193,10 @@ export class DeliveryTempService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
+      arrayAggregation.push(new ModelWeightResponseFormat().deliveryTempTableResponseFormat(
+        0,
+        dto.responseFormat,
+      ),);
       if (dto.screenType.includes(101)) {
         const employeePipeline = () => {
           const pipeline = [];

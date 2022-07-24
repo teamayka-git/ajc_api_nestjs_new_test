@@ -1011,8 +1011,6 @@ export class ModelWeight {
 
   public productTableMinimum(): Object {
     return {
-
-
       _id: 1,
       _name: 1,
       _barcode: 1,
@@ -1028,7 +1026,6 @@ export class ModelWeight {
       _categoryId: 1,
       _subCategoryId: 1,
       _groupId: 1,
-
     };
   }
 
@@ -1084,193 +1081,549 @@ export class ModelWeight {
 
   public categoryTableLight(): Object {
     return {
-      _id:1,
-      _name:1,
-      _code:1,
-      _status:1,
+      _id: 1,
+      _name: 1,
+      _code: 1,
+      _status: 1,
     };
   }
 
   public categoryTableMinimum(): Object {
     return {
-      _id:1,
-      _name:1,
-      _code:1,
-      _description:1,
-      _dataGuard:1,
-      _status:1,
+      _id: 1,
+      _name: 1,
+      _code: 1,
+      _description: 1,
+      _dataGuard: 1,
+      _status: 1,
     };
   }
 
   public categoryTableMedium(): Object {
     return {
-      _id:1,
-      _name:1,
-      _code:1,
-      _description:1,
-      _groupId:1,
-      _globalGalleryId:1,
-      _dataGuard:1,
-      _status:1,
+      _id: 1,
+      _name: 1,
+      _code: 1,
+      _description: 1,
+      _groupId: 1,
+      _globalGalleryId: 1,
+      _dataGuard: 1,
+      _status: 1,
     };
   }
 
   public categoryTableMaximum(): Object {
     return {
-      _id:1,
-      _name:1,
-      _code:1,
-      _description:1,
-      _groupId:1,
-      _globalGalleryId:1,
-      _dataGuard:1,
-      _createdUserId:1,
-      _createdAt:1,
-      _updatedUserId:1,
-      _updatedAt:1,
-      _status:1,
+      _id: 1,
+      _name: 1,
+      _code: 1,
+      _description: 1,
+      _groupId: 1,
+      _globalGalleryId: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
     };
   }
   public rootCauseTableLight(): Object {
     return {
-      _id:1,
-      _name:1,
-     
+      _id: 1,
+      _name: 1,
     };
   }
   public rootCauseTableMinimumn(): Object {
     return {
-      _id:1,
-      _name:1,
-      _type:1,
-      _dataGuard:1,
-      
-      _status:1,
+      _id: 1,
+      _name: 1,
+      _type: 1,
+      _dataGuard: 1,
+
+      _status: 1,
     };
   }
   public rootCauseTableMedium(): Object {
     return {
-      _id:1,
-      _name:1,
-      _type:1,
-      _dataGuard:1,
-      _createdUserId:1,
-      _status:1,
+      _id: 1,
+      _name: 1,
+      _type: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _status: 1,
     };
   }
   public rootCauseTableMaximum(): Object {
     return {
-      _id:1,
-      _name:1,
-      _type:1,
-      _dataGuard:1,
-      _createdUserId:1,
-      _createdAt:1,
-      _updatedUserId:1,
-      _updatedAt:1,
-      _status:1,
+      _id: 1,
+      _name: 1,
+      _type: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
     };
   }
   public deliveryChellanTableLight(): Object {
     return {
-      _id:1,
-      _userId:1,
-      _uid:1,
-      _deliveryMode:1,
-      _rootCauseId:1,
-      _description:1,
-      _referenceUrl:1,
-      _type:1,
-      _saleType:1,
+      _id: 1,
+      _userId: 1,
+      _uid: 1,
+      _deliveryMode: 1,
+      _rootCauseId: 1,
+      _description: 1,
+      _referenceUrl: 1,
+      _type: 1,
+      _saleType: 1,
     };
   }
   public deliveryChellanTableMinimum(): Object {
     return {
- _id:1,
-      _userId:1,
-      _uid:1,
-      _deliveryMode:1,
-      _deliveryProviderId:1,
-      _deliveryExicutiveId:1,
-      _rootCauseId:1,
-      _description:1,
-      _referenceUrl:1,
-      _type:1,
-      _saleType:1,
-
+      _id: 1,
+      _userId: 1,
+      _uid: 1,
+      _deliveryMode: 1,
+      _deliveryProviderId: 1,
+      _deliveryExicutiveId: 1,
+      _rootCauseId: 1,
+      _description: 1,
+      _referenceUrl: 1,
+      _type: 1,
+      _saleType: 1,
     };
   }
   public deliveryChellanTableMedium(): Object {
     return {
-      _id:1,
-      _userId:1,
-      _uid:1,
-      _deliveryMode:1,
-      _deliveryProviderId:1,
-      _deliveryExicutiveId:1,
-      _rootCauseId:1,
-      _description:1,
-      _referenceUrl:1,
-      _type:1,
-      _saleType:1,
-      _status:1,
+      _id: 1,
+      _userId: 1,
+      _uid: 1,
+      _deliveryMode: 1,
+      _deliveryProviderId: 1,
+      _deliveryExicutiveId: 1,
+      _rootCauseId: 1,
+      _description: 1,
+      _referenceUrl: 1,
+      _type: 1,
+      _saleType: 1,
+      _status: 1,
     };
   }
   public deliveryChellanTableMaximum(): Object {
     return {
-      _id:1,
-      _userId:1,
-      _uid:1,
-      _deliveryMode:1,
-      _deliveryProviderId:1,
-      _deliveryExicutiveId:1,
-      _rootCauseId:1,
-      _description:1,
-      _referenceUrl:1,
-      _type:1,
-      _saleType:1,
-      _createdUserId:1,
-      _createdAt:1,
-      _updatedUserId:1,
-      _updatedAt:1,
-      _status:1,
+      _id: 1,
+      _userId: 1,
+      _uid: 1,
+      _deliveryMode: 1,
+      _deliveryProviderId: 1,
+      _deliveryExicutiveId: 1,
+      _rootCauseId: 1,
+      _description: 1,
+      _referenceUrl: 1,
+      _type: 1,
+      _saleType: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
     };
   }
 
   public deliveryProviderTableLight(): Object {
     return {
-      _id:1,
-      _name:1,
+      _id: 1,
+      _name: 1,
     };
   }
   public deliveryProviderTableMinimum(): Object {
     return {
-      _id:1,
-      _name:1,
-      _websiteUrl:1,
-      _address:1,
+      _id: 1,
+      _name: 1,
+      _websiteUrl: 1,
+      _address: 1,
     };
   }
   public deliveryProviderTableMedium(): Object {
     return {
-      _id:1,
-      _name:1,
-      _websiteUrl:1,
-      _address:1,
-      _status:1,
+      _id: 1,
+      _name: 1,
+      _websiteUrl: 1,
+      _address: 1,
+      _status: 1,
     };
   }
   public deliveryProviderTableMaximum(): Object {
     return {
-      _id:1,
-      _name:1,
-      _websiteUrl:1,
-      _address:1,
-      _createdUserId:1,
-      _createdAt:1,
-      _updatedUserId:1,
-      _updatedAt:1,
-      _status:1,
+      _id: 1,
+      _name: 1,
+      _websiteUrl: 1,
+      _address: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+  public customerTableLight(): Object {
+    return {
+      _id: 1,
+      _uid: 1,
+      _status: 1,
+    };
+  }
+  public customerTableMinimum(): Object {
+    return {
+      _id: 1,
+      _uid: 1,
+      _status: 1,
+    };
+  }
+  public customerTableMedium(): Object {
+    return {
+      _id: 1,
+      _uid: 1,
+      _field1: 1,
+      _field2: 1,
+      _field3: 1,
+
+      _status: 1,
+    };
+  }
+  public customerTableMaximum(): Object {
+    return {
+      _id: 1,
+      _uid: 1,
+      _field1: 1,
+      _field2: 1,
+      _field3: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+  public deliveryTempTableLight(): Object {
+    return {
+      _id: 1,
+      _type: 1,
+      _invoiceId: 1,
+      _employeeId: 1,
+      _hubId: 1,
+    };
+  }
+  public deliveryTempTableMinimum(): Object {
+    return {
+      _id: 1,
+      _type: 1,
+      _invoiceId: 1,
+      _employeeId: 1,
+      _hubId: 1,
+      _createdUserId: 1,
+
+      _status: 1,
+    };
+  }
+  public deliveryTempTableMedium(): Object {
+    return {
+      _id: 1,
+      _type: 1,
+      _invoiceId: 1,
+      _employeeId: 1,
+      _hubId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+
+      _status: 1,
+    };
+  }
+  public deliveryTempTableMaximum(): Object {
+    return {
+      _id: 1,
+      _type: 1,
+      _invoiceId: 1,
+      _employeeId: 1,
+      _hubId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+  public branchTableLight(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _uid: 1,
+
+      _status: 1,
+    };
+  }
+  public branchTableMinimum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _uid: 1,
+      _email: 1,
+      _mobile: 1,
+      _globalGalleryId: 1,
+      _dataGuard: 1,
+      _tectCode: 1,
+      _status: 1,
+    };
+  }
+  public branchTableMedium(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _uid: 1,
+      _email: 1,
+      _mobile: 1,
+      _globalGalleryId: 1,
+      _dataGuard: 1,
+      _tectCode: 1,
+      _status: 1,
+    };
+  }
+  public branchTableMaximum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _uid: 1,
+      _email: 1,
+      _mobile: 1,
+      _globalGalleryId: 1,
+      _dataGuard: 1,
+      _tectCode: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+  public ratecardTableLight(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+    };
+  }
+  public ratecardTableMinimum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+
+      _status: 1,
+    };
+  }
+  public ratecardTableMedium(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _createdUserId: 1,
+      _status: 1,
+    };
+  }
+  public ratecardTableMaximum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+  public ratecardPercentagesTableLight(): Object {
+    return {
+      _id: 1,
+      _percentage: 1,
+    };
+  }
+  public ratecardPercentagesTableMinimum(): Object {
+    return {
+      _id: 1,
+      _rateCardId: 1,
+      _subCategoryId: 1,
+      _percentage: 1,
+    };
+  }
+  public ratecardPercentagesTableMedium(): Object {
+    return {
+      _id: 1,
+      _rateCardId: 1,
+      _subCategoryId: 1,
+      _percentage: 1,
+      _status: 1,
+    };
+  }
+  public ratecardPercentagesTableMaximum(): Object {
+    return {
+      _id: 1,
+      _rateCardId: 1,
+      _subCategoryId: 1,
+      _percentage: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+  public cityTableLight(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _code: 1,
+    };
+  }
+  public cityTableMinimum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _code: 1,
+      _districtsId: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _status: 1,
+    };
+  }
+  public cityTableMedium(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _code: 1,
+      _districtsId: 1,
+      _dataGuard: 1,
+      _status: 1,
+    };
+  }
+  public cityTableMaximum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _code: 1,
+      _districtsId: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+  public tdsMasterTableLight(): Object {
+    return {
+      _id: 1,
+      _percentage: 1,
+    };
+  }
+  public tdsMasterTableMinimum(): Object {
+    return {
+      _id: 1,
+      _percentage: 1,
+      _dataGuard: 1,
+
+      _status: 1,
+    };
+  }
+  public tdsMasterTableMedium(): Object {
+    return {
+      _id: 1,
+      _percentage: 1,
+      _dataGuard: 1,
+      _status: 1,
+    };
+  }
+  public tdsMasterTableMaximum(): Object {
+    return {
+      _id: 1,
+      _percentage: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+  public tcsMasterTableLight(): Object {
+    return {
+      _id: 1,
+      _percentage: 1,
+    };
+  }
+  public tcsMasterTableMinimum(): Object {
+    return {
+      _id: 1,
+      _percentage: 1,
+      _dataGuard: 1,
+
+      _status: 1,
+    };
+  }
+  public tcsMasterTableMedium(): Object {
+    return {
+      _id: 1,
+      _percentage: 1,
+      _dataGuard: 1,
+      _status: 1,
+    };
+  }
+  public tcsMasterTableMaximum(): Object {
+    return {
+      _id: 1,
+      _percentage: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+  public rateBaseMasterTableLight(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      
+    };
+  }
+  public rateBaseMasterTableMinimum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _status: 1,
+    };
+  }
+  public rateBaseMasterTableMedium(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _dataGuard: 1,
+      _status: 1,
+    };
+  }
+  public rateBaseMasterTableMaximum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
     };
   }
 }

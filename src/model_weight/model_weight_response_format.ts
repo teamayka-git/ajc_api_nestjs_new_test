@@ -434,5 +434,177 @@ export class ModelWeightResponseFormat {
     }
   }
 
+  public customerTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().customerTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().customerTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().customerTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().customerTableMedium() };
+    } else {
+      return { $project: new ModelWeight().customerTableMaximum() };
+    }
+  }
+
+  public deliveryTempTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().deliveryTempTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().deliveryTempTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().deliveryTempTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().deliveryTempTableMedium() };
+    } else {
+      return { $project: new ModelWeight().deliveryTempTableMaximum() };
+    }
+  }
+
+
+
+  public branchTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().branchTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().branchTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().branchTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().branchTableMedium() };
+    } else {
+      return { $project: new ModelWeight().branchTableMaximum() };
+    }
+  }
+
+
+  public ratecardTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().ratecardTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().ratecardTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().ratecardTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().ratecardTableMedium() };
+    } else {
+      return { $project: new ModelWeight().ratecardTableMaximum() };
+    }
+  }
+  public ratecardPercentagesTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().ratecardPercentagesTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().ratecardPercentagesTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().ratecardPercentagesTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().ratecardPercentagesTableMedium() };
+    } else {
+      return { $project: new ModelWeight().ratecardPercentagesTableMaximum() };
+    }
+  }
+
+  public cityTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().cityTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().cityTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().cityTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().cityTableMedium() };
+    } else {
+      return { $project: new ModelWeight().cityTableMaximum() };
+    }
+  }
+  public tdsMasterTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().tdsMasterTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().tdsMasterTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().tdsMasterTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().tdsMasterTableMedium() };
+    } else {
+      return { $project: new ModelWeight().tdsMasterTableMaximum() };
+    }
+  }
+
+  public tcsMasterTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().tcsMasterTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().tcsMasterTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().tcsMasterTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().tcsMasterTableMedium() };
+    } else {
+      return { $project: new ModelWeight().tcsMasterTableMaximum() };
+    }
+  }
+
+  public rateBaseMasterTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().rateBaseMasterTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().rateBaseMasterTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().rateBaseMasterTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().rateBaseMasterTableMedium() };
+    } else {
+      return { $project: new ModelWeight().rateBaseMasterTableMaximum() };
+    }
+  }
+
 
 }
