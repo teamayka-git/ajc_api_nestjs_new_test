@@ -413,4 +413,26 @@ export class ModelWeightResponseFormat {
       return { $project: new ModelWeight().deliveryProviderTableMaximum() };
     }
   }
+
+
+  public deliveryHubTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().deliveryHubTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().deliveryHubTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().deliveryHubTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().deliveryHubTableMedium() };
+    } else {
+      return { $project: new ModelWeight().deliveryHubTableMaximum() };
+    }
+  }
+
+
 }

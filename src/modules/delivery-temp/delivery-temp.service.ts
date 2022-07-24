@@ -10,6 +10,7 @@ import {
   DeliveryTempListDto,
 } from './delivery_temp.dto';
 import { GlobalConfig } from 'src/config/global_config';
+import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 
 @Injectable()
 export class DeliveryTempService {
@@ -193,39 +194,58 @@ export class DeliveryTempService {
       }
 
       if (dto.screenType.includes(101)) {
+        const employeePipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$userId'] },
+              },
+            },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1010,
+              dto.responseFormat,
+            ),
+          );
+          const employeeGlobalGallery = dto.screenType.includes(106);
+          if (employeeGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
+                    },
+
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1060,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.USER,
               let: { userId: '$_employeeId' },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: { $eq: ['$_id', '$$userId'] },
-                  },
-                },
-
-                {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                        },
-                      },
-                    ],
-                    as: 'globalGalleryDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
-              ],
+              pipeline: employeePipeline(),
               as: 'employeeDetails',
             },
           },
@@ -250,6 +270,10 @@ export class DeliveryTempService {
                     $expr: { $eq: ['$_id', '$$hubId'] },
                   },
                 },
+                new ModelWeightResponseFormat().deliveryHubTableResponseFormat(
+                  1020,
+                  dto.responseFormat,
+                ),
               ],
               as: 'hubDetails',
             },
@@ -264,86 +288,109 @@ export class DeliveryTempService {
       }
 
       if (dto.screenType.includes(103)) {
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.INVOICES,
-              let: { invoiceId: '$_invoiceId' },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: { $eq: ['$_id', '$$invoiceId'] },
+        const invoicePipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$invoiceId'] },
+              },
+            },
+
+            new ModelWeightResponseFormat().invoiceItemsTableResponseFormat(
+              1030,
+              dto.responseFormat,
+            ),
+          );
+
+          const invoiceItemsPipeline = () => {
+            const pipeline = [];
+
+            pipeline.push(
+              {
+                $match: {
+                  _status: 1,
+                  $expr: {
+                    $eq: ['$_invoiceId', '$$invoiceId'],
                   },
                 },
-              ],
-              as: 'invoiceDetails',
-            },
-          },
-          {
-            $unwind: {
-              path: '$invoiceDetails',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-        );
+              },
+              new ModelWeightResponseFormat().invoiceItemsTableResponseFormat(
+                1040,
+                dto.responseFormat,
+              ),
+            );
 
-        if (dto.screenType.includes(104)) {
-          arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push({
-            $lookup: {
-              from: ModelNames.INVOICE_ITEMS,
-              let: { invoiceId: '$_id' },
-              pipeline: [
-                {
-                  $match: {
-                    _status: 1,
-                    $expr: {
-                      $eq: ['$_invoiceId', '$$invoiceId'],
+            const invoiceItemsOrdersaleItems = dto.screenType.includes(107);
+            if (invoiceItemsOrdersaleItems) {
+              const invoiceItemsOrdersaleItemsPipeline = () => {
+                const pipeline = [];
+                pipeline.push(
+                  {
+                    $match: {
+                      $expr: { $eq: ['$_id', '$$orderSaleItemId'] },
                     },
                   },
-                },
+                  new ModelWeightResponseFormat().orderSaleItemsTableResponseFormat(
+                    1070,
+                    dto.responseFormat,
+                  ),
+                );
 
-                {
-                  $lookup: {
-                    from: ModelNames.ORDER_SALES_ITEMS,
-                    let: { orderSaleItemId: '$_orderSaleItemId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$orderSaleItemId'] },
+                const invoiceItemsOrdersaleItemsOrderSaleMain =
+                  dto.screenType.includes(108);
+                if (invoiceItemsOrdersaleItemsOrderSaleMain) {
+                  const invoiceItemsOrdersaleItemsOrderSaleMainPipeline =
+                    () => {
+                      const pipeline = [];
+                      pipeline.push(
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$orderId'] },
+                          },
                         },
-                      },
+                        new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+                          1080,
+                          dto.responseFormat,
+                        ),
+                      );
 
-                      {
-                        $lookup: {
-                          from: ModelNames.ORDER_SALES_MAIN,
-                          let: { orderId: '$_orderSaleId' },
-                          pipeline: [
-                            {
-                              $match: {
-                                $expr: { $eq: ['$_id', '$$orderId'] },
-                              },
-                            },
-      
-                            {
-                              $lookup: {
-                                from: ModelNames.SHOPS,
-                                let: { shopId: '$_shopId' },
-                                pipeline: [
-                                  {
-                                    $match: {
-                                      $expr: { $eq: ['$_id', '$$shopId'] },
-                                    },
+                      const invoiceItemsOrdersaleItemsOrderSaleMainShopDetails =
+                        dto.screenType.includes(109);
+                      if (invoiceItemsOrdersaleItemsOrderSaleMainShopDetails) {
+                        pipeline.push(
+                          {
+                            $lookup: {
+                              from: ModelNames.SHOPS,
+                              let: { shopId: '$_shopId' },
+                              pipeline: [
+                                {
+                                  $match: {
+                                    $expr: { $eq: ['$_id', '$$shopId'] },
                                   },
-                                ],
-                                as: 'shopDetails',
-                              },
+                                },
+                                new ModelWeightResponseFormat().shopTableResponseFormat(
+                                  1090,
+                                  dto.responseFormat,
+                                ),
+                              ],
+                              as: 'shopDetails',
                             },
-                            {
-                              $unwind: {
-                                path: '$shopDetails',
-                                preserveNullAndEmptyArrays: true,
-                              },
+                          },
+                          {
+                            $unwind: {
+                              path: '$shopDetails',
+                              preserveNullAndEmptyArrays: true,
                             },
+                          },
+                        );
+
+                        const invoiceItemsOrdersaleItemsOrderSaleMainSubCategoryDetails =
+                          dto.screenType.includes(110);
+                        if (
+                          invoiceItemsOrdersaleItemsOrderSaleMainSubCategoryDetails
+                        ) {
+                          pipeline.push(
                             {
                               $lookup: {
                                 from: ModelNames.SUB_CATEGORIES,
@@ -351,9 +398,15 @@ export class DeliveryTempService {
                                 pipeline: [
                                   {
                                     $match: {
-                                      $expr: { $eq: ['$_id', '$$subCategoryId'] },
+                                      $expr: {
+                                        $eq: ['$_id', '$$subCategoryId'],
+                                      },
                                     },
                                   },
+                                  new ModelWeightResponseFormat().subCategoryTableResponseFormat(
+                                    1100,
+                                    dto.responseFormat,
+                                  ),
                                 ],
                                 as: 'subCategoryDetails',
                               },
@@ -364,17 +417,39 @@ export class DeliveryTempService {
                                 preserveNullAndEmptyArrays: true,
                               },
                             },
-                          ],
-                          as: 'orderDetails',
-                        },
+                          );
+                        }
+                      }
+                      return pipeline;
+                    };
+
+                  pipeline.push(
+                    {
+                      $lookup: {
+                        from: ModelNames.ORDER_SALES_MAIN,
+                        let: { orderId: '$_orderSaleId' },
+                        pipeline:
+                          invoiceItemsOrdersaleItemsOrderSaleMainPipeline(),
+                        as: 'orderDetails',
                       },
-                      {
-                        $unwind: {
-                          path: '$orderDetails',
-                          preserveNullAndEmptyArrays: true,
-                        },
+                    },
+                    {
+                      $unwind: {
+                        path: '$orderDetails',
+                        preserveNullAndEmptyArrays: true,
                       },
-                    ],
+                    },
+                  );
+                }
+                return pipeline;
+              };
+
+              pipeline.push(
+                {
+                  $lookup: {
+                    from: ModelNames.ORDER_SALES_ITEMS,
+                    let: { orderSaleItemId: '$_orderSaleItemId' },
+                    pipeline: invoiceItemsOrdersaleItemsPipeline(),
                     as: 'ordersaleItemDetails',
                   },
                 },
@@ -384,12 +459,40 @@ export class DeliveryTempService {
                     preserveNullAndEmptyArrays: true,
                   },
                 },
-                
-              ],
-              as: 'invoiceItems',
+              );
+            }
+            return pipeline;
+          };
+          const invoiceItems = dto.screenType.includes(104);
+          if (invoiceItems) {
+            pipeline.push({
+              $lookup: {
+                from: ModelNames.INVOICE_ITEMS,
+                let: { invoiceId: '$_id' },
+                pipeline: invoiceItemsPipeline(),
+                as: 'invoiceItems',
+              },
+            });
+          }
+          return pipeline;
+        };
+
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.INVOICES,
+              let: { invoiceId: '$_invoiceId' },
+              pipeline: invoicePipeline(),
+              as: 'invoiceDetails',
             },
-          });
-        }
+          },
+          {
+            $unwind: {
+              path: '$invoiceDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
       }
 
       var result = await this.deliveryTempModel
