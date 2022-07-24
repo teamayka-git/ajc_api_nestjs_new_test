@@ -14,11 +14,11 @@ import { GlobalConfig } from 'src/config/global_config';
 import { DeliveryTemp } from 'src/tableModels/delivery_temp.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
+import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 
 @Injectable()
 export class InvoicesService {
   constructor(
-    
     @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
     private readonly orderSaleHistoriesModel: mongoose.Model<OrderSaleHistories>,
     @InjectModel(ModelNames.DELIVERY_TEMP)
@@ -149,7 +149,7 @@ export class InvoicesService {
             _orderSaleId: mapItem1.orderId,
             _userId: null,
             _type: 17,
-            _orderSaleItemId:null,
+            _orderSaleItemId: null,
             _shopId: null,
             _description: '',
             _createdUserId: _userId_,
@@ -161,7 +161,7 @@ export class InvoicesService {
             _userId: null,
             _type: 106,
             _shopId: null,
-            _orderSaleItemId:null,
+            _orderSaleItemId: null,
             _description: '',
             _createdUserId: _userId_,
             _createdAt: dateTime,
@@ -180,7 +180,6 @@ export class InvoicesService {
           _updatedAt: -1,
           _status: 1,
         });
-       
       });
 
       await this.orderSaleMainModel.updateMany(
@@ -192,7 +191,6 @@ export class InvoicesService {
       await this.orderSaleHistoriesModel.insertMany(arraySalesOrderHistories, {
         session: transactionSession,
       });
-
 
       await this.deliveryTempModel.insertMany(arrayToDeliveryTemp, {
         session: transactionSession,
@@ -346,35 +344,53 @@ export class InvoicesService {
         arrayAggregation.push({ $limit: dto.limit });
       }
       if (dto.screenType.includes(100)) {
+        const userPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1000,
+              dto.responseFormat,
+            ),
+          );
+          const userDetailsGlobalGallery = dto.screenType.includes(107);
+          if (userDetailsGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1070,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.USER,
               let: { userId: '$_userId' },
-              pipeline: [
-                { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
-
-                {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                        },
-                      },
-                    ],
-                    as: 'globalGalleryDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
-              ],
+              pipeline: userPipeline(),
               as: 'userDetails',
             },
           },
@@ -394,6 +410,11 @@ export class InvoicesService {
                 {
                   $match: { $expr: { $eq: ['$_id', '$$rootCauseId'] } },
                 },
+
+                new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                  1030,
+                  dto.responseFormat,
+                ),
               ],
               as: 'rootCauseDetails',
             },
@@ -407,37 +428,56 @@ export class InvoicesService {
         );
       }
       if (dto.screenType.includes(104)) {
+        const createdUserPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: { $expr: { $eq: ['$_id', '$$createdUserId'] } },
+            },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1040,
+              dto.responseFormat,
+            ),
+          );
+
+          const createdUserGlobalGallery = dto.screenType.includes(108);
+          if (createdUserGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      108,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.USER,
               let: { createdUserId: '$_createdUserId' },
-              pipeline: [
-                {
-                  $match: { $expr: { $eq: ['$_id', '$$createdUserId'] } },
-                },
-
-                {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                        },
-                      },
-                    ],
-                    as: 'globalGalleryDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
-              ],
+              pipeline: createdUserPipeline(),
               as: 'createdUserDetails',
             },
           },
@@ -451,44 +491,63 @@ export class InvoicesService {
       }
 
       if (dto.screenType.includes(105)) {
+        const invoiceItemsPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                _status: 1,
+                $expr: {
+                  $eq: ['$_invoiceId', '$$invoiceId'],
+                },
+              },
+            },
+
+            new ModelWeightResponseFormat().invoiceItemsTableResponseFormat(
+              1050,
+              dto.responseFormat,
+            ),
+          );
+          const invoiceItemsSubCategory = dto.screenType.includes(109);
+          if (invoiceItemsSubCategory) {
+            pipeline.push(
+              {
+                //106
+                $lookup: {
+                  from: ModelNames.SUB_CATEGORIES,
+                  let: { subCategoryId: '$_subCategoryId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$subCategoryId'] } } },
+
+                    new ModelWeightResponseFormat().subCategoryTableResponseFormat(
+                      1090,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'subCategoryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$subCategoryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.INVOICE_ITEMS,
             let: { invoiceId: '$_id' },
-            pipeline: [
-              {
-                $match: {
-                  _status: 1,
-                  $expr: {
-                    $eq: ['$_invoiceId', '$$invoiceId'],
-                  },
-                },
-              },
-            ],
+            pipeline: invoiceItemsPipeline(),
             as: 'invoiceItems',
           },
         });
       }
-      if (dto.screenType.includes(106)) {
-        arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
-          {
-            $lookup: {
-              from: ModelNames.SUB_CATEGORIES,
-              let: { subCategoryId: '$_subCategoryId' },
-              pipeline: [
-                { $match: { $expr: { $eq: ['$_id', '$$subCategoryId'] } } },
-              ],
-              as: 'subCategoryDetails',
-            },
-          },
-          {
-            $unwind: {
-              path: '$subCategoryDetails',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-        );
-      }
+
       var result = await this.invoiceItemsModel
         .aggregate(arrayAggregation)
         .session(transactionSession);

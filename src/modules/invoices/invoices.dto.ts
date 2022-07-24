@@ -13,7 +13,7 @@ import { Optional } from '@nestjs/common';
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList =
-  '0-total documents count, 100-user details, 103-root cause details, 104-created user details, 105-invoice items, 106-sub category only if invoice items exist';
+  '0-total documents count, 100-user details, 103-root cause details, 104-created user details, 105-invoice items, 106-sub category only if invoice items exist,107 -  user details under[100] global gallery ,108 -  created user details under[104] global gallery, 109 - invoice items under[105] sub category';
 const descriptionDeliveryMode = '0 - executive,  1 - courier,  2 - third party';
 const descriptionType = '0 - halmark, 1 - hub transfer';
 const descriptionBillMode = ' 0 - PureWeight, 1 - net weight, 2 - job work';
