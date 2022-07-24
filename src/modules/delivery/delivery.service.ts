@@ -110,10 +110,10 @@ export class DeliveryService {
         if (indexChild != -1) {
           arrayToDeliveryItems.push({
             _deliveryId: resultOldDelivery[indexChild]._id,
-            _orderId:
-              mapItem.orderId == '' || mapItem.orderId == 'nil'
+            _orderSaleItemId:
+              mapItem.orderSaleItemId == '' || mapItem.orderSaleItemId == 'nil'
                 ? null
-                : mapItem.orderId,
+                : mapItem.orderSaleItemId,
             _invoiceId:
               mapItem.invoiceId == '' || mapItem.invoiceId == 'nil'
                 ? null
@@ -566,12 +566,12 @@ if(getDeliveryItemsForCheck.length!=dto.deliveryIds.length){
           arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
             {
               $lookup: {
-                from: ModelNames.ORDER_SALES,
-                let: { orderId: '$_orderId' },
+                from: ModelNames.ORDER_SALES_ITEMS,
+                let: { orderSaleId: '$_orderSaleItemId' },
                 pipeline: [
                   {
                     $match: {
-                      $expr: { $eq: ['$_id', '$$orderId'] },
+                      $expr: { $eq: ['$_id', '$$orderSaleId'] },
                     },
                   },
 
@@ -614,28 +614,28 @@ if(getDeliveryItemsForCheck.length!=dto.deliveryIds.length){
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
                   .length - 2
               ].$lookup.pipeline.push({
-                $project: new ModelWeight().orderSaleTableLight(),
+                $project: new ModelWeight().orderSaleItemsTableLight(),
               });
             } else if (dto.responseFormat.includes(1041)) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
                   .length - 2
               ].$lookup.pipeline.push({
-                $project: new ModelWeight().orderSaleTableMinimum(),
+                $project: new ModelWeight().orderSaleItemsTableMinimum(),
               });
             } else if (dto.responseFormat.includes(1042)) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
                   .length - 2
               ].$lookup.pipeline.push({
-                $project: new ModelWeight().orderSaleTableMedium(),
+                $project: new ModelWeight().orderSaleItemsTableMedium(),
               });
             } else if (dto.responseFormat.includes(1043)) {
               arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
                 arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
                   .length - 2
               ].$lookup.pipeline.push({
-                $project: new ModelWeight().orderSaleTableMaximum(),
+                $project: new ModelWeight().orderSaleItemsTableMaximum(),
               });
             }
           }

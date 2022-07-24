@@ -33,7 +33,7 @@ class DeliveryCreateList {
 
   @IsString()
   @ApiProperty({})
-  orderId: string;
+  orderSaleItemId: string;
 
   @IsString()
   @ApiProperty({})

@@ -436,7 +436,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _deliveryId: 1,
-      _orderId: 1,
+      _orderSaleItemId: 1,
       _invoiceId: 1,
     };
   }
@@ -444,7 +444,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _deliveryId: 1,
-      _orderId: 1,
+      _orderSaleItemId: 1,
       _invoiceId: 1,
       _createdUserId: 1,
       _status: 1,
@@ -454,7 +454,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _deliveryId: 1,
-      _orderId: 1,
+      _orderSaleItemId: 1,
       _invoiceId: 1,
       _createdUserId: 1,
       _createdAt: 1,
@@ -467,7 +467,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _deliveryId: 1,
-      _orderId: 1,
+      _orderSaleItemId: 1,
       _invoiceId: 1,
       _createdUserId: 1,
       _createdAt: 1,
