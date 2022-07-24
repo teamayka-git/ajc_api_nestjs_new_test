@@ -18,7 +18,7 @@ import { Transform, Type, Type as ValidateTypes } from 'class-transformer';
 import { Optional } from '@nestjs/common';
 
 const descriptionListScreenTypeForBranchList =
-  '0-total documents count, 101-list documents, 102-shop id, 103-root cause populate, 104-order sale histories, 105-set process, 106-setprocess and sub process also, 107-workers list and department list';
+  '0-total documents count, 101-list documents, 102-shop id, 103-root cause populate, 104-order sale histories, 105-set process, 106-setprocess and sub process also, 107-workers list and department list, 108 - set process under[105] process master, 109 - set process under[105] user, 110 - set process under[105] set sub process,111 - set process under[105] sub process under[110] sub process master,112 - set process under[105] sub process under[110] user populate,113 - set process under[105] sub process under[110] user under global gallery, 114 - order sale history under[104] user details, 115 - order sale history under[104] user details under[114] global gallery, 116 - order sale history under[104] created user details ,117 - order sale history under[104] created user details under[116] global gallery, 118- order sale document under[101] global galleryu populate, 119 - shop under[102] global gallery details, 120 - shop under[102] order head details, 121 - shop under[102] order head under[120] global gallery, 122 - shop under[102] relationship manager details,123 - shop under[102] relationship manager under[122] global gallery   ';
 const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 
@@ -33,7 +33,7 @@ const descriptionFileOriginalName =
 
 const descriptionWorkStatus = '0-pending, 1-accepted, 2-rejected';
 const descriptionListScreenTypeForSetProcessOrdersaleList =
-  '0-total count,100-order details,101-process and sub process details, 102-process master  500-order list assigned by me';
+  '0-total count,100-order details,101-process and sub process details, 102-process master  500-order list assigned by me, 103 - set sub process under[101] sub processmaster, 104 - order sale main under[100] shop details, 105 - order sale main under[100] documents details, 106 - order sale main under[100] documents under global gallery details ';
 
 const DescriptionOrderSaleProcessOrderStatus =
   '0-Pending, 1-Assigned, 2-On Working, 3-Completed, 4-Hold, Request To Assign';

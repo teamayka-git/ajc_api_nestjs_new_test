@@ -21,6 +21,7 @@ import { StringUtils } from 'src/utils/string_utils';
 import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 import { FilesS3Service } from 'src/s3_services/file.s3.services';
 import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
+import { ModelWeight } from 'src/model_weight/model_weight';
 
 @Injectable()
 export class CategoriesService {
@@ -567,53 +568,50 @@ export class CategoriesService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.includes( 100) ) {
+      const isGroupDetailsCreatedUser = dto.screenType.includes(150);
+      const isGroupDetailsCreatedUserPipeLine = () => {
+        const userTableWeight = () => {
+          if (dto.responseFormat.includes(1500)) {
+            return new ModelWeight().userTableLight();
+          }
+          return new ModelWeight().userTableLight();
+        };
+
+        const pipeArray: Array<Object> = [
+          { $match: { $expr: { $eq: ['$_id', '$$groupId'] } } },
+        ];
+        if (isGroupDetailsCreatedUser) {
+          pipeArray.push(
+            {
+              $lookup: {
+                from: ModelNames.USER,
+                let: { userId: '$_createdUserId' },
+                pipeline: [
+                  { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+
+                  { $project: userTableWeight() },
+                ],
+                as: 'userDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$userDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          );
+        }
+        return pipeArray;
+      };
+
+      if (dto.screenType.includes(100)) {
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.GROUP_MASTERS,
               let: { groupId: '$_groupId' },
-              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$groupId'] } } },
-            
-            
-            
-
-
-
-
-
-              dto.screenType.includes( 150)&& {
-                $lookup: {
-                  from: ModelNames.USER,
-                  let: { userId: '$_createdUserId' },
-                  pipeline: [
-                    { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
-                  ],
-                  as: 'userDetails',
-                },
-              },
-              dto.screenType.includes( 150)&&{
-                $unwind: {
-                  path: '$userDetails',
-                  preserveNullAndEmptyArrays: true,
-                },
-              },
-
-
-              
-
-
-
-
-
-
-// false
-
-            
-            
-            
-            
-            ].filter((e)=>Boolean(e) !== false),
+              pipeline: isGroupDetailsCreatedUserPipeLine(),
               as: 'groupDetails',
             },
           },
@@ -625,8 +623,8 @@ export class CategoriesService {
           },
         );
       }
-console.log("arrayAggregation  "+JSON.stringify(arrayAggregation));
-      if (dto.screenType.includes( 50) ) {
+      console.log('arrayAggregation  ' + JSON.stringify(arrayAggregation));
+      if (dto.screenType.includes(50)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -685,7 +683,7 @@ console.log("arrayAggregation  "+JSON.stringify(arrayAggregation));
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.includes( 0) ) {
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
@@ -751,7 +749,7 @@ console.log("arrayAggregation  "+JSON.stringify(arrayAggregation));
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.includes(100) ) {
+      if (dto.screenType.includes(100)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -775,7 +773,7 @@ console.log("arrayAggregation  "+JSON.stringify(arrayAggregation));
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.includes( 0) ) {
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,

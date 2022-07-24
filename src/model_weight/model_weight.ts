@@ -242,158 +242,195 @@ export class ModelWeight {
   public orderSaleTableLight(): Object {
     return {
       _id: 1,
-      _shopId:1,
-      _uid:1,
-      _dueDate:1,
-      _workStatus:1,
-      _type:1,
-
-     
+      _shopId: 1,
+      _uid: 1,
+      _dueDate: 1,
+      _workStatus: 1,
+      _type: 1,
     };
   }
   public orderSaleTableMinimum(): Object {
     return {
-
       _id: 1,
-      _shopId:1,
-      _uid:1,
-      _dueDate:1,
-      _workStatus:1,
-      _type:1,
-      _rootCauseId:1,
-      _createdUserId:1,
-      _orderHeadId:1,
-      _description:1,
-      _rootCause:1,
-      _status:1,
-
-
-
-
-
-     
+      _shopId: 1,
+      _uid: 1,
+      _dueDate: 1,
+      _workStatus: 1,
+      _type: 1,
+      _rootCauseId: 1,
+      _createdUserId: 1,
+      _orderHeadId: 1,
+      _description: 1,
+      _rootCause: 1,
+      _status: 1,
     };
   }
   public orderSaleTableMedium(): Object {
     return {
-
       _id: 1,
-      _shopId:1,
-      _uid:1,
-      _dueDate:1,
-      _workStatus:1,
-      _type:1,
-      _rootCauseId:1,
-      _createdUserId:1,
-      _orderHeadId:1,
-      _description:1,
-      _deliveryType:1,
-      _rootCause:1,
-      _generalRemark:1,
-      _status:1,
+      _shopId: 1,
+      _uid: 1,
+      _dueDate: 1,
+      _workStatus: 1,
+      _type: 1,
+      _rootCauseId: 1,
+      _createdUserId: 1,
+      _orderHeadId: 1,
+      _description: 1,
+      _deliveryType: 1,
+      _rootCause: 1,
+      _generalRemark: 1,
+      _status: 1,
     };
   }
   public orderSaleTableMaximum(): Object {
     return {
-      _id:1,
-      _shopId:1,
-      _uid:1,
-      _dueDate:1,
-      _workStatus:1,
-      _rootCauseId:1,
-      _deliveryType:1,
-      _type:1,
-      _isReWork:1,
-      _rootCause:1,
-      _orderHeadId:1,
-      _description:1,
-      _generalRemark:1,
-      _createdUserId:1,
-      _createdAt:1,
-      _updatedUserId:1,
-      _updatedAt:1,
-      _status:1,
+      _id: 1,
+      _shopId: 1,
+      _uid: 1,
+      _dueDate: 1,
+      _workStatus: 1,
+      _rootCauseId: 1,
+      _deliveryType: 1,
+      _type: 1,
+      _isReWork: 1,
+      _rootCause: 1,
+      _orderHeadId: 1,
+      _description: 1,
+      _generalRemark: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
     };
   }
 
   public orderSaleItemsTableLight(): Object {
     return {
-      _id:1,
-      _quantity:1,
-      _size:1,
-      _weight:1,
-      _uid:1,
-      _stoneColour:1,
+      _id: 1,
+      _quantity: 1,
+      _size: 1,
+      _weight: 1,
+      _uid: 1,
+      _stoneColour: 1,
     };
   }
   public orderSaleItemsTableMinimum(): Object {
     return {
-      _id:1,
-      _quantity:1,
-      _size:1,
-      _weight:1,
-      _uid:1,
-      _stoneColour:1,
-      _orderSaleId:1,
-      _subCategoryId:1,
-      _createdUserId:1,
-      _updatedUserId:1,
-      _productId:1,
-      _designId:1,
-      _status:1,
+      _id: 1,
+      _quantity: 1,
+      _size: 1,
+      _weight: 1,
+      _uid: 1,
+      _stoneColour: 1,
+      _orderSaleId: 1,
+      _subCategoryId: 1,
+      _createdUserId: 1,
+      _updatedUserId: 1,
+      _productId: 1,
+      _designId: 1,
+      _status: 1,
     };
   }
   public orderSaleItemsTableMedium(): Object {
     return {
-      _id:1,
-      _quantity:1,
-      _size:1,
-      _weight:1,
-      _uid:1,
-      _stoneColour:1,
-      _orderSaleId:1,
-      _subCategoryId:1,
-      _createdUserId:1,
-      _updatedUserId:1,
-      _isInvoiceGenerated:1,
-      _isProductGenerated:1,
-      _productId:1,
-      _designId:1,
-      _status:1,
-      _stockStatus:1,
-      _isRhodium:1,
-      _isMatFinish:1,
-
+      _id: 1,
+      _quantity: 1,
+      _size: 1,
+      _weight: 1,
+      _uid: 1,
+      _stoneColour: 1,
+      _orderSaleId: 1,
+      _subCategoryId: 1,
+      _createdUserId: 1,
+      _updatedUserId: 1,
+      _isInvoiceGenerated: 1,
+      _isProductGenerated: 1,
+      _productId: 1,
+      _designId: 1,
+      _status: 1,
+      _stockStatus: 1,
+      _isRhodium: 1,
+      _isMatFinish: 1,
     };
   }
   public orderSaleItemsTableMaximum(): Object {
     return {
-      _id:1,
-      _orderSaleId:1,
-      _subCategoryId:1,
-      _quantity:1,
-      _size:1,
-      _weight:1,
-      _uid:1,
-      _stoneColour:1,
-      _isInvoiceGenerated:1,
-      _isProductGenerated:1,
-      _productData:1,
-      _productId:1,
-      _designId:1,
-      _stockStatus:1,
-      _isRhodium:1,
-      _isMatFinish:1,
-      _createdUserId:1,
-      _createdAt:1,
-      _updatedUserId:1,
-      _updatedAt:1,
-      _status:1,
+      _id: 1,
+      _orderSaleId: 1,
+      _subCategoryId: 1,
+      _quantity: 1,
+      _size: 1,
+      _weight: 1,
+      _uid: 1,
+      _stoneColour: 1,
+      _isInvoiceGenerated: 1,
+      _isProductGenerated: 1,
+      _productData: 1,
+      _productId: 1,
+      _designId: 1,
+      _stockStatus: 1,
+      _isRhodium: 1,
+      _isMatFinish: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
     };
   }
-
-
-
+  public processMasterTableLight(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _code: 1,
+      _createdUserId: 1,
+      _status: 1,
+    };
+  }
+  public processMasterTableMinimum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _code: 1,
+      _isAutomatic: 1,
+      _maxHours: 1,
+      _parentId: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _status: 1,
+    };
+  }
+  public processMasterTableMedium(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _code: 1,
+      _isAutomatic: 1,
+      _maxHours: 1,
+      _parentId: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _status: 1,
+    };
+  }
+  public processMasterTableMaximum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _code: 1,
+      _isAutomatic: 1,
+      _maxHours: 1,
+      _parentId: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
 
   public deliveryItemsTableLight(): Object {
     return {
@@ -674,8 +711,8 @@ export class ModelWeight {
       _agentId: 1,
       _supplierId: 1,
       _testCenterId: 1,
-      
-      _logisticPartnerId:1,
+
+      _logisticPartnerId: 1,
       _shopId: 1,
       _halmarkId: 1,
       _customerId: 1,
@@ -699,7 +736,7 @@ export class ModelWeight {
       _agentId: 1,
       _supplierId: 1,
       _testCenterId: 1,
-      _logisticPartnerId:1,
+      _logisticPartnerId: 1,
       _shopId: 1,
       _halmarkId: 1,
       _customerId: 1,
@@ -752,6 +789,205 @@ export class ModelWeight {
       _workStatus: 1,
       _hubId: 1,
       _shopId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+  public orderSaleSetSubProcessTableLight(): Object {
+    return {
+      _id: 1,
+      _orderSaleSetProcessId: 1,
+      _userId: 1,
+      _orderStatus: 1,
+      _description: 1,
+      _subProcessId: 1,
+      _status: 1,
+    };
+  }
+  public orderSaleSetSubProcessTableMinimum(): Object {
+    return {
+      _id: 1,
+      _orderSaleSetProcessId: 1,
+      _userId: 1,
+      _orderStatus: 1,
+      _description: 1,
+      _subProcessId: 1,
+      _status: 1,
+    };
+  }
+  public orderSaleSetSubProcessTableMedium(): Object {
+    return {
+      _id: 1,
+      _orderSaleSetProcessId: 1,
+      _userId: 1,
+      _orderStatus: 1,
+      _description: 1,
+      _subProcessId: 1,
+      _status: 1,
+    };
+  }
+  public orderSaleSetSubProcessTableMaximum(): Object {
+    return {
+      _id: 1,
+      _orderSaleSetProcessId: 1,
+      _userId: 1,
+      _orderStatus: 1,
+      _description: 1,
+      _subProcessId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _status: 1,
+    };
+  }
+  public subProcessMasterTableLight(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _code: 1,
+      _isAutomatic: 1,
+      _maxHours: 1,
+      _processMasterId: 1,
+      _priority: 1,
+      _createdUserId: 1,
+      _status: 1,
+    };
+  }
+  public subProcessMasterTableMinimum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _code: 1,
+
+      _priority: 1,
+      _createdUserId: 1,
+      _status: 1,
+    };
+  }
+  public subProcessMasterTableMedium(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _code: 1,
+      _isAutomatic: 1,
+      _maxHours: 1,
+      _processMasterId: 1,
+      _priority: 1,
+      _createdUserId: 1,
+      _status: 1,
+    };
+  }
+  public subProcessMasterTableMaximum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _code: 1,
+      _isAutomatic: 1,
+      _maxHours: 1,
+      _processMasterId: 1,
+      _priority: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+  public orderSaleHistoryTableLight(): Object {
+    return {
+      _id: 1,
+      _orderSaleId: 1,
+      _orderSaleItemId: 1,
+      _shopId: 1,
+      _userId: 1,
+      _type: 1,
+      _description: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _status: 1,
+    };
+  }
+
+  public orderSaleHistoryTableMinimum(): Object {
+    return {
+      _id: 1,
+      _orderSaleId: 1,
+      _orderSaleItemId: 1,
+      _shopId: 1,
+      _userId: 1,
+      _type: 1,
+      _description: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _status: 1,
+    };
+  }
+
+  public orderSaleHistoryTableMedium(): Object {
+    return {
+      _id: 1,
+      _orderSaleId: 1,
+      _orderSaleItemId: 1,
+      _shopId: 1,
+      _userId: 1,
+      _type: 1,
+      _description: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _status: 1,
+    };
+  }
+
+  public orderSaleHistoryTableMaximum(): Object {
+    return {
+      _id: 1,
+      _orderSaleId: 1,
+      _orderSaleItemId: 1,
+      _shopId: 1,
+      _userId: 1,
+      _type: 1,
+      _description: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _status: 1,
+    };
+  }
+
+  public orderSaleDocumentsTableLight(): Object {
+    return {
+      _orderSaleId: 1,
+      _globalGalleryId: 1,
+    };
+  }
+
+  public orderSaleDocumentsTableMinimum(): Object {
+    return {
+      _id: 1,
+      _orderSaleId: 1,
+      _globalGalleryId: 1,
+      _status: 1,
+    };
+  }
+
+  public orderSaleDocumentsTableMedium(): Object {
+    return {
+      _id: 1,
+      _orderSaleId: 1,
+      _globalGalleryId: 1,
+      _createdUserId: 1,
+      _status: 1,
+    };
+  }
+
+  public orderSaleDocumentsTableMaximum(): Object {
+    return {
+      _id: 1,
+      _orderSaleId: 1,
+      _globalGalleryId: 1,
+      _createdUserId: 1,
       _createdAt: 1,
       _updatedUserId: 1,
       _updatedAt: 1,
