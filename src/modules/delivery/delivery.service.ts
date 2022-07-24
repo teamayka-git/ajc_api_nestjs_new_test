@@ -15,6 +15,7 @@ import { DeliveryItems } from 'src/tableModels/delivery_items.model';
 import { Counters } from 'src/tableModels/counters.model';
 import { DeliveryTemp } from 'src/tableModels/delivery_temp.model';
 import { ModelWeight } from 'src/model_weight/model_weight';
+import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 
 @Injectable()
 export class DeliveryService {
@@ -178,21 +179,19 @@ export class DeliveryService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-
-
-if(dto.fromWorkStatus!=-1){
-  var getDeliveryItemsForCheck= await this.deliveryModel.find({ _id: { $in: dto.deliveryIds },_workStatus:dto.fromWorkStatus,_status:1});
-if(getDeliveryItemsForCheck.length!=dto.deliveryIds.length){
-  throw new HttpException('Delivery wrong status', HttpStatus.INTERNAL_SERVER_ERROR);
-}
-
-
-
-}
-
-
-
-
+      if (dto.fromWorkStatus != -1) {
+        var getDeliveryItemsForCheck = await this.deliveryModel.find({
+          _id: { $in: dto.deliveryIds },
+          _workStatus: dto.fromWorkStatus,
+          _status: 1,
+        });
+        if (getDeliveryItemsForCheck.length != dto.deliveryIds.length) {
+          throw new HttpException(
+            'Delivery wrong status',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
 
       var result = await this.deliveryModel.updateMany(
         {
@@ -314,40 +313,67 @@ if(getDeliveryItemsForCheck.length!=dto.deliveryIds.length){
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
+      arrayAggregation.push(
+        new ModelWeightResponseFormat().deliveryTableResponseFormat(
+          0,
+          dto.responseFormat,
+        ),
+      );
 
-      if (dto.responseFormat.length != 0) {
-        if (dto.responseFormat.includes(0)) {
-          arrayAggregation.push({
-            $project: new ModelWeight().deliveryTableLight(),
-          });
-        } else if (dto.responseFormat.includes(1)) {
-          arrayAggregation.push({
-            $project: new ModelWeight().deliveryTableMinimum(),
-          });
-        } else if (dto.responseFormat.includes(2)) {
-          arrayAggregation.push({
-            $project: new ModelWeight().deliveryTableMedium(),
-          });
-        } else if (dto.responseFormat.includes(3)) {
-          arrayAggregation.push({
-            $project: new ModelWeight().deliveryTableMaximum(),
-          });
-        }
-      }
+      if (dto.screenType.includes(101)) {
+        const employeeDetailsPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$userId'] },
+              },
+            },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1010,
+              dto.responseFormat,
+            ),
+          );
 
-      if (dto.screenType.includes( 101) ) {
+          const employeeDetailsGlobalGallery = dto.screenType.includes(106);
+          if (employeeDetailsGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1060,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.USER,
               let: { userId: '$_employeeId' },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: { $eq: ['$_id', '$$userId'] },
-                  },
-                },
-              ],
+              pipeline: employeeDetailsPipeline(),
               as: 'employeeDetails',
             },
           },
@@ -358,87 +384,9 @@ if(getDeliveryItemsForCheck.length!=dto.deliveryIds.length){
             },
           },
         );
-
-        if (dto.responseFormat.length != 0) {
-          if (dto.responseFormat.includes(1010)) {
-            arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
-              { $project: new ModelWeight().userTableLight() },
-            );
-          } else if (dto.responseFormat.includes(1011)) {
-            arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
-              { $project: new ModelWeight().userTableMinimum() },
-            );
-          } else if (dto.responseFormat.includes(1012)) {
-            arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
-              { $project: new ModelWeight().userTableMedium() },
-            );
-          } else if (dto.responseFormat.includes(1013)) {
-            arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
-              { $project: new ModelWeight().userTableMaximum() },
-            );
-          }
-        }
-
-        if (dto.screenType.includes(106) ) {
-          arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
-            {
-              $lookup: {
-                from: ModelNames.GLOBAL_GALLERIES,
-                let: { globalGalleryId: '$_globalGalleryId' },
-                pipeline: [
-                  {
-                    $match: {
-                      $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                    },
-                  },
-                ],
-                as: 'globalGalleryDetails',
-              },
-            },
-            {
-              $unwind: {
-                path: '$globalGalleryDetails',
-                preserveNullAndEmptyArrays: true,
-              },
-            },
-          );
-
-          if (dto.responseFormat.length != 0) {
-        
-            if (dto.responseFormat.includes(1060)) {
-              arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline[
-                arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline
-                  .length - 2
-              ].$lookup.pipeline.push({
-                $project: new ModelWeight().globalGalleryTableLight(),
-              });
-            } else if (dto.responseFormat.includes(1061)) {
-              arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline[
-                arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline
-                  .length - 2
-              ].$lookup.pipeline.push({
-                $project: new ModelWeight().globalGalleryTableMinimum(),
-              });
-            } else if (dto.responseFormat.includes(1062)) {
-              arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline[
-                arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline
-                  .length - 2
-              ].$lookup.pipeline.push({
-                $project: new ModelWeight().globalGalleryTableMedium(),
-              });
-            } else if (dto.responseFormat.includes(1063)) {
-              arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline[
-                arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline
-                  .length - 2
-              ].$lookup.pipeline.push({
-                $project: new ModelWeight().globalGalleryTableMaximum(),
-              });
-            }
-          }
-        }
       }
 
-      if (dto.screenType.includes( 102) ) {
+      if (dto.screenType.includes(102)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -481,7 +429,7 @@ if(getDeliveryItemsForCheck.length!=dto.deliveryIds.length){
           }
         }
       }
-      if (dto.screenType.includes( 100) ) {
+      if (dto.screenType.includes(100)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -493,6 +441,11 @@ if(getDeliveryItemsForCheck.length!=dto.deliveryIds.length){
                     $expr: { $eq: ['$_id', '$$shopId'] },
                   },
                 },
+
+                new ModelWeightResponseFormat().shopTableResponseFormat(
+                  1000,
+                  dto.responseFormat,
+                ),
               ],
               as: 'shopDetails',
             },
@@ -504,77 +457,42 @@ if(getDeliveryItemsForCheck.length!=dto.deliveryIds.length){
             },
           },
         );
-        if (dto.responseFormat.length != 0) {
-          if (dto.responseFormat.includes(1000)) {
-            arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
-              { $project: new ModelWeight().shopTableLight() },
-            );
-          } else if (dto.responseFormat.includes(1001)) {
-            arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
-              { $project: new ModelWeight().shopTableMinimum() },
-            );
-          } else if (dto.responseFormat.includes(1002)) {
-            arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
-              { $project: new ModelWeight().shopTableMedium() },
-            );
-          } else if (dto.responseFormat.includes(1003)) {
-            arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
-              { $project: new ModelWeight().shopTableMaximum() },
-            );
-          }
-        }
       }
 
-      if (dto.screenType.includes( 103) ) {
-        arrayAggregation.push({
-          $lookup: {
-            from: ModelNames.DELIVERY_ITEMS,
-            let: { deliveryId: '$_id' },
-            pipeline: [
-              {
-                $match: {
-                  _status: 1,
-                  $expr: { $eq: ['$_deliveryId', '$$deliveryId'] },
-                },
-              },
-            ],
-            as: 'deliveryItems',
-          },
-        });
-
-        if (dto.responseFormat.length != 0) {
-          if (dto.responseFormat.includes(1030)) {
-            arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
-              { $project: new ModelWeight().deliveryItemsTableLight() },
-            );
-          } else if (dto.responseFormat.includes(1031)) {
-            arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
-              { $project: new ModelWeight().deliveryItemsTableMinimum() },
-            );
-          } else if (dto.responseFormat.includes(1032)) {
-            arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
-              { $project: new ModelWeight().deliveryItemsTableMedium() },
-            );
-          } else if (dto.responseFormat.includes(1033)) {
-            arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
-              { $project: new ModelWeight().deliveryItemsTableMaximum() },
-            );
-          }
-        }
-
-        if (dto.screenType.includes(104) ) {
-          arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
+      if (dto.screenType.includes(103)) {
+        const deliveryItemsPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
             {
-              $lookup: {
-                from: ModelNames.ORDER_SALES_ITEMS,
-                let: { orderSaleId: '$_orderSaleItemId' },
-                pipeline: [
-                  {
-                    $match: {
-                      $expr: { $eq: ['$_id', '$$orderSaleId'] },
-                    },
+              $match: {
+                _status: 1,
+                $expr: { $eq: ['$_deliveryId', '$$deliveryId'] },
+              },
+            },
+            new ModelWeightResponseFormat().deliveryItemsTableResponseFormat(
+              1030,
+              dto.responseFormat,
+            ),
+          );
+          const isorderSaleItems = dto.screenType.includes(104);
+          if (isorderSaleItems) {
+            const orderSaleItemsPipeline = () => {
+              const pipeline = [];
+              pipeline.push(
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$orderSaleId'] },
                   },
+                },
+                new ModelWeightResponseFormat().orderSaleItemsTableResponseFormat(
+                  1040,
+                  dto.responseFormat,
+                ),
+              );
 
+              const isorderSaleItemsSubCategory = dto.screenType.includes(107);
+              if (isorderSaleItemsSubCategory) {
+                pipeline.push(
                   {
                     $lookup: {
                       from: ModelNames.SUB_CATEGORIES,
@@ -585,7 +503,10 @@ if(getDeliveryItemsForCheck.length!=dto.deliveryIds.length){
                             $expr: { $eq: ['$_id', '$$subCategoryId'] },
                           },
                         },
-                        { $project: new ModelWeight().subCategoryTableLight() },
+                        new ModelWeightResponseFormat().subCategoryTableResponseFormat(
+                          1070,
+                          dto.responseFormat,
+                        ),
                       ],
                       as: 'subCategoryDetails',
                     },
@@ -596,95 +517,102 @@ if(getDeliveryItemsForCheck.length!=dto.deliveryIds.length){
                       preserveNullAndEmptyArrays: true,
                     },
                   },
-                ],
-                as: 'orderDetails',
-              },
-            },
-            {
-              $unwind: {
-                path: '$orderDetails',
-                preserveNullAndEmptyArrays: true,
-              },
-            },
-          );
+                );
+              }
+              return pipeline;
+            };
 
-          if (dto.responseFormat.length != 0) {
-            if (dto.responseFormat.includes(1040)) {
-              arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
-                arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
-                  .length - 2
-              ].$lookup.pipeline.push({
-                $project: new ModelWeight().orderSaleItemsTableLight(),
-              });
-            } else if (dto.responseFormat.includes(1041)) {
-              arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
-                arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
-                  .length - 2
-              ].$lookup.pipeline.push({
-                $project: new ModelWeight().orderSaleItemsTableMinimum(),
-              });
-            } else if (dto.responseFormat.includes(1042)) {
-              arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
-                arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
-                  .length - 2
-              ].$lookup.pipeline.push({
-                $project: new ModelWeight().orderSaleItemsTableMedium(),
-              });
-            } else if (dto.responseFormat.includes(1043)) {
-              arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline[
-                arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline
-                  .length - 2
-              ].$lookup.pipeline.push({
-                $project: new ModelWeight().orderSaleItemsTableMaximum(),
-              });
-            }
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.ORDER_SALES_ITEMS,
+                  let: { orderSaleId: '$_orderSaleItemId' },
+                  pipeline: orderSaleItemsPipeline(),
+                  as: 'orderDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$orderDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
           }
-        }
 
-        if (dto.screenType.includes(105) ) {
-          arrayAggregation[arrayAggregation.length - 1].$lookup.pipeline.push(
-            {
-              $lookup: {
-                from: ModelNames.INVOICES,
-                let: { invoiceId: '$_invoiceId' },
-                pipeline: [
-                  {
-                    $match: {
-                      $expr: { $eq: ['$_id', '$$invoiceId'] },
-                    },
+          const isorderSaleItemsInvoices = dto.screenType.includes(105);
+          if (isorderSaleItemsInvoices) {
+            const orderSaleItemsInvoiceListPipeline = () => {
+              const pipeline = [];
+              pipeline.push(
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$invoiceId'] },
                   },
-                  {$project: new ModelWeight().invoiceTableMinimum()},
-                  {
-                    $lookup: {
-                      from: ModelNames.INVOICE_ITEMS,
-                      let: { invoiceId: '$_id' },
-                      pipeline: [
-                        {
-                          $match: {
-                            _status: 1,
-                            $expr: {
-                              $eq: ['$_invoiceId', '$$invoiceId'],
-                            },
+                },
+                new ModelWeightResponseFormat().invoiceTableResponseFormat(
+                  1050,
+                  dto.responseFormat,
+                ),);
+
+
+                const isorderSaleItemsInvoicesDetailsInvoiceItems = dto.screenType.includes(108);
+                if (isorderSaleItemsInvoicesDetailsInvoiceItems) {
+                pipeline.push({
+                  $lookup: {
+                    from: ModelNames.INVOICE_ITEMS,
+                    let: { invoiceId: '$_id' },
+                    pipeline: [
+                      {
+                        $match: {
+                          _status: 1,
+                          $expr: {
+                            $eq: ['$_invoiceId', '$$invoiceId'],
                           },
                         },
-                        { $project: new ModelWeight().invoiceItemsTableMinimum() },
-                      ],
-                      as: 'invoiceItems',
-                    },
+                      },
+                      new ModelWeightResponseFormat().invoiceItemsTableResponseFormat(
+                        1080,
+                        dto.responseFormat,
+                      ),
+                    ],
+                    as: 'invoiceItems',
                   },
-                ],
-                as: 'invoiceDetails',
+                },
+              );
+            }
+              return pipeline;
+            };
+
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.INVOICES,
+                  let: { invoiceId: '$_invoiceId' },
+                  pipeline: orderSaleItemsInvoiceListPipeline(),
+                  as: 'invoiceDetails',
+                },
               },
-            },
-            {
-              $unwind: {
-                path: '$invoiceDetails',
-                preserveNullAndEmptyArrays: true,
+              {
+                $unwind: {
+                  path: '$invoiceDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
               },
-            },
-          );
-       
-        }
+            );
+          }
+
+          return pipeline;
+        };
+
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.DELIVERY_ITEMS,
+            let: { deliveryId: '$_id' },
+            pipeline: deliveryItemsPipeline(),
+            as: 'deliveryItems',
+          },
+        });
       }
 
       var result = await this.deliveryModel
@@ -692,7 +620,7 @@ if(getDeliveryItemsForCheck.length!=dto.deliveryIds.length){
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.includes( 0) ) {
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
