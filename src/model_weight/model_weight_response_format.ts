@@ -377,4 +377,40 @@ export class ModelWeightResponseFormat {
       return { $project: new ModelWeight().invoiceItemsTableMaximum() };
     }
   }
+  public deliveryChellanTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().deliveryChellanTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().deliveryChellanTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().deliveryChellanTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().deliveryChellanTableMedium() };
+    } else {
+      return { $project: new ModelWeight().deliveryChellanTableMaximum() };
+    }
+  }
+  public deliveryProviderTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: new ModelWeight().deliveryProviderTableMaximum() };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().deliveryProviderTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().deliveryProviderTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().deliveryProviderTableMedium() };
+    } else {
+      return { $project: new ModelWeight().deliveryProviderTableMaximum() };
+    }
+  }
 }

@@ -27,7 +27,6 @@ export interface DeliveryProviders {
   _name: String;
   _websiteUrl: String;
   _address: String;
-
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;

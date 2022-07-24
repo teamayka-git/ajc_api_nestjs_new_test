@@ -13,7 +13,7 @@ import { Optional } from '@nestjs/common';
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList =
-  '0-total documents count, 100-user details, 101-delivery provider details, 102-delivery executive details, 103-root cause details, 104-created user details, 105-challan items';
+  '0-total documents count, 100-user details, 101-delivery provider details, 102-delivery executive details, 103-root cause details, 104-created user details, 105-challan items, 106 - user details under[100] global gallery details, 107 - delivery executive under[102] global gallery, 108 - created user details under[104] global gallery details';
 const descriptionDeliveryMode = '0 - executive,  1 - courier,  2 - third party';
 const descriptionType = '0 - halmark, 1 - hub transfer';
 const descriptionSaleType = ' 0 - order sale, 1 - stock sale, 2 - job work';

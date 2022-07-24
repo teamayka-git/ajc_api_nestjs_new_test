@@ -1171,4 +1171,106 @@ export class ModelWeight {
       _status:1,
     };
   }
+  public deliveryChellanTableLight(): Object {
+    return {
+      _id:1,
+      _userId:1,
+      _uid:1,
+      _deliveryMode:1,
+      _rootCauseId:1,
+      _description:1,
+      _referenceUrl:1,
+      _type:1,
+      _saleType:1,
+    };
+  }
+  public deliveryChellanTableMinimum(): Object {
+    return {
+ _id:1,
+      _userId:1,
+      _uid:1,
+      _deliveryMode:1,
+      _deliveryProviderId:1,
+      _deliveryExicutiveId:1,
+      _rootCauseId:1,
+      _description:1,
+      _referenceUrl:1,
+      _type:1,
+      _saleType:1,
+
+    };
+  }
+  public deliveryChellanTableMedium(): Object {
+    return {
+      _id:1,
+      _userId:1,
+      _uid:1,
+      _deliveryMode:1,
+      _deliveryProviderId:1,
+      _deliveryExicutiveId:1,
+      _rootCauseId:1,
+      _description:1,
+      _referenceUrl:1,
+      _type:1,
+      _saleType:1,
+      _status:1,
+    };
+  }
+  public deliveryChellanTableMaximum(): Object {
+    return {
+      _id:1,
+      _userId:1,
+      _uid:1,
+      _deliveryMode:1,
+      _deliveryProviderId:1,
+      _deliveryExicutiveId:1,
+      _rootCauseId:1,
+      _description:1,
+      _referenceUrl:1,
+      _type:1,
+      _saleType:1,
+      _createdUserId:1,
+      _createdAt:1,
+      _updatedUserId:1,
+      _updatedAt:1,
+      _status:1,
+    };
+  }
+
+  public deliveryProviderTableLight(): Object {
+    return {
+      _id:1,
+      _name:1,
+    };
+  }
+  public deliveryProviderTableMinimum(): Object {
+    return {
+      _id:1,
+      _name:1,
+      _websiteUrl:1,
+      _address:1,
+    };
+  }
+  public deliveryProviderTableMedium(): Object {
+    return {
+      _id:1,
+      _name:1,
+      _websiteUrl:1,
+      _address:1,
+      _status:1,
+    };
+  }
+  public deliveryProviderTableMaximum(): Object {
+    return {
+      _id:1,
+      _name:1,
+      _websiteUrl:1,
+      _address:1,
+      _createdUserId:1,
+      _createdAt:1,
+      _updatedUserId:1,
+      _updatedAt:1,
+      _status:1,
+    };
+  }
 }

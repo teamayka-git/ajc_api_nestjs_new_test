@@ -12,6 +12,8 @@ import {
 } from './delivery_chellan.dto';
 import { GlobalConfig } from 'src/config/global_config';
 
+import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
+
 @Injectable()
 export class DeliveryChellanService {
   constructor(
@@ -307,36 +309,62 @@ export class DeliveryChellanService {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
-      if (dto.screenType.includes( 100) ) {
+
+      arrayAggregation.push(
+        new ModelWeightResponseFormat().deliveryTableResponseFormat(
+          0,
+          dto.responseFormat,
+        ),
+      );
+
+      if (dto.screenType.includes(100)) {
+        const userPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1000,
+              dto.responseFormat,
+            ),
+          );
+          const userGlobalGallery = dto.screenType.includes(106);
+          if (userGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      106,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.USER,
               let: { userId: '$_userId' },
-              pipeline: [
-                { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
-
-                {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                        },
-                      },
-                    ],
-                    as: 'globalGalleryDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
-              ],
+              pipeline: userPipeline(),
               as: 'userDetails',
             },
           },
@@ -345,7 +373,7 @@ export class DeliveryChellanService {
           },
         );
       }
-      if (dto.screenType.includes( 101)) {
+      if (dto.screenType.includes(101)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -355,6 +383,11 @@ export class DeliveryChellanService {
                 {
                   $match: { $expr: { $eq: ['$_id', '$$deliveryProviderId'] } },
                 },
+
+                new ModelWeightResponseFormat().deliveryProviderTableResponseFormat(
+                  1010,
+                  dto.responseFormat,
+                ),
               ],
               as: 'deliveryProviderDetails',
             },
@@ -367,38 +400,56 @@ export class DeliveryChellanService {
           },
         );
       }
-      if (dto.screenType.includes( 102)) {
+      if (dto.screenType.includes(102)) {
+        const deliveryExicutiveIdPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: { $expr: { $eq: ['$_id', '$$deliveryExecutiveId'] } },
+            },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1020,
+              dto.responseFormat,
+            ),
+          );
+          const deliveryExecutiveGlobalGallery = dto.screenType.includes(107);
+          if (deliveryExecutiveGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1070,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.USER,
               let: { deliveryExecutiveId: '$_deliveryExicutiveId' },
-              pipeline: [
-                {
-                  $match: { $expr: { $eq: ['$_id', '$$deliveryExecutiveId'] } },
-                },
-
-                {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                        },
-                      },
-                    ],
-                    as: 'globalGalleryDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
-              ],
+              pipeline: deliveryExicutiveIdPipeline(),
               as: 'deliveryExecutiveDetails',
             },
           },
@@ -410,7 +461,7 @@ export class DeliveryChellanService {
           },
         );
       }
-      if (dto.screenType.includes( 103)) {
+      if (dto.screenType.includes(103)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -420,6 +471,10 @@ export class DeliveryChellanService {
                 {
                   $match: { $expr: { $eq: ['$_id', '$$rootCauseId'] } },
                 },
+                new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                  1030,
+                  dto.responseFormat,
+                ),
               ],
               as: 'rootCauseDetails',
             },
@@ -432,38 +487,57 @@ export class DeliveryChellanService {
           },
         );
       }
-      if (dto.screenType.includes( 104)) {
+      if (dto.screenType.includes(104)) {
+        const createdUserPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: { $expr: { $eq: ['$_id', '$$createdUserId'] } },
+            },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1040,
+              dto.responseFormat,
+            ),
+          );
+
+          const createdUserGlobalGallery = dto.screenType.includes(108);
+          if (createdUserGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1080,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.USER,
               let: { createdUserId: '$_createdUserId' },
-              pipeline: [
-                {
-                  $match: { $expr: { $eq: ['$_id', '$$createdUserId'] } },
-                },
-
-                {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
-                        },
-                      },
-                    ],
-                    as: 'globalGalleryDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
-              ],
+              pipeline: createdUserPipeline(),
               as: 'createdUserDetails',
             },
           },
@@ -476,7 +550,7 @@ export class DeliveryChellanService {
         );
       }
 
-      if (dto.screenType.includes( 105) ) {
+      if (dto.screenType.includes(105)) {
         arrayAggregation.push({
           $lookup: {
             from: ModelNames.DELIVERY_CHALLAN_ITEMS,
@@ -490,6 +564,11 @@ export class DeliveryChellanService {
                   },
                 },
               },
+
+              new ModelWeightResponseFormat().deliveryChellanTableResponseFormat(
+                1050,
+                dto.responseFormat,
+              ),
             ],
             as: 'deliveryChallanItems',
           },
@@ -500,7 +579,7 @@ export class DeliveryChellanService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.includes( 0) ) {
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
