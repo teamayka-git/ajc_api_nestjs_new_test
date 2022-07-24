@@ -375,7 +375,7 @@ export class ProductsService {
 
         const halmarkRequestModel = new this.halmarkRequestModel({
           _uid: resultCounterHalmarkRequest._count,
-          _orderId: orderId,
+          _orderSaleItemId: orderItemId,
           _productId: productId,
           _halmarkCenterId: null,
           _halmarkCenterUserId: null,

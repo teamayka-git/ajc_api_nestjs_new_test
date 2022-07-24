@@ -52,10 +52,10 @@ export class HalmarkingRequestsService {
       dto.array.map((mapItem, index) => {
         arrayToStates.push({
           _uid: resultCounterPurchase._count - dto.array.length + (index + 1),
-          _orderId:
-            mapItem.orderId == '' || mapItem.orderId == 'nil'
+          _orderSaleItemId:
+            mapItem.orderSaleItemId == '' || mapItem.orderSaleItemId == 'nil'
               ? null
-              : mapItem.orderId,
+              : mapItem.orderSaleItemId,
           _productId:
             mapItem.productId == '' || mapItem.productId == 'nil'
               ? null
@@ -112,8 +112,8 @@ export class HalmarkingRequestsService {
         },
         {
           $set: {
-            _orderId:
-              dto.orderId == '' || dto.orderId == 'nil' ? null : dto.orderId,
+            _orderSaleItemId:
+              dto.orderSaleItemId == '' || dto.orderSaleItemId == 'nil' ? null : dto.orderSaleItemId,
             _productId:
               dto.productId == '' || dto.productId == 'nil'
                 ? null
@@ -302,15 +302,79 @@ export class HalmarkingRequestsService {
         arrayAggregation.push(
           {
             $lookup: {
-              from: ModelNames.ORDER_SALES,
-              let: { orderId: '$_orderId' },
-              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$orderId'] } } }],
-              as: 'orderDetails',
+              from: ModelNames.ORDER_SALES_ITEMS,
+              let: { orderSaleItemId: '$_orderSaleItemId' },
+              pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$orderSaleItemId'] } }},
+            
+            
+              {
+                $lookup: {
+                  from: ModelNames.ORDER_SALES,
+                  let: { orderId: '$_orderSaleId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$orderId'] },
+                      },
+                    },
+
+                    {
+                      $lookup: {
+                        from: ModelNames.SHOPS,
+                        let: { shopId: '$_shopId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: { $eq: ['$_id', '$$shopId'] },
+                            },
+                          },
+                        ],
+                        as: 'shopDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$shopDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                    {
+                      $lookup: {
+                        from: ModelNames.SUB_CATEGORIES,
+                        let: { subCategoryId: '$_subCategoryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: { $eq: ['$_id', '$$subCategoryId'] },
+                            },
+                          },
+                        ],
+                        as: 'subCategoryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$subCategoryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                  ],
+                  as: 'orderDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$orderDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            ],
+              as: 'orderSaleItemDetails',
             },
           },
           {
             $unwind: {
-              path: '$orderDetails',
+              path: '$orderSaleItemDetails',
               preserveNullAndEmptyArrays: true,
             },
           },
@@ -484,42 +548,7 @@ export class HalmarkingRequestsService {
           },
         );
       }
-
-      if (dto.screenType.includes( 106)) {
-        arrayAggregation.push({
-          $lookup: {
-            from: ModelNames.ORDER_SALES_DOCUMENTS,
-            let: { orderId: '$_orderId' },
-            pipeline: [
-              {
-                $match: {
-                  _status: 1,
-                  $expr: { $eq: ['$_orderSaleId', '$$orderId'] },
-                },
-              },
-              {
-                $lookup: {
-                  from: ModelNames.GLOBAL_GALLERIES,
-                  let: { globalGalleryId: '$_globalGalleryId' },
-                  pipeline: [
-                    {
-                      $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } },
-                    },
-                  ],
-                  as: 'globalGalleryDetails',
-                },
-              },
-              {
-                $unwind: {
-                  path: '$globalGalleryDetails',
-                  preserveNullAndEmptyArrays: true,
-                },
-              },
-            ],
-            as: 'orderSaleDocuments',
-          },
-        });
-      }
+      
 
       if (dto.screenType.includes( 101)) {
         arrayAggregation.push(

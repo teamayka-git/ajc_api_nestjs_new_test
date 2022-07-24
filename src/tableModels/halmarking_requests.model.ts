@@ -5,9 +5,9 @@ import { GlobalConfig } from 'src/config/global_config';
 export const HalmarkingRequestsSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
   _uid: { type: String, required: true, default: 'nil' },
-  _orderId: {
+  _orderSaleItemId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.ORDER_SALES,
+    ref: ModelNames.ORDER_SALES_ITEMS,
     default: null,
   },
   _productId: {
@@ -56,7 +56,7 @@ export const HalmarkingRequestsSchema = new mongoose.Schema({
 export interface HalmarkingRequests {
   _id: String;
   _uid: String;
-  _orderId: String;
+  _orderSaleItemId: String;
   _productId:string;
   _halmarkCenterId: String;
   _halmarkCenterUserId: String;
@@ -76,7 +76,7 @@ export interface HalmarkingRequests {
 HalmarkingRequestsSchema.index({ _hmValue: 1 });
 HalmarkingRequestsSchema.index({ _productId: 1 });
 HalmarkingRequestsSchema.index({ _uid: 1 });
-HalmarkingRequestsSchema.index({ _orderId: 1 });
+HalmarkingRequestsSchema.index({ _orderSaleItemId: 1 });
 HalmarkingRequestsSchema.index({ _halmarkCenterId: 1 });
 HalmarkingRequestsSchema.index({ _halmarkCenterUserId: 1 });
 HalmarkingRequestsSchema.index({ _verifyUserId: 1 });
