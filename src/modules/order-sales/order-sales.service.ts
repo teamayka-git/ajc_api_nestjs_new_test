@@ -715,6 +715,11 @@ export class OrderSalesService {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
+      
+      arrayAggregation.push(new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+        0,
+        dto.responseFormat,
+      ),);
 
       const isorderSaleSetProcess = dto.screenType.includes(105);
       const isorderSaleSetProcessPipeline = () => {
@@ -1770,6 +1775,12 @@ export class OrderSalesService {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
+
+      
+      arrayAggregation.push(new ModelWeightResponseFormat().orderSaleSetProcessTableResponseFormat(
+        0,
+        dto.responseFormat,
+      ),);
 
       const isorderSaleSetSubProcess = dto.screenType.includes(101);
       if (isorderSaleSetSubProcess) {
