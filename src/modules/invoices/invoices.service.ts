@@ -11,7 +11,6 @@ import {
   InvoiceStatusChangeDto,
 } from './invoices.dto';
 import { GlobalConfig } from 'src/config/global_config';
-import { OrderSales } from 'src/tableModels/order_sales.model';
 import { DeliveryTemp } from 'src/tableModels/delivery_temp.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';

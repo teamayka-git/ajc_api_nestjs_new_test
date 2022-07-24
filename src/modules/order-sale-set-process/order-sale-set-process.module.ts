@@ -8,7 +8,6 @@ import { OrderSaleSetProcessHistoriesSchema } from 'src/tableModels/order_sale_s
 import { OrderSaleSetSubProcessesSchema } from 'src/tableModels/order_sale_set_sub_processes.model';
 import { OrderSaleSetSubProcessHistoriesSchema } from 'src/tableModels/order_sale_set_sub_process_histories.model';
 import { SubProcessMasterSchema } from 'src/tableModels/subProcessMaster.model';
-import { OrderSalesSchema } from 'src/tableModels/order_sales.model';
 import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.model';
 import { EmployeeSchema } from 'src/tableModels/employee.model';
 import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';

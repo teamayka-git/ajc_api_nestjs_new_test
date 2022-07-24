@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
-import { OrderSales } from 'src/tableModels/order_sales.model';
 import * as mongoose from 'mongoose';
 import { OrderSalesDocuments } from 'src/tableModels/order_sales_documents.model';
 import {

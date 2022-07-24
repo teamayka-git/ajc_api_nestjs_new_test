@@ -16,7 +16,6 @@ import { OrderSaleSetSubProcesses } from 'src/tableModels/order_sale_set_sub_pro
 import { OrderSaleSetSubProcessHistories } from 'src/tableModels/order_sale_set_sub_process_histories.model';
 import { SubProcessMaster } from 'src/tableModels/subProcessMaster.model';
 import { IndexUtils } from 'src/utils/IndexUtils';
-import { OrderSales } from 'src/tableModels/order_sales.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { GlobalConfig } from 'src/config/global_config';
 import { Employee } from 'src/tableModels/employee.model';

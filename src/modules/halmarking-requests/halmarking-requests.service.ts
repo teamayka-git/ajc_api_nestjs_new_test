@@ -5,7 +5,6 @@ import { ModelNames } from 'src/common/model_names';
 import { GlobalConfig } from 'src/config/global_config';
 import { Counters } from 'src/tableModels/counters.model';
 import { HalmarkingRequests } from 'src/tableModels/halmarking_requests.model';
-import { OrderSales } from 'src/tableModels/order_sales.model';
 import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { Products } from 'src/tableModels/products.model';

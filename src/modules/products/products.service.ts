@@ -14,7 +14,6 @@ import {
   ProductEcommerceStatusChangeDto,
   ProductListDto,
 } from './products.dto';
-import { OrderSales } from 'src/tableModels/order_sales.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { PhotographerRequests } from 'src/tableModels/photographer_requests.model';
 import { HalmarkingRequests } from 'src/tableModels/halmarking_requests.model';

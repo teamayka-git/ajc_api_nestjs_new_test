@@ -8,7 +8,6 @@ import { ProductStoneLinkingsSchema } from 'src/tableModels/productStoneLinkings
 import { CountersSchema } from 'src/tableModels/counters.model';
 import { CategoriesSchema } from 'src/tableModels/categories.model';
 import { SubCategoriesSchema } from 'src/tableModels/sub_categories.model';
-import { OrderSalesSchema } from 'src/tableModels/order_sales.model';
 import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.model';
 import { PhotographerRequestsSchema } from 'src/tableModels/photographer_requests.model';
 import { HalmarkingRequestsSchema } from 'src/tableModels/halmarking_requests.model';

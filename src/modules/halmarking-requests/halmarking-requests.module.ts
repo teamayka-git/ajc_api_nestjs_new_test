@@ -5,7 +5,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { HalmarkingRequestsSchema } from 'src/tableModels/halmarking_requests.model';
 import { CountersSchema } from 'src/tableModels/counters.model';
-import { OrderSalesSchema } from 'src/tableModels/order_sales.model';
 import { ProductsSchema } from 'src/tableModels/products.model';
 import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.model';
 import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';

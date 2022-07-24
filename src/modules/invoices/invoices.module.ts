@@ -6,7 +6,6 @@ import { ModelNames } from 'src/common/model_names';
 import { InvoicesSchema } from 'src/tableModels/invoices.model';
 import { InvoiceItemsSchema } from 'src/tableModels/invoice_items.model';
 import { CountersSchema } from 'src/tableModels/counters.model';
-import { OrderSalesSchema } from 'src/tableModels/order_sales.model';
 import { DeliveryTempSchema } from 'src/tableModels/delivery_temp.model';
 import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.model';
 import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';

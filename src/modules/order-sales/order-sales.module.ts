@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { OrderSalesService } from './order-sales.service';
 import { OrderSalesController } from './order-sales.controller';
 import { ModelNames } from 'src/common/model_names';
-import { OrderSalesSchema } from 'src/tableModels/order_sales.model';
 import { MongooseModule } from '@nestjs/mongoose';
 import { OrderSalesDocumentsSchema } from 'src/tableModels/order_sales_documents.model';
 import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
