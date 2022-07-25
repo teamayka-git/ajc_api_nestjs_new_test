@@ -8,7 +8,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().orderSaleItemsTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -18,7 +18,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().orderSaleItemsTableMedium() };
     } else {
-      return { $project: new ModelWeight().orderSaleItemsTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -28,7 +28,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().processMasterTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -38,7 +38,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().processMasterTableMedium() };
     } else {
-      return { $project: new ModelWeight().processMasterTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -48,7 +48,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().userTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -58,7 +58,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().userTableMedium() };
     } else {
-      return { $project: new ModelWeight().userTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -70,7 +70,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().globalGalleryTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -80,7 +80,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().globalGalleryTableMedium() };
     } else {
-      return { $project: new ModelWeight().globalGalleryTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
   
@@ -89,7 +89,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().orderSaleSetSubProcessTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -99,7 +99,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().orderSaleSetSubProcessTableMedium() };
     } else {
-      return { $project: new ModelWeight().orderSaleSetSubProcessTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
   
@@ -108,7 +108,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().subProcessMasterTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -118,7 +118,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().subProcessMasterTableMedium() };
     } else {
-      return { $project: new ModelWeight().subProcessMasterTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -130,7 +130,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().orderSaleHistoryTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -140,7 +140,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().orderSaleHistoryTableMedium() };
     } else {
-      return { $project: new ModelWeight().orderSaleHistoryTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -151,7 +151,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().orderSaleDocumentsTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -161,7 +161,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().orderSaleDocumentsTableMedium() };
     } else {
-      return { $project: new ModelWeight().orderSaleDocumentsTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
   
@@ -170,7 +170,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().shopTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -180,7 +180,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().shopTableMedium() };
     } else {
-      return { $project: new ModelWeight().shopTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -190,7 +190,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().orderSaleTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -200,7 +200,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().orderSaleTableMedium() };
     } else {
-      return { $project: new ModelWeight().orderSaleTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -210,7 +210,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().orderSaleItemsTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -220,7 +220,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().orderSaleItemsTableMedium() };
     } else {
-      return { $project: new ModelWeight().orderSaleItemsTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -230,7 +230,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().productTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -240,7 +240,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().productTableMedium() };
     } else {
-      return { $project: new ModelWeight().productTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -250,7 +250,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().subCategoryTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -260,7 +260,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().subCategoryTableMedium() };
     } else {
-      return { $project: new ModelWeight().subCategoryTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -270,7 +270,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().categoryTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -280,7 +280,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().categoryTableMedium() };
     } else {
-      return { $project: new ModelWeight().categoryTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
   public rootcauseTableResponseFormat(
@@ -288,7 +288,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().rootCauseTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -298,7 +298,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().rootCauseTableMedium() };
     } else {
-      return { $project: new ModelWeight().rootCauseTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
   public deliveryTableResponseFormat(
@@ -306,7 +306,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().deliveryTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -316,7 +316,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().deliveryTableMedium() };
     } else {
-      return { $project: new ModelWeight().deliveryTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -327,7 +327,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().deliveryItemsTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -337,7 +337,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().deliveryItemsTableMedium() };
     } else {
-      return { $project: new ModelWeight().deliveryItemsTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
   
@@ -346,7 +346,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().invoiceTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -356,7 +356,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().invoiceTableMedium() };
     } else {
-      return { $project: new ModelWeight().invoiceTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
   public invoiceItemsTableResponseFormat(
@@ -364,7 +364,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().invoiceItemsTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -374,7 +374,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().invoiceItemsTableMedium() };
     } else {
-      return { $project: new ModelWeight().invoiceItemsTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
   public deliveryChellanTableResponseFormat(
@@ -382,7 +382,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().deliveryChellanTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -392,7 +392,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().deliveryChellanTableMedium() };
     } else {
-      return { $project: new ModelWeight().deliveryChellanTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
   public deliveryProviderTableResponseFormat(
@@ -400,7 +400,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().deliveryProviderTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -410,7 +410,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().deliveryProviderTableMedium() };
     } else {
-      return { $project: new ModelWeight().deliveryProviderTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -420,7 +420,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().deliveryHubTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -430,7 +430,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().deliveryHubTableMedium() };
     } else {
-      return { $project: new ModelWeight().deliveryHubTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -439,7 +439,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().customerTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -449,7 +449,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().customerTableMedium() };
     } else {
-      return { $project: new ModelWeight().customerTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -458,7 +458,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().deliveryTempTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -468,7 +468,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().deliveryTempTableMedium() };
     } else {
-      return { $project: new ModelWeight().deliveryTempTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -479,7 +479,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().branchTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -489,7 +489,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().branchTableMedium() };
     } else {
-      return { $project: new ModelWeight().branchTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -499,7 +499,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().ratecardTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -509,7 +509,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().ratecardTableMedium() };
     } else {
-      return { $project: new ModelWeight().ratecardTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
   public ratecardPercentagesTableResponseFormat(
@@ -517,7 +517,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().ratecardPercentagesTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -527,7 +527,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().ratecardPercentagesTableMedium() };
     } else {
-      return { $project: new ModelWeight().ratecardPercentagesTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -536,7 +536,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().cityTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -546,7 +546,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().cityTableMedium() };
     } else {
-      return { $project: new ModelWeight().cityTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
   public tdsMasterTableResponseFormat(
@@ -554,7 +554,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().tdsMasterTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -564,7 +564,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().tdsMasterTableMedium() };
     } else {
-      return { $project: new ModelWeight().tdsMasterTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -573,7 +573,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().tcsMasterTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -583,7 +583,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().tcsMasterTableMedium() };
     } else {
-      return { $project: new ModelWeight().tcsMasterTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -592,7 +592,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().rateBaseMasterTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -602,7 +602,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().rateBaseMasterTableMedium() };
     } else {
-      return { $project: new ModelWeight().rateBaseMasterTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -611,7 +611,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().groupTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -621,7 +621,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().groupTableMedium() };
     } else {
-      return { $project: new ModelWeight().groupTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
   public productDocumentLinkingTableResponseFormat(
@@ -629,7 +629,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().productDocumentLinkingTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -639,7 +639,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().productDocumentLinkingTableMedium() };
     } else {
-      return { $project: new ModelWeight().productDocumentLinkingTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -651,7 +651,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().productStonelinkingTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -661,7 +661,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().productStonelinkingTableMedium() };
     } else {
-      return { $project: new ModelWeight().productStonelinkingTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -670,7 +670,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().stoneMasterTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -680,7 +680,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().stoneMasterTableMedium() };
     } else {
-      return { $project: new ModelWeight().stoneMasterTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
@@ -689,7 +689,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().colourMasterTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -699,7 +699,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().colourMasterTableMedium() };
     } else {
-      return { $project: new ModelWeight().colourMasterTableMaximum() };
+      return { $project: {   _: 0,  } };
     }
   }
 
