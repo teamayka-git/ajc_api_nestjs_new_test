@@ -315,6 +315,10 @@ export class OrderSaleListDto {
   shopIds: string[];
 
   @IsArray()
+  @ApiProperty({ type: [String] })
+  subCategoryIds: string[];
+
+  @IsArray()
   @ApiProperty({ type: [Number], description: descriptionWorkStatus })
   workStatus: number[];
 

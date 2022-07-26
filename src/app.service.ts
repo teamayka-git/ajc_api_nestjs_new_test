@@ -20,6 +20,10 @@ import { Purity } from './tableModels/purity.model';
 import { States } from './tableModels/states.model';
 import { User } from './tableModels/user.model';
 import { IndexUtils } from './utils/IndexUtils';
+
+
+const twilioClient=require("twilio")("AC9bf34a6b64db1480be17402f908aded8","e142df6719a87d15b748fcb5dd3f99c9")
+
 const crypto = require('crypto');
 
 @Injectable()
@@ -62,6 +66,52 @@ export class AppService {
     return 'Hello Worldwwwww!';
   }
 
+  async test() {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+    
+
+      // var asdf=await twilioClient.verify.services("VAde1a2cec914055959a733ff1739d201f").verifications.create({
+      //   to:"+919895680203",
+      //   channel:"sms",
+        
+      // })
+
+
+      var asdf=await twilioClient.messages.create({
+        body:"BODY",
+        to:"+918907341069",
+        from:"+18625003273"
+      });
+
+
+
+      const responseJSON = {
+        message: 'success',
+        data: {asdf:asdf  },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
   async me(dto: MeDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();

@@ -68,6 +68,10 @@ export class AppController {
   getUser(@Body() dto: GetUserDto) {
     return this.appService.getUser(dto);
   }
+  @Post('test')
+  test() {
+    return this.appService.test();
+  }
 
   @Get()
   getHello(): string {
