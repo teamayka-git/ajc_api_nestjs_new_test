@@ -441,20 +441,20 @@ export class OrderSalesService {
         { new: true, session: transactionSession },
       );
 
-      for (var i = 0; i < dto.arrayItemEdit.length; i++) {
+      for (var i = 0; i < dto.arrayItems.length; i++) {
         await this.orderSaleItemsModel.findOneAndUpdate(
           {
-            _id: dto.arrayItemEdit[i].orderSaleItemId,
+            _id: dto.arrayItems[i].orderSaleItemId,
           },
           {
             $set: {
-              _subCategoryId: dto.arrayItemEdit[i].subCategoryId,
-              _quantity: dto.arrayItemEdit[i].quantity,
-              _size: dto.arrayItemEdit[i].size,
-              _weight: dto.arrayItemEdit[i].weight,
-              _stoneColour: dto.arrayItemEdit[i].stoneColor,
-              _isMatFinish: dto.arrayItemEdit[i].isMatFinish,
-              _isRhodium: dto.arrayItemEdit[i].isRhodium,
+              _subCategoryId: dto.arrayItems[i].subCategoryId,
+              _quantity: dto.arrayItems[i].quantity,
+              _size: dto.arrayItems[i].size,
+              _weight: dto.arrayItems[i].weight,
+              _stoneColour: dto.arrayItems[i].stoneColor,
+              _isMatFinish: dto.arrayItems[i].isMatFinish,
+              _isRhodium: dto.arrayItems[i].isRhodium,
             },
           },
           { new: true, session: transactionSession },

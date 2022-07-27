@@ -125,7 +125,6 @@ _workStatus:{
   16 - invoice pending
   17 - invoice generated
   18 - outof delivery pending
-  19 - hub transfer pending
   20 - delivery job assigned
   21 - delivery in transit
   22 - delivered to customer          

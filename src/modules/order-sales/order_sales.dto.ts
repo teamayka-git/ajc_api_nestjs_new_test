@@ -251,7 +251,7 @@ export class OrderSalesEditDto {
   @ApiProperty({ type: [orderSaleItemEditList] })
   @ValidateNested({ each: true })
   @Type(() => orderSaleItemEditList)
-  arrayItemEdit: orderSaleItemEditList[];
+  arrayItems: orderSaleItemEditList[];
 
 
   
