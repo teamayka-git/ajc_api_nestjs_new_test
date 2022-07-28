@@ -1971,7 +1971,7 @@ export class OrderSalesService {
 
                 const isorderSaleItems = dto.screenType.includes(107);
                 if (isorderSaleItems) {
-                  const orderSaleDocumentsPipeline = () => {
+                  const orderSaleItemsPipeline = () => {
                     const pipeline = [];
                     pipeline.push(
                       {
@@ -2024,7 +2024,7 @@ export class OrderSalesService {
                     $lookup: {
                       from: ModelNames.ORDER_SALES_ITEMS,
                       let: { orderSaleId: '$_id' },
-                      pipeline: orderSaleDocumentsPipeline(),
+                      pipeline: orderSaleItemsPipeline(),
                       as: 'orderSaleItemsList',
                     },
                   });
