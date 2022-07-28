@@ -395,13 +395,11 @@ export class ModelWeight {
   }
   public processMasterTableMinimum(): Object {
     return {
+    
       _id: 1,
       _name: 1,
       _code: 1,
-      _isAutomatic: 1,
       _maxHours: 1,
-      _parentId: 1,
-      _dataGuard: 1,
       _createdUserId: 1,
       _status: 1,
     };
