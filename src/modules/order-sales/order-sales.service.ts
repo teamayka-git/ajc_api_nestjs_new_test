@@ -1253,12 +1253,12 @@ export class OrderSalesService {
                       dto.responseFormat,
                     ),
                   ],
-                  as: 'dlobalGalleryDetails',
+                  as: 'globalGalleryDetails',
                 },
               },
               {
                 $unwind: {
-                  path: '$dlobalGalleryDetails',
+                  path: '$globalGalleryDetails',
                   preserveNullAndEmptyArrays: true,
                 },
               },
