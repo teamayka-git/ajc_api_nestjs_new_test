@@ -1920,7 +1920,7 @@ export class OrderSalesService {
                 },
               },
             );
-
+            }
             const isorderSaleDocuments = dto.screenType.includes(105);
             if (isorderSaleDocuments) {
               const orderSaleDocumentsPipeline = () => {
@@ -2042,7 +2042,7 @@ export class OrderSalesService {
                 },
               });
             }
-          }
+          
           return pipeline;
         };
 
