@@ -953,6 +953,7 @@ export class OrderSalesService {
               from: ModelNames.ORDER_SALE_SET_SUB_PROCESSES,
               let: { setProcess: '$_id' },
               pipeline: isorderSaleSetProcessPipeline(),
+              as: 'orderSaleSetSubProcessList',
             },
           });
         }
