@@ -1921,6 +1921,70 @@ export class OrderSalesService {
               },
             );
             }
+
+
+
+            const isorderSaleItems = dto.screenType.includes(107);
+            if (isorderSaleItems) {
+              const orderSaleItemsPipeline = () => {
+                const pipeline = [];
+                pipeline.push(
+                  {
+                    $match: {
+                      _status: 1,
+                      $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+                    },
+                  },
+                  new ModelWeightResponseFormat().orderSaleItemsTableResponseFormat(
+                    1070,
+                    dto.responseFormat,
+                  ),);
+
+                  const isorderSaleItemsSubCategory = dto.screenType.includes(108);
+                  if (isorderSaleItemsSubCategory) {
+                    pipeline.push(
+                      {
+                        $lookup: {
+                          from: ModelNames.SUB_CATEGORIES,
+                          let: { subCategoryId: '$_subCategoryId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: { $eq: ['$_id', '$$subCategoryId'] },
+                              },
+                            },
+                            new ModelWeightResponseFormat().subCategoryTableResponseFormat(
+                              1080,
+                              dto.responseFormat,
+                            ),
+                          ],
+                          as: 'subCategoryDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$subCategoryDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    );
+                  }
+
+
+                
+                return pipeline;
+              };
+
+              pipeline.push({
+                $lookup: {
+                  from: ModelNames.ORDER_SALES_ITEMS,
+                  let: { orderSaleId: '$_id' },
+                  pipeline: orderSaleItemsPipeline(),
+                  as: 'orderSaleItemsList',
+                },
+              });
+            }
+
             const isorderSaleDocuments = dto.screenType.includes(105);
             if (isorderSaleDocuments) {
               const orderSaleDocumentsPipeline = () => {
@@ -1969,66 +2033,7 @@ export class OrderSalesService {
                   );
                 }
 
-                const isorderSaleItems = dto.screenType.includes(107);
-                if (isorderSaleItems) {
-                  const orderSaleItemsPipeline = () => {
-                    const pipeline = [];
-                    pipeline.push(
-                      {
-                        $match: {
-                          _status: 1,
-                          $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
-                        },
-                      },
-                      new ModelWeightResponseFormat().orderSaleItemsTableResponseFormat(
-                        1070,
-                        dto.responseFormat,
-                      ),);
-
-                      const isorderSaleItemsSubCategory = dto.screenType.includes(108);
-                      if (isorderSaleItemsSubCategory) {
-                        pipeline.push(
-                          {
-                            $lookup: {
-                              from: ModelNames.SUB_CATEGORIES,
-                              let: { subCategoryId: '$_subCategoryId' },
-                              pipeline: [
-                                {
-                                  $match: {
-                                    $expr: { $eq: ['$_id', '$$subCategoryId'] },
-                                  },
-                                },
-                                new ModelWeightResponseFormat().subCategoryTableResponseFormat(
-                                  1080,
-                                  dto.responseFormat,
-                                ),
-                              ],
-                              as: 'subCategoryDetails',
-                            },
-                          },
-                          {
-                            $unwind: {
-                              path: '$subCategoryDetails',
-                              preserveNullAndEmptyArrays: true,
-                            },
-                          },
-                        );
-                      }
-
-
-                    
-                    return pipeline;
-                  };
-
-                  pipeline.push({
-                    $lookup: {
-                      from: ModelNames.ORDER_SALES_ITEMS,
-                      let: { orderSaleId: '$_id' },
-                      pipeline: orderSaleItemsPipeline(),
-                      as: 'orderSaleItemsList',
-                    },
-                  });
-                }
+                
 
                 return pipeline;
               };
@@ -2045,6 +2050,8 @@ export class OrderSalesService {
           
           return pipeline;
         };
+
+
 
         arrayAggregation.push(
           {
