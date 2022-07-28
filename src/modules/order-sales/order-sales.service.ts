@@ -985,6 +985,10 @@ export class OrderSalesService {
               let: { rootCauseId: '$_rootCauseId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$rootCauseId'] } } },
+                new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                  1030,
+                  dto.responseFormat,
+                ),
               ],
               as: 'rootCauseDetails',
             },
