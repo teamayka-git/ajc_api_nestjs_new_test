@@ -485,6 +485,7 @@ export class ModelWeight {
       _id: 1,
       _uid: 1,
       _name: 1,
+      _displayName:1,
     };
   }
   public shopTableMinimum(): Object {
@@ -492,6 +493,7 @@ export class ModelWeight {
       _id: 1,
       _cityId: 1,
       _uid: 1,
+      _displayName:1,
       _name: 1,
       _branchId: 1,
       _orderHeadId: 1,
@@ -512,6 +514,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _cityId: 1,
+      _displayName:1,
       _uid: 1,
       _name: 1,
       _orderSaleRate: 1,
@@ -551,6 +554,7 @@ export class ModelWeight {
       _id: 1,
       _cityId: 1,
       _uid: 1,
+      _displayName:1,
       _name: 1,
       _orderSaleRate: 1,
       _stockSaleRate: 1,

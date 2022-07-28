@@ -237,6 +237,8 @@ export class ShopsService {
       const newsettingsModel = new this.shopsModel({
         _id: shopId,
         _name: dto.name,
+        
+        _displayName:dto.displayName,
         _uid: resultCounterPurchase._count,
         _globalGalleryId: globalGalleryId,
         _orderSaleRate: dto.orderSaleRate,
@@ -493,6 +495,8 @@ export class ShopsService {
         _shopType: dto.shopType,
         _location: dto.location,
         _branchId: dto.branchId,
+        
+        _displayName:dto.displayName,
         _address: dto.address,
         _orderHeadId: dto.orderHeadId,
         _relationshipManagerId: dto.relationshipManagerId,
@@ -746,6 +750,7 @@ export class ShopsService {
               // { _id: { $in: userIdsSearch } },
               { _uid: dto.searchingText },
               { _name: new RegExp(dto.searchingText, 'i') },
+              { _displayName: new RegExp(dto.searchingText, 'i') },
               { _address: new RegExp(dto.searchingText, 'i') },
               { _panCardNumber: dto.searchingText },
               { _gstNumber: dto.searchingText },

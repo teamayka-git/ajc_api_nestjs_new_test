@@ -179,6 +179,11 @@ export class ShopCreateDto {
   @ApiProperty({})
   name: string;
 
+  
+  @IsString()
+  @ApiProperty({})
+  displayName: string;
+
   @IsString()
   @ApiProperty({})
   orderHeadId: string;
@@ -352,6 +357,11 @@ export class ShopEditeDto {
   @ApiProperty({})
   address: string;
   
+  @IsString()
+  @ApiProperty({})
+  displayName: string;
+
+
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({ description: descriptionTdsTcsStatus })

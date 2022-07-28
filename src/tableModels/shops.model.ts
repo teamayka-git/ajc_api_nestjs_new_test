@@ -6,6 +6,7 @@ export const ShopsSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
   _uid: { type: String, required: true, default: 'nil' },
   _name: { type: String, required: true, default: 'nil' },
+  _displayName: { type: String, required: true, default: 'nil' },
 
   _orderSaleRate: { type: Number, required: true, default: -1 },
   _stockSaleRate: { type: Number, required: true, default: -1 },
@@ -108,6 +109,7 @@ export interface Shops {
   _cityId: String;
   _uid: String;
   _name: string;
+  _displayName:string;
   _orderSaleRate: Number;
   _stockSaleRate: Number;
   _shopType: Number;
@@ -146,6 +148,7 @@ export interface Shops {
 
 ShopsSchema.index({ _location: '2dsphere' });
 ShopsSchema.index({ _name: 1 });
+ShopsSchema.index({ _displayName: 1 });
 ShopsSchema.index({ _tdsTcsStatus: 1 });
 ShopsSchema.index({ _address: 1 });
 ShopsSchema.index({ _isTaxIgstEnabled: 1 });
