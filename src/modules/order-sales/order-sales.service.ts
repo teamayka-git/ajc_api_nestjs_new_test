@@ -1254,7 +1254,7 @@ export class OrderSalesService {
                 },
               },
             );
-
+            }
             const isorderSaleshopOrderHead = dto.screenType.includes(120);
             if (isorderSaleshopOrderHead) {
               const orderSaleShopOrderHeadPipeline = () => {
@@ -1320,7 +1320,7 @@ export class OrderSalesService {
                   },
                 },
               );
-
+              }
               const isorderSaleshopRelationshipManager =
                 dto.screenType.includes(122);
               if (isorderSaleshopRelationshipManager) {
@@ -1389,8 +1389,8 @@ export class OrderSalesService {
                   },
                 );
               }
-            }
-          }
+            
+         
           return pipeline;
         };
 
