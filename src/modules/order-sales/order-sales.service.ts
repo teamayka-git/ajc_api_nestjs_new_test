@@ -1661,7 +1661,8 @@ export class OrderSalesService {
             },
           },
         ]);
-
+      }
+      if (dto.screenType.includes(100)) {
         resultProcessMasters = await this.processMasterModel.find({
           _status: 1,
         });
