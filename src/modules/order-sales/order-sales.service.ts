@@ -1592,7 +1592,7 @@ export class OrderSalesService {
       var resultWorkets = [];
       var resultProcessMasters = [];
 
-      if (dto.screenType.includes(105)) {
+      if (dto.screenType.includes(107)) {
         var resultDepartment = await this.departmentModel.find({
           _code: 1003,
           _status: 1,
