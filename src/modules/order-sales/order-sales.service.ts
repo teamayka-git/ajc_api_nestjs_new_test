@@ -2063,7 +2063,7 @@ export class OrderSalesService {
           },
         );
       }
-
+console.log(JSON.stringify(arrayAggregation));
       var result = await this.orderSaleSetProcessModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
