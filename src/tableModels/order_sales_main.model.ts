@@ -10,7 +10,8 @@ export const OrderSalesMainSchema = new mongoose.Schema({
     default: null,
   },
   _deliveryType: { type: Number, required: true, default: -1 },
-  _rootCause: { type: String, default: 'nil' },
+  _rootCause: { type: String, default: '' },
+  _referenceNumber: { type: String, default: '' },
   _dueDate: { type: Number, required: true, default: -1 },
   _orderHeadId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -27,7 +28,7 @@ export const OrderSalesMainSchema = new mongoose.Schema({
   _isReWork: { type: Number, required: true, default: -1 },
   _type: { type: Number, required: true, default: -1 },
   _workStatus: { type: Number, required: true, default: -1 },
-  _uid: { type: String, required: true, default: 'nil' },
+  _uid: { type: String, required: true, default: '' },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -51,6 +52,7 @@ export interface OrderSalesMain {
   _workStatus: number;//
   _rootCauseId: String;//
   _deliveryType:number;//
+  _referenceNumber: String;//
   _type: number;//
   _isReWork:number;//
   _rootCause: String;//
@@ -64,6 +66,7 @@ export interface OrderSalesMain {
   _status: Number;
 }
 
+OrderSalesMainSchema.index({ _referenceNumber: 1 });
 OrderSalesMainSchema.index({ _isReWork: 1 });
 OrderSalesMainSchema.index({ _type: 1 });
 OrderSalesMainSchema.index({ _workStatus: 1 });

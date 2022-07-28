@@ -103,6 +103,10 @@ export class OrderSalesCreateDto {
   @ApiProperty({})
   shopId: string;
 
+  @IsString()
+  @ApiProperty({})
+  referenceNumber: string;
+
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({ description: descriptionType })
@@ -211,6 +215,11 @@ export class OrderSalesEditDto {
   @IsString()
   @ApiProperty({})
   shopId: string;
+
+
+  @IsString()
+  @ApiProperty({})
+  referenceNumber: string;
 
   @Transform(({ value }) => Number(value))
   @IsNumber()
