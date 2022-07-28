@@ -1990,12 +1990,12 @@ export class OrderSalesService {
               const orderSaleDocumentsPipeline = () => {
                 const pipeline = [];
                 pipeline.push(
-                 /* {
+                  {
                     $match: {
-                      _status: 1,
+                    //  _status: 1,
                       $expr: { $eq: ['$_orderSaleId', '$$orderSaleMainId'] },
                     },
-                  },*/
+                  },
                   new ModelWeightResponseFormat().orderSaleDocumentsTableResponseFormat(
                     1050,
                     dto.responseFormat,
