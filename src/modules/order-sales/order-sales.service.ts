@@ -1993,7 +1993,7 @@ export class OrderSalesService {
                   {
                     $match: {
                       _status: 1,
-                      $expr: { $eq: ['$_orderSaleId', '$$orderSaleIdId'] },
+                      $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
                     },
                   },
                   new ModelWeightResponseFormat().orderSaleDocumentsTableResponseFormat(
@@ -2041,7 +2041,7 @@ export class OrderSalesService {
               pipeline.push({
                 $lookup: {
                   from: ModelNames.ORDER_SALES_DOCUMENTS,
-                  let: { orderSaleIdId: '$_id' },
+                  let: { orderSaleId: '$_id' },
                   pipeline: orderSaleDocumentsPipeline(),
                   as: 'orderSaleDocumentList',
                 },
