@@ -42,6 +42,7 @@ const DescriptionOrderSalesHistoriesType =
 const descriptionType = '0 - order sale, 1 - stock sale';
 const descriptionDeliveryType=" 0 - bundle delivery,1 - get me the ready item first";
 const descriptionStockStatus="0 - out of stock, 1 - in stock";
+const descriptionSetProcessOrderStatus="inside ordersale list set process filter with this array if this arrayu not empty";
 
 class orderSaleCreateList {
   @IsString()
@@ -285,6 +286,13 @@ export class OrderSaleListDto {
     description: descriptionListScreenTypeForBranchList,
   })
   screenType: number[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionSetProcessOrderStatus,
+  })
+  setProcessOrderStatus: number[];
 
 
   @IsArray()

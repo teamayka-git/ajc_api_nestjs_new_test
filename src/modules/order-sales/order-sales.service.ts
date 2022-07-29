@@ -185,7 +185,7 @@ export class OrderSalesService {
         },
         { new: true, session: transactionSession },
       );
-console.log("___pp1");
+      console.log('___pp1');
       var shopDetails = await this.shopsModel.aggregate([
         {
           $match: {
@@ -239,16 +239,16 @@ console.log("___pp1");
         },
       ]);
 
-      console.log("___pp2 "+JSON.stringify(shopDetails));
+      console.log('___pp2 ' + JSON.stringify(shopDetails));
 
-      console.log("___pp3 ");
+      console.log('___pp3 ');
       if (shopDetails.length == 0) {
         throw new HttpException(
           'Shop not found',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-      console.log("___pp3 ");
+      console.log('___pp3 ');
       let uidSalesOrder = resultCounterPurchase._count;
 
       const newsettingsModel = new this.orderSaleMainModel({
@@ -830,13 +830,22 @@ console.log("___pp1");
         };
 
         const pipeline = [];
-        pipeline.push(
-          {
-            $match: {
-              _status: 1,
-              $expr: { $eq: ['$_orderSaleId', '$$orderSaleSetProcess'] },
-            },
+        pipeline.push({
+          $match: {
+            _status: 1,
+            $expr: { $eq: ['$_orderSaleId', '$$orderSaleSetProcess'] },
           },
+        });
+
+        if (dto.setProcessOrderStatus.length != 0) {
+          pipeline.push({
+            $match: {
+              _orderStatus: { $in: dto.setProcessOrderStatus },
+            },
+          });
+        }
+
+        pipeline.push(
           new ModelWeightResponseFormat().orderSaleSetProcessTableResponseFormat(
             1050,
             dto.responseFormat,
