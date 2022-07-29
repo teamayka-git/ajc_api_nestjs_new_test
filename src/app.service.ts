@@ -1536,6 +1536,46 @@ export class AppService {
         },
         { upsert: true, new: true, session: transactionSession },
       );
+      await this.generalsModel.findOneAndUpdate(
+        { _code: 1022 },
+        {
+          $setOnInsert: {
+            _name: 'Order maximum due date count',
+            _string: '',
+            _number: 7,
+            _vlaueType: 0,
+            _json: { basic: 'Basic' },
+            _type: 4,
+            _dataGuard: [1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+      await this.generalsModel.findOneAndUpdate(
+        { _code: 1023 },
+        {
+          $setOnInsert: {
+            _name: 'Invoice prefix',
+            _string: 'IN',
+            _number: -1,
+            _vlaueType: 1,
+            _json: { basic: 'Basic' },
+            _type: 5,
+            _dataGuard: [1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
 
       await this.purityModel.findOneAndUpdate(
         { _name: '916' },

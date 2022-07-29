@@ -96,6 +96,8 @@ _code:{
     1019 - invoice template
     1020 - Halmarking charge
     1021 - General tax
+    1022 - Order maximum due date
+    1023 - Invoice prefix
 
 }
 _type:{

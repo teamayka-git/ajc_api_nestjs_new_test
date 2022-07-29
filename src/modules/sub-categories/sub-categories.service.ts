@@ -22,12 +22,15 @@ import { ThumbnailUtils } from 'src/utils/ThumbnailUtils';
 import { RateCards } from 'src/tableModels/rateCards.model';
 import { RateCardPercentages } from 'src/tableModels/rateCardPercentages.model';
 import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
+import { Generals } from 'src/tableModels/generals.model';
 
 @Injectable()
 export class SubCategoriesService {
   constructor(
     @InjectModel(ModelNames.SUB_CATEGORIES)
     private readonly subCategoriesModel: Model<SubCategories>,
+    @InjectModel(ModelNames.GENERALS)
+    private readonly generalsModel: Model<Generals>,
     @InjectModel(ModelNames.GLOBAL_GALLERIES)
     private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
     @InjectModel(ModelNames.RATE_CARDS)
@@ -124,7 +127,7 @@ export class SubCategoriesService {
           _code: mapItem.code,
           _description: mapItem.description,
           _categoryId: mapItem.categoryId,
-          _rewardPoint:mapItem.rewardPoint,
+          _rewardPoint: mapItem.rewardPoint,
           _hmSealing: mapItem.hmsealing,
           _defaultValueAdditionPercentage:
             mapItem.defaultValueAdditionPercentage,
@@ -230,7 +233,7 @@ export class SubCategoriesService {
         _description: dto.description,
         _categoryId: dto.categoryId,
         _hmSealing: dto.hmsealing,
-        _rewardPoint:dto.rewardPoint,
+        _rewardPoint: dto.rewardPoint,
         _defaultValueAdditionPercentage: dto.defaultValueAdditionPercentage,
         _dataGuard: dto.dataGuard,
         _updatedUserId: _userId_,
@@ -403,7 +406,7 @@ export class SubCategoriesService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.includes( 100)) {
+      if (dto.screenType.includes(100)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -424,7 +427,7 @@ export class SubCategoriesService {
         );
       }
 
-      if (dto.screenType.includes( 50)) {
+      if (dto.screenType.includes(50)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -450,7 +453,7 @@ export class SubCategoriesService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.includes( 0)) {
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
@@ -476,9 +479,24 @@ export class SubCategoriesService {
         }
       }
 
+      var generalSetting = [];
+      if (dto.screenType.includes(500)) {
+        generalSetting = await this.generalsModel.aggregate([
+          {
+            $match: {
+              _code: 1022,
+            },
+          },
+        ]);
+      }
+
       const responseJSON = {
         message: 'success',
-        data: { list: result, totalCount: totalCount },
+        data: {
+          list: result,
+          totalCount: totalCount,
+          generalSetting: generalSetting,
+        },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
