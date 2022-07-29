@@ -415,7 +415,7 @@ export class EmployeesService {
         _name: dto.name,
         _gender: dto.gender,
         _mobile: dto.mobile,
-        _prefix: dto.mobile,
+        _prefix: dto.prefix,
         _permissions:dto.permissions
       };
 
