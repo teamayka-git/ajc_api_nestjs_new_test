@@ -15,6 +15,7 @@ import { DeliveryTemp } from 'src/tableModels/delivery_temp.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
+import { Generals } from 'src/tableModels/generals.model';
 
 @Injectable()
 export class InvoicesService {
@@ -27,6 +28,8 @@ export class InvoicesService {
     private readonly invoiceModel: mongoose.Model<Invoices>,
     @InjectModel(ModelNames.INVOICE_ITEMS)
     private readonly invoiceItemsModel: mongoose.Model<InvoiceItems>,
+    @InjectModel(ModelNames.GENERALS)
+    private readonly generalsModel: mongoose.Model<Generals>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
     @InjectModel(ModelNames.ORDER_SALES_MAIN)
@@ -48,6 +51,20 @@ export class InvoicesService {
       dto.invoices.map((mapItem) => {
         invoiceLocalIds.push(mapItem.localId);
       });
+
+      let generalList = await this.generalsModel.aggregate([
+        {
+          $match: {
+            _code: 1023,
+          },
+        },
+      ]);
+      if(generalList.length==0){
+        throw new HttpException(
+          'Invoice prefix not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
 
       let invoiceListLocalItems = await this.invoiceModel.find({
         _localId: { $in: invoiceLocalIds },
@@ -74,7 +91,7 @@ export class InvoicesService {
         arrayToDeliveryChallan.push({
           _id: invoiceId,
           _userId: _userId_,
-          _uid:
+          _uid:generalList[0]._string+
             resultCounterPurchase._count - dto.invoices.length + (index + 1),
           _halmarkingCharge: mapItem.halmarkingCharge,
           _otherCharge: mapItem.otherCharge,
