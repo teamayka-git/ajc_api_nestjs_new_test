@@ -127,6 +127,27 @@ export class AppService {
             let: { employeeId: '$_employeeId' },
             pipeline: [
               { $match: { $expr: { $eq: ['$_id', '$$employeeId'] } } },
+
+
+
+              {
+                $lookup: {
+                  from: ModelNames.DEPARTMENT,
+                  let: { departmentId: '$_departmentId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$departmentId'] } } },
+                  ],
+                  as: 'departmentDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$departmentDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+
+
             ],
             as: 'userDetails',
           },
@@ -137,6 +158,7 @@ export class AppService {
             preserveNullAndEmptyArrays: true,
           },
         },
+         
         // {
         //   $lookup: {
         //     from: ModelNames.AGENTS,
@@ -1426,26 +1448,7 @@ export class AppService {
         { upsert: true, new: true, session: transactionSession },
       );
 
-      await this.generalsModel.findOneAndUpdate(
-        { _code: 1017 },
-        {
-          $setOnInsert: {
-            _name: 'order headname prefix',
-            _string: 'AJC',
-            _number: -1,
-            _vlaueType: 1,
-            _json: { basic: 'basic' },
-            _type: 4,
-            _dataGuard: [1, 2],
-            _createdUserId: null,
-            _createdAt: dateTime,
-            _updatedUserId: null,
-            _updatedAt: -1,
-          },
-          $set: { _status: 1 },
-        },
-        { upsert: true, new: true, session: transactionSession },
-      );
+      
       await this.generalsModel.findOneAndUpdate(
         { _code: 1018 },
         {

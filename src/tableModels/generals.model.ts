@@ -91,7 +91,7 @@ _code:{
     1014 - order sale new order prefix, 
     1015 - order sale new order suffix status, 
     1016 - order sale new order prefix status, 
-    1017 - order headname prefix
+    deleted (1017 - order headname prefix)
     1018 - photo min respond time
     1019 - invoice template
     1020 - Halmarking charge
