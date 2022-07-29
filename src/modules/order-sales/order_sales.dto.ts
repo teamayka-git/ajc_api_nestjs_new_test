@@ -33,7 +33,7 @@ const descriptionFileOriginalName =
 
 const descriptionWorkStatus = '0-pending, 1-accepted, 2-rejected';
 const descriptionListScreenTypeForSetProcessOrdersaleList =
-  '0-total count,100-order details,101-set sub process list, 102-process master  500-order list assigned by me, 103 - set sub process under[101] sub processmaster, 104 - order sale main under[100] shop details, 105 - order sale main under[100] documents details, 106 - order sale main under[100] documents under global gallery details, 107 - order sale main under[100] items list, 108 - order sale main under[100] items list under[107] sub category details  ';
+  '0-total count,100-order details,101-set sub process list, 102-process master  500-order list assigned by me, 103 - set sub process under[101] sub processmaster, 104 - order sale main under[100] shop details, 105 - order sale main under[100] documents details, 106 - order sale main under[100] documents under global gallery details, 107 - order sale main under[100] items list, 108 - order sale main under[100] items list under[107] sub category details , 109 - order sale main under[100] shop details under[104] documents, 110 - order sale main under[100] shop details under[104] documents under[109] global gallery, 111 - order sale main under[100] shop details under[104] Orderhead details, 112 - order sale main under[100] shop details under[104] Orderhead details under[111] global gallery, 113 - order sale main under[100] shop details under[104] Relationship manager details, 114 -  order sale main under[100] shop details under[104] relationship manager details under[113] global gallery ';
 
 const DescriptionOrderSaleProcessOrderStatus =
   '0-Pending, 1-Assigned, 2-On Working, 3-Completed, 4-Hold, Request To Assign';

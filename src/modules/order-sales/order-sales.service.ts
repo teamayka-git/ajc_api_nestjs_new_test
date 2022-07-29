@@ -1813,7 +1813,6 @@ export class OrderSalesService {
                   pipeline: [
                     {
                       $match: {
-                        _status: 1,
                         $expr: { $eq: ['$_id', '$$subProcessId'] },
                       },
                     },
@@ -1894,117 +1893,192 @@ export class OrderSalesService {
 
           const isorderSaleMainShopPopulate = dto.screenType.includes(104);
           if (isorderSaleMainShopPopulate) {
-            pipeline.push(
-              {
-                $lookup: {
-                  from: ModelNames.SHOPS,
-                  let: { shopId: '$_shopId' },
-                  pipeline: [
+            const orderSaleMainShopPipeline = () => {
+              const pipeline = [];
+              pipeline.push(
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$shopId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().shopTableResponseFormat(
+                  1040,
+                  dto.responseFormat,
+                ),
+              );
+
+              const isorderSaleMainShopDocumentsPopulate =
+                dto.screenType.includes(109);
+              if (isorderSaleMainShopDocumentsPopulate) {
+                const isorderSaleMainShopDocumentsPipeline = () => {
+                  const pipeline = [];
+                  pipeline.push(
                     {
                       $match: {
-                        $expr: { $eq: ['$_id', '$$shopId'] },
+                        _status: 1,
+                        $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
                       },
                     },
-                    new ModelWeightResponseFormat().shopTableResponseFormat(
-                      1040,
+
+                    new ModelWeightResponseFormat().orderSaleDocumentsTableResponseFormat(
+                      1090,
                       dto.responseFormat,
                     ),
-                  ],
-                  as: 'shopDetails',
-                },
-              },
-              {
-                $unwind: {
-                  path: '$shopDetails',
-                  preserveNullAndEmptyArrays: true,
-                },
-              },
-            );
-            }
+                  );
 
-
-
-            const isorderSaleItems = dto.screenType.includes(107);
-            if (isorderSaleItems) {
-              const orderSaleItemsPipeline = () => {
-                const pipeline = [];
-                pipeline.push(
-                  {
-                    $match: {
-                      _status: 1,
-                      $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
-                    },
-                  },
-                  new ModelWeightResponseFormat().orderSaleItemsTableResponseFormat(
-                    1070,
-                    dto.responseFormat,
-                  ),);
-
-                  const isorderSaleItemsSubCategory = dto.screenType.includes(108);
-                  if (isorderSaleItemsSubCategory) {
+                  const isorderSaleMainShopDocumentsGlobalGalleryPopulate =
+                    dto.screenType.includes(110);
+                  if (isorderSaleMainShopDocumentsGlobalGalleryPopulate) {
                     pipeline.push(
                       {
                         $lookup: {
-                          from: ModelNames.SUB_CATEGORIES,
-                          let: { subCategoryId: '$_subCategoryId' },
+                          from: ModelNames.GLOBAL_GALLERIES,
+                          let: { documentId: '$_globalGalleryId' },
                           pipeline: [
                             {
                               $match: {
-                                $expr: { $eq: ['$_id', '$$subCategoryId'] },
+                                $expr: {
+                                  $eq: ['$_id', '$$documentId'],
+                                },
                               },
                             },
-                            new ModelWeightResponseFormat().subCategoryTableResponseFormat(
-                              1080,
+
+                            new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                              1100,
                               dto.responseFormat,
                             ),
                           ],
-                          as: 'subCategoryDetails',
+                          as: 'globalGalleryDetails',
                         },
                       },
                       {
                         $unwind: {
-                          path: '$subCategoryDetails',
+                          path: '$globalGalleryDetails',
                           preserveNullAndEmptyArrays: true,
                         },
                       },
                     );
                   }
 
+                  return pipeline;
+                };
 
-                
-                return pipeline;
-              };
+                pipeline.push({
+                  $lookup: {
+                    from: ModelNames.ORDER_SALES_DOCUMENTS,
+                    let: { orderSaleId: '$_id' },
+                    pipeline: isorderSaleMainShopDocumentsPipeline(),
+                    as: 'orderSaleDocuments',
+                  },
+                });
+              }
 
-              pipeline.push({
-                $lookup: {
-                  from: ModelNames.ORDER_SALES_ITEMS,
-                  let: { orderSaleId: '$_id' },
-                  pipeline: orderSaleItemsPipeline(),
-                  as: 'orderSaleItemsList',
-                },
-              });
-            }
+              const isorderSaleMainShopOHPopulate =
+                dto.screenType.includes(111);
+              if (isorderSaleMainShopOHPopulate) {
+                const isorderSaleMainShopOHPipeline = () => {
+                  const pipeline = [];
+                  pipeline.push(
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$ohId'] },
+                      },
+                    },
 
-            const isorderSaleDocuments = dto.screenType.includes(105);
-            if (isorderSaleDocuments) {
-              const orderSaleDocumentsPipeline = () => {
+                    new ModelWeightResponseFormat().userTableResponseFormat(
+                      1110,
+                      dto.responseFormat,
+                    ),
+                  );
+
+                  const isorderSaleMainShopOHPopulate =
+                    dto.screenType.includes(112);
+                  if (isorderSaleMainShopOHPopulate) {
+                    pipeline.push(
+                      {
+                        $lookup: {
+                          from: ModelNames.GLOBAL_GALLERIES,
+                          let: { globalGalleryId: '$_globalGalleryId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: {
+                                  $eq: ['$_id', '$$globalGalleryId'],
+                                },
+                              },
+                            },
+
+                            new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                              1120,
+                              dto.responseFormat,
+                            ),
+                          ],
+                          as: 'globalGalleryDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$globalGalleryDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    );
+                  }
+
+                  return pipeline;
+                };
+
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.USER,
+                      let: { ohId: '$_orderHeadId' },
+                      pipeline: isorderSaleMainShopOHPipeline(),
+                      as: 'orderHeadDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$orderHeadDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                );
+              }
+
+
+
+
+
+
+
+
+
+
+
+
+
+              const isorderSaleMainShopRMPopulate =
+              dto.screenType.includes(113);
+            if (isorderSaleMainShopRMPopulate) {
+              const isorderSaleMainShopRMPipeline = () => {
                 const pipeline = [];
                 pipeline.push(
                   {
                     $match: {
-                     _status: 1,
-                      $expr: { $eq: ['$_orderSaleId', '$$orderSaleMainId'] },
+                      $expr: { $eq: ['$_id', '$$rmId'] },
                     },
                   },
-                  new ModelWeightResponseFormat().orderSaleDocumentsTableResponseFormat(
-                    1050,
+
+                  new ModelWeightResponseFormat().userTableResponseFormat(
+                    1130,
                     dto.responseFormat,
                   ),
                 );
 
-                const isorderSaledocumentsGlobalGallery =
-                  dto.screenType.includes(106);
-                if (isorderSaledocumentsGlobalGallery) {
+                const isorderSaleMainShopRMPopulate =
+                  dto.screenType.includes(114);
+                if (isorderSaleMainShopRMPopulate) {
                   pipeline.push(
                     {
                       $lookup: {
@@ -2013,11 +2087,14 @@ export class OrderSalesService {
                         pipeline: [
                           {
                             $match: {
-                              $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                              $expr: {
+                                $eq: ['$_id', '$$globalGalleryId'],
+                              },
                             },
                           },
+
                           new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
-                            1060,
+                            1140,
                             dto.responseFormat,
                           ),
                         ],
@@ -2033,25 +2110,195 @@ export class OrderSalesService {
                   );
                 }
 
-                
-
                 return pipeline;
               };
-              pipeline.push({
-                $lookup: {
-                  from: ModelNames.ORDER_SALES_DOCUMENTS,
-                  let: { orderSaleMainId: '$_id' },
-                  pipeline: orderSaleDocumentsPipeline(),
-                  as: 'orderSaleDocumentsList',
+
+              pipeline.push(
+                {
+                  $lookup: {
+                    from: ModelNames.USER,
+                    let: { rmId: '$_relationshipManagerId' },
+                    pipeline: isorderSaleMainShopRMPipeline(),
+                    as: 'relationshipManagerDetails',
+                  },
                 },
-              });
-            
+                {
+                  $unwind: {
+                    path: '$relationshipManagerDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              );
             }
-          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              return pipeline;
+            };
+
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.SHOPS,
+                  let: { shopId: '$_shopId' },
+                  pipeline: orderSaleMainShopPipeline(),
+                  as: 'shopDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$shopDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
+          const isorderSaleItems = dto.screenType.includes(107);
+          if (isorderSaleItems) {
+            const orderSaleItemsPipeline = () => {
+              const pipeline = [];
+              pipeline.push(
+                {
+                  $match: {
+                    _status: 1,
+                    $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().orderSaleItemsTableResponseFormat(
+                  1070,
+                  dto.responseFormat,
+                ),
+              );
+
+              const isorderSaleItemsSubCategory = dto.screenType.includes(108);
+              if (isorderSaleItemsSubCategory) {
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.SUB_CATEGORIES,
+                      let: { subCategoryId: '$_subCategoryId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$subCategoryId'] },
+                          },
+                        },
+                        new ModelWeightResponseFormat().subCategoryTableResponseFormat(
+                          1080,
+                          dto.responseFormat,
+                        ),
+                      ],
+                      as: 'subCategoryDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$subCategoryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                );
+              }
+
+              return pipeline;
+            };
+
+            pipeline.push({
+              $lookup: {
+                from: ModelNames.ORDER_SALES_ITEMS,
+                let: { orderSaleId: '$_id' },
+                pipeline: orderSaleItemsPipeline(),
+                as: 'orderSaleItemsList',
+              },
+            });
+          }
+
+          const isorderSaleDocuments = dto.screenType.includes(105);
+          if (isorderSaleDocuments) {
+            const orderSaleDocumentsPipeline = () => {
+              const pipeline = [];
+              pipeline.push(
+                {
+                  $match: {
+                    _status: 1,
+                    $expr: { $eq: ['$_orderSaleId', '$$orderSaleMainId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().orderSaleDocumentsTableResponseFormat(
+                  1050,
+                  dto.responseFormat,
+                ),
+              );
+
+              const isorderSaledocumentsGlobalGallery =
+                dto.screenType.includes(106);
+              if (isorderSaledocumentsGlobalGallery) {
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.GLOBAL_GALLERIES,
+                      let: { globalGalleryId: '$_globalGalleryId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                          },
+                        },
+                        new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                          1060,
+                          dto.responseFormat,
+                        ),
+                      ],
+                      as: 'globalGalleryDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$globalGalleryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                );
+              }
+
+              return pipeline;
+            };
+            pipeline.push({
+              $lookup: {
+                from: ModelNames.ORDER_SALES_DOCUMENTS,
+                let: { orderSaleMainId: '$_id' },
+                pipeline: orderSaleDocumentsPipeline(),
+                as: 'orderSaleDocumentsList',
+              },
+            });
+          }
+
           return pipeline;
         };
-
-
 
         arrayAggregation.push(
           {
@@ -2070,7 +2317,7 @@ export class OrderSalesService {
           },
         );
       }
-console.log(JSON.stringify(arrayAggregation));
+      console.log(JSON.stringify(arrayAggregation));
       var result = await this.orderSaleSetProcessModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
