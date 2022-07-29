@@ -38,9 +38,8 @@ class StonesList {
 }
 
 export class ProductCreateDto {
-  @IsString()
-  @ApiProperty({})
-  name: string;
+
+
 
   @IsString()
   @ApiProperty({})
@@ -49,6 +48,12 @@ export class ProductCreateDto {
   @IsString()
   @ApiProperty({})
   orderId: string;
+
+
+  @IsString()
+  @ApiProperty({})
+  name: string;
+
 
   @IsString()
   @ApiProperty({})

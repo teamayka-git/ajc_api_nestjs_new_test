@@ -841,7 +841,7 @@ export class HalmarkingRequestsService {
             $set: {
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
-              _huId: dto.hmValue,
+              _huId: dto.hmValue, 
             },
           },
           { new: true, session: transactionSession },

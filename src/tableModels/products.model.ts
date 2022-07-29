@@ -39,7 +39,7 @@ export const ProductsSchema = new mongoose.Schema({
   _totalStoneWeight: { type: Number, required: true, default: -1 },
   _netWeight: { type: Number, required: true, default: -1 },
   _hmSealingStatus: { type: Number, required: true, default: -1 },
-  _huId: { type: String, default: 'nil' },
+  _huId: { type: Object, required: true, default: [] },
   _eCommerceStatus: { type: Number, required: true, default: -1 },
 
   _createdUserId: {
@@ -73,7 +73,7 @@ export interface Products {
   _hmSealingStatus: Number;
   _totalStoneWeight: Number;
   _netWeight: Number;
-  _huId: String;
+  _huId: Object;
   _eCommerceStatus: Number;
   _createdUserId: String;
   _createdAt: Number;

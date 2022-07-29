@@ -183,9 +183,12 @@ export class HalmarkingRequestsUpdateEditDto {
   @ApiProperty({})
   rootCauseId: string;
 
-  @IsString()
-  @ApiProperty({})
-  hmValue: string;
+  
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  hmValue: string[];
+
 
   @IsString()
   @ApiProperty({})

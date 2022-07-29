@@ -57,6 +57,10 @@ export class ProductsService {
       var arrayStonesLinkings = [];
       var arrayOrderSaleHistory = [];
 
+
+
+      
+
       var resultSubcategory = await this.subCategoriesModel.aggregate([
         {
           $match: {
@@ -181,7 +185,7 @@ export class ProductsService {
         _type: dto.type,
         _purity: resultSubcategory[0].categoryDetails.groupDetails._purity,
         _hmSealingStatus: dto.hmSealingStatus,
-        _huId: '',
+        _huId: [],
         _eCommerceStatus: dto.eCommerceStatus,
         _createdUserId: _userId_,
         _createdAt: dateTime,
