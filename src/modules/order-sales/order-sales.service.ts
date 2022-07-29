@@ -186,10 +186,58 @@ export class OrderSalesService {
         { new: true, session: transactionSession },
       );
 
-      var shopDetails = await this.shopsModel.find({
-        _id: dto.shopId,
-        _status: 1,
-      });
+      var shopDetails = await this.shopsModel.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(dto.shopId),
+            _status: 1,
+          },
+        },
+
+        {
+          $lookup: {
+            from: ModelNames.USER,
+            let: { ohId: '$_orderHeadId' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$_id', '$$ohId'] },
+                },
+              },
+              { $project: new ModelWeight().userTableLight() },
+
+              {
+                $lookup: {
+                  from: ModelNames.EMPLOYEES,
+                  let: { userId: '$_id' },
+                  pipeline: [
+                    {
+                      $match: {
+                        _status: 1,
+                        $expr: { $eq: ['$_userId', '$$userId'] },
+                      },
+                    },
+                  ],
+                  as: 'employeeDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$employeeDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            ],
+            as: 'orderHeadDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$orderHeadDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      ]);
       if (shopDetails.length == 0) {
         throw new HttpException(
           'Shop not found',
@@ -202,7 +250,9 @@ export class OrderSalesService {
       const newsettingsModel = new this.orderSaleMainModel({
         _id: orderSaleId,
         _shopId: dto.shopId,
-        _uid: uidSalesOrder,
+        _uid:
+          shopDetails[0].orderHeadDetails.employeeDetails._prefix +
+          uidSalesOrder,
         _referenceNumber: dto.referenceNumber,
         _dueDate: dto.dueDate,
         _workStatus: 0,
@@ -1910,33 +1960,33 @@ export class OrderSalesService {
               const isorderSaleMainShopDocumentsPopulate =
                 dto.screenType.includes(109);
               if (isorderSaleMainShopDocumentsPopulate) {
-              
-
-                pipeline.push({
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.GLOBAL_GALLERIES,
+                      let: { globalGalleryId: '$_globalGalleryId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                          },
                         },
-                      },
-  
-                      new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
-                        1090,
-                        dto.responseFormat,
-                      ),
-                    
-                    ],
-                    as: 'globalGalleryDetails',
+
+                        new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                          1090,
+                          dto.responseFormat,
+                        ),
+                      ],
+                      as: 'globalGalleryDetails',
+                    },
                   },
-                },{
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
+                  {
+                    $unwind: {
+                      path: '$globalGalleryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
                   },
-                },);
+                );
               }
 
               const isorderSaleMainShopOHPopulate =
@@ -2012,115 +2062,78 @@ export class OrderSalesService {
                 );
               }
 
-
-
-
-
-
-
-
-
-
-
-
-
               const isorderSaleMainShopRMPopulate =
-              dto.screenType.includes(113);
-            if (isorderSaleMainShopRMPopulate) {
-              const isorderSaleMainShopRMPipeline = () => {
-                const pipeline = [];
-                pipeline.push(
-                  {
-                    $match: {
-                      $expr: { $eq: ['$_id', '$$rmId'] },
-                    },
-                  },
-
-                  new ModelWeightResponseFormat().userTableResponseFormat(
-                    1130,
-                    dto.responseFormat,
-                  ),
-                );
-
-                const isorderSaleMainShopRMPopulate =
-                  dto.screenType.includes(114);
-                if (isorderSaleMainShopRMPopulate) {
+                dto.screenType.includes(113);
+              if (isorderSaleMainShopRMPopulate) {
+                const isorderSaleMainShopRMPipeline = () => {
+                  const pipeline = [];
                   pipeline.push(
                     {
-                      $lookup: {
-                        from: ModelNames.GLOBAL_GALLERIES,
-                        let: { globalGalleryId: '$_globalGalleryId' },
-                        pipeline: [
-                          {
-                            $match: {
-                              $expr: {
-                                $eq: ['$_id', '$$globalGalleryId'],
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$rmId'] },
+                      },
+                    },
+
+                    new ModelWeightResponseFormat().userTableResponseFormat(
+                      1130,
+                      dto.responseFormat,
+                    ),
+                  );
+
+                  const isorderSaleMainShopRMPopulate =
+                    dto.screenType.includes(114);
+                  if (isorderSaleMainShopRMPopulate) {
+                    pipeline.push(
+                      {
+                        $lookup: {
+                          from: ModelNames.GLOBAL_GALLERIES,
+                          let: { globalGalleryId: '$_globalGalleryId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: {
+                                  $eq: ['$_id', '$$globalGalleryId'],
+                                },
                               },
                             },
-                          },
 
-                          new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
-                            1140,
-                            dto.responseFormat,
-                          ),
-                        ],
-                        as: 'globalGalleryDetails',
+                            new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                              1140,
+                              dto.responseFormat,
+                            ),
+                          ],
+                          as: 'globalGalleryDetails',
+                        },
                       },
-                    },
-                    {
-                      $unwind: {
-                        path: '$globalGalleryDetails',
-                        preserveNullAndEmptyArrays: true,
+                      {
+                        $unwind: {
+                          path: '$globalGalleryDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
                       },
+                    );
+                  }
+
+                  return pipeline;
+                };
+
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.USER,
+                      let: { rmId: '$_relationshipManagerId' },
+                      pipeline: isorderSaleMainShopRMPipeline(),
+                      as: 'relationshipManagerDetails',
                     },
-                  );
-                }
-
-                return pipeline;
-              };
-
-              pipeline.push(
-                {
-                  $lookup: {
-                    from: ModelNames.USER,
-                    let: { rmId: '$_relationshipManagerId' },
-                    pipeline: isorderSaleMainShopRMPipeline(),
-                    as: 'relationshipManagerDetails',
                   },
-                },
-                {
-                  $unwind: {
-                    path: '$relationshipManagerDetails',
-                    preserveNullAndEmptyArrays: true,
+                  {
+                    $unwind: {
+                      path: '$relationshipManagerDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
                   },
-                },
-              );
-            }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                );
+              }
 
               return pipeline;
             };
