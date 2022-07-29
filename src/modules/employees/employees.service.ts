@@ -116,13 +116,14 @@ export class EmployeesService {
                 { $match: { $expr: { $eq: ['$_id', '$$employeeId'] } } },
                 { $project: { _password: 0 } },
 
-
                 {
                   $lookup: {
                     from: ModelNames.DEPARTMENT,
                     let: { departmentId: '$_departmentId' },
                     pipeline: [
-                      { $match: { $expr: { $eq: ['$_id', '$$departmentId'] } } },
+                      {
+                        $match: { $expr: { $eq: ['$_id', '$$departmentId'] } },
+                      },
                       { $project: { _password: 0 } },
                     ],
                     as: 'departmentDetails',
@@ -134,7 +135,6 @@ export class EmployeesService {
                     preserveNullAndEmptyArrays: true,
                   },
                 },
-
               ],
               as: 'userDetails',
             },
@@ -145,7 +145,7 @@ export class EmployeesService {
               preserveNullAndEmptyArrays: true,
             },
           },
-          { 
+          {
             $lookup: {
               from: ModelNames.USER_ATTENDANCES,
               let: { userId: '$_id' },
@@ -173,16 +173,15 @@ export class EmployeesService {
         );
       }
 
-
       var listGoldTimelines = await this.goldRateTimelineModel
-      .find({ _status: 1 })
-      .sort({ _id: -1 })
-      .limit(1);
+        .find({ _status: 1 })
+        .sort({ _id: -1 })
+        .limit(1);
 
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
 
-      return {userDetails:resultUser[0],goldTimeline:listGoldTimelines}
+      return { userDetails: resultUser[0], goldTimeline: listGoldTimelines };
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
@@ -281,8 +280,7 @@ export class EmployeesService {
       var password = '';
       if (dto.password == '') {
         // password = new StringUtils().makeid(6);
-        password ="123456";
-
+        password = '123456';
       } else {
         password = dto.password;
       }
@@ -305,8 +303,8 @@ export class EmployeesService {
             _customType: [0],
             _halmarkId: null,
 
-            _testCenterId:null,
-            _logisticPartnerId:null,
+            _testCenterId: null,
+            _logisticPartnerId: null,
             _agentId: null,
             _supplierId: null,
             _shopId: null,
@@ -415,8 +413,7 @@ export class EmployeesService {
         _name: dto.name,
         _gender: dto.gender,
         _mobile: dto.mobile,
-        _prefix: dto.prefix,
-        _permissions:dto.permissions
+        _permissions: dto.permissions,
       };
 
       var globalGalleryId = null;
@@ -465,6 +462,8 @@ export class EmployeesService {
                 ? null
                 : dto.processMasterId,
             __dataGuard: dto.dataGuard,
+
+            _prefix: dto.prefix,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
           },
@@ -526,7 +525,7 @@ export class EmployeesService {
                 _status: { $in: dto.statusArray },
               },
             },
-            { $project: { _id: 1 } }, 
+            { $project: { _id: 1 } },
           ])
           .session(transactionSession);
 
@@ -537,7 +536,10 @@ export class EmployeesService {
 
         arrayAggregation.push({
           $match: {
-            $or: [{ _userId: { $in: userIdsSearch } }, { _uid: dto.searchingText }],
+            $or: [
+              { _userId: { $in: userIdsSearch } },
+              { _uid: dto.searchingText },
+            ],
           },
         });
       }
@@ -616,7 +618,7 @@ export class EmployeesService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.includes( 100)) {
+      if (dto.screenType.includes(100)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -635,7 +637,7 @@ export class EmployeesService {
           },
         );
       }
-      if (dto.screenType.includes( 50) ) {
+      if (dto.screenType.includes(50)) {
         arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
           {
             $lookup: {
@@ -655,7 +657,7 @@ export class EmployeesService {
           },
         );
       }
-      if (dto.screenType.includes( 101)) {
+      if (dto.screenType.includes(101)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -677,7 +679,7 @@ export class EmployeesService {
           },
         );
       }
-      if (dto.screenType.includes( 102) ) {
+      if (dto.screenType.includes(102)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -705,7 +707,7 @@ export class EmployeesService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.includes( 0) ) {
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
@@ -730,8 +732,6 @@ export class EmployeesService {
           totalCount = resultTotalCount[0].totalCount;
         }
       }
-
-
 
       const responseJSON = {
         message: 'success',
@@ -833,7 +833,7 @@ export class EmployeesService {
       throw error;
     }
   }
-  async checkPrefixExisting(dto: CheckPrefixExistDto  ) {
+  async checkPrefixExisting(dto: CheckPrefixExistDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
