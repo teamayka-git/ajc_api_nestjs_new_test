@@ -669,7 +669,7 @@ console.log("___pp1");
           _status: 1,
         };
         switch (dto.workStatus) {
-          case 1:
+          case 2:
             objOrderHistory._description = dto.rootCause;
             break;
         }
