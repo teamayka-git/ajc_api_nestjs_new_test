@@ -20,6 +20,7 @@ import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_pa
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { GlobalConfig } from 'src/config/global_config';
 import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
+import { GoldRateTimelines } from 'src/tableModels/gold_rate_timelines.model';
 const crypto = require('crypto');
 
 @Injectable()
@@ -33,6 +34,8 @@ export class EmployeesService {
     private readonly employeeModel: mongoose.Model<Employee>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
+    @InjectModel(ModelNames.GOLD_RATE_TIMELINES)
+    private readonly goldRateTimelineModel: mongoose.Model<GoldRateTimelines>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async login(dto: EmployeeLoginDto) {
@@ -141,7 +144,25 @@ export class EmployeesService {
               preserveNullAndEmptyArrays: true,
             },
           },
-       
+          { 
+            $lookup: {
+              from: ModelNames.USER_ATTENDANCES,
+              let: { userId: '$_id' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_userId', '$$userId'] } } },
+                { $sort: { _id: -1 } },
+                { $skip: 0 },
+                { $limit: 1 },
+              ],
+              as: 'employeeAttendanceDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$employeeAttendanceDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
         ])
         .session(transactionSession);
       if (resultUser.length == 0) {
@@ -151,10 +172,16 @@ export class EmployeesService {
         );
       }
 
+
+      var listGoldTimelines = await this.goldRateTimelineModel
+      .find({ _status: 1 })
+      .sort({ _id: -1 })
+      .limit(1);
+
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
 
-      return resultUser[0];
+      return {userDetails:resultUser[0],goldTimeline:listGoldTimelines}
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();

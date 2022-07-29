@@ -205,7 +205,7 @@ export class AppService {
             preserveNullAndEmptyArrays: true,
           },
         },
-        {
+        { 
           $lookup: {
             from: ModelNames.USER_ATTENDANCES,
             let: { userId: '$_id' },

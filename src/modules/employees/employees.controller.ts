@@ -54,14 +54,14 @@ export class EmployeesController {
     var returnData: Object = await this.employeesService.login(dto);
 
     var userRole = new GuardUserRoleStringGenerate().generate(
-      returnData['_userRole'],
+      returnData['userDetails']['_userRole'],
     );
 
     const jwt = await this.jwtService.signAsync(
       {
-        _userId_: returnData['_id'],
-        _employeeId_: returnData['_employeeId'],
-        _type_: returnData['_type'],
+        _userId_: returnData['userDetails']['_id'],
+        _employeeId_: returnData['userDetails']['_employeeId'],
+        _type_: returnData['userDetails']['_type'],
         _userRole_: userRole,
       },
       { expiresIn: '365d' },
@@ -69,11 +69,15 @@ export class EmployeesController {
     //response.cookie(process.env.JWT_CLIENT_COOKIE_KEY, {token:jwt,permissions:returnData["userDetails"]["_permissions"]}, { httpOnly: true });//jwt response store in cookie
     response.cookie(process.env.JWT_CLIENT_COOKIE_KEY, jwt, { httpOnly: true }); //jwt response store in cookie
 
-    return { message: 'Success', data: returnData, token: jwt };
+    return {
+      message: 'Success',
+      data: returnData['userDetails'],
+      goldTimelinesList: returnData['goldTimeline'],
+      token: jwt,
+    };
   }
 
   @Post()
-   
   @ApiCreatedResponse({
     description: 'files upload on these input feilds => [image]',
   })

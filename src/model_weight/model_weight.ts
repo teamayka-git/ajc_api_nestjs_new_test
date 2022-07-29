@@ -686,7 +686,6 @@ export class ModelWeight {
       _email: 1,
       _mobile: 1,
       _globalGalleryId: 1,
-      _permissions: 1,
     };
   }
 
@@ -698,7 +697,6 @@ export class ModelWeight {
       _email: 1,
       _mobile: 1,
       _globalGalleryId: 1,
-      _permissions: 1,
       _customType: 1,
       _createdUserId: 1,
       _status: 1,
