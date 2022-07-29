@@ -59,20 +59,13 @@ EmployeeSchema.index({ _processMasterId: 1 });
 EmployeeSchema.index({ _status: 1 });
 EmployeeSchema.index({ _uid: 1, _id: 1 });
 EmployeeSchema.index({ _userId: 1, _id: 1 });
-EmployeeSchema.index({ _prefix: 1, _id: 1 });
+EmployeeSchema.index({ _prefix: 1 });
 
 EmployeeSchema.index({ _uid: 1 }, { unique: true });
 
 EmployeeSchema.index(
   { _userId: 1 },
   { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },
-);
-EmployeeSchema.index(
-  { _prefix: 1 },
-  {
-    unique: true,
-    partialFilterExpression: { _status: { $lt: 2 }, _prefix: { $ne: "" } },
-  },
 );
 EmployeeSchema.post('save', async function (error, doc, next) {
   schemaPostFunctionForDuplicate(error, doc, next);
