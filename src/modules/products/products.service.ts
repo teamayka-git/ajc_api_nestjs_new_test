@@ -56,15 +56,17 @@ export class ProductsService {
 
       var arrayStonesLinkings = [];
       var arrayOrderSaleHistory = [];
+      var arraySubCategoryidsMDB = [];
 
+dto.arrayitems.forEach((it)=>{
+  arraySubCategoryidsMDB.push(new mongoose.Types.ObjectId(it.subCategoryId));
+});
 
-
-      
 
       var resultSubcategory = await this.subCategoriesModel.aggregate([
         {
           $match: {
-            _id: new mongoose.Types.ObjectId(dto.subCategoryId),
+            _id: {$in:arraySubCategoryidsMDB},
           },
         },
         {
@@ -131,17 +133,109 @@ export class ProductsService {
         { _tableName: ModelNames.PRODUCTS },
         {
           $inc: {
-            _count: 1,
+            _count: dto.arrayitems.length,
           },
         },
         { new: true, session: transactionSession },
       );
 
-      var autoIncrementNumber = resultProduct._count;
+      var resultPhotographer = await this.departmentsModel.aggregate([
+        {
+          $match: {
+            _code: 1004,
+            _status: 1,
+          },
+        },
+        { $project: { _id: 1 } },
+        {
+          $lookup: {
+            from: ModelNames.EMPLOYEES,
+            let: { departmentId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_departmentId', '$$departmentId'] },
+                },
+              },
+
+              {
+                $lookup: {
+                  from: ModelNames.PHOTOGRAPHER_REQUESTS,
+                  let: { userId: '$_userId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        _status: 1,
+                        $expr: { $eq: ['$_userId', '$$userId'] },
+                      },
+                    },
+                    { $project: { _id: 1 } },
+                  ],
+                  as: 'photographyRequestList',
+                },
+              },
+              {
+                $project: {
+                  _userId: 1,
+                  photographyRequestCount: {
+                    $size: '$photographyRequestList',
+                  },
+                },
+              },
+            ],
+            as: 'employeeList',
+          },
+        },
+        {
+          $unwind: {
+            path: '$employeeList',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        { $sort: { 'employeeList.photographyRequestCount': 1 } },
+        { $limit: 1 },
+        {
+          $group: {
+            _id: '$_id',
+            employeeList: {
+              $push: '$employeeList',
+            },
+          },
+        },
+      ]);
+      if (resultPhotographer.length == 0) {
+        throw new HttpException(
+          'Photography department not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      if (resultPhotographer[0].employeeList.length == 0) {
+        throw new HttpException(
+          'Photography employees not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+
+
+for(var i=0;i<dto.arrayitems.length;i++){
+
+
+
+
+  let subCategoryIndex=resultSubcategory.findIndex(
+    (it) => it._id == dto.arrayitems[i].subCategoryId,
+  );
+if(subCategoryIndex ==-1){
+  throw new HttpException('Subcategory mismatch', HttpStatus.INTERNAL_SERVER_ERROR);
+}
+
+      var autoIncrementNumber = (resultProduct._count -i);
       var productId = new mongoose.Types.ObjectId();
       var shopId = dto.shopId;
       var orderId = dto.orderId;
-      var orderItemId = dto.orderItemId;
+      var orderItemId = dto.arrayitems[i].orderItemId;
       if (shopId == '' || shopId == 'nil') {
         shopId = null;
       }
@@ -152,7 +246,7 @@ export class ProductsService {
         orderItemId = null;
       }
 
-      dto.stonesArray.map((mapItem1) => {
+      dto.arrayitems[i].stonesArray.map((mapItem1) => {
         arrayStonesLinkings.push({
           _productId: productId,
           _stoneId: mapItem1.stoneId,
@@ -169,24 +263,24 @@ export class ProductsService {
 
       arrayToProducts.push({
         _id: productId,
-        _name: dto.name,
-        _designerId: `${resultSubcategory[0]._code}-${autoIncrementNumber}`,
+        _name: dto.arrayitems[i].name,
+        _designerId: `${resultSubcategory[subCategoryIndex]._code}-${autoIncrementNumber}`,
         _shopId: shopId,
         _orderItemId: orderItemId,
-        _netWeight: dto.netWeight,
-        _totalStoneWeight: dto.totalStoneWeight,
-        _grossWeight: dto.grossWeight,
+        _netWeight: dto.arrayitems[i].netWeight,
+        _totalStoneWeight: dto.arrayitems[i].totalStoneWeight,
+        _grossWeight: dto.arrayitems[i].grossWeight,
         _barcode:
           BarCodeQrCodePrefix.PRODUCT_AND_INVOICE +
           new StringUtils().intToDigitString(autoIncrementNumber, 8),
-        _categoryId: resultSubcategory[0]._categoryId,
-        _subCategoryId: dto.subCategoryId,
-        _groupId: resultSubcategory[0].categoryDetails._groupId,
-        _type: dto.type,
-        _purity: resultSubcategory[0].categoryDetails.groupDetails._purity,
-        _hmSealingStatus: dto.hmSealingStatus,
+        _categoryId: resultSubcategory[subCategoryIndex]._categoryId,
+        _subCategoryId: dto.arrayitems[i].subCategoryId,
+        _groupId: resultSubcategory[subCategoryIndex].categoryDetails._groupId,
+        _type: dto.arrayitems[i].type,
+        _purity: resultSubcategory[subCategoryIndex].categoryDetails.groupDetails._purity,
+        _hmSealingStatus: dto.arrayitems[i].hmSealingStatus,
         _huId: [],
-        _eCommerceStatus: dto.eCommerceStatus,
+        _eCommerceStatus: dto.arrayitems[i].eCommerceStatus,
         _createdUserId: _userId_,
         _createdAt: dateTime,
         _updatedUserId: null,
@@ -194,13 +288,7 @@ export class ProductsService {
         _status: 1,
       });
 
-      var result1 = await this.productModel.insertMany(arrayToProducts, {
-        session: transactionSession,
-      });
-
-      await this.productStoneLinkingsModel.insertMany(arrayStonesLinkings, {
-        session: transactionSession,
-      });
+    
 
       if (orderId != null) {
         var result = await this.orderSaleMainModel.findOneAndUpdate(
@@ -212,7 +300,7 @@ export class ProductsService {
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
               _isProductGenerated: 1,
-              _workStatus: dto.hmSealingStatus == 1 ? 8 : 16,
+              _workStatus: dto.arrayitems[i].hmSealingStatus == 1 ? 8 : 16,
             },
           },
           { new: true, session: transactionSession },
@@ -228,7 +316,7 @@ export class ProductsService {
           _createdAt: dateTime,
           _status: 1,
         });
-        if (dto.hmSealingStatus == 0) {
+        if (dto.arrayitems[i].hmSealingStatus == 0) {
           arrayOrderSaleHistory.push({
             _orderSaleId: dto.orderId,
             _userId: null,
@@ -242,84 +330,8 @@ export class ProductsService {
           });
         }
       }
-      if (dto.eCommerceStatus == 1 && orderId != null) {
-        var resultPhotographer = await this.departmentsModel.aggregate([
-          {
-            $match: {
-              _code: 1004,
-              _status: 1,
-            },
-          },
-          { $project: { _id: 1 } },
-          {
-            $lookup: {
-              from: ModelNames.EMPLOYEES,
-              let: { departmentId: '$_id' },
-              pipeline: [
-                {
-                  $match: {
-                    _status: 1,
-                    $expr: { $eq: ['$_departmentId', '$$departmentId'] },
-                  },
-                },
-
-                {
-                  $lookup: {
-                    from: ModelNames.PHOTOGRAPHER_REQUESTS,
-                    let: { userId: '$_userId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          _status: 1,
-                          $expr: { $eq: ['$_userId', '$$userId'] },
-                        },
-                      },
-                      { $project: { _id: 1 } },
-                    ],
-                    as: 'photographyRequestList',
-                  },
-                },
-                {
-                  $project: {
-                    _userId: 1,
-                    photographyRequestCount: {
-                      $size: '$photographyRequestList',
-                    },
-                  },
-                },
-              ],
-              as: 'employeeList',
-            },
-          },
-          {
-            $unwind: {
-              path: '$employeeList',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-          { $sort: { 'employeeList.photographyRequestCount': 1 } },
-          { $limit: 1 },
-          {
-            $group: {
-              _id: '$_id',
-              employeeList: {
-                $push: '$employeeList',
-              },
-            },
-          },
-        ]);
-        if (resultPhotographer.length == 0) {
-          throw new HttpException(
-            'Photography department not found',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-        if (resultPhotographer[0].employeeList.length == 0) {
-          throw new HttpException(
-            'Photography employees not found',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
+      if (dto.arrayitems[i].eCommerceStatus == 1 && orderId != null) {
+      
 
         var resultCounterPhotographer =
           await this.counterModel.findOneAndUpdate(
@@ -362,9 +374,7 @@ export class ProductsService {
         });
       }
 
-      console.log('___s1 dto.hmSealingStatus ' + dto.hmSealingStatus);
-      console.log('___s1 orderId ' + orderId);
-      if (dto.hmSealingStatus == 1 && orderId != null) {
+      if (dto.arrayitems[i].hmSealingStatus == 1 && orderId != null) {
         var resultCounterHalmarkRequest =
           await this.counterModel.findOneAndUpdate(
             { _tableName: ModelNames.HALMARKING_REQUESTS },
@@ -407,6 +417,17 @@ export class ProductsService {
           _status: 1,
         });
       }
+
+    }
+
+      var result1 = await this.productModel.insertMany(arrayToProducts, {
+        session: transactionSession,
+      });
+
+      await this.productStoneLinkingsModel.insertMany(arrayStonesLinkings, {
+        session: transactionSession,
+      });
+
       if (arrayOrderSaleHistory.length != 0) {
         await this.orderSaleHistoriesModel.insertMany(arrayOrderSaleHistory, {
           session: transactionSession,
