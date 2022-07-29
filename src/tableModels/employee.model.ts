@@ -9,6 +9,7 @@ export const EmployeeSchema = new mongoose.Schema({
     ref: ModelNames.USER,
     default: null,
   },
+  _prefix: { type: String, default: '' },
   _uid: { type: String, required: true, default: 'nil' },
   _lastLogin: { type: Number, required: true, default: -1 },
   _departmentId: {
@@ -16,8 +17,8 @@ export const EmployeeSchema = new mongoose.Schema({
     ref: ModelNames.DEPARTMENT,
     default: null,
   },
-  _processMasterId: { 
-    type: mongoose.Schema.Types.ObjectId, 
+  _processMasterId: {
+    type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.PROCESS_MASTER,
     default: null,
   },
@@ -38,10 +39,11 @@ export const EmployeeSchema = new mongoose.Schema({
 });
 
 export interface Employee {
-    _id: String;
-    _userId: string;
+  _id: String;
+  _userId: string;
   _uid: String;
   _departmentId: String;
+  _prefix: String;
   _processMasterId: String;
   _lastLogin: Number;
   _dataGuard: Object;
@@ -57,12 +59,20 @@ EmployeeSchema.index({ _processMasterId: 1 });
 EmployeeSchema.index({ _status: 1 });
 EmployeeSchema.index({ _uid: 1, _id: 1 });
 EmployeeSchema.index({ _userId: 1, _id: 1 });
+EmployeeSchema.index({ _prefix: 1, _id: 1 });
 
 EmployeeSchema.index({ _uid: 1 }, { unique: true });
 
 EmployeeSchema.index(
   { _userId: 1 },
   { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },
+);
+EmployeeSchema.index(
+  { _prefix: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { _status: { $lt: 2 }, _prefix: { $ne: '' } },
+  },
 );
 EmployeeSchema.post('save', async function (error, doc, next) {
   schemaPostFunctionForDuplicate(error, doc, next);

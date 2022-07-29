@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import {
   CheckEmailExistDto,
   CheckMobileExistDto,
+  CheckPrefixExistDto,
   EmployeeCreateDto,
   EmployeeEditDto,
   EmployeeListDto,
@@ -337,6 +338,7 @@ export class EmployeesService {
         _uid: resultCounterPurchase._count,
         _lastLogin: 0,
         _departmentId: dto.departmentId,
+        _prefix: dto.prefix,
         _processMasterId:
           dto.processMasterId == 'nil' || dto.processMasterId == ''
             ? null
@@ -413,6 +415,7 @@ export class EmployeesService {
         _name: dto.name,
         _gender: dto.gender,
         _mobile: dto.mobile,
+        _prefix: dto.mobile,
         _permissions:dto.permissions
       };
 
@@ -802,6 +805,43 @@ export class EmployeesService {
         .count({
           _mobile: dto.value,
           _id: { $nin: dto.existingIds },
+          _status: { $in: [1, 0] },
+        })
+        .session(transactionSession);
+
+      const responseJSON = {
+        message: 'success',
+        data: { count: resultCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async checkPrefixExisting(dto: CheckPrefixExistDto  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var resultCount = await this.employeeModel
+        .count({
+          _prefix: dto.value,
+          _id: { $nin: dto.existingEmployeeIds },
           _status: { $in: [1, 0] },
         })
         .session(transactionSession);

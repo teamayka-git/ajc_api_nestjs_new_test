@@ -56,6 +56,10 @@ export class EmployeeCreateDto {
 
   @IsString()
   @ApiProperty({})
+  prefix: string;
+
+  @IsString()
+  @ApiProperty({})
   processMasterId: string;
 
   @Transform(({ value }) =>
@@ -103,6 +107,12 @@ export class EmployeeEditDto {
   @ApiProperty({})
   mobile: string;
 
+  @IsString()
+  @ApiProperty({})
+  prefix: string;
+
+
+  
   @IsString()
   @ApiProperty({})
   departmentId: string;
@@ -198,4 +208,14 @@ export class CheckMobileExistDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   existingIds: string[];
+}
+
+export class CheckPrefixExistDto {
+  @IsString()
+  @ApiProperty({})
+  value: string;
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  existingEmployeeIds: string[];
 }

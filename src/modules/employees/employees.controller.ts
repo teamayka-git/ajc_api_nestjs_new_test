@@ -18,6 +18,7 @@ import { JwtService } from '@nestjs/jwt';
 import {
   CheckEmailExistDto,
   CheckMobileExistDto,
+  CheckPrefixExistDto,
   EmployeeCreateDto,
   EmployeeEditDto,
   EmployeeListDto,
@@ -148,5 +149,9 @@ export class EmployeesController {
   @Post('checkMobileExisting')
   checkMobileExisting(@Body() dto: CheckMobileExistDto) {
     return this.employeesService.checkMobileExisting(dto);
+  }
+  @Post('checkPrefixExisting')
+  checkPrefixExisting(@Body() dto: CheckPrefixExistDto) {
+    return this.employeesService.checkPrefixExisting(dto);
   }
 }
