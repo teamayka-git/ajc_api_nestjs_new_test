@@ -12,11 +12,11 @@ export class ModelWeightResponseFormat {
     }
 
     if (responseFormatArray.includes(startIndex)) {
-      return { $project: new ModelWeight().orderSaleItemsTableLight() };
+      return { $project: new ModelWeight().orderSaleSetProcessTableLight() };
     } else if (responseFormatArray.includes(startIndex + 1)) {
-      return { $project: new ModelWeight().orderSaleItemsTableMinimum() };
+      return { $project: new ModelWeight().orderSaleSetProcessTableMinimum() };
     } else if (responseFormatArray.includes(startIndex + 2)) {
-      return { $project: new ModelWeight().orderSaleItemsTableMedium() };
+      return { $project: new ModelWeight().orderSaleSetProcessTableMedium() };
     } else {
       return { $project: {   _: 0,  } };
     }

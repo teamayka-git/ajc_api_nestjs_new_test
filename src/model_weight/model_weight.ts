@@ -243,7 +243,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _shopId: 1,
-      _referenceNumber:1,
+      _referenceNumber: 1,
       _uid: 1,
       _dueDate: 1,
       _workStatus: 1,
@@ -257,7 +257,7 @@ export class ModelWeight {
       _uid: 1,
       _dueDate: 1,
       _workStatus: 1,
-      _referenceNumber:1,
+      _referenceNumber: 1,
       _type: 1,
       _rootCauseId: 1,
       _createdUserId: 1,
@@ -276,7 +276,7 @@ export class ModelWeight {
       _workStatus: 1,
       _type: 1,
       _rootCauseId: 1,
-      _referenceNumber:1,
+      _referenceNumber: 1,
       _createdUserId: 1,
       _orderHeadId: 1,
       _description: 1,
@@ -297,7 +297,7 @@ export class ModelWeight {
       _deliveryType: 1,
       _type: 1,
       _isReWork: 1,
-      _referenceNumber:1,
+      _referenceNumber: 1,
       _rootCause: 1,
       _orderHeadId: 1,
       _description: 1,
@@ -395,7 +395,6 @@ export class ModelWeight {
   }
   public processMasterTableMinimum(): Object {
     return {
-    
       _id: 1,
       _name: 1,
       _code: 1,
@@ -483,7 +482,7 @@ export class ModelWeight {
       _id: 1,
       _uid: 1,
       _name: 1,
-      _displayName:1,
+      _displayName: 1,
     };
   }
   public shopTableMinimum(): Object {
@@ -491,7 +490,7 @@ export class ModelWeight {
       _id: 1,
       _cityId: 1,
       _uid: 1,
-      _displayName:1,
+      _displayName: 1,
       _name: 1,
       _branchId: 1,
       _orderHeadId: 1,
@@ -512,7 +511,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _cityId: 1,
-      _displayName:1,
+      _displayName: 1,
       _uid: 1,
       _name: 1,
       _orderSaleRate: 1,
@@ -552,7 +551,7 @@ export class ModelWeight {
       _id: 1,
       _cityId: 1,
       _uid: 1,
-      _displayName:1,
+      _displayName: 1,
       _name: 1,
       _orderSaleRate: 1,
       _stockSaleRate: 1,
@@ -1805,12 +1804,10 @@ export class ModelWeight {
   }
   public colourMasterTableLight(): Object {
     return {
-      
       _id: 1,
       _name: 1,
       _hexCode: 1,
       _hexCodeSecond: 1,
-     
     };
   }
   public colourMasterTableMinimum(): Object {
@@ -1820,7 +1817,6 @@ export class ModelWeight {
       _hexCode: 1,
       _hexCodeSecond: 1,
       _type: 1,
-     
     };
   }
   public colourMasterTableMedium(): Object {
@@ -1832,7 +1828,7 @@ export class ModelWeight {
       _type: 1,
       _dataGuard: 1,
       _createdUserId: 1,
-     
+
       _status: 1,
     };
   }
@@ -1848,6 +1844,73 @@ export class ModelWeight {
       _createdAt: 1,
       _updatedUserId: 1,
       _updatedAt: 1,
+      _status: 1,
+    };
+  }
+  public orderSaleSetProcessTableLight(): Object {
+    return {
+      _id: 1,
+      _orderSaleId: 1,
+      _userId: 1,
+      _orderStatus: 1,
+      _index: 1,
+      _description: 1,
+      _processId: 1,
+      _isLastItem: 1,
+    };
+  }
+  public orderSaleSetProcessTableMinimum(): Object {
+    return {
+      _id: 1,
+      _orderSaleId: 1,
+      _userId: 1,
+      _orderStatus: 1,
+      _index: 1,
+      _description: 1,
+      _rootCauseId: 1,
+      _rootCause: 1,
+      _processId: 1,
+      _isLastItem: 1,
+
+
+    };
+  }
+  public orderSaleSetProcessTableMedium(): Object {
+    return {
+
+      _id: 1,
+      _orderSaleId: 1,
+      _userId: 1,
+      _orderStatus: 1,
+      _index: 1,
+      _description: 1,
+      _rootCauseId: 1,
+      _rootCause: 1,
+      _processId: 1,
+      _isLastItem: 1,
+      _workAssignedTime: 1,
+      _workStartedTime: 1,
+      _workCompletedTime: 1,
+
+    };
+  }
+  public orderSaleSetProcessTableMaximum(): Object {
+    return {
+      _id: 1,
+      _orderSaleId: 1,
+      _userId: 1,
+      _orderStatus: 1,
+      _workAssignedTime: 1,
+      _workStartedTime: 1,
+      _workCompletedTime: 1,
+      _index: 1,
+      _rootCauseId: 1,
+      _rootCause: 1,
+      _description: 1,
+      _processId: 1,
+      _isLastItem: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
       _status: 1,
     };
   }

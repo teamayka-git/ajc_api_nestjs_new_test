@@ -84,6 +84,11 @@ export class OrderSaleSetProcessService {
             _orderSaleId: mapItem.orderSaleId,
             _isLastItem: isLastItem,
             _userId: null,
+            _rootCauseId: null,
+            _workAssignedTime: -1,
+            _workStartedTime: -1,
+            _workCompletedTime: -1,
+            _rootCause: '',
             _description: mapItem1.description,
             _index: mapItem1.index,
             _orderStatus: 0,
@@ -126,6 +131,7 @@ export class OrderSaleSetProcessService {
           _userId: _userId_,
           _type: 0,
           _processId: null,
+          _orderSaleSetProcessId: null,
           _description: '',
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -135,7 +141,7 @@ export class OrderSaleSetProcessService {
           _orderSaleId: mapItem.orderSaleId,
           _userId: null,
           _shopId: null,
-          _orderSaleItemId:null,
+          _orderSaleItemId: null,
           _type: 3,
           _description: '',
           _createdUserId: _userId_,
@@ -217,6 +223,11 @@ export class OrderSaleSetProcessService {
         _userId: dto.userId,
         _orderStatus: dto.orderStatus,
         _description: dto.description,
+        _rootCause: dto.rootCause,
+        _rootCauseId:
+          dto.rootCauseId == '' || dto.rootCauseId == 'nil'
+            ? null
+            : dto.rootCauseId,
       };
 
       switch (dto.orderStatus) {
@@ -249,7 +260,7 @@ export class OrderSaleSetProcessService {
         _orderSaleSetProcessId: null,
         _createdUserId: _userId_,
         _createdAt: dateTime,
-        _description: '',
+        _description: dto.descriptionSetProcessHistory,
         _status: 1,
       };
       switch (dto.setProcessHistoryType) {
@@ -261,6 +272,7 @@ export class OrderSaleSetProcessService {
           4 - process work on holding
           5 - process work on reassign request
           6 - process description editted
+          7 - rejected
         */
         case 1:
           objDefaultProcessHistory._userId = dto.userId;
@@ -283,6 +295,10 @@ export class OrderSaleSetProcessService {
         case 6:
           objDefaultProcessHistory._processId = result._processId;
           break;
+        case 7:
+          objDefaultProcessHistory._userId = dto.userId;
+          objDefaultProcessHistory._processId = result._processId;
+          break;
       }
 
       const orderSaleSetProcessHistory =
@@ -290,6 +306,46 @@ export class OrderSaleSetProcessService {
       await orderSaleSetProcessHistory.save({
         session: transactionSession,
       });
+
+      if (dto.orderStatus == 6) {
+        const orderSaleNewSetProcess = new this.orderSaleSetProcessModel({
+          _orderSaleId: result._orderSaleId,
+          _userId: null,
+          _orderStatus: 0,
+
+          _workAssignedTime: -1,
+          _workStartedTime: -1,
+          _workCompletedTime: -1,
+          _index: result._index,
+          _rootCauseId: null,
+          _rootCause: '',
+          _description: '',
+          _processId: result._processId,
+          _isLastItem: result._isLastItem,
+          _createdUserId: result._createdUserId,
+          _createdAt: dateTime,
+          _status: 1,
+        });
+        await orderSaleNewSetProcess.save({
+          session: transactionSession,
+        });
+
+        const orderSaleNewSetProcessHistory =
+          new this.orderSaleSetProcessHistoriesModel({
+            _orderSaleId: result._orderSaleId,
+            _userId: null,
+            _type: 0,
+            _orderSaleSetProcessId: null,
+            _processId: null,
+            _description: '',
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _status: 1,
+          });
+        await orderSaleNewSetProcessHistory.save({
+          session: transactionSession,
+        });
+      }
 
       if (dto.orderStatus == 2 || dto.orderStatus == 3) {
         var objSubProcessHistory = {

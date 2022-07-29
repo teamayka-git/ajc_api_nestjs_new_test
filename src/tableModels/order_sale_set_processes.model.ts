@@ -26,7 +26,13 @@ export const OrderSaleSetProcessesSchema = new mongoose.Schema({
     ref: ModelNames.PROCESS_MASTER,
     default: null,
   },
+  _rootCauseId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.ROOT_CAUSES,
+    default: null,
+  },
 
+  _rootCause: { type: String, default: '' },
   _description: { type: String, default: '' },
 
   _createdUserId: {
@@ -47,6 +53,8 @@ export interface OrderSaleSetProcesses {
   _workStartedTime: number; 
   _workCompletedTime: number; 
   _index:number;
+  _rootCauseId: String;
+  _rootCause: String;
   _description: string;
   _processId: String;
   _isLastItem: number;
@@ -55,6 +63,8 @@ export interface OrderSaleSetProcesses {
   _status: Number;
 }
 
+OrderSaleSetProcessesSchema.index({ _rootCauseId: 1 });
+OrderSaleSetProcessesSchema.index({ _rootCause: 1 });
 OrderSaleSetProcessesSchema.index({ _index: 1 });
 OrderSaleSetProcessesSchema.index({ _isLastItem: 1 });
 OrderSaleSetProcessesSchema.index({ _description: 1 });
@@ -72,6 +82,7 @@ _orderStatus:{
   2 - onworking
   3 - completed
   4 - on holding
-  5 - resigned to reassign
+  5 - request to reassign
+  6 - reject
 }
 */

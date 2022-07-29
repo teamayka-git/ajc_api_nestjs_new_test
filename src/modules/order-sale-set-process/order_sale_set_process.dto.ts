@@ -14,14 +14,14 @@ import { Optional } from '@nestjs/common';
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 
 const DescriptionOrderSaleChangeProcessOrderStatus =
-  '0-Pending, 1-Assigned, 2-On Working, 3-Completed, 4-Hold, Request To Assign';
+  '0-Pending, 1-Assigned, 2-On Working, 3-Completed, 4-Hold,5 -  Request To Assign, 6 - reject';
 const DescriptionAddSubProcessHistory =
   '0-no need to add any history for sub process, 1-add subprocess history like started finished like';
 
 const DescriptionSetProcessHistoryType =
   '/order-sale-set-process/setProcessHistories';
 const DescriptionOrderSaleSetProcessHistories =
-  ' 0 - created  process, 1 - process work assigned, 2 - process work started, 3 - finished process work, 4 - process work on holding, 5 - process work on reassign request, 6 - process description editted';
+  ' 0 - created  process, 1 - process work assigned, 2 - process work started, 3 - finished process work, 4 - process work on holding, 5 - process work on reassign request, 6 - process description editted, 7 - process description editted';
 const DescriptionOrderSaleSetSubProcessHistories =
   ' 0 - created all sub processed, 1 - process work started, 2 - finished sub process, 3 - finished process work';
 class processCreateList {
@@ -66,6 +66,18 @@ export class ChangeProcessOrderStatusDto {
   @IsString()
   @ApiProperty({})
   description: string;
+
+  @IsString()
+  @ApiProperty({})
+  descriptionSetProcessHistory: string;
+
+  @IsString()
+  @ApiProperty({})
+  rootCauseId: string;
+
+  @IsString()
+  @ApiProperty({})
+  rootCause: string;
 
   @IsNumber()
   @ApiProperty({ description: DescriptionOrderSaleChangeProcessOrderStatus })

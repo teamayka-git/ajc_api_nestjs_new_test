@@ -69,5 +69,6 @@ _type:{
   4 - process work on holding
   5 - process work on reassign request
   6 - process description editted
+  7 - rejected by employee
 }
 */
