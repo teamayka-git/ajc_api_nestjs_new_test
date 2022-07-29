@@ -1910,67 +1910,33 @@ export class OrderSalesService {
               const isorderSaleMainShopDocumentsPopulate =
                 dto.screenType.includes(109);
               if (isorderSaleMainShopDocumentsPopulate) {
-                const isorderSaleMainShopDocumentsPipeline = () => {
-                  const pipeline = [];
-                  pipeline.push(
-                    {
-                      $match: {
-                        _status: 1,
-                        $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
-                      },
-                    },
-
-                    new ModelWeightResponseFormat().orderSaleDocumentsTableResponseFormat(
-                      1090,
-                      dto.responseFormat,
-                    ),
-                  );
-
-                  const isorderSaleMainShopDocumentsGlobalGalleryPopulate =
-                    dto.screenType.includes(110);
-                  if (isorderSaleMainShopDocumentsGlobalGalleryPopulate) {
-                    pipeline.push(
-                      {
-                        $lookup: {
-                          from: ModelNames.GLOBAL_GALLERIES,
-                          let: { documentId: '$_globalGalleryId' },
-                          pipeline: [
-                            {
-                              $match: {
-                                $expr: {
-                                  $eq: ['$_id', '$$documentId'],
-                                },
-                              },
-                            },
-
-                            new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
-                              1100,
-                              dto.responseFormat,
-                            ),
-                          ],
-                          as: 'globalGalleryDetails',
-                        },
-                      },
-                      {
-                        $unwind: {
-                          path: '$globalGalleryDetails',
-                          preserveNullAndEmptyArrays: true,
-                        },
-                      },
-                    );
-                  }
-
-                  return pipeline;
-                };
+              
 
                 pipeline.push({
                   $lookup: {
-                    from: ModelNames.ORDER_SALES_DOCUMENTS,
-                    let: { orderSaleId: '$_id' },
-                    pipeline: isorderSaleMainShopDocumentsPipeline(),
-                    as: 'orderSaleDocuments',
+                    from: ModelNames.GLOBAL_GALLERIES,
+                    let: { globalGalleryId: '$_globalGalleryId' },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                        },
+                      },
+  
+                      new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                        1090,
+                        dto.responseFormat,
+                      ),
+                    
+                    ],
+                    as: 'globalGalleryDetails',
                   },
-                });
+                },{
+                  $unwind: {
+                    path: '$globalGalleryDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },);
               }
 
               const isorderSaleMainShopOHPopulate =
