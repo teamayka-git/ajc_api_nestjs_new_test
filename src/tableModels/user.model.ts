@@ -61,7 +61,7 @@ export const UserSchema = new mongoose.Schema({
   _fcmId: { type: String, default: '' },
   _deviceUniqueId: { type: String, default: '' },
   _permissions: { type: Object, required: true, default: [] },
-  _userRole: { type: Number, required: true, default: -1 },
+  _userType: { type: Number, required: true, default: -1 },
   _customType: { type: Object, required: true, default: [] },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -99,7 +99,7 @@ export interface User {
   _logisticPartnerId:String;
   _deviceUniqueId: String;
   _permissions: Object;
-  _userRole: Number;
+  _userType: Number;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -111,7 +111,7 @@ UserSchema.index({ _logisticPartnerId: 1 });
 UserSchema.index({ _testCenterId: 1 });
 UserSchema.index({ _deliveryHubId: 1 });
 UserSchema.index({ _halmarkId: 1 });
-UserSchema.index({ _userRole: 1 });
+UserSchema.index({ _userType: 1 });
 UserSchema.index({ _customType: 1 });
 UserSchema.index({ _status: 1 });
 UserSchema.index({ _customerId: 1 });
@@ -154,7 +154,7 @@ function schemaPostFunctionForDuplicate(error, doc, next) {
   }
 }
 /*
-_userRole:{
+_userType:{
     0 - super_admin
     1 - agent
     2 - supplier

@@ -76,7 +76,7 @@ export class LogisticsPartnersService {
             _fcmId: '',
             _deviceUniqueId: '',
             _permissions: [],
-            _userRole: 3,
+            _userType: 3,
             _gender: 2,
             _createdUserId: _userId_,
             _createdAt: dateTime,

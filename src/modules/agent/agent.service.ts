@@ -263,7 +263,7 @@ export class AgentService {
             _fcmId: '',
             _deviceUniqueId: '',
             _permissions: [],
-            _userRole: 3,
+            _userType: 3,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _updatedUserId: null,

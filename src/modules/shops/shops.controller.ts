@@ -52,7 +52,7 @@ export class ShopsController {
     var returnData: Object = await this.shopService.login(dto);
 
     var userRole = new GuardUserRoleStringGenerate().generate(
-      returnData['_userRole'],
+      returnData['_userType'],
     );
 
     const jwt = await this.jwtService.signAsync(

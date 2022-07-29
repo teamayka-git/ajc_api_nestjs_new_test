@@ -51,7 +51,7 @@ export class AgentController {
     var returnData: Object = await this.agentService.login(dto);
 
     var userRole = new GuardUserRoleStringGenerate().generate(
-      returnData['_userRole'],
+      returnData['_userType'],
     );
 
     const jwt = await this.jwtService.signAsync(

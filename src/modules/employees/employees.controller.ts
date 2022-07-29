@@ -54,7 +54,7 @@ export class EmployeesController {
     var returnData: Object = await this.employeesService.login(dto);
 
     var userRole = new GuardUserRoleStringGenerate().generate(
-      returnData['userDetails']['_userRole'],
+      returnData['userDetails']['_userType'],
     );
 
     const jwt = await this.jwtService.signAsync(

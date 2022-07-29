@@ -722,7 +722,7 @@ export class ModelWeight {
       _customerId: 1,
       _deliveryHubId: 1,
       _deviceUniqueId: 1,
-      _userRole: 1,
+      _userType: 1,
       _status: 1,
     };
   }
@@ -748,7 +748,7 @@ export class ModelWeight {
       _deliveryHubId: 1,
       _deviceUniqueId: 1,
       _permissions: 1,
-      _userRole: 1,
+      _userType: 1,
       _createdUserId: 1,
       _createdAt: 1,
       _updatedUserId: 1,

@@ -967,7 +967,7 @@ export class AppService {
             _fcmId: '',
             _deviceUniqueId: '',
             _permissions: GlobalConfig().SUPER_ADMIN_PERMISSIONS,
-            _userRole: 0,
+            _userType: 0,
             _createdUserId: null,
             _createdAt: -1,
             _updatedUserId: null,

@@ -80,7 +80,7 @@ export class DeliveryHubsService {
           _fcmId: '',
           _deviceUniqueId: '',
           _permissions: [],
-          _userRole: 0,
+          _userType: 0,
           _createdUserId: null,
           _createdAt: -1,
           _updatedUserId: null,
