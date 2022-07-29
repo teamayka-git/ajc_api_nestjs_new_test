@@ -71,7 +71,7 @@ EmployeeSchema.index(
   { _prefix: 1 },
   {
     unique: true,
-    partialFilterExpression: { _status: { $lt: 2 }, _prefix: { $ne: '' } },
+    partialFilterExpression: { _status: { $lt: 2 }, _prefix: { $ne: "" } },
   },
 );
 EmployeeSchema.post('save', async function (error, doc, next) {
