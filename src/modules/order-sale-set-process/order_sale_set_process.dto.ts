@@ -65,7 +65,7 @@ export class ChangeProcessOrderStatusDto {
 
   @IsString()
   @ApiProperty({})
-  descriptionId: string;
+  description: string;
 
   @IsNumber()
   @ApiProperty({ description: DescriptionOrderSaleChangeProcessOrderStatus })
@@ -87,7 +87,7 @@ export class ChangeProcessDescriptionOrderStatusDto {
 
   @IsString()
   @ApiProperty({})
-  descriptionId: string;
+  description: string;
 }
 export class ChangeSubProcessOrderStatusDto {
   @IsString()
@@ -100,7 +100,7 @@ export class ChangeSubProcessOrderStatusDto {
 
   @IsString()
   @ApiProperty({})
-  descriptionId: string;
+  description: string;
 
   @IsNumber()
   @ApiProperty({ description: DescriptionOrderSaleChangeProcessOrderStatus })

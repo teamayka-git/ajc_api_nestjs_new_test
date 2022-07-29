@@ -216,7 +216,7 @@ export class OrderSaleSetProcessService {
       var objectUpdateOrderSaleSetProcess = {
         _userId: dto.userId,
         _orderStatus: dto.orderStatus,
-        _description: dto.descriptionId,
+        _description: dto.description,
       };
 
       switch (dto.orderStatus) {
@@ -516,7 +516,7 @@ export class OrderSaleSetProcessService {
         },
         {
           $set: {
-            _description: dto.descriptionId,
+            _description: dto.description,
           },
         },
         { new: true, session: transactionSession },
@@ -575,7 +575,7 @@ export class OrderSaleSetProcessService {
           $set: {
             _userId: _userId_,
             _orderStatus: dto.orderStatus,
-            _description: dto.descriptionId,
+            _description: dto.description,
           },
         },
         { new: true, session: transactionSession },
