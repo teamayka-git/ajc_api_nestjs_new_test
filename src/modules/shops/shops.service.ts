@@ -766,6 +766,21 @@ export class ShopsService {
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
+      if (dto.orderHeadIds.length > 0) {
+        var newSettingsId = [];
+        dto.orderHeadIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _orderHeadId: { $in: newSettingsId } } });
+      }
+
+      if (dto.relationshipManagerIds.length > 0) {
+        var newSettingsId = [];
+        dto.relationshipManagerIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _relationshipManagerId: { $in: newSettingsId } } });
+      }
 
       if (dto.orderSaleRates.length > 0) {
         arrayAggregation.push({
