@@ -23,6 +23,9 @@ export const OrderSalesMainSchema = new mongoose.Schema({
     ref: ModelNames.ROOT_CAUSES,
     default: null,
   },
+  
+  _isInvoiceGenerated: { type: Number, required: true, default: -1 },
+  _isProductGenerated: { type: Number, required: true, default: -1 },
   _description: { type: String, default: '' },
   _generalRemark: { type: String, default: '' },
   _isReWork: { type: Number, required: true, default: -1 },
@@ -55,6 +58,8 @@ export interface OrderSalesMain {
   _referenceNumber: String;//
   _type: number;//
   _isReWork:number;//
+  _isInvoiceGenerated:number;
+  _isProductGenerated:number;
   _rootCause: String;//
   _orderHeadId: string;//
   _description: string;//
@@ -66,6 +71,9 @@ export interface OrderSalesMain {
   _status: Number;
 }
 
+
+OrderSalesMainSchema.index({ _isProductGenerated: 1 });
+OrderSalesMainSchema.index({ _isInvoiceGenerated: 1 });
 OrderSalesMainSchema.index({ _referenceNumber: 1 });
 OrderSalesMainSchema.index({ _isReWork: 1 });
 OrderSalesMainSchema.index({ _type: 1 });

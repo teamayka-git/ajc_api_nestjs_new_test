@@ -262,6 +262,8 @@ export class OrderSalesService {
         _workStatus: 0,
         _rootCauseId: null,
         _deliveryType: dto.deliveryType,
+        _isInvoiceGenerated: 0,
+        _isProductGenerated: 0,
         _type: dto.type,
         _isReWork: 0,
         _rootCause: '',
@@ -317,8 +319,6 @@ export class OrderSalesService {
           _weight: eachItem.weight,
           _uid: uidSalesOrder + new StringUtils().numberToEncodedLetter(index),
           _stoneColour: eachItem.stoneColor,
-          _isInvoiceGenerated: 0,
-          _isProductGenerated: 0,
           _productData: { _idDone: 0 },
           _productId: null,
           _designId: null,
@@ -751,6 +751,16 @@ export class OrderSalesService {
       if (dto.workStatus.length > 0) {
         arrayAggregation.push({
           $match: { _workStatus: { $in: dto.workStatus } },
+        });
+      }
+      if (dto.isProductGenerated.length > 0) {
+        arrayAggregation.push({
+          $match: { _isProductGenerated: { $in: dto.isProductGenerated } },
+        });
+      }
+      if (dto.isInvoiceGenerated.length > 0) {
+        arrayAggregation.push({
+          $match: { _isInvoiceGenerated: { $in: dto.isInvoiceGenerated } },
         });
       }
 

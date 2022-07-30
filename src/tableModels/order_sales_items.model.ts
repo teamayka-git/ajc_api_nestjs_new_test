@@ -33,8 +33,6 @@ export const OrderSalesItemsSchema = new mongoose.Schema({
   _stockStatus: { type: Number, required: true, default: -1 },
   _productData: { type: Object, required: true, default: {} },
   _uid: { type: String, required: true, default: 'nil' },
-  _isInvoiceGenerated: { type: Number, required: true, default: -1 },
-  _isProductGenerated: { type: Number, required: true, default: -1 },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -59,8 +57,6 @@ export interface OrderSalesItems {
   _weight: number;
   _uid: string;
   _stoneColour: string;
-  _isInvoiceGenerated:number;
-  _isProductGenerated:number;
   _productData: object;
   _productId: String;
   _designId: String;
@@ -78,8 +74,6 @@ OrderSalesItemsSchema.index({ _isMatFinish: 1 });
 OrderSalesItemsSchema.index({ _stockStatus: 1 });
 OrderSalesItemsSchema.index({ _designId: 1 });
 OrderSalesItemsSchema.index({ _productId: 1 });
-OrderSalesItemsSchema.index({ _isProductGenerated: 1 });
-OrderSalesItemsSchema.index({ _isInvoiceGenerated: 1 });
 OrderSalesItemsSchema.index({ _subCategoryId: 1 });
 OrderSalesItemsSchema.index({ _quantity: 1 });
 OrderSalesItemsSchema.index({ _stoneColour: 1 });

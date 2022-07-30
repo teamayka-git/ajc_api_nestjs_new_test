@@ -300,6 +300,14 @@ export class OrderSaleListDto {
   responseFormat: number[];
   
   @IsArray()
+  @ApiProperty({ type: [Number], })
+  isProductGenerated: number[];
+  
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  isInvoiceGenerated: number[];
+  
+  @IsArray()
   @ApiProperty({ type: [String] })
   orderSaleIdsIds: string[];
 
