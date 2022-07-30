@@ -1596,24 +1596,73 @@ export class OrderSalesService {
               const isorderSalesItemsSubCategoryCategory =
                 dto.screenType.includes(128);
               if (isorderSalesItemsSubCategoryCategory) {
+
+                const orderSaleSubCategoryPipeline = () => {
+                  const pipeline = [];
+                  pipeline.push({
+                    $match: {
+                      $expr: {
+                        $eq: ['$_id', '$$categoryId'],
+                      },
+                    },
+                  },
+                  new ModelWeightResponseFormat().categoryTableResponseFormat(
+                    1280,
+                    dto.responseFormat,
+                  ),);
+
+                  const isorderSalesItemsSubCategoryCategoryGroup =
+                  dto.screenType.includes(129);
+                if (isorderSalesItemsSubCategoryCategoryGroup) {
+                
+                  pipeline.push(
+                    {
+                      $lookup: {
+                        from: ModelNames.GROUP_MASTERS,
+                        let: { groupId: '$_groupId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$groupId'],
+                              },
+                            },
+                          },
+                          new ModelWeightResponseFormat().groupMasterTableResponseFormat(
+                            1290,
+                            dto.responseFormat,
+                          ),
+                        ],
+                        as: 'groupDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$groupDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                  );
+                }  
+
+
+
+
+
+
+                  return pipeline;
+                }
+               
+
+
+
+
                 pipeline.push(
                   {
                     $lookup: {
                       from: ModelNames.CATEGORIES,
                       let: { categoryId: '$_categoryId' },
-                      pipeline: [
-                        {
-                          $match: {
-                            $expr: {
-                              $eq: ['$_id', '$$categoryId'],
-                            },
-                          },
-                        },
-                        new ModelWeightResponseFormat().categoryTableResponseFormat(
-                          1280,
-                          dto.responseFormat,
-                        ),
-                      ],
+                      pipeline: orderSaleSubCategoryPipeline(),
                       as: 'categoryDetails',
                     },
                   },
