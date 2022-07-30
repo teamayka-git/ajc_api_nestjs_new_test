@@ -101,7 +101,7 @@ export class ProductCreateDto {
   @ApiProperty({ type: [ProductCreateList] })
   @ValidateNested({ each: true })
   @Type(() => ProductCreateList)
-  arrayitems: ProductCreateList[];
+  arrayItems: ProductCreateList[];
 }
 
 export class ProductListDto {

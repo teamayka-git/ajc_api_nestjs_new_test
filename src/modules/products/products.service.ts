@@ -58,7 +58,7 @@ export class ProductsService {
       var arrayOrderSaleHistory = [];
       var arraySubCategoryidsMDB = [];
 
-dto.arrayitems.forEach((it)=>{
+dto.arrayItems.forEach((it)=>{
   arraySubCategoryidsMDB.push(new mongoose.Types.ObjectId(it.subCategoryId));
 });
 
@@ -133,7 +133,7 @@ dto.arrayitems.forEach((it)=>{
         { _tableName: ModelNames.PRODUCTS },
         {
           $inc: {
-            _count: dto.arrayitems.length,
+            _count: dto.arrayItems.length,
           },
         },
         { new: true, session: transactionSession },
@@ -219,13 +219,13 @@ dto.arrayitems.forEach((it)=>{
 
 
 
-for(var i=0;i<dto.arrayitems.length;i++){
+for(var i=0;i<dto.arrayItems.length;i++){
 
 
 
 
   let subCategoryIndex=resultSubcategory.findIndex(
-    (it) => it._id == dto.arrayitems[i].subCategoryId,
+    (it) => it._id == dto.arrayItems[i].subCategoryId,
   );
 if(subCategoryIndex ==-1){
   throw new HttpException('Subcategory mismatch', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -235,7 +235,7 @@ if(subCategoryIndex ==-1){
       var productId = new mongoose.Types.ObjectId();
       var shopId = dto.shopId;
       var orderId = dto.orderId;
-      var orderItemId = dto.arrayitems[i].orderItemId;
+      var orderItemId = dto.arrayItems[i].orderItemId;
       if (shopId == '' || shopId == 'nil') {
         shopId = null;
       }
@@ -246,7 +246,7 @@ if(subCategoryIndex ==-1){
         orderItemId = null;
       }
 
-      dto.arrayitems[i].stonesArray.map((mapItem1) => {
+      dto.arrayItems[i].stonesArray.map((mapItem1) => {
         arrayStonesLinkings.push({
           _productId: productId,
           _stoneId: mapItem1.stoneId,
@@ -263,24 +263,24 @@ if(subCategoryIndex ==-1){
 
       arrayToProducts.push({
         _id: productId,
-        _name: dto.arrayitems[i].name,
+        _name: dto.arrayItems[i].name,
         _designerId: `${resultSubcategory[subCategoryIndex]._code}-${autoIncrementNumber}`,
         _shopId: shopId,
         _orderItemId: orderItemId,
-        _netWeight: dto.arrayitems[i].netWeight,
-        _totalStoneWeight: dto.arrayitems[i].totalStoneWeight,
-        _grossWeight: dto.arrayitems[i].grossWeight,
+        _netWeight: dto.arrayItems[i].netWeight,
+        _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
+        _grossWeight: dto.arrayItems[i].grossWeight,
         _barcode:
           BarCodeQrCodePrefix.PRODUCT_AND_INVOICE +
           new StringUtils().intToDigitString(autoIncrementNumber, 8),
         _categoryId: resultSubcategory[subCategoryIndex]._categoryId,
-        _subCategoryId: dto.arrayitems[i].subCategoryId,
+        _subCategoryId: dto.arrayItems[i].subCategoryId,
         _groupId: resultSubcategory[subCategoryIndex].categoryDetails._groupId,
-        _type: dto.arrayitems[i].type,
+        _type: dto.arrayItems[i].type,
         _purity: resultSubcategory[subCategoryIndex].categoryDetails.groupDetails._purity,
-        _hmSealingStatus: dto.arrayitems[i].hmSealingStatus,
+        _hmSealingStatus: dto.arrayItems[i].hmSealingStatus,
         _huId: [],
-        _eCommerceStatus: dto.arrayitems[i].eCommerceStatus,
+        _eCommerceStatus: dto.arrayItems[i].eCommerceStatus,
         _createdUserId: _userId_,
         _createdAt: dateTime,
         _updatedUserId: null,
@@ -300,7 +300,7 @@ if(subCategoryIndex ==-1){
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
               _isProductGenerated: 1,
-              _workStatus: dto.arrayitems[i].hmSealingStatus == 1 ? 8 : 16,
+              _workStatus: dto.arrayItems[i].hmSealingStatus == 1 ? 8 : 16,
             },
           },
           { new: true, session: transactionSession },
@@ -316,7 +316,7 @@ if(subCategoryIndex ==-1){
           _createdAt: dateTime,
           _status: 1,
         });
-        if (dto.arrayitems[i].hmSealingStatus == 0) {
+        if (dto.arrayItems[i].hmSealingStatus == 0) {
           arrayOrderSaleHistory.push({
             _orderSaleId: dto.orderId,
             _userId: null,
@@ -330,7 +330,7 @@ if(subCategoryIndex ==-1){
           });
         }
       }
-      if (dto.arrayitems[i].eCommerceStatus == 1 && orderId != null) {
+      if (dto.arrayItems[i].eCommerceStatus == 1 && orderId != null) {
       
 
         var resultCounterPhotographer =
@@ -374,7 +374,7 @@ if(subCategoryIndex ==-1){
         });
       }
 
-      if (dto.arrayitems[i].hmSealingStatus == 1 && orderId != null) {
+      if (dto.arrayItems[i].hmSealingStatus == 1 && orderId != null) {
         var resultCounterHalmarkRequest =
           await this.counterModel.findOneAndUpdate(
             { _tableName: ModelNames.HALMARKING_REQUESTS },
