@@ -300,7 +300,8 @@ if(subCategoryIndex ==-1){
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
               _isProductGenerated: 1,
-              _workStatus: dto.arrayItems[i].hmSealingStatus == 1 ? 8 : 16,
+              _orderItemId:orderItemId,
+              _workStatus: dto.arrayItems[i].hmSealingStatus == 1 ? 8 : 16,//todo doubt
             },
           },
           { new: true, session: transactionSession },
