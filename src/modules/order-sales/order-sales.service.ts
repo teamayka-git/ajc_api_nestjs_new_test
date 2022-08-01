@@ -317,7 +317,7 @@ export class OrderSalesService {
           _quantity: eachItem.quantity,
           _size: eachItem.size,
           _weight: eachItem.weight,
-          _uid: uidSalesOrder + new StringUtils().numberToEncodedLetter(index),
+          _uid: uidSalesOrder + new StringUtils().numberToEncodedLetter(index+1),
           _stoneColour: eachItem.stoneColor,
           _productData: { _idDone: 0 },
           _productId: null,
