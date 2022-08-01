@@ -21,6 +21,7 @@ import { Departments } from 'src/tableModels/departments.model';
 import { BarCodeQrCodePrefix } from 'src/common/barcode_qrcode_prefix';
 import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
+import { OrderSalesItems } from 'src/tableModels/order_sales_items.model';
 
 @Injectable()
 export class ProductsService {
@@ -37,6 +38,8 @@ export class ProductsService {
     private readonly counterModel: Model<Counters>,
     @InjectModel(ModelNames.ORDER_SALES_MAIN)
     private readonly orderSaleMainModel: Model<OrderSalesMain>,
+    @InjectModel(ModelNames.ORDER_SALES_ITEMS)
+    private readonly orderSaleItemsModel: Model<OrderSalesItems>,
     @InjectModel(ModelNames.PHOTOGRAPHER_REQUESTS)
     private readonly photographerRequestModel: Model<PhotographerRequests>,
     @InjectModel(ModelNames.HALMARKING_REQUESTS)
@@ -58,15 +61,16 @@ export class ProductsService {
       var arrayOrderSaleHistory = [];
       var arraySubCategoryidsMDB = [];
 
-dto.arrayItems.forEach((it)=>{
-  arraySubCategoryidsMDB.push(new mongoose.Types.ObjectId(it.subCategoryId));
-});
-
+      dto.arrayItems.forEach((it) => {
+        arraySubCategoryidsMDB.push(
+          new mongoose.Types.ObjectId(it.subCategoryId),
+        );
+      });
 
       var resultSubcategory = await this.subCategoriesModel.aggregate([
         {
           $match: {
-            _id: {$in:arraySubCategoryidsMDB},
+            _id: { $in: arraySubCategoryidsMDB },
           },
         },
         {
@@ -217,111 +221,164 @@ dto.arrayItems.forEach((it)=>{
         );
       }
 
+      for (var i = 0; i < dto.arrayItems.length; i++) {
+        let subCategoryIndex = resultSubcategory.findIndex(
+          (it) => it._id == dto.arrayItems[i].subCategoryId,
+        );
+        if (subCategoryIndex == -1) {
+          throw new HttpException(
+            'Subcategory mismatch',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
 
+        var autoIncrementNumber = resultProduct._count - i;
+        var productId = new mongoose.Types.ObjectId();
+        var shopId = dto.shopId;
+        var orderId = dto.orderId;
+        var orderItemId = dto.arrayItems[i].orderItemId;
+        if (shopId == '' || shopId == 'nil') {
+          shopId = null;
+        }
+        if (orderId == '' || orderId == 'nil') {
+          orderId = null;
+        }
+        if (orderItemId == '' || orderItemId == 'nil') {
+          orderItemId = null;
+        }
 
-for(var i=0;i<dto.arrayItems.length;i++){
+        dto.arrayItems[i].stonesArray.map((mapItem1) => {
+          arrayStonesLinkings.push({
+            _productId: productId,
+            _stoneId: mapItem1.stoneId,
+            _stoneColourId: mapItem1.colourId,
+            _stoneWeight: mapItem1.stoneWeight,
+            _quantity: mapItem1.quantity,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+        });
 
-
-
-
-  let subCategoryIndex=resultSubcategory.findIndex(
-    (it) => it._id == dto.arrayItems[i].subCategoryId,
-  );
-if(subCategoryIndex ==-1){
-  throw new HttpException('Subcategory mismatch', HttpStatus.INTERNAL_SERVER_ERROR);
-}
-
-      var autoIncrementNumber = (resultProduct._count -i);
-      var productId = new mongoose.Types.ObjectId();
-      var shopId = dto.shopId;
-      var orderId = dto.orderId;
-      var orderItemId = dto.arrayItems[i].orderItemId;
-      if (shopId == '' || shopId == 'nil') {
-        shopId = null;
-      }
-      if (orderId == '' || orderId == 'nil') {
-        orderId = null;
-      }
-      if (orderItemId == '' || orderItemId == 'nil') {
-        orderItemId = null;
-      }
-
-      dto.arrayItems[i].stonesArray.map((mapItem1) => {
-        arrayStonesLinkings.push({
-          _productId: productId,
-          _stoneId: mapItem1.stoneId,
-          _stoneColourId: mapItem1.colourId,
-          _stoneWeight: mapItem1.stoneWeight,
-          _quantity: mapItem1.quantity,
+        arrayToProducts.push({
+          _id: productId,
+          _name: dto.arrayItems[i].name,
+          _designerId: `${resultSubcategory[subCategoryIndex]._code}-${autoIncrementNumber}`,
+          _shopId: shopId,
+          _orderItemId: orderItemId,
+          _netWeight: dto.arrayItems[i].netWeight,
+          _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
+          _grossWeight: dto.arrayItems[i].grossWeight,
+          _barcode:
+            BarCodeQrCodePrefix.PRODUCT_AND_INVOICE +
+            new StringUtils().intToDigitString(autoIncrementNumber, 8),
+          _categoryId: resultSubcategory[subCategoryIndex]._categoryId,
+          _subCategoryId: dto.arrayItems[i].subCategoryId,
+          _groupId:
+            resultSubcategory[subCategoryIndex].categoryDetails._groupId,
+          _type: dto.arrayItems[i].type,
+          _purity:
+            resultSubcategory[subCategoryIndex].categoryDetails.groupDetails
+              ._purity,
+          _hmSealingStatus: dto.arrayItems[i].hmSealingStatus,
+          _huId: [],
+          _eCommerceStatus: dto.arrayItems[i].eCommerceStatus,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
           _updatedAt: -1,
           _status: 1,
         });
-      });
 
-      arrayToProducts.push({
-        _id: productId,
-        _name: dto.arrayItems[i].name,
-        _designerId: `${resultSubcategory[subCategoryIndex]._code}-${autoIncrementNumber}`,
-        _shopId: shopId,
-        _orderItemId: orderItemId,
-        _netWeight: dto.arrayItems[i].netWeight,
-        _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
-        _grossWeight: dto.arrayItems[i].grossWeight,
-        _barcode:
-          BarCodeQrCodePrefix.PRODUCT_AND_INVOICE +
-          new StringUtils().intToDigitString(autoIncrementNumber, 8),
-        _categoryId: resultSubcategory[subCategoryIndex]._categoryId,
-        _subCategoryId: dto.arrayItems[i].subCategoryId,
-        _groupId: resultSubcategory[subCategoryIndex].categoryDetails._groupId,
-        _type: dto.arrayItems[i].type,
-        _purity: resultSubcategory[subCategoryIndex].categoryDetails.groupDetails._purity,
-        _hmSealingStatus: dto.arrayItems[i].hmSealingStatus,
-        _huId: [],
-        _eCommerceStatus: dto.arrayItems[i].eCommerceStatus,
-        _createdUserId: _userId_,
-        _createdAt: dateTime,
-        _updatedUserId: null,
-        _updatedAt: -1,
-        _status: 1,
-      });
-
-    
-
-      if (orderId != null) {
-        var result = await this.orderSaleMainModel.findOneAndUpdate(
-          {
-            _id: dto.orderId,
-          },
-          {
-            $set: {
-              _updatedUserId: _userId_,
-              _updatedAt: dateTime,
-              _isProductGenerated: 1,
-              _orderItemId:orderItemId,
-              _workStatus: dto.arrayItems[i].hmSealingStatus == 1 ? 8 : 16,//todo doubt
+        if (orderItemId != null) {
+          await this.orderSaleItemsModel.findOneAndUpdate(
+            {
+              _id: orderItemId,
             },
-          },
-          { new: true, session: transactionSession },
-        );
-        arrayOrderSaleHistory.push({
-          _orderSaleId: dto.orderId,
-          _userId: null,
-          _type: 6,
-          _shopId: null,
-          _orderSaleItemId: null,
-          _description: '',
-          _createdUserId: _userId_,
-          _createdAt: dateTime,
-          _status: 1,
-        });
-        if (dto.arrayItems[i].hmSealingStatus == 0) {
+            {
+              $set: {
+                _productId: productId,
+              },
+            },
+          );
+        }
+
+        if (orderId != null) {
+          var result = await this.orderSaleMainModel.findOneAndUpdate(
+            {
+              _id: dto.orderId,
+            },
+            {
+              $set: {
+                _updatedUserId: _userId_,
+                _updatedAt: dateTime,
+                _isProductGenerated: 1,
+                _orderItemId: orderItemId,
+                _workStatus: (dto.arrayItems.findIndex((it)=>it.hmSealingStatus==1)!=-1) ? 8 : 16, 
+              },
+            },
+            { new: true, session: transactionSession },
+          );
           arrayOrderSaleHistory.push({
             _orderSaleId: dto.orderId,
             _userId: null,
-            _type: 16,
+            _type: 6,
+            _shopId: null,
+            _orderSaleItemId: null,
+            _description: '',
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _status: 1,
+          });
+          if (dto.arrayItems[i].hmSealingStatus == 0) {
+            arrayOrderSaleHistory.push({
+              _orderSaleId: dto.orderId,
+              _userId: null,
+              _type: 16,
+              _shopId: null,
+              _orderSaleItemId: null,
+              _description: '',
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _status: 1,
+            });
+          }
+        }
+        if (dto.arrayItems[i].eCommerceStatus == 1 && orderId != null) {
+          var resultCounterPhotographer =
+            await this.counterModel.findOneAndUpdate(
+              { _tableName: ModelNames.PHOTOGRAPHER_REQUESTS },
+              {
+                $inc: {
+                  _count: 1,
+                },
+              },
+              { new: true, session: transactionSession },
+            );
+          const photographerRequestModel = new this.photographerRequestModel({
+            _rootCauseId: null,
+            _orderItemId: orderItemId,
+            _productId: productId,
+            _requestStatus: 0,
+            _description: '',
+            _uid: resultCounterPhotographer._count,
+            _userId: resultPhotographer[0].employeeList[0]._userId,
+            _finishedAt: 0,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: 0,
+            _status: 1,
+          });
+          await photographerRequestModel.save({
+            session: transactionSession,
+          });
+          arrayOrderSaleHistory.push({
+            _orderSaleId: dto.orderId,
+            _userId: resultPhotographer[0].employeeList[0]._userId,
+            _type: 105,
             _shopId: null,
             _orderSaleItemId: null,
             _description: '',
@@ -330,96 +387,51 @@ if(subCategoryIndex ==-1){
             _status: 1,
           });
         }
-      }
-      if (dto.arrayItems[i].eCommerceStatus == 1 && orderId != null) {
-      
 
-        var resultCounterPhotographer =
-          await this.counterModel.findOneAndUpdate(
-            { _tableName: ModelNames.PHOTOGRAPHER_REQUESTS },
-            {
-              $inc: {
-                _count: 1,
+        if (dto.arrayItems[i].hmSealingStatus == 1 && orderId != null) {
+          var resultCounterHalmarkRequest =
+            await this.counterModel.findOneAndUpdate(
+              { _tableName: ModelNames.HALMARKING_REQUESTS },
+              {
+                $inc: {
+                  _count: 1,
+                },
               },
-            },
-            { new: true, session: transactionSession },
-          );
-        const photographerRequestModel = new this.photographerRequestModel({
-          _rootCauseId: null,
-          _orderItemId: orderItemId,
-          _productId: productId,
-          _requestStatus: 0,
-          _description: '',
-          _uid: resultCounterPhotographer._count,
-          _userId: resultPhotographer[0].employeeList[0]._userId,
-          _finishedAt: 0,
-          _createdUserId: _userId_,
-          _createdAt: dateTime,
-          _updatedUserId: null,
-          _updatedAt: 0,
-          _status: 1,
-        });
-        await photographerRequestModel.save({
-          session: transactionSession,
-        });
-        arrayOrderSaleHistory.push({
-          _orderSaleId: dto.orderId,
-          _userId: resultPhotographer[0].employeeList[0]._userId,
-          _type: 105,
-          _shopId: null,
-          _orderSaleItemId: null,
-          _description: '',
-          _createdUserId: _userId_,
-          _createdAt: dateTime,
-          _status: 1,
-        });
+              { new: true, session: transactionSession },
+            );
+
+          const halmarkRequestModel = new this.halmarkRequestModel({
+            _uid: resultCounterHalmarkRequest._count,
+            _orderSaleItemId: orderItemId,
+            _productId: productId,
+            _halmarkCenterId: null,
+            _halmarkCenterUserId: null,
+            _verifyUserId: null,
+            _requestStatus: 5,
+            _rootCauseId: null,
+            _description: '',
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: 0,
+            _status: 1,
+          });
+          await halmarkRequestModel.save({
+            session: transactionSession,
+          });
+          arrayOrderSaleHistory.push({
+            _orderSaleId: dto.orderId,
+            _userId: null,
+            _type: 8,
+            _orderSaleItemId: null,
+            _shopId: null,
+            _description: '',
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _status: 1,
+          });
+        }
       }
-
-      if (dto.arrayItems[i].hmSealingStatus == 1 && orderId != null) {
-        var resultCounterHalmarkRequest =
-          await this.counterModel.findOneAndUpdate(
-            { _tableName: ModelNames.HALMARKING_REQUESTS },
-            {
-              $inc: {
-                _count: 1,
-              },
-            },
-            { new: true, session: transactionSession },
-          );
-
-        const halmarkRequestModel = new this.halmarkRequestModel({
-          _uid: resultCounterHalmarkRequest._count,
-          _orderSaleItemId: orderItemId,
-          _productId: productId,
-          _halmarkCenterId: null,
-          _halmarkCenterUserId: null,
-          _verifyUserId: null,
-          _requestStatus: 5,
-          _rootCauseId: null,
-          _description: '',
-          _createdUserId: _userId_,
-          _createdAt: dateTime,
-          _updatedUserId: null,
-          _updatedAt: 0,
-          _status: 1,
-        });
-        await halmarkRequestModel.save({
-          session: transactionSession,
-        });
-        arrayOrderSaleHistory.push({
-          _orderSaleId: dto.orderId,
-          _userId: null,
-          _type: 8,
-          _orderSaleItemId: null,
-          _shopId: null,
-          _description: '',
-          _createdUserId: _userId_,
-          _createdAt: dateTime,
-          _status: 1,
-        });
-      }
-
-    }
 
       var result1 = await this.productModel.insertMany(arrayToProducts, {
         session: transactionSession,
