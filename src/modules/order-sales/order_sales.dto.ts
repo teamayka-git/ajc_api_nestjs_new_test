@@ -91,10 +91,21 @@ class orderSaleItemsCreateList {
   @IsNumber()
   @ApiProperty({})
   isRhodium: number;
+  
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   isMatFinish: number;
+  
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  isDullFinish: number;
+  
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  isEnamel: number;
 
 }
 
@@ -166,6 +177,16 @@ class orderSaleItemEditList {
   @ApiProperty({})
   orderSaleItemId: string;
 
+  
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  isDullFinish: number;
+  
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  isEnamel: number;
   
   @Transform(({ value }) => Number(value))
   @IsNumber()

@@ -30,6 +30,8 @@ export const OrderSalesItemsSchema = new mongoose.Schema({
   },
   _isMatFinish: { type: Number, required: true, default: -1 },
   _isRhodium: { type: Number, required: true, default: -1 },
+  _isEnamel: { type: Number, required: true, default: -1 },
+  _isDullFinish: { type: Number, required: true, default: -1 },
   _stockStatus: { type: Number, required: true, default: -1 },
   _productData: { type: Object, required: true, default: {} },
   _uid: { type: String, required: true, default: 'nil' },
@@ -62,6 +64,8 @@ export interface OrderSalesItems {
   _designId: String;
   _stockStatus:number;
   _isRhodium: number;
+  _isEnamel: number;
+  _isDullFinish: number;
   _isMatFinish: number;
   _createdUserId: String;
   _createdAt: Number;
@@ -70,6 +74,8 @@ export interface OrderSalesItems {
   _status: Number;
 }
 
+OrderSalesItemsSchema.index({ _isEnamel: 1 });
+OrderSalesItemsSchema.index({ _isDullFinish: 1 });
 OrderSalesItemsSchema.index({ _isMatFinish: 1 });
 OrderSalesItemsSchema.index({ _stockStatus: 1 });
 OrderSalesItemsSchema.index({ _designId: 1 });
