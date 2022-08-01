@@ -359,6 +359,8 @@ export class ModelWeight {
       _stockStatus: 1,
       _isRhodium: 1,
       _isMatFinish: 1,
+      _isEnamel:1,
+      _isDullFinish:1,
     };
   }
   public orderSaleItemsTableMaximum(): Object {
@@ -377,6 +379,8 @@ export class ModelWeight {
       _stockStatus: 1,
       _isRhodium: 1,
       _isMatFinish: 1,
+      _isEnamel:1,
+      _isDullFinish:1,
       _createdUserId: 1,
       _createdAt: 1,
       _updatedUserId: 1,
