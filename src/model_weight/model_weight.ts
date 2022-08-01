@@ -805,13 +805,9 @@ export class ModelWeight {
 
   public orderSaleSetSubProcessTableLight(): Object {
     return {
-      _id: 1,
-      _orderSaleSetProcessId: 1,
-      _userId: 1,
-      _orderStatus: 1,
+      
       _description: 1,
       _subProcessId: 1,
-      _status: 1,
     };
   }
   public orderSaleSetSubProcessTableMinimum(): Object {
@@ -854,12 +850,6 @@ export class ModelWeight {
       _id: 1,
       _name: 1,
       _code: 1,
-      _isAutomatic: 1,
-      _maxHours: 1,
-      _processMasterId: 1,
-      _priority: 1,
-      _createdUserId: 1,
-      _status: 1,
     };
   }
   public subProcessMasterTableMinimum(): Object {

@@ -20,7 +20,7 @@ export const OrderSaleSetSubProcessesSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.SUB_PROCESS_MASTER,
     default: null,
-  },
+  }, 
 
   _description: { type: String, default: '' },
   _createdUserId: {
