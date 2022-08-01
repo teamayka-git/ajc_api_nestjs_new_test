@@ -69,7 +69,7 @@ export class OrderSaleSetProcessService {
         { _processMasterId: { $in: arrayProcessIds }, _status: 1 },
         { _processMasterId: 1, _id: 1 },
       );
-
+console.log("resultSubProcess  "+JSON.stringify(resultSubProcess));
       dto.array.map((mapItem) => {
         mapItem.arrayProcess.map((mapItem1, index) => {
           var processId = new mongoose.Types.ObjectId();
@@ -113,6 +113,7 @@ export class OrderSaleSetProcessService {
               resultSubProcess,
               mapItem1,
             );
+            console.log("____f1    "+arraySubProcessIndexes);
           arraySubProcessIndexes.map((mapItem2) => {
             arrayToSetSubProcess.push({
               _orderSaleSetProcessId: processId,
