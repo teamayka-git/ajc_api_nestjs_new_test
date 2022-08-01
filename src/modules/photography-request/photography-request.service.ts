@@ -369,18 +369,49 @@ export class PhotographyRequestService {
       }
 
       if (dto.screenType.includes(100)) {
+        const orderSaleItemPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            { $match: { $expr: { $eq: ['$_id', '$$orderId'] } } },
+            new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+              1000,
+              dto.responseFormat,
+            ),
+          );
+          if (dto.screenType.includes(106)) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.ORDER_SALES_MAIN,
+                  let: { orderItemId: '$_orderSaleId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$orderItemId'] } } },
+
+                    new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+                      1060,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'orderSaleMainDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$orderSaleMainDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.ORDER_SALES_ITEMS,
               let: { orderId: '$_orderItemId' },
-              pipeline: [
-                { $match: { $expr: { $eq: ['$_id', '$$orderId'] } } },
-                new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
-                  1000,
-                  dto.responseFormat,
-                ),
-              ],
+              pipeline: orderSaleItemPipeline(),
               as: 'orderDetails',
             },
           },
@@ -429,34 +460,37 @@ export class PhotographyRequestService {
             new ModelWeightResponseFormat().userTableResponseFormat(
               1020,
               dto.responseFormat,
-            ),);
-            const photographerUserGlobalGallery = dto.screenType.includes(104);
-            if (photographerUserGlobalGallery) {
-            pipeline.push( {
-              $lookup: {
-                from: ModelNames.GLOBAL_GALLERIES,
-                let: { globalGalleryId: '$_globalGalleryId' },
-                pipeline: [
-                  {
-                    $match: {
-                      $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+            ),
+          );
+          const photographerUserGlobalGallery = dto.screenType.includes(104);
+          if (photographerUserGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
                     },
-                  },
-                  new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
-                    1040,
-                    dto.responseFormat,
-                  )
-                ],
-                as: 'globalGalleryDetails',
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1040,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
               },
-            },
-            {
-              $unwind: {
-                path: '$globalGalleryDetails',
-                preserveNullAndEmptyArrays: true,
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
               },
-            },
-          );}
+            );
+          }
           return pipeline;
         };
 
@@ -478,9 +512,6 @@ export class PhotographyRequestService {
         );
       }
 
-
-
-
       if (dto.screenType.includes(103)) {
         const photographyCreatedUserPipeline = () => {
           const pipeline = [];
@@ -493,34 +524,37 @@ export class PhotographyRequestService {
             new ModelWeightResponseFormat().userTableResponseFormat(
               1030,
               dto.responseFormat,
-            ),);
-            const photographerUserGlobalGallery = dto.screenType.includes(105);
-            if (photographerUserGlobalGallery) {
-            pipeline.push( {
-              $lookup: {
-                from: ModelNames.GLOBAL_GALLERIES,
-                let: { globalGalleryId: '$_globalGalleryId' },
-                pipeline: [
-                  {
-                    $match: {
-                      $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+            ),
+          );
+          const photographerUserGlobalGallery = dto.screenType.includes(105);
+          if (photographerUserGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
                     },
-                  },
-                  new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
-                    1050,
-                    dto.responseFormat,
-                  )
-                ],
-                as: 'globalGalleryDetails',
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1050,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
               },
-            },
-            {
-              $unwind: {
-                path: '$globalGalleryDetails',
-                preserveNullAndEmptyArrays: true,
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
               },
-            },
-          );}
+            );
+          }
           return pipeline;
         };
 
@@ -541,7 +575,6 @@ export class PhotographyRequestService {
           },
         );
       }
-
 
       var result = await this.photographyRequestModel
         .aggregate(arrayAggregation)

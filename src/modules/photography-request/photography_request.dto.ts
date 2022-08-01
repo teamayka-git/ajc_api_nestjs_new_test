@@ -13,7 +13,7 @@ import { Optional } from '@nestjs/common';
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList =
-  '0-total documents count, 100 - order details, 101-root cause details, 102-user details, 103-created user details, 104 - user details under[102] global gallery, 105 - created user details under[103] global gallery';
+  '0-total documents count, 100 - order item details, 101-root cause details, 102-user details, 103-created user details, 104 - user details under[102] global gallery, 105 - created user details under[103] global gallery, 106 - order item under[100] order main details';
 const descriptionRequestStatus =
   ' 0 - pending, 1 - accept, 2 - reject, 3 - completed';
 class PhotographyRequestCreateList {
