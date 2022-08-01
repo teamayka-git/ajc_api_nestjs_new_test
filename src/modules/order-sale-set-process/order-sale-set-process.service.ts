@@ -111,7 +111,7 @@ console.log("resultSubProcess  "+JSON.stringify(resultSubProcess));
           var arraySubProcessIndexes =
             new IndexUtils().multipleIndexSetSubProcess(
               resultSubProcess,
-              mapItem1,
+              mapItem1.processId,
             );
             console.log("____f1    "+arraySubProcessIndexes);
           arraySubProcessIndexes.map((mapItem2) => {
