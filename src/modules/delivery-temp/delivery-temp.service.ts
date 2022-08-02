@@ -457,7 +457,7 @@ export class DeliveryTempService {
                     as: 'ordersaleItemDetails',
                   },
                 },
-                {
+                { 
                   $unwind: {
                     path: '$ordersaleItemDetails',
                     preserveNullAndEmptyArrays: true,
@@ -498,7 +498,7 @@ export class DeliveryTempService {
           },
         );
       }
-
+console.log("arrayAggregation  "+JSON.stringify(arrayAggregation));
       var result = await this.deliveryTempModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
