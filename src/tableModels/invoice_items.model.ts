@@ -27,7 +27,7 @@ export const InvoiceItemsSchema = new mongoose.Schema({
   _productName: { type: String, required: true, default: 'nil' },
   _purity: { type: Number, required: true, default: -1 },
   _hsnCode: { type: String, required: true, default: 'nil' },
-  _huid: { type: String, required: true, default: 'nil' },
+  _huid: { type: Object, required: true, default: 'nil' },
   _grossWeight: { type: Number, required: true, default: -1 },
   _stoneWeight: { type: Number, required: true, default: -1 },
   _netWeight: { type: Number, required: true, default: -1 },
