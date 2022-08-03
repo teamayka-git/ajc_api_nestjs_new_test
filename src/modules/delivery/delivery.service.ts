@@ -470,7 +470,6 @@ export class DeliveryService {
               dto.responseFormat,
             ),
           );
-         
 
           const isorderSaleItemsInvoices = dto.screenType.includes(105);
           if (isorderSaleItemsInvoices) {
@@ -485,16 +484,16 @@ export class DeliveryService {
                 new ModelWeightResponseFormat().invoiceTableResponseFormat(
                   1050,
                   dto.responseFormat,
-                ),);
+                ),
+              );
 
-
-                const isorderSaleItemsInvoicesDetailsInvoiceItems = dto.screenType.includes(108);
-                if (isorderSaleItemsInvoicesDetailsInvoiceItems) {
-                pipeline.push({
-                  $lookup: {
-                    from: ModelNames.INVOICE_ITEMS,
-                    let: { invoiceId: '$_id' },
-                    pipeline: [
+              const isorderSaleItemsInvoicesDetailsInvoiceItems =
+                dto.screenType.includes(108);
+              if (isorderSaleItemsInvoicesDetailsInvoiceItems) {
+                const isorderSaleItemsInvoicesDetailsInvoiceItemsPipeline =
+                  () => {
+                    const pipeline = [];
+                    pipeline.push(
                       {
                         $match: {
                           _status: 1,
@@ -507,12 +506,110 @@ export class DeliveryService {
                         1080,
                         dto.responseFormat,
                       ),
-                    ],
+                    );
+
+                    const isorderSaleItemsInvoicesDetailsInvoiceItemsOrderSaleItedDetails =
+                      dto.screenType.includes(109);
+                    if (
+                      isorderSaleItemsInvoicesDetailsInvoiceItemsOrderSaleItedDetails
+                    ) {
+                      const isorderSaleItemsInvoicesDetailsInvoiceItemsOrderSaleItemPipeline =
+                        () => {
+                          const pipeline = [];
+                          pipeline.push(
+                            {
+                              $match: {
+                                $expr: {
+                                  $eq: ['$_id', '$$invoiceItemId'],
+                                },
+                              },
+                            },
+                            new ModelWeightResponseFormat().orderSaleItemsTableResponseFormat(
+                              1090,
+                              dto.responseFormat,
+                            ),
+                          );
+
+
+                          const isorderSaleItemsInvoicesDetailsInvoiceItemsOrderSaleItedSubCategoryDetails =
+                          dto.screenType.includes(110);
+                        if (
+                          isorderSaleItemsInvoicesDetailsInvoiceItemsOrderSaleItedSubCategoryDetails
+                        ) {
+
+                          pipeline.push(
+                            {
+                              $lookup: {
+                                from: ModelNames.SUB_CATEGORIES,
+                                let: { subCategoryId: '$_subCategoryId' },
+                                pipeline: [
+                                  {
+                                    $match: {
+                                      $expr: { $eq: ['$_id', '$$subCategoryId'] },
+                                    },
+                                  },
+                  
+                                  new ModelWeightResponseFormat().subCategoryTableResponseFormat(
+                                    1100,
+                                    dto.responseFormat,
+                                  ),
+                                ],
+                                as: 'subCategoryDetails',
+                              },
+                            },
+                            {
+                              $unwind: {
+                                path: '$subCategoryDetails',
+                                preserveNullAndEmptyArrays: true,
+                              },
+                            },
+                          );
+
+
+                        }
+
+
+
+
+
+
+
+
+
+
+                          return pipeline;
+                        }
+                      pipeline.push(
+                        {
+                          $lookup: {
+                            from: ModelNames.ORDER_SALES_ITEMS,
+                            let: { invoiceItemId: '$_orderSaleItemId' },
+                            pipeline: isorderSaleItemsInvoicesDetailsInvoiceItemsOrderSaleItemPipeline(),
+                            as: 'orderSaleItemDetails',
+                          },
+                        },
+                        {
+                          $unwind: {
+                            path: '$orderSaleItemDetails',
+                            preserveNullAndEmptyArrays: true,
+                          },
+                        },
+                      );
+                    }
+
+                    return pipeline;
+                  };
+
+                pipeline.push({
+                  $lookup: {
+                    from: ModelNames.INVOICE_ITEMS,
+                    let: { invoiceId: '$_id' },
+                    pipeline:
+                      isorderSaleItemsInvoicesDetailsInvoiceItemsPipeline(),
                     as: 'invoiceItems',
                   },
-                },
-              );
-            }
+                });
+              }
               return pipeline;
             };
 

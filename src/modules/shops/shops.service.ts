@@ -1350,7 +1350,7 @@ export class ShopsService {
         generalSettingsTypes.push(0);
       }
       if (dto.screenType.includes(201)) {
-        generalSettingsTypes.push(1);
+        generalSettingsTypes.push(1); 
       }
       if (dto.screenType.includes(202)) {
         generalSettingsTypes.push(2);
