@@ -2,13 +2,19 @@ import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { GlobalConfig } from 'src/config/global_config';
 
+var mongooseDoubleType = require('mongoose')
+require('mongoose-double')(mongoose);
+ 
+var SchemaTypes = mongooseDoubleType.Schema.Types;
+
+
 export const BankSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
   _acNo: { type: String, required: true, default: 'nil' },
   _ifsc: { type: String, required: true, default: 'nil' },
   _acHolderName: { type: String, required: true, default: 'nil' },
   _branchName: { type: String, required: true, default: 'nil' },
-  _type: { type: mongoose.Types.Decimal128, required: true, default: -1 },
+  _type: { type: SchemaTypes.Double, required: true, default: -1 },
   _userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
