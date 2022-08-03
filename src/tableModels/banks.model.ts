@@ -8,7 +8,7 @@ export const BankSchema = new mongoose.Schema({
   _ifsc: { type: String, required: true, default: 'nil' },
   _acHolderName: { type: String, required: true, default: 'nil' },
   _branchName: { type: String, required: true, default: 'nil' },
-  _type: { type: Number, required: true, default: -1 },
+  _type: { type: mongoose.Types.Decimal128, required: true, default: -1 },
   _userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
