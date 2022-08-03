@@ -31,10 +31,7 @@ class DeliveryCreateList {
   @ApiProperty({})
   invoiceId: string;
 
-  @IsString()
-  @ApiProperty({})
-  orderSaleItemId: string;
-
+  
   @IsString()
   @ApiProperty({})
   shopId: string;

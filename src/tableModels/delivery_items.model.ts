@@ -9,11 +9,6 @@ export const DeliveryItemsSchema = new mongoose.Schema({
     ref: ModelNames.DELIVERY,
     default: null,
   },
-  _orderSaleItemId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.ORDER_SALES_ITEMS,
-    default: null,
-  },
   _invoiceId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.INVOICES,
@@ -36,7 +31,6 @@ export const DeliveryItemsSchema = new mongoose.Schema({
 
 export interface DeliveryItems {
   _id: String;
-  _orderSaleItemId: String;
   _orderId: String;
   _invoiceId: string;
   _createdUserId: String;
@@ -46,7 +40,6 @@ export interface DeliveryItems {
   _status: Number;
 }
 
-DeliveryItemsSchema.index({ _orderSaleItemId: 1 });
 DeliveryItemsSchema.index({ _orderId: 1 });
 DeliveryItemsSchema.index({ _invoiceId: 1 });
 DeliveryItemsSchema.index({ _createdUserId: 1 });

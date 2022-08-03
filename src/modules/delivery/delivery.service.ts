@@ -111,10 +111,6 @@ export class DeliveryService {
         if (indexChild != -1) {
           arrayToDeliveryItems.push({
             _deliveryId: resultOldDelivery[indexChild]._id,
-            _orderSaleItemId:
-              mapItem.orderSaleItemId == '' || mapItem.orderSaleItemId == 'nil'
-                ? null
-                : mapItem.orderSaleItemId,
             _invoiceId:
               mapItem.invoiceId == '' || mapItem.invoiceId == 'nil'
                 ? null
@@ -474,71 +470,7 @@ export class DeliveryService {
               dto.responseFormat,
             ),
           );
-          const isorderSaleItems = dto.screenType.includes(104);
-          if (isorderSaleItems) {
-            const orderSaleItemsPipeline = () => {
-              const pipeline = [];
-              pipeline.push(
-                {
-                  $match: {
-                    $expr: { $eq: ['$_id', '$$orderSaleId'] },
-                  },
-                },
-                new ModelWeightResponseFormat().orderSaleItemsTableResponseFormat(
-                  1040,
-                  dto.responseFormat,
-                ),
-              );
-
-              const isorderSaleItemsSubCategory = dto.screenType.includes(107);
-              if (isorderSaleItemsSubCategory) {
-                pipeline.push(
-                  {
-                    $lookup: {
-                      from: ModelNames.SUB_CATEGORIES,
-                      let: { subCategoryId: '$_subCategoryId' },
-                      pipeline: [
-                        {
-                          $match: {
-                            $expr: { $eq: ['$_id', '$$subCategoryId'] },
-                          },
-                        },
-                        new ModelWeightResponseFormat().subCategoryTableResponseFormat(
-                          1070,
-                          dto.responseFormat,
-                        ),
-                      ],
-                      as: 'subCategoryDetails',
-                    },
-                  },
-                  {
-                    $unwind: {
-                      path: '$subCategoryDetails',
-                      preserveNullAndEmptyArrays: true,
-                    },
-                  },
-                );
-              }
-              return pipeline;
-            };
-
-            pipeline.push(
-              {
-                $lookup: {
-                  from: ModelNames.ORDER_SALES_ITEMS,
-                  let: { orderSaleId: '$_orderSaleItemId' },
-                  pipeline: orderSaleItemsPipeline(),
-                  as: 'orderDetails',
-                },
-              },
-              {
-                $unwind: {
-                  path: '$orderDetails',
-                  preserveNullAndEmptyArrays: true,
-                },
-              },
-            );
-          }
+         
 
           const isorderSaleItemsInvoices = dto.screenType.includes(105);
           if (isorderSaleItemsInvoices) {
