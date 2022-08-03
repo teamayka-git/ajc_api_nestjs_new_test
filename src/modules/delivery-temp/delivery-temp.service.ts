@@ -389,40 +389,7 @@ export class DeliveryTempService {
                           },
                         );
 
-                        const invoiceItemsOrdersaleItemsOrderSaleMainSubCategoryDetails =
-                          dto.screenType.includes(110);
-                        if (
-                          invoiceItemsOrdersaleItemsOrderSaleMainSubCategoryDetails
-                        ) {
-                          pipeline.push(
-                            {
-                              $lookup: {
-                                from: ModelNames.SUB_CATEGORIES,
-                                let: { subCategoryId: '$_subCategoryId' },
-                                pipeline: [
-                                  {
-                                    $match: {
-                                      $expr: {
-                                        $eq: ['$_id', '$$subCategoryId'],
-                                      },
-                                    },
-                                  },
-                                  new ModelWeightResponseFormat().subCategoryTableResponseFormat(
-                                    1100,
-                                    dto.responseFormat,
-                                  ),
-                                ],
-                                as: 'subCategoryDetails',
-                              },
-                            },
-                            {
-                              $unwind: {
-                                path: '$subCategoryDetails',
-                                preserveNullAndEmptyArrays: true,
-                              },
-                            },
-                          );
-                        }
+                     
                       }
                       return pipeline;
                     };
@@ -445,6 +412,41 @@ export class DeliveryTempService {
                     },
                   );
                 }
+
+                const invoiceItemsOrdersaleItemsOrderSaleMainSubCategoryDetails =
+                dto.screenType.includes(110);
+              if (
+                invoiceItemsOrdersaleItemsOrderSaleMainSubCategoryDetails
+              ) {
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.SUB_CATEGORIES,
+                      let: { subCategoryId: '$_subCategoryId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: {
+                              $eq: ['$_id', '$$subCategoryId'],
+                            },
+                          },
+                        },
+                        new ModelWeightResponseFormat().subCategoryTableResponseFormat(
+                          1100,
+                          dto.responseFormat,
+                        ),
+                      ],
+                      as: 'subCategoryDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$subCategoryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                );
+              }
                 return pipeline;
               };
 
