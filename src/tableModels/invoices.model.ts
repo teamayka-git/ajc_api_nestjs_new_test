@@ -9,6 +9,11 @@ export const InvoicesSchema = new mongoose.Schema({
     ref: ModelNames.USER,
     default: null,
   },
+  _shopId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.SHOPS,
+    default: null,
+  },
   _uid: { type: String, required: true, default: 'nil' },
   _billMode: { type: Number, required: true, default: -1 },
   _halmarkingCharge: { type: Number, required: true, default: -1 },
@@ -51,6 +56,7 @@ export const InvoicesSchema = new mongoose.Schema({
 export interface Invoices {
   _id: String;
   _userId: String;
+  _shopId: String;
   _uid: String;
   _billMode: number;
   _halmarkingCharge: number;

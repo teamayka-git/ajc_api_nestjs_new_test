@@ -59,7 +59,7 @@ export class InvoicesService {
           },
         },
       ]);
-      if(generalList.length==0){
+      if (generalList.length == 0) {
         throw new HttpException(
           'Invoice prefix not found',
           HttpStatus.INTERNAL_SERVER_ERROR,
@@ -91,7 +91,8 @@ export class InvoicesService {
         arrayToDeliveryChallan.push({
           _id: invoiceId,
           _userId: _userId_,
-          _uid:generalList[0]._string+
+          _uid:
+            generalList[0]._string +
             (resultCounterPurchase._count - dto.invoices.length + (index + 1)),
           _halmarkingCharge: mapItem.halmarkingCharge,
           _otherCharge: mapItem.otherCharge,
@@ -330,6 +331,15 @@ export class InvoicesService {
           $match: { _rootCauseId: { $in: newSettingsId } },
         });
       }
+      if (dto.shopIds.length > 0) {
+        var newSettingsId = [];
+        dto.shopIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _shopId: { $in: newSettingsId } },
+        });
+      }
       if (dto.createdUserIds.length > 0) {
         var newSettingsId = [];
         dto.createdUserIds.map((mapItem) => {
@@ -354,6 +364,63 @@ export class InvoicesService {
       }
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+
+      if (dto.orderHeadIds.length != 0 || dto.cityIds.length != 0) {
+        var arrayCityIdsMongo = [];
+        var arrayOrderHeadIdsMongo = [];
+        dto.cityIds.forEach((eachItem) => {
+          arrayCityIdsMongo.push(new mongoose.Types.ObjectId(eachItem));
+        });
+        dto.orderHeadIds.forEach((eachItem) => {
+          arrayOrderHeadIdsMongo.push(new mongoose.Types.ObjectId(eachItem));
+        });
+
+        const shopCheckMongoPipeline = () => {
+          const pipeline = [];
+          pipeline.push({
+            $match: {
+              $expr: { $eq: ['$_id', '$$shopId'] },
+            },
+          });
+
+          if (dto.cityIds.length != 0){
+            pipeline.push({
+              $match: {
+                _cityId:{$in:arrayCityIdsMongo}
+              },
+            });
+          }
+          if (dto.orderHeadIds.length != 0){
+            pipeline.push({
+              $match: {
+                _orderHeadId:{$in:arrayOrderHeadIdsMongo}
+              },
+            });
+          }
+
+
+
+
+
+          pipeline.push({ $project: { _id: 1 } });
+          return pipeline;
+        };
+
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.SHOPS,
+              let: { shopId: '$_shopId' },
+              pipeline: shopCheckMongoPipeline(),
+              as: 'shopDetailsForMongoCheckup',
+            },
+          },
+          {
+            $unwind: '$shopDetailsForMongoCheckup',
+          },
+        );
+      }
+
       arrayAggregation.push({ $sort: { _id: -1 } });
 
       if (dto.skip != -1) {
@@ -439,6 +506,34 @@ export class InvoicesService {
           {
             $unwind: {
               path: '$rootCauseDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.includes(110)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.SHOPS,
+              let: { shopId: '$_shopId' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$shopId'] } },
+                },
+
+                new ModelWeightResponseFormat().shopTableResponseFormat(
+                  1100,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'shopDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$shopDetails',
               preserveNullAndEmptyArrays: true,
             },
           },
