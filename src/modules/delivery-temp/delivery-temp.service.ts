@@ -301,7 +301,7 @@ export class DeliveryTempService {
               },
             },
 
-            new ModelWeightResponseFormat().invoiceItemsTableResponseFormat(
+            new ModelWeightResponseFormat().invoiceTableResponseFormat(
               1030,
               dto.responseFormat,
             ),
