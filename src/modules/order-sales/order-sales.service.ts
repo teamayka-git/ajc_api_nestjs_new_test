@@ -33,6 +33,7 @@ import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
 import { OrderSalesItems } from 'src/tableModels/order_sales_items.model';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 import { pipe } from 'rxjs';
+import { SubCategories } from 'src/tableModels/sub_categories.model';
 
 @Injectable()
 export class OrderSalesService {
@@ -47,6 +48,8 @@ export class OrderSalesService {
     private readonly shopsModel: Model<Shops>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: Model<Counters>,
+    @InjectModel(ModelNames.SUB_CATEGORIES)
+    private readonly subCategoryModel: Model<SubCategories>,
     @InjectModel(ModelNames.GLOBAL_GALLERIES)
     private readonly globalGalleryModel: Model<GlobalGalleries>,
     @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
@@ -317,7 +320,8 @@ export class OrderSalesService {
           _quantity: eachItem.quantity,
           _size: eachItem.size,
           _weight: eachItem.weight,
-          _uid: uidSalesOrder + new StringUtils().numberToEncodedLetter(index+1),
+          _uid:
+            uidSalesOrder + new StringUtils().numberToEncodedLetter(index + 1),
           _stoneColour: eachItem.stoneColor,
           _productData: { _idDone: 0 },
           _productId: null,
@@ -1600,66 +1604,57 @@ export class OrderSalesService {
               const isorderSalesItemsSubCategoryCategory =
                 dto.screenType.includes(128);
               if (isorderSalesItemsSubCategoryCategory) {
-
                 const orderSaleSubCategoryPipeline = () => {
                   const pipeline = [];
-                  pipeline.push({
-                    $match: {
-                      $expr: {
-                        $eq: ['$_id', '$$categoryId'],
-                      },
-                    },
-                  },
-                  new ModelWeightResponseFormat().categoryTableResponseFormat(
-                    1280,
-                    dto.responseFormat,
-                  ),);
-
-                  const isorderSalesItemsSubCategoryCategoryGroup =
-                  dto.screenType.includes(129);
-                if (isorderSalesItemsSubCategoryCategoryGroup) {
-                
                   pipeline.push(
                     {
-                      $lookup: {
-                        from: ModelNames.GROUP_MASTERS,
-                        let: { groupId: '$_groupId' },
-                        pipeline: [
-                          {
-                            $match: {
-                              $expr: {
-                                $eq: ['$_id', '$$groupId'],
+                      $match: {
+                        $expr: {
+                          $eq: ['$_id', '$$categoryId'],
+                        },
+                      },
+                    },
+                    new ModelWeightResponseFormat().categoryTableResponseFormat(
+                      1280,
+                      dto.responseFormat,
+                    ),
+                  );
+
+                  const isorderSalesItemsSubCategoryCategoryGroup =
+                    dto.screenType.includes(129);
+                  if (isorderSalesItemsSubCategoryCategoryGroup) {
+                    pipeline.push(
+                      {
+                        $lookup: {
+                          from: ModelNames.GROUP_MASTERS,
+                          let: { groupId: '$_groupId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: {
+                                  $eq: ['$_id', '$$groupId'],
+                                },
                               },
                             },
-                          },
-                          new ModelWeightResponseFormat().groupMasterTableResponseFormat(
-                            1290,
-                            dto.responseFormat,
-                          ),
-                        ],
-                        as: 'groupDetails',
+                            new ModelWeightResponseFormat().groupMasterTableResponseFormat(
+                              1290,
+                              dto.responseFormat,
+                            ),
+                          ],
+                          as: 'groupDetails',
+                        },
                       },
-                    },
-                    {
-                      $unwind: {
-                        path: '$groupDetails',
-                        preserveNullAndEmptyArrays: true,
+                      {
+                        $unwind: {
+                          path: '$groupDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
                       },
-                    },
-                  );
-                }  
-
-
-
-
-
+                    );
+                  }
 
                   return pipeline;
-                }
-               
-
-
-
+                };
 
                 pipeline.push(
                   {
@@ -1715,6 +1710,7 @@ export class OrderSalesService {
 
       var resultWorkets = [];
       var resultProcessMasters = [];
+      var resultSubCategory = [];
 
       if (dto.screenType.includes(107)) {
         var resultDepartment = await this.departmentModel.find({
@@ -1825,6 +1821,23 @@ export class OrderSalesService {
         }
       }
 
+      if (dto.screenType.includes(500)) {
+        var pipeline = [];
+        pipeline.push({
+          $match: {
+            _status: 1,
+          },
+        });
+        pipeline.push(
+          new ModelWeightResponseFormat().subCategoryTableResponseFormat(
+            5000,
+            dto.responseFormat,
+          ),
+        );
+
+        resultSubCategory = await this.subCategoryModel.aggregate(pipeline);
+      }
+
       const responseJSON = {
         message: 'success',
         data: {
@@ -1832,6 +1845,7 @@ export class OrderSalesService {
           totalCount: totalCount,
           workers: resultWorkets,
           processMasters: resultProcessMasters,
+          subCategory: resultSubCategory,
         },
       };
       if (
