@@ -77,7 +77,7 @@ export class InvoicesService {
       }
 
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
-        { _tableName: ModelNames.DELIVERY_CHALLANS },
+        { _tableName: ModelNames.INVOICES },
         {
           $inc: {
             _count: dto.invoices.length,
@@ -92,7 +92,7 @@ export class InvoicesService {
           _id: invoiceId,
           _userId: _userId_,
           _uid:generalList[0]._string+
-            resultCounterPurchase._count - dto.invoices.length + (index + 1),
+            (resultCounterPurchase._count - dto.invoices.length + (index + 1)),
           _halmarkingCharge: mapItem.halmarkingCharge,
           _otherCharge: mapItem.otherCharge,
           _roundOff: mapItem.roundOff,
