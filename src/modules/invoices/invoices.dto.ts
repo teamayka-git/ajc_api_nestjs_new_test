@@ -63,9 +63,10 @@ class InvoiceCreateListItems {
   @ApiProperty({})
   hsnCode: string;
 
-  @IsString()
-  @ApiProperty({})
-  huid: string;
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  huid: string[];
+  
 
   @IsNumber()
   @ApiProperty({})
