@@ -660,7 +660,7 @@ export class InvoicesService {
         });
       }
 
-      var result = await this.invoiceItemsModel
+      var result = await this.invoiceModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
 
@@ -683,7 +683,7 @@ export class InvoicesService {
           $group: { _id: null, totalCount: { $sum: 1 } },
         });
 
-        var resultTotalCount = await this.invoiceItemsModel
+        var resultTotalCount = await this.invoiceModel
           .aggregate(arrayAggregation)
           .session(transactionSession);
         if (resultTotalCount.length > 0) {
