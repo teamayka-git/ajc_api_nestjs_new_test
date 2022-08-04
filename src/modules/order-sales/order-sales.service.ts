@@ -543,6 +543,9 @@ export class OrderSalesService {
         session: transactionSession,
       });
 
+
+console.log("documentsLinkingIdsForDelete   "+JSON.stringify(dto.documentsLinkingIdsForDelete));
+
       if (dto.documentsLinkingIdsForDelete.length != 0) {
         await this.orderSaleDocumentsModel.updateMany(
           { _id: { $in: dto.documentsLinkingIdsForDelete } },
