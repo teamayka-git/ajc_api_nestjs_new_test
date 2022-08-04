@@ -16,6 +16,7 @@ import { OrderSaleSetProcessesSchema } from 'src/tableModels/order_sale_set_proc
 import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
 import { OrderSalesItemsSchema } from 'src/tableModels/order_sales_items.model';
 import { SubCategoriesSchema } from 'src/tableModels/sub_categories.model';
+import { GeneralsSchema } from 'src/tableModels/generals.model';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { SubCategoriesSchema } from 'src/tableModels/sub_categories.model';
       { name: ModelNames.ORDER_SALES_MAIN, schema:OrderSalesMainSchema },
       { name: ModelNames.ORDER_SALES_ITEMS, schema:OrderSalesItemsSchema },
       { name: ModelNames.SUB_CATEGORIES, schema:SubCategoriesSchema },
+      { name: ModelNames.GENERALS, schema:GeneralsSchema },
       { name: ModelNames.SHOPS, schema: ShopsSchema },
       {
         name: ModelNames.ORDER_SALE_HISTORIES,

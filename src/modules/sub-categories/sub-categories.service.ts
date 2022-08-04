@@ -494,7 +494,7 @@ export class SubCategoriesService {
         message: 'success',
         data: {
           list: result,
-          totalCount: totalCount,
+          totalCount: totalCount, 
           generalSetting: generalSetting,
         },
       };

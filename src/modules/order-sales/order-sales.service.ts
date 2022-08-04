@@ -34,6 +34,7 @@ import { OrderSalesItems } from 'src/tableModels/order_sales_items.model';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 import { pipe } from 'rxjs';
 import { SubCategories } from 'src/tableModels/sub_categories.model';
+import { Generals } from 'src/tableModels/generals.model';
 
 @Injectable()
 export class OrderSalesService {
@@ -54,6 +55,8 @@ export class OrderSalesService {
     private readonly globalGalleryModel: Model<GlobalGalleries>,
     @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
     private readonly orderSaleHistoriesModel: Model<OrderSaleHistories>,
+    @InjectModel(ModelNames.GENERALS)
+    private readonly generalsModel: Model<Generals>,
     @InjectModel(ModelNames.EMPLOYEES)
     private readonly employeeModel: mongoose.Model<Employee>,
     @InjectModel(ModelNames.DEPARTMENT)
@@ -1837,15 +1840,26 @@ export class OrderSalesService {
 
         resultSubCategory = await this.subCategoryModel.aggregate(pipeline);
       }
+      var generalSetting = [];
+      if (dto.screenType.includes(501)) {
+        generalSetting = await this.generalsModel.aggregate([
+          {
+            $match: {
+              _code: 1022,
+            },
+          },
+        ]);
+      }
 
       const responseJSON = {
         message: 'success',
         data: {
           list: result,
           totalCount: totalCount,
-          workers: resultWorkets,
+          workers: resultWorkets, 
           processMasters: resultProcessMasters,
           subCategory: resultSubCategory,
+          generalSetting: generalSetting,
         },
       };
       if (
