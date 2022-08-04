@@ -1453,7 +1453,7 @@ export class ShopsService {
           list: result,
           totalCount: totalCount,
           generals: resultGenerals,
-          company: resultCompany,
+          company: resultCompany, 
         },
       };
       if (

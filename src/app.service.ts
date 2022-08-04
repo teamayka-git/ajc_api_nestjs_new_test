@@ -236,6 +236,75 @@ export class AppService {
       .sort({ _id: -1 })
       .limit(1);
 
+
+      var resultCompany = {};
+        var resultCompanyList = await this.companyModel.aggregate([
+          { $match: { _status: 1 } },
+
+          {
+            $lookup: {
+              from: ModelNames.CITIES,
+              let: { cityId: '$_cityId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$cityId'] } } },
+                
+
+                {
+                  $lookup: {
+                    from: ModelNames.DISTRICTS,
+                    let: { districtId: '$_districtsId' },
+                    pipeline: [
+                      { $match: { $expr: { $eq: ['$_id', '$$districtId'] } } },
+                      {
+                        $lookup: {
+                          from: ModelNames.STATES,
+                          let: { stateId: '$_statesId' },
+                          pipeline: [
+                            {
+                              $match: { $expr: { $eq: ['$_id', '$$stateId'] } },
+                            },
+                          ],
+                          as: 'stateDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$stateDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    ],
+                    as: 'districtDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$districtDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              ],
+              as: 'cityDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$cityDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        ]);
+        if (resultCompanyList.length == 0) {
+          throw new HttpException(
+            'Company not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        resultCompany = resultCompanyList[0];
+      
+
+
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
 
@@ -245,6 +314,7 @@ export class AppService {
         userDetails: resultEmployee[0],
         goldTimelinesList: listGoldTimelines,
         currentDateTime: dateTime,
+        company: resultCompany,
       },
     };
   }
