@@ -383,24 +383,20 @@ export class InvoicesService {
             },
           });
 
-          if (dto.cityIds.length != 0){
+          if (dto.cityIds.length != 0) {
             pipeline.push({
               $match: {
-                _cityId:{$in:arrayCityIdsMongo}
+                _cityId: { $in: arrayCityIdsMongo },
               },
             });
           }
-          if (dto.orderHeadIds.length != 0){
+          if (dto.orderHeadIds.length != 0) {
             pipeline.push({
               $match: {
-                _orderHeadId:{$in:arrayOrderHeadIdsMongo}
+                _orderHeadId: { $in: arrayOrderHeadIdsMongo },
               },
             });
           }
-
-
-
-
 
           pipeline.push({ $project: { _id: 1 } });
           return pipeline;
@@ -513,21 +509,60 @@ export class InvoicesService {
       }
 
       if (dto.screenType.includes(110)) {
+        const shopPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: { $expr: { $eq: ['$_id', '$$shopId'] } },
+            },
+
+            new ModelWeightResponseFormat().shopTableResponseFormat(
+              1100,
+              dto.responseFormat,
+            ),
+          );
+          if (dto.screenType.includes(111)) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.USER,
+                  let: { shopId: '$_id' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_shopId', '$$shopId'] },
+
+                        _customType:{$in:[5]}
+
+                      },
+                    },
+                    new ModelWeightResponseFormat().userTableResponseFormat(
+                      1110,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'shopUserDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$shopUserDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
+
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.SHOPS,
               let: { shopId: '$_shopId' },
-              pipeline: [
-                {
-                  $match: { $expr: { $eq: ['$_id', '$$shopId'] } },
-                },
-
-                new ModelWeightResponseFormat().shopTableResponseFormat(
-                  1100,
-                  dto.responseFormat,
-                ),
-              ],
+              pipeline: shopPipeline(),
               as: 'shopDetails',
             },
           },
