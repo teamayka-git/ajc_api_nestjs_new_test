@@ -387,6 +387,7 @@ export class OrderSalesService {
     transactionSession.startTransaction();
 
     try {
+      console.log("payload "+JSON.stringify(dto));
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
 
