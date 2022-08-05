@@ -66,6 +66,7 @@ export enum ModelNames {
   DELIVERY_TEMP = 'delivery_temps',
   DELIVERY = 'deliveries',
   DELIVERY_ITEMS = 'delivery_items',
+  DELIVERY_REJECTED_REPORTS = 'delivery_rejected_reports',
 
   CHAT_PERSONAL_CHAT_MESSAGES = 'chat_personal_chat_messages',
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',
