@@ -33,6 +33,7 @@ export const OrderSalesItemsSchema = new mongoose.Schema({
   _isEnamel: { type: Number, required: true, default: -1 },
   _isDullFinish: { type: Number, required: true, default: -1 },
   _stockStatus: { type: Number, required: true, default: -1 },
+  _isDeliveryRejected: { type: Number, required: true, default: -1 },
   _productData: { type: Object, required: true, default: {} },
   _uid: { type: String, required: true, default: 'nil' },
   _createdUserId: {
@@ -65,6 +66,7 @@ export interface OrderSalesItems {
   _stockStatus:number;
   _isRhodium: number;
   _isEnamel: number;
+  _isDeliveryRejected: number;// if delivery rejected then after reject 
   _isDullFinish: number;
   _isMatFinish: number;
   _createdUserId: String;
@@ -74,6 +76,7 @@ export interface OrderSalesItems {
   _status: Number;
 }
 
+OrderSalesItemsSchema.index({ _isDeliveryRejected: 1 });
 OrderSalesItemsSchema.index({ _isEnamel: 1 });
 OrderSalesItemsSchema.index({ _isDullFinish: 1 });
 OrderSalesItemsSchema.index({ _isMatFinish: 1 });

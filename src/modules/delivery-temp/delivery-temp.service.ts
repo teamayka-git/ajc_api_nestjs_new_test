@@ -39,6 +39,11 @@ export class DeliveryTempService {
             mapItem.hubId != '' && mapItem.hubId != 'nil'
               ? mapItem.hubId
               : null,
+              
+          _rootCauseId: null,
+          _rootCause: '',
+          _reworkStatus: -1,
+          _mistakeType: -1,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
@@ -290,7 +295,34 @@ export class DeliveryTempService {
           },
         );
       }
-
+      if (dto.screenType.includes(111)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ROOT_CAUSES,
+              let: { rootCauseId: '$_rootCauseId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$rootCauseId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                  1110,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'rootCauseDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$rootCauseDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
       if (dto.screenType.includes(103)) {
         const invoicePipeline = () => {
           const pipeline = [];

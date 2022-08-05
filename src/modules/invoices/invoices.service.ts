@@ -98,8 +98,8 @@ export class InvoicesService {
           _otherCharge: mapItem.otherCharge,
           _roundOff: mapItem.roundOff,
           _netTotal: mapItem.netTotal,
-          _shopId:mapItem.customerId,
-          _localId:mapItem.localId,
+          _shopId: mapItem.customerId,
+          _localId: mapItem.localId,
           _isDelivered: 0,
           _tdsReceivable: mapItem.tdsReceivable,
           _tdsPayable: mapItem.tdsPayable,
@@ -110,7 +110,7 @@ export class InvoicesService {
           _sgstOtherCharge: mapItem.sgstOtherCharge,
           _igstHalmarkCharge: mapItem.igstHalmarkCharge,
           _igstOtherCharge: mapItem.igstOtherCharge,
-          _rootCauseId: null, 
+          _rootCauseId: null,
           _description: mapItem.description,
           _billMode: mapItem.billMode,
           _createdUserId: _userId_,
@@ -194,6 +194,12 @@ export class InvoicesService {
           _invoiceId: invoiceId,
           _employeeId: null,
           _hubId: null,
+
+          _rootCauseId: null,
+          _rootCause: '',
+          _reworkStatus: -1,
+          _mistakeType: -1,
+
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
@@ -534,8 +540,7 @@ export class InvoicesService {
                       $match: {
                         $expr: { $eq: ['$_shopId', '$$shopId'] },
 
-                        _customType:{$in:[5]}
-
+                        _customType: { $in: [5] },
                       },
                     },
                     new ModelWeightResponseFormat().userTableResponseFormat(
@@ -554,7 +559,6 @@ export class InvoicesService {
               },
             );
           }
-
 
           return pipeline;
         };

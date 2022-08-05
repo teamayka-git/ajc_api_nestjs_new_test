@@ -27,6 +27,7 @@ export class ModelWeight {
       _productName: 1,
       _purity: 1,
       _hsnCode: 1,
+      _isDeliveryRejected:1,
       _huid: 1,
       _netWeight: 1,
       _amount: 1,
@@ -53,6 +54,7 @@ export class ModelWeight {
       _grossWeight: 1,
       _stoneWeight: 1,
       _netWeight: 1,
+      _isDeliveryRejected:1,
       _tought: 1,
       _pureWeight: 1,
       _pureWeightHundredPercentage: 1,
@@ -89,6 +91,7 @@ export class ModelWeight {
       _stoneWeight: 1,
       _netWeight: 1,
       _tought: 1,
+      _isDeliveryRejected:1,
       _pureWeight: 1,
       _pureWeightHundredPercentage: 1,
       _unitRate: 1,
@@ -123,7 +126,7 @@ export class ModelWeight {
       _id: 1,
       _userId: 1,
       _uid: 1,
-      _shopId:1,
+      _shopId: 1,
       _rootCauseId: 1,
       _description: 1,
       _createdUserId: 1,
@@ -140,7 +143,7 @@ export class ModelWeight {
       _halmarkingCharge: 1,
       _otherCharge: 1,
       _roundOff: 1,
-      _shopId:1,
+      _shopId: 1,
       _netTotal: 1,
       _tdsReceivable: 1,
       _tdsPayable: 1,
@@ -166,7 +169,7 @@ export class ModelWeight {
       _billMode: 1,
       _grossAmount: 1,
       _halmarkingCharge: 1,
-      _shopId:1,
+      _shopId: 1,
       _otherCharge: 1,
       _roundOff: 1,
       _netTotal: 1,
@@ -362,8 +365,8 @@ export class ModelWeight {
       _stockStatus: 1,
       _isRhodium: 1,
       _isMatFinish: 1,
-      _isEnamel:1,
-      _isDullFinish:1,
+      _isEnamel: 1,
+      _isDullFinish: 1,
     };
   }
   public orderSaleItemsTableMaximum(): Object {
@@ -382,8 +385,8 @@ export class ModelWeight {
       _stockStatus: 1,
       _isRhodium: 1,
       _isMatFinish: 1,
-      _isEnamel:1,
-      _isDullFinish:1,
+      _isEnamel: 1,
+      _isDullFinish: 1,
       _createdUserId: 1,
       _createdAt: 1,
       _updatedUserId: 1,
@@ -804,7 +807,6 @@ export class ModelWeight {
 
   public orderSaleSetSubProcessTableLight(): Object {
     return {
-      
       _description: 1,
       _subProcessId: 1,
     };
@@ -1322,6 +1324,11 @@ export class ModelWeight {
       _hubId: 1,
       _createdUserId: 1,
 
+      _rootCauseId: 1,
+      _rootCause: 1,
+      _reworkStatus: 1,
+      _mistakeType: 1,
+
       _status: 1,
     };
   }
@@ -1332,8 +1339,12 @@ export class ModelWeight {
       _invoiceId: 1,
       _employeeId: 1,
       _hubId: 1,
+
+      _rootCauseId: 1,
+      _rootCause: 1,
+      _reworkStatus: 1,
+      _mistakeType: 1,
       _createdUserId: 1,
-      _createdAt: 1,
 
       _status: 1,
     };
@@ -1345,6 +1356,10 @@ export class ModelWeight {
       _invoiceId: 1,
       _employeeId: 1,
       _hubId: 1,
+      _rootCauseId: 1,
+      _rootCause: 1,
+      _reworkStatus: 1,
+      _mistakeType: 1,
       _createdUserId: 1,
       _createdAt: 1,
       _updatedUserId: 1,
@@ -1864,13 +1879,10 @@ export class ModelWeight {
       _rootCause: 1,
       _processId: 1,
       _isLastItem: 1,
-
-
     };
   }
   public orderSaleSetProcessTableMedium(): Object {
     return {
-
       _id: 1,
       _orderSaleId: 1,
       _userId: 1,
@@ -1884,7 +1896,6 @@ export class ModelWeight {
       _workAssignedTime: 1,
       _workStartedTime: 1,
       _workCompletedTime: 1,
-
     };
   }
   public orderSaleSetProcessTableMaximum(): Object {

@@ -323,6 +323,7 @@ export class OrderSalesService {
           _quantity: eachItem.quantity,
           _size: eachItem.size,
           _weight: eachItem.weight,
+          _isDeliveryRejected:0,
           _uid:
             uidSalesOrder + new StringUtils().numberToEncodedLetter(index + 1),
           _stoneColour: eachItem.stoneColor,
