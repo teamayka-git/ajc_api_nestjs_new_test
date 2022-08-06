@@ -22,6 +22,7 @@ import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { GlobalConfig } from 'src/config/global_config';
 import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 import { GoldRateTimelines } from 'src/tableModels/gold_rate_timelines.model';
+import { Company } from 'src/tableModels/companies.model';
 const crypto = require('crypto');
 
 @Injectable()
@@ -37,6 +38,8 @@ export class EmployeesService {
     private readonly counterModel: mongoose.Model<Counters>,
     @InjectModel(ModelNames.GOLD_RATE_TIMELINES)
     private readonly goldRateTimelineModel: mongoose.Model<GoldRateTimelines>,
+    @InjectModel(ModelNames.COMPANIES)
+    private readonly companyModel: mongoose.Model<Company>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async login(dto: EmployeeLoginDto) {
@@ -178,10 +181,79 @@ export class EmployeesService {
         .sort({ _id: -1 })
         .limit(1);
 
+
+        var resultCompany = {};
+        var resultCompanyList = await this.companyModel.aggregate([
+          { $match: { _status: 1 } },
+
+          {
+            $lookup: {
+              from: ModelNames.CITIES,
+              let: { cityId: '$_cityId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$cityId'] } } },
+                
+
+                {
+                  $lookup: {
+                    from: ModelNames.DISTRICTS,
+                    let: { districtId: '$_districtsId' },
+                    pipeline: [
+                      { $match: { $expr: { $eq: ['$_id', '$$districtId'] } } },
+                      {
+                        $lookup: {
+                          from: ModelNames.STATES,
+                          let: { stateId: '$_statesId' },
+                          pipeline: [
+                            {
+                              $match: { $expr: { $eq: ['$_id', '$$stateId'] } },
+                            },
+                          ],
+                          as: 'stateDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$stateDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    ],
+                    as: 'districtDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$districtDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              ],
+              as: 'cityDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$cityDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        ]);
+        if (resultCompanyList.length == 0) {
+          throw new HttpException(
+            'Company not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        resultCompany = resultCompanyList[0];
+      
+        
+
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
 
-      return { userDetails: resultUser[0], goldTimeline: listGoldTimelines };
+      return { userDetails: resultUser[0], goldTimeline: listGoldTimelines,resultCompany:resultCompany };
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();

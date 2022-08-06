@@ -324,6 +324,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _quantity: 1,
+      _subCategoryId: 1,
       _size: 1,
       _weight: 1,
       _uid: 1,

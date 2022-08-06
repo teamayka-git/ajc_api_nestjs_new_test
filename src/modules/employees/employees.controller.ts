@@ -74,6 +74,8 @@ export class EmployeesController {
       message: 'Success',
       data: returnData['userDetails'],
       goldTimelinesList: returnData['goldTimeline'],
+      currentDateTime: new Date().getTime(),
+      company: returnData["resultCompany"],
       token: jwt,
     };
   }

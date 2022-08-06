@@ -10,6 +10,7 @@ import { GlobalConfig } from 'src/config/global_config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
 import { GoldRateTimelinesSchema } from 'src/tableModels/gold_rate_timelines.model';
+import { CompanySchema } from 'src/tableModels/companies.model';
 
 @Module({  imports: [
   JwtModule.register({
@@ -21,6 +22,7 @@ import { GoldRateTimelinesSchema } from 'src/tableModels/gold_rate_timelines.mod
     { name: ModelNames.EMPLOYEES, schema: EmployeeSchema },
     { name: ModelNames.COUNTERS, schema: CountersSchema },
     { name: ModelNames.GOLD_RATE_TIMELINES, schema:GoldRateTimelinesSchema },
+    { name: ModelNames.COMPANIES, schema:CompanySchema },
 
     
     {name:ModelNames.GLOBAL_GALLERIES,schema:GlobalGalleriesSchema},
