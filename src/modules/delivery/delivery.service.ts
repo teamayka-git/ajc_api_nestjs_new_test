@@ -643,7 +643,7 @@ export class DeliveryService {
           },
         });
       }
-
+console.log("delivery list payload  "+JSON.stringify(arrayAggregation));
       var result = await this.deliveryModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
