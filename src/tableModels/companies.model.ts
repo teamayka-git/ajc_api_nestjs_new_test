@@ -5,6 +5,11 @@ import { GlobalConfig } from 'src/config/global_config';
 export const CompanySchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
   _name: { type: String, required: true, default: 'nil' },
+  _phone: { type: String,  default: '' },
+  _address: { type: String, default: '' },
+  _pan: { type: String, default: '' },
+  _cin: { type: String, default: '' },
+  _gst: { type: String, default: '' },
   _place: { type: String, required: true, default: 'nil' },
   _email: { type: String, required: true, default: 'nil' },
   _cityId: {
@@ -31,6 +36,11 @@ export const CompanySchema = new mongoose.Schema({
 export interface Company {
   _id: String;
   _name: String;
+  _phone: String; 
+  _address: String;
+  _pan: String;
+  _cin: String;
+  _gst: String;
   _place: String;
   _cityId: String;
   _email: String;
@@ -42,6 +52,11 @@ export interface Company {
   _status: Number;
 }
 
+CompanySchema.index({ _pan: 1 });
+CompanySchema.index({ _cin: 1 });
+CompanySchema.index({ _gst: 1 });
+CompanySchema.index({ _phone: 1 });
+CompanySchema.index({ _address: 1 });
 CompanySchema.index({ _cityId: 1 });
 CompanySchema.index({ _status: 1 });
 CompanySchema.index({ _name: 1, _id: 1 });

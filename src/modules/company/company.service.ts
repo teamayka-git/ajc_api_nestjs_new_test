@@ -32,6 +32,11 @@ export class CompanyService {
       dto.array.map((mapItem) => {
         arrayToStates.push({
           _name: mapItem.name,
+          _phone: mapItem.phone,
+          _address: mapItem.address,
+          _pan: mapItem.pan,
+          _cin: mapItem.cin,
+          _gst: mapItem.gst,
           _place: mapItem.place,
           _email: mapItem.email,
           _cityId: mapItem.cityId,
@@ -69,7 +74,7 @@ export class CompanyService {
       throw error;
     }
   }
-
+ 
   async edit(dto: CompanyEditDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
@@ -82,6 +87,11 @@ export class CompanyService {
         {
           $set: {
             _name: dto.name,
+            _phone: dto.phone,
+            _pan: dto.pan,
+            _cin: dto.cin,
+            _gst: dto.gst,
+            _address: dto.address,
             _place: dto.place,
             _email: dto.email,
             _cityId: dto.cityId,

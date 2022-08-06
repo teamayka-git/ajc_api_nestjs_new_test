@@ -20,6 +20,12 @@ class CompanyCreateList {
   @IsString()
   @ApiProperty({})
   name: string;
+  @IsString()
+  @ApiProperty({})
+  address: string;
+  @IsString()
+  @ApiProperty({})
+  phone: string;
 
   @IsString()
   @ApiProperty({})
@@ -33,6 +39,18 @@ class CompanyCreateList {
   @IsEmail()
   @ApiProperty({})
   cityId: string;
+
+  @IsEmail()
+  @ApiProperty({})
+  pan: string;
+
+  @IsEmail()
+  @ApiProperty({})
+  gst: string;
+
+  @IsEmail()
+  @ApiProperty({})
+  cin: string;
 
   
 
@@ -68,6 +86,25 @@ export class CompanyEditDto {
   @ApiProperty({})
   cityId: string;
 
+
+  @IsEmail()
+  @ApiProperty({})
+  pan: string;
+
+  @IsEmail()
+  @ApiProperty({})
+  gst: string;
+
+  @IsEmail()
+  @ApiProperty({})
+  cin: string;
+
+  @IsString()
+  @ApiProperty({})
+  address: string;
+  @IsString()
+  @ApiProperty({})
+  phone: string;
 
 
   
@@ -106,7 +143,7 @@ export class CompanyListDto {
   @ApiProperty({})
   skip: number;
 
-  @IsString()
+  @IsString() 
   @ApiProperty({})
   searchingText: string;
 }

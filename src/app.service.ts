@@ -1122,10 +1122,15 @@ export class AppService {
 
       await this.companyModel.findOneAndUpdate(
         { _email: 'ajc@gmail.com' },
-        {
+        { 
           $setOnInsert: {
-            _name: 'AJC',
-            _place: 'Malappuram',
+            _name: 'AJC JEWEL MANUFACTURERS PVT LTD',
+            _place: 'MALAPPURAM',
+            _phone: '+91 9961005004',
+            _address: '38/227-Z, INKEL GREENS EDU CITY, KARATHODE - KONAMPPARA ROAD, PANAKKAD VILLAGE , MALAPPURAM DT 676519',
+            _pan: 'AAJCP7687C',
+            _cin: 'U93090KL2018PTC052621',
+            _gst: '32AAJCP7687C128',
             _cityId: resultCity._id,
             _dataGuard: [0, 1, 2],
             _createdUserId: null,
