@@ -16,6 +16,7 @@ import { Counters } from 'src/tableModels/counters.model';
 import { DeliveryTemp } from 'src/tableModels/delivery_temp.model';
 import { ModelWeight } from 'src/model_weight/model_weight';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
+import { RootCause } from 'aws-sdk/clients/costexplorer';
 
 @Injectable()
 export class DeliveryService {
@@ -28,6 +29,8 @@ export class DeliveryService {
     private readonly counterModel: Model<Counters>,
     @InjectModel(ModelNames.DELIVERY_ITEMS)
     private readonly deliveryItemsModel: Model<DeliveryItems>,
+    @InjectModel(ModelNames.ROOT_CAUSES)
+    private readonly rootCauseModel: Model<RootCause>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
@@ -530,61 +533,51 @@ export class DeliveryService {
                             ),
                           );
 
-
                           const isorderSaleItemsInvoicesDetailsInvoiceItemsOrderSaleItedSubCategoryDetails =
-                          dto.screenType.includes(110);
-                        if (
-                          isorderSaleItemsInvoicesDetailsInvoiceItemsOrderSaleItedSubCategoryDetails
-                        ) {
-
-                          pipeline.push(
-                            {
-                              $lookup: {
-                                from: ModelNames.SUB_CATEGORIES,
-                                let: { subCategoryId: '$_subCategoryId' },
-                                pipeline: [
-                                  {
-                                    $match: {
-                                      $expr: { $eq: ['$_id', '$$subCategoryId'] },
+                            dto.screenType.includes(110);
+                          if (
+                            isorderSaleItemsInvoicesDetailsInvoiceItemsOrderSaleItedSubCategoryDetails
+                          ) {
+                            pipeline.push(
+                              {
+                                $lookup: {
+                                  from: ModelNames.SUB_CATEGORIES,
+                                  let: { subCategoryId: '$_subCategoryId' },
+                                  pipeline: [
+                                    {
+                                      $match: {
+                                        $expr: {
+                                          $eq: ['$_id', '$$subCategoryId'],
+                                        },
+                                      },
                                     },
-                                  },
-                  
-                                  new ModelWeightResponseFormat().subCategoryTableResponseFormat(
-                                    1100,
-                                    dto.responseFormat,
-                                  ),
-                                ],
-                                as: 'subCategoryDetails',
+
+                                    new ModelWeightResponseFormat().subCategoryTableResponseFormat(
+                                      1100,
+                                      dto.responseFormat,
+                                    ),
+                                  ],
+                                  as: 'subCategoryDetails',
+                                },
                               },
-                            },
-                            {
-                              $unwind: {
-                                path: '$subCategoryDetails',
-                                preserveNullAndEmptyArrays: true,
+                              {
+                                $unwind: {
+                                  path: '$subCategoryDetails',
+                                  preserveNullAndEmptyArrays: true,
+                                },
                               },
-                            },
-                          );
-
-
-                        }
-
-
-
-
-
-
-
-
-
+                            );
+                          }
 
                           return pipeline;
-                        }
+                        };
                       pipeline.push(
                         {
                           $lookup: {
                             from: ModelNames.ORDER_SALES_ITEMS,
                             let: { invoiceItemId: '$_orderSaleItemId' },
-                            pipeline: isorderSaleItemsInvoicesDetailsInvoiceItemsOrderSaleItemPipeline(),
+                            pipeline:
+                              isorderSaleItemsInvoicesDetailsInvoiceItemsOrderSaleItemPipeline(),
                             as: 'orderSaleItemDetails',
                           },
                         },
@@ -643,7 +636,7 @@ export class DeliveryService {
           },
         });
       }
-console.log("delivery list payload  "+JSON.stringify(arrayAggregation));
+      console.log('delivery list payload  ' + JSON.stringify(arrayAggregation));
       var result = await this.deliveryModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
@@ -674,9 +667,33 @@ console.log("delivery list payload  "+JSON.stringify(arrayAggregation));
           totalCount = resultTotalCount[0].totalCount;
         }
       }
+
+      var resultDeliveryRejectRootCause = [];
+      if (dto.screenType.includes(500)) {
+        var aggregateDeliveryReject = [];
+        aggregateDeliveryReject.push(
+          {
+            $match: {
+              _type: { $in: [4] },
+              _status: 1,
+            },
+          },
+          new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+            5000,
+            dto.responseFormat,
+          ),
+        );
+
+        resultDeliveryRejectRootCause = await this.rootCauseModel.aggregate(aggregateDeliveryReject);
+      }
+
       const responseJSON = {
         message: 'success',
-        data: { list: result, totalCount: totalCount },
+        data: {
+          list: result,
+          totalCount: totalCount,
+          deliveryRejectRootCause: resultDeliveryRejectRootCause,
+        },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&

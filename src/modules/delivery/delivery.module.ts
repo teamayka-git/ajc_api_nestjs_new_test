@@ -7,6 +7,7 @@ import { DeliverySchema } from 'src/tableModels/delivery.model';
 import { DeliveryItemsSchema } from 'src/tableModels/delivery_items.model';
 import { CountersSchema } from 'src/tableModels/counters.model';
 import { DeliveryTempSchema } from 'src/tableModels/delivery_temp.model';
+import { RootCausesSchema } from 'src/tableModels/rootCause.model';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { DeliveryTempSchema } from 'src/tableModels/delivery_temp.model';
       { name: ModelNames.DELIVERY_ITEMS, schema: DeliveryItemsSchema },
       { name: ModelNames.DELIVERY_TEMP, schema: DeliveryTempSchema },
       { name: ModelNames.COUNTERS, schema: CountersSchema },
+      { name: ModelNames.ROOT_CAUSES, schema: RootCausesSchema },
     ]),
   ],
   controllers: [DeliveryController],

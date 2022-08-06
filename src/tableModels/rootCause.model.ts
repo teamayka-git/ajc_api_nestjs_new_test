@@ -69,5 +69,7 @@ _type:{
     0 - order sale
     1 - halmark
     2 - photography
+    3 - Gold testing
+    4 - delivery reject
 }
  */
