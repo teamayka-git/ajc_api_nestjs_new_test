@@ -326,6 +326,7 @@ export class ModelWeight {
       _quantity: 1,
       _subCategoryId: 1,
       _size: 1,
+      _orderSaleId: 1,
       _weight: 1,
       _uid: 1,
       _stoneColour: 1,
