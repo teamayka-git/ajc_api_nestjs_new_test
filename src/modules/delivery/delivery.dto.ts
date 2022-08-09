@@ -142,6 +142,10 @@ class DeliveryRejectList {
 
   @IsString()
   @ApiProperty({})
+  productBarcode: string;
+
+  @IsString()
+  @ApiProperty({})
   shopId: string;
 
   @IsString()

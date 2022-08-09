@@ -23,7 +23,7 @@ export const DeliveryRejectedPendingsSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.INVOICES,
     default: null,
-  },
+  }, 
   _rootCauseId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.ROOT_CAUSES,
@@ -34,6 +34,8 @@ export const DeliveryRejectedPendingsSchema = new mongoose.Schema({
     ref: ModelNames.SHOPS,
     default: null,
   },
+  
+  _productedBarcode: { type: String, default: '' },
   _rootCause: { type: String, default: '' },
   _mistakeType: { type: Number, required: true, default: -1 },
   _reworkStatus: { type: Number, required: true, default: -1 },
@@ -60,6 +62,7 @@ export interface DeliveryRejectedPendings {
   _invoiceId: string;
   _shopId: string;
   _rootCauseId: string;
+  _productedBarcode:string;
   _rootCause: string;
   _reworkStatus: Number;
   _mistakeType: Number;
@@ -70,6 +73,7 @@ export interface DeliveryRejectedPendings {
   _status: Number;
 }
 
+DeliveryRejectedPendingsSchema.index({ _productedBarcode: 1 });
 DeliveryRejectedPendingsSchema.index({ _shopId: 1 });
 DeliveryRejectedPendingsSchema.index({ _reworkStatus: 1 });
 DeliveryRejectedPendingsSchema.index({ _mistakeType: 1 });

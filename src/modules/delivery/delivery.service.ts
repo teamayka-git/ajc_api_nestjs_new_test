@@ -218,6 +218,8 @@ export class DeliveryService {
             _salesId: eachItem.salesId,
             _deliveryId: eachItem.deliveryId,
             _invoiceId: eachItem.invoiceId,
+
+            _productedBarcode: eachItem.productBarcode,
             _shopId: eachItem.shopId,
             _rootCauseId: eachItem.rootCauseId,
             _rootCause: eachItem.rootCause,
