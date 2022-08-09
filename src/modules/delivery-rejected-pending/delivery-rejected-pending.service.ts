@@ -153,6 +153,10 @@ export class DeliveryRejectedPendingService {
                         $expr: { $eq: ['$_id', '$$subCategoryId'] },
                       },
                     },
+                    new ModelWeightResponseFormat().subCategoryTableResponseFormat(
+                        1060,
+                        dto.responseFormat,
+                      ),
                   ],
                   as: 'subCategoryDetails',
                 },
