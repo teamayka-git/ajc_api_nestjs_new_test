@@ -56,7 +56,7 @@ export interface DeliveryRejectedPendings {
   _id: String;
   _salesItemId: string;
   _salesId: string;
-  _deliveryId: string;
+  _deliveryId: string; 
   _invoiceId: string;
   _shopId: string;
   _rootCauseId: string;

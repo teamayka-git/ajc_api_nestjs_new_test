@@ -1,0 +1,353 @@
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { ModelNames } from 'src/common/model_names';
+import { DeliveryRejectedPendings } from 'src/tableModels/delivery_rejected_pendings.model';
+import * as mongoose from 'mongoose';
+import { DeliveryRejectListListDto } from './delivery-rejected-pending.dto';
+import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
+import { GlobalConfig } from 'src/config/global_config';
+
+@Injectable()
+export class DeliveryRejectedPendingService {
+  constructor(
+    @InjectModel(ModelNames.DELIVERY_REJECTED_PENDINGS)
+    private readonly deliveryRejectedPendingModel: Model<DeliveryRejectedPendings>,
+    @InjectConnection() private readonly connection: mongoose.Connection,
+  ) {}
+  async list(dto: DeliveryRejectListListDto) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var arrayAggregation = [];
+      var arrayEmployeeIds = [];
+      if (dto.deliveryRejectedPendingsIds.length > 0) {
+        var newSettingsId = [];
+        dto.deliveryRejectedPendingsIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
+      }
+
+      if (dto.salesItemsIds.length > 0) {
+        var newSettingsId = [];
+        dto.salesItemsIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _salesItemId: { $in: newSettingsId } },
+        });
+      }
+      if (dto.salesIds.length > 0) {
+        var newSettingsId = [];
+        dto.salesIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _salesId: { $in: newSettingsId } },
+        });
+      }
+      if (dto.deliveryIds.length > 0) {
+        var newSettingsId = [];
+        dto.deliveryIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _deliveryId: { $in: newSettingsId } },
+        });
+      }
+      if (dto.invoiceIds.length > 0) {
+        var newSettingsId = [];
+        dto.invoiceIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _invoiceId: { $in: newSettingsId } },
+        });
+      }
+      if (dto.shopIds.length > 0) {
+        var newSettingsId = [];
+        dto.shopIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _shopId: { $in: newSettingsId } },
+        });
+      }
+      if (dto.rootCauseIds.length > 0) {
+        var newSettingsId = [];
+        dto.rootCauseIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _rootCauseId: { $in: newSettingsId } },
+        });
+      }
+      if (dto.reworkStatusArray.length > 0) {
+        arrayAggregation.push({
+          $match: { _reworkStatus: { $in: dto.reworkStatusArray } },
+        });
+      }
+
+      if (dto.mistakeTypes.length > 0) {
+        arrayAggregation.push({
+          $match: { _mistakeType: { $in: dto.mistakeTypes } },
+        });
+      }
+
+      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+      switch (dto.sortType) {
+        case 0:
+          arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
+          break;
+        case 1:
+          arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
+          break;
+        case 2:
+          arrayAggregation.push({ $sort: { _shopId: dto.sortOrder } });
+          break;
+        case 3:
+          arrayAggregation.push({ $sort: { _mistakeType: dto.sortOrder } });
+          break;
+        case 4:
+          arrayAggregation.push({ $sort: { _reworkStatus: dto.sortOrder } });
+          break;
+      }
+      if (dto.skip != -1) {
+        arrayAggregation.push({ $skip: dto.skip });
+        arrayAggregation.push({ $limit: dto.limit });
+      }
+
+      arrayAggregation.push(
+        new ModelWeightResponseFormat().deliveryRejectedPendingsTableResponseFormat(
+          0,
+          dto.responseFormat,
+        ),
+      );
+      
+      if (dto.screenType.includes(100)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_ITEMS,
+              let: { salesItemId: '$_salesItemId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$salesItemId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().orderSaleItemsTableResponseFormat(
+                  1000,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'orderSaleItemDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderSaleItemDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.includes(101)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_MAIN,
+              let: { salesId: '$_salesId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$salesId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+                  1010,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'orderSaleDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderSaleDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.includes(102)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.DELIVERY,
+              let: { deliveryId: '$_deliveryId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$deliveryId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().deliveryTableResponseFormat(
+                  1020,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'deliveryDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$deliveryDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.includes(103)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.INVOICES,
+              let: { invoiceId: '$_invoiceId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$invoiceId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().invoiceTableResponseFormat(
+                  1030,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'invoiceDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$invoiceDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.includes(104)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.SHOPS,
+              let: { shopId: '$_shopId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$shopId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().shopTableResponseFormat(
+                  1040,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'shopDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$shopDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      
+      if (dto.screenType.includes(105)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ROOT_CAUSES,
+              let: { rootCauseId: '$_rootCauseId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$rootCauseId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                  1050,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'rootCauseDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$rootCauseDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      
+      var result = await this.deliveryRejectedPendingModel
+        .aggregate(arrayAggregation)
+        .session(transactionSession);
+
+      var totalCount = 0;
+      if (dto.screenType.includes(0)) {
+        //Get total count
+        var limitIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$limit') === true,
+        );
+        if (limitIndexCount != -1) {
+          arrayAggregation.splice(limitIndexCount, 1);
+        }
+        var skipIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$skip') === true,
+        );
+        if (skipIndexCount != -1) {
+          arrayAggregation.splice(skipIndexCount, 1);
+        }
+        arrayAggregation.push({
+          $group: { _id: null, totalCount: { $sum: 1 } },
+        });
+
+        var resultTotalCount = await this.deliveryRejectedPendingModel
+          .aggregate(arrayAggregation)
+          .session(transactionSession);
+        if (resultTotalCount.length > 0) {
+          totalCount = resultTotalCount[0].totalCount;
+        }
+      }
+      const responseJSON = {
+        message: 'success',
+        data: { list: result, totalCount: totalCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+}
