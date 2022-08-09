@@ -703,5 +703,24 @@ export class ModelWeightResponseFormat {
     }
   }
 
+  public deliveryRejectedPendingsTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: {   _: 0,  } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().deliveryRejectedPendingsTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().deliveryRejectedPendingsTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().deliveryRejectedPendingsTableMedium() };
+    } else {
+      return { $project: {   _: 0,  } };
+    }
+  }
+
 
 }

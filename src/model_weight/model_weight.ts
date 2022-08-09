@@ -27,7 +27,7 @@ export class ModelWeight {
       _productName: 1,
       _purity: 1,
       _hsnCode: 1,
-      _isDeliveryRejected:1,
+      _isDeliveryRejected: 1,
       _huid: 1,
       _netWeight: 1,
       _amount: 1,
@@ -54,7 +54,7 @@ export class ModelWeight {
       _grossWeight: 1,
       _stoneWeight: 1,
       _netWeight: 1,
-      _isDeliveryRejected:1,
+      _isDeliveryRejected: 1,
       _tought: 1,
       _pureWeight: 1,
       _pureWeightHundredPercentage: 1,
@@ -91,7 +91,7 @@ export class ModelWeight {
       _stoneWeight: 1,
       _netWeight: 1,
       _tought: 1,
-      _isDeliveryRejected:1,
+      _isDeliveryRejected: 1,
       _pureWeight: 1,
       _pureWeightHundredPercentage: 1,
       _unitRate: 1,
@@ -1326,11 +1326,6 @@ export class ModelWeight {
       _hubId: 1,
       _createdUserId: 1,
 
-      _rootCauseId: 1,
-      _rootCause: 1,
-      _reworkStatus: 1,
-      _mistakeType: 1,
-
       _status: 1,
     };
   }
@@ -1342,10 +1337,6 @@ export class ModelWeight {
       _employeeId: 1,
       _hubId: 1,
 
-      _rootCauseId: 1,
-      _rootCause: 1,
-      _reworkStatus: 1,
-      _mistakeType: 1,
       _createdUserId: 1,
 
       _status: 1,
@@ -1358,10 +1349,7 @@ export class ModelWeight {
       _invoiceId: 1,
       _employeeId: 1,
       _hubId: 1,
-      _rootCauseId: 1,
-      _rootCause: 1,
-      _reworkStatus: 1,
-      _mistakeType: 1,
+
       _createdUserId: 1,
       _createdAt: 1,
       _updatedUserId: 1,
@@ -1917,6 +1905,67 @@ export class ModelWeight {
       _isLastItem: 1,
       _createdUserId: 1,
       _createdAt: 1,
+      _status: 1,
+    };
+  }
+  public deliveryRejectedPendingsTableLight(): Object {
+    return {
+      _id: 1,
+      _salesItemId: 1,
+      _salesId: 1,
+      _deliveryId: 1,
+      _invoiceId: 1,
+      _shopId: 1,
+      _rootCauseId: 1,
+      _rootCause: 1,
+     
+    };
+  }
+  public deliveryRejectedPendingsTableMinimum(): Object {
+    return {
+      _id: 1,
+      _salesItemId: 1,
+      _salesId: 1,
+      _deliveryId: 1,
+      _invoiceId: 1,
+      _shopId: 1,
+      _rootCauseId: 1,
+      _rootCause: 1,
+      _reworkStatus: 1,
+      _mistakeType: 1,
+    };
+  }
+  public deliveryRejectedPendingsTableMedium(): Object {
+    return {
+      _id: 1,
+      _salesItemId: 1,
+      _salesId: 1,
+      _deliveryId: 1,
+      _invoiceId: 1,
+      _shopId: 1,
+      _rootCauseId: 1,
+      _rootCause: 1,
+      _reworkStatus: 1,
+      _mistakeType: 1,
+      _status: 1,
+    };
+  }
+  public deliveryRejectedPendingsTableMaximum(): Object {
+    return {
+      _id: 1,
+      _salesItemId: 1,
+      _salesId: 1,
+      _deliveryId: 1,
+      _invoiceId: 1,
+      _shopId: 1,
+      _rootCauseId: 1,
+      _rootCause: 1,
+      _reworkStatus: 1,
+      _mistakeType: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
       _status: 1,
     };
   }

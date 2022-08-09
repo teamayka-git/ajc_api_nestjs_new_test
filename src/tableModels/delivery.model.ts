@@ -70,7 +70,6 @@ _type:{
 _workStatus:{
     0 - intransit,
     1 - delivery pending,
-    2 - delivery accept full items,
-    3 - delivery accept partial items,
+    2 - delivery completed
 }
 */

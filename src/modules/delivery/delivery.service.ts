@@ -17,6 +17,7 @@ import { DeliveryTemp } from 'src/tableModels/delivery_temp.model';
 import { ModelWeight } from 'src/model_weight/model_weight';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 import { RootCause } from 'aws-sdk/clients/costexplorer';
+import { DeliveryRejectedPendings } from 'src/tableModels/delivery_rejected_pendings.model';
 
 @Injectable()
 export class DeliveryService {
@@ -29,6 +30,8 @@ export class DeliveryService {
     private readonly counterModel: Model<Counters>,
     @InjectModel(ModelNames.DELIVERY_ITEMS)
     private readonly deliveryItemsModel: Model<DeliveryItems>,
+    @InjectModel(ModelNames.DELIVERY_REJECTED_PENDINGS)
+    private readonly deliveryRejectPendingModel: Model<DeliveryRejectedPendings>,
     @InjectModel(ModelNames.ROOT_CAUSES)
     private readonly rootCauseModel: Model<RootCause>,
     @InjectConnection() private readonly connection: mongoose.Connection,
@@ -205,6 +208,36 @@ export class DeliveryService {
         },
         { new: true, session: transactionSession },
       );
+
+      if (dto.deliveryRejectedList.length != 0) {
+        var arrayToDeliveryRejectedList = [];
+
+        dto.deliveryRejectedList.forEach((eachItem) => {
+          arrayToDeliveryRejectedList.push({
+            _salesItemId: eachItem.salesItemId,
+            _salesId: eachItem.salesId,
+            _deliveryId: eachItem.deliveryId,
+            _invoiceId: eachItem.invoiceId,
+            _shopId: eachItem.shopId,
+            _rootCauseId: eachItem.rootCauseId,
+            _rootCause: eachItem.rootCause,
+            _reworkStatus: eachItem.reWorkStatus,
+            _mistakeType: eachItem.mistakeType,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+        });
+
+        await this.deliveryRejectPendingModel.insertMany(
+          arrayToDeliveryRejectedList,
+          {
+            session: transactionSession,
+          },
+        );
+      }
 
       const responseJSON = { message: 'success', data: result };
       if (
@@ -684,7 +717,9 @@ export class DeliveryService {
           ),
         );
 
-        resultDeliveryRejectRootCause = await this.rootCauseModel.aggregate(aggregateDeliveryReject);
+        resultDeliveryRejectRootCause = await this.rootCauseModel.aggregate(
+          aggregateDeliveryReject,
+        );
       }
 
       const responseJSON = {
