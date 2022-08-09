@@ -125,24 +125,56 @@ export class DeliveryRejectedPendingService {
           dto.responseFormat,
         ),
       );
-      
+
       if (dto.screenType.includes(100)) {
+        const orderSaleItemPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$salesItemId'] },
+              },
+            },
+            new ModelWeightResponseFormat().orderSaleItemsTableResponseFormat(
+              1000,
+              dto.responseFormat,
+            ),
+          );
+
+          if (dto.screenType.includes(106)) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.SUB_CATEGORIES,
+                  let: { subCategoryId: '$_subCategoryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$subCategoryId'] },
+                      },
+                    },
+                  ],
+                  as: 'subCategoryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$subCategoryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.ORDER_SALES_ITEMS,
               let: { salesItemId: '$_salesItemId' },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: { $eq: ['$_id', '$$salesItemId'] },
-                  },
-                },
-                new ModelWeightResponseFormat().orderSaleItemsTableResponseFormat(
-                  1000,
-                  dto.responseFormat,
-                ),
-              ],
+              pipeline: orderSaleItemPipeline(),
               as: 'orderSaleItemDetails',
             },
           },
@@ -266,7 +298,7 @@ export class DeliveryRejectedPendingService {
           },
         );
       }
-      
+
       if (dto.screenType.includes(105)) {
         arrayAggregation.push(
           {
@@ -295,7 +327,7 @@ export class DeliveryRejectedPendingService {
           },
         );
       }
-      
+
       var result = await this.deliveryRejectedPendingModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
