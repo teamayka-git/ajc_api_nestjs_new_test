@@ -2,6 +2,7 @@ import { Body, Controller, Post, Request } from '@nestjs/common';
 import { DeliveryRejectWorkStatusChangeDto, DeliveryReturnCreateDto, DeliveryReturnListDto } from './delivery-return.dto';
 import { DeliveryReturnService } from './delivery-return.service';
 
+@Controller('delivery return')
 @Controller('delivery-return')
 export class DeliveryReturnController {
   constructor(private readonly deliveryReturnService: DeliveryReturnService) {}
