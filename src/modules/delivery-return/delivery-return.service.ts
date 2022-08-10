@@ -634,7 +634,7 @@ export class DeliveryReturnService {
                           },
                         },
                         new ModelWeightResponseFormat().rootcauseTableResponseFormat(
-                          113,
+                          1130,
                           dto.responseFormat,
                         ),
                       ],
