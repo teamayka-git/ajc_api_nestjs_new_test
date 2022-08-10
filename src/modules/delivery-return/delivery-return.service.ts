@@ -452,7 +452,7 @@ export class DeliveryReturnService {
                       },
                     },
                     new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
-                      107,
+                      1070,
                       dto.responseFormat,
                     ),
                   );
@@ -487,7 +487,7 @@ export class DeliveryReturnService {
                                   },
                                 },
                                 new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
-                                  109,
+                                  1090,
                                   dto.responseFormat,
                                 ),
                               ],
