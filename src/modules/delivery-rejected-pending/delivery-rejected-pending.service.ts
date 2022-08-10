@@ -154,9 +154,9 @@ export class DeliveryRejectedPendingService {
                       },
                     },
                     new ModelWeightResponseFormat().subCategoryTableResponseFormat(
-                        1060,
-                        dto.responseFormat,
-                      ),
+                      1060,
+                      dto.responseFormat,
+                    ),
                   ],
                   as: 'subCategoryDetails',
                 },
@@ -191,22 +191,93 @@ export class DeliveryRejectedPendingService {
         );
       }
       if (dto.screenType.includes(101)) {
+        const orderSaleMainPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$salesId'] },
+              },
+            },
+            new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+              1010,
+              dto.responseFormat,
+            ),
+          );
+
+          if (dto.screenType.includes(107)) {
+            const orderSaleMainDocumentsPipeline = () => {
+              const pipeline = [];
+              pipeline.push(
+                {
+                  $match: {
+                    _status: 1,
+                    $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().orderSaleDocumentsTableResponseFormat(
+                  1070,
+                  dto.responseFormat,
+                ),
+              );
+              if (dto.screenType.includes(108)) {
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.GLOBAL_GALLERIES,
+                      let: { globalGalleryId: '$_globalGalleryId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                          },
+                        },
+                        new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                          1080,
+                          dto.responseFormat,
+                        ),
+                      ],
+                      as: 'globalGalleryDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$globalGalleryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                );
+              }
+              return pipeline;
+            };
+
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.ORDER_SALES_DOCUMENTS,
+                  let: { orderSaleId: '$_id' },
+                  pipeline: orderSaleMainDocumentsPipeline(),
+                  as: 'deliveryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$deliveryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.ORDER_SALES_MAIN,
               let: { salesId: '$_salesId' },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: { $eq: ['$_id', '$$salesId'] },
-                  },
-                },
-                new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
-                  1010,
-                  dto.responseFormat,
-                ),
-              ],
+              pipeline: orderSaleMainPipeline(),
               as: 'orderSaleDetails',
             },
           },
