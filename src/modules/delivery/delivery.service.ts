@@ -323,6 +323,26 @@ export class DeliveryService {
           $match: { _hubId: { $in: newSettingsId } },
         });
       }
+      
+      if (dto.receivedUserIds.length > 0) {
+        var newSettingsId = [];
+        dto.receivedUserIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _receivedUserId: { $in: newSettingsId } },
+        });
+      }
+      
+      if (dto.verifiedUserIds.length > 0) {
+        var newSettingsId = [];
+        dto.verifiedUserIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _verifiedUserId: { $in: newSettingsId } },
+        });
+      }
       if (dto.typeArray.length > 0) {
         arrayAggregation.push({
           $match: { _type: { $in: dto.typeArray } },

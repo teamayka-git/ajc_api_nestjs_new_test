@@ -102,6 +102,18 @@ export class DeliveryListDto {
   @ApiProperty({ type: [String] })
   hubIds: string[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  receivedUserIds: string[];
+
+  
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  verifiedUserIds: string[];
+
+
+
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionType })
   typeArray: number[];
