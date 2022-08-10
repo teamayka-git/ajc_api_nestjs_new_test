@@ -63,7 +63,7 @@ DeliveryReturnSchema.index({ _createdUserId: 1 });
 
 /*
 _type:{
-    0 - delivery to shop
+    0 - delivery return from 
     1 - hub transfer
 }
 

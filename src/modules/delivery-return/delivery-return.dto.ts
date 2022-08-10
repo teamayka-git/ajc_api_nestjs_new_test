@@ -21,7 +21,7 @@ const descriptionListSortType =
   '0-Created Date, 1-Status,2-uid,3-type, 4-work status';
 
 const descriptionWorkStatus = '0 - intransit,  1 - delivery return pending,  2 - delivery return completed';
-const descriptionType = '0 - delivery to shop, 1 - hub transfer';
+const descriptionType = '0 - delivery return from shop, 1 - hub transfer';
 
 
 
