@@ -257,15 +257,10 @@ export class DeliveryRejectedPendingService {
                   from: ModelNames.ORDER_SALES_DOCUMENTS,
                   let: { orderSaleId: '$_id' },
                   pipeline: orderSaleMainDocumentsPipeline(),
-                  as: 'deliveryDetails',
+                  as: 'orderSaleDocuments',
                 },
               },
-              {
-                $unwind: {
-                  path: '$deliveryDetails',
-                  preserveNullAndEmptyArrays: true,
-                },
-              },
+              
             );
           }
 
