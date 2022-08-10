@@ -20,7 +20,7 @@ export const DeliverySchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
     default: null,
-  },
+  }, 
   _hubId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.DELIVERY_HUBS,

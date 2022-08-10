@@ -10,7 +10,7 @@ export const DeliveryReturnSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
     default: null,
-  },
+  }, 
   _hubId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.DELIVERY_HUBS,
@@ -19,6 +19,17 @@ export const DeliveryReturnSchema = new mongoose.Schema({
   _shopId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.SHOPS,
+    default: null,
+  },
+  
+  _receivedUserId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.USER,
+    default: null,
+  },
+    _verifiedUserId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.USER,
     default: null,
   },
   _workStatus: { type: Number, required: true, default: -1 },
@@ -45,6 +56,8 @@ export interface DeliveryReturn {
   _employeeId: String;
   _hubId: String;
   _shopId: string;
+  _receivedUserId: String;
+  _verifiedUserId: String;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -52,6 +65,8 @@ export interface DeliveryReturn {
   _status: Number;
 }
 
+DeliveryReturnSchema.index({ _receivedUserId: 1 });
+DeliveryReturnSchema.index({ _verifiedUserId: 1 });
 DeliveryReturnSchema.index({ _shopId: 1 });
 DeliveryReturnSchema.index({ _uid: 1 });
 DeliveryReturnSchema.index({ _status: 1 });

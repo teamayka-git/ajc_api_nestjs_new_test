@@ -1995,6 +1995,9 @@ export class ModelWeight {
       _type: 1,
       _workStatus: 1,
       _employeeId: 1,
+      
+      _receivedUserId:1,
+      _verifiedUserId:1,
       _status: 1,
     };
   }
@@ -2005,6 +2008,9 @@ export class ModelWeight {
       _type: 1,
       _workStatus: 1,
       _employeeId: 1,
+      
+      _receivedUserId:1,
+      _verifiedUserId:1,
       _hubId: 1,
       _shopId: 1,
       _status: 1,
@@ -2017,6 +2023,8 @@ export class ModelWeight {
       _type: 1,
       _workStatus: 1,
       _employeeId: 1,
+      _receivedUserId:1,
+      _verifiedUserId:1,
       _hubId: 1,
       _shopId: 1,
       _createdUserId: 1,

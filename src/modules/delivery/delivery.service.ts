@@ -201,7 +201,7 @@ export class DeliveryService {
         _updatedAt: dateTime,
         _workStatus: dto.workStatus,
       };
-
+ 
       if (dto.workStatus == 1) {
         updateObj['_receivedUserId'] = dto.toUser;
       } else if (dto.workStatus == 1) {

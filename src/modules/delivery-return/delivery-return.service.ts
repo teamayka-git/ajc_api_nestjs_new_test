@@ -6,7 +6,7 @@ import { DeliveryRejectedPendings } from 'src/tableModels/delivery_rejected_pend
 import { DeliveryReturn } from 'src/tableModels/delivery_return.model';
 import { DeliveryReturnItems } from 'src/tableModels/delivery_return_items.model';
 import {
-    DeliveryRejectWorkStatusChangeDto,
+  DeliveryRejectWorkStatusChangeDto,
   DeliveryReturnCreateDto,
   DeliveryReturnListDto,
 } from './delivery-return.dto';
@@ -56,13 +56,15 @@ export class DeliveryReturnService {
             : dto.employeeId,
         _hubId: dto.hubId == '' || dto.hubId == 'nil' ? null : dto.hubId,
         _shopId: dto.shopId == '' || dto.shopId == 'nil' ? null : dto.shopId,
+        _receivedUserId: null,
+        _verifiedUserId: null,
         _createdUserId: null,
         _createdAt: dateTime,
         _updatedUserId: null,
         _updatedAt: -1,
         _status: 1,
       });
-      var result1 =    await deliveryReturn.save({
+      var result1 = await deliveryReturn.save({
         session: transactionSession,
       });
 
@@ -83,7 +85,6 @@ export class DeliveryReturnService {
         });
       });
 
-      
       await this.deliveryRejectedPendingModel.updateMany(
         {
           _id: { $in: arrayToDeliveryRejectIds },
@@ -98,14 +99,11 @@ export class DeliveryReturnService {
         { new: true, session: transactionSession },
       );
 
-      await this.deliveryReturnItemsModel.insertMany(
-        arrayToDeliveryReturnIds,
-        {
-          session: transactionSession,
-        },
-      );
+      await this.deliveryReturnItemsModel.insertMany(arrayToDeliveryReturnIds, {
+        session: transactionSession,
+      });
 
-      const responseJSON = { message: 'success', data:  result1 };
+      const responseJSON = { message: 'success', data: result1 };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
@@ -126,22 +124,32 @@ export class DeliveryReturnService {
       throw error;
     }
   }
-  
-  async changeWorkStatus(dto: DeliveryRejectWorkStatusChangeDto, _userId_: string) {
+
+  async changeWorkStatus(
+    dto: DeliveryRejectWorkStatusChangeDto,
+    _userId_: string,
+  ) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+      var updateObj = {
+        _updatedUserId: _userId_,
+        _updatedAt: dateTime,
+        _workStatus: dto.deliveryReturnIds,
+      };
+
+      if (dto.workStatus == 1) {
+        updateObj['_receivedUserId'] = dto.toUser;
+      } else if (dto.workStatus == 1) {
+        updateObj['_verifiedUserId'] = dto.toUser;
+      }
       var result = await this.deliveryReturnModel.updateMany(
         {
           _id: { $in: dto.deliveryReturnIds },
         },
         {
-          $set: {
-            _updatedUserId: _userId_,
-            _updatedAt: dateTime,
-            _workStatus: dto.deliveryReturnIds,
-          },
+          $set: updateObj,
         },
         { new: true, session: transactionSession },
       );
@@ -192,6 +200,31 @@ export class DeliveryReturnService {
           $match: { _employeeId: { $in: newSettingsId } },
         });
       }
+
+
+
+      if (dto.receivedUserIds.length > 0) {
+        var newSettingsId = [];
+        dto.receivedUserIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _receivedUserId: { $in: newSettingsId } },
+        });
+      }
+      
+      if (dto.verifiedUserIds.length > 0) {
+        var newSettingsId = [];
+        dto.verifiedUserIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _verifiedUserId: { $in: newSettingsId } },
+        });
+      }
+
+
+
       if (dto.hubIds.length > 0) {
         var newSettingsId = [];
         dto.hubIds.map((mapItem) => {

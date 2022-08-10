@@ -89,6 +89,13 @@ export class DeliveryRejectWorkStatusChangeDto {
   @IsNumber()
   @ApiProperty({ description: descriptionWorkStatus })
   workStatus: number;
+
+
+  @IsString()
+  @ApiProperty({})
+  toUser: string;
+
+  
 }
 
 
@@ -129,6 +136,14 @@ export class DeliveryReturnListDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   employeeIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  receivedUserIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  verifiedUserIds: string[];
 
   @IsArray()
   @ApiProperty({ type: [String] })
