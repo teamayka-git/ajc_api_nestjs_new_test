@@ -49,7 +49,7 @@ export const DeliveryChallanItemsSchema = new mongoose.Schema({
   _sgstOtherCharge: { type: Number, required: true, default: -1 },
   _igstHalmarkCharge: { type: Number, required: true, default: -1 },
   _igstOtherCharge: { type: Number, required: true, default: -1 },
-  _makingChargeWithtHundredPercentage: {
+  _makingChargeWithHundredPercentage: {
     type: Number,
     required: true,
     default: -1,
@@ -115,7 +115,7 @@ export interface DeliveryChallanItems {
   _sgstOtherCharge: number;
   _igstHalmarkCharge: number;
   _igstOtherCharge: number;
-  _makingChargeWithtHundredPercentage: number;
+  _makingChargeWithHundredPercentage: number;
   _makingChargeAmount: number;
   _productBarcode: String;
   _productId: String;
@@ -164,7 +164,7 @@ DeliveryChallanItemsSchema.index({ _sgstHalmarkCharge: 1 });
 DeliveryChallanItemsSchema.index({ _sgstOtherCharge: 1 });
 DeliveryChallanItemsSchema.index({ _igstHalmarkCharge: 1 });
 DeliveryChallanItemsSchema.index({ _igstOtherCharge: 1 });
-DeliveryChallanItemsSchema.index({ _makingChargeWithtHundredPercentage: 1 });
+DeliveryChallanItemsSchema.index({ _makingChargeWithHundredPercentage: 1 });
 DeliveryChallanItemsSchema.index({ _makingChargeAmount: 1 });
 DeliveryChallanItemsSchema.index({ _productBarcode: 1 });
 DeliveryChallanItemsSchema.index({ _productId: 1 });

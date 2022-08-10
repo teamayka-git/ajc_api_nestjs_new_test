@@ -151,7 +151,7 @@ export class InvoicesService {
             _metalAmountGst: mapItem1.metalAmountGst,
             _stoneAmountGst: mapItem1.stoneAmount,
 
-            _makingChargeWithtHundredPercentage:
+            _makingChargeWithHundredPercentage:
               mapItem1.makingChargeWithHundredPercentage,
             _makingChargeAmount: mapItem1.makingChargeAmount,
             _productBarcode: mapItem1.productBarcode,

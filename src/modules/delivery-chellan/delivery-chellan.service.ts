@@ -114,7 +114,7 @@ export class DeliveryChellanService {
             _sgstOtherCharge: mapItem1.sgstOtherCharge,
             _igstHalmarkCharge: mapItem1.igstHalmarkCharge,
             _igstOtherCharge: mapItem1.igstOtherCharge,
-            _makingChargeWithtHundredPercentage:
+            _makingChargeWithHundredPercentage:
               mapItem1.makingChargeWithHundredPercentage,
             _makingChargeAmount: mapItem1.makingChargeAmount,
             _productBarcode: mapItem1.productBarcide,
