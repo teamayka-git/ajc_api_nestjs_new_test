@@ -121,6 +121,8 @@ export class DeliveryService {
               mapItem.invoiceId == '' || mapItem.invoiceId == 'nil'
                 ? null
                 : mapItem.invoiceId,
+            _receivedUserId: null,
+            _verifiedUserId: null,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -194,17 +196,24 @@ export class DeliveryService {
           );
         }
       }
+      var updateObj = {
+        _updatedUserId: _userId_,
+        _updatedAt: dateTime,
+        _workStatus: dto.workStatus,
+      };
+
+      if (dto.workStatus == 1) {
+        updateObj['_receivedUserId'] = dto.toUser;
+      } else if (dto.workStatus == 1) {
+        updateObj['_verifiedUserId'] = dto.toUser;
+      }
 
       var result = await this.deliveryModel.updateMany(
         {
           _id: { $in: dto.deliveryIds },
         },
         {
-          $set: {
-            _updatedUserId: _userId_,
-            _updatedAt: dateTime,
-            _workStatus: dto.workStatus,
-          },
+          $set: updateObj,
         },
         { new: true, session: transactionSession },
       );

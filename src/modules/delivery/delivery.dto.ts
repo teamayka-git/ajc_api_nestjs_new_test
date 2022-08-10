@@ -178,6 +178,13 @@ export class DeliveryEmployeeAssignDto {
   @ApiProperty({ description: descriptionWorkStatus })
   fromWorkStatus: number;
 
+
+  @IsString()
+  @ApiProperty({})
+  toUser: string;
+
+
+
   @IsArray()
   @ApiProperty({ type: [DeliveryRejectList] })
   @ValidateNested({ each: true })
