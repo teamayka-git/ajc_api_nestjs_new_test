@@ -4,6 +4,8 @@ import { DeliveryRejectedPendingController } from './delivery-rejected-pending.c
 import { MongooseModule } from '@nestjs/mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { DeliveryRejectedPendingsSchema } from 'src/tableModels/delivery_rejected_pendings.model';
+import { DeliveryReturnSchema } from 'src/tableModels/delivery_return.model';
+import { DeliveryReturnItemsSchema } from 'src/tableModels/delivery_return_items.model';
 
 @Module({
   imports: [

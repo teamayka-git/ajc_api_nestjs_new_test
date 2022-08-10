@@ -1915,11 +1915,10 @@ export class ModelWeight {
       _salesId: 1,
       _deliveryId: 1,
       _invoiceId: 1,
-      _productedBarcode:1,
+      _productedBarcode: 1,
       _shopId: 1,
       _rootCauseId: 1,
       _rootCause: 1,
-     
     };
   }
   public deliveryRejectedPendingsTableMinimum(): Object {
@@ -1930,7 +1929,7 @@ export class ModelWeight {
       _deliveryId: 1,
       _invoiceId: 1,
       _shopId: 1,
-      _productedBarcode:1,
+      _productedBarcode: 1,
       _rootCauseId: 1,
       _rootCause: 1,
       _reworkStatus: 1,
@@ -1945,7 +1944,7 @@ export class ModelWeight {
       _deliveryId: 1,
       _invoiceId: 1,
       _shopId: 1,
-      _productedBarcode:1,
+      _productedBarcode: 1,
       _rootCauseId: 1,
       _rootCause: 1,
       _reworkStatus: 1,
@@ -1960,7 +1959,7 @@ export class ModelWeight {
       _salesId: 1,
       _deliveryId: 1,
       _invoiceId: 1,
-      _productedBarcode:1,
+      _productedBarcode: 1,
       _shopId: 1,
       _rootCauseId: 1,
       _rootCause: 1,
@@ -1971,6 +1970,91 @@ export class ModelWeight {
       _updatedUserId: 1,
       _updatedAt: 1,
       _status: 1,
+    };
+  }
+  public deliveryReturnsTableLight(): Object {
+    return {
+      _id: 1,
+      _uid: 1,
+     
+      _workStatus: 1,
+      _employeeId: 1,
+    
+    };
+  }
+  public deliveryReturnsTableMinimum(): Object {
+    return {
+      _id: 1,
+      _uid: 1,
+      _type: 1,
+      _workStatus: 1,
+      _employeeId: 1,
+      _status: 1,
+    };
+  }
+  public deliveryReturnsTableMedium(): Object {
+    return {
+      _id: 1,
+      _uid: 1,
+      _type: 1,
+      _workStatus: 1,
+      _employeeId: 1,
+      _hubId: 1,
+      _shopId: 1,
+      _status: 1,
+    };
+  }
+  public deliveryReturnsTableMaximum(): Object {
+    return {
+      _id: 1,
+      _uid: 1,
+      _type: 1,
+      _workStatus: 1,
+      _employeeId: 1,
+      _hubId: 1,
+      _shopId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+  
+  public deliveryReturnItemsTableLight(): Object {
+    return {
+      _id:1,
+      _deliveryReturnId:1,
+      _deliveryRejectPendingId:1,
+    };
+  }
+  public deliveryReturnItemsTableMinimum(): Object {
+    return {
+      _id:1,
+      _deliveryReturnId:1,
+      _deliveryRejectPendingId:1,
+      _status:1,
+    };
+  }
+  public deliveryReturnItemsTableMedium(): Object {
+    return {
+      _id:1,
+      _deliveryReturnId:1,
+      _deliveryRejectPendingId:1,
+      _status:1,
+    };
+  }
+  public deliveryReturnItemsTableMaximum(): Object {
+    return {
+      _id:1,
+      _deliveryReturnId:1,
+      _deliveryRejectPendingId:1,
+      _createdUserId:1,
+      _createdAt:1,
+      _updatedUserId:1,
+      _updatedAt:1,
+      _status:1,
     };
   }
 }

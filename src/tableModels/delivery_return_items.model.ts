@@ -2,16 +2,16 @@ import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { GlobalConfig } from 'src/config/global_config';
 
-export const DeliveryItemsSchema = new mongoose.Schema({
+export const DeliveryReturnItemsSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
-  _deliveryId: {
+  _deliveryReturnId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.DELIVERY,
+    ref: ModelNames.DELIVERY_RETURN,
     default: null,
   },
-  _invoiceId: {
+  _deliveryRejectPendingId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.INVOICES,
+    ref: ModelNames.DELIVERY_REJECTED_PENDINGS,
     default: null,
   },
   _createdUserId: {
@@ -29,10 +29,10 @@ export const DeliveryItemsSchema = new mongoose.Schema({
   _status: { type: Number, required: true, default: -1 },
 });
 
-export interface DeliveryItems {
+export interface DeliveryReturnItems {
   _id: String;
-  _deliveryId: String;
-  _invoiceId: string;
+  _deliveryReturnId: String;
+  _deliveryRejectPendingId: string;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -40,10 +40,10 @@ export interface DeliveryItems {
   _status: Number;
 }
 
-DeliveryItemsSchema.index({ _deliveryId: 1 });
-DeliveryItemsSchema.index({ _invoiceId: 1 });
-DeliveryItemsSchema.index({ _createdUserId: 1 });
-DeliveryItemsSchema.index({ _status: 1 });
+DeliveryReturnItemsSchema.index({ _deliveryReturnId: 1 });
+DeliveryReturnItemsSchema.index({ _deliveryRejectPendingId: 1 });
+DeliveryReturnItemsSchema.index({ _createdUserId: 1 });
+DeliveryReturnItemsSchema.index({ _status: 1 });
 
 
 /*

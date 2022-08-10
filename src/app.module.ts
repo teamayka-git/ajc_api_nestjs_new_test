@@ -79,6 +79,7 @@ import { GoldRateTimelinesSchema } from './tableModels/gold_rate_timelines.model
 import { LogisticsPartnersModule } from './modules/logistics-partners/logistics-partners.module';
 import { TestChargeModule } from './modules/test-charge/test-charge.module';
 import { DeliveryRejectedPendingModule } from './modules/delivery-rejected-pending/delivery-rejected-pending.module';
+import { DeliveryReturnModule } from './modules/delivery-return/delivery-return.module';
 
 @Module({
   imports: [
@@ -169,6 +170,7 @@ import { DeliveryRejectedPendingModule } from './modules/delivery-rejected-pendi
     LogisticsPartnersModule,
     TestChargeModule,
     DeliveryRejectedPendingModule,
+    DeliveryReturnModule,
 
     // SalesReturnRequestStatusesModule,
   ],
