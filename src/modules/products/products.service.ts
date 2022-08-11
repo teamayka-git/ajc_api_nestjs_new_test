@@ -357,13 +357,16 @@ export class ProductsService {
               },
               { new: true, session: transactionSession },
             );
+
+            var photographyUid=resultCounterPhotographer._count;
+
           const photographerRequestModel = new this.photographerRequestModel({
             _rootCauseId: null,
             _orderItemId: orderItemId,
             _productId: productId,
             _requestStatus: 0,
             _description: '',
-            _uid: resultCounterPhotographer._count,
+            _uid: photographyUid,
             _userId: resultPhotographer[0].employeeList[0]._userId,
             _finishedAt: 0,
             _createdUserId: _userId_,
@@ -381,7 +384,7 @@ export class ProductsService {
             _type: 105,
             _shopId: null,
             _orderSaleItemId: null,
-            _description: '',
+            _description: 'Photography request UID: '+photographyUid,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _status: 1,

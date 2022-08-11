@@ -11,12 +11,18 @@ import {
 } from './delivery_temp.dto';
 import { GlobalConfig } from 'src/config/global_config';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
+import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
+import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 
 @Injectable()
 export class DeliveryTempService {
   constructor(
     @InjectModel(ModelNames.DELIVERY_TEMP)
     private readonly deliveryTempModel: Model<DeliveryTemp>,
+    @InjectModel(ModelNames.ORDER_SALES_MAIN)
+    private readonly orderSaleMainModel: Model<OrderSalesMain>,
+    @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
+    private readonly orderSaleMainHistoriesModel: Model<OrderSaleHistories>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
@@ -39,7 +45,7 @@ export class DeliveryTempService {
             mapItem.hubId != '' && mapItem.hubId != 'nil'
               ? mapItem.hubId
               : null,
-              
+
           _rootCauseId: null,
           _rootCause: '',
           _reworkStatus: -1,
@@ -83,9 +89,19 @@ export class DeliveryTempService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+      var arrayDeliveryTemp = [];
+      var arrayorderSales = [];
+
+      dto.items.forEach((eachItem) => {
+        arrayDeliveryTemp.push(eachItem.deliveryTempId);
+      });
+      dto.items.forEach((eachItem) => {
+        arrayorderSales.push(eachItem.orderId);
+      });
+
       var result = await this.deliveryTempModel.updateMany(
         {
-          _id: { $in: dto.deliveryTempIds },
+          _id: { $in: arrayDeliveryTemp },
         },
         {
           $set: {
@@ -96,6 +112,43 @@ export class DeliveryTempService {
           },
         },
         { new: true, session: transactionSession },
+      );
+
+      await this.orderSaleMainModel.updateMany(
+        {
+          _id: { $in: arrayorderSales },
+        },
+        {
+          $set: {
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+            _workStatus: 20,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      var arraySalesOrderHistories = [];
+
+      arrayorderSales.forEach((eachItem) => {
+        arraySalesOrderHistories.push({
+          _orderSaleId: eachItem,
+          _userId: dto.employeeId,
+          _type: 20,
+          _shopId: null,
+          _orderSaleItemId: null,
+          _description: '',
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _status: 1,
+        });
+      });
+
+      await this.orderSaleMainHistoriesModel.insertMany(
+        arraySalesOrderHistories,
+        {
+          session: transactionSession,
+        },
       );
 
       const responseJSON = { message: 'success', data: result };
@@ -198,10 +251,12 @@ export class DeliveryTempService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      arrayAggregation.push(new ModelWeightResponseFormat().deliveryTempTableResponseFormat(
-        0,
-        dto.responseFormat,
-      ),);
+      arrayAggregation.push(
+        new ModelWeightResponseFormat().deliveryTempTableResponseFormat(
+          0,
+          dto.responseFormat,
+        ),
+      );
       if (dto.screenType.includes(101)) {
         const employeePipeline = () => {
           const pipeline = [];
@@ -420,8 +475,6 @@ export class DeliveryTempService {
                             },
                           },
                         );
-
-                     
                       }
                       return pipeline;
                     };
@@ -446,39 +499,37 @@ export class DeliveryTempService {
                 }
 
                 const invoiceItemsOrdersaleItemsOrderSaleMainSubCategoryDetails =
-                dto.screenType.includes(110);
-              if (
-                invoiceItemsOrdersaleItemsOrderSaleMainSubCategoryDetails
-              ) {
-                pipeline.push(
-                  {
-                    $lookup: {
-                      from: ModelNames.SUB_CATEGORIES,
-                      let: { subCategoryId: '$_subCategoryId' },
-                      pipeline: [
-                        {
-                          $match: {
-                            $expr: {
-                              $eq: ['$_id', '$$subCategoryId'],
+                  dto.screenType.includes(110);
+                if (invoiceItemsOrdersaleItemsOrderSaleMainSubCategoryDetails) {
+                  pipeline.push(
+                    {
+                      $lookup: {
+                        from: ModelNames.SUB_CATEGORIES,
+                        let: { subCategoryId: '$_subCategoryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$subCategoryId'],
+                              },
                             },
                           },
-                        },
-                        new ModelWeightResponseFormat().subCategoryTableResponseFormat(
-                          1100,
-                          dto.responseFormat,
-                        ),
-                      ],
-                      as: 'subCategoryDetails',
+                          new ModelWeightResponseFormat().subCategoryTableResponseFormat(
+                            1100,
+                            dto.responseFormat,
+                          ),
+                        ],
+                        as: 'subCategoryDetails',
+                      },
                     },
-                  },
-                  {
-                    $unwind: {
-                      path: '$subCategoryDetails',
-                      preserveNullAndEmptyArrays: true,
+                    {
+                      $unwind: {
+                        path: '$subCategoryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
                     },
-                  },
-                );
-              }
+                  );
+                }
                 return pipeline;
               };
 
@@ -491,7 +542,7 @@ export class DeliveryTempService {
                     as: 'ordersaleItemDetails',
                   },
                 },
-                { 
+                {
                   $unwind: {
                     path: '$ordersaleItemDetails',
                     preserveNullAndEmptyArrays: true,
@@ -532,7 +583,7 @@ export class DeliveryTempService {
           },
         );
       }
-console.log("arrayAggregation  "+JSON.stringify(arrayAggregation));
+      console.log('arrayAggregation  ' + JSON.stringify(arrayAggregation));
       var result = await this.deliveryTempModel
         .aggregate(arrayAggregation)
         .session(transactionSession);

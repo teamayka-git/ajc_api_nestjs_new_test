@@ -88,12 +88,15 @@ export class InvoicesService {
 
       dto.invoices.map((mapItem, index) => {
         var invoiceId = new mongoose.Types.ObjectId();
+
+
+        var inventoryUid=
+        generalList[0]._string +
+        (resultCounterPurchase._count - dto.invoices.length + (index + 1));
         arrayToDeliveryChallan.push({
           _id: invoiceId,
           _userId: _userId_,
-          _uid:
-            generalList[0]._string +
-            (resultCounterPurchase._count - dto.invoices.length + (index + 1)),
+          _uid:inventoryUid,
           _halmarkingCharge: mapItem.halmarkingCharge,
           _otherCharge: mapItem.otherCharge,
           _roundOff: mapItem.roundOff,
@@ -171,7 +174,7 @@ export class InvoicesService {
             _type: 17,
             _orderSaleItemId: null,
             _shopId: null,
-            _description: '',
+            _description: 'Invoice UID: '+inventoryUid,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _status: 1,
@@ -210,7 +213,7 @@ export class InvoicesService {
 
       await this.orderSaleMainModel.updateMany(
         { _id: { $in: orderIds } },
-        { $set: { _isInvoiceGenerated: 1, _workStatus: 17 } },
+        { $set: { _isInvoiceGenerated: 1, _workStatus: 18 } }, 
         { new: true, session: transactionSession },
       );
 
