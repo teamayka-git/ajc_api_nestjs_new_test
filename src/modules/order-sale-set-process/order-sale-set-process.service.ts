@@ -126,18 +126,19 @@ console.log("resultSubProcess  "+JSON.stringify(resultSubProcess));
               _status: 1,
             });
           });
+          arrayToSetProcessHistories.push({ 
+            _orderSaleId: mapItem.orderSaleId,
+            _userId: _userId_,
+            _type: 0,
+            _processId: mapItem1.processId,
+            _orderSaleSetProcessId: null,
+            _description: mapItem1.description,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _status: 1,
+          });
         });
-        arrayToSetProcessHistories.push({
-          _orderSaleId: mapItem.orderSaleId,
-          _userId: _userId_,
-          _type: 0,
-          _processId: null,
-          _orderSaleSetProcessId: null,
-          _description: '',
-          _createdUserId: _userId_,
-          _createdAt: dateTime,
-          _status: 1,
-        });
+      
         arrayToOrderSaleHistories.push({
           _orderSaleId: mapItem.orderSaleId,
           _userId: null,
