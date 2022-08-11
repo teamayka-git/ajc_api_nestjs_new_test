@@ -62,10 +62,13 @@ class orderSaleItemsCreateList {
   subCategoryId: string;
 
   
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
+  @IsString()
   @ApiProperty({})
-  quantity: number;
+  quantity: string;
+
+  @IsString()
+  @ApiProperty({})
+  size: string;
 
   
   @Transform(({ value }) => Number(value))
@@ -73,10 +76,7 @@ class orderSaleItemsCreateList {
   @ApiProperty({ description: descriptionStockStatus })
   stockStatus: number;
 
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({})
-  size: number;
+  
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
@@ -203,16 +203,15 @@ class orderSaleItemEditList {
   @ApiProperty({})
   subCategoryId: string;
 
-  
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
+  @IsString()
   @ApiProperty({})
-  quantity: number;
+  quantity: string;
 
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
+  @IsString()
   @ApiProperty({})
-  size: number;
+  size: string;
+
+  
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
