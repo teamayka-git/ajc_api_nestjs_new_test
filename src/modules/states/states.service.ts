@@ -29,8 +29,7 @@ export class StatesService {
 
       dto.array.map((mapItem) => {
         arrayToStates.push({
-          // _name: mapItem.name,
-          _name: "aaa\nsss",
+          _name: mapItem.name,
           _code: mapItem.code,
           _dataGuard: mapItem.dataGuard,
           _createdUserId: _userId_,
