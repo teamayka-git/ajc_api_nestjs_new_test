@@ -142,7 +142,7 @@ _workStatus:{
   23 - delivey accepted
   24 - order declined collection pending || descrption, erorr type*(Int) ,rework status(Int)
   25 - order declined collected
-  26 - order declined inscan
+  26 - order declined received
   27 - order cancelled
   28 - delivery reshedule requested(shop closed -> ajc inscan)
 
@@ -151,6 +151,7 @@ _workStatus:{
   31 - hub tranfer intransit
   32 - hub transfer delivered
   33 - hub transfer accepted(invoice pending)
+  34 - order declined inscan
   
   
 }

@@ -289,7 +289,7 @@ export class DeliveryService {
         );
 
 
-      } else if (dto.workStatus == 1) {
+      } else if (dto.workStatus == 2) {
         updateObj['_verifiedUserId'] = dto.toUser;
 
         await this.orderSaleMainModel.updateMany(

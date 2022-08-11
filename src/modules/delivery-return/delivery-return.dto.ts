@@ -86,6 +86,16 @@ export class DeliveryRejectWorkStatusChangeDto {
   @ApiProperty({ type: [String] })
   deliveryReturnIds: string[];
 
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  deliveryReceivingOrderSaleIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  deliveryCompleteOrderSaleIds: string[];
+
+
   @IsNumber()
   @ApiProperty({ description: descriptionWorkStatus })
   workStatus: number;
