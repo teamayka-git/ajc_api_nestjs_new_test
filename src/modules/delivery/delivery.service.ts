@@ -343,7 +343,7 @@ export class DeliveryService {
       if (dto.deliveryRejectedList.length != 0) {
         var arrayToDeliveryRejectedList = [];
         var arrayToDeliveryRejectedOrderIdsList = [];
-
+        var arraySalesOrderHistories = [];
         dto.deliveryRejectedList.forEach((eachItem) => {
           arrayToDeliveryRejectedOrderIdsList.push(eachItem.salesId);
           arrayToDeliveryRejectedList.push({
@@ -364,6 +364,28 @@ export class DeliveryService {
             _updatedAt: -1,
             _status: 1,
           });
+
+
+
+          arrayToDeliveryRejectedOrderIdsList.forEach((eachItem) => {
+            arraySalesOrderHistories.push({
+              _orderSaleId: eachItem,
+              _userId: dto.toUser,
+              _type: 24,
+              _shopId: null,
+              _orderSaleItemId: null,
+              _description: `Root cause: /n${eachItem.rootCauseIdName}`,
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _status: 1,
+            });
+          });
+
+
+
+
+
+
         });
 
         await this.deliveryRejectPendingModel.insertMany(
@@ -391,21 +413,9 @@ export class DeliveryService {
           { new: true, session: transactionSession },
         );
   
-        var arraySalesOrderHistories = [];
+       
   
-        arrayToDeliveryRejectedOrderIdsList.forEach((eachItem) => {
-          arraySalesOrderHistories.push({
-            _orderSaleId: eachItem,
-            _userId: dto.toUser,
-            _type: 24,
-            _shopId: null,
-            _orderSaleItemId: null,
-            _description: '',
-            _createdUserId: _userId_,
-            _createdAt: dateTime,
-            _status: 1,
-          });
-        });
+       
   
         await this.orderSaleMainHistoriesModel.insertMany(
           arraySalesOrderHistories,

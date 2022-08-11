@@ -174,6 +174,10 @@ class DeliveryRejectList {
   @ApiProperty({})
   rootCause: string;
 
+  @IsString()
+  @ApiProperty({})
+  rootCauseIdName: string;
+
   @IsNumber()
   @ApiProperty({ description: descriptionReWorkStatus })
   reWorkStatus: number;
