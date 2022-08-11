@@ -342,8 +342,10 @@ export class DeliveryService {
 
       if (dto.deliveryRejectedList.length != 0) {
         var arrayToDeliveryRejectedList = [];
+        var arrayToDeliveryRejectedOrderIdsList = [];
 
         dto.deliveryRejectedList.forEach((eachItem) => {
+          arrayToDeliveryRejectedOrderIdsList.push(eachItem.salesId);
           arrayToDeliveryRejectedList.push({
             _salesItemId: eachItem.salesItemId,
             _salesId: eachItem.salesId,
@@ -370,6 +372,53 @@ export class DeliveryService {
             session: transactionSession,
           },
         );
+
+
+
+
+
+        await this.orderSaleMainModel.updateMany(
+          {
+            _id: { $in:arrayToDeliveryRejectedOrderIdsList },
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _workStatus: 24,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+  
+        var arraySalesOrderHistories = [];
+  
+        arrayToDeliveryRejectedOrderIdsList.forEach((eachItem) => {
+          arraySalesOrderHistories.push({
+            _orderSaleId: eachItem,
+            _userId: dto.toUser,
+            _type: 24,
+            _shopId: null,
+            _orderSaleItemId: null,
+            _description: '',
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _status: 1,
+          });
+        });
+  
+        await this.orderSaleMainHistoriesModel.insertMany(
+          arraySalesOrderHistories,
+          {
+            session: transactionSession,
+          },
+        );
+
+
+
+
+
+
       }
 
       const responseJSON = { message: 'success', data: result };
