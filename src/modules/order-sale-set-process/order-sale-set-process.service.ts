@@ -584,9 +584,9 @@ console.log("resultSubProcess  "+JSON.stringify(resultSubProcess));
         new this.orderSaleSetProcessHistoriesModel({
           _orderSaleId: result._orderSaleId,
           _userId: null,
-          _type: 6,
+          _type: 6, 
           _processId: result._processId,
-          _description: '',
+          _description: dto.description,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _status: 1,
