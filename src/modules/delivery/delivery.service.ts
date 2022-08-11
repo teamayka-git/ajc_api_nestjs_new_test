@@ -367,9 +367,9 @@ console.log("delivery reject "+JSON.stringify(dto));
 
 
 
-          arrayToDeliveryRejectedOrderIdsList.forEach((eachItem) => {
+          arrayToDeliveryRejectedOrderIdsList.forEach((eachItemChild) => {
             arraySalesOrderHistories.push({
-              _orderSaleId: eachItem,
+              _orderSaleId: eachItemChild,
               _userId: dto.toUser,
               _type: 24,
               _shopId: null,
