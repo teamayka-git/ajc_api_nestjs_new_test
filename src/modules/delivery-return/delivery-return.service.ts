@@ -136,7 +136,7 @@ export class DeliveryReturnService {
       var updateObj = {
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
-        _workStatus: dto.deliveryReturnIds,
+        _workStatus: dto.workStatus,
       };
 
       if (dto.workStatus == 1) {
