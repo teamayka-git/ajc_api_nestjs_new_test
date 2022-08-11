@@ -94,10 +94,11 @@ export class DeliveryTempService {
 
       dto.items.forEach((eachItem) => {
         arrayDeliveryTemp.push(eachItem.deliveryTempId);
+        eachItem.orderIds.forEach((eachItemChild) => {
+          arrayorderSales.push(eachItemChild);
+        });
       });
-      dto.items.forEach((eachItem) => {
-        arrayorderSales.push(eachItem.orderId);
-      });
+     
 
       var result = await this.deliveryTempModel.updateMany(
         {

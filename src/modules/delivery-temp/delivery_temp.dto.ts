@@ -132,9 +132,9 @@ class DeliveryTempEmployeeAssignList {
   @ApiProperty({})
   deliveryTempId: string;
 
-  @IsString()
-  @ApiProperty({})
-  orderId: string;
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderIds: string[];
 
 }
 
