@@ -368,6 +368,199 @@ export class OrderSaleListDto {
   workStatus: number[];
 
 }
+class OrderprocessWithStatusItems {
+  @IsString()
+  @ApiProperty({})
+  processMasterId: string;
+
+  
+  @IsArray()
+  @ApiProperty({ type: [Number] })
+  setProcessOrderkStatus: number[];
+}
+class OrderWorkerWithStatusItems {
+  @IsString()
+  @ApiProperty({})
+  workerId: string;
+
+  
+  @IsArray()
+  @ApiProperty({ type: [Number] })
+  setProcessOrderkStatus: number[];
+}
+
+export class OrderSaleReportListDto {
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortType })
+  sortType: number;
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortOrder })
+  sortOrder: number;
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @ApiProperty({ type: [Number], description: descriptionStatus })
+  statusArray: number[];
+
+
+
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionListScreenTypeForBranchList,
+  })
+  screenType: number[];
+
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  isProductGenerated: number[];
+  
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  isInvoiceGenerated: number[];
+  
+  @IsNumber()
+  @ApiProperty({})
+  limit: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  skip: number;
+//
+
+
+@IsNumber()
+@ApiProperty({})
+netWeight: number;
+
+@IsArray()
+@ApiProperty({ type: [String] })
+huids: string[];
+
+
+
+@IsArray()
+@ApiProperty({ type: [String] })
+orderSaleIds: string[];
+
+
+@IsArray()
+@ApiProperty({ type: [String] })
+orderSaleUids: string[];
+
+@IsArray()
+@ApiProperty({ type: [String] })
+subCategoryIds: string[];
+
+@IsNumber()
+@ApiProperty({})
+dueStartDate: number;
+
+@IsNumber()
+@ApiProperty({})
+dueEndDate: number;
+
+@IsArray()
+@ApiProperty({ type: [String] })
+orderHeadIds: string[];
+
+
+@IsArray()
+@ApiProperty({ type: [String] })
+shopIds: string[];
+
+@IsArray()
+@ApiProperty({ type: [Number], description: descriptionWorkStatus })
+workStatus: number[];
+
+
+@IsArray()
+@ApiProperty({ type: [String] })
+referenceIds: string[];
+
+@IsArray()
+@ApiProperty({ type: [Number], description: descriptionType })
+types: number[];
+
+@IsNumber()
+@ApiProperty({})
+createdDateStartDate: number;
+
+@IsNumber()
+@ApiProperty({})
+createdDateEndDate: number;
+
+
+
+
+@IsArray()
+@ApiProperty({ type: [String] })
+cityIds: string[];
+
+@IsArray()
+@ApiProperty({ type: [String] })
+branchIds: string[];
+
+@IsArray()
+@ApiProperty({ type: [String] })
+relationshipManagerIds: string[];
+
+
+
+@IsNumber()
+@ApiProperty({})
+invoiceDateStartDate: number;
+
+@IsNumber()
+@ApiProperty({})
+invoiceDateEndDate: number;
+
+@IsArray()
+@ApiProperty({ type: [String] })
+invoiceUids: string[];
+
+
+
+
+
+
+
+
+@IsArray()
+@ApiProperty({ type: [OrderprocessWithStatusItems] })
+@ValidateNested({ each: true })
+@Type(() => OrderprocessWithStatusItems)
+arrayProcessMasterWithWorkStatus: OrderprocessWithStatusItems[];
+
+
+@IsArray()
+@ApiProperty({ type: [OrderWorkerWithStatusItems] })
+@ValidateNested({ each: true })
+@Type(() => OrderWorkerWithStatusItems)
+arrayWorkerWithWorkStatus: OrderWorkerWithStatusItems[];
+
+
+
+
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionSetProcessOrderStatus,
+  })
+  setProcessOrderStatus: number[];
+
+
+
+ 
+
+}
 
 export class OrderSalesChangeDto {
   @IsArray()

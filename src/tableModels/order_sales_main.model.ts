@@ -60,7 +60,7 @@ export interface OrderSalesMain {
   _isReWork:number;//
   _isInvoiceGenerated:number;
   _isProductGenerated:number;
-  _rootCause: String;//
+  _rootCause: String;// 
   _orderHeadId: string;//
   _description: string;//
   _generalRemark: string;//

@@ -18,6 +18,7 @@ import {
   EditOrderSaleGeneralRemarkDto,
   OrderSaleHistoryListDto,
   OrderSaleListDto,
+  OrderSaleReportListDto,
   OrderSalesChangeDto,
   OrderSalesCreateDto,
   OrderSalesEditDto,
@@ -103,6 +104,11 @@ export class OrderSalesController {
   @Post('list')
   list(@Body() dto: OrderSaleListDto) {
     return this.orderSalesService.list(dto);
+  }
+
+  @Post('reportList')
+  reportList(@Body() dto: OrderSaleReportListDto) {
+    return this.orderSalesService.reportList(dto);
   }
 
   @Post('set_proccess_assigned_order_sale_list')

@@ -8,6 +8,7 @@ import {
   EditOrderSaleGeneralRemarkDto,
   OrderSaleHistoryListDto,
   OrderSaleListDto,
+  OrderSaleReportListDto,
   OrderSalesChangeDto,
   OrderSalesCreateDto,
   OrderSalesEditDto,
@@ -323,7 +324,7 @@ export class OrderSalesService {
           _quantity: eachItem.quantity,
           _size: eachItem.size,
           _weight: eachItem.weight,
-          _isDeliveryRejected:0,
+          _isDeliveryRejected: 0,
           _uid:
             uidSalesOrder + new StringUtils().numberToEncodedLetter(index + 1),
           _stoneColour: eachItem.stoneColor,
@@ -388,7 +389,7 @@ export class OrderSalesService {
     transactionSession.startTransaction();
 
     try {
-      console.log("payload "+JSON.stringify(dto));
+      console.log('payload ' + JSON.stringify(dto));
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
 
@@ -545,8 +546,10 @@ export class OrderSalesService {
         session: transactionSession,
       });
 
-
-console.log("documentsLinkingIdsForDelete   "+JSON.stringify(dto.documentsLinkingIdsForDelete));
+      console.log(
+        'documentsLinkingIdsForDelete   ' +
+          JSON.stringify(dto.documentsLinkingIdsForDelete),
+      );
 
       if (dto.documentsLinkingIdsForDelete.length != 0) {
         await this.orderSaleDocumentsModel.updateMany(
@@ -744,7 +747,13 @@ console.log("documentsLinkingIdsForDelete   "+JSON.stringify(dto.documentsLinkin
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
-
+      if (dto.dueStartDate != -1 && dto.dueEndDate != -1) {
+        arrayAggregation.push({
+          $match: {
+            _dueDate: { $lt: dto.dueEndDate, $gt: dto.dueStartDate },
+          },
+        });
+      }
       if (dto.shopIds.length > 0) {
         var newSettingsId = [];
         dto.shopIds.map((mapItem) => {
@@ -1861,7 +1870,1585 @@ console.log("documentsLinkingIdsForDelete   "+JSON.stringify(dto.documentsLinkin
         data: {
           list: result,
           totalCount: totalCount,
-          workers: resultWorkets, 
+          workers: resultWorkets,
+          processMasters: resultProcessMasters,
+          subCategory: resultSubCategory,
+          generalSetting: generalSetting,
+        },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async reportList(dto: OrderSaleReportListDto) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var arrayAggregation = [];
+
+      // if (dto.searchingText != '') {
+      //   //todo
+      //   arrayAggregation.push({
+      //     $match: {
+      //       $or: [
+      //         { _name: new RegExp(dto.searchingText, 'i') },
+      //         { _uid: dto.searchingText },
+      //         { _referenceNumber: dto.searchingText },
+      //       ],
+      //     },
+      //   });
+      // }
+      if (dto.orderSaleUids.length > 0) {
+        arrayAggregation.push({
+          $match: {
+            _uid: { $in: dto.orderSaleUids },
+          },
+        });
+      }
+
+      if (dto.dueStartDate != -1 && dto.dueEndDate != -1) {
+        arrayAggregation.push({
+          $match: {
+            _dueDate: { $lt: dto.dueEndDate, $gt: dto.dueStartDate },
+          },
+        });
+      }
+      if (dto.createdDateStartDate != -1 && dto.createdDateEndDate != -1) {
+        arrayAggregation.push({
+          $match: {
+            _createdAt: {
+              $lt: dto.createdDateEndDate,
+              $gt: dto.createdDateStartDate,
+            },
+          },
+        });
+      }
+
+      if (dto.referenceIds.length > 0) {
+        arrayAggregation.push({
+          $match: {
+            _referenceNumber: { $in: dto.referenceIds },
+          },
+        });
+      }
+      if (dto.types.length > 0) {
+        arrayAggregation.push({
+          $match: { _type: { $in: dto.types } },
+        });
+      }
+
+      if (dto.orderSaleIds.length > 0) {
+        var newSettingsId = [];
+        dto.orderSaleIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
+      }
+
+      if (dto.shopIds.length > 0) {
+        var newSettingsId = [];
+        dto.shopIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _shopId: { $in: newSettingsId } },
+        });
+      }
+      if (dto.orderHeadIds.length > 0) {
+        var newSettingsId = [];
+        dto.orderHeadIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _orderHeadId: { $in: newSettingsId } },
+        });
+      }
+
+      if (dto.workStatus.length > 0) {
+        arrayAggregation.push({
+          $match: { _workStatus: { $in: dto.workStatus } },
+        });
+      }
+      if (dto.isProductGenerated.length > 0) {
+        arrayAggregation.push({
+          $match: { _isProductGenerated: { $in: dto.isProductGenerated } },
+        });
+      }
+      if (dto.isInvoiceGenerated.length > 0) {
+        arrayAggregation.push({
+          $match: { _isInvoiceGenerated: { $in: dto.isInvoiceGenerated } },
+        });
+      }
+
+      if (
+        dto.cityIds.length > 0 ||
+        dto.branchIds.length > 0 ||
+        dto.relationshipManagerIds.length > 0
+      ) {
+        const shopMongoCheckPipeline = () => {
+          const pipeline = [];
+          pipeline.push({
+            $match: {
+              $expr: { $eq: ['$_id', '$$shopId'] },
+            },
+          });
+          if (dto.cityIds.length > 0) {
+            var newSettingsId = [];
+            dto.cityIds.map((mapItem) => {
+              newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+            });
+            pipeline.push({ $match: { _cityId: { $in: newSettingsId } } });
+          }
+
+          if (dto.branchIds.length > 0) {
+            var newSettingsId = [];
+            dto.branchIds.map((mapItem) => {
+              newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+            });
+            pipeline.push({ $match: { _branchId: { $in: newSettingsId } } });
+          }
+          if (dto.relationshipManagerIds.length > 0) {
+            var newSettingsId = [];
+            dto.relationshipManagerIds.map((mapItem) => {
+              newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+            });
+            pipeline.push({
+              $match: { _relationshipManagerId: { $in: newSettingsId } },
+            });
+          }
+
+          pipeline.push({ $project: { _id: 1 } });
+
+          return pipeline;
+        };
+
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.SHOPS,
+              let: { shopId: '$_shopId' },
+              pipeline: shopMongoCheckPipeline(),
+              as: 'mongoCheckShopList',
+            },
+          },
+          {
+            $match: { mongoCheckShopList: { $ne: [] } },
+          },
+        );
+      }
+
+      //product
+
+      if (dto.netWeight != -1 || dto.huids.length != 0 || (dto.invoiceDateStartDate != -1 && dto.invoiceDateEndDate!=-1)|| dto.invoiceUids.length!=0) {
+        const orderSaleItemsMongoCheckPipeline = () => {
+          const pipeline = [];
+          pipeline.push({
+            $match: {
+              _status: 1,
+              $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+            },
+          });
+if(dto.netWeight != -1 || dto.huids.length != 0){
+          const orderSaleItemsProductMongoCheckPipeline = () => {
+            const pipeline = [];
+            pipeline.push({
+              $match: {
+                _status: 1,
+                $expr: { $eq: ['$_orderItemId', '$$orderSaleItemId'] },
+              },
+            });
+
+            if (dto.netWeight != -1) {
+              pipeline.push({
+                $match: {
+                  _netWeight: dto.netWeight,
+                },
+              });
+            }
+            if (dto.huids.length != 0) {
+              pipeline.push({
+                $match: {
+                  _huId: { $in: dto.huids },
+                },
+              });
+            }
+
+            pipeline.push({ $project: { _id: 1 } });
+            return pipeline;
+          };
+
+          pipeline.push(
+            {
+              $lookup: {
+                from: ModelNames.PRODUCTS,
+                let: { orderSaleItemId: '$_id' },
+                pipeline: orderSaleItemsProductMongoCheckPipeline(),
+                as: 'mongoCheckProductlist',
+              },
+            },
+            {
+              $match: { mongoCheckProductlist: { $ne: [] } },
+            },
+          );
+          }
+
+
+if( (dto.invoiceDateStartDate != -1 && dto.invoiceDateEndDate!=-1)|| dto.invoiceUids.length!=0){
+  const invoiceItemsMongoCheckPipeline = () => {
+    const pipeline = [];
+    pipeline.push( {
+      $match: {
+        $expr: { $eq: ['$_orderSaleItemId', '$$orderSaleItemId'] },
+      },
+    },
+    );
+
+
+
+
+
+
+    const invoiceItemsInvoiceDetailsMongoCheckPipeline = () => {
+      const pipeline = [];
+      pipeline.push( {
+        $match: {
+          $expr: { $eq: ['$_id', '$$invoiceId'] },
+        },
+      },);
+
+if((dto.invoiceDateStartDate != -1 && dto.invoiceDateEndDate!=-1)){
+
+  pipeline.push( {
+    $match: {
+      _createdAt:{
+        $gt:dto.invoiceDateStartDate,$lt:dto.invoiceDateEndDate
+      }
+    },
+  },);
+
+}
+if(dto.invoiceUids.length != 0){
+  pipeline.push( {
+    $match: {
+      _uid:{$in:dto.invoiceUids}
+    },
+  },);
+}
+
+
+
+
+
+
+
+      
+    pipeline.push({ $project: { _id: 1 } });
+      return pipeline;
+    }
+
+
+    pipeline.push( {
+      $lookup: {
+        from: ModelNames.INVOICES,
+        let: { invoiceId: '$_invoiceId' },
+        pipeline:invoiceItemsInvoiceDetailsMongoCheckPipeline() ,
+        as: 'invoiceDetails',
+      },
+    },
+    {
+      $unwind: {
+        path: '$invoiceDetails',
+        preserveNullAndEmptyArrays: true,
+      },
+    },);
+
+
+
+
+
+
+
+
+
+    pipeline.push({ $project: { _id: 1 } });
+    return pipeline;
+  }
+   
+  pipeline.push( {
+    $lookup: {
+      from: ModelNames.INVOICE_ITEMS,
+      let: { orderSaleItemId: '$_id' },
+      pipeline:invoiceItemsMongoCheckPipeline() ,
+      as: 'mongoCheckInvoiceList',
+    },
+  },{
+    $match: { mongoCheckInvoiceList: { $ne: [] } },
+  },);
+
+
+}
+
+
+
+
+
+
+
+
+
+          pipeline.push({ $project: { _id: 1 } });
+          return pipeline;
+        };
+
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_ITEMS,
+              let: { orderSaleId: '$_id' },
+              pipeline: orderSaleItemsMongoCheckPipeline(),
+              as: 'mongoCheckOrderItemsList',
+            },
+          },
+          {
+            $match: { mongoCheckOrderItemsList: { $ne: [] } },
+          },
+        );
+      }
+
+      
+
+if(dto.arrayProcessMasterWithWorkStatus.length != 0){
+
+  var mongoMatchArray=[];
+  dto.arrayProcessMasterWithWorkStatus.forEach((eachItem=>{
+    mongoMatchArray.push({
+      _processId:new mongoose.Types.ObjectId(eachItem.processMasterId),_orderStatus:{$in:eachItem.setProcessOrderkStatus}
+    });
+  }));
+
+
+
+
+
+  const orderSaleSetProcessPipeline = () => {
+    const pipeline = [];
+    pipeline.push( {
+      $match: {
+        _status:1,
+        $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+      },
+    },
+    );
+
+    pipeline.push( {
+      $match: {
+        $or: mongoMatchArray,
+        
+
+      },
+    },
+    );
+
+
+
+
+
+
+    pipeline.push({ $project: { _id: 1 } });
+    return pipeline;
+  }
+
+
+
+arrayAggregation.push( {
+  $lookup: {
+    from: ModelNames.ORDER_SALE_SET_PROCESSES,
+    let: { orderSaleId: '$_id' },
+    pipeline:orderSaleSetProcessPipeline() ,
+    as: 'mongoCheckProcessMasterWithWorkStatus',
+  },
+},{
+  $match: { mongoCheckProcessMasterWithWorkStatus: { $ne: [] } },
+},);
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+if(dto.arrayWorkerWithWorkStatus.length != 0){
+
+  var mongoMatchArray=[];
+  dto.arrayWorkerWithWorkStatus.forEach((eachItem=>{
+    mongoMatchArray.push({
+      _userId:new mongoose.Types.ObjectId(eachItem.workerId),_orderStatus:{$in:eachItem.setProcessOrderkStatus}
+    });
+  }));
+
+
+
+
+
+  const orderSaleSetProcessPipeline = () => {
+    const pipeline = [];
+    pipeline.push( {
+      $match: {
+        _status:1,
+        $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+      },
+    },
+    );
+
+    pipeline.push( {
+      $match: {
+        $or: mongoMatchArray,
+        
+
+      },
+    },
+    );
+
+
+
+
+
+
+    pipeline.push({ $project: { _id: 1 } });
+    return pipeline;
+  }
+
+
+
+arrayAggregation.push( {
+  $lookup: {
+    from: ModelNames.ORDER_SALE_SET_PROCESSES,
+    let: { orderSaleId: '$_id' },
+    pipeline:orderSaleSetProcessPipeline() ,
+    as: 'mongoCheckWorkerWithWorkStatus',
+  },
+},{
+  $match: { mongoCheckWorkerWithWorkStatus: { $ne: [] } },
+},);
+
+
+
+
+
+
+
+}
+
+
+      
+      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+
+      switch (dto.sortType) {
+        case 0:
+          arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
+          break;
+        case 1:
+          arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
+          break;
+        case 2:
+          arrayAggregation.push({ $sort: { _dueDate: dto.sortOrder } });
+          break;
+      }
+
+      if (dto.skip != -1) {
+        arrayAggregation.push({ $skip: dto.skip });
+        arrayAggregation.push({ $limit: dto.limit });
+      }
+
+      arrayAggregation.push(
+        new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+          0,
+          dto.responseFormat,
+        ),
+      );
+
+      const isorderSaleSetProcess = dto.screenType.includes(105);
+      const isorderSaleSetProcessPipeline = () => {
+        const orderSaleSetProcessUserPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$userId'] },
+              },
+            },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1090,
+              dto.responseFormat,
+            ),
+          );
+
+          const isorderSaleSetProcessUserGlobalGallery =
+            dto.screenType.includes(110);
+          if (isorderSaleSetProcessUserGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1100,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+
+        const pipeline = [];
+        pipeline.push({
+          $match: {
+            _status: 1,
+            $expr: { $eq: ['$_orderSaleId', '$$orderSaleSetProcess'] },
+          },
+        });
+
+        if (dto.setProcessOrderStatus.length != 0) {
+          pipeline.push({
+            $match: {
+              _orderStatus: { $in: dto.setProcessOrderStatus },
+            },
+          });
+        }
+
+        pipeline.push(
+          new ModelWeightResponseFormat().orderSaleSetProcessTableResponseFormat(
+            1050,
+            dto.responseFormat,
+          ),
+        );
+        const isorderSaleSetProcessProcessMaster = dto.screenType.includes(108);
+        if (isorderSaleSetProcessProcessMaster) {
+          pipeline.push(
+            {
+              $lookup: {
+                from: ModelNames.PROCESS_MASTER,
+                let: { processId: '$_processId' },
+                pipeline: [
+                  { $match: { $expr: { $eq: ['$_id', '$$processId'] } } },
+                  new ModelWeightResponseFormat().orderSaleSetProcessTableResponseFormat(
+                    1080,
+                    dto.responseFormat,
+                  ),
+                ],
+                as: 'processDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$processDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          );
+
+          const isorderSaleSetProcessUser = dto.screenType.includes(109);
+          if (isorderSaleSetProcessUser) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.USER,
+                  let: { userId: '$_userId' },
+                  pipeline: orderSaleSetProcessUserPipeline(),
+                  as: 'userDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$userDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+        }
+
+        const isorderSaleSetSubProcess = dto.screenType.includes(110);
+        if (isorderSaleSetSubProcess) {
+          const isorderSaleSetProcessPipeline = () => {
+            const pipeline = [];
+            pipeline.push(
+              {
+                $match: {
+                  _status: 1,
+                  $expr: {
+                    $eq: ['$_orderSaleSetProcessId', '$$setProcess'],
+                  },
+                },
+              },
+              new ModelWeightResponseFormat().orderSaleSetSubProcessTableResponseFormat(
+                1100,
+                dto.responseFormat,
+              ),
+            );
+            const isorderSaleSetSubProcessMaster = dto.screenType.includes(111);
+            if (isorderSaleSetSubProcessMaster) {
+              pipeline.push(
+                {
+                  $lookup: {
+                    from: ModelNames.SUB_PROCESS_MASTER,
+                    let: { processId: '$_subProcessId' },
+                    pipeline: [
+                      {
+                        $match: { $expr: { $eq: ['$_id', '$$processId'] } },
+                      },
+                      new ModelWeightResponseFormat().subProcessMasterTableResponseFormat(
+                        1110,
+                        dto.responseFormat,
+                      ),
+                    ],
+                    as: 'subProcessDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$subProcessDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              );
+            }
+            const isorderSaleSetSubProcessUserPopulate =
+              dto.screenType.includes(112);
+            if (isorderSaleSetSubProcessUserPopulate) {
+              const orderSaleSetSubProcessUserPipeline = () => {
+                const pipeline = [];
+                pipeline.push(
+                  {
+                    $match: {
+                      $expr: { $eq: ['$_id', '$$userId'] },
+                    },
+                  },
+                  new ModelWeightResponseFormat().userTableResponseFormat(
+                    1120,
+                    dto.responseFormat,
+                  ),
+                );
+
+                const isorderSaleSetSubProcessUserGlobalGalleryPopulate =
+                  dto.screenType.includes(113);
+                if (isorderSaleSetSubProcessUserGlobalGalleryPopulate) {
+                  pipeline.push(
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_id', '$$globalGalleryId'],
+                              },
+                            },
+                          },
+
+                          new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                            1130,
+                            dto.responseFormat,
+                          ),
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                  );
+                }
+                return pipeline;
+              };
+
+              pipeline.push(
+                {
+                  $lookup: {
+                    from: ModelNames.USER,
+                    let: { userId: '$_userId' },
+                    pipeline: orderSaleSetSubProcessUserPipeline(),
+                    as: 'userDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$userDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              );
+            }
+
+            return pipeline;
+          };
+
+          pipeline.push({
+            $lookup: {
+              from: ModelNames.ORDER_SALE_SET_SUB_PROCESSES,
+              let: { setProcess: '$_id' },
+              pipeline: isorderSaleSetProcessPipeline(),
+              as: 'orderSaleSetSubProcessList',
+            },
+          });
+        }
+
+        return pipeline;
+      };
+
+      if (isorderSaleSetProcess) {
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.ORDER_SALE_SET_PROCESSES,
+            let: { orderSaleSetProcess: '$_id' },
+            pipeline: isorderSaleSetProcessPipeline(),
+            as: 'setProcessList',
+          },
+        });
+      }
+
+      if (dto.screenType.includes(103)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ROOT_CAUSES,
+              let: { rootCauseId: '$_rootCauseId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$rootCauseId'] } } },
+                new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                  1030,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'rootCauseDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$rootCauseDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      const isorderSaleHistories = dto.screenType.includes(104);
+
+      if (isorderSaleHistories) {
+        const orderSaleHistoriesPipeline = () => {
+          const pipeline = [];
+
+          pipeline.push(
+            {
+              $match: {
+                _status: 1,
+                $expr: {
+                  $eq: ['$_orderSaleId', '$$orderSaleId'],
+                },
+              },
+            },
+            new ModelWeightResponseFormat().orderSaleHistoryTableResponseFormat(
+              1040,
+              dto.responseFormat,
+            ),
+          );
+          const isorderSaleHistoriesUser = dto.screenType.includes(114);
+
+          if (isorderSaleHistoriesUser) {
+            const orderSaleHistoriesUserPipeline = () => {
+              const pipeline = [];
+              pipeline.push(
+                { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+                new ModelWeightResponseFormat().userTableResponseFormat(
+                  1140,
+                  dto.responseFormat,
+                ),
+              );
+
+              const isorderSaleHistoriesUserGlobalGallery =
+                dto.screenType.includes(115);
+              if (isorderSaleHistoriesUserGlobalGallery) {
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.GLOBAL_GALLERIES,
+                      let: { globalGalleryId: '$_globalGalleryId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                          },
+                        },
+                        new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                          1150,
+                          dto.responseFormat,
+                        ),
+                      ],
+                      as: 'globalGalleryDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$globalGalleryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                );
+              }
+
+              return pipeline;
+            };
+
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.USER,
+                  let: { userId: '$_userId' },
+                  pipeline: orderSaleHistoriesUserPipeline(),
+                  as: 'userDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$userDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+
+            const isorderSaleHistoriescreatedUser =
+              dto.screenType.includes(116);
+            if (isorderSaleHistoriescreatedUser) {
+              const orderSaleHistoriesCreatedUserUserPipeline = () => {
+                const pipeline = [];
+                pipeline.push(
+                  { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+
+                  new ModelWeightResponseFormat().userTableResponseFormat(
+                    1160,
+                    dto.responseFormat,
+                  ),
+                );
+                const isorderSaleHistoriescreatedUserGlobalGallery =
+                  dto.screenType.includes(117);
+                if (isorderSaleHistoriescreatedUserGlobalGallery) {
+                  pipeline.push(
+                    {
+                      $lookup: {
+                        from: ModelNames.GLOBAL_GALLERIES,
+                        let: { globalGalleryId: '$_globalGalleryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                            },
+                          },
+                          new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                            1170,
+                            dto.responseFormat,
+                          ),
+                        ],
+                        as: 'globalGalleryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$globalGalleryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                  );
+                }
+                return pipeline;
+              };
+
+              pipeline.push(
+                {
+                  $lookup: {
+                    from: ModelNames.USER,
+                    let: { userId: '$_createdUserId' },
+                    pipeline: orderSaleHistoriesCreatedUserUserPipeline(),
+                    as: 'createdUserDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$createdUserDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              );
+            }
+          }
+          return pipeline;
+        };
+
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.ORDER_SALE_HISTORIES,
+            let: { orderSaleId: '$_id' },
+            pipeline: orderSaleHistoriesPipeline(),
+            as: 'orderSaleHistories',
+          },
+        });
+      }
+
+      const isorderSaledocuments = dto.screenType.includes(101);
+
+      if (isorderSaledocuments) {
+        const orderSaleDocumentsPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                _status: 1,
+                $expr: { $eq: ['$_orderSaleId', '$$orderSaleIdId'] },
+              },
+            },
+            new ModelWeightResponseFormat().orderSaleDocumentsTableResponseFormat(
+              1010,
+              dto.responseFormat,
+            ),
+          );
+
+          const isorderSaledocumentsGlobalGallery =
+            dto.screenType.includes(118);
+
+          if (isorderSaledocumentsGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } },
+                    },
+
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1180,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.ORDER_SALES_DOCUMENTS,
+            let: { orderSaleIdId: '$_id' },
+            pipeline: orderSaleDocumentsPipeline(),
+            as: 'orderSaleDocumentList',
+          },
+        });
+      }
+
+      const isorderSaleshop = dto.screenType.includes(102);
+
+      if (isorderSaleshop) {
+        const orderSaleShopPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            { $match: { $expr: { $eq: ['$_id', '$$shopId'] } } },
+            new ModelWeightResponseFormat().shopTableResponseFormat(
+              1020,
+              dto.responseFormat,
+            ),
+          );
+          const isorderSaleshopGlobalGallery = dto.screenType.includes(119);
+          if (isorderSaleshopGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1190,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          const isorderSaleshopOrderHead = dto.screenType.includes(120);
+          if (isorderSaleshopOrderHead) {
+            const orderSaleShopOrderHeadPipeline = () => {
+              const pipeline = [];
+              pipeline.push(
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$userId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().userTableResponseFormat(
+                  1200,
+                  dto.responseFormat,
+                ),
+              );
+              const isorderSaleshopOrderHeadGlobalgallery =
+                dto.screenType.includes(121);
+              if (isorderSaleshopOrderHeadGlobalgallery) {
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.GLOBAL_GALLERIES,
+                      let: { globalGalleryId: '$_globalGalleryId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: {
+                              $eq: ['$_id', '$$globalGalleryId'],
+                            },
+                          },
+                        },
+                        new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                          1210,
+                          dto.responseFormat,
+                        ),
+                      ],
+                      as: 'globalGalleryDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$globalGalleryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                );
+              }
+              return pipeline;
+            };
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.USER,
+                  let: { userId: '$_orderHeadId' },
+                  pipeline: orderSaleShopOrderHeadPipeline(),
+                  as: 'orderHeadDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$orderHeadDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          const isorderSaleshopRelationshipManager =
+            dto.screenType.includes(122);
+          if (isorderSaleshopRelationshipManager) {
+            const orderSaleShopOrderHeadPipeline = () => {
+              const pipeline = [];
+              pipeline.push(
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$userId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().userTableResponseFormat(
+                  1220,
+                  dto.responseFormat,
+                ),
+              );
+
+              const isorderSaleshopRelationshipManagerGlobalGallery =
+                dto.screenType.includes(123);
+              if (isorderSaleshopRelationshipManagerGlobalGallery) {
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.GLOBAL_GALLERIES,
+                      let: { globalGalleryId: '$_globalGalleryId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: {
+                              $eq: ['$_id', '$$globalGalleryId'],
+                            },
+                          },
+                        },
+                        new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                          1230,
+                          dto.responseFormat,
+                        ),
+                      ],
+                      as: 'globalGalleryDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$globalGalleryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                );
+              }
+              return pipeline;
+            };
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.USER,
+                  let: { userId: '$_relationshipManagerId' },
+                  pipeline: orderSaleShopOrderHeadPipeline(),
+                  as: 'relationshipManagerDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$relationshipManagerDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
+          return pipeline;
+        };
+
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.SHOPS,
+              let: { shopId: '$_shopId' },
+              pipeline: orderSaleShopPipeline(),
+              as: 'shopDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$shopDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      const isorderSaleItems = dto.screenType.includes(124);
+      if (isorderSaleItems) {
+        const orderSaleItemsPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                _status: 1,
+                $expr: { $eq: ['$_orderSaleId', '$$mainId'] },
+              },
+            },
+
+            new ModelWeightResponseFormat().orderSaleItemsTableResponseFormat(
+              1240,
+              dto.responseFormat,
+            ),
+          );
+
+          const isorderSalesItemsProduct = dto.screenType.includes(125);
+          if (isorderSalesItemsProduct) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.PRODUCTS,
+                  let: { productId: '$_productId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $eq: ['$_id', '$$productId'],
+                        },
+                      },
+                    },
+                    new ModelWeightResponseFormat().productTableResponseFormat(
+                      1250,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'productDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$productDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
+          const isorderSalesItemsDesign = dto.screenType.includes(126);
+          if (isorderSalesItemsDesign) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.PRODUCTS,
+                  let: { designId: '$_designId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $eq: ['$_id', '$$designId'],
+                        },
+                      },
+                    },
+                    new ModelWeightResponseFormat().productTableResponseFormat(
+                      1260,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'designDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$designDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
+          const isorderSalesItemsSubCategory = dto.screenType.includes(127);
+          if (isorderSalesItemsSubCategory) {
+            const orderSaleSubCategoryPipeline = () => {
+              const pipeline = [];
+              pipeline.push(
+                {
+                  $match: {
+                    $expr: {
+                      $eq: ['$_id', '$$subCategoryId'],
+                    },
+                  },
+                },
+                new ModelWeightResponseFormat().subCategoryTableResponseFormat(
+                  1270,
+                  dto.responseFormat,
+                ),
+              );
+
+              const isorderSalesItemsSubCategoryCategory =
+                dto.screenType.includes(128);
+              if (isorderSalesItemsSubCategoryCategory) {
+                const orderSaleSubCategoryPipeline = () => {
+                  const pipeline = [];
+                  pipeline.push(
+                    {
+                      $match: {
+                        $expr: {
+                          $eq: ['$_id', '$$categoryId'],
+                        },
+                      },
+                    },
+                    new ModelWeightResponseFormat().categoryTableResponseFormat(
+                      1280,
+                      dto.responseFormat,
+                    ),
+                  );
+
+                  const isorderSalesItemsSubCategoryCategoryGroup =
+                    dto.screenType.includes(129);
+                  if (isorderSalesItemsSubCategoryCategoryGroup) {
+                    pipeline.push(
+                      {
+                        $lookup: {
+                          from: ModelNames.GROUP_MASTERS,
+                          let: { groupId: '$_groupId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: {
+                                  $eq: ['$_id', '$$groupId'],
+                                },
+                              },
+                            },
+                            new ModelWeightResponseFormat().groupMasterTableResponseFormat(
+                              1290,
+                              dto.responseFormat,
+                            ),
+                          ],
+                          as: 'groupDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$groupDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    );
+                  }
+
+                  return pipeline;
+                };
+
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.CATEGORIES,
+                      let: { categoryId: '$_categoryId' },
+                      pipeline: orderSaleSubCategoryPipeline(),
+                      as: 'categoryDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$categoryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                );
+              }
+
+              return pipeline;
+            };
+
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.SUB_CATEGORIES,
+                  let: { subCategoryId: '$_subCategoryId' },
+                  pipeline: orderSaleSubCategoryPipeline(),
+                  as: 'subCategoryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$subCategoryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
+          return pipeline;
+        };
+
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.ORDER_SALES_ITEMS,
+            let: { mainId: '$_id' },
+            pipeline: orderSaleItemsPipeline(),
+            as: 'orderItemsList',
+          },
+        });
+      }
+
+      var resultWorkets = [];
+      var resultProcessMasters = [];
+      var resultSubCategory = [];
+
+      if (dto.screenType.includes(107)) {
+        var resultDepartment = await this.departmentModel.find({
+          _code: 1003,
+          _status: 1,
+        });
+        if (resultDepartment.length == 0) {
+          throw new HttpException(
+            'Department not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        resultWorkets = await this.employeeModel.aggregate([
+          {
+            $match: {
+              _departmentId: new mongoose.Types.ObjectId(
+                resultDepartment[0]._id,
+              ),
+              _status: 1,
+            },
+          },
+
+          {
+            $project: {
+              _id: 1,
+              _name: 1,
+              _email: 1,
+              _mobile: 1,
+              _uid: 1,
+              _globalGalleryId: 1,
+              _processMasterId: 1,
+            },
+          },
+          {
+            $lookup: {
+              from: ModelNames.GLOBAL_GALLERIES,
+              let: { globalGalleryId: '$_globalGalleryId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+              ],
+              as: 'globalGalleryDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$globalGalleryDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { employeeId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_employeeId', '$$employeeId'] },
+                  },
+                },
+              ],
+              as: 'userDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$userDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        ]);
+      }
+      if (dto.screenType.includes(100)) {
+        resultProcessMasters = await this.processMasterModel.find({
+          _status: 1,
+        });
+      }
+
+      var result = await this.orderSaleMainModel
+        .aggregate(arrayAggregation)
+        .session(transactionSession);
+
+      var totalCount = 0;
+      if (dto.screenType.includes(0)) {
+        //Get total count
+        var limitIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$limit') === true,
+        );
+        if (limitIndexCount != -1) {
+          arrayAggregation.splice(limitIndexCount, 1);
+        }
+        var skipIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$skip') === true,
+        );
+        if (skipIndexCount != -1) {
+          arrayAggregation.splice(skipIndexCount, 1);
+        }
+        arrayAggregation.push({
+          $group: { _id: null, totalCount: { $sum: 1 } },
+        });
+
+        var resultTotalCount = await this.orderSaleMainModel
+          .aggregate(arrayAggregation)
+          .session(transactionSession);
+        if (resultTotalCount.length > 0) {
+          totalCount = resultTotalCount[0].totalCount;
+        }
+      }
+
+      if (dto.screenType.includes(500)) {
+        var pipeline = [];
+        pipeline.push({
+          $match: {
+            _status: 1,
+          },
+        });
+        pipeline.push(
+          new ModelWeightResponseFormat().subCategoryTableResponseFormat(
+            5000,
+            dto.responseFormat,
+          ),
+        );
+
+        resultSubCategory = await this.subCategoryModel.aggregate(pipeline);
+      }
+      var generalSetting = [];
+      if (dto.screenType.includes(501)) {
+        generalSetting = await this.generalsModel.aggregate([
+          {
+            $match: {
+              _code: 1022,
+            },
+          },
+        ]);
+      }
+
+      const responseJSON = {
+        message: 'success',
+        data: {
+          list: result,
+          totalCount: totalCount,
+          workers: resultWorkets,
           processMasters: resultProcessMasters,
           subCategory: resultSubCategory,
           generalSetting: generalSetting,

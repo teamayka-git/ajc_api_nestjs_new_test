@@ -10,7 +10,7 @@ export const OrderSaleSetProcessesSchema = new mongoose.Schema({
     ref: ModelNames.ORDER_SALES_MAIN,
     default: null,
   },
-  _userId: {
+  _userId: {  
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
     default: null,

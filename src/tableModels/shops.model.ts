@@ -20,7 +20,7 @@ export const ShopsSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.BRANCHES,
     default: null,
-  },
+  }, 
   _orderHeadId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,

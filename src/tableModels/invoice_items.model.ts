@@ -8,7 +8,7 @@ export const InvoiceItemsSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.INVOICES,
     default: null,
-  },
+  }, 
   _orderSaleItemId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.ORDER_SALES_ITEMS,
