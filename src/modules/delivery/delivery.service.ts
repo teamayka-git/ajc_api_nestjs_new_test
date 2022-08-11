@@ -339,7 +339,7 @@ export class DeliveryService {
         },
         { new: true, session: transactionSession },
       );
-
+console.log("delivery reject "+JSON.stringify(dto));
       if (dto.deliveryRejectedList.length != 0) {
         var arrayToDeliveryRejectedList = [];
         var arrayToDeliveryRejectedOrderIdsList = [];
