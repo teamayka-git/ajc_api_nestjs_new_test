@@ -139,7 +139,7 @@ export class DeliveryReturnService {
         arraySalesOrderHistories.push({
           _orderSaleId: eachItem,
           _userId: null,
-          _type: 21,
+          _type: 25,
           _shopId: null,
           _orderSaleItemId: null,
           _description: '',
