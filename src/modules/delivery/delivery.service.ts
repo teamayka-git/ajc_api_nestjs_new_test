@@ -374,7 +374,7 @@ console.log("delivery reject "+JSON.stringify(dto));
               _type: 24,
               _shopId: null,
               _orderSaleItemId: null,
-              _description: `Root cause: ${eachItem.rootCauseIdName}\n ${eachItem.rootCauseIdName}`,
+              _description: `Root cause: ${eachItem.rootCauseIdName}\n ${eachItem.rootCause}`,
               _createdUserId: _userId_,
               _createdAt: dateTime,
               _status: 1,
