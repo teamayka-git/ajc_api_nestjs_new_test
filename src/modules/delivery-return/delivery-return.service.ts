@@ -133,6 +133,29 @@ export class DeliveryReturnService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+
+      //check qr code scanned at right status
+      var getDeliveryItemsForCheck = await this.deliveryReturnModel.find({
+        _id: { $in: dto.deliveryReturnIds },
+        _workStatus: dto.fromWorkStatus,
+        _status: 1,
+      });
+      if (getDeliveryItemsForCheck.length != dto.deliveryReturnIds.length) {
+        throw new HttpException(
+          'Delivery return wrong status',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    
+
+
+
+
+
+
+
+
       var updateObj = {
         _updatedUserId: _userId_,
         _updatedAt: dateTime,

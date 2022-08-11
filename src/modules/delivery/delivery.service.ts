@@ -183,7 +183,7 @@ export class DeliveryService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      if (dto.fromWorkStatus != -1) {
+      //check qr code scanned at right status
         var getDeliveryItemsForCheck = await this.deliveryModel.find({
           _id: { $in: dto.deliveryIds },
           _workStatus: dto.fromWorkStatus,
@@ -195,7 +195,7 @@ export class DeliveryService {
             HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }
-      }
+      
       var updateObj = {
         _updatedUserId: _userId_,
         _updatedAt: dateTime,

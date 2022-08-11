@@ -96,6 +96,11 @@ export class DeliveryRejectWorkStatusChangeDto {
   toUser: string;
 
   
+  @IsNumber()
+  @ApiProperty({ description: descriptionWorkStatus })
+  fromWorkStatus: number;
+
+
 }
 
 
