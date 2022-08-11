@@ -201,7 +201,13 @@ export class DeliveryEmployeeAssignDto {
   @ApiProperty({})
   toUser: string;
 
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  deliveryReceivingOrderSaleIds: string[];
 
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  deliveryCompleteOrderSaleIds: string[];
 
   @IsArray()
   @ApiProperty({ type: [DeliveryRejectList] })

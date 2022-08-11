@@ -59,9 +59,6 @@ export class DeliveryService {
         shopIds.push(mapItem.shopId);
         deliveryTempIds.push(mapItem.deliveryTempId);
         orderSaleIds.push(...mapItem.orderIds);
-
-
-
       });
 
       var resultOldDelivery = await this.deliveryModel.find({
@@ -164,16 +161,6 @@ export class DeliveryService {
         { new: true, session: transactionSession },
       );
 
-
-
-
-
-
-
-
-
-
-
       await this.orderSaleMainModel.updateMany(
         {
           _id: { $in: orderSaleIds },
@@ -211,20 +198,6 @@ export class DeliveryService {
         },
       );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -256,28 +229,105 @@ export class DeliveryService {
     transactionSession.startTransaction();
     try {
       //check qr code scanned at right status
-        var getDeliveryItemsForCheck = await this.deliveryModel.find({
-          _id: { $in: dto.deliveryIds },
-          _workStatus: dto.fromWorkStatus,
-          _status: 1,
-        });
-        if (getDeliveryItemsForCheck.length != dto.deliveryIds.length) {
-          throw new HttpException(
-            'Delivery wrong status',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-      
+      var getDeliveryItemsForCheck = await this.deliveryModel.find({
+        _id: { $in: dto.deliveryIds },
+        _workStatus: dto.fromWorkStatus,
+        _status: 1,
+      });
+      if (getDeliveryItemsForCheck.length != dto.deliveryIds.length) {
+        throw new HttpException(
+          'Delivery wrong status',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
       var updateObj = {
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
         _workStatus: dto.workStatus,
       };
- 
+
       if (dto.workStatus == 1) {
         updateObj['_receivedUserId'] = dto.toUser;
+
+
+        await this.orderSaleMainModel.updateMany(
+          {
+            _id: { $in: dto.deliveryReceivingOrderSaleIds },
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _workStatus: 22,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+  
+        var arraySalesOrderHistories = [];
+  
+        dto.deliveryReceivingOrderSaleIds.forEach((eachItem) => {
+          arraySalesOrderHistories.push({
+            _orderSaleId: eachItem,
+            _userId: dto.toUser,
+            _type: 22,
+            _shopId: null,
+            _orderSaleItemId: null,
+            _description: '',
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _status: 1,
+          });
+        });
+  
+        await this.orderSaleMainHistoriesModel.insertMany(
+          arraySalesOrderHistories,
+          {
+            session: transactionSession,
+          },
+        );
+
+
       } else if (dto.workStatus == 1) {
         updateObj['_verifiedUserId'] = dto.toUser;
+
+        await this.orderSaleMainModel.updateMany(
+          {
+            _id: { $in: dto.deliveryCompleteOrderSaleIds },
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _workStatus: 23,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+  
+        var arraySalesOrderHistories = [];
+  
+        dto.deliveryCompleteOrderSaleIds.forEach((eachItem) => {
+          arraySalesOrderHistories.push({
+            _orderSaleId: eachItem,
+            _userId: null,
+            _type: 23,
+            _shopId: null,
+            _orderSaleItemId: null,
+            _description: '',
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _status: 1,
+          });
+        });
+  
+        await this.orderSaleMainHistoriesModel.insertMany(
+          arraySalesOrderHistories,
+          {
+            session: transactionSession,
+          },
+        );
       }
 
       var result = await this.deliveryModel.updateMany(
@@ -395,7 +445,7 @@ export class DeliveryService {
           $match: { _hubId: { $in: newSettingsId } },
         });
       }
-      
+
       if (dto.receivedUserIds.length > 0) {
         var newSettingsId = [];
         dto.receivedUserIds.map((mapItem) => {
@@ -405,7 +455,7 @@ export class DeliveryService {
           $match: { _receivedUserId: { $in: newSettingsId } },
         });
       }
-      
+
       if (dto.verifiedUserIds.length > 0) {
         var newSettingsId = [];
         dto.verifiedUserIds.map((mapItem) => {
