@@ -89,20 +89,12 @@ export class DeliveryTempService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var arrayDeliveryTemp = [];
-      var arrayorderSales = [];
-
-      dto.items.forEach((eachItem) => {
-        arrayDeliveryTemp.push(eachItem.deliveryTempId);
-        eachItem.orderIds.forEach((eachItemChild) => {
-          arrayorderSales.push(eachItemChild);
-        });
-      });
+ 
      
 
       var result = await this.deliveryTempModel.updateMany(
         {
-          _id: { $in: arrayDeliveryTemp },
+          _id: { $in: dto.deliveryTempIds },
         },
         {
           $set: {
@@ -117,7 +109,7 @@ export class DeliveryTempService {
 
       await this.orderSaleMainModel.updateMany(
         {
-          _id: { $in: arrayorderSales },
+          _id: { $in: dto.orderIds },
         },
         {
           $set: {
@@ -131,7 +123,7 @@ export class DeliveryTempService {
 
       var arraySalesOrderHistories = [];
 
-      arrayorderSales.forEach((eachItem) => {
+      dto.orderIds.forEach((eachItem) => {
         arraySalesOrderHistories.push({
           _orderSaleId: eachItem,
           _userId: dto.employeeId,

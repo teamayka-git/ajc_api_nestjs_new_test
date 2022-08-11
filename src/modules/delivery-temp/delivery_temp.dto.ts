@@ -127,25 +127,16 @@ export class DeliveryTempListDto {
 
 }
 
-class DeliveryTempEmployeeAssignList {
-  @IsString()
-  @ApiProperty({})
-  deliveryTempId: string;
+export class DeliveryTempEmployeeAssignDto {
+  
+ 
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  deliveryTempIds: string[];
 
   @IsArray()
   @ApiProperty({ type: [String] })
   orderIds: string[];
-
-}
-
-export class DeliveryTempEmployeeAssignDto {
-  
-  
-  @IsArray()
-  @ApiProperty({ type: [DeliveryTempEmployeeAssignList] })
-  @ValidateNested({ each: true })
-  @Type(() => DeliveryTempEmployeeAssignList)
-  items: DeliveryTempEmployeeAssignList[];
 
   @IsString()
   @ApiProperty({})
