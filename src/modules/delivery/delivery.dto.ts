@@ -39,6 +39,12 @@ class DeliveryCreateList {
   @IsString()
   @ApiProperty({})
   deliveryTempId: string;
+
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderIds: string[];
+
 }
 
 export class DeliveryCreateDto {

@@ -18,6 +18,8 @@ import { ModelWeight } from 'src/model_weight/model_weight';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 import { RootCause } from 'aws-sdk/clients/costexplorer';
 import { DeliveryRejectedPendings } from 'src/tableModels/delivery_rejected_pendings.model';
+import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
+import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 
 @Injectable()
 export class DeliveryService {
@@ -34,6 +36,10 @@ export class DeliveryService {
     private readonly deliveryRejectPendingModel: Model<DeliveryRejectedPendings>,
     @InjectModel(ModelNames.ROOT_CAUSES)
     private readonly rootCauseModel: Model<RootCause>,
+    @InjectModel(ModelNames.ORDER_SALES_MAIN)
+    private readonly orderSaleMainModel: Model<OrderSalesMain>,
+    @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
+    private readonly orderSaleMainHistoriesModel: Model<OrderSaleHistories>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
@@ -47,10 +53,15 @@ export class DeliveryService {
 
       var shopIds = [];
       var deliveryTempIds = [];
+      var orderSaleIds = [];
 
       dto.array.map((mapItem) => {
         shopIds.push(mapItem.shopId);
         deliveryTempIds.push(mapItem.deliveryTempId);
+        orderSaleIds.push(...mapItem.orderIds);
+
+
+
       });
 
       var resultOldDelivery = await this.deliveryModel.find({
@@ -152,6 +163,67 @@ export class DeliveryService {
         },
         { new: true, session: transactionSession },
       );
+
+
+
+
+
+
+
+
+
+
+
+      await this.orderSaleMainModel.updateMany(
+        {
+          _id: { $in: orderSaleIds },
+        },
+        {
+          $set: {
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+            _workStatus: 21,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      var arraySalesOrderHistories = [];
+
+      orderSaleIds.forEach((eachItem) => {
+        arraySalesOrderHistories.push({
+          _orderSaleId: eachItem,
+          _userId: null,
+          _type: 21,
+          _shopId: null,
+          _orderSaleItemId: null,
+          _description: '',
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _status: 1,
+        });
+      });
+
+      await this.orderSaleMainHistoriesModel.insertMany(
+        arraySalesOrderHistories,
+        {
+          session: transactionSession,
+        },
+      );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
