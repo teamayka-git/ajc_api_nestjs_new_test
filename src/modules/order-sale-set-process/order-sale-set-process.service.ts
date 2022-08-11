@@ -128,7 +128,7 @@ console.log("resultSubProcess  "+JSON.stringify(resultSubProcess));
           });
           arrayToSetProcessHistories.push({ 
             _orderSaleId: mapItem.orderSaleId,
-            _userId: _userId_,
+            _userId: null,
             _type: 0,
             _processId: mapItem1.processId,
             _orderSaleSetProcessId: null,
