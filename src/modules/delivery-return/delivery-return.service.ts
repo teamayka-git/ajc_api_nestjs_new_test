@@ -269,19 +269,14 @@ export class DeliveryReturnService {
 
       } else if (dto.workStatus == 2) {
         updateObj['_verifiedUserId'] = dto.toUser;
-        await this.orderSaleModel.updateMany(
-          {
-            _id: { $in: dto.deliveryCompleteOrderSaleIds },
-          },
-          {
-            $set: {
-              _updatedUserId: _userId_,
-              _updatedAt: dateTime,
-              _workStatus: 34,
-            },
-          },
-          { new: true, session: transactionSession },
-        );
+
+
+
+       
+
+
+
+
   
         var arraySalesOrderHistories = [];
   
@@ -298,6 +293,81 @@ export class DeliveryReturnService {
             _status: 1,
           });
         });
+
+
+
+
+        if(dto.deliveryCompleteCancelOrderSaleIds.length!=0){
+          await this.orderSaleModel.updateMany(
+            {
+              _id: { $in: dto.deliveryCompleteCancelOrderSaleIds },
+            },
+            {
+              $set: {
+                _updatedUserId: _userId_,
+                _updatedAt: dateTime,
+                _workStatus: 27,
+              },
+            },
+            { new: true, session: transactionSession },
+          );
+          dto.deliveryCompleteCancelOrderSaleIds.forEach((eachItem) => {
+            arraySalesOrderHistories.push({
+              _orderSaleId: eachItem,
+              _userId: null,
+              _type: 27,
+              _shopId: null,
+              _orderSaleItemId: null,
+              _description: '',
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _status: 1,
+            });
+          });
+        }
+
+        if(dto.deliveryCompleteReworkOrderSaleIds.length!=0){
+          await this.orderSaleModel.updateMany(
+            {
+              _id: { $in:dto.deliveryCompleteReworkOrderSaleIds },
+            },
+            {
+              $set: {
+                _isReWork:1,
+                _updatedUserId: _userId_,
+                _updatedAt: dateTime,
+                _workStatus: 0,
+              },
+            },
+            { new: true, session: transactionSession },
+          );
+          dto.deliveryCompleteReworkOrderSaleIds.forEach((eachItem) => {
+            arraySalesOrderHistories.push({
+              _orderSaleId: eachItem,
+              _userId: null,
+              _type: 0,
+              _shopId: null,
+              _orderSaleItemId: null,
+              _description: 'Rework',
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _status: 1,
+            });
+          });
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
   
         await this.orderSaleHistoriesModel.insertMany(
           arraySalesOrderHistories,
@@ -305,6 +375,20 @@ export class DeliveryReturnService {
             session: transactionSession,
           },
         );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       }
       var result = await this.deliveryReturnModel.updateMany(
         {
