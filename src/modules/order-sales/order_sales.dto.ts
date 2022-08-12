@@ -392,7 +392,11 @@ export class OrderSaleReportListDto {
 
   @IsNumber()
   @ApiProperty({})
-  netWeight: number;
+  netWeightStart: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  netWeightEnd: number;
 
   @IsArray()
   @ApiProperty({ type: [String] })

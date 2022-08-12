@@ -2097,7 +2097,8 @@ export class OrderSalesService {
       //product
 
       if (
-        dto.netWeight != -1 ||
+        dto.netWeightStart != -1 ||
+        dto.netWeightEnd != -1 ||
         dto.huids.length != 0 ||
         (dto.invoiceDateStartDate != -1 && dto.invoiceDateEndDate != -1) ||
         dto.invoiceUids.length != 0
@@ -2110,7 +2111,7 @@ export class OrderSalesService {
               $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
             },
           });
-          if (dto.netWeight != -1 || dto.huids.length != 0) {
+          if (dto.netWeightStart != -1 ||dto.netWeightEnd != -1 || dto.huids.length != 0) {
             const orderSaleItemsProductMongoCheckPipeline = () => {
               const pipeline = [];
               pipeline.push({
@@ -2120,13 +2121,22 @@ export class OrderSalesService {
                 },
               });
 
-              if (dto.netWeight != -1) {
+              if (dto.netWeightStart != -1) {
                 pipeline.push({
                   $match: {
-                    _netWeight: dto.netWeight,
+                    _netWeight: {$gte:dto.netWeightStart},
                   },
                 });
               }
+
+              if (dto.netWeightEnd != -1) {
+                pipeline.push({
+                  $match: {
+                    _netWeight: {$lte:dto.netWeightEnd},
+                  },
+                });
+              }
+              
               if (dto.huids.length != 0) {
                 pipeline.push({
                   $match: {
