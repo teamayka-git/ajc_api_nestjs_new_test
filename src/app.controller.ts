@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
-import { ChangeMyPasswordDto, ChatDocumentCreateDto, GetUserDto, MeDto } from './app.dto';
+import { ChangeMyPasswordDto, ChangeUserPasswordDto, ChatDocumentCreateDto, GetUserDto, MeDto } from './app.dto';
 import { AppService } from './app.service';
 import { Roles } from './Auth/roles.decorator';
 import { diskStorage } from 'multer';
@@ -73,6 +73,14 @@ export class AppController {
   changeMyPassword(@Body() dto: ChangeMyPasswordDto,@Request() req) {
     return this.appService.changeMyPassword(dto,req['_userId_']);
   }
+
+
+  @Post('changeUserPassword')
+  changeUserPassword(@Body() dto: ChangeUserPasswordDto) {
+    return this.appService.changeUserPassword(dto);
+  }
+
+
   @Post('test')
   test() {
     return this.appService.test();

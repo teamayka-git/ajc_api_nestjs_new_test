@@ -148,3 +148,16 @@ export class ChangeMyPasswordDto {
   newPassword: string;
 
 }
+
+export class ChangeUserPasswordDto {
+
+  @IsString()
+  @ApiProperty({})
+  userId: string;
+
+  
+  @IsString()
+  @ApiProperty({})
+  newPassword: string;
+
+}

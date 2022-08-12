@@ -69,6 +69,7 @@ export enum ModelNames {
   DELIVERY_REJECTED_PENDINGS = 'delivery_rejected_pendings',
   DELIVERY_RETURN = 'delivery_returns',
   DELIVERY_RETURN_ITEMS = 'delivery_return_items',
+  OTP = 'otps',
 
   CHAT_PERSONAL_CHAT_MESSAGES = 'chat_personal_chat_messages',
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',

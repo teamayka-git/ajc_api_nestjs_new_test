@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
-import { ChangeMyPasswordDto, GetUserDto, MeDto } from './app.dto';
+import { ChangeMyPasswordDto, ChangeUserPasswordDto, GetUserDto, MeDto } from './app.dto';
 import { CommonNames } from './common/common_names';
 import { ModelNames } from './common/model_names';
 import { GlobalConfig } from './config/global_config';
@@ -344,6 +344,59 @@ export class AppService {
       await this.userModel.findOneAndUpdate(
         {
           _id: _userId_,
+        },
+        {
+          $set: {
+            _password: newPasswordEncrypted,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      const responseJSON = { message: 'success', data: {} };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+
+  
+  async changeUserPassword(dto: ChangeUserPasswordDto) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      
+      
+
+      var newPasswordEncrypted = await crypto
+        .pbkdf2Sync(
+          dto.newPassword,
+          process.env.CRYPTO_ENCRYPTION_SALT,
+          1000,
+          64,
+          `sha512`,
+        )
+        .toString(`hex`);
+      await this.userModel.findOneAndUpdate(
+        {
+          _id: dto.userId,
         },
         {
           $set: {

@@ -80,6 +80,7 @@ import { LogisticsPartnersModule } from './modules/logistics-partners/logistics-
 import { TestChargeModule } from './modules/test-charge/test-charge.module';
 import { DeliveryRejectedPendingModule } from './modules/delivery-rejected-pending/delivery-rejected-pending.module';
 import { DeliveryReturnModule } from './modules/delivery-return/delivery-return.module';
+import { OtpModule } from './modules/otp/otp.module';
 
 @Module({
   imports: [
@@ -171,6 +172,7 @@ import { DeliveryReturnModule } from './modules/delivery-return/delivery-return.
     TestChargeModule,
     DeliveryRejectedPendingModule,
     DeliveryReturnModule,
+    OtpModule,
 
     // SalesReturnRequestStatusesModule,
   ],
@@ -198,6 +200,8 @@ export class AppModule {
         process.env.GLOBAL_PREFIX_FOR_API + '/shops/login',
         process.env.GLOBAL_PREFIX_FOR_API + '/branch',
         process.env.GLOBAL_PREFIX_FOR_API + '/generals/list',
+        process.env.GLOBAL_PREFIX_FOR_API + '/otp/createOtp',
+        process.env.GLOBAL_PREFIX_FOR_API + '/changeUserPassword',
       )
       .forRoutes('*');
   }
