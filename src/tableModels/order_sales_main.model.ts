@@ -152,6 +152,7 @@ _workStatus:{
   32 - hub transfer delivered
   33 - hub transfer accepted(invoice pending)
   34 - order declined inscan
+  35 - Order completed
   
   
 }

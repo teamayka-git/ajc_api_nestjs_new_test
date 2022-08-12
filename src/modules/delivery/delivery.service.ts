@@ -322,6 +322,40 @@ export class DeliveryService {
           });
         });
   
+       
+
+        if(dto.deliveryCompleteAcceptedOrderSaleIds.length!=0){
+          await this.orderSaleMainModel.updateMany(
+            {
+              _id: { $in:dto.deliveryCompleteAcceptedOrderSaleIds },
+            },
+            {
+              $set: {
+                _updatedUserId: _userId_,
+                _updatedAt: dateTime,
+                _workStatus: 35,
+              },
+            },
+            { new: true, session: transactionSession },
+          );
+    
+    
+          dto.deliveryCompleteAcceptedOrderSaleIds.forEach((eachItem) => {
+            arraySalesOrderHistories.push({
+              _orderSaleId: eachItem,
+              _userId: null,
+              _type: 35,
+              _shopId: null,
+              _orderSaleItemId: null,
+              _description: '',
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _status: 1,
+            });
+          });
+    
+         
+        }
         await this.orderSaleMainHistoriesModel.insertMany(
           arraySalesOrderHistories,
           {
