@@ -23,6 +23,7 @@ import { GlobalConfig } from 'src/config/global_config';
 import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 import { GoldRateTimelines } from 'src/tableModels/gold_rate_timelines.model';
 import { Company } from 'src/tableModels/companies.model';
+import { SmsUtils } from 'src/utils/smsUtils';
 const crypto = require('crypto');
 
 @Injectable()
@@ -181,79 +182,79 @@ export class EmployeesService {
         .sort({ _id: -1 })
         .limit(1);
 
+      var resultCompany = {};
+      var resultCompanyList = await this.companyModel.aggregate([
+        { $match: { _status: 1 } },
 
-        var resultCompany = {};
-        var resultCompanyList = await this.companyModel.aggregate([
-          { $match: { _status: 1 } },
+        {
+          $lookup: {
+            from: ModelNames.CITIES,
+            let: { cityId: '$_cityId' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$_id', '$$cityId'] } } },
 
-          {
-            $lookup: {
-              from: ModelNames.CITIES,
-              let: { cityId: '$_cityId' },
-              pipeline: [
-                { $match: { $expr: { $eq: ['$_id', '$$cityId'] } } },
-                
-
-                {
-                  $lookup: {
-                    from: ModelNames.DISTRICTS,
-                    let: { districtId: '$_districtsId' },
-                    pipeline: [
-                      { $match: { $expr: { $eq: ['$_id', '$$districtId'] } } },
-                      {
-                        $lookup: {
-                          from: ModelNames.STATES,
-                          let: { stateId: '$_statesId' },
-                          pipeline: [
-                            {
-                              $match: { $expr: { $eq: ['$_id', '$$stateId'] } },
-                            },
-                          ],
-                          as: 'stateDetails',
-                        },
+              {
+                $lookup: {
+                  from: ModelNames.DISTRICTS,
+                  let: { districtId: '$_districtsId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$districtId'] } } },
+                    {
+                      $lookup: {
+                        from: ModelNames.STATES,
+                        let: { stateId: '$_statesId' },
+                        pipeline: [
+                          {
+                            $match: { $expr: { $eq: ['$_id', '$$stateId'] } },
+                          },
+                        ],
+                        as: 'stateDetails',
                       },
-                      {
-                        $unwind: {
-                          path: '$stateDetails',
-                          preserveNullAndEmptyArrays: true,
-                        },
+                    },
+                    {
+                      $unwind: {
+                        path: '$stateDetails',
+                        preserveNullAndEmptyArrays: true,
                       },
-                    ],
-                    as: 'districtDetails',
-                  },
+                    },
+                  ],
+                  as: 'districtDetails',
                 },
-                {
-                  $unwind: {
-                    path: '$districtDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
+              },
+              {
+                $unwind: {
+                  path: '$districtDetails',
+                  preserveNullAndEmptyArrays: true,
                 },
-              ],
-              as: 'cityDetails',
-            },
+              },
+            ],
+            as: 'cityDetails',
           },
-          {
-            $unwind: {
-              path: '$cityDetails',
-              preserveNullAndEmptyArrays: true,
-            },
+        },
+        {
+          $unwind: {
+            path: '$cityDetails',
+            preserveNullAndEmptyArrays: true,
           },
-        ]);
-        if (resultCompanyList.length == 0) {
-          throw new HttpException(
-            'Company not found',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
+        },
+      ]);
+      if (resultCompanyList.length == 0) {
+        throw new HttpException(
+          'Company not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
 
-        resultCompany = resultCompanyList[0];
-      
-        
+      resultCompany = resultCompanyList[0];
 
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
 
-      return { userDetails: resultUser[0], goldTimeline: listGoldTimelines,resultCompany:resultCompany };
+      return {
+        userDetails: resultUser[0],
+        goldTimeline: listGoldTimelines,
+        resultCompany: resultCompany,
+      };
     } catch (error) {
       await transactionSession.abortTransaction();
       await transactionSession.endSession();
@@ -351,8 +352,8 @@ export class EmployeesService {
 
       var password = '';
       if (dto.password == '') {
-        // password = new StringUtils().makeid(6);
-        password = '123456';
+        password = new StringUtils().makeid(6);
+        // password = '123456';
       } else {
         password = dto.password;
       }
@@ -402,6 +403,13 @@ export class EmployeesService {
         },
         { upsert: true, new: true, session: transactionSession },
       );
+
+      if (resultUserUpdated._password == encryptedPassword) {
+        new SmsUtils().sendSms(
+          dto.mobile,
+          password + ' is your AJC employee password',
+        );
+      }
 
       const newsettingsModel = new this.employeeModel({
         _id: employeeId,
