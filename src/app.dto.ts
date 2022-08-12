@@ -133,3 +133,18 @@ export class ChatDocumentCreateDto {
   @ApiProperty({ description: descriptionFileOriginalName })
   fileOriginalName: string;
 }
+
+
+
+export class ChangeMyPasswordDto {
+
+  @IsString()
+  @ApiProperty({})
+  oldPassword: string;
+
+  
+  @IsString()
+  @ApiProperty({})
+  newPassword: string;
+
+}

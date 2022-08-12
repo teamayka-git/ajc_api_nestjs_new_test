@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
-import { GetUserDto, MeDto } from './app.dto';
+import { ChangeMyPasswordDto, GetUserDto, MeDto } from './app.dto';
 import { CommonNames } from './common/common_names';
 import { ModelNames } from './common/model_names';
 import { GlobalConfig } from './config/global_config';
@@ -21,8 +21,10 @@ import { States } from './tableModels/states.model';
 import { User } from './tableModels/user.model';
 import { IndexUtils } from './utils/IndexUtils';
 
-
-const twilioClient=require("twilio")("AC9bf34a6b64db1480be17402f908aded8","e142df6719a87d15b748fcb5dd3f99c9")
+const twilioClient = require('twilio')(
+  'AC9bf34a6b64db1480be17402f908aded8',
+  'e142df6719a87d15b748fcb5dd3f99c9',
+);
 
 const crypto = require('crypto');
 
@@ -71,26 +73,21 @@ export class AppService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-    
-
       // var asdf=await twilioClient.verify.services("VAde1a2cec914055959a733ff1739d201f").verifications.create({
       //   to:"+919895680203",
       //   channel:"sms",
-        
+
       // })
 
-
-      var asdf=await twilioClient.messages.create({
-        body:"BODY",
-        to:"+918907341069",
-        from:"+18625003273"
+      var asdf = await twilioClient.messages.create({
+        body: 'BODY',
+        to: '+918907341069',
+        from: '+18625003273',
       });
-
-
 
       const responseJSON = {
         message: 'success',
-        data: {asdf:asdf  },
+        data: { asdf: asdf },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -128,8 +125,6 @@ export class AppService {
             pipeline: [
               { $match: { $expr: { $eq: ['$_id', '$$employeeId'] } } },
 
-
-
               {
                 $lookup: {
                   from: ModelNames.DEPARTMENT,
@@ -146,8 +141,6 @@ export class AppService {
                   preserveNullAndEmptyArrays: true,
                 },
               },
-
-
             ],
             as: 'userDetails',
           },
@@ -158,7 +151,7 @@ export class AppService {
             preserveNullAndEmptyArrays: true,
           },
         },
-         
+
         // {
         //   $lookup: {
         //     from: ModelNames.AGENTS,
@@ -205,7 +198,7 @@ export class AppService {
             preserveNullAndEmptyArrays: true,
           },
         },
-        { 
+        {
           $lookup: {
             from: ModelNames.USER_ATTENDANCES,
             let: { userId: '$_id' },
@@ -236,74 +229,70 @@ export class AppService {
       .sort({ _id: -1 })
       .limit(1);
 
+    var resultCompany = {};
+    var resultCompanyList = await this.companyModel.aggregate([
+      { $match: { _status: 1 } },
 
-      var resultCompany = {};
-        var resultCompanyList = await this.companyModel.aggregate([
-          { $match: { _status: 1 } },
+      {
+        $lookup: {
+          from: ModelNames.CITIES,
+          let: { cityId: '$_cityId' },
+          pipeline: [
+            { $match: { $expr: { $eq: ['$_id', '$$cityId'] } } },
 
-          {
-            $lookup: {
-              from: ModelNames.CITIES,
-              let: { cityId: '$_cityId' },
-              pipeline: [
-                { $match: { $expr: { $eq: ['$_id', '$$cityId'] } } },
-                
-
-                {
-                  $lookup: {
-                    from: ModelNames.DISTRICTS,
-                    let: { districtId: '$_districtsId' },
-                    pipeline: [
-                      { $match: { $expr: { $eq: ['$_id', '$$districtId'] } } },
-                      {
-                        $lookup: {
-                          from: ModelNames.STATES,
-                          let: { stateId: '$_statesId' },
-                          pipeline: [
-                            {
-                              $match: { $expr: { $eq: ['$_id', '$$stateId'] } },
-                            },
-                          ],
-                          as: 'stateDetails',
+            {
+              $lookup: {
+                from: ModelNames.DISTRICTS,
+                let: { districtId: '$_districtsId' },
+                pipeline: [
+                  { $match: { $expr: { $eq: ['$_id', '$$districtId'] } } },
+                  {
+                    $lookup: {
+                      from: ModelNames.STATES,
+                      let: { stateId: '$_statesId' },
+                      pipeline: [
+                        {
+                          $match: { $expr: { $eq: ['$_id', '$$stateId'] } },
                         },
-                      },
-                      {
-                        $unwind: {
-                          path: '$stateDetails',
-                          preserveNullAndEmptyArrays: true,
-                        },
-                      },
-                    ],
-                    as: 'districtDetails',
+                      ],
+                      as: 'stateDetails',
+                    },
                   },
-                },
-                {
-                  $unwind: {
-                    path: '$districtDetails',
-                    preserveNullAndEmptyArrays: true,
+                  {
+                    $unwind: {
+                      path: '$stateDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
                   },
-                },
-              ],
-              as: 'cityDetails',
+                ],
+                as: 'districtDetails',
+              },
             },
-          },
-          {
-            $unwind: {
-              path: '$cityDetails',
-              preserveNullAndEmptyArrays: true,
+            {
+              $unwind: {
+                path: '$districtDetails',
+                preserveNullAndEmptyArrays: true,
+              },
             },
-          },
-        ]);
-        if (resultCompanyList.length == 0) {
-          throw new HttpException(
-            'Company not found',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
+          ],
+          as: 'cityDetails',
+        },
+      },
+      {
+        $unwind: {
+          path: '$cityDetails',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+    ]);
+    if (resultCompanyList.length == 0) {
+      throw new HttpException(
+        'Company not found',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
 
-        resultCompany = resultCompanyList[0];
-      
-
+    resultCompany = resultCompanyList[0];
 
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
@@ -317,6 +306,75 @@ export class AppService {
         company: resultCompany,
       },
     };
+  }
+
+  async changeMyPassword(dto: ChangeMyPasswordDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var oldPasswordEncrypted = await crypto
+        .pbkdf2Sync(
+          dto.oldPassword,
+          process.env.CRYPTO_ENCRYPTION_SALT,
+          1000,
+          64,
+          `sha512`,
+        )
+        .toString(`hex`);
+
+      var oldUser = await this.userModel.find({
+        _id: _userId_,
+        _password: oldPasswordEncrypted,
+      });
+      if (oldUser.length == 0) {
+        throw new HttpException(
+          'Current pasword incorrect',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      var newPasswordEncrypted = await crypto
+        .pbkdf2Sync(
+          dto.newPassword,
+          process.env.CRYPTO_ENCRYPTION_SALT,
+          1000,
+          64,
+          `sha512`,
+        )
+        .toString(`hex`);
+      await this.userModel.findOneAndUpdate(
+        {
+          _id: _userId_,
+        },
+        {
+          $set: {
+            _password: newPasswordEncrypted,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      const responseJSON = { message: 'success', data: {} };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
   }
 
   async getUser(dto: GetUserDto) {
@@ -1136,12 +1194,13 @@ export class AppService {
 
       await this.companyModel.findOneAndUpdate(
         { _email: 'ajc@gmail.com' },
-        { 
+        {
           $setOnInsert: {
             _name: 'AJC JEWEL MANUFACTURERS PVT LTD',
             _place: 'MALAPPURAM',
             _phone: '+91 9961005004',
-            _address: '38/227-Z, INKEL GREENS EDU CITY, KARATHODE - KONAMPPARA ROAD, PANAKKAD VILLAGE , MALAPPURAM DT 676519',
+            _address:
+              '38/227-Z, INKEL GREENS EDU CITY, KARATHODE - KONAMPPARA ROAD, PANAKKAD VILLAGE , MALAPPURAM DT 676519',
             _pan: 'AAJCP7687C',
             _cin: 'U93090KL2018PTC052621',
             _gst: '32AAJCP7687C128',
@@ -1537,7 +1596,6 @@ export class AppService {
         { upsert: true, new: true, session: transactionSession },
       );
 
-      
       await this.generalsModel.findOneAndUpdate(
         { _code: 1018 },
         {
