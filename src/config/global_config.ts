@@ -21,8 +21,13 @@ export const GlobalConfig = () => ({
     },
   }),
   
+  TWILIO_SMS_GATEWAY_ACCOUNT_SID: String(process.env.TWILIO_SMS_GATEWAY_ACCOUNT_SID),
+  TWILIO_SMS_GATEWAY_AUTH_TOKEN: String(process.env.TWILIO_SMS_GATEWAY_AUTH_TOKEN),
+  TWILIO_SMS_GATEWAY_SERVICE_SID: String(process.env.TWILIO_SMS_GATEWAY_SERVICE_SID),
+
   RESPONSE_RESTRICT_DEFAULT_COUNT:20000,
   RESPONSE_RESTRICT_RESPONSE:"Response restrict count exceeded, ",
+  
   SUPER_ADMIN_PERMISSIONS:[
     "4!A#4?2",
     "4!B#4",

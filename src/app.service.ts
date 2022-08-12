@@ -20,11 +20,12 @@ import { Purity } from './tableModels/purity.model';
 import { States } from './tableModels/states.model';
 import { User } from './tableModels/user.model';
 import { IndexUtils } from './utils/IndexUtils';
+import { SmsUtils } from './utils/smsUtils';
 
-const twilioClient = require('twilio')(
-  'AC9bf34a6b64db1480be17402f908aded8',
-  'e142df6719a87d15b748fcb5dd3f99c9',
-);
+// const twilioClient = require('twilio')(
+//   'AC9bf34a6b64db1480be17402f908aded8',
+//   'e142df6719a87d15b748fcb5dd3f99c9',
+// );
 
 const crypto = require('crypto');
 
@@ -73,21 +74,18 @@ export class AppService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      // var asdf=await twilioClient.verify.services("VAde1a2cec914055959a733ff1739d201f").verifications.create({
-      //   to:"+919895680203",
-      //   channel:"sms",
+      
+      // var asdf = await twilioClient.messages.create({
+      //   body: 'BODYaaabbb',
+      //   messagingServiceSid: 'MG2d9b32cf7d39a5ceb380fdbb25a80eea',  
+      //   to: '+919895680203',
+      // });
 
-      // })
-
-      var asdf = await twilioClient.messages.create({
-        body: 'BODY',
-        to: '+918907341069',
-        from: '+18625003273',
-      });
+      new SmsUtils().sendSms("9895680203","AAAAAA");
 
       const responseJSON = {
         message: 'success',
-        data: { asdf: asdf },
+        data: {  },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
