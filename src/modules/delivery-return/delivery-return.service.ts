@@ -16,10 +16,13 @@ import { pipe } from 'rxjs';
 import { Counters } from 'src/tableModels/counters.model';
 import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
+import { OrderSaleSetProcesses } from 'src/tableModels/order_sale_set_processes.model';
 
 @Injectable()
 export class DeliveryReturnService {
   constructor(
+    @InjectModel(ModelNames.ORDER_SALE_SET_PROCESSES)
+    private readonly orderSaleSetProcessModel: mongoose.Model<OrderSaleSetProcesses>,
     @InjectModel(ModelNames.ORDER_SALES_MAIN)
     private readonly orderSaleModel: mongoose.Model<OrderSalesMain>,
     @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
@@ -327,6 +330,21 @@ export class DeliveryReturnService {
         }
 
         if(dto.deliveryCompleteReworkOrderSaleIds.length!=0){
+
+          await this.orderSaleSetProcessModel.updateMany(
+            {
+              _orderSaleId: { $in:dto.deliveryCompleteReworkOrderSaleIds },
+            },
+            {
+              $set: {
+                _updatedUserId: _userId_,
+                _updatedAt: dateTime,
+                _status: 0,
+              },
+            },
+            { new: true, session: transactionSession },
+          );
+
           await this.orderSaleModel.updateMany(
             {
               _id: { $in:dto.deliveryCompleteReworkOrderSaleIds },

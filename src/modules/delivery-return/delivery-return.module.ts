@@ -9,6 +9,7 @@ import { DeliveryRejectedPendingsSchema } from 'src/tableModels/delivery_rejecte
 import { CountersSchema } from 'src/tableModels/counters.model';
 import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
 import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.model';
+import { OrderSaleSetProcessesSchema } from 'src/tableModels/order_sale_set_processes.model';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.m
       { name: ModelNames.COUNTERS, schema:CountersSchema },
       { name: ModelNames.ORDER_SALES_MAIN, schema:OrderSalesMainSchema },
       { name: ModelNames.ORDER_SALE_HISTORIES, schema:OrderSaleHistoriesSchema },
+      { name: ModelNames.ORDER_SALE_SET_PROCESSES, schema:OrderSaleSetProcessesSchema },
     ]),
   ],
   controllers: [DeliveryReturnController],
