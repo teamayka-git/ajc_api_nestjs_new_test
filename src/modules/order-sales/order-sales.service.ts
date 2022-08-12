@@ -789,6 +789,45 @@ export class OrderSalesService {
         });
       }
 
+      if (dto.relationshipManagerIds.length > 0) {
+        const shopMongoCheckPipeline = () => {
+          const pipeline = [];
+          pipeline.push({
+            $match: {
+              $expr: { $eq: ['$_id', '$$shopId'] },
+            },
+          });
+
+          if (dto.relationshipManagerIds.length > 0) {
+            var newSettingsId = [];
+            dto.relationshipManagerIds.map((mapItem) => {
+              newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+            });
+            pipeline.push({
+              $match: { _relationshipManagerId: { $in: newSettingsId } },
+            });
+          }
+
+          pipeline.push({ $project: { _id: 1 } });
+
+          return pipeline;
+        };
+
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.SHOPS,
+              let: { shopId: '$_shopId' },
+              pipeline: shopMongoCheckPipeline(),
+              as: 'mongoCheckShopList',
+            },
+          },
+          {
+            $match: { mongoCheckShopList: { $ne: [] } },
+          },
+        );
+      }
+
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
       switch (dto.sortType) {
@@ -2057,7 +2096,12 @@ export class OrderSalesService {
 
       //product
 
-      if (dto.netWeight != -1 || dto.huids.length != 0 || (dto.invoiceDateStartDate != -1 && dto.invoiceDateEndDate!=-1)|| dto.invoiceUids.length!=0) {
+      if (
+        dto.netWeight != -1 ||
+        dto.huids.length != 0 ||
+        (dto.invoiceDateStartDate != -1 && dto.invoiceDateEndDate != -1) ||
+        dto.invoiceUids.length != 0
+      ) {
         const orderSaleItemsMongoCheckPipeline = () => {
           const pipeline = [];
           pipeline.push({
@@ -2066,153 +2110,130 @@ export class OrderSalesService {
               $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
             },
           });
-if(dto.netWeight != -1 || dto.huids.length != 0){
-          const orderSaleItemsProductMongoCheckPipeline = () => {
-            const pipeline = [];
-            pipeline.push({
-              $match: {
-                _status: 1,
-                $expr: { $eq: ['$_orderItemId', '$$orderSaleItemId'] },
-              },
-            });
-
-            if (dto.netWeight != -1) {
+          if (dto.netWeight != -1 || dto.huids.length != 0) {
+            const orderSaleItemsProductMongoCheckPipeline = () => {
+              const pipeline = [];
               pipeline.push({
                 $match: {
-                  _netWeight: dto.netWeight,
+                  _status: 1,
+                  $expr: { $eq: ['$_orderItemId', '$$orderSaleItemId'] },
                 },
               });
-            }
-            if (dto.huids.length != 0) {
-              pipeline.push({
-                $match: {
-                  _huId: { $in: dto.huids },
+
+              if (dto.netWeight != -1) {
+                pipeline.push({
+                  $match: {
+                    _netWeight: dto.netWeight,
+                  },
+                });
+              }
+              if (dto.huids.length != 0) {
+                pipeline.push({
+                  $match: {
+                    _huId: { $in: dto.huids },
+                  },
+                });
+              }
+
+              pipeline.push({ $project: { _id: 1 } });
+              return pipeline;
+            };
+
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.PRODUCTS,
+                  let: { orderSaleItemId: '$_id' },
+                  pipeline: orderSaleItemsProductMongoCheckPipeline(),
+                  as: 'mongoCheckProductlist',
                 },
-              });
-            }
-
-            pipeline.push({ $project: { _id: 1 } });
-            return pipeline;
-          };
-
-          pipeline.push(
-            {
-              $lookup: {
-                from: ModelNames.PRODUCTS,
-                let: { orderSaleItemId: '$_id' },
-                pipeline: orderSaleItemsProductMongoCheckPipeline(),
-                as: 'mongoCheckProductlist',
               },
-            },
-            {
-              $match: { mongoCheckProductlist: { $ne: [] } },
-            },
-          );
+              {
+                $match: { mongoCheckProductlist: { $ne: [] } },
+              },
+            );
           }
 
+          if (
+            (dto.invoiceDateStartDate != -1 && dto.invoiceDateEndDate != -1) ||
+            dto.invoiceUids.length != 0
+          ) {
+            const invoiceItemsMongoCheckPipeline = () => {
+              const pipeline = [];
+              pipeline.push({
+                $match: {
+                  $expr: { $eq: ['$_orderSaleItemId', '$$orderSaleItemId'] },
+                },
+              });
 
-if( (dto.invoiceDateStartDate != -1 && dto.invoiceDateEndDate!=-1)|| dto.invoiceUids.length!=0){
-  const invoiceItemsMongoCheckPipeline = () => {
-    const pipeline = [];
-    pipeline.push( {
-      $match: {
-        $expr: { $eq: ['$_orderSaleItemId', '$$orderSaleItemId'] },
-      },
-    },
-    );
+              const invoiceItemsInvoiceDetailsMongoCheckPipeline = () => {
+                const pipeline = [];
+                pipeline.push({
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$invoiceId'] },
+                  },
+                });
 
+                if (
+                  dto.invoiceDateStartDate != -1 &&
+                  dto.invoiceDateEndDate != -1
+                ) {
+                  pipeline.push({
+                    $match: {
+                      _createdAt: {
+                        $gt: dto.invoiceDateStartDate,
+                        $lt: dto.invoiceDateEndDate,
+                      },
+                    },
+                  });
+                }
+                if (dto.invoiceUids.length != 0) {
+                  pipeline.push({
+                    $match: {
+                      _uid: { $in: dto.invoiceUids },
+                    },
+                  });
+                }
 
+                pipeline.push({ $project: { _id: 1 } });
+                return pipeline;
+              };
 
+              pipeline.push(
+                {
+                  $lookup: {
+                    from: ModelNames.INVOICES,
+                    let: { invoiceId: '$_invoiceId' },
+                    pipeline: invoiceItemsInvoiceDetailsMongoCheckPipeline(),
+                    as: 'invoiceDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$invoiceDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              );
 
+              pipeline.push({ $project: { _id: 1 } });
+              return pipeline;
+            };
 
-
-    const invoiceItemsInvoiceDetailsMongoCheckPipeline = () => {
-      const pipeline = [];
-      pipeline.push( {
-        $match: {
-          $expr: { $eq: ['$_id', '$$invoiceId'] },
-        },
-      },);
-
-if((dto.invoiceDateStartDate != -1 && dto.invoiceDateEndDate!=-1)){
-
-  pipeline.push( {
-    $match: {
-      _createdAt:{
-        $gt:dto.invoiceDateStartDate,$lt:dto.invoiceDateEndDate
-      }
-    },
-  },);
-
-}
-if(dto.invoiceUids.length != 0){
-  pipeline.push( {
-    $match: {
-      _uid:{$in:dto.invoiceUids}
-    },
-  },);
-}
-
-
-
-
-
-
-
-      
-    pipeline.push({ $project: { _id: 1 } });
-      return pipeline;
-    }
-
-
-    pipeline.push( {
-      $lookup: {
-        from: ModelNames.INVOICES,
-        let: { invoiceId: '$_invoiceId' },
-        pipeline:invoiceItemsInvoiceDetailsMongoCheckPipeline() ,
-        as: 'invoiceDetails',
-      },
-    },
-    {
-      $unwind: {
-        path: '$invoiceDetails',
-        preserveNullAndEmptyArrays: true,
-      },
-    },);
-
-
-
-
-
-
-
-
-
-    pipeline.push({ $project: { _id: 1 } });
-    return pipeline;
-  }
-   
-  pipeline.push( {
-    $lookup: {
-      from: ModelNames.INVOICE_ITEMS,
-      let: { orderSaleItemId: '$_id' },
-      pipeline:invoiceItemsMongoCheckPipeline() ,
-      as: 'mongoCheckInvoiceList',
-    },
-  },{
-    $match: { mongoCheckInvoiceList: { $ne: [] } },
-  },);
-
-
-}
-
-
-
-
-
-
-
-
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.INVOICE_ITEMS,
+                  let: { orderSaleItemId: '$_id' },
+                  pipeline: invoiceItemsMongoCheckPipeline(),
+                  as: 'mongoCheckInvoiceList',
+                },
+              },
+              {
+                $match: { mongoCheckInvoiceList: { $ne: [] } },
+              },
+            );
+          }
 
           pipeline.push({ $project: { _id: 1 } });
           return pipeline;
@@ -2233,140 +2254,92 @@ if(dto.invoiceUids.length != 0){
         );
       }
 
-      
+      if (dto.arrayProcessMasterWithWorkStatus.length != 0) {
+        var mongoMatchArray = [];
+        dto.arrayProcessMasterWithWorkStatus.forEach((eachItem) => {
+          mongoMatchArray.push({
+            _processId: new mongoose.Types.ObjectId(eachItem.processMasterId),
+            _orderStatus: { $in: eachItem.setProcessOrderkStatus },
+          });
+        });
 
-if(dto.arrayProcessMasterWithWorkStatus.length != 0){
+        const orderSaleSetProcessPipeline = () => {
+          const pipeline = [];
+          pipeline.push({
+            $match: {
+              _status: 1,
+              $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+            },
+          });
 
-  var mongoMatchArray=[];
-  dto.arrayProcessMasterWithWorkStatus.forEach((eachItem=>{
-    mongoMatchArray.push({
-      _processId:new mongoose.Types.ObjectId(eachItem.processMasterId),_orderStatus:{$in:eachItem.setProcessOrderkStatus}
-    });
-  }));
+          pipeline.push({
+            $match: {
+              $or: mongoMatchArray,
+            },
+          });
 
+          pipeline.push({ $project: { _id: 1 } });
+          return pipeline;
+        };
 
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALE_SET_PROCESSES,
+              let: { orderSaleId: '$_id' },
+              pipeline: orderSaleSetProcessPipeline(),
+              as: 'mongoCheckProcessMasterWithWorkStatus',
+            },
+          },
+          {
+            $match: { mongoCheckProcessMasterWithWorkStatus: { $ne: [] } },
+          },
+        );
+      }
 
+      if (dto.arrayWorkerWithWorkStatus.length != 0) {
+        var mongoMatchArray = [];
+        dto.arrayWorkerWithWorkStatus.forEach((eachItem) => {
+          mongoMatchArray.push({
+            _userId: new mongoose.Types.ObjectId(eachItem.workerId),
+            _orderStatus: { $in: eachItem.setProcessOrderkStatus },
+          });
+        });
 
+        const orderSaleSetProcessPipeline = () => {
+          const pipeline = [];
+          pipeline.push({
+            $match: {
+              _status: 1,
+              $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+            },
+          });
 
-  const orderSaleSetProcessPipeline = () => {
-    const pipeline = [];
-    pipeline.push( {
-      $match: {
-        _status:1,
-        $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
-      },
-    },
-    );
+          pipeline.push({
+            $match: {
+              $or: mongoMatchArray,
+            },
+          });
 
-    pipeline.push( {
-      $match: {
-        $or: mongoMatchArray,
-        
+          pipeline.push({ $project: { _id: 1 } });
+          return pipeline;
+        };
 
-      },
-    },
-    );
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALE_SET_PROCESSES,
+              let: { orderSaleId: '$_id' },
+              pipeline: orderSaleSetProcessPipeline(),
+              as: 'mongoCheckWorkerWithWorkStatus',
+            },
+          },
+          {
+            $match: { mongoCheckWorkerWithWorkStatus: { $ne: [] } },
+          },
+        );
+      }
 
-
-
-
-
-
-    pipeline.push({ $project: { _id: 1 } });
-    return pipeline;
-  }
-
-
-
-arrayAggregation.push( {
-  $lookup: {
-    from: ModelNames.ORDER_SALE_SET_PROCESSES,
-    let: { orderSaleId: '$_id' },
-    pipeline:orderSaleSetProcessPipeline() ,
-    as: 'mongoCheckProcessMasterWithWorkStatus',
-  },
-},{
-  $match: { mongoCheckProcessMasterWithWorkStatus: { $ne: [] } },
-},);
-
-
-
-
-
-
-
-}
-
-
-
-
-
-
-
-if(dto.arrayWorkerWithWorkStatus.length != 0){
-
-  var mongoMatchArray=[];
-  dto.arrayWorkerWithWorkStatus.forEach((eachItem=>{
-    mongoMatchArray.push({
-      _userId:new mongoose.Types.ObjectId(eachItem.workerId),_orderStatus:{$in:eachItem.setProcessOrderkStatus}
-    });
-  }));
-
-
-
-
-
-  const orderSaleSetProcessPipeline = () => {
-    const pipeline = [];
-    pipeline.push( {
-      $match: {
-        _status:1,
-        $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
-      },
-    },
-    );
-
-    pipeline.push( {
-      $match: {
-        $or: mongoMatchArray,
-        
-
-      },
-    },
-    );
-
-
-
-
-
-
-    pipeline.push({ $project: { _id: 1 } });
-    return pipeline;
-  }
-
-
-
-arrayAggregation.push( {
-  $lookup: {
-    from: ModelNames.ORDER_SALE_SET_PROCESSES,
-    let: { orderSaleId: '$_id' },
-    pipeline:orderSaleSetProcessPipeline() ,
-    as: 'mongoCheckWorkerWithWorkStatus',
-  },
-},{
-  $match: { mongoCheckWorkerWithWorkStatus: { $ne: [] } },
-},);
-
-
-
-
-
-
-
-}
-
-
-      
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
       switch (dto.sortType) {

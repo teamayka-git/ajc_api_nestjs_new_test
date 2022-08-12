@@ -24,8 +24,7 @@ const descriptionListDataGuard =
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListSortOrder = '1-ascending, -1-descending';
-const descriptionListSortType =
-  '0-Created Date, 1-Status,2-due date';
+const descriptionListSortType = '0-Created Date, 1-Status,2-due date';
 const descriptionListDocType = '0-image, 1-video, 2-pdf, 3-audio, 4-document';
 
 const descriptionFileOriginalName =
@@ -40,9 +39,11 @@ const DescriptionOrderSaleProcessOrderStatus =
 const DescriptionOrderSalesHistoriesType =
   '  0 - order pending  1 - order accept  2 - order reject  3 - set process done  4 - finished goods  5 - product generate request  6 - product generated   7 - deliverychalan generated//need to discuss  8 - halmark issuence requested  9 - halmark issuence bypassed  10 - send to halmark issuence  11 - halmarking issued  12 - halmark request cancelled  13 - halmark request rejected  14 - halmark error occured  15 - send to reissuence   16 - invoice pending  17 - invoice generated  18 - outof delivery pending  19 - hub transfer pending  20 - delivery job assigned  21 - delivery in transit  22 - delivered to customer            23 - delivey accepted  24 - order declined collection pending   25 - order declined collected  26 - order declined inscan  27 - order cancelled  28 - delivery reshedule requested  29 - hub tranfer pending  30 - hub assigned  31 - hub tranfer intransit  32 - hub transfer delivered  33 - hub transfer accepted    100 - order editted  101- sales order actived  102- sales order disabled  103- sales order deleted  104- sales order general remark editted';
 const descriptionType = '0 - order sale, 1 - stock sale';
-const descriptionDeliveryType=" 0 - bundle delivery,1 - get me the ready item first";
-const descriptionStockStatus="0 - out of stock, 1 - in stock";
-const descriptionSetProcessOrderStatus="inside ordersale list set process filter with this array if this arrayu not empty";
+const descriptionDeliveryType =
+  ' 0 - bundle delivery,1 - get me the ready item first';
+const descriptionStockStatus = '0 - out of stock, 1 - in stock';
+const descriptionSetProcessOrderStatus =
+  'inside ordersale list set process filter with this array if this arrayu not empty';
 
 class orderSaleCreateList {
   @IsString()
@@ -55,13 +56,10 @@ class orderSaleCreateList {
   docType: number;
 }
 class orderSaleItemsCreateList {
-
-  
   @IsString()
   @ApiProperty({})
   subCategoryId: string;
 
-  
   @IsString()
   @ApiProperty({})
   quantity: string;
@@ -70,13 +68,11 @@ class orderSaleItemsCreateList {
   @ApiProperty({})
   size: string;
 
-  
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({ description: descriptionStockStatus })
   stockStatus: number;
 
-  
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
@@ -86,31 +82,28 @@ class orderSaleItemsCreateList {
   @ApiProperty({})
   stoneColor: string;
 
-  
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   isRhodium: number;
-  
+
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   isMatFinish: number;
-  
+
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   isDullFinish: number;
-  
+
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   isEnamel: number;
-
 }
 
 export class OrderSalesCreateDto {
-
   @IsString()
   @ApiProperty({})
   shopId: string;
@@ -124,7 +117,6 @@ export class OrderSalesCreateDto {
   @ApiProperty({ description: descriptionType })
   type: number;
 
-
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
@@ -132,7 +124,7 @@ export class OrderSalesCreateDto {
 
   @Transform(({ value }) => Number(value))
   @IsNumber()
-  @ApiProperty({description: descriptionDeliveryType })
+  @ApiProperty({ description: descriptionDeliveryType })
   deliveryType: number;
 
   @IsString()
@@ -147,7 +139,7 @@ export class OrderSalesCreateDto {
   @ValidateNested({ each: true })
   @Type(() => orderSaleCreateList)
   arrayDocuments: orderSaleCreateList[];
-  
+
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
   )
@@ -156,9 +148,6 @@ export class OrderSalesCreateDto {
   @ValidateNested({ each: true })
   @Type(() => orderSaleItemsCreateList)
   arrayItems: orderSaleItemsCreateList[];
-
-
-  
 }
 
 class orderSaleEditList {
@@ -172,22 +161,20 @@ class orderSaleEditList {
   docType: number;
 }
 class orderSaleItemEditList {
-  
   @IsString()
   @ApiProperty({})
   orderSaleItemId: string;
 
-  
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   isDullFinish: number;
-  
+
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   isEnamel: number;
-  
+
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
@@ -198,7 +185,6 @@ class orderSaleItemEditList {
   @ApiProperty({})
   isMatFinish: number;
 
-  
   @IsString()
   @ApiProperty({})
   subCategoryId: string;
@@ -211,7 +197,6 @@ class orderSaleItemEditList {
   @ApiProperty({})
   size: string;
 
-  
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
@@ -227,16 +212,13 @@ export class OrderSalesEditDto {
   @ApiProperty({})
   orderSaleId: string;
 
-  
   @IsString()
   @ApiProperty({})
   ordderSaleHistoryDescription: string;
 
-
   @IsString()
   @ApiProperty({})
   shopId: string;
-
 
   @IsString()
   @ApiProperty({})
@@ -247,7 +229,6 @@ export class OrderSalesEditDto {
   @ApiProperty({ description: descriptionType })
   type: number;
 
-
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
@@ -256,7 +237,6 @@ export class OrderSalesEditDto {
   @IsString()
   @ApiProperty({})
   description: string;
-
 
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
@@ -282,9 +262,6 @@ export class OrderSalesEditDto {
   @ValidateNested({ each: true })
   @Type(() => orderSaleItemEditList)
   arrayItems: orderSaleItemEditList[];
-
-
-  
 }
 
 export class OrderSaleListDto {
@@ -314,19 +291,18 @@ export class OrderSaleListDto {
   })
   setProcessOrderStatus: number[];
 
+  @IsArray()
+  @ApiProperty({ type: [Number] })
+  responseFormat: number[];
 
   @IsArray()
-  @ApiProperty({ type: [Number], })
-  responseFormat: number[];
-  
-  @IsArray()
-  @ApiProperty({ type: [Number], })
+  @ApiProperty({ type: [Number] })
   isProductGenerated: number[];
-  
+
   @IsArray()
-  @ApiProperty({ type: [Number], })
+  @ApiProperty({ type: [Number] })
   isInvoiceGenerated: number[];
-  
+
   @IsArray()
   @ApiProperty({ type: [String] })
   orderSaleIdsIds: string[];
@@ -353,6 +329,10 @@ export class OrderSaleListDto {
 
   @IsArray()
   @ApiProperty({ type: [String] })
+  relationshipManagerIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
   orderHeadIds: string[];
 
   @IsArray()
@@ -366,14 +346,12 @@ export class OrderSaleListDto {
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionWorkStatus })
   workStatus: number[];
-
 }
 class OrderprocessWithStatusItems {
   @IsString()
   @ApiProperty({})
   processMasterId: string;
 
-  
   @IsArray()
   @ApiProperty({ type: [Number] })
   setProcessOrderkStatus: number[];
@@ -383,7 +361,6 @@ class OrderWorkerWithStatusItems {
   @ApiProperty({})
   workerId: string;
 
-  
   @IsArray()
   @ApiProperty({ type: [Number] })
   setProcessOrderkStatus: number[];
@@ -402,9 +379,6 @@ export class OrderSaleReportListDto {
   @ApiProperty({ type: [Number], description: descriptionStatus })
   statusArray: number[];
 
-
-
-
   @IsArray()
   @ApiProperty({
     type: [Number],
@@ -412,19 +386,18 @@ export class OrderSaleReportListDto {
   })
   screenType: number[];
 
+  @IsArray()
+  @ApiProperty({ type: [Number] })
+  responseFormat: number[];
 
   @IsArray()
-  @ApiProperty({ type: [Number], })
-  responseFormat: number[];
-  
-  @IsArray()
-  @ApiProperty({ type: [Number], })
+  @ApiProperty({ type: [Number] })
   isProductGenerated: number[];
-  
+
   @IsArray()
-  @ApiProperty({ type: [Number], })
+  @ApiProperty({ type: [Number] })
   isInvoiceGenerated: number[];
-  
+
   @IsNumber()
   @ApiProperty({})
   limit: number;
@@ -432,122 +405,99 @@ export class OrderSaleReportListDto {
   @IsNumber()
   @ApiProperty({})
   skip: number;
-//
+  //
 
+  @IsNumber()
+  @ApiProperty({})
+  netWeight: number;
 
-@IsNumber()
-@ApiProperty({})
-netWeight: number;
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  huids: string[];
 
-@IsArray()
-@ApiProperty({ type: [String] })
-huids: string[];
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleIds: string[];
 
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleUids: string[];
 
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  subCategoryIds: string[];
 
-@IsArray()
-@ApiProperty({ type: [String] })
-orderSaleIds: string[];
+  @IsNumber()
+  @ApiProperty({})
+  dueStartDate: number;
 
+  @IsNumber()
+  @ApiProperty({})
+  dueEndDate: number;
 
-@IsArray()
-@ApiProperty({ type: [String] })
-orderSaleUids: string[];
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderHeadIds: string[];
 
-@IsArray()
-@ApiProperty({ type: [String] })
-subCategoryIds: string[];
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  shopIds: string[];
 
-@IsNumber()
-@ApiProperty({})
-dueStartDate: number;
+  @IsArray()
+  @ApiProperty({ type: [Number], description: descriptionWorkStatus })
+  workStatus: number[];
 
-@IsNumber()
-@ApiProperty({})
-dueEndDate: number;
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  referenceIds: string[];
 
-@IsArray()
-@ApiProperty({ type: [String] })
-orderHeadIds: string[];
+  @IsArray()
+  @ApiProperty({ type: [Number], description: descriptionType })
+  types: number[];
 
+  @IsNumber()
+  @ApiProperty({})
+  createdDateStartDate: number;
 
-@IsArray()
-@ApiProperty({ type: [String] })
-shopIds: string[];
+  @IsNumber()
+  @ApiProperty({})
+  createdDateEndDate: number;
 
-@IsArray()
-@ApiProperty({ type: [Number], description: descriptionWorkStatus })
-workStatus: number[];
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  cityIds: string[];
 
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  branchIds: string[];
 
-@IsArray()
-@ApiProperty({ type: [String] })
-referenceIds: string[];
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  relationshipManagerIds: string[];
 
-@IsArray()
-@ApiProperty({ type: [Number], description: descriptionType })
-types: number[];
+  @IsNumber()
+  @ApiProperty({})
+  invoiceDateStartDate: number;
 
-@IsNumber()
-@ApiProperty({})
-createdDateStartDate: number;
+  @IsNumber()
+  @ApiProperty({})
+  invoiceDateEndDate: number;
 
-@IsNumber()
-@ApiProperty({})
-createdDateEndDate: number;
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  invoiceUids: string[];
 
+  @IsArray()
+  @ApiProperty({ type: [OrderprocessWithStatusItems] })
+  @ValidateNested({ each: true })
+  @Type(() => OrderprocessWithStatusItems)
+  arrayProcessMasterWithWorkStatus: OrderprocessWithStatusItems[];
 
-
-
-@IsArray()
-@ApiProperty({ type: [String] })
-cityIds: string[];
-
-@IsArray()
-@ApiProperty({ type: [String] })
-branchIds: string[];
-
-@IsArray()
-@ApiProperty({ type: [String] })
-relationshipManagerIds: string[];
-
-
-
-@IsNumber()
-@ApiProperty({})
-invoiceDateStartDate: number;
-
-@IsNumber()
-@ApiProperty({})
-invoiceDateEndDate: number;
-
-@IsArray()
-@ApiProperty({ type: [String] })
-invoiceUids: string[];
-
-
-
-
-
-
-
-
-@IsArray()
-@ApiProperty({ type: [OrderprocessWithStatusItems] })
-@ValidateNested({ each: true })
-@Type(() => OrderprocessWithStatusItems)
-arrayProcessMasterWithWorkStatus: OrderprocessWithStatusItems[];
-
-
-@IsArray()
-@ApiProperty({ type: [OrderWorkerWithStatusItems] })
-@ValidateNested({ each: true })
-@Type(() => OrderWorkerWithStatusItems)
-arrayWorkerWithWorkStatus: OrderWorkerWithStatusItems[];
-
-
-
-
+  @IsArray()
+  @ApiProperty({ type: [OrderWorkerWithStatusItems] })
+  @ValidateNested({ each: true })
+  @Type(() => OrderWorkerWithStatusItems)
+  arrayWorkerWithWorkStatus: OrderWorkerWithStatusItems[];
 
   @IsArray()
   @ApiProperty({
@@ -555,11 +505,6 @@ arrayWorkerWithWorkStatus: OrderWorkerWithStatusItems[];
     description: descriptionSetProcessOrderStatus,
   })
   setProcessOrderStatus: number[];
-
-
-
- 
-
 }
 
 export class OrderSalesChangeDto {
@@ -605,11 +550,10 @@ export class SetProcessAssignedOrderSaleListDto {
   })
   screenType: number[];
 
-
   @IsArray()
-  @ApiProperty({ type: [Number], })
+  @ApiProperty({ type: [Number] })
   responseFormat: number[];
-  
+
   @IsArray()
   @ApiProperty({ type: [String] })
   employeesArray: string[];
