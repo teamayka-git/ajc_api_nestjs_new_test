@@ -24,9 +24,9 @@ const descriptionListSortType =
 const descriptionListScreenTypeForFilterLoading =
   '0-total documents count, 100-city details';
 export class AgentLoginDto {
-  @IsEmail()
+  @IsString()
   @ApiProperty({})
-  email: string;
+  mobile: string;
 
   @IsString()
   @ApiProperty({})

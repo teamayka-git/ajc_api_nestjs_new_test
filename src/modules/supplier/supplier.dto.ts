@@ -22,9 +22,9 @@ const descriptionListScreenTypeForFilterLoading =
   '0-total documents count, 100-item details';
 
 export class SupplierLoginDto {
-  @IsEmail()
+  @IsString()
   @ApiProperty({})
-  email: string;
+  mobile: string;
 
   @IsString()
   @ApiProperty({})

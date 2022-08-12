@@ -1036,7 +1036,7 @@ export class AppService {
             _name: 'super admin',
             _gender: 0,
             _password: encryptedPassword,
-            _mobile: '',
+            _mobile: '9961005004',
             _globalGalleryId: null,
             _employeeId: employeeId,
             _agentId: null,

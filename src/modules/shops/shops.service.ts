@@ -61,7 +61,7 @@ export class ShopsService {
     transactionSession.startTransaction();
     try {
       var resultEmployee = await this.userModel
-        .aggregate([{ $match: { _email: dto.email } }])
+        .aggregate([{ $match: { _mobile: dto.mobile } }])
         .session(transactionSession);
       console.log('___shop login ' + JSON.stringify(resultEmployee));
       if (resultEmployee.length == 0) {

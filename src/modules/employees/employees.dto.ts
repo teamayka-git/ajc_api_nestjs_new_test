@@ -19,9 +19,9 @@ const descriptionListScreenTypeForList =
   '0-total documents count, ,50-populate image global gallery only if user details exist, 100-user details, 101-department populate, 102-process master populate';
 
 export class EmployeeLoginDto {
-  @IsEmail()
+  @IsString()
   @ApiProperty({})
-  email: string;
+  mobile: string;
 
   @IsString()
   @ApiProperty({})

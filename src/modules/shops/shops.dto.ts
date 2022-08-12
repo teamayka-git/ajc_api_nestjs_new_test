@@ -43,9 +43,9 @@ const descriptionCommisionType = '  0 - amount, 1 - percentage';
 const descriptionTdsTcsStatus="0-tds, 1-tcs";
 
 export class ShopLoginDto {
-  @IsEmail()
+  @IsString()
   @ApiProperty({})
-  email: string;
+  mobile: string;
 
   @IsString()
   @ApiProperty({})
