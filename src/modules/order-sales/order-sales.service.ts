@@ -2254,13 +2254,11 @@ export class OrderSalesService {
         );
       }
 
-      if (dto.arrayProcessMasterWithWorkStatus.length != 0) {
-        var mongoMatchArray = [];
-        dto.arrayProcessMasterWithWorkStatus.forEach((eachItem) => {
-          mongoMatchArray.push({
-            _processId: new mongoose.Types.ObjectId(eachItem.processMasterId),
-            _orderStatus: { $in: eachItem.setProcessOrderStatus },
-          });
+      if (dto.orderProcessMasterIds.length != 0 && dto.orderSetProcessOrderStatus.length != 0) {
+        var mongoProcessMasterIdsArray = [];
+        dto.orderProcessMasterIds.forEach((eachItem) => {
+          mongoProcessMasterIdsArray.push(new mongoose.Types.ObjectId(eachItem));
+          
         });
 
         const orderSaleSetProcessPipeline = () => {
@@ -2274,7 +2272,8 @@ export class OrderSalesService {
 
           pipeline.push({
             $match: {
-              $or: mongoMatchArray,
+              _processId:{$in:mongoProcessMasterIdsArray},
+              _orderStatus:{$in:dto.orderSetProcessOrderStatus}
             },
           });
 
@@ -2297,15 +2296,14 @@ export class OrderSalesService {
         );
       }
 
-      if (dto.arrayWorkerWithWorkStatus.length != 0) {
-        var mongoMatchArray = [];
-        dto.arrayWorkerWithWorkStatus.forEach((eachItem) => {
-          mongoMatchArray.push({
-            _userId: new mongoose.Types.ObjectId(eachItem.workerId),
-            _orderStatus: { $in: eachItem.setProcessOrderStatus },
-          });
-        });
 
+      
+        if (dto.orderSetProcessWorkerIds.length != 0 && dto.orderSetProcessOrderStatus.length != 0) {
+          var mongoWorkerIdsArray = [];
+          dto.orderSetProcessWorkerIds.forEach((eachItem) => {
+            mongoWorkerIdsArray.push(new mongoose.Types.ObjectId(eachItem));
+            
+          });
         const orderSaleSetProcessPipeline = () => {
           const pipeline = [];
           pipeline.push({
@@ -2317,7 +2315,9 @@ export class OrderSalesService {
 
           pipeline.push({
             $match: {
-              $or: mongoMatchArray,
+              _userId:{$in:mongoWorkerIdsArray},
+
+              _orderStatus:{$in:dto.orderSetProcessOrderStatus}
             },
           });
 

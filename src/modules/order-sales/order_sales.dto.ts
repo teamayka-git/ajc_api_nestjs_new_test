@@ -347,24 +347,7 @@ export class OrderSaleListDto {
   @ApiProperty({ type: [Number], description: descriptionWorkStatus })
   workStatus: number[];
 }
-class OrderprocessWithStatusItems {
-  @IsString()
-  @ApiProperty({})
-  processMasterId: string;
 
-  @IsArray()
-  @ApiProperty({ type: [Number] })
-  setProcessOrderStatus: number[];
-}
-class OrderWorkerWithStatusItems {
-  @IsString()
-  @ApiProperty({})
-  workerId: string;
-
-  @IsArray()
-  @ApiProperty({ type: [Number] })
-  setProcessOrderStatus: number[];
-}
 
 export class OrderSaleReportListDto {
   @IsNumber()
@@ -487,17 +470,30 @@ export class OrderSaleReportListDto {
   @ApiProperty({ type: [String] })
   invoiceUids: string[];
 
-  @IsArray()
-  @ApiProperty({ type: [OrderprocessWithStatusItems] })
-  @ValidateNested({ each: true })
-  @Type(() => OrderprocessWithStatusItems)
-  arrayProcessMasterWithWorkStatus: OrderprocessWithStatusItems[];
+
+
 
   @IsArray()
-  @ApiProperty({ type: [OrderWorkerWithStatusItems] })
-  @ValidateNested({ each: true })
-  @Type(() => OrderWorkerWithStatusItems)
-  arrayWorkerWithWorkStatus: OrderWorkerWithStatusItems[];
+  @ApiProperty({ type: [String] })
+  orderProcessMasterIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSetProcessWorkerIds: string[];
+
+
+  @IsArray()
+  @ApiProperty({ type: [Number] })
+  orderSetProcessOrderStatus: number[];
+
+
+
+
+
+
+  
+
+
 
   @IsArray()
   @ApiProperty({
