@@ -31,6 +31,7 @@ import { Customers } from 'src/tableModels/customers.model';
 import { Generals } from 'src/tableModels/generals.model';
 import { Company } from 'src/tableModels/companies.model';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
+import { SmsUtils } from 'src/utils/smsUtils';
 @Injectable()
 export class ShopsService {
   constructor(
@@ -303,9 +304,15 @@ export class ShopsService {
         }
       }
       if (dto.arrayUsersNew.length > 0) {
-        var encryptedPassword = await crypto
+        
+
+
+for(var i=0;i<dto.arrayUsersNew.length;i++){
+
+ var password = new StringUtils().makeid(6);
+  var encryptedPassword = await crypto
           .pbkdf2Sync(
-            '123456',
+            password,
             process.env.CRYPTO_ENCRYPTION_SALT,
             1000,
             64,
@@ -313,40 +320,51 @@ export class ShopsService {
           )
           .toString(`hex`);
 
-        dto.arrayUsersNew.map((mapItem) => {
-          arrayToUsers.push({
-            _email: mapItem.email,
-            _name: mapItem.name,
-            _gender: mapItem.gender,
-            _password: encryptedPassword,
-            _mobile: mapItem.mobile,
-            _globalGalleryId: null,
-            _employeeId: null,
-            _agentId: null,
-            _supplierId: null,
-            _deliveryHubId: null,
-            _logisticPartnerId: null,
-            _shopId: shopId,
-            _testCenterId: null,
-            _customType: [mapItem.customType],
-            _halmarkId: null,
-            _customerId: null,
-            _fcmId: '',
-            _deviceUniqueId: '',
-            _permissions: [],
-            _userType: 0,
-            _createdUserId: null,
-            _createdAt: -1,
-            _updatedUserId: null,
-            _updatedAt: -1,
-            _status: 1,
-          });
-        });
+  arrayToUsers.push({
+    _email: dto.arrayUsersNew[i].email,
+    _name: dto.arrayUsersNew[i].name,
+    _gender: dto.arrayUsersNew[i].gender,
+    _password: encryptedPassword,
+    _mobile: dto.arrayUsersNew[i].mobile,
+    _globalGalleryId: null,
+    _employeeId: null,
+    _agentId: null,
+    _supplierId: null,
+    _deliveryHubId: null,
+    _logisticPartnerId: null,
+    _shopId: shopId,
+    _testCenterId: null,
+    _customType: [dto.arrayUsersNew[i].customType],
+    _halmarkId: null,
+    _customerId: null,
+    _fcmId: '',
+    _deviceUniqueId: '',
+    _permissions: [],
+    _userType: 0,
+    _createdUserId: null,
+    _createdAt: -1,
+    _updatedUserId: null,
+    _updatedAt: -1,
+    _status: 1,
+  });
+
+
+
+
+new SmsUtils().sendSms(dto.arrayUsersNew[i].mobile, "Use "+  password + ' as AJC OMS password reset code.')
+
+
+
+
+}
+
+
       }
 
+      var passwordMainUser = new StringUtils().makeid(6);
       var encryptedPasswordShop = await crypto
         .pbkdf2Sync(
-          '123456',
+          passwordMainUser,
           process.env.CRYPTO_ENCRYPTION_SALT,
           1000,
           64,
@@ -381,6 +399,7 @@ export class ShopsService {
         _status: 1,
       });
 
+      new SmsUtils().sendSms(dto.mobile, "Use "+  passwordMainUser + ' as AJC OMS password reset code.')
       await this.userModel.insertMany(arrayToUsers, {
         session: transactionSession,
       });
@@ -618,9 +637,14 @@ export class ShopsService {
       if (dto.arrayUsersNew.length > 0) {
         var arrayToUsers = [];
 
-        var encryptedPassword = await crypto
+
+
+for(var i=0;i<dto.arrayUsersNew.length;i++){
+  
+ var password = new StringUtils().makeid(6);
+  var encryptedPassword = await crypto
           .pbkdf2Sync(
-            '123456',
+            password,
             process.env.CRYPTO_ENCRYPTION_SALT,
             1000,
             64,
@@ -628,13 +652,12 @@ export class ShopsService {
           )
           .toString(`hex`);
 
-        dto.arrayUsersNew.map((mapItem) => {
           arrayToUsers.push({
-            _email: mapItem.email,
-            _name: mapItem.name,
-            _gender: mapItem.gender,
+            _email: dto.arrayUsersNew[i].email,
+            _name: dto.arrayUsersNew[i].name,
+            _gender: dto.arrayUsersNew[i].gender,
             _password: encryptedPassword,
-            _mobile: mapItem.mobile,
+            _mobile: dto.arrayUsersNew[i].mobile,
             _globalGalleryId: null,
             _employeeId: null,
             _agentId: null,
@@ -656,7 +679,11 @@ export class ShopsService {
             _updatedAt: -1,
             _status: 1,
           });
-        });
+
+          new SmsUtils().sendSms(dto.arrayUsersNew[i].mobile, "Use "+  password + ' as AJC OMS password reset code.')
+}
+
+
         await this.userModel.insertMany(arrayToUsers, {
           session: transactionSession,
         });
@@ -1629,9 +1656,13 @@ export class ShopsService {
       if (dto.arrayUsersNew.length > 0) {
         var arrayToUsers = [];
 
-        var encryptedPassword = await crypto
+
+for(var i=0;i<dto.arrayUsersNew.length;i++){
+  
+ var password = new StringUtils().makeid(6);
+  var encryptedPassword = await crypto
           .pbkdf2Sync(
-            '123456',
+            password,
             process.env.CRYPTO_ENCRYPTION_SALT,
             1000,
             64,
@@ -1639,13 +1670,12 @@ export class ShopsService {
           )
           .toString(`hex`);
 
-        dto.arrayUsersNew.map((mapItem) => {
           arrayToUsers.push({
-            _email: mapItem.email,
-            _name: mapItem.name,
-            _gender: mapItem.gender,
+            _email: dto.arrayUsersNew[i].email,
+            _name: dto.arrayUsersNew[i].name,
+            _gender: dto.arrayUsersNew[i].gender,
             _password: encryptedPassword,
-            _mobile: mapItem.mobile,
+            _mobile: dto.arrayUsersNew[i].mobile,
             _globalGalleryId: null,
             _testCenterId: null,
             _employeeId: null,
@@ -1655,7 +1685,7 @@ export class ShopsService {
             _deliveryHubId: null,
             _customerId: null,
             _shopId: dto.shopUserId,
-            _customType: [mapItem.customType],
+            _customType: [dto.arrayUsersNew[i].customType],
             _halmarkId: null,
             _fcmId: '',
             _deviceUniqueId: '',
@@ -1667,7 +1697,14 @@ export class ShopsService {
             _updatedAt: -1,
             _status: 1,
           });
-        });
+          
+new SmsUtils().sendSms(dto.arrayUsersNew[i].mobile, "Use "+  password + ' as AJC OMS password reset code.')
+}
+
+
+
+
+
         await this.userModel.insertMany(arrayToUsers, {
           session: transactionSession,
         });
@@ -1749,62 +1786,77 @@ export class ShopsService {
           { new: true, session: transactionSession },
         );
 
-        var encryptedPassword = await crypto
-          .pbkdf2Sync(
-            '123456',
-            process.env.CRYPTO_ENCRYPTION_SALT,
-            1000,
-            64,
-            `sha512`,
-          )
-          .toString(`hex`);
 
-        dto.arrayUsersNew.map((mapItem, index) => {
-          var customerId = new mongoose.Types.ObjectId();
-          arrayToCustomers.push({
-            _id: customerId,
-            _uid:
-              resultCounterCustomers._count -
-              dto.arrayUsersNew.length +
-              (index + 1),
-            _field1: mapItem.field1,
-            _field2: mapItem.field2,
-            _field3: mapItem.field3,
-            _createdUserId: _userId_,
-            _createdAt: dateTime,
-            _updatedUserId: null,
-            _updatedAt: -1,
-            _status: 1,
-          });
 
-          arrayToUsers.push({
-            _email: mapItem.email,
-            _name: mapItem.name,
-            _gender: mapItem.gender,
-            _password: encryptedPassword,
-            _mobile: mapItem.mobile,
-            _globalGalleryId: null,
-            _employeeId: null,
-            _deliveryHubId: null,
-            _testCenterId: null,
-            _agentId: null,
-            _supplierId: null,
-            _logisticPartnerId: null,
-            _customerId: customerId,
-            _shopId: dto.shopUserId,
-            _customType: [mapItem.customType],
-            _halmarkId: null,
-            _fcmId: '',
-            _deviceUniqueId: '',
-            _permissions: [],
-            _userType: 0,
-            _createdUserId: null,
-            _createdAt: -1,
-            _updatedUserId: null,
-            _updatedAt: -1,
-            _status: 1,
-          });
-        });
+
+
+
+for(var i=0;i<dto.arrayUsersNew.length;i++){
+  
+ var password = new StringUtils().makeid(6);
+  var encryptedPassword = await crypto
+  .pbkdf2Sync(
+    password,
+    process.env.CRYPTO_ENCRYPTION_SALT,
+    1000,
+    64,
+    `sha512`,
+  )
+  .toString(`hex`);
+  var customerId = new mongoose.Types.ObjectId();
+  arrayToCustomers.push({
+    _id: customerId,
+    _uid:
+      resultCounterCustomers._count -
+      dto.arrayUsersNew.length +
+      (i + 1),
+    _field1: dto.arrayUsersNew[i].field1,
+    _field2: dto.arrayUsersNew[i].field2,
+    _field3: dto.arrayUsersNew[i].field3,
+    _createdUserId: _userId_,
+    _createdAt: dateTime,
+    _updatedUserId: null,
+    _updatedAt: -1,
+    _status: 1,
+  });
+
+  arrayToUsers.push({
+    _email: dto.arrayUsersNew[i].email,
+    _name: dto.arrayUsersNew[i].name,
+    _gender: dto.arrayUsersNew[i].gender,
+    _password: encryptedPassword,
+    _mobile: dto.arrayUsersNew[i].mobile,
+    _globalGalleryId: null,
+    _employeeId: null,
+    _deliveryHubId: null,
+    _testCenterId: null,
+    _agentId: null,
+    _supplierId: null,
+    _logisticPartnerId: null,
+    _customerId: customerId,
+    _shopId: dto.shopUserId,
+    _customType: [dto.arrayUsersNew[i].customType],
+    _halmarkId: null,
+    _fcmId: '',
+    _deviceUniqueId: '',
+    _permissions: [],
+    _userType: 0,
+    _createdUserId: null,
+    _createdAt: -1,
+    _updatedUserId: null,
+    _updatedAt: -1,
+    _status: 1,
+  });
+
+  
+new SmsUtils().sendSms(dto.arrayUsersNew[i].mobile, "Use "+  password + ' as AJC OMS password reset code.')
+}
+
+
+
+
+       
+
         await this.userModel.insertMany(arrayToUsers, {
           session: transactionSession,
         });

@@ -407,7 +407,7 @@ export class EmployeesService {
       if (resultUserUpdated._password == encryptedPassword) {
         new SmsUtils().sendSms(
           dto.mobile,
-          password + ' is your AJC employee password',
+        "Use "+  password + ' as AJC OMS password reset code.',
         );
       }
 
