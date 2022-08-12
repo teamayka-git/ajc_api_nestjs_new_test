@@ -354,7 +354,7 @@ class OrderprocessWithStatusItems {
 
   @IsArray()
   @ApiProperty({ type: [Number] })
-  setProcessOrderkStatus: number[];
+  setProcessOrderStatus: number[];
 }
 class OrderWorkerWithStatusItems {
   @IsString()
@@ -363,7 +363,7 @@ class OrderWorkerWithStatusItems {
 
   @IsArray()
   @ApiProperty({ type: [Number] })
-  setProcessOrderkStatus: number[];
+  setProcessOrderStatus: number[];
 }
 
 export class OrderSaleReportListDto {

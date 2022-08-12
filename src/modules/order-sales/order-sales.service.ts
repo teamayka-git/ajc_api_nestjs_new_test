@@ -2259,7 +2259,7 @@ export class OrderSalesService {
         dto.arrayProcessMasterWithWorkStatus.forEach((eachItem) => {
           mongoMatchArray.push({
             _processId: new mongoose.Types.ObjectId(eachItem.processMasterId),
-            _orderStatus: { $in: eachItem.setProcessOrderkStatus },
+            _orderStatus: { $in: eachItem.setProcessOrderStatus },
           });
         });
 
@@ -2302,7 +2302,7 @@ export class OrderSalesService {
         dto.arrayWorkerWithWorkStatus.forEach((eachItem) => {
           mongoMatchArray.push({
             _userId: new mongoose.Types.ObjectId(eachItem.workerId),
-            _orderStatus: { $in: eachItem.setProcessOrderkStatus },
+            _orderStatus: { $in: eachItem.setProcessOrderStatus },
           });
         });
 
