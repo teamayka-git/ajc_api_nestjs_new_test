@@ -48,7 +48,7 @@ export class SupplierService {
         .session(transactionSession);
       if (resultEmployee.length == 0) {
         throw new HttpException(
-          'Wrong, Please check email and password',
+          'Wrong, Please check mobile and password',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       } else if (resultEmployee[0]._status == 0) {

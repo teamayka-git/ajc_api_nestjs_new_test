@@ -20,6 +20,11 @@ export const DeliveryTempSchema = new mongoose.Schema({
     ref: ModelNames.DELIVERY_HUBS,
     default: null,
   },
+  _deliveryProviderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.DELIVERY_PROVIDER,
+    default: null,
+  },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -37,11 +42,11 @@ export const DeliveryTempSchema = new mongoose.Schema({
 
 export interface DeliveryTemp {
   _id: String;
-  _type: Number;
+  _type: Number; 
   _invoiceId: String;
   _employeeId: String;
   _hubId: String;
-
+  _deliveryProviderId:String;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -49,6 +54,7 @@ export interface DeliveryTemp {
   _status: Number;
 }
 
+DeliveryTempSchema.index({ _deliveryProviderId: 1 });
 DeliveryTempSchema.index({ _status: 1 });
 DeliveryTempSchema.index({ _type: 1 });
 DeliveryTempSchema.index({ _invoiceId: 1 });
@@ -61,5 +67,6 @@ _type:{
     -1- not assigned
     0 - delivery to shop
     1 - hub transfer
+    2 - Delivery provider
 }
 */

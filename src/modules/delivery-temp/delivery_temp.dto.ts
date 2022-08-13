@@ -22,12 +22,16 @@ const descriptionListScreenTypeForFilterLoading =
   '0-total documents count, 100-item details';
 
 
-const descriptionType="0 - delivery to shop, 1 - hub transfer";
+const descriptionType="0 - delivery to shop, 1 - hub transfer, 2 - delivery provider";
 
 class DeliveryTempCreateList {
   @IsString()
   @ApiProperty({})
   invoiceId: string;
+
+  @IsString()
+  @ApiProperty({})
+  deliveryProviderId: string;
 
   @IsNumber()
   @ApiProperty({description:descriptionType})
@@ -141,6 +145,29 @@ export class DeliveryTempEmployeeAssignDto {
   @IsString()
   @ApiProperty({})
   employeeId: string;
+
+  
+  @IsNumber()
+  @ApiProperty({description:descriptionType})
+  type: number;
+
+
+}
+
+export class DeliveryTempDeliveryProviderAssignDto {
+  
+ 
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  deliveryTempIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderIds: string[];
+
+  @IsString()
+  @ApiProperty({})
+  deliveryProviderId: string;
 
   
   @IsNumber()

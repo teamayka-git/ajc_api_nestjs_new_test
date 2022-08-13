@@ -16,6 +16,11 @@ export const OrderSaleHistoriesSchema = new mongoose.Schema({
     ref: ModelNames.ORDER_SALES_ITEMS,
     default: null,
   },
+  _deliveryProviderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.DELIVERY_PROVIDER,
+    default: null,
+  },
   _userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -41,6 +46,7 @@ export interface OrderSaleHistories {
   _id: String;
   _orderSaleId: String;
   _orderSaleItemId: String;
+  _deliveryProviderId:String;
   _shopId: string;
   _userId: String;
   _type: number;
@@ -50,6 +56,7 @@ export interface OrderSaleHistories {
   _status: Number;
 }
 
+OrderSaleHistoriesSchema.index({ _deliveryProviderId: 1 });
 OrderSaleHistoriesSchema.index({ _shopId: 1 });
 OrderSaleHistoriesSchema.index({ _orderSaleId: 1 });
 OrderSaleHistoriesSchema.index({ _orderSaleItemId: 1 });

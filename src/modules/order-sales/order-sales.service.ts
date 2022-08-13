@@ -352,6 +352,7 @@ export class OrderSalesService {
         _orderSaleItemId: null,
         _shopId: dto.shopId,
         _type: 0,
+        _deliveryProviderId: null,
         _description: '',
         _createdUserId: _userId_,
         _createdAt: dateTime,
@@ -535,6 +536,7 @@ export class OrderSalesService {
         _orderSaleId: dto.orderSaleId,
         _userId: null,
         _type: 100,
+        _deliveryProviderId: null,
         _shopId: null,
         _orderSaleItemId: null,
         _description: dto.ordderSaleHistoryDescription,
@@ -615,6 +617,7 @@ export class OrderSalesService {
           _orderSaleId: mapItem,
           _userId: null,
           _type: type,
+          _deliveryProviderId: null,
           _shopId: null,
           _orderSaleItemId: null,
           _description: '',
@@ -680,6 +683,7 @@ export class OrderSalesService {
           _orderSaleId: mapItem,
           _userId: null,
           _type: dto.workStatus,
+          _deliveryProviderId: null,
           _orderSaleItemId: null,
           _shopId: null,
           _description: '',
@@ -2111,7 +2115,11 @@ export class OrderSalesService {
               $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
             },
           });
-          if (dto.netWeightStart != -1 ||dto.netWeightEnd != -1 || dto.huids.length != 0) {
+          if (
+            dto.netWeightStart != -1 ||
+            dto.netWeightEnd != -1 ||
+            dto.huids.length != 0
+          ) {
             const orderSaleItemsProductMongoCheckPipeline = () => {
               const pipeline = [];
               pipeline.push({
@@ -2124,7 +2132,7 @@ export class OrderSalesService {
               if (dto.netWeightStart != -1) {
                 pipeline.push({
                   $match: {
-                    _netWeight: {$gte:dto.netWeightStart},
+                    _netWeight: { $gte: dto.netWeightStart },
                   },
                 });
               }
@@ -2132,11 +2140,11 @@ export class OrderSalesService {
               if (dto.netWeightEnd != -1) {
                 pipeline.push({
                   $match: {
-                    _netWeight: {$lte:dto.netWeightEnd},
+                    _netWeight: { $lte: dto.netWeightEnd },
                   },
                 });
               }
-              
+
               if (dto.huids.length != 0) {
                 pipeline.push({
                   $match: {
@@ -2264,11 +2272,15 @@ export class OrderSalesService {
         );
       }
 
-      if (dto.orderProcessMasterIds.length != 0 && dto.orderSetProcessOrderStatus.length != 0) {
+      if (
+        dto.orderProcessMasterIds.length != 0 &&
+        dto.orderSetProcessOrderStatus.length != 0
+      ) {
         var mongoProcessMasterIdsArray = [];
         dto.orderProcessMasterIds.forEach((eachItem) => {
-          mongoProcessMasterIdsArray.push(new mongoose.Types.ObjectId(eachItem));
-          
+          mongoProcessMasterIdsArray.push(
+            new mongoose.Types.ObjectId(eachItem),
+          );
         });
 
         const orderSaleSetProcessPipeline = () => {
@@ -2282,8 +2294,8 @@ export class OrderSalesService {
 
           pipeline.push({
             $match: {
-              _processId:{$in:mongoProcessMasterIdsArray},
-              _orderStatus:{$in:dto.orderSetProcessOrderStatus}
+              _processId: { $in: mongoProcessMasterIdsArray },
+              _orderStatus: { $in: dto.orderSetProcessOrderStatus },
             },
           });
 
@@ -2306,14 +2318,14 @@ export class OrderSalesService {
         );
       }
 
-
-      
-        if (dto.orderSetProcessWorkerIds.length != 0 && dto.orderSetProcessOrderStatus.length != 0) {
-          var mongoWorkerIdsArray = [];
-          dto.orderSetProcessWorkerIds.forEach((eachItem) => {
-            mongoWorkerIdsArray.push(new mongoose.Types.ObjectId(eachItem));
-            
-          });
+      if (
+        dto.orderSetProcessWorkerIds.length != 0 &&
+        dto.orderSetProcessOrderStatus.length != 0
+      ) {
+        var mongoWorkerIdsArray = [];
+        dto.orderSetProcessWorkerIds.forEach((eachItem) => {
+          mongoWorkerIdsArray.push(new mongoose.Types.ObjectId(eachItem));
+        });
         const orderSaleSetProcessPipeline = () => {
           const pipeline = [];
           pipeline.push({
@@ -2325,9 +2337,9 @@ export class OrderSalesService {
 
           pipeline.push({
             $match: {
-              _userId:{$in:mongoWorkerIdsArray},
+              _userId: { $in: mongoWorkerIdsArray },
 
-              _orderStatus:{$in:dto.orderSetProcessOrderStatus}
+              _orderStatus: { $in: dto.orderSetProcessOrderStatus },
             },
           });
 
@@ -2924,8 +2936,6 @@ export class OrderSalesService {
             );
           }
 
-
-
           const isorderSaleshopBranch = dto.screenType.includes(130);
           if (isorderSaleshopBranch) {
             pipeline.push(
@@ -3162,82 +3172,67 @@ export class OrderSalesService {
             );
           }
 
-
-
-
-
-          
           const isorderSalesItemsInVoiceItems = dto.screenType.includes(131);
           if (isorderSalesItemsInVoiceItems) {
-
             const invoiceItemsPipeline = () => {
               const pipeline = [];
-              pipeline.push({
-                $match: {
-                  $expr: {_status:1,
-                    $eq: ['$_orderSaleItemId', '$$invoiceItemId'],
+              pipeline.push(
+                {
+                  $match: {
+                    _status: 1,
+                    $expr: {
+                      $eq: ['$_orderSaleItemId', '$$invoiceItemId'],
+                    },
                   },
                 },
-              },
-              new ModelWeightResponseFormat().invoiceItemsTableResponseFormat(
-                1310,
-                dto.responseFormat,
-              ),);
+                new ModelWeightResponseFormat().invoiceItemsTableResponseFormat(
+                  1310,
+                  dto.responseFormat,
+                ),
+              );
 
-
-
-              const isorderSalesItemsInVoiceItemsInvoiceDetails = dto.screenType.includes(132);
+              const isorderSalesItemsInVoiceItemsInvoiceDetails =
+                dto.screenType.includes(132);
               if (isorderSalesItemsInVoiceItemsInvoiceDetails) {
-              
-   pipeline.push(
-    {
-      $lookup: {
-        from: ModelNames.INVOICES,
-        let: { invoiceId: '$_invoiceId' },
-        pipeline: [
-          {
-            $match: {
-              $expr: {
-                $eq: ['$_id', '$$invoiceId'],
-              },
-            },
-          },
-          new ModelWeightResponseFormat().invoiceTableResponseFormat(
-            1320,
-            dto.responseFormat,
-          ),
-        ],
-        as: 'invoiceDetails',
-      },
-    },
-    {
-      $unwind: {
-        path: '$invoiceDetails',
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-  );
-              
-              
-              }    
-
-
-
-
-
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.INVOICES,
+                      let: { invoiceId: '$_invoiceId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: {
+                              $eq: ['$_id', '$$invoiceId'],
+                            },
+                          },
+                        },
+                        new ModelWeightResponseFormat().invoiceTableResponseFormat(
+                          1320,
+                          dto.responseFormat,
+                        ),
+                      ],
+                      as: 'invoiceDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$invoiceDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                );
+              }
 
               return pipeline;
-            }
-            
-
-
+            };
 
             pipeline.push(
               {
                 $lookup: {
                   from: ModelNames.INVOICE_ITEMS,
                   let: { invoiceItemId: '$_id' },
-                  pipeline:invoiceItemsPipeline() ,
+                  pipeline: invoiceItemsPipeline(),
                   as: 'invoiceItemDetails',
                 },
               },
@@ -3249,9 +3244,6 @@ export class OrderSalesService {
               },
             );
           }
-
-
-
 
           const isorderSalesItemsDesign = dto.screenType.includes(126);
           if (isorderSalesItemsDesign) {

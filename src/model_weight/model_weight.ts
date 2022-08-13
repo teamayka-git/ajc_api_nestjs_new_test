@@ -907,6 +907,7 @@ export class ModelWeight {
       _id: 1,
       _orderSaleId: 1,
       _orderSaleItemId: 1,
+      _deliveryProviderId:1,
       _shopId: 1,
       _userId: 1,
       _type: 1,
@@ -922,6 +923,7 @@ export class ModelWeight {
       _id: 1,
       _orderSaleId: 1,
       _orderSaleItemId: 1,
+      _deliveryProviderId:1,
       _shopId: 1,
       _userId: 1,
       _type: 1,
@@ -937,6 +939,7 @@ export class ModelWeight {
       _id: 1,
       _orderSaleId: 1,
       _orderSaleItemId: 1,
+      _deliveryProviderId:1,
       _shopId: 1,
       _userId: 1,
       _type: 1,
@@ -952,6 +955,7 @@ export class ModelWeight {
       _id: 1,
       _orderSaleId: 1,
       _orderSaleItemId: 1,
+      _deliveryProviderId:1,
       _shopId: 1,
       _userId: 1,
       _type: 1,
@@ -1320,6 +1324,7 @@ export class ModelWeight {
       _type: 1,
       _invoiceId: 1,
       _employeeId: 1,
+      _deliveryProviderId:1,
       _hubId: 1,
     };
   }
@@ -1329,6 +1334,7 @@ export class ModelWeight {
       _type: 1,
       _invoiceId: 1,
       _employeeId: 1,
+      _deliveryProviderId:1,
       _hubId: 1,
       _createdUserId: 1,
 
@@ -1341,6 +1347,7 @@ export class ModelWeight {
       _type: 1,
       _invoiceId: 1,
       _employeeId: 1,
+      _deliveryProviderId:1,
       _hubId: 1,
 
       _createdUserId: 1,
@@ -1355,6 +1362,7 @@ export class ModelWeight {
       _invoiceId: 1,
       _employeeId: 1,
       _hubId: 1,
+      _deliveryProviderId:1,
 
       _createdUserId: 1,
       _createdAt: 1,
