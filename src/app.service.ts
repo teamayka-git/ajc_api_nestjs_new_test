@@ -22,10 +22,10 @@ import { User } from './tableModels/user.model';
 import { IndexUtils } from './utils/IndexUtils';
 import { SmsUtils } from './utils/smsUtils';
 
-// const twilioClient = require('twilio')(
-//   'AC9bf34a6b64db1480be17402f908aded8',
-//   'e142df6719a87d15b748fcb5dd3f99c9',
-// );
+const twilioClient = require('twilio')(
+  'AC9bf34a6b64db1480be17402f908aded8',
+  'e142df6719a87d15b748fcb5dd3f99c9',
+);
 
 const crypto = require('crypto');
 
@@ -75,17 +75,18 @@ export class AppService {
     transactionSession.startTransaction();
     try {
       
-      // var asdf = await twilioClient.messages.create({
-      //   body: 'BODYaaabbb',
-      //   messagingServiceSid: 'MG2d9b32cf7d39a5ceb380fdbb25a80eea',  
-      //   to: '+919895680203',
-      // });
+      var asdf = await twilioClient.messages.create({
+        // from:'AJCGOLD',
+        body: 'BODYaaabbbd',
+        messagingServiceSid: 'MG2d9b32cf7d39a5ceb380fdbb25a80eea',  
+        to: '+919895680203',
+      });
 
-      new SmsUtils().sendSms("9895680203","AAAAAA");
+      // new SmsUtils().sendSms("9895680203","AAAAAA");
 
       const responseJSON = {
         message: 'success',
-        data: {  },
+        data: asdf,
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&

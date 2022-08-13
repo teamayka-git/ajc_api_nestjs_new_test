@@ -2923,6 +2923,39 @@ export class OrderSalesService {
               },
             );
           }
+
+
+
+          const isorderSaleshopBranch = dto.screenType.includes(130);
+          if (isorderSaleshopBranch) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.BRANCHES,
+                  let: { branchId: '$_branchId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$branchId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().branchTableResponseFormat(
+                      1300,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'branchDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$branchDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
           const isorderSaleshopOrderHead = dto.screenType.includes(120);
           if (isorderSaleshopOrderHead) {
             const orderSaleShopOrderHeadPipeline = () => {
@@ -3128,6 +3161,97 @@ export class OrderSalesService {
               },
             );
           }
+
+
+
+
+
+          
+          const isorderSalesItemsInVoiceItems = dto.screenType.includes(131);
+          if (isorderSalesItemsInVoiceItems) {
+
+            const invoiceItemsPipeline = () => {
+              const pipeline = [];
+              pipeline.push({
+                $match: {
+                  $expr: {_status:1,
+                    $eq: ['$_orderSaleItemId', '$$invoiceItemId'],
+                  },
+                },
+              },
+              new ModelWeightResponseFormat().invoiceItemsTableResponseFormat(
+                1310,
+                dto.responseFormat,
+              ),);
+
+
+
+              const isorderSalesItemsInVoiceItemsInvoiceDetails = dto.screenType.includes(132);
+              if (isorderSalesItemsInVoiceItemsInvoiceDetails) {
+              
+   pipeline.push(
+    {
+      $lookup: {
+        from: ModelNames.INVOICES,
+        let: { invoiceId: '$_invoiceId' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ['$_id', '$$invoiceId'],
+              },
+            },
+          },
+          new ModelWeightResponseFormat().invoiceTableResponseFormat(
+            1320,
+            dto.responseFormat,
+          ),
+        ],
+        as: 'invoiceDetails',
+      },
+    },
+    {
+      $unwind: {
+        path: '$invoiceDetails',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+  );
+              
+              
+              }    
+
+
+
+
+
+
+              return pipeline;
+            }
+            
+
+
+
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.INVOICE_ITEMS,
+                  let: { invoiceItemId: '$_id' },
+                  pipeline:invoiceItemsPipeline() ,
+                  as: 'invoiceItemDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$invoiceItemDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
+
+
 
           const isorderSalesItemsDesign = dto.screenType.includes(126);
           if (isorderSalesItemsDesign) {
