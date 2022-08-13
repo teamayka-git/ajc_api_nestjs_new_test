@@ -3024,6 +3024,39 @@ export class OrderSalesService {
             );
           }
 
+
+
+          
+          const isorderSaleshopCity = dto.screenType.includes(134);
+          if (isorderSaleshopCity) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.CITIES,
+                  let: { cityId: '$_cityId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$cityId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().cityTableResponseFormat(
+                      1340,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'cityDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$cityDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
           const isorderSaleshopBranch = dto.screenType.includes(130);
           if (isorderSaleshopBranch) {
             pipeline.push(
