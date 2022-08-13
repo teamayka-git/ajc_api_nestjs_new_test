@@ -1162,6 +1162,51 @@ export class OrderSalesService {
               dto.responseFormat,
             ),
           );
+
+
+
+
+
+          const isorderSaleHistoriesDeliveryProvider = dto.screenType.includes(133);
+          if (isorderSaleHistoriesDeliveryProvider) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.DELIVERY_PROVIDER,
+                  let: { deliveryProviderId: '$_deliveryProviderId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$deliveryProviderId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().deliveryProviderTableResponseFormat(
+                      1330,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'deliveryProviderDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$deliveryProviderDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
+
+
+
+
+
+
+
+
+
+
           const isorderSaleHistoriesUser = dto.screenType.includes(114);
 
           if (isorderSaleHistoriesUser) {
@@ -2692,6 +2737,49 @@ export class OrderSalesService {
               dto.responseFormat,
             ),
           );
+
+
+
+
+
+
+
+
+          const isorderSaleHistoriesDeliveryProvider = dto.screenType.includes(133);
+          if (isorderSaleHistoriesDeliveryProvider) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.DELIVERY_PROVIDER,
+                  let: { deliveryProviderId: '$_deliveryProviderId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$deliveryProviderId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().deliveryProviderTableResponseFormat(
+                      1330,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'deliveryProviderDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$deliveryProviderDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
+
+
+
+
+
           const isorderSaleHistoriesUser = dto.screenType.includes(114);
 
           if (isorderSaleHistoriesUser) {
@@ -4361,6 +4449,26 @@ export class OrderSalesService {
         {
           $unwind: {
             path: '$orderSaleItemDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: ModelNames.DELIVERY_PROVIDER,
+            let: { deliveryProviderId: '$_deliveryProviderId' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$_id', '$$deliveryProviderId'] },
+                },
+              },
+            ],
+            as: 'deliveryProviderDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$deliveryProviderDetails',
             preserveNullAndEmptyArrays: true,
           },
         },
