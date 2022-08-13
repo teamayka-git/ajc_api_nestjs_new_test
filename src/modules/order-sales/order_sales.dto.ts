@@ -369,7 +369,7 @@ export class OrderSaleReportListDto {
   @IsArray()
   @ApiProperty({
     type: [Number],
-    description: descriptionListScreenTypeForBranchList,
+    description: descriptionListScreenTypeOrderSaleReport,
   })
   screenType: number[];
 
