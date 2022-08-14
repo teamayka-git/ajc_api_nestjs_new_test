@@ -8,6 +8,11 @@ import * as path from 'path';
 import { SocketIoAdapter } from './socket/socket_adapter';
 import { config } from 'aws-sdk';
 
+
+/*
+DB_GULL_URL=mongodb://localhost:27017/db1_ajc_gold_erp_v1
+*/
+
 async function bootstrap() {
   config.update({
     accessKeyId: process.env.CDN_BUCKET_ACCESS_KEY_ID,

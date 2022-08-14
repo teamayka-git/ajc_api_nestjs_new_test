@@ -15,7 +15,7 @@ export const StatesSchema = new mongoose.Schema({
     _status: { type: Number, required: true, default: -1 },
 });
  
-export interface States {
+export interface States { 
     _id: String;
     _name: String;
     _code: Number;

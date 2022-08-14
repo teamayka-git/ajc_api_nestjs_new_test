@@ -81,6 +81,7 @@ import { TestChargeModule } from './modules/test-charge/test-charge.module';
 import { DeliveryRejectedPendingModule } from './modules/delivery-rejected-pending/delivery-rejected-pending.module';
 import { DeliveryReturnModule } from './modules/delivery-return/delivery-return.module';
 import { OtpModule } from './modules/otp/otp.module';
+import { BulkApiTempModule } from './modules/bulk-api-temp/bulk-api-temp.module';
 
 @Module({
   imports: [
@@ -173,6 +174,7 @@ import { OtpModule } from './modules/otp/otp.module';
     DeliveryRejectedPendingModule,
     DeliveryReturnModule,
     OtpModule,
+    BulkApiTempModule,
 
     // SalesReturnRequestStatusesModule,
   ],

@@ -1140,7 +1140,7 @@ export class AppService {
 
       var employeeId = new mongoose.Types.ObjectId();
       var resultUser = await this.userModel.findOneAndUpdate(
-        { _email: 'admin@ayka.com' },
+        { _email: 'apkashraf@gmail.com' },
         {
           $setOnInsert: {
             _name: 'super admin',
@@ -1200,7 +1200,7 @@ export class AppService {
         { _code: 1 },
         {
           $setOnInsert: {
-            _name: 'Kerala',
+            _name: 'KERALA',
             _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
@@ -1212,10 +1212,10 @@ export class AppService {
         { upsert: true, new: true, session: transactionSession },
       );
       var resultDistrict = await this.districtModel.findOneAndUpdate(
-        { _code: 1 },
+        { _code: 10 },
         {
           $setOnInsert: {
-            _name: 'Malappuram',
+            _name: 'MALAPPURAM',
             _statesId: resultState._id,
             _dataGuard: [1, 2],
             _createdUserId: null,
@@ -1231,7 +1231,7 @@ export class AppService {
         { _code: 1 },
         {
           $setOnInsert: {
-            _name: 'Malappuram',
+            _name: 'MALAPPURAM',
             _districtsId: resultDistrict._id,
             _dataGuard: [1, 2],
             _createdUserId: null,

@@ -224,7 +224,7 @@ _shopType:{
     1-Shop
 }
 _billingModeSale:{
-    0-pure weight
+    0-pure weight 
     1-net weight
     2-job work
 }
