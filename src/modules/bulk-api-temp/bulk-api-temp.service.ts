@@ -17,7 +17,7 @@ import { RateCards } from 'src/tableModels/rateCards.model';
 import { RateCardPercentages } from 'src/tableModels/rateCardPercentages.model';
 import { SubCategories } from 'src/tableModels/sub_categories.model';
 import { Employee } from 'src/tableModels/employee.model';
-import { ShopBulkDataDto } from './bulk_api_temp.dto';
+import { BranchBulkDataDto, CityBulkDataDto, DepartmentBulkDataDto, DistrictBulkDataDto, EmployeesBulkDataDto, RatebaseMasterBulkDataDto, RatecardBulkDataDto, ShopBulkDataDto, StateBulkDataDto, TdsTcsMasterBulkDataDto } from './bulk_api_temp.dto';
 import { Shops } from 'src/tableModels/shops.model';
 
 const crypto = require('crypto');
@@ -84,23 +84,23 @@ export class BulkApiTempService {
     }
   }
 
-  async stateCreate(_userId_: string) {
+  async stateCreate(dto: StateBulkDataDto,_userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var listStates = [];
-      listStates = [
-        // {"Name":"KERALA","Code":"1"},
-        { Name: 'TAMILNADU', Code: '2' },
-        { Name: 'KARNATAKA', Code: '3' },
-        { Name: 'ANDRAPRADESH', Code: '4' },
-        { Name: 'GOA', Code: '5' },
-        { Name: 'MADHYAPRADESH', Code: '6' },
-        { Name: 'MAHARASHTRA', Code: '7' },
-      ];
+      // var listStates = [];
+      // listStates = [
+      //   // {"Name":"KERALA","Code":"1"},
+      //   { Name: 'TAMILNADU', Code: '2' },
+      //   { Name: 'KARNATAKA', Code: '3' },
+      //   { Name: 'ANDRAPRADESH', Code: '4' },
+      //   { Name: 'GOA', Code: '5' },
+      //   { Name: 'MADHYAPRADESH', Code: '6' },
+      //   { Name: 'MAHARASHTRA', Code: '7' },
+      // ];
 
-      const resultArray = listStates.map((element) => {
+      const resultArray = dto.items.map((element) => {
         const { Name: _name } = element;
         const { Code: _code } = element;
 
@@ -141,41 +141,41 @@ export class BulkApiTempService {
       throw error;
     }
   }
-  async districtCreate(_userId_: string) {
+  async districtCreate(dto: DistrictBulkDataDto,_userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
       var listStates = await this.stateModel.find();
-      console.log('state list ' + JSON.stringify(listStates));
-      var listDistrict = [
-        { Name: 'THIRUVANANTHAPURAM', Code: '1', State: 'KERALA' },
-        { Name: 'KOLLAM', Code: '2', State: 'KERALA' },
-        { Name: 'PATHANAMTHITTA', Code: '3', State: 'KERALA' },
-        { Name: 'ALAPPUZHA', Code: '4', State: 'KERALA' },
-        { Name: 'KOTTAYAM', Code: '5', State: 'KERALA' },
-        { Name: 'IDUKKI', Code: '6', State: 'KERALA' },
-        { Name: 'ERNAKULAM', Code: '7', State: 'KERALA' },
-        { Name: 'THRISSUR', Code: '8', State: 'KERALA' },
-        { Name: 'PALAKKAD', Code: '9', State: 'KERALA' },
-        // {"Name":"MALAPPURAM","Code":"10","State":"KERALA"},
-        { Name: 'KOZHIKKODE', Code: '11', State: 'KERALA' },
-        { Name: 'WAYANAD', Code: '12', State: 'KERALA' },
-        { Name: 'KANNUR', Code: '13', State: 'KERALA' },
-        { Name: 'KASARAGODE', Code: '14', State: 'KERALA' },
-        { Name: 'CHENNAI', Code: '15', State: 'TAMILNADU' },
-        { Name: 'COIMBATORE', Code: '16', State: 'TAMILNADU' },
-        { Name: 'ERODE', Code: '17', State: 'TAMILNADU' },
-        { Name: 'MADURAI', Code: '18', State: 'TAMILNADU' },
-        { Name: 'KANYAKUMARI', Code: '19', State: 'TAMILNADU' },
-        { Name: 'THIRUCHIRAPALLI', Code: '20', State: 'TAMILNADU' },
-        { Name: 'TIRUPUR', Code: '21', State: 'TAMILNADU' },
-        { Name: 'SALEM', Code: '22', State: 'TAMILNADU' },
-        { Name: 'MUMBAI', Code: '23', State: 'MAHARASHTRA' },
-        { Name: 'NTR', Code: '24', State: 'ANDRAPRADESH' },
-      ];
+      // console.log('state list ' + JSON.stringify(listStates));
+      // var listDistrict = [
+      //   { Name: 'THIRUVANANTHAPURAM', Code: '1', State: 'KERALA' },
+      //   { Name: 'KOLLAM', Code: '2', State: 'KERALA' },
+      //   { Name: 'PATHANAMTHITTA', Code: '3', State: 'KERALA' },
+      //   { Name: 'ALAPPUZHA', Code: '4', State: 'KERALA' },
+      //   { Name: 'KOTTAYAM', Code: '5', State: 'KERALA' },
+      //   { Name: 'IDUKKI', Code: '6', State: 'KERALA' },
+      //   { Name: 'ERNAKULAM', Code: '7', State: 'KERALA' },
+      //   { Name: 'THRISSUR', Code: '8', State: 'KERALA' },
+      //   { Name: 'PALAKKAD', Code: '9', State: 'KERALA' },
+      //   // {"Name":"MALAPPURAM","Code":"10","State":"KERALA"},
+      //   { Name: 'KOZHIKKODE', Code: '11', State: 'KERALA' },
+      //   { Name: 'WAYANAD', Code: '12', State: 'KERALA' },
+      //   { Name: 'KANNUR', Code: '13', State: 'KERALA' },
+      //   { Name: 'KASARAGODE', Code: '14', State: 'KERALA' },
+      //   { Name: 'CHENNAI', Code: '15', State: 'TAMILNADU' },
+      //   { Name: 'COIMBATORE', Code: '16', State: 'TAMILNADU' },
+      //   { Name: 'ERODE', Code: '17', State: 'TAMILNADU' },
+      //   { Name: 'MADURAI', Code: '18', State: 'TAMILNADU' },
+      //   { Name: 'KANYAKUMARI', Code: '19', State: 'TAMILNADU' },
+      //   { Name: 'THIRUCHIRAPALLI', Code: '20', State: 'TAMILNADU' },
+      //   { Name: 'TIRUPUR', Code: '21', State: 'TAMILNADU' },
+      //   { Name: 'SALEM', Code: '22', State: 'TAMILNADU' },
+      //   { Name: 'MUMBAI', Code: '23', State: 'MAHARASHTRA' },
+      //   { Name: 'NTR', Code: '24', State: 'ANDRAPRADESH' },
+      // ];
 
-      const resultArray = listDistrict.map((element) => {
+      const resultArray = dto.items.map((element) => {
         const { Name: _name } = element;
         const { Code: _code } = element;
 
@@ -222,85 +222,85 @@ export class BulkApiTempService {
       throw error;
     }
   }
-  async cityCreate(_userId_: string) {
+  async cityCreate(dto: CityBulkDataDto,_userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
       var listStates = await this.districtModel.find();
-      console.log('state list ' + JSON.stringify(listStates));
-      var listDistrict = [
-        // {"Name":"MALAPPURAM","Code":"1","District":"MALAPPURAM"},
-        { Name: 'EDAPPAL', Code: '2', District: 'MALAPPURAM' },
-        { Name: 'CHANGARAMKULAM', Code: '3', District: 'MALAPPURAM' },
-        { Name: 'CALICUT', Code: '4', District: 'KOZHIKKODE' },
-        { Name: 'KONDOTTY', Code: '5', District: 'MALAPPURAM' },
-        { Name: 'KODUVALLY', Code: '6', District: 'MALAPPURAM' },
-        { Name: 'PUTHANATHANI', Code: '7', District: 'MALAPPURAM' },
-        { Name: 'KOTTAKKAL', Code: '8', District: 'MALAPPURAM' },
-        { Name: 'VENGARA', Code: '9', District: 'MALAPPURAM' },
-        { Name: 'VALANCHERY', Code: '10', District: 'MALAPPURAM' },
-        { Name: 'RAMANATTUKARA', Code: '11', District: 'KOZHIKKODE' },
-        { Name: 'KASARAGOD', Code: '12', District: 'KASARAGODE' },
-        { Name: 'THRISSUR', Code: '13', District: 'THRISSUR' },
-        { Name: 'CHEMMAD', Code: '14', District: 'MALAPPURAM' },
-        { Name: 'PERINTHALMANNA', Code: '15', District: 'MALAPPURAM' },
-        { Name: 'PATTAMBI', Code: '16', District: 'PALAKKAD' },
-        { Name: 'FEROKE', Code: '17', District: 'KOZHIKKODE' },
-        { Name: 'ERANAKULAM', Code: '18', District: 'ERNAKULAM' },
-        { Name: 'TIRUR', Code: '19', District: 'MALAPPURAM' },
-        { Name: 'TAMIL NADU', Code: '20', District: 'CHENNAI' },
-        { Name: 'KANNUR', Code: '21', District: 'KANNUR' },
-        { Name: 'KARUNAGAPPALLY', Code: '22', District: 'KOLLAM' },
-        { Name: 'KAYAMKULAM', Code: '23', District: 'ALAPPUZHA' },
-        { Name: 'KOTTARAKKARA', Code: '24', District: 'KOLLAM' },
-        { Name: 'KUNDARA', Code: '25', District: 'KOLLAM' },
-        { Name: 'CHANGANASSERY', Code: '26', District: 'KOTTAYAM' },
-        { Name: 'KOLLAM', Code: '27', District: 'KOLLAM' },
-        { Name: 'KADAKKAL', Code: '28', District: 'KOLLAM' },
-        { Name: 'ATTINGAL', Code: '29', District: 'KOLLAM' },
-        { Name: 'POTHENCODE', Code: '30', District: 'THIRUVANANTHAPURAM' },
-        { Name: 'PALLICKAL', Code: '31', District: 'THIRUVANANTHAPURAM' },
-        { Name: 'MAVELIKKARA', Code: '32', District: 'ALAPPUZHA' },
-        { Name: 'PUNALUR', Code: '33', District: 'KOLLAM' },
-        { Name: 'PADAPPANAL', Code: '34', District: 'KOLLAM' },
-        { Name: 'WAYANAD', Code: '35', District: 'WAYANAD' },
-        {
-          Name: 'THIRUVANANTHAPURAM',
-          Code: '36',
-          District: 'THIRUVANANTHAPURAM',
-        },
-        { Name: 'MANJERI', Code: '37', District: 'MALAPPURAM' },
-        { Name: 'PARAVOOR', Code: '38', District: 'KOLLAM' },
-        { Name: 'VIJAYAWADA', Code: '39', District: 'NTR' },
-        { Name: 'PONNANI', Code: '40', District: 'MALAPPURAM' },
-        { Name: 'KUNNAMKULAM', Code: '41', District: 'THRISSUR' },
-        { Name: 'ANCHAL', Code: '42', District: 'KOLLAM' },
-        { Name: 'OTTAPPALAM', Code: '43', District: 'PALAKKAD' },
-        { Name: 'PARAPPANANGADI', Code: '44', District: 'MALAPPURAM' },
-        { Name: 'KOTTIYAM', Code: '45', District: 'KOLLAM' },
-        { Name: 'OTHUKKUNGAL', Code: '46', District: 'MALAPPURAM' },
-        { Name: 'TANUR', Code: '47', District: 'MALAPPURAM' },
-        { Name: 'KUNNUMPURAM', Code: '48', District: 'MALAPPURAM' },
-        { Name: 'THENJIPALAM', Code: '49', District: 'MALAPPURAM' },
-        { Name: 'AMBALAPUZHA', Code: '50', District: 'ALAPPUZHA' },
-        { Name: 'KOTTAYAM', Code: '51', District: 'KOTTAYAM' },
-        { Name: 'PANDIKKAD', Code: '52', District: 'MALAPPURAM' },
-        { Name: 'PALAKKAD', Code: '53', District: 'PALAKKAD' },
-        { Name: 'MADURAI', Code: '54', District: 'MADURAI' },
-        { Name: 'TIRUPPUR', Code: '55', District: 'TIRUPUR' },
-        { Name: 'MUMBAI', Code: '56', District: 'MUMBAI' },
-        { Name: 'ARAKKINAR', Code: '57', District: 'KOZHIKKODE' },
-        { Name: 'MUKKAM', Code: '58', District: 'KOZHIKKODE' },
-        { Name: 'KOYILANDY', Code: '59', District: 'KOZHIKKODE' },
-        { Name: 'NEDUMANGADU', Code: '60', District: 'THIRUVANANTHAPURAM' },
-        { Name: 'NEYYATTINKARA', Code: '61', District: 'THIRUVANANTHAPURAM' },
-        { Name: 'PATHANAPURAM', Code: '62', District: 'KOLLAM' },
-        { Name: 'KADAPPADY', Code: '63', District: 'MALAPPURAM' },
-        { Name: 'KOLATHUR', Code: '64', District: 'MALAPPURAM' },
-      ];
+      // console.log('state list ' + JSON.stringify(listStates));
+      // var listDistrict = [
+      //   // {"Name":"MALAPPURAM","Code":"1","District":"MALAPPURAM"},
+      //   { Name: 'EDAPPAL', Code: '2', District: 'MALAPPURAM' },
+      //   { Name: 'CHANGARAMKULAM', Code: '3', District: 'MALAPPURAM' },
+      //   { Name: 'CALICUT', Code: '4', District: 'KOZHIKKODE' },
+      //   { Name: 'KONDOTTY', Code: '5', District: 'MALAPPURAM' },
+      //   { Name: 'KODUVALLY', Code: '6', District: 'MALAPPURAM' },
+      //   { Name: 'PUTHANATHANI', Code: '7', District: 'MALAPPURAM' },
+      //   { Name: 'KOTTAKKAL', Code: '8', District: 'MALAPPURAM' },
+      //   { Name: 'VENGARA', Code: '9', District: 'MALAPPURAM' },
+      //   { Name: 'VALANCHERY', Code: '10', District: 'MALAPPURAM' },
+      //   { Name: 'RAMANATTUKARA', Code: '11', District: 'KOZHIKKODE' },
+      //   { Name: 'KASARAGOD', Code: '12', District: 'KASARAGODE' },
+      //   { Name: 'THRISSUR', Code: '13', District: 'THRISSUR' },
+      //   { Name: 'CHEMMAD', Code: '14', District: 'MALAPPURAM' },
+      //   { Name: 'PERINTHALMANNA', Code: '15', District: 'MALAPPURAM' },
+      //   { Name: 'PATTAMBI', Code: '16', District: 'PALAKKAD' },
+      //   { Name: 'FEROKE', Code: '17', District: 'KOZHIKKODE' },
+      //   { Name: 'ERANAKULAM', Code: '18', District: 'ERNAKULAM' },
+      //   { Name: 'TIRUR', Code: '19', District: 'MALAPPURAM' },
+      //   { Name: 'TAMIL NADU', Code: '20', District: 'CHENNAI' },
+      //   { Name: 'KANNUR', Code: '21', District: 'KANNUR' },
+      //   { Name: 'KARUNAGAPPALLY', Code: '22', District: 'KOLLAM' },
+      //   { Name: 'KAYAMKULAM', Code: '23', District: 'ALAPPUZHA' },
+      //   { Name: 'KOTTARAKKARA', Code: '24', District: 'KOLLAM' },
+      //   { Name: 'KUNDARA', Code: '25', District: 'KOLLAM' },
+      //   { Name: 'CHANGANASSERY', Code: '26', District: 'KOTTAYAM' },
+      //   { Name: 'KOLLAM', Code: '27', District: 'KOLLAM' },
+      //   { Name: 'KADAKKAL', Code: '28', District: 'KOLLAM' },
+      //   { Name: 'ATTINGAL', Code: '29', District: 'KOLLAM' },
+      //   { Name: 'POTHENCODE', Code: '30', District: 'THIRUVANANTHAPURAM' },
+      //   { Name: 'PALLICKAL', Code: '31', District: 'THIRUVANANTHAPURAM' },
+      //   { Name: 'MAVELIKKARA', Code: '32', District: 'ALAPPUZHA' },
+      //   { Name: 'PUNALUR', Code: '33', District: 'KOLLAM' },
+      //   { Name: 'PADAPPANAL', Code: '34', District: 'KOLLAM' },
+      //   { Name: 'WAYANAD', Code: '35', District: 'WAYANAD' },
+      //   {
+      //     Name: 'THIRUVANANTHAPURAM',
+      //     Code: '36',
+      //     District: 'THIRUVANANTHAPURAM',
+      //   },
+      //   { Name: 'MANJERI', Code: '37', District: 'MALAPPURAM' },
+      //   { Name: 'PARAVOOR', Code: '38', District: 'KOLLAM' },
+      //   { Name: 'VIJAYAWADA', Code: '39', District: 'NTR' },
+      //   { Name: 'PONNANI', Code: '40', District: 'MALAPPURAM' },
+      //   { Name: 'KUNNAMKULAM', Code: '41', District: 'THRISSUR' },
+      //   { Name: 'ANCHAL', Code: '42', District: 'KOLLAM' },
+      //   { Name: 'OTTAPPALAM', Code: '43', District: 'PALAKKAD' },
+      //   { Name: 'PARAPPANANGADI', Code: '44', District: 'MALAPPURAM' },
+      //   { Name: 'KOTTIYAM', Code: '45', District: 'KOLLAM' },
+      //   { Name: 'OTHUKKUNGAL', Code: '46', District: 'MALAPPURAM' },
+      //   { Name: 'TANUR', Code: '47', District: 'MALAPPURAM' },
+      //   { Name: 'KUNNUMPURAM', Code: '48', District: 'MALAPPURAM' },
+      //   { Name: 'THENJIPALAM', Code: '49', District: 'MALAPPURAM' },
+      //   { Name: 'AMBALAPUZHA', Code: '50', District: 'ALAPPUZHA' },
+      //   { Name: 'KOTTAYAM', Code: '51', District: 'KOTTAYAM' },
+      //   { Name: 'PANDIKKAD', Code: '52', District: 'MALAPPURAM' },
+      //   { Name: 'PALAKKAD', Code: '53', District: 'PALAKKAD' },
+      //   { Name: 'MADURAI', Code: '54', District: 'MADURAI' },
+      //   { Name: 'TIRUPPUR', Code: '55', District: 'TIRUPUR' },
+      //   { Name: 'MUMBAI', Code: '56', District: 'MUMBAI' },
+      //   { Name: 'ARAKKINAR', Code: '57', District: 'KOZHIKKODE' },
+      //   { Name: 'MUKKAM', Code: '58', District: 'KOZHIKKODE' },
+      //   { Name: 'KOYILANDY', Code: '59', District: 'KOZHIKKODE' },
+      //   { Name: 'NEDUMANGADU', Code: '60', District: 'THIRUVANANTHAPURAM' },
+      //   { Name: 'NEYYATTINKARA', Code: '61', District: 'THIRUVANANTHAPURAM' },
+      //   { Name: 'PATHANAPURAM', Code: '62', District: 'KOLLAM' },
+      //   { Name: 'KADAPPADY', Code: '63', District: 'MALAPPURAM' },
+      //   { Name: 'KOLATHUR', Code: '64', District: 'MALAPPURAM' },
+      // ];
 
-      const resultArray = listDistrict.map((element) => {
+      const resultArray = dto.items.map((element) => {
         const { Name: _name } = element;
         const { Code: _code } = element;
 
@@ -348,60 +348,60 @@ export class BulkApiTempService {
     }
   }
 
-  async branchCreate(_userId_: string) {
+  async branchCreate(dto: BranchBulkDataDto,_userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var listStates = [];
+      // var listStates = [];
 
-      listStates = [
-        {
-          Name: 'KOLLAM',
-          Code: '1',
-          Email: 'info.ajcastings@gmail.com',
-          Mobile: '7356428916',
-        },
-        {
-          Name: 'CALICUT',
-          Code: '2',
-          Email: 'ajcjewelclt@gmail.com',
-          Mobile: '7591916008',
-        },
-        {
-          Name: 'ERNAKULAM',
-          Code: '3',
-          Email: 'ajcjewelekm@gmail.com',
-          Mobile: '9072103916',
-        },
-        {
-          Name: 'INKEL',
-          Code: '4',
-          Email: 'ajcjewel@gmail.com',
-          Mobile: '9961916004',
-        },
-        {
-          Name: 'THRISSUR',
-          Code: '5',
-          Email: 'ajcjewel1@gmail.com',
-          Mobile: '9961916004',
-        },
-      ];
+      // listStates = [
+      //   {
+      //     Name: 'KOLLAM',
+      //     Code: '1',
+      //     Email: 'info.ajcastings@gmail.com',
+      //     Mobile: '7356428916',
+      //   },
+      //   {
+      //     Name: 'CALICUT',
+      //     Code: '2',
+      //     Email: 'ajcjewelclt@gmail.com',
+      //     Mobile: '7591916008',
+      //   },
+      //   {
+      //     Name: 'ERNAKULAM',
+      //     Code: '3',
+      //     Email: 'ajcjewelekm@gmail.com',
+      //     Mobile: '9072103916',
+      //   },
+      //   {
+      //     Name: 'INKEL',
+      //     Code: '4',
+      //     Email: 'ajcjewel@gmail.com',
+      //     Mobile: '9961916004',
+      //   },
+      //   {
+      //     Name: 'THRISSUR',
+      //     Code: '5',
+      //     Email: 'ajcjewel1@gmail.com',
+      //     Mobile: '9961916004',
+      //   },
+      // ];
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.BRANCHES },
         {
           $inc: {
-            _count: listStates.length,
+            _count: dto.items.length,
           },
         },
         { new: true, session: transactionSession },
       );
-      const resultArray = listStates.map((element, index) => {
+      const resultArray = dto.items.map((element, index) => {
         const { Name: _name } = element;
 
         return {
           _name,
-          _uid: resultCounterPurchase._count - listStates.length + index + 1,
+          _uid: resultCounterPurchase._count - dto.items.length + index + 1,
           _email: element.Email,
           _mobile: element.Mobile,
           _globalGalleryId: null,
@@ -441,90 +441,90 @@ export class BulkApiTempService {
     }
   }
 
-  async departmentCreate(_userId_: string) {
+  async departmentCreate(dto: DepartmentBulkDataDto,_userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var listStates = [];
-      listStates = [
-        {
-          Name: 'SALES DIRECTOR',
-          Code: '2000',
-          Prefix: 'RELATIONSHIP MANAGER',
-          field4: '',
-        },
-        {
-          Name: 'MARKETING DIRECTOR',
-          Code: '2001',
-          Prefix: 'RELATIONSHIP MANAGER',
-          field4: '',
-        },
-        {
-          Name: 'ORDER DIRECTOR',
-          Code: '2002',
-          Prefix: 'ORDER HEAD',
-          field4: '',
-        },
-        { Name: 'DIRECTOR', Code: '2003', Prefix: 'PRODUCTION', field4: '' },
-        {
-          Name: 'DIRECTOR1',
-          Code: '2004',
-          Prefix: 'HR',
-          field4: 'duplicate data updated',
-        },
-        {
-          Name: 'SALES EXECUTIVE',
-          Code: '2005',
-          Prefix: 'RELATIONSHIP MANAGER',
-          field4: '',
-        },
-        {
-          Name: 'BRANCH MANAGER',
-          Code: '2006',
-          Prefix: 'RELATIONSHIP MANAGER',
-          field4: '',
-        },
-        {
-          Name: 'ASSISTANT BRACH MANAGER',
-          Code: '2007',
-          Prefix: 'RELATIONSHIP MANAGER',
-          field4: '',
-        },
-        {
-          Name: 'ORDER CONTROLLER',
-          Code: '2008',
-          Prefix: 'ORDER HEAD',
-          field4: '',
-        },
-        {
-          Name: 'ASSISTANT ORDER CONTROLLER',
-          Code: '2009',
-          Prefix: 'AOC',
-          field4: '',
-        },
-        {
-          Name: 'ACCOUNTS MANAGER',
-          Code: '2010',
-          Prefix: 'STATUTORY',
-          field4: '',
-        },
-        {
-          Name: 'ACCOUNTS MANAGER1',
-          Code: '2011',
-          Prefix: 'OPERATIONS',
-          field4: 'duplicate data updated',
-        },
-        { Name: 'SUPERVISOR', Code: '2012', Prefix: 'PRODUCTION', field4: '' },
-        {
-          Name: 'MANAGER',
-          Code: '2013',
-          Prefix: 'RELATIONSHIP MANAGER',
-          field4: '',
-        },
-      ];
+      // var listStates = [];
+      // listStates = [
+      //   {
+      //     Name: 'SALES DIRECTOR',
+      //     Code: '2000',
+      //     Prefix: 'RELATIONSHIP MANAGER',
+      //     field4: '',
+      //   },
+      //   {
+      //     Name: 'MARKETING DIRECTOR',
+      //     Code: '2001',
+      //     Prefix: 'RELATIONSHIP MANAGER',
+      //     field4: '',
+      //   },
+      //   {
+      //     Name: 'ORDER DIRECTOR',
+      //     Code: '2002',
+      //     Prefix: 'ORDER HEAD',
+      //     field4: '',
+      //   },
+      //   { Name: 'DIRECTOR', Code: '2003', Prefix: 'PRODUCTION', field4: '' },
+      //   {
+      //     Name: 'DIRECTOR1',
+      //     Code: '2004',
+      //     Prefix: 'HR',
+      //     field4: 'duplicate data updated',
+      //   },
+      //   {
+      //     Name: 'SALES EXECUTIVE',
+      //     Code: '2005',
+      //     Prefix: 'RELATIONSHIP MANAGER',
+      //     field4: '',
+      //   },
+      //   {
+      //     Name: 'BRANCH MANAGER',
+      //     Code: '2006',
+      //     Prefix: 'RELATIONSHIP MANAGER',
+      //     field4: '',
+      //   },
+      //   {
+      //     Name: 'ASSISTANT BRACH MANAGER',
+      //     Code: '2007',
+      //     Prefix: 'RELATIONSHIP MANAGER',
+      //     field4: '',
+      //   },
+      //   {
+      //     Name: 'ORDER CONTROLLER',
+      //     Code: '2008',
+      //     Prefix: 'ORDER HEAD',
+      //     field4: '',
+      //   },
+      //   {
+      //     Name: 'ASSISTANT ORDER CONTROLLER',
+      //     Code: '2009',
+      //     Prefix: 'AOC',
+      //     field4: '',
+      //   },
+      //   {
+      //     Name: 'ACCOUNTS MANAGER',
+      //     Code: '2010',
+      //     Prefix: 'STATUTORY',
+      //     field4: '',
+      //   },
+      //   {
+      //     Name: 'ACCOUNTS MANAGER1',
+      //     Code: '2011',
+      //     Prefix: 'OPERATIONS',
+      //     field4: 'duplicate data updated',
+      //   },
+      //   { Name: 'SUPERVISOR', Code: '2012', Prefix: 'PRODUCTION', field4: '' },
+      //   {
+      //     Name: 'MANAGER',
+      //     Code: '2013',
+      //     Prefix: 'RELATIONSHIP MANAGER',
+      //     field4: '',
+      //   },
+      // ];
 
-      const resultArray = listStates.map((element) => {
+      const resultArray = dto.items.map((element) => {
         const { Name: _name } = element;
         const { Code: _code } = element;
 
@@ -569,14 +569,14 @@ export class BulkApiTempService {
     }
   }
 
-  async rateBaseMaster(_userId_: string) {
+  async rateBaseMaster(dto: RatebaseMasterBulkDataDto,_userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var listStates = [{ Name: '99.5' }];
+      // var listStates = [{ Name: '99.5' }];
 
-      const resultArray = listStates.map((element) => {
+      const resultArray = dto.items.map((element) => {
         const { Name: _name } = element;
 
         return {
@@ -615,14 +615,14 @@ export class BulkApiTempService {
       throw error;
     }
   }
-  async tdsTcs(_userId_: string) {
+  async tdsTcs(dto: TdsTcsMasterBulkDataDto,_userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var listStates = [{ Percentage: '1' }];
+      // var listStates = [{ Percentage: '1' }];
 
-      const resultArray = listStates.map((element) => {
+      const resultArray = dto.items.map((element) => {
         const { Percentage: _percentage } = element;
 
         return {
@@ -666,62 +666,56 @@ export class BulkApiTempService {
     }
   }
 
-  async rateCard(_userId_: string) {
+  async rateCard(dto: RatecardBulkDataDto,_userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var resultSubCategory = await this.subCategoryModel.find({ _status: 1 });
-      if (resultSubCategory.length == 0) {
-        throw new HttpException(
-          'Subcategory is empty',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+      
 
-      var listStates = [
-        { Name: 'BASIC PRICE LIST', Percentage: '4' },
-        { Name: 'BASIC PRICE LIST', Percentage: '4' },
-        { Name: 'AKS', Percentage: '4' },
-        { Name: 'BSC1', Percentage: '4' },
-        { Name: 'BSC10', Percentage: '4' },
-        { Name: 'BSC2', Percentage: '4' },
-        { Name: 'BSC3', Percentage: '4' },
-        { Name: 'BSC4', Percentage: '4' },
-        { Name: 'BSC5', Percentage: '4' },
-        { Name: 'BSC9', Percentage: '4' },
-        { Name: 'CRP1', Percentage: '4' },
-        { Name: 'CRP3', Percentage: '4' },
-        { Name: 'CRP4', Percentage: '4' },
-        { Name: 'CRP5', Percentage: '4' },
-        { Name: 'SPL6', Percentage: '4' },
-        { Name: 'JSC', Percentage: '4' },
-        { Name: 'JWL', Percentage: '4' },
-        { Name: 'MLB', Percentage: '4' },
-        { Name: 'NRL1', Percentage: '4' },
-        { Name: 'NRL10', Percentage: '4' },
-        { Name: 'NRL11', Percentage: '4' },
-        { Name: 'NRL12', Percentage: '4' },
-        { Name: 'NRL2', Percentage: '4' },
-        { Name: 'NRL3', Percentage: '4' },
-        { Name: 'NRL4', Percentage: '4' },
-        { Name: 'NRL5', Percentage: '4' },
-        { Name: 'NRL6', Percentage: '4' },
-        { Name: 'NRL7', Percentage: '4' },
-        { Name: 'NRL8', Percentage: '4' },
-        { Name: 'NRL9', Percentage: '4' },
-        { Name: 'SPL1', Percentage: '4' },
-        { Name: 'SPL10', Percentage: '4' },
-        { Name: 'SPL11', Percentage: '4' },
-        { Name: 'SPL12', Percentage: '4' },
-        { Name: 'SPL3', Percentage: '4' },
-        { Name: 'SPL4', Percentage: '4' },
-        { Name: 'SPL7', Percentage: '4' },
-        { Name: 'SPL8', Percentage: '4' },
-        { Name: 'SPL9', Percentage: '4' },
-      ];
+      // var listStates = [
+      //   { Name: 'BASIC PRICE LIST', Percentage: '4' },
+      //   { Name: 'BASIC PRICE LIST', Percentage: '4' },
+      //   { Name: 'AKS', Percentage: '4' },
+      //   { Name: 'BSC1', Percentage: '4' },
+      //   { Name: 'BSC10', Percentage: '4' },
+      //   { Name: 'BSC2', Percentage: '4' },
+      //   { Name: 'BSC3', Percentage: '4' },
+      //   { Name: 'BSC4', Percentage: '4' },
+      //   { Name: 'BSC5', Percentage: '4' },
+      //   { Name: 'BSC9', Percentage: '4' },
+      //   { Name: 'CRP1', Percentage: '4' },
+      //   { Name: 'CRP3', Percentage: '4' },
+      //   { Name: 'CRP4', Percentage: '4' },
+      //   { Name: 'CRP5', Percentage: '4' },
+      //   { Name: 'SPL6', Percentage: '4' },
+      //   { Name: 'JSC', Percentage: '4' },
+      //   { Name: 'JWL', Percentage: '4' },
+      //   { Name: 'MLB', Percentage: '4' },
+      //   { Name: 'NRL1', Percentage: '4' },
+      //   { Name: 'NRL10', Percentage: '4' },
+      //   { Name: 'NRL11', Percentage: '4' },
+      //   { Name: 'NRL12', Percentage: '4' },
+      //   { Name: 'NRL2', Percentage: '4' },
+      //   { Name: 'NRL3', Percentage: '4' },
+      //   { Name: 'NRL4', Percentage: '4' },
+      //   { Name: 'NRL5', Percentage: '4' },
+      //   { Name: 'NRL6', Percentage: '4' },
+      //   { Name: 'NRL7', Percentage: '4' },
+      //   { Name: 'NRL8', Percentage: '4' },
+      //   { Name: 'NRL9', Percentage: '4' },
+      //   { Name: 'SPL1', Percentage: '4' },
+      //   { Name: 'SPL10', Percentage: '4' },
+      //   { Name: 'SPL11', Percentage: '4' },
+      //   { Name: 'SPL12', Percentage: '4' },
+      //   { Name: 'SPL3', Percentage: '4' },
+      //   { Name: 'SPL4', Percentage: '4' },
+      //   { Name: 'SPL7', Percentage: '4' },
+      //   { Name: 'SPL8', Percentage: '4' },
+      //   { Name: 'SPL9', Percentage: '4' },
+      // ];
       var uniqueArray = [];
-      listStates.filter((element) => {
+      dto.items.filter((element) => {
         const isDuplicate = uniqueArray.includes(element.Name);
 
         if (!isDuplicate) {
@@ -747,11 +741,11 @@ export class BulkApiTempService {
           _updatedAt: 0,
           _status: 1,
         });
-        listStates.forEach((elementChild) => {
+        dto.items.forEach((elementChild) => {
           if (elementChild.Name == element) {
             rateCardPercentages.push({
               _rateCardId: rateCardId,
-              _subCategoryId: resultSubCategory[0]._id,
+              _subCategoryId: dto.subCategoryId,
               _percentage: Number(elementChild.Percentage),
               _createdUserId: null,
               _createdAt: 0,
@@ -796,172 +790,172 @@ export class BulkApiTempService {
     }
   }
 
-  async employee(_userId_: string) {
+  async employee(dto: EmployeesBulkDataDto,_userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var listStates = [];
+      // var listStates = [];
 
-      listStates = [
-        {
-          Name: 'MUHAMMED ALI',
-          Gender: 'Male',
-          Email: 'muhammedali@gmail.com',
-          Mobile: '8156908916',
-          Departments: 'SALES DIRECTOR',
-          Prefix: '',
-        },
-        {
-          Name: 'MAHESH KV',
-          Gender: 'Male',
-          Email: 'mahesh@gmail.com',
-          Mobile: '1111111111',
-          Departments: 'MARKETING DIRECTOR',
-          Prefix: '',
-        },
-        {
-          Name: 'SHARAFALI',
-          Gender: 'Male',
-          Email: 'sharafali@gmail.com',
-          Mobile: '7591916002',
-          Departments: 'DIRECTOR',
-          Prefix: '',
-        },
-        {
-          Name: 'ABDUL BASITH',
-          Gender: 'Male',
-          Email: 'abdulbasith@gmail.com',
-          Mobile: '9605686054',
-          Departments: 'DIRECTOR',
-          Prefix: '',
-        },
-        {
-          Name: 'NOUFAL M',
-          Gender: 'Male',
-          Email: 'noufal@gmail.com',
-          Mobile: '9961916004',
-          Departments: 'ORDER DIRECTOR',
-          Prefix: 'IB',
-        },
-        {
-          Name: 'PRIYA',
-          Gender: 'Female',
-          Email: 'priya@gmail.com',
-          Mobile: '9072916003',
-          Departments: 'ORDER CONTROLLER',
-          Prefix: 'HN',
-        },
-        {
-          Name: 'NASEEMA',
-          Gender: 'Female',
-          Email: 'naseema@gmail.com',
-          Mobile: '9072916004',
-          Departments: 'ORDER CONTROLLER',
-          Prefix: 'YM',
-        },
-        {
-          Name: 'FASIL RAZACK',
-          Gender: 'Male',
-          Email: 'fasilrazak@gmail.com',
-          Mobile: '8156906916',
-          Departments: 'SALES EXECUTIVE',
-          Prefix: '',
-        },
-        {
-          Name: 'ANAS',
-          Gender: 'Male',
-          Email: 'anas@gmail.com',
-          Mobile: '9633305916',
-          Departments: 'SALES EXECUTIVE',
-          Prefix: '',
-        },
-        {
-          Name: 'SHAJI',
-          Gender: 'Male',
-          Email: 'shaji@gmail.com',
-          Mobile: '9947494916',
-          Departments: 'SALES EXECUTIVE',
-          Prefix: '',
-        },
-        {
-          Name: 'FARSHAN',
-          Gender: 'Male',
-          Email: 'farshan@gmail.com',
-          Mobile: '7591916008',
-          Departments: 'ASSISTANT BRACH MANAGER',
-          Prefix: '',
-        },
-        {
-          Name: 'JUNAID',
-          Gender: 'Male',
-          Email: 'junaid@gmail.com',
-          Mobile: '8592913678',
-          Departments: 'SALES EXECUTIVE',
-          Prefix: '',
-        },
-        {
-          Name: 'MAHROOF',
-          Gender: 'Male',
-          Email: 'mahroof@gmail.com',
-          Mobile: '7356428916',
-          Departments: 'ASSISTANT BRACH MANAGER',
-          Prefix: '',
-        },
-        {
-          Name: 'ASHIQ P',
-          Gender: 'Male',
-          Email: 'ashiq@gmail.com',
-          Mobile: '9544633624',
-          Departments: 'ASSISTANT BRACH MANAGER',
-          Prefix: '',
-        },
-        {
-          Name: 'RAHUL',
-          Gender: 'Male',
-          Email: 'rahul@gmail.com',
-          Mobile: '8086934921',
-          Departments: 'SALES EXECUTIVE',
-          Prefix: '',
-        },
-        {
-          Name: 'ABID',
-          Gender: 'Male',
-          Email: 'abid@gmail.com',
-          Mobile: '7034304428',
-          Departments: 'SALES EXECUTIVE',
-          Prefix: '',
-        },
-        {
-          Name: 'JABBAR',
-          Gender: 'Male',
-          Email: 'jabbar@gmail.com',
-          Mobile: '8138916133',
-          Departments: 'ORDER CONTROLLER',
-          Prefix: 'HD',
-        },
-        {
-          Name: 'HAFIS',
-          Gender: 'Male',
-          Email: 'hafis@gmail.com',
-          Mobile: '2222222222',
-          Departments: 'ORDER CONTROLLER',
-          Prefix: 'IBS',
-        },
-        {
-          Name: 'SHAREEF',
-          Gender: 'Male',
-          Email: 'shareef@gmail.com',
-          Mobile: '9567916222',
-          Departments: 'ORDER CONTROLLER',
-          Prefix: 'SH',
-        },
-      ];
+      // listStates = [
+      //   {
+      //     Name: 'MUHAMMED ALI',
+      //     Gender: 'Male',
+      //     Email: 'muhammedali@gmail.com',
+      //     Mobile: '8156908916',
+      //     Departments: 'SALES DIRECTOR',
+      //     Prefix: '',
+      //   },
+      //   {
+      //     Name: 'MAHESH KV',
+      //     Gender: 'Male',
+      //     Email: 'mahesh@gmail.com',
+      //     Mobile: '1111111111',
+      //     Departments: 'MARKETING DIRECTOR',
+      //     Prefix: '',
+      //   },
+      //   {
+      //     Name: 'SHARAFALI',
+      //     Gender: 'Male',
+      //     Email: 'sharafali@gmail.com',
+      //     Mobile: '7591916002',
+      //     Departments: 'DIRECTOR',
+      //     Prefix: '',
+      //   },
+      //   {
+      //     Name: 'ABDUL BASITH',
+      //     Gender: 'Male',
+      //     Email: 'abdulbasith@gmail.com',
+      //     Mobile: '9605686054',
+      //     Departments: 'DIRECTOR',
+      //     Prefix: '',
+      //   },
+      //   {
+      //     Name: 'NOUFAL M',
+      //     Gender: 'Male',
+      //     Email: 'noufal@gmail.com',
+      //     Mobile: '9961916004',
+      //     Departments: 'ORDER DIRECTOR',
+      //     Prefix: 'IB',
+      //   },
+      //   {
+      //     Name: 'PRIYA',
+      //     Gender: 'Female',
+      //     Email: 'priya@gmail.com',
+      //     Mobile: '9072916003',
+      //     Departments: 'ORDER CONTROLLER',
+      //     Prefix: 'HN',
+      //   },
+      //   {
+      //     Name: 'NASEEMA',
+      //     Gender: 'Female',
+      //     Email: 'naseema@gmail.com',
+      //     Mobile: '9072916004',
+      //     Departments: 'ORDER CONTROLLER',
+      //     Prefix: 'YM',
+      //   },
+      //   {
+      //     Name: 'FASIL RAZACK',
+      //     Gender: 'Male',
+      //     Email: 'fasilrazak@gmail.com',
+      //     Mobile: '8156906916',
+      //     Departments: 'SALES EXECUTIVE',
+      //     Prefix: '',
+      //   },
+      //   {
+      //     Name: 'ANAS',
+      //     Gender: 'Male',
+      //     Email: 'anas@gmail.com',
+      //     Mobile: '9633305916',
+      //     Departments: 'SALES EXECUTIVE',
+      //     Prefix: '',
+      //   },
+      //   {
+      //     Name: 'SHAJI',
+      //     Gender: 'Male',
+      //     Email: 'shaji@gmail.com',
+      //     Mobile: '9947494916',
+      //     Departments: 'SALES EXECUTIVE',
+      //     Prefix: '',
+      //   },
+      //   {
+      //     Name: 'FARSHAN',
+      //     Gender: 'Male',
+      //     Email: 'farshan@gmail.com',
+      //     Mobile: '7591916008',
+      //     Departments: 'ASSISTANT BRACH MANAGER',
+      //     Prefix: '',
+      //   },
+      //   {
+      //     Name: 'JUNAID',
+      //     Gender: 'Male',
+      //     Email: 'junaid@gmail.com',
+      //     Mobile: '8592913678',
+      //     Departments: 'SALES EXECUTIVE',
+      //     Prefix: '',
+      //   },
+      //   {
+      //     Name: 'MAHROOF',
+      //     Gender: 'Male',
+      //     Email: 'mahroof@gmail.com',
+      //     Mobile: '7356428916',
+      //     Departments: 'ASSISTANT BRACH MANAGER',
+      //     Prefix: '',
+      //   },
+      //   {
+      //     Name: 'ASHIQ P',
+      //     Gender: 'Male',
+      //     Email: 'ashiq@gmail.com',
+      //     Mobile: '9544633624',
+      //     Departments: 'ASSISTANT BRACH MANAGER',
+      //     Prefix: '',
+      //   },
+      //   {
+      //     Name: 'RAHUL',
+      //     Gender: 'Male',
+      //     Email: 'rahul@gmail.com',
+      //     Mobile: '8086934921',
+      //     Departments: 'SALES EXECUTIVE',
+      //     Prefix: '',
+      //   },
+      //   {
+      //     Name: 'ABID',
+      //     Gender: 'Male',
+      //     Email: 'abid@gmail.com',
+      //     Mobile: '7034304428',
+      //     Departments: 'SALES EXECUTIVE',
+      //     Prefix: '',
+      //   },
+      //   {
+      //     Name: 'JABBAR',
+      //     Gender: 'Male',
+      //     Email: 'jabbar@gmail.com',
+      //     Mobile: '8138916133',
+      //     Departments: 'ORDER CONTROLLER',
+      //     Prefix: 'HD',
+      //   },
+      //   {
+      //     Name: 'HAFIS',
+      //     Gender: 'Male',
+      //     Email: 'hafis@gmail.com',
+      //     Mobile: '2222222222',
+      //     Departments: 'ORDER CONTROLLER',
+      //     Prefix: 'IBS',
+      //   },
+      //   {
+      //     Name: 'SHAREEF',
+      //     Gender: 'Male',
+      //     Email: 'shareef@gmail.com',
+      //     Mobile: '9567916222',
+      //     Departments: 'ORDER CONTROLLER',
+      //     Prefix: 'SH',
+      //   },
+      // ];
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.EMPLOYEES },
         {
           $inc: {
-            _count: listStates.length,
+            _count: dto.items.length,
           },
         },
         { new: true, session: transactionSession },
@@ -978,7 +972,7 @@ export class BulkApiTempService {
           `sha512`,
         )
         .toString(`hex`);
-      listStates.forEach((element, index) => {
+        dto.items.forEach((element, index) => {
         var employeeId = new mongoose.Types.ObjectId();
 
         var userId = new mongoose.Types.ObjectId();
@@ -1023,7 +1017,7 @@ export class BulkApiTempService {
 
         arrayEmployees.push({
           _userId: userId,
-          _uid: resultCounterPurchase._count - listStates.length + index + 1,
+          _uid: resultCounterPurchase._count - dto.items.length + index + 1,
           _departmentId: resultDepartment[countIndexDep]._id,
           _prefix: element.Prefix,
           _processMasterId: null,
@@ -1071,80 +1065,80 @@ export class BulkApiTempService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var listStates = [
-        {
-          LEGAL_NAME: 'AADHAR GOLD CHEMMAD LLP',
-          DISPLAY_NAME: 'AADHAR CHEMMAD',
-          Email: 'aadhargold@gmail.com',
-          Mobile: '98950059160',
-          Address:
-            'TPV/157, E,F,G, NEW-V/1318 A,B,C, GROUND FLOOR, KHALEEJ MALL, CHEMMAD, TIRURANGADI, MALAPPURAM, KERALA, 676303',
-          Shop_Type: 'B2B',
-          City: 'CHEMMAD',
-          Branch: 'INKEL',
-          Is_Supplier: 'No',
-          Agent: 'NA',
-          Order_head: 'NASEEMA',
-          Relationship_manager: 'MAHESH KV',
-          RateCard: 'NRL8',
-          Rate_Base: '99.5',
-          TDS_TCS: 'TCS',
-          TDS_TCS_Value: '1',
-          Commision_Type: 'Percentage',
-          Commision_Value: '0',
-          PanCard_Number: 'ABFFA6865M',
-          GST_Number: '32ABFFA6865M1Z4',
-          Credit_Amount: '0',
-          Credit_Days: '0',
-          Stone_Pricing: '0',
-          OrderSale_Rate: 'Fix',
-          Stoc_Sale_Rate: 'Fix',
-          Billing_Model_Sales: 'Pure weight',
-          Billing_Mode_Purchase: 'Pure weight',
-          Hallmarking_Mandatory_Status: 'No',
-          Chat_Permission: 'Allow Document Uploading',
-          User_Name: 'AADHAR CHEMMAD',
-          User_Email: 'aadhargold1@gmail.com',
-          User_mobile: '9895005916',
-          User_Gender: 'Male',
-        },
-        {
-          LEGAL_NAME: 'MASS GOLD LLP-AADHAR KONDOTTY',
-          DISPLAY_NAME: 'AADHAR KONDOTTY',
-          Email: 'aadharkty@gmail.com',
-          Mobile: '95263300040',
-          Address:
-            '18/1018D, SECOND FLOOR, NADHA COMPLEX, ZC NORTH ROAD, CHALAPPURAM, KOZHIKODE, 673002',
-          Shop_Type: 'B2B',
-          City: 'KONDOTTY',
-          Branch: 'INKEL',
-          Is_Supplier: 'No',
-          Agent: 'NA',
-          Order_head: 'NASEEMA',
-          Relationship_manager: 'MUHAMMED ALI',
-          RateCard: 'SPL8',
-          Rate_Base: '99.5',
-          TDS_TCS: 'TCS',
-          TDS_TCS_Value: '1',
-          Commision_Type: 'Percentage',
-          Commision_Value: '0',
-          PanCard_Number: 'AAYFM3197J',
-          GST_Number: '32AAYFM3197J1ZM',
-          Credit_Amount: '0',
-          Credit_Days: '0',
-          Stone_Pricing: '0',
-          OrderSale_Rate: 'Un fix',
-          Stoc_Sale_Rate: 'Un Fix',
-          Billing_Model_Sales: 'Pure weight',
-          Billing_Mode_Purchase: 'Pure weight',
-          Hallmarking_Mandatory_Status: 'No',
-          Chat_Permission: 'Allow Document Uploading',
-          User_Name: 'aadharkty',
-          User_Email: 'aadharkty1@gmail.com',
-          User_mobile: '9526330004',
-          User_Gender: 'Male',
-        },
-      ];
+      // var listStates = [
+      //   {
+      //     LEGAL_NAME: 'AADHAR GOLD CHEMMAD LLP',
+      //     DISPLAY_NAME: 'AADHAR CHEMMAD',
+      //     Email: 'aadhargold@gmail.com',
+      //     Mobile: '98950059160',
+      //     Address:
+      //       'TPV/157, E,F,G, NEW-V/1318 A,B,C, GROUND FLOOR, KHALEEJ MALL, CHEMMAD, TIRURANGADI, MALAPPURAM, KERALA, 676303',
+      //     Shop_Type: 'B2B',
+      //     City: 'CHEMMAD',
+      //     Branch: 'INKEL',
+      //     Is_Supplier: 'No',
+      //     Agent: 'NA',
+      //     Order_head: 'NASEEMA',
+      //     Relationship_manager: 'MAHESH KV',
+      //     RateCard: 'NRL8',
+      //     Rate_Base: '99.5',
+      //     TDS_TCS: 'TCS',
+      //     TDS_TCS_Value: '1',
+      //     Commision_Type: 'Percentage',
+      //     Commision_Value: '0',
+      //     PanCard_Number: 'ABFFA6865M',
+      //     GST_Number: '32ABFFA6865M1Z4',
+      //     Credit_Amount: '0',
+      //     Credit_Days: '0',
+      //     Stone_Pricing: '0',
+      //     OrderSale_Rate: 'Fix',
+      //     Stoc_Sale_Rate: 'Fix',
+      //     Billing_Model_Sales: 'Pure weight',
+      //     Billing_Mode_Purchase: 'Pure weight',
+      //     Hallmarking_Mandatory_Status: 'No',
+      //     Chat_Permission: 'Allow Document Uploading',
+      //     User_Name: 'AADHAR CHEMMAD',
+      //     User_Email: 'aadhargold1@gmail.com',
+      //     User_mobile: '9895005916',
+      //     User_Gender: 'Male',
+      //   },
+      //   {
+      //     LEGAL_NAME: 'MASS GOLD LLP-AADHAR KONDOTTY',
+      //     DISPLAY_NAME: 'AADHAR KONDOTTY',
+      //     Email: 'aadharkty@gmail.com',
+      //     Mobile: '95263300040',
+      //     Address:
+      //       '18/1018D, SECOND FLOOR, NADHA COMPLEX, ZC NORTH ROAD, CHALAPPURAM, KOZHIKODE, 673002',
+      //     Shop_Type: 'B2B',
+      //     City: 'KONDOTTY',
+      //     Branch: 'INKEL',
+      //     Is_Supplier: 'No',
+      //     Agent: 'NA',
+      //     Order_head: 'NASEEMA',
+      //     Relationship_manager: 'MUHAMMED ALI',
+      //     RateCard: 'SPL8',
+      //     Rate_Base: '99.5',
+      //     TDS_TCS: 'TCS',
+      //     TDS_TCS_Value: '1',
+      //     Commision_Type: 'Percentage',
+      //     Commision_Value: '0',
+      //     PanCard_Number: 'AAYFM3197J',
+      //     GST_Number: '32AAYFM3197J1ZM',
+      //     Credit_Amount: '0',
+      //     Credit_Days: '0',
+      //     Stone_Pricing: '0',
+      //     OrderSale_Rate: 'Un fix',
+      //     Stoc_Sale_Rate: 'Un Fix',
+      //     Billing_Model_Sales: 'Pure weight',
+      //     Billing_Mode_Purchase: 'Pure weight',
+      //     Hallmarking_Mandatory_Status: 'No',
+      //     Chat_Permission: 'Allow Document Uploading',
+      //     User_Name: 'aadharkty',
+      //     User_Email: 'aadharkty1@gmail.com',
+      //     User_mobile: '9526330004',
+      //     User_Gender: 'Male',
+      //   },
+      // ];
 
       var resultBranch = await this.branchModel.find({ _status: 1 });
       var resultRateCard = await this.ratecardModel.find({ _status: 1 });
@@ -1166,7 +1160,7 @@ export class BulkApiTempService {
         { _tableName: ModelNames.SHOPS },
         {
           $inc: {
-            _count: listStates.length,
+            _count: dto.items.length,
           },
         },
         { new: true, session: transactionSession },
@@ -1175,7 +1169,7 @@ export class BulkApiTempService {
       var arrayUsers = [];
       var arrayshops = [];
 
-      listStates.forEach((element, index) => {
+      dto.items.forEach((element, index) => {
         var shopId = new mongoose.Types.ObjectId();
 
         var orderSaleRate = 0;
@@ -1250,7 +1244,7 @@ export class BulkApiTempService {
           _name: element.LEGAL_NAME,
 
           _displayName: element.DISPLAY_NAME,
-          _uid: resultCounterPurchase._count - listStates.length + index + 1,
+          _uid: resultCounterPurchase._count - dto.items.length + index + 1,
           _globalGalleryId: null,
           _orderSaleRate: orderSaleRate,
           _stockSaleRate: stockSaleRate,

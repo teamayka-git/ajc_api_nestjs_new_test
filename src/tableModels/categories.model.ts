@@ -6,7 +6,7 @@ export const CategoriesSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
   _name: { type: String, required: true, default: 'nil' },
   _code: { type: Number, required: true, default: -1 },
-  _description: { type: String, required: true, default: 'nil' },
+  _description: { type: String,  default: '' },
   _groupId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.GROUP_MASTERS,

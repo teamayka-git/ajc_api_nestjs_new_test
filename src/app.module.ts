@@ -82,6 +82,9 @@ import { DeliveryRejectedPendingModule } from './modules/delivery-rejected-pendi
 import { DeliveryReturnModule } from './modules/delivery-return/delivery-return.module';
 import { OtpModule } from './modules/otp/otp.module';
 import { BulkApiTempModule } from './modules/bulk-api-temp/bulk-api-temp.module';
+import { GroupMastersSchema } from './tableModels/groupMasters.model';
+import { CategoriesSchema } from './tableModels/categories.model';
+import { SubCategoriesSchema } from './tableModels/sub_categories.model';
 
 @Module({
   imports: [
@@ -102,6 +105,9 @@ import { BulkApiTempModule } from './modules/bulk-api-temp/bulk-api-temp.module'
       { name: ModelNames.GENERALS, schema: GeneralsSchema },
       { name: ModelNames.STATES, schema:StatesSchema },
       { name: ModelNames.DISTRICTS, schema:DistrictsSchema },
+      { name: ModelNames.GROUP_MASTERS, schema:GroupMastersSchema },
+      { name: ModelNames.CATEGORIES, schema:CategoriesSchema },
+      { name: ModelNames.SUB_CATEGORIES, schema:SubCategoriesSchema },
       { name: ModelNames.CITIES, schema:CitiesSchema },
       { name: ModelNames.DEPARTMENT, schema: DepartmentsSchema },
       { name: ModelNames.PURITY, schema: PuritySchema },

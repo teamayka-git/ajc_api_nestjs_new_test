@@ -5,6 +5,7 @@ import { ChangeMyPasswordDto, ChangeUserPasswordDto, GetUserDto, MeDto } from '.
 import { CommonNames } from './common/common_names';
 import { ModelNames } from './common/model_names';
 import { GlobalConfig } from './config/global_config';
+import { Categories } from './tableModels/categories.model';
 import { Cities } from './tableModels/cities.model';
 import { Colours } from './tableModels/colourMasters.model';
 import { Company } from './tableModels/companies.model';
@@ -15,9 +16,11 @@ import { Employee } from './tableModels/employee.model';
 import { Generals } from './tableModels/generals.model';
 import { GlobalGalleryCategories } from './tableModels/globalGallerycategories.model';
 import { GoldRateTimelines } from './tableModels/gold_rate_timelines.model';
+import { GroupMasters } from './tableModels/groupMasters.model';
 import { ProcessMaster } from './tableModels/processMaster.model';
 import { Purity } from './tableModels/purity.model';
 import { States } from './tableModels/states.model';
+import { SubCategories } from './tableModels/sub_categories.model';
 import { User } from './tableModels/user.model';
 import { IndexUtils } from './utils/IndexUtils';
 import { SmsUtils } from './utils/smsUtils';
@@ -34,6 +37,12 @@ export class AppService {
   constructor(
     @InjectModel(ModelNames.STATES)
     private readonly stateModel: mongoose.Model<States>,
+    @InjectModel(ModelNames.GROUP_MASTERS)
+    private readonly groupmasterModel: mongoose.Model<GroupMasters>,
+    @InjectModel(ModelNames.CATEGORIES)
+    private readonly categoryModel: mongoose.Model<Categories>,
+    @InjectModel(ModelNames.STATES)
+    private readonly subCategoryModel: mongoose.Model<SubCategories>,
     @InjectModel(ModelNames.DISTRICTS)
     private readonly districtModel: mongoose.Model<Districts>,
     @InjectModel(ModelNames.CITIES)
@@ -1195,6 +1204,107 @@ export class AppService {
       );
 
       userId = resultUser._id;
+
+
+
+      var resultGroup = await this.groupmasterModel.findOneAndUpdate(
+        { 
+          _name:"22K GOLD" },
+        {
+          $setOnInsert: {
+
+            _rawMaterialStatus:1,
+            _hsnCode:"7113",
+            _descriptionArray:[],
+            _meltingPurity:91.75,
+            _taxPercentage:3,
+            _purity:92,
+            _dataGuard: [1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+
+
+
+      var resultCategory = await this.categoryModel.findOneAndUpdate(
+        { 
+          _code:1 },
+        {
+          $setOnInsert: {
+
+            name:"PLANE ORNAMENTS",
+            _description:"",
+            _groupId:resultGroup._id,
+            _globalGalleryId:null,
+            
+            _dataGuard: [1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+
+
+      var resultSubCategory = await this.subCategoryModel.findOneAndUpdate(
+        { 
+          _code:1 },
+        {
+          $setOnInsert: {
+
+            name:"PLANE RING",
+            _description:"",
+            _categoryId:resultCategory._id,
+            _hmSealing:1,
+            _defaultValueAdditionPercentage:4,
+            _rewardPoint:1,
+            _globalGalleryId:null,
+            _dataGuard: [1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       var resultState = await this.stateModel.findOneAndUpdate(
         { _code: 1 },

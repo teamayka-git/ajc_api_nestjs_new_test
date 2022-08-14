@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Request } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { BulkApiTempService } from './bulk-api-temp.service';
-import { ShopBulkDataDto } from './bulk_api_temp.dto';
+import { BranchBulkDataDto, CityBulkDataDto, DepartmentBulkDataDto, DistrictBulkDataDto, EmployeesBulkDataDto, RatebaseMasterBulkDataDto, RatecardBulkDataDto, ShopBulkDataDto, StateBulkDataDto, TdsTcsMasterBulkDataDto } from './bulk_api_temp.dto';
 
 
 @ApiTags("Bulk Api Temp Docs") 
@@ -17,48 +17,48 @@ export class BulkApiTempController {
   }
   
   @Post("1_stateCreate")
-  stateCreate(@Request() req) {
-    return this.bulkApiTempService.stateCreate(req["_userId_"]);
+  stateCreate(@Body() dto: StateBulkDataDto,@Request() req) {
+    return this.bulkApiTempService.stateCreate(dto,req["_userId_"]);
   }
   
   @Post("2_districtCreate")
-  districtCreate(@Request() req) {
-    return this.bulkApiTempService.districtCreate(req["_userId_"]);
+  districtCreate(@Body() dto: DistrictBulkDataDto,@Request() req) {
+    return this.bulkApiTempService.districtCreate(dto,req["_userId_"]);
   }
   
   @Post("3_cityCreate")
-  cityCreate(@Request() req) {
-    return this.bulkApiTempService.cityCreate(req["_userId_"]);
+  cityCreate(@Body() dto: CityBulkDataDto,@Request() req) {
+    return this.bulkApiTempService.cityCreate(dto,req["_userId_"]);
   }
   
 
   @Post("4_branchCreate")
-  branchCreate(@Request() req) {
-    return this.bulkApiTempService.branchCreate(req["_userId_"]);
+  branchCreate(@Body() dto: BranchBulkDataDto,@Request() req) {
+    return this.bulkApiTempService.branchCreate(dto,req["_userId_"]);
   }
   
   @Post("5_departmentCreate")
-  departmentCreate(@Request() req) {
-    return this.bulkApiTempService.departmentCreate(req["_userId_"]);
+  departmentCreate(@Body() dto: DepartmentBulkDataDto,@Request() req) {
+    return this.bulkApiTempService.departmentCreate(dto,req["_userId_"]);
   }
   
   @Post("7_employee")
-  employee(@Request() req) {
-    return this.bulkApiTempService.employee(req["_userId_"]);
+  employee(@Body() dto: EmployeesBulkDataDto,@Request() req) {
+    return this.bulkApiTempService.employee(dto,req["_userId_"]);
   }
   @Post("8_rateCard")
-  rateCard(@Request() req) {
-    return this.bulkApiTempService.rateCard(req["_userId_"]);
+  rateCard(@Body() dto: RatecardBulkDataDto,@Request() req) {
+    return this.bulkApiTempService.rateCard(dto,req["_userId_"]);
   }
   @Post("9_rateBaseMaster")
-  rateBaseMaster(@Request() req) {
-    return this.bulkApiTempService.rateBaseMaster(req["_userId_"]);
+  rateBaseMaster(@Body() dto: RatebaseMasterBulkDataDto,@Request() req) {
+    return this.bulkApiTempService.rateBaseMaster(dto,req["_userId_"]);
   }
   
 
   @Post("10_tdsTcs")
-  tdsTcs(@Request() req) {
-    return this.bulkApiTempService.tdsTcs(req["_userId_"]);
+  tdsTcs(@Body() dto: TdsTcsMasterBulkDataDto,@Request() req) {
+    return this.bulkApiTempService.tdsTcs(dto,req["_userId_"]);
   }
   @Post("11_shop")
   shop(@Body() dto: ShopBulkDataDto,@Request() req) {//ShopBulkDataDto
