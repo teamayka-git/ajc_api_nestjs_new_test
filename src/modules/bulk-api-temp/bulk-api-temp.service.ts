@@ -1016,6 +1016,7 @@ export class BulkApiTempService {
         );
 
         arrayEmployees.push({
+          _id:employeeId,
           _userId: userId,
           _uid: resultCounterPurchase._count - dto.items.length + index + 1,
           _departmentId: resultDepartment[countIndexDep]._id,
