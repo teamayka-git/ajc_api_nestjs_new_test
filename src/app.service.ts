@@ -41,7 +41,7 @@ export class AppService {
     private readonly groupmasterModel: mongoose.Model<GroupMasters>,
     @InjectModel(ModelNames.CATEGORIES)
     private readonly categoryModel: mongoose.Model<Categories>,
-    @InjectModel(ModelNames.STATES)
+    @InjectModel(ModelNames.SUB_CATEGORIES)
     private readonly subCategoryModel: mongoose.Model<SubCategories>,
     @InjectModel(ModelNames.DISTRICTS)
     private readonly districtModel: mongoose.Model<Districts>,
