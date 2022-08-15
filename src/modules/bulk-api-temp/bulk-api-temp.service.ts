@@ -1331,7 +1331,7 @@ export class BulkApiTempService {
           _shopId: shopId,
           _logisticPartnerId: null,
           _testCenterId: null,
-          _customType: [5],
+          _customType: [1],
           _deliveryHubId: null,
           _halmarkId: null,
           _customerId: null,
