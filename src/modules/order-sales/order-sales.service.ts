@@ -192,7 +192,7 @@ export class OrderSalesService {
         },
         { new: true, session: transactionSession },
       );
-      console.log('___pp1');
+      console.log('___pp1   '+dto.shopId);
       var shopDetails = await this.shopsModel.aggregate([
         {
           $match: {
