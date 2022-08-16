@@ -511,7 +511,7 @@ console.log("delivery reject "+JSON.stringify(dto));
     }
   }
 
-  async list(dto: DeliveryListDto) {
+  async list(dto: DeliveryListDto) { 
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -592,6 +592,89 @@ console.log("delivery reject "+JSON.stringify(dto));
           $match: { _workStatus: { $in: dto.workStatus } },
         });
       }
+
+
+
+
+
+      if (
+        dto.cityIds.length != 0 ||
+        dto.relationshipManagerIds.length != 0 ||
+        dto.orderHeadIds.length != 0
+      ) {
+        var pipelineShop = [];
+        pipelineShop.push(
+          {
+            $match: {
+              $expr: { $eq: ['$_id', '$$shopId'] },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              _cityId: 1,
+              _orderHeadId: 1,
+              _relationshipManagerId: 1,
+            },
+          },
+        );
+
+
+        if (dto.cityIds.length > 0) {
+          var newSettingsId = [];
+          dto.cityIds.map((mapItem) => {
+            newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+          });
+          pipelineShop.push({
+            $match: { _cityId: { $in: newSettingsId } },
+          });
+        }
+
+        if (dto.relationshipManagerIds.length > 0) {
+          var newSettingsId = [];
+          dto.relationshipManagerIds.map((mapItem) => {
+            newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+          });
+          pipelineShop.push({
+            $match: { _relationshipManagerId: { $in: newSettingsId } },
+          });
+        }
+
+        if (dto.orderHeadIds.length > 0) {
+          var newSettingsId = [];
+          dto.orderHeadIds.map((mapItem) => {
+            newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+          });
+          pipelineShop.push({
+            $match: { _orderHeadId: { $in: newSettingsId } },
+          });
+        }
+
+
+
+
+        arrayAggregation.push( {
+          $lookup: {
+            from: ModelNames.SHOPS,
+            let: { shopId: '$_shopId' },
+            pipeline: pipelineShop,
+            as: 'mongoCheckShopList',
+          },
+        },
+        {
+          $match: { mongoCheckShopList: { $ne: [] } },
+        },
+        );
+      }
+
+
+
+
+
+
+
+
+
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {

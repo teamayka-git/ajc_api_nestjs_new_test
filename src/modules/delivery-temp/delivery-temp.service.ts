@@ -492,15 +492,13 @@ export class DeliveryTempService {
                   },
                 },
               ],
-              as: 'invoiceDetails',
+              as: 'mongoCheckInvoiceList',
             },
           },
-          {
-            $unwind: {
-              path: '$invoiceDetails',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
+          
+        {
+          $match: { mongoCheckInvoiceList: { $ne: [] } },
+        },
         );
       }
 
