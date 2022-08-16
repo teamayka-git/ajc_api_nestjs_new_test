@@ -250,6 +250,7 @@ export class ModelWeight {
       _id: 1,
       _shopId: 1,
       _referenceNumber: 1,
+      _description: 1,
       _uid: 1,
       _dueDate: 1,
       _workStatus: 1,

@@ -103,6 +103,8 @@ _type:{
   31 - hub tranfer intransit
   32 - hub transfer delivered
   33 - hub transfer accepted
+  34 - order declined inscan
+  35 - Order completed
   
   100 - order editted
   101- sales order actived
