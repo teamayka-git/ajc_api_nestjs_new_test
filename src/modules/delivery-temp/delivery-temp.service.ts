@@ -106,7 +106,7 @@ export class DeliveryTempService {
             _type: dto.type,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
-            _employeeId: dto.employeeId,
+            _employeeId: dto.deliveryProviderId,//todo employee
           },
         },
         { new: true, session: transactionSession },
@@ -131,7 +131,7 @@ export class DeliveryTempService {
       dto.orderIds.forEach((eachItem) => {
         arraySalesOrderHistories.push({
           _orderSaleId: eachItem,
-          _userId: dto.employeeId,
+          _userId: dto.deliveryProviderId,//todo employee
           _type: 20,
           _shopId: null,
           _orderSaleItemId: null,
