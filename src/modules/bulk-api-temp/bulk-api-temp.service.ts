@@ -19,6 +19,7 @@ import { SubCategories } from 'src/tableModels/sub_categories.model';
 import { Employee } from 'src/tableModels/employee.model';
 import { BranchBulkDataDto, CityBulkDataDto, DepartmentBulkDataDto, DistrictBulkDataDto, EmployeesBulkDataDto, RatebaseMasterBulkDataDto, RatecardBulkDataDto, ShopBulkDataDto, StateBulkDataDto, TdsTcsMasterBulkDataDto } from './bulk_api_temp.dto';
 import { Shops } from 'src/tableModels/shops.model';
+import { Company } from 'src/tableModels/companies.model';
 
 const crypto = require('crypto');
 
@@ -55,6 +56,8 @@ export class BulkApiTempService {
     private readonly tdsModel: mongoose.Model<TdsMasters>,
     @InjectModel(ModelNames.TCS_MASTERS)
     private readonly tcsModel: mongoose.Model<TcsMasters>,
+    @InjectModel(ModelNames.COMPANIES)
+    private readonly companyModel: mongoose.Model<Company>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async create(_userId_: string) {
@@ -1141,9 +1144,126 @@ export class BulkApiTempService {
       //   },
       // ];
 
+      var resultCompany=await this.companyModel.aggregate([{$match:{_status:1}},
+      
+        {
+          $lookup: {
+            from: ModelNames.CITIES,
+            let: { cityId: '$_cityId' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$_id', '$$cityId'] },
+                },
+              },
+
+              {
+                $lookup: {
+                  from: ModelNames.DISTRICTS,
+                  let: { districtId: '$_districtsId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$districtId'] },
+                      },
+                    },
+
+                    {
+                      $lookup: {
+                        from: ModelNames.STATES,
+                        let: { stateId: '$_statesId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: { $eq: ['$_id', '$$stateId'] },
+                            },
+                          },
+                        ],
+                        as: 'stateDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$stateDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+
+                  ],
+                  as: 'districtDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$districtDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+
+
+
+            ],
+            as: 'cityDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$cityDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      
+      ]);
       var resultBranch = await this.branchModel.find({ _status: 1 });
       var resultRateCard = await this.ratecardModel.find({ _status: 1 });
-      var resultCity = await this.cityModel.find({ _status: 1 });
+      var resultCity = await this.cityModel.aggregate([{$match:{_status:1}},
+      
+      
+        {
+          $lookup: {
+            from: ModelNames.DISTRICTS,
+            let: { districtId: '$_districtsId' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$_id', '$$districtId'] },
+                },
+              },
+
+              {
+                $lookup: {
+                  from: ModelNames.STATES,
+                  let: { stateId: '$_statesId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$stateId'] },
+                      },
+                    },
+                  ],
+                  as: 'stateDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$stateDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+
+            ],
+            as: 'districtDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$districtDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+
+      
+      ]);
       var resultRateBase = await this.ratebaseMasterModel.find({ _status: 1 });
       var resultUsers = await this.userModel.find({ _status: 1 });
 
@@ -1172,6 +1292,15 @@ export class BulkApiTempService {
 
       dto.items.forEach((element, index) => {
         var shopId = new mongoose.Types.ObjectId();
+
+
+
+
+
+
+
+
+
 
         var orderSaleRate = 0;
         if (element.OrderSale_Rate == 'Un fix') {
@@ -1240,6 +1369,22 @@ export class BulkApiTempService {
           (it) => it._name == element.Relationship_manager,
         );
 
+
+        var isIgstTaxEnabled=0;
+if(resultCompany[0].cityDetails.districtDetails.stateDetails._name!=resultCity[countIndexCity].districtDetails.stateDetails._name){
+  isIgstTaxEnabled=1;
+}
+        
+        // countIndexCity
+
+
+
+
+
+
+
+
+
         arrayshops.push({
           _id: shopId,
           _name: element.LEGAL_NAME,
@@ -1251,7 +1396,7 @@ export class BulkApiTempService {
           _stockSaleRate: stockSaleRate,
           _address: element.Address,
           _shopType: shopType,
-          _isTaxIgstEnabled: 1,
+          _isTaxIgstEnabled: isIgstTaxEnabled,
           _commisionType: commisionType,
           _branchId: resultBranch[countIndexBranch]._id,
           _orderHeadId: resultUsers[countIndexUserOH]._id,

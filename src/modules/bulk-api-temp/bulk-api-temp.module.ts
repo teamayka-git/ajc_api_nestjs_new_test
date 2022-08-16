@@ -18,6 +18,7 @@ import { RateCardPercentagesSchema } from 'src/tableModels/rateCardPercentages.m
 import { SubCategoriesSchema } from 'src/tableModels/sub_categories.model';
 import { EmployeeSchema } from 'src/tableModels/employee.model';
 import { ShopsSchema } from 'src/tableModels/shops.model';
+import { CompanySchema } from 'src/tableModels/companies.model';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { ShopsSchema } from 'src/tableModels/shops.model';
       { name: ModelNames.SUB_CATEGORIES, schema:SubCategoriesSchema },
       { name: ModelNames.EMPLOYEES, schema:EmployeeSchema },
       { name: ModelNames.SHOPS, schema:ShopsSchema },
+      { name: ModelNames.COMPANIES, schema:CompanySchema },
     
     ]),
   ],

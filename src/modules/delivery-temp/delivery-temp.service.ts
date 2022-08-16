@@ -42,14 +42,15 @@ export class DeliveryTempService {
             mapItem.employeeId != '' && mapItem.employeeId != 'nil'
               ? mapItem.employeeId
               : null,
-              _hubId:
-                mapItem.hubId != '' && mapItem.hubId != 'nil'
-                  ? mapItem.hubId
-                  : null,
-                  _deliveryProviderId:
-                    mapItem.deliveryProviderId != '' && mapItem.deliveryProviderId != 'nil'
-                      ? mapItem.deliveryProviderId
-                      : null,
+          _hubId:
+            mapItem.hubId != '' && mapItem.hubId != 'nil'
+              ? mapItem.hubId
+              : null,
+          _deliveryProviderId:
+            mapItem.deliveryProviderId != '' &&
+            mapItem.deliveryProviderId != 'nil'
+              ? mapItem.deliveryProviderId
+              : null,
 
           _rootCauseId: null,
           _rootCause: '',
@@ -94,9 +95,6 @@ export class DeliveryTempService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
- 
-     
-
       var result = await this.deliveryTempModel.updateMany(
         {
           _id: { $in: dto.deliveryTempIds },
@@ -106,7 +104,7 @@ export class DeliveryTempService {
             _type: dto.type,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
-            _employeeId: dto.deliveryProviderId,//todo employee
+            _employeeId: dto.employeeId, 
           },
         },
         { new: true, session: transactionSession },
@@ -131,11 +129,11 @@ export class DeliveryTempService {
       dto.orderIds.forEach((eachItem) => {
         arraySalesOrderHistories.push({
           _orderSaleId: eachItem,
-          _userId: dto.deliveryProviderId,//todo employee
+          _userId: dto.employeeId, 
           _type: 20,
           _shopId: null,
           _orderSaleItemId: null,
-          _deliveryProviderId:null,
+          _deliveryProviderId: null,
           _description: '',
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -171,14 +169,14 @@ export class DeliveryTempService {
       throw error;
     }
   }
-  async deliveryProviderAssign(dto: DeliveryTempDeliveryProviderAssignDto, _userId_: string) {
+  async deliveryProviderAssign(
+    dto: DeliveryTempDeliveryProviderAssignDto,
+    _userId_: string,
+  ) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
- 
-     
-
       var result = await this.deliveryTempModel.updateMany(
         {
           _id: { $in: dto.deliveryTempIds },
@@ -195,7 +193,6 @@ export class DeliveryTempService {
       );
 
       await this.orderSaleMainModel.updateMany(
-
         {
           _id: { $in: dto.orderIds },
         },
@@ -215,7 +212,7 @@ export class DeliveryTempService {
         arraySalesOrderHistories.push({
           _orderSaleId: eachItem,
           _userId: null,
-          _deliveryProviderId:dto.deliveryProviderId,
+          _deliveryProviderId: dto.deliveryProviderId,
           _type: 20,
           _shopId: null,
           _orderSaleItemId: null,
@@ -311,6 +308,200 @@ export class DeliveryTempService {
         arrayAggregation.push({
           $match: { _employeeId: null },
         });
+      }
+
+      if (
+        dto.shopIds.length != 0 ||
+        dto.cityIds.length != 0 ||
+        dto.relationshipManagerIds.length != 0 ||
+        dto.orderHeadIds.length != 0
+      ) {
+        var pipelineShop = [];
+        pipelineShop.push(
+          {
+            $match: {
+              $expr: { $eq: ['$_id', '$$shopId'] },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              _cityId: 1,
+              _orderHeadId: 1,
+              _relationshipManagerId: 1,
+            },
+          },
+        );
+
+
+        if (dto.shopIds.length > 0) {
+          var newSettingsId = [];
+          dto.shopIds.map((mapItem) => {
+            newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+          });
+          pipelineShop.push({
+            $match: { _id: { $in: newSettingsId } },
+          });
+        }
+
+        if (dto.cityIds.length > 0) {
+          var newSettingsId = [];
+          dto.cityIds.map((mapItem) => {
+            newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+          });
+          pipelineShop.push({
+            $match: { _cityId: { $in: newSettingsId } },
+          });
+        }
+
+        if (dto.relationshipManagerIds.length > 0) {
+          var newSettingsId = [];
+          dto.relationshipManagerIds.map((mapItem) => {
+            newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+          });
+          pipelineShop.push({
+            $match: { _relationshipManagerId: { $in: newSettingsId } },
+          });
+        }
+
+        if (dto.orderHeadIds.length > 0) {
+          var newSettingsId = [];
+          dto.orderHeadIds.map((mapItem) => {
+            newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+          });
+          pipelineShop.push({
+            $match: { _orderHeadId: { $in: newSettingsId } },
+          });
+        }
+
+
+
+
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.INVOICES,
+              let: { invoiceId: '$_invoiceId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$invoiceId'] },
+                  },
+                },
+                {
+                  $project: {
+                    _id: 1,
+                  },
+                },
+                {
+                  $lookup: {
+                    from: ModelNames.INVOICE_ITEMS,
+                    let: { invoiceId: '$_id' },
+                    pipeline: [
+                      {
+                        $match: {
+                          _status: 1,
+                          $expr: {
+                            $eq: ['$_invoiceId', '$$invoiceId'],
+                          },
+                        },
+                      },
+                      {
+                        $project: {
+                          _orderSaleItemId: 1,
+                        },
+                      },
+                      { $limit: 1 },
+
+                      {
+                        $lookup: {
+                          from: ModelNames.ORDER_SALES_ITEMS,
+                          let: { orderSaleItemId: '$_orderSaleItemId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: { $eq: ['$_id', '$$orderSaleItemId'] },
+                              },
+                            },
+
+                            {
+                              $project: {
+                                _orderSaleId: 1,
+                              },
+                            },
+
+                            {
+                              $lookup: {
+                                from: ModelNames.ORDER_SALES_MAIN,
+                                let: { orderId: '$_orderSaleId' },
+                                pipeline: [
+                                  {
+                                    $match: {
+                                      $expr: { $eq: ['$_id', '$$orderId'] },
+                                    },
+                                  },
+
+                                  {
+                                    $project: {
+                                      _shopId: 1,
+                                    },
+                                  },
+
+                                  {
+                                    $lookup: {
+                                      from: ModelNames.SHOPS,
+                                      let: { shopId: '$_shopId' },
+                                      pipeline: pipelineShop,
+                                      as: 'shopDetails',
+                                    },
+                                  },
+                                  {
+                                    $unwind: {
+                                      path: '$shopDetails',
+                                      preserveNullAndEmptyArrays: true,
+                                    },
+                                  },
+                                ],
+                                as: 'orderDetails',
+                              },
+                            },
+                            {
+                              $unwind: {
+                                path: '$orderDetails',
+                                preserveNullAndEmptyArrays: true,
+                              },
+                            },
+                          ],
+                          as: 'ordersaleItemDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$ordersaleItemDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    ],
+                    as: 'invoiceItemDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$invoiceItemDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              ],
+              as: 'invoiceDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$invoiceDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
       }
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
