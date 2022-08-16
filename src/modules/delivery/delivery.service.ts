@@ -60,7 +60,11 @@ console.log("delivery create dto "+JSON.stringify(dto));
 
 
       dto.array.map((mapItem) => {
-        shopIds.push(mapItem.shopId);
+
+if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)!=-1){
+  shopIds.push(mapItem.shopId);
+}
+        
         deliveryTempIds.push(mapItem.deliveryTempId);
         orderSaleIds.push(...mapItem.orderIds);
       });
