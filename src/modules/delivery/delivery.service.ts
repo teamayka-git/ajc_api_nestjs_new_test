@@ -61,7 +61,7 @@ console.log("delivery create dto "+JSON.stringify(dto));
 
       dto.array.map((mapItem) => {
 
-if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)!=-1){
+if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
   shopIds.push(mapItem.shopId);
 }
         
