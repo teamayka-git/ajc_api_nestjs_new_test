@@ -163,6 +163,12 @@ export class DeliveryTempEmployeeAssignDto {
   employeeId: string;
 
   
+  @IsString()
+  @ApiProperty({})
+  deliveryProviderId: string;//temp bcz bad request from ashrafka
+
+  
+  
   @IsNumber()
   @ApiProperty({description:descriptionType})
   type: number;
