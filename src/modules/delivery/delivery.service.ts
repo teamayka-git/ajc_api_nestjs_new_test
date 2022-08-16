@@ -55,6 +55,10 @@ export class DeliveryService {
       var deliveryTempIds = [];
       var orderSaleIds = [];
 
+
+console.log("delivery create dto "+JSON.stringify(dto));
+
+
       dto.array.map((mapItem) => {
         shopIds.push(mapItem.shopId);
         deliveryTempIds.push(mapItem.deliveryTempId);
@@ -80,6 +84,10 @@ export class DeliveryService {
           ++countUid;
         }
       });
+
+console.log("shopIds  "+JSON.stringify(shopIds));
+
+
 
       var resultCounterDelivery = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.DELIVERY },
@@ -113,6 +121,10 @@ export class DeliveryService {
         }
       });
 
+
+console.log("arrayToDelivery  "+JSON.stringify(arrayToDelivery));
+
+      
       resultOldDelivery.push(...arrayToDelivery);
       await this.deliveryModel.insertMany(arrayToDelivery, {
         session: transactionSession,
@@ -139,6 +151,10 @@ export class DeliveryService {
           });
         }
       });
+
+
+console.log("arrayToDeliveryItems  "+JSON.stringify(arrayToDeliveryItems));
+
 
       var result1 = await this.deliveryItemsModel.insertMany(
         arrayToDeliveryItems,
@@ -211,7 +227,7 @@ export class DeliveryService {
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-      await transactionSession.commitTransaction();
+      // await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return responseJSON;
     } catch (error) {
