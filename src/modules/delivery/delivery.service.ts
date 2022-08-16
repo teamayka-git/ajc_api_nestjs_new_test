@@ -231,7 +231,7 @@ console.log("arrayToDeliveryItems  "+JSON.stringify(arrayToDeliveryItems));
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-      // await transactionSession.commitTransaction();
+      await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return responseJSON;
     } catch (error) {
