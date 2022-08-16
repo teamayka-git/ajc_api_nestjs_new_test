@@ -85,6 +85,7 @@ import { BulkApiTempModule } from './modules/bulk-api-temp/bulk-api-temp.module'
 import { GroupMastersSchema } from './tableModels/groupMasters.model';
 import { CategoriesSchema } from './tableModels/categories.model';
 import { SubCategoriesSchema } from './tableModels/sub_categories.model';
+import { RootCausesSchema } from './tableModels/rootCause.model';
 
 @Module({
   imports: [
@@ -98,6 +99,8 @@ import { SubCategoriesSchema } from './tableModels/sub_categories.model';
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(process.env.DB_GULL_URL),
     MongooseModule.forFeature([
+      
+      { name: ModelNames.ROOT_CAUSES, schema: RootCausesSchema },
       { name: ModelNames.USER, schema: UserSchema },
       { name: ModelNames.EMPLOYEES, schema: EmployeeSchema },
       { name: ModelNames.COUNTERS, schema: CountersSchema },

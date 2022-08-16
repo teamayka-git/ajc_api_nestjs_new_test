@@ -19,6 +19,7 @@ import { GoldRateTimelines } from './tableModels/gold_rate_timelines.model';
 import { GroupMasters } from './tableModels/groupMasters.model';
 import { ProcessMaster } from './tableModels/processMaster.model';
 import { Purity } from './tableModels/purity.model';
+import { RootCausesModel } from './tableModels/rootCause.model';
 import { States } from './tableModels/states.model';
 import { SubCategories } from './tableModels/sub_categories.model';
 import { User } from './tableModels/user.model';
@@ -35,6 +36,9 @@ const crypto = require('crypto');
 @Injectable()
 export class AppService {
   constructor(
+    
+    @InjectModel(ModelNames.ROOT_CAUSES)
+    private readonly rootCauseModel: mongoose.Model<RootCausesModel>,
     @InjectModel(ModelNames.STATES)
     private readonly stateModel: mongoose.Model<States>,
     @InjectModel(ModelNames.GROUP_MASTERS)
@@ -1297,10 +1301,21 @@ export class AppService {
 
 
 
-
-
-
-
+      await this.rootCauseModel.findOneAndUpdate(
+        { _name: "Other" },
+        {
+          $setOnInsert: {
+            _type:[0,1,2,3,4],
+            _dataGuard: [1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
 
 
 
