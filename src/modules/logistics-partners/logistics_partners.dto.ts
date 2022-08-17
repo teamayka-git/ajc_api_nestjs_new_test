@@ -58,6 +58,11 @@ export class LogisticsPartnersEditDto {
   
   @IsString()
   @ApiProperty({})
+  email: string;
+
+  
+  @IsString()
+  @ApiProperty({})
   trackingUrl: string;
 
 

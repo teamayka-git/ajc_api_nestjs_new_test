@@ -130,6 +130,7 @@ export class LogisticsPartnersService {
           $set: {
             _name: dto.name,
             _trackingUrl:dto.trackingUrl,
+            _email:dto.email,
             _dataGuard: dto.dataGuard,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
