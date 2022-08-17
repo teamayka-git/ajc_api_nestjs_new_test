@@ -283,10 +283,10 @@ export class LogisticsPartnersService {
           {
             $lookup: {
               from: ModelNames.USER,
-              let: { logisticId: '$_logisticPartnerId' },
+              let: { logisticId: '$_id' },
               pipeline: [
                 {
-                  $match: { $expr: { $eq: ['$_id', '$$logisticId'] } },
+                  $match: { $expr: { $eq: ['$_logisticPartnerId', '$$logisticId'] } },
                 },
               ],
               as: 'logisticPartnerDetails',
