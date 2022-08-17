@@ -62,7 +62,6 @@ export class LogisticsPartnersService {
         {
           $setOnInsert: {
             _password: encryptedPassword,
-            _customType: [],
             _halmarkId: null,
 
             _testCenterId:null,
