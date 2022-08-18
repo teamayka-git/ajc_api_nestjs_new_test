@@ -2274,7 +2274,6 @@ export class OrderSalesService {
                 {
                   $unwind: {
                     path: '$invoiceDetails',
-                    preserveNullAndEmptyArrays: true,
                   },
                 },
               );
