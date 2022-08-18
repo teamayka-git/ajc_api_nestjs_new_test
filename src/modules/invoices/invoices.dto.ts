@@ -247,6 +247,10 @@ export class InvoiceListDto {
 
   @IsArray()
   @ApiProperty({ type: [String] })
+  invoiceUids: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
   orderHeadIds: string[];
 
   @IsArray()

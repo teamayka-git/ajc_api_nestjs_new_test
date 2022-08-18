@@ -328,6 +328,11 @@ export class InvoicesService {
           },
         });
       }
+      if (dto.invoiceUids.length > 0) {
+    
+        
+        arrayAggregation.push({ $match: { _uid: { $in: dto.invoiceUids } } });
+      }
       if (dto.invoiceIds.length > 0) {
         var newSettingsId = [];
         dto.invoiceIds.map((mapItem) => {
