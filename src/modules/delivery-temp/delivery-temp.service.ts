@@ -458,7 +458,6 @@ export class DeliveryTempService {
                                   {
                                     $unwind: {
                                       path: '$shopDetails',
-                                      preserveNullAndEmptyArrays: true,
                                     },
                                   },
                                 ],
