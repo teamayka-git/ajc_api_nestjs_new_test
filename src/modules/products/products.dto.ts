@@ -124,6 +124,23 @@ export class ProductListDto {
   })
   screenType: number[];
 
+  
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  relationshipManagerIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderHeadIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  shopIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  cityIds: string[];
+
 
   @IsArray()
   @ApiProperty({ type: [Number], })
@@ -133,9 +150,7 @@ export class ProductListDto {
   @ApiProperty({ type: [String] })
   productIds: string[];
 
-  @IsArray()
-  @ApiProperty({ type: [String] })
-  shopIds: string[];
+  
 
   @IsArray()
   @ApiProperty({ type: [String] })

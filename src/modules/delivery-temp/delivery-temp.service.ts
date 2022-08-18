@@ -521,7 +521,7 @@ export class DeliveryTempService {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
-
+console.log("deltemp arrayAggregation  "+JSON.stringify(arrayAggregation));
       arrayAggregation.push(
         new ModelWeightResponseFormat().deliveryTempTableResponseFormat(
           0,

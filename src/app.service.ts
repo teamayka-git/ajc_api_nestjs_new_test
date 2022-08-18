@@ -1302,7 +1302,7 @@ export class AppService {
 
 
       await this.rootCauseModel.findOneAndUpdate(
-        { _name: "Other" },
+        { _name: "Not as per requirement" },
         {
           $setOnInsert: {
             _type:[0,1,2,3,4],
