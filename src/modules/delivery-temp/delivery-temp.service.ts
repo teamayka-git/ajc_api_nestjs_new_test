@@ -467,7 +467,6 @@ export class DeliveryTempService {
                             {
                               $unwind: {
                                 path: '$orderDetails',
-                                preserveNullAndEmptyArrays: true,
                               },
                             },
                           ],
@@ -477,7 +476,6 @@ export class DeliveryTempService {
                       {
                         $unwind: {
                           path: '$ordersaleItemDetails',
-                          preserveNullAndEmptyArrays: true,
                         },
                       },
                     ],
@@ -487,7 +485,6 @@ export class DeliveryTempService {
                 {
                   $unwind: {
                     path: '$invoiceItemDetails',
-                    preserveNullAndEmptyArrays: true,
                   },
                 },
               ],
