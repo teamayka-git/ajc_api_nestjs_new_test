@@ -98,4 +98,9 @@ export class AppController {
   project_init() {
     return this.appService.project_init();
   }
+  
+  @Post('getDashboard')
+  getDashboard( @Request() req) {
+    return this.appService.getDashboard(req['_userId_']);
+  }
 }

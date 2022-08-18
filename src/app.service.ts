@@ -1,7 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
-import { ChangeMyPasswordDto, ChangeUserPasswordDto, GetUserDto, MeDto } from './app.dto';
+import {
+  ChangeMyPasswordDto,
+  ChangeUserPasswordDto,
+  GetUserDto,
+  MeDto,
+} from './app.dto';
 import { CommonNames } from './common/common_names';
 import { ModelNames } from './common/model_names';
 import { GlobalConfig } from './config/global_config';
@@ -23,6 +28,7 @@ import { RootCausesModel } from './tableModels/rootCause.model';
 import { States } from './tableModels/states.model';
 import { SubCategories } from './tableModels/sub_categories.model';
 import { User } from './tableModels/user.model';
+import { UserAttendance } from './tableModels/user_attendances.model';
 import { IndexUtils } from './utils/IndexUtils';
 import { SmsUtils } from './utils/smsUtils';
 
@@ -36,9 +42,10 @@ const crypto = require('crypto');
 @Injectable()
 export class AppService {
   constructor(
-    
     @InjectModel(ModelNames.ROOT_CAUSES)
     private readonly rootCauseModel: mongoose.Model<RootCausesModel>,
+    @InjectModel(ModelNames.USER_ATTENDANCES)
+    private readonly userAttendanceModel: mongoose.Model<UserAttendance>,
     @InjectModel(ModelNames.STATES)
     private readonly stateModel: mongoose.Model<States>,
     @InjectModel(ModelNames.GROUP_MASTERS)
@@ -87,11 +94,10 @@ export class AppService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      
       var asdf = await twilioClient.messages.create({
         // from:'AJCGOLD',
         body: 'BODYaaabbbd',
-        messagingServiceSid: 'MG2d9b32cf7d39a5ceb380fdbb25a80eea',  
+        messagingServiceSid: 'MG2d9b32cf7d39a5ceb380fdbb25a80eea',
         to: '+919895680203',
       });
 
@@ -100,6 +106,49 @@ export class AppService {
       const responseJSON = {
         message: 'success',
         data: asdf,
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async getDashboard(_userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var resultUserAttendance = await this.userAttendanceModel.aggregate([
+        {
+          $match: {
+            _userId: new mongoose.Types.ObjectId(_userId_),
+          },
+        },
+
+        { $sort: { _id: -1 } },
+
+        { $limit:1 }
+      ]);
+
+      const responseJSON = {
+        message: 'success',
+        data: {
+          listAttendance:resultUserAttendance
+        },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -389,16 +438,11 @@ export class AppService {
     }
   }
 
-
-  
   async changeUserPassword(dto: ChangeUserPasswordDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      
-      
-
       var newPasswordEncrypted = await crypto
         .pbkdf2Sync(
           dto.newPassword,
@@ -1209,20 +1253,18 @@ export class AppService {
 
       userId = resultUser._id;
 
-
-
       var resultGroup = await this.groupmasterModel.findOneAndUpdate(
-        { 
-          _name:"22K GOLD" },
+        {
+          _name: '22K GOLD',
+        },
         {
           $setOnInsert: {
-
-            _rawMaterialStatus:1,
-            _hsnCode:"7113",
-            _descriptionArray:[],
-            _meltingPurity:91.75,
-            _taxPercentage:3,
-            _purity:92,
+            _rawMaterialStatus: 1,
+            _hsnCode: '7113',
+            _descriptionArray: [],
+            _meltingPurity: 91.75,
+            _taxPercentage: 3,
+            _purity: 92,
             _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
@@ -1233,20 +1275,18 @@ export class AppService {
         },
         { upsert: true, new: true, session: transactionSession },
       );
-
-
 
       var resultCategory = await this.categoryModel.findOneAndUpdate(
-        { 
-          _code:1 },
+        {
+          _code: 1,
+        },
         {
           $setOnInsert: {
+            name: 'PLANE ORNAMENTS',
+            _description: '',
+            _groupId: resultGroup._id,
+            _globalGalleryId: null,
 
-            name:"PLANE ORNAMENTS",
-            _description:"",
-            _groupId:resultGroup._id,
-            _globalGalleryId:null,
-            
             _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
@@ -1257,21 +1297,20 @@ export class AppService {
         },
         { upsert: true, new: true, session: transactionSession },
       );
-
 
       var resultSubCategory = await this.subCategoryModel.findOneAndUpdate(
-        { 
-          _code:1 },
+        {
+          _code: 1,
+        },
         {
           $setOnInsert: {
-
-            name:"PLANE RING",
-            _description:"",
-            _categoryId:resultCategory._id,
-            _hmSealing:1,
-            _defaultValueAdditionPercentage:4,
-            _rewardPoint:1,
-            _globalGalleryId:null,
+            name: 'PLANE RING',
+            _description: '',
+            _categoryId: resultCategory._id,
+            _hmSealing: 1,
+            _defaultValueAdditionPercentage: 4,
+            _rewardPoint: 1,
+            _globalGalleryId: null,
             _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
@@ -1282,30 +1321,12 @@ export class AppService {
         },
         { upsert: true, new: true, session: transactionSession },
       );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       await this.rootCauseModel.findOneAndUpdate(
-        { _name: "Not as per requirement" },
+        { _name: 'Not as per requirement' },
         {
           $setOnInsert: {
-            _type:[0,1,2,3,4],
+            _type: [0, 1, 2, 3, 4],
             _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
@@ -1316,10 +1337,6 @@ export class AppService {
         },
         { upsert: true, new: true, session: transactionSession },
       );
-
-
-
-
 
       var resultState = await this.stateModel.findOneAndUpdate(
         { _code: 1 },

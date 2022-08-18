@@ -86,6 +86,7 @@ import { GroupMastersSchema } from './tableModels/groupMasters.model';
 import { CategoriesSchema } from './tableModels/categories.model';
 import { SubCategoriesSchema } from './tableModels/sub_categories.model';
 import { RootCausesSchema } from './tableModels/rootCause.model';
+import { UserAttendanceSchema } from './tableModels/user_attendances.model';
 
 @Module({
   imports: [
@@ -131,6 +132,7 @@ import { RootCausesSchema } from './tableModels/rootCause.model';
         schema: ChatPersonalChatMessagesSchema,
       },
       { name: ModelNames.COLOUR_MASTERS, schema: ColoursSchema },
+      { name: ModelNames.USER_ATTENDANCES, schema: UserAttendanceSchema },
     ]),
     EmployeesModule,
     BranchModule,
