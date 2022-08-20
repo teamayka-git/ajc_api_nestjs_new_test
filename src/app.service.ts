@@ -4,8 +4,10 @@ import * as mongoose from 'mongoose';
 import {
   ChangeMyPasswordDto,
   ChangeUserPasswordDto,
+  GetDashboardDto,
   GetUserDto,
   MeDto,
+  TestDto,
 } from './app.dto';
 import { CommonNames } from './common/common_names';
 import { ModelNames } from './common/model_names';
@@ -89,23 +91,31 @@ export class AppService {
     return 'Hello Worldwwwww!';
   }
 
-  async test() {
+  async test(dto: TestDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var asdf = await twilioClient.messages.create({
-        // from:'AJCGOLD',
-        body: 'BODYaaabbbd',
-        messagingServiceSid: 'MG2d9b32cf7d39a5ceb380fdbb25a80eea',
-        to: '+919895680203',
-      });
+      // var asdf = await twilioClient.messages.create({
+      //   // from:'AJCGOLD',
+      //   body: 'BODYaaabbbd',
+      //   messagingServiceSid: 'MG2d9b32cf7d39a5ceb380fdbb25a80eea',
+      //   to: '+919895680203',
+      // });
 
       // new SmsUtils().sendSms("9895680203","AAAAAA");
 
+
+console.log("___optional  "+dto.searchingText);
+if(dto.searchingText==null){
+console.log("___ null");
+}else{
+  console.log("___ notnull");
+}
+
       const responseJSON = {
         message: 'success',
-        data: asdf,
+        data: dto,
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -127,27 +137,51 @@ export class AppService {
       throw error;
     }
   }
-  async getDashboard(_userId_: string) {
+  async getDashboard(dto: GetDashboardDto,_userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var resultUserAttendance = await this.userAttendanceModel.aggregate([
-        {
-          $match: {
-            _userId: new mongoose.Types.ObjectId(_userId_),
+
+      var resultUserAttendance=[];
+      var resultUserDetails=[];
+      
+      if (dto.screenType.includes( 0)) {
+        resultUserAttendance = await this.userAttendanceModel.aggregate([
+          {
+            $match: {
+              _userId: new mongoose.Types.ObjectId(_userId_),
+            },
           },
-        },
-
-        { $sort: { _id: -1 } },
-
-        { $limit:1 }
-      ]);
+  
+          { $sort: { _id: -1 } },
+  
+          { $limit:1 }
+        ]);
+      }
+ 
+      if (dto.screenType.includes( 1)) {
+        resultUserDetails= await this.userModel.aggregate(
+          [
+            {
+              $match: {
+                _id: new mongoose.Types.ObjectId(_userId_),
+              },
+            },
+            {
+              $project:{
+                _permissions:1
+              }
+            }
+          ]
+        );
+      }
 
       const responseJSON = {
         message: 'success',
         data: {
-          listAttendance:resultUserAttendance
+          listAttendance:resultUserAttendance,
+          userDetails:resultUserDetails[0],
         },
       };
       if (

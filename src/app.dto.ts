@@ -4,13 +4,14 @@ import {
   IsEmail,
   IsNumber,
   IsObject,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type, Type as ValidateTypes } from 'class-transformer';
 import { Optional } from '@nestjs/common';
-
+const descriptionListScreenTypeForList="0 - get attendanceDetails, 1 - get permission array";
 const descriptionFileOriginalName =
   "file name givent while uploading, if there is no image then give 'nil; here";
 const descriptionType = '1-image, 2-video, 3-audio, 4-document';
@@ -21,7 +22,28 @@ const descriptionGenders = '0-male, 1-female, 2-other';
 const descriptionCustomType =
   ' 0 - nil, 1 - Shop admin, 2 - Shop sales man, 3 - Shop casher, 4 - halmark staff, 5 - shop user, 6 - delivery hub, 7 - halmark center,8-shop customer';
 
-export class MeDto {}
+  export class TestDto {
+
+    
+    @IsOptional()
+    @IsNumber()
+    @ApiProperty({})
+    searchingText: number;
+  
+  
+    }
+    export class GetDashboardDto {
+  
+      @IsArray()
+      @ApiProperty({
+        type: [Number],
+        description: descriptionListScreenTypeForList,
+      })
+      screenType: number[];
+    
+  
+    }
+  export class MeDto {}
 
 export class GetUserDto {
   @IsArray()

@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
-import { ChangeMyPasswordDto, ChangeUserPasswordDto, ChatDocumentCreateDto, GetUserDto, MeDto } from './app.dto';
+import { ChangeMyPasswordDto, ChangeUserPasswordDto, ChatDocumentCreateDto, GetDashboardDto, GetUserDto, MeDto, TestDto } from './app.dto';
 import { AppService } from './app.service';
 import { Roles } from './Auth/roles.decorator';
 import { diskStorage } from 'multer';
@@ -82,8 +82,8 @@ export class AppController {
 
 
   @Post('test')
-  test() {
-    return this.appService.test();
+  test(@Body() dto: TestDto,) {
+    return this.appService.test(dto);
   }
 
   @Get()
@@ -100,7 +100,7 @@ export class AppController {
   }
   
   @Post('getDashboard')
-  getDashboard( @Request() req) {
-    return this.appService.getDashboard(req['_userId_']);
+  getDashboard(@Body() dto: GetDashboardDto, @Request() req) {
+    return this.appService.getDashboard(dto,req['_userId_']);
   }
 }
