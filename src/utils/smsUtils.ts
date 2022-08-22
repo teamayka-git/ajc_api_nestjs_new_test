@@ -16,6 +16,7 @@ export class SmsUtils {
       messagingServiceSid: GlobalConfig().TWILIO_SMS_GATEWAY_SERVICE_SID,  
       to: '+91'+toNumber,
     });
+    console.log("___a3 "+asdf);
     
   }
 
