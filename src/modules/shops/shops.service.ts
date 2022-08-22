@@ -1697,7 +1697,7 @@ for(var i=0;i<dto.arrayUsersNew.length;i++){
             _updatedAt: -1,
             _status: 1,
           });
-          
+          console.log("___a0");
 new SmsUtils().sendSms(dto.arrayUsersNew[i].mobile, "Use "+  password + ' as AJC OMS password reset code.')
 }
 

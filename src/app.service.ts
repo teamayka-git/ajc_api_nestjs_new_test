@@ -1316,7 +1316,7 @@ console.log("___ null");
         },
         {
           $setOnInsert: {
-            name: 'PLANE ORNAMENTS',
+            _name: 'PLANE ORNAMENTS',
             _description: '',
             _groupId: resultGroup._id,
             _globalGalleryId: null,
@@ -1338,7 +1338,7 @@ console.log("___ null");
         },
         {
           $setOnInsert: {
-            name: 'PLANE RING',
+            _name: 'PLANE RING',
             _description: '',
             _categoryId: resultCategory._id,
             _hmSealing: 1,
