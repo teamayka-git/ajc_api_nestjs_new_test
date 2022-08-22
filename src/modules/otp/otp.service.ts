@@ -25,6 +25,7 @@ export class OtpService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+      var smsGatewayArray = [];
       var userDataCheck = await this.userModel.find({
         _mobile: dto.mobile,
         _status: 1,
@@ -61,11 +62,10 @@ export class OtpService {
       var resultOtp = await otpTable.save({
         session: transactionSession,
       });
-
-new SmsUtils().sendSms(dto.mobile,otpValue+" is your AJC OMS verification code.")
-
-
-
+      smsGatewayArray.push({
+        mobile: dto.mobile,
+        text: otpValue + ' is your AJC OMS verification code.',
+      });
 
       const responseJSON = { message: 'success', data: resultOtp };
       if (
@@ -81,6 +81,16 @@ new SmsUtils().sendSms(dto.mobile,otpValue+" is your AJC OMS verification code."
       }
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
+
+      if (smsGatewayArray.length != 0) {
+        smsGatewayArray.forEach((elementSmsGateway) => {
+          new SmsUtils().sendSms(
+            elementSmsGateway.mobile,
+            elementSmsGateway.text,
+          );
+        });
+      }
+
       return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();

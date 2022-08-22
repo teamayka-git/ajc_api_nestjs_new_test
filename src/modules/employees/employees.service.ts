@@ -280,6 +280,7 @@ export class EmployeesService {
       //   );
       // }
 
+      var smsGatewayArray = [];
       var resultUpload = {};
       if (file.hasOwnProperty('image')) {
         resultUpload = await new S3BucketUtils().uploadMyFile(
@@ -405,10 +406,10 @@ export class EmployeesService {
       );
 
       if (resultUserUpdated._password == encryptedPassword) {
-        new SmsUtils().sendSms(
-          dto.mobile,
-        "Use "+  password + ' as AJC OMS password reset code.',
-        );
+        smsGatewayArray.push({
+          mobile: dto.mobile,
+          text: 'Use ' + password + ' as AJC OMS password reset code.',
+        });
       }
 
       const newsettingsModel = new this.employeeModel({
@@ -447,6 +448,16 @@ export class EmployeesService {
       }
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
+
+      if (smsGatewayArray.length != 0) {
+        smsGatewayArray.forEach((elementSmsGateway) => {
+          new SmsUtils().sendSms(
+            elementSmsGateway.mobile,
+            elementSmsGateway.text,
+          );
+        });
+      }
+
       return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
