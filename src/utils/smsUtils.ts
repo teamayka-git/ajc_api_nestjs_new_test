@@ -3,13 +3,14 @@ import { GlobalConfig } from "src/config/global_config";
 export class SmsUtils {
  async  sendSms(toNumber:String,smsContent:String)  {
 
-  console.log("___a1");
+  console.log("___a1 "+toNumber);
 
     const twilioClient = require('twilio')(
       GlobalConfig().TWILIO_SMS_GATEWAY_ACCOUNT_SID,
       GlobalConfig().TWILIO_SMS_GATEWAY_AUTH_TOKEN,
     );
 
+    console.log("___a2");
     var asdf = await twilioClient.messages.create({
       body: smsContent,
       messagingServiceSid: GlobalConfig().TWILIO_SMS_GATEWAY_SERVICE_SID,  
