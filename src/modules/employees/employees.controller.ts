@@ -53,7 +53,7 @@ export class EmployeesController {
     @Res({ passthrough: true }) response: Response, //jwt response store in cookie
   ) {
     var returnData: Object = await this.employeesService.login(dto);
-
+console.log("___jwt "+JSON.stringify(returnData));
     var userRole = new GuardUserRoleStringGenerate().generate(
       returnData['userDetails']['_userType'],
     );
