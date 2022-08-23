@@ -69,7 +69,7 @@ export class EmployeesController {
     );
 
 
-    console.log("___jwt token "+JSON.stringify(returnData));
+    console.log("___jwt token "+JSON.stringify(jwt));
 
     //response.cookie(process.env.JWT_CLIENT_COOKIE_KEY, {token:jwt,permissions:returnData["userDetails"]["_permissions"]}, { httpOnly: true });//jwt response store in cookie
     response.cookie(process.env.JWT_CLIENT_COOKIE_KEY, jwt, { httpOnly: true }); //jwt response store in cookie
