@@ -649,6 +649,16 @@ export class OrderSalesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+
+
+
+
+
+
+
+
+      
       var result = await this.orderSaleMainModel.updateMany(
         {
           _id: { $in: dto.orderSaleIds },

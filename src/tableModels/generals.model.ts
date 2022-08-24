@@ -76,6 +76,8 @@ function schemaPostFunctionForDuplicate(error, doc, next) {
 _code:{
     100  - Mobile Employee major update application Build number
     101  - Mobile Customer major update application Build number
+    102  - Mobile Employee minor update application Build number
+    103  - Mobile Customer minor update application Build number
     1000 - currency denominator text, 
     1001 - currency denominator symbol, 
     1002 - product floating digit weight, 

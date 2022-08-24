@@ -226,11 +226,49 @@ console.log("___ null");
         );
       }
 
+
+
+      var resultGeneralsAppUpdate=[];
+      var codeGeneralsAppUpdate=[];
+
+      if (dto.screenType.includes( 3)) {//employee
+        codeGeneralsAppUpdate.push(100);
+        codeGeneralsAppUpdate.push(102);
+      }
+      if (dto.screenType.includes( 4)) {//customer
+        codeGeneralsAppUpdate.push(101);
+        codeGeneralsAppUpdate.push(103);
+
+      }
+if(codeGeneralsAppUpdate.length!=0){
+  resultGeneralsAppUpdate= await this.generalsModel.aggregate([
+    {$match:{
+      _code:{$in:codeGeneralsAppUpdate}
+    }},
+    {
+      $project:{
+        _code:1,
+        _string:1,
+        _number:1,
+
+      }
+    }
+  ]);
+}
+
+
+
+
+
+
+
+
       const responseJSON = {
         message: 'success',
         data: {
           listAttendance:resultUserAttendance,
           userDetails:resultUserDetails[0],
+          appUpdates:resultGeneralsAppUpdate
         },
       };
       if (
@@ -1550,6 +1588,47 @@ console.log("___ null");
           $setOnInsert: {
             _string: '',
             _name: 'Mobile Customer major update application Build number',
+            _number: 1,
+            _vlaueType: 0,
+            _json: { basic: 'basic' },
+            _type: 7,
+            _dataGuard: [0, 1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+      await this.generalsModel.findOneAndUpdate(
+        { _code: 102 },
+        {
+          $setOnInsert: {
+            _string: '',
+            _name: 'Mobile Employee minor update application Build number',
+            _number: 1,
+            _vlaueType: 0,
+            _json: { basic: 'basic' },
+            _type: 7,
+            _dataGuard: [0, 1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+
+      await this.generalsModel.findOneAndUpdate(
+        { _code: 103 },
+        {
+          $setOnInsert: {
+            _string: '',
+            _name: 'Mobile Customer minor update application Build number',
             _number: 1,
             _vlaueType: 0,
             _json: { basic: 'basic' },
