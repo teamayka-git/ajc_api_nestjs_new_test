@@ -857,6 +857,55 @@ export class OrderSalesService {
         );
       }
 
+
+      if (dto.setProcessOrderStatus.length != 0) {
+      
+        
+
+
+        arrayAggregation.push( {
+          $lookup: {
+            from: ModelNames.ORDER_SALE_SET_PROCESSES,
+            let: { orderId: '$_id' },
+            pipeline: [{
+              $match: {
+                $expr: { $eq: ['$_orderSaleId', '$$orderId'] },
+              },
+            },
+          {$match:{
+            _orderStatus:{ $in: dto.setProcessOrderStatus }
+          }},
+          {$project:{
+            _id:1
+          }}
+          
+          
+          ],
+            as: 'mongoCheckSetProcessList',
+          },
+        },
+        {
+          $match: { mongoCheckSetProcessList: { $ne: [] } },
+        },);
+
+
+
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
       console.log('arrayAggregation  ' + JSON.stringify(arrayAggregation));
@@ -941,13 +990,7 @@ export class OrderSalesService {
           },
         });
 
-        if (dto.setProcessOrderStatus.length != 0) {
-          pipeline.push({
-            $match: {
-              _orderStatus: { $in: dto.setProcessOrderStatus },
-            },
-          });
-        }
+        
 
         pipeline.push(
           new ModelWeightResponseFormat().orderSaleSetProcessTableResponseFormat(
@@ -2418,6 +2461,89 @@ export class OrderSalesService {
         );
       }
 
+      if (dto.subCategoryIds.length > 0) {
+        var newSettingsId = [];
+        dto.subCategoryIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_ITEMS,
+              let: { orderId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    _status: 1,
+                    $expr: { $eq: ['$_orderSaleId', '$$orderId'] },
+                  },
+                },
+                {
+                  $match: {
+                    _subCategoryId: { $in: newSettingsId },
+                  },
+                },
+                {
+                  $project: {
+                    _id: 1,
+                  },
+                },
+              ],
+              as: 'mongoCheckSubItems',
+            },
+          },
+          {
+            $match: { mongoCheckSubItems: { $ne: [] } },
+          },
+        );
+      }
+
+
+
+
+
+
+
+
+
+
+
+      if (dto.setProcessOrderStatus.length != 0) {
+      
+        
+
+
+        arrayAggregation.push( {
+          $lookup: {
+            from: ModelNames.ORDER_SALE_SET_PROCESSES,
+            let: { orderId: '$_id' },
+            pipeline: [{
+              $match: {
+                $expr: { $eq: ['$_orderSaleId', '$$orderId'] },
+              },
+            },
+          {$match:{
+            _orderStatus:{ $in: dto.setProcessOrderStatus }
+          }},
+          {$project:{
+            _id:1
+          }}
+          
+          
+          ],
+            as: 'mongoCheckSetProcessList',
+          },
+        },
+        {
+          $match: { mongoCheckSetProcessList: { $ne: [] } },
+        },);
+
+
+
+      }
+
+
+      
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
       switch (dto.sortType) {
@@ -2501,13 +2627,8 @@ export class OrderSalesService {
           },
         });
 
-        if (dto.setProcessOrderStatus.length != 0) {
-          pipeline.push({
-            $match: {
-              _orderStatus: { $in: dto.setProcessOrderStatus },
-            },
-          });
-        }
+      
+        
 
         pipeline.push(
           new ModelWeightResponseFormat().orderSaleSetProcessTableResponseFormat(
