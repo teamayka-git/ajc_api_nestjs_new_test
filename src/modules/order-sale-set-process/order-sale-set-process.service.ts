@@ -57,6 +57,14 @@ export class OrderSaleSetProcessService {
       var arrayToOrderSaleHistories = [];
       var arrayProcessIds = [];
       var arrayOrdersaleIds = [];
+
+
+
+
+
+
+
+
       dto.array.map((mapItem) => {
         arrayOrdersaleIds.push(mapItem.orderSaleId);
 
@@ -64,6 +72,15 @@ export class OrderSaleSetProcessService {
           arrayProcessIds.push(mapItem1.processId);
         });
       });
+
+      var resultCheckOrderSale=await this.orderSaleMainModel.find(
+        {
+          _id: { $in: arrayOrdersaleIds },_workStatus:1
+        });
+
+if(resultCheckOrderSale.length != arrayOrdersaleIds.length){
+  throw new HttpException('Already done setprocess', HttpStatus.INTERNAL_SERVER_ERROR);
+}
 
       var resultSubProcess = await this.subProcessModel.find(
         { _processMasterId: { $in: arrayProcessIds }, _status: 1 },
