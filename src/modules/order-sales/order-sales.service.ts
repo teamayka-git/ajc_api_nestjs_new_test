@@ -826,6 +826,7 @@ export class OrderSalesService {
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
+      console.log("arrayAggregation  "+JSON.stringify(arrayAggregation));
       switch (dto.sortType) {
         case 0:
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
@@ -1886,7 +1887,6 @@ export class OrderSalesService {
           _status: 1,
         });
       }
-console.log("arrayAggregation  "+JSON.stringify(arrayAggregation));
       var result = await this.orderSaleMainModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
