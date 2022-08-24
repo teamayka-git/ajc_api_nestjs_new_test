@@ -777,8 +777,8 @@ export class ModelWeight {
       _uid: 1,
       _type: 1,
       _employeeId: 1,
-      _receivedUserId:1,
-      _verifiedUserId:1,
+      _receivedUserId: 1,
+      _verifiedUserId: 1,
       _createdUserId: 1,
       _workStatus: 1,
     };
@@ -790,8 +790,8 @@ export class ModelWeight {
       _type: 1,
       _workStatus: 1,
       _employeeId: 1,
-      _receivedUserId:1,
-      _verifiedUserId:1,
+      _receivedUserId: 1,
+      _verifiedUserId: 1,
       _hubId: 1,
       _shopId: 1,
       _status: 1,
@@ -803,8 +803,8 @@ export class ModelWeight {
       _uid: 1,
       _type: 1,
       _workStatus: 1,
-      _receivedUserId:1,
-      _verifiedUserId:1,
+      _receivedUserId: 1,
+      _verifiedUserId: 1,
       _hubId: 1,
       _shopId: 1,
       _createdAt: 1,
@@ -908,7 +908,7 @@ export class ModelWeight {
       _id: 1,
       _orderSaleId: 1,
       _orderSaleItemId: 1,
-      _deliveryProviderId:1,
+      _deliveryProviderId: 1,
       _shopId: 1,
       _userId: 1,
       _type: 1,
@@ -924,7 +924,7 @@ export class ModelWeight {
       _id: 1,
       _orderSaleId: 1,
       _orderSaleItemId: 1,
-      _deliveryProviderId:1,
+      _deliveryProviderId: 1,
       _shopId: 1,
       _userId: 1,
       _type: 1,
@@ -940,7 +940,7 @@ export class ModelWeight {
       _id: 1,
       _orderSaleId: 1,
       _orderSaleItemId: 1,
-      _deliveryProviderId:1,
+      _deliveryProviderId: 1,
       _shopId: 1,
       _userId: 1,
       _type: 1,
@@ -956,7 +956,7 @@ export class ModelWeight {
       _id: 1,
       _orderSaleId: 1,
       _orderSaleItemId: 1,
-      _deliveryProviderId:1,
+      _deliveryProviderId: 1,
       _shopId: 1,
       _userId: 1,
       _type: 1,
@@ -1325,7 +1325,7 @@ export class ModelWeight {
       _type: 1,
       _invoiceId: 1,
       _employeeId: 1,
-      _deliveryProviderId:1,
+      _deliveryProviderId: 1,
       _hubId: 1,
     };
   }
@@ -1335,7 +1335,7 @@ export class ModelWeight {
       _type: 1,
       _invoiceId: 1,
       _employeeId: 1,
-      _deliveryProviderId:1,
+      _deliveryProviderId: 1,
       _hubId: 1,
       _createdUserId: 1,
 
@@ -1348,7 +1348,7 @@ export class ModelWeight {
       _type: 1,
       _invoiceId: 1,
       _employeeId: 1,
-      _deliveryProviderId:1,
+      _deliveryProviderId: 1,
       _hubId: 1,
 
       _createdUserId: 1,
@@ -1363,7 +1363,7 @@ export class ModelWeight {
       _invoiceId: 1,
       _employeeId: 1,
       _hubId: 1,
-      _deliveryProviderId:1,
+      _deliveryProviderId: 1,
 
       _createdUserId: 1,
       _createdAt: 1,
@@ -1991,10 +1991,9 @@ export class ModelWeight {
     return {
       _id: 1,
       _uid: 1,
-     
+
       _workStatus: 1,
       _employeeId: 1,
-    
     };
   }
   public deliveryReturnsTableMinimum(): Object {
@@ -2004,9 +2003,9 @@ export class ModelWeight {
       _type: 1,
       _workStatus: 1,
       _employeeId: 1,
-      
-      _receivedUserId:1,
-      _verifiedUserId:1,
+
+      _receivedUserId: 1,
+      _verifiedUserId: 1,
       _status: 1,
     };
   }
@@ -2017,9 +2016,9 @@ export class ModelWeight {
       _type: 1,
       _workStatus: 1,
       _employeeId: 1,
-      
-      _receivedUserId:1,
-      _verifiedUserId:1,
+
+      _receivedUserId: 1,
+      _verifiedUserId: 1,
       _hubId: 1,
       _shopId: 1,
       _status: 1,
@@ -2032,8 +2031,8 @@ export class ModelWeight {
       _type: 1,
       _workStatus: 1,
       _employeeId: 1,
-      _receivedUserId:1,
-      _verifiedUserId:1,
+      _receivedUserId: 1,
+      _verifiedUserId: 1,
       _hubId: 1,
       _shopId: 1,
       _createdUserId: 1,
@@ -2044,35 +2043,132 @@ export class ModelWeight {
     };
   }
 
-  
   public deliveryReturnItemsTableLight(): Object {
     return {
-      _id:1,
-      _deliveryReturnId:1,
-      _deliveryRejectPendingId:1,
+      _id: 1,
+      _deliveryReturnId: 1,
+      _deliveryRejectPendingId: 1,
     };
   }
   public deliveryReturnItemsTableMinimum(): Object {
     return {
-      _id:1,
-      _deliveryReturnId:1,
-      _deliveryRejectPendingId:1,
-      _status:1,
+      _id: 1,
+      _deliveryReturnId: 1,
+      _deliveryRejectPendingId: 1,
+      _status: 1,
     };
   }
   public deliveryReturnItemsTableMedium(): Object {
     return {
-      _id:1,
-      _deliveryReturnId:1,
-      _deliveryRejectPendingId:1,
-      _status:1,
+      _id: 1,
+      _deliveryReturnId: 1,
+      _deliveryRejectPendingId: 1,
+      _status: 1,
     };
   }
   public deliveryReturnItemsTableMaximum(): Object {
     return {
+      _id: 1,
+      _deliveryReturnId: 1,
+      _deliveryRejectPendingId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+  public departmentTableLight(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _prefix: 1,
+      _code: 1,
+     
+    };
+  }
+  public departmentTableMinimum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _prefix: 1,
+      _processMasterStatus: 1,
+      _code: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _status: 1,
+    };
+  }
+  public departmentTableMedium(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _prefix: 1,
+      _processMasterStatus: 1,
+      _code: 1,
+      _permissions: 1,
+      _dataGuard: 1,
+      _status: 1,
+    };
+  }
+  public departmentTableMaximum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _prefix: 1,
+      _processMasterStatus: 1,
+      _code: 1,
+      _permissions: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+  public employeeTableLight(): Object {
+    return {
       _id:1,
-      _deliveryReturnId:1,
-      _deliveryRejectPendingId:1,
+      _uid:1,
+      _prefix:1,
+    };
+  }
+  public employeeTableMinimum(): Object {
+    return {
+      _id:1,
+      _userId:1,
+      _uid:1,
+      _departmentId:1,
+      _prefix:1,
+      _processMasterId:1,
+     
+    };
+  }
+  public employeeTableMedium(): Object {
+    return {
+      _id:1,
+      _userId:1,
+      _uid:1,
+      _departmentId:1,
+      _prefix:1,
+      _processMasterId:1,
+      _lastLogin:1,
+      _dataGuard:1,
+      _status:1,
+    };
+  }
+  public employeeTableMaximum(): Object {
+    return {
+      _id:1,
+      _userId:1,
+      _uid:1,
+      _departmentId:1,
+      _prefix:1,
+      _processMasterId:1,
+      _lastLogin:1,
+      _dataGuard:1,
       _createdUserId:1,
       _createdAt:1,
       _updatedUserId:1,

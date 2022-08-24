@@ -12,6 +12,7 @@ import {
 import { CommonNames } from './common/common_names';
 import { ModelNames } from './common/model_names';
 import { GlobalConfig } from './config/global_config';
+import { ModelWeight } from './model_weight/model_weight';
 import { Categories } from './tableModels/categories.model';
 import { Cities } from './tableModels/cities.model';
 import { Colours } from './tableModels/colourMasters.model';
@@ -188,6 +189,7 @@ console.log("___ null");
                 {
                   $match: { $expr: { $eq: ['$_id', '$$employeeId'] } },
                 },
+                { $project: new ModelWeight().employeeTableMinimum() },
                 {
                   $lookup: {
                     from: ModelNames.DEPARTMENT,
@@ -196,6 +198,8 @@ console.log("___ null");
                       {
                         $match: { $expr: { $eq: ['$_id', '$$departmentId'] } },
                       },
+                      
+                { $project: new ModelWeight().departmentTableLight() },
                     ],
                     as: 'departmentDetails',
                   },
