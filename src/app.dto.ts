@@ -11,7 +11,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type, Type as ValidateTypes } from 'class-transformer';
 import { Optional } from '@nestjs/common';
-const descriptionListScreenTypeForList="0 - get attendanceDetails, 1 - get permission array";
+const descriptionListScreenTypeForList="0 - get attendanceDetails, 1 - user details get permission array, 2 - user details under[1] departmentDetails";
 const descriptionFileOriginalName =
   "file name givent while uploading, if there is no image then give 'nil; here";
 const descriptionType = '1-image, 2-video, 3-audio, 4-document';

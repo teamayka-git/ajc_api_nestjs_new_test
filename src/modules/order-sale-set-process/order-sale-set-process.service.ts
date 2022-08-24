@@ -326,27 +326,27 @@ if(resultCheckOrderSale.length != arrayOrdersaleIds.length){
       });
 
       if (dto.orderStatus == 6) {
-        const orderSaleNewSetProcess = new this.orderSaleSetProcessModel({
-          _orderSaleId: result._orderSaleId,
-          _userId: null,
-          _orderStatus: 0,
+        // const orderSaleNewSetProcess = new this.orderSaleSetProcessModel({
+        //   _orderSaleId: result._orderSaleId,
+        //   _userId: null,
+        //   _orderStatus: 0,
 
-          _workAssignedTime: -1,
-          _workStartedTime: -1,
-          _workCompletedTime: -1,
-          _index: result._index,
-          _rootCauseId: null,
-          _rootCause: '',
-          _description: '',
-          _processId: result._processId,
-          _isLastItem: result._isLastItem,
-          _createdUserId: result._createdUserId,
-          _createdAt: dateTime,
-          _status: 1,
-        });
-        await orderSaleNewSetProcess.save({
-          session: transactionSession,
-        });
+        //   _workAssignedTime: -1,
+        //   _workStartedTime: -1,
+        //   _workCompletedTime: -1,
+        //   _index: result._index,
+        //   _rootCauseId: null,
+        //   _rootCause: '',
+        //   _description: '',
+        //   _processId: result._processId,
+        //   _isLastItem: result._isLastItem,
+        //   _createdUserId: result._createdUserId,
+        //   _createdAt: dateTime,
+        //   _status: 1,
+        // });
+        // await orderSaleNewSetProcess.save({
+        //   session: transactionSession,
+        // });
 
         const orderSaleNewSetProcessHistory =
           new this.orderSaleSetProcessHistoriesModel({

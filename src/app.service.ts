@@ -161,19 +161,64 @@ console.log("___ null");
       }
  
       if (dto.screenType.includes( 1)) {
-        resultUserDetails= await this.userModel.aggregate(
-          [
-            {
-              $match: {
-                _id: new mongoose.Types.ObjectId(_userId_),
-              },
+        
+        var aggregationArrayChild = [];
+        aggregationArrayChild.push({
+          $match: {
+            _id: new mongoose.Types.ObjectId(_userId_),
+          },
+        },
+        {
+          $project:{
+            _permissions:1,
+            _email:1,
+            _employeeId:1,
+            _mobile:1,
+            _name:1,
+          }
+        });
+
+        if (dto.screenType.includes( 1)) {
+
+          aggregationArrayChild.push({
+            $lookup: {
+              from: ModelNames.EMPLOYEES,
+              let: { employeeId: '$_employeeId' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$employeeId'] } },
+                },
+                {
+                  $lookup: {
+                    from: ModelNames.DEPARTMENT,
+                    let: { departmentId: '$_departmentId' },
+                    pipeline: [
+                      {
+                        $match: { $expr: { $eq: ['$_id', '$$departmentId'] } },
+                      },
+                    ],
+                    as: 'departmentDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$departmentDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                }
+              ],
+              as: 'employeeDetails',
             },
-            {
-              $project:{
-                _permissions:1
-              }
-            }
-          ]
+          },
+          {
+            $unwind: {
+              path: '$employeeDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },);
+        }
+        resultUserDetails= await this.userModel.aggregate(
+          aggregationArrayChild
         );
       }
 
