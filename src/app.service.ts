@@ -1528,7 +1528,7 @@ console.log("___ null");
         {
           $setOnInsert: {
             _string: '',
-            _name: 'Mobile Employee application Build number',
+            _name: 'Mobile Employee major update application Build number',
             _number: 1,
             _vlaueType: 0,
             _json: { basic: 'basic' },
@@ -1549,7 +1549,7 @@ console.log("___ null");
         {
           $setOnInsert: {
             _string: '',
-            _name: 'Mobile Customer application Build number',
+            _name: 'Mobile Customer major update application Build number',
             _number: 1,
             _vlaueType: 0,
             _json: { basic: 'basic' },
