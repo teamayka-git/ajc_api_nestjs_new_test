@@ -785,6 +785,38 @@ export class OrderSalesService {
         });
       }
 
+      if (dto.subCategoryIds.length > 0) {
+        var newSettingsId = [];
+        dto.subCategoryIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_ITEMS,
+              let: { orderId: '$_id' },
+              pipeline: [{
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_orderSaleId', '$$orderId'] },
+                },
+              },
+              {
+                $match: {
+                  _subCategoryId: {$in:newSettingsId}
+                  
+                },
+              }
+            
+            ],
+              as: 'mongoCheckSubItems',
+            },
+          },
+          {
+            $match: { mongoCheckSubItems: { $ne: [] } },
+          },
+          );
+      }
       if (dto.relationshipManagerIds.length > 0) {
         const shopMongoCheckPipeline = () => {
           const pipeline = [];
