@@ -55,9 +55,7 @@ export class CategoriesService {
         );
 
         for (var i = 0; i < file['image'].length; i++) {
-          console.log('___a');
-          console.log('path    ' + file['image'][i]['path']);
-
+       
           var resultUpload = await new S3BucketUtils().uploadMyFile(
             file['image'][i],
             UploadedFileDirectoryPath.GLOBAL_GALLERY_CATEGORY,
@@ -259,7 +257,6 @@ export class CategoriesService {
       var arrayToStates = [];
       var arrayGlobalGalleries = [];
 
-      console.log('___z1');
 
       // if (file.hasOwnProperty('image')) {
       //   var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
@@ -319,16 +316,12 @@ export class CategoriesService {
       //     session: transactionSession,
       //   },
       // );
-      console.log('___z2');
 
-      console.log('___z3   ' + JSON.stringify(file['originalname']));
 
-      console.log('___z4');
       // await this.filesService.uploadMyFile(file);
 
       var resultUpload = await new S3BucketUtils().uploadMyFile(file, '');
 
-      console.log('resultUpload  ' + JSON.stringify(resultUpload));
 
       if (resultUpload['status'] == 0) {
         throw new HttpException(
@@ -337,7 +330,6 @@ export class CategoriesService {
         );
       }
 
-      console.log('___z5');
       const responseJSON = {
         message: 'success',
         data: resultUpload,
@@ -623,7 +615,6 @@ export class CategoriesService {
           },
         );
       }
-      console.log('arrayAggregation  ' + JSON.stringify(arrayAggregation));
       if (dto.screenType.includes(50)) {
         arrayAggregation.push(
           {

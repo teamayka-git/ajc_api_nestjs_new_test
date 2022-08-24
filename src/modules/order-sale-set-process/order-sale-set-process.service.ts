@@ -69,7 +69,6 @@ export class OrderSaleSetProcessService {
         { _processMasterId: { $in: arrayProcessIds }, _status: 1 },
         { _processMasterId: 1, _id: 1 },
       );
-console.log("resultSubProcess  "+JSON.stringify(resultSubProcess));
       dto.array.map((mapItem) => {
         mapItem.arrayProcess.map((mapItem1, index) => {
           var processId = new mongoose.Types.ObjectId();
@@ -113,7 +112,6 @@ console.log("resultSubProcess  "+JSON.stringify(resultSubProcess));
               resultSubProcess,
               mapItem1.processId,
             );
-            console.log("____f1    "+arraySubProcessIndexes);
           arraySubProcessIndexes.map((mapItem2) => {
             arrayToSetSubProcess.push({
               _orderSaleSetProcessId: processId,
@@ -377,7 +375,6 @@ console.log("resultSubProcess  "+JSON.stringify(resultSubProcess));
       }
 
       if (dto.isLastSetProcess == 0 && dto.orderStatus == 3) {
-        console.log('____a4 1');
         var orderSaleSetProcess = await this.orderSaleSetProcessModel.aggregate(
           [
             {
@@ -413,9 +410,7 @@ console.log("resultSubProcess  "+JSON.stringify(resultSubProcess));
             HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }
-        console.log('____a4 2');
         if (orderSaleSetProcess[0].processDetails._isAutomatic == 1) {
-          console.log('____a4 3');
           var resultEmployees = await this.employeeModel.aggregate([
             {
               $match: {

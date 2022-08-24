@@ -176,8 +176,6 @@ console.log("___ null");
           ]
         );
       }
-      console.log("dash user "+_userId_);
-      console.log("dash dto "+JSON.stringify(dto));
 
       const responseJSON = {
         message: 'success',
@@ -186,7 +184,6 @@ console.log("___ null");
           userDetails:resultUserDetails[0],
         },
       };
-      console.log("dash res "+JSON.stringify(responseJSON));
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=

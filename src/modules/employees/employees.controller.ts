@@ -53,7 +53,6 @@ export class EmployeesController {
     @Res({ passthrough: true }) response: Response, //jwt response store in cookie
   ) {
     var returnData: Object = await this.employeesService.login(dto);
-    console.log("___jwt "+JSON.stringify(returnData));
     var userRole = new GuardUserRoleStringGenerate().generate(
       returnData['userDetails']['_userType'],
     );
@@ -69,7 +68,6 @@ export class EmployeesController {
     );
 
 
-    console.log("___jwt token "+JSON.stringify(jwt));
 
     //response.cookie(process.env.JWT_CLIENT_COOKIE_KEY, {token:jwt,permissions:returnData["userDetails"]["_permissions"]}, { httpOnly: true });//jwt response store in cookie
     response.cookie(process.env.JWT_CLIENT_COOKIE_KEY, jwt, { httpOnly: true }); //jwt response store in cookie

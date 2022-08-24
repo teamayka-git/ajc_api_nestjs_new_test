@@ -192,7 +192,6 @@ export class OrderSalesService {
         },
         { new: true, session: transactionSession },
       );
-      console.log('___pp1   '+dto.shopId);
       var shopDetails = await this.shopsModel.aggregate([
         {
           $match: {
@@ -246,16 +245,13 @@ export class OrderSalesService {
         },
       ]);
 
-      console.log('___pp2 ' + JSON.stringify(shopDetails));
 
-      console.log('___pp3 ');
       if (shopDetails.length == 0) {
         throw new HttpException(
           'Shop not found',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-      console.log('___pp3 ');
       let uidSalesOrder = resultCounterPurchase._count;
 
       const newsettingsModel = new this.orderSaleMainModel({
@@ -390,7 +386,6 @@ export class OrderSalesService {
     transactionSession.startTransaction();
 
     try {
-      console.log('payload ' + JSON.stringify(dto));
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
 
@@ -548,10 +543,7 @@ export class OrderSalesService {
         session: transactionSession,
       });
 
-      console.log(
-        'documentsLinkingIdsForDelete   ' +
-          JSON.stringify(dto.documentsLinkingIdsForDelete),
-      );
+    
 
       if (dto.documentsLinkingIdsForDelete.length != 0) {
         await this.orderSaleDocumentsModel.updateMany(
@@ -4211,7 +4203,6 @@ console.log("arrayAggregation  "+JSON.stringify(arrayAggregation));
           },
         );
       }
-      console.log(JSON.stringify(arrayAggregation));
       var result = await this.orderSaleSetProcessModel
         .aggregate(arrayAggregation)
         .session(transactionSession);

@@ -64,7 +64,6 @@ export class ShopsService {
       var resultEmployee = await this.userModel
         .aggregate([{ $match: { _mobile: dto.mobile } }])
         .session(transactionSession);
-      console.log('___shop login ' + JSON.stringify(resultEmployee));
       if (resultEmployee.length == 0) {
         throw new HttpException(
           'Wrong, Please check mobile and password',
@@ -1704,7 +1703,6 @@ export class ShopsService {
             _updatedAt: -1,
             _status: 1,
           });
-          console.log('___a0');
           smsGatewayArray.push({mobile: dto.arrayUsersNew[i].mobile,text: 'Use ' + password + ' as AJC OMS password reset code.'});
 		
          

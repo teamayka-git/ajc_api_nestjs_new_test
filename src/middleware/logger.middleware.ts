@@ -21,7 +21,6 @@ export class LoggerMiddleware implements NestMiddleware {
       jwt_token = req.cookies[process.env.JWT_CLIENT_COOKIE_KEY];//jwt read cookie
       
     }
-    console.log("logger token "+jwt_token);
     try {
 
 

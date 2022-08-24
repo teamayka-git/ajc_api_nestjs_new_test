@@ -517,7 +517,6 @@ export class DeliveryTempService {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
-console.log("deltemp arrayAggregation  "+JSON.stringify(arrayAggregation));
       arrayAggregation.push(
         new ModelWeightResponseFormat().deliveryTempTableResponseFormat(
           0,
@@ -850,7 +849,6 @@ console.log("deltemp arrayAggregation  "+JSON.stringify(arrayAggregation));
           },
         );
       }
-      console.log('arrayAggregation  ' + JSON.stringify(arrayAggregation));
       var result = await this.deliveryTempModel
         .aggregate(arrayAggregation)
         .session(transactionSession);

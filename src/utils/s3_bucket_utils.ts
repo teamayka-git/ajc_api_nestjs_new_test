@@ -16,12 +16,7 @@ export class S3BucketUtils {
 
       //const fileContent = fs.readFileSync(file);
 
-      console.log('mimetype   ' + file['mimetype']);
-      console.log('path    ' + file['path']);
-
-      // console.log('file    ' + JSON.stringify(file));
-      console.log('-----'); //
-
+     
       // let bodyFs = fs.createReadStream(file.path) ;
       const svgBuffer = Buffer.from(file['buffer'], 'utf-8');
       const params = {
@@ -40,7 +35,6 @@ export class S3BucketUtils {
           resolve({ status: 0 });
           // throw err;
         }
-        console.log('data   ' + JSON.stringify(data));
         resolve({ status: 1, url: data.Location });
       });
     });

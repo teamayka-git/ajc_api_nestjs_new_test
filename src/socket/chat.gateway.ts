@@ -64,17 +64,14 @@ export class ChatGateway
 
     if (typeof userId == 'undefined' || typeof userId != 'string') {
       client.disconnect();
-      console.log('___a1');
       return;
     }
     if (typeof deviceId == 'undefined' || typeof deviceId != 'string') {
       client.disconnect();
-      console.log('___a2');
       return;
     }
     if (typeof appType == 'undefined' || typeof appType != 'string') {
       client.disconnect();
-      console.log('___a3');
       return;
     }
 
@@ -83,11 +80,9 @@ export class ChatGateway
       typeof lastPendingId != 'string'
     ) {
       client.disconnect();
-      console.log('___a4');
       return;
     }
 
-    console.log('___a5');
     this.connectedUsers.push({
       userId: client.handshake.query.userId,
       socket: client,
@@ -142,7 +137,6 @@ export class ChatGateway
       client.disconnect();
       return;
     }
-console.log("___personal chat");
     var personalChatId = '';
 
     //finding personal chat id
@@ -451,10 +445,9 @@ console.log("___personal chat");
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      console.log('___j1  dto ' + JSON.stringify(dto));
 
       if (file.hasOwnProperty('document')) {
-        console.log('___j2');
+     
 
         var resultUpload = await new S3BucketUtils().uploadMyFile(
           file['document'][0],
@@ -483,29 +476,21 @@ console.log("___personal chat");
         //           );
 
         //         }
-        console.log('___j3');
         dto.value['fileUrl'] = resultUpload['url'];
 
-        console.log('___j3.2');
       }
-      console.log('___j4');
       var personalChatId = '';
 
       //finding personal chat id
 
-      console.log('___j5');
       var resultGroupUid = await this.chatPersonalChatsModel.find({
         _groupUid: dto.groupUid,
         _status: 1,
       });
-      console.log('___j5.0');
       if (resultGroupUid.length != 0) {
-        console.log('___j5.1');
         personalChatId = resultGroupUid[0]._id;
 
-        console.log('___j5.2');
       } else {
-        console.log('___j5.3');
         const personalChat = new this.chatPersonalChatsModel({
           _personalIdOne: _userId_,
           _personalIdTwo: dto.recipientId,
@@ -514,13 +499,10 @@ console.log("___personal chat");
         });
         var resultChat = await personalChat.save();
 
-        console.log('___j.4');
         personalChatId = resultChat._id;
 
-        console.log('___j5.5');
       }
 
-      console.log('___j6');
       const personalMessage = new this.chatPersonalChatMessagesModel({
         _personalChatId: personalChatId,
         _senderId: _userId_,
@@ -534,7 +516,6 @@ console.log("___personal chat");
         session: transactionSession,
       });
 
-      console.log('___j7');
       const personalPendingMessage = new this.chatPendingMessagesModel({
         _userId: dto.recipientId,
         _createdUserId: _userId_,
@@ -548,7 +529,6 @@ console.log("___personal chat");
         session: transactionSession,
       });
 
-      console.log('___j8');
       var resultSender = await this.userModel.aggregate([
         { $match: { _id: new mongoose.Types.ObjectId(_userId_) } },
         {
@@ -582,7 +562,6 @@ console.log("___personal chat");
         },
       ]);
 
-      console.log('___j9');
 
       var jsonString = {
         _personalChatId: personalChatId,
@@ -595,7 +574,6 @@ console.log("___personal chat");
         sender: resultSender[0],
         time: dto.time,
       };
-      console.log('_____d1 jsonString ' + JSON.stringify(jsonString));
       var onlineUsers = new IndexUtils().multipleIndexChat(
         this.connectedUsers,
         dto.recipientId,
@@ -622,7 +600,6 @@ console.log("___personal chat");
         );
       }
 
-      console.log('___j10');
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return { message: 'success', data: jsonString };
@@ -960,10 +937,6 @@ console.log("___personal chat");
         arrayJsonDatasPersonalMessageCreatedIds.push(mapItem._id);
       }
     });
-    console.log(
-      'arrayJsonDatasPersonalMessageCreatedIds   ' +
-        arrayJsonDatasPersonalMessageCreatedIds.length,
-    );
     if (arrayJsonDatasPersonalMessageCreated.length != 0) {
       client.emit(
         SocketChatEvents.EVENT_PERSONAL_MESSAGE_RECEIVED,
@@ -975,10 +948,7 @@ console.log("___personal chat");
           },
         },
         async (ack) => {
-          console.log(
-            'arrayJsonDatasPersonalMessageCreatedIds   ' +
-              arrayJsonDatasPersonalMessageCreatedIds.length,
-          );
+      
 
           await this.chatPendingMessagesModel.updateMany(
             { _id: { $in: arrayJsonDatasPersonalMessageCreatedIds } },

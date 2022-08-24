@@ -56,7 +56,6 @@ export class DeliveryService {
       var orderSaleIds = [];
 
 
-console.log("delivery create dto "+JSON.stringify(dto));
 
 
       dto.array.map((mapItem) => {
@@ -89,7 +88,6 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
         }
       });
 
-console.log("shopIds  "+JSON.stringify(shopIds));
 
 
 
@@ -126,7 +124,6 @@ console.log("shopIds  "+JSON.stringify(shopIds));
       });
 
 
-console.log("arrayToDelivery  "+JSON.stringify(arrayToDelivery));
 
       
       resultOldDelivery.push(...arrayToDelivery);
@@ -157,7 +154,6 @@ console.log("arrayToDelivery  "+JSON.stringify(arrayToDelivery));
       });
 
 
-console.log("arrayToDeliveryItems  "+JSON.stringify(arrayToDeliveryItems));
 
 
       var result1 = await this.deliveryItemsModel.insertMany(
@@ -396,7 +392,6 @@ console.log("arrayToDeliveryItems  "+JSON.stringify(arrayToDeliveryItems));
         },
         { new: true, session: transactionSession },
       );
-console.log("delivery reject "+JSON.stringify(dto));
       if (dto.deliveryRejectedList.length != 0) {
         var arrayToDeliveryRejectedList = [];
         var arrayToDeliveryRejectedOrderIdsList = [];
@@ -1022,7 +1017,6 @@ console.log("delivery reject "+JSON.stringify(dto));
           },
         });
       }
-      console.log('delivery list payload  ' + JSON.stringify(arrayAggregation));
       var result = await this.deliveryModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
