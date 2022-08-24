@@ -81,6 +81,9 @@ export class OrderSalesService {
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
 
+
+console.log("____ order sale doc "+file.hasOwnProperty('documents'));
+
       if (file.hasOwnProperty('documents')) {
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
@@ -658,7 +661,7 @@ export class OrderSalesService {
 
 
 
-      
+
       var result = await this.orderSaleMainModel.updateMany(
         {
           _id: { $in: dto.orderSaleIds },
