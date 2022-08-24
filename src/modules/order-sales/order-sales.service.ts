@@ -245,7 +245,6 @@ export class OrderSalesService {
         },
       ]);
 
-
       if (shopDetails.length == 0) {
         throw new HttpException(
           'Shop not found',
@@ -543,8 +542,6 @@ export class OrderSalesService {
         session: transactionSession,
       });
 
-    
-
       if (dto.documentsLinkingIdsForDelete.length != 0) {
         await this.orderSaleDocumentsModel.updateMany(
           { _id: { $in: dto.documentsLinkingIdsForDelete } },
@@ -795,27 +792,31 @@ export class OrderSalesService {
             $lookup: {
               from: ModelNames.ORDER_SALES_ITEMS,
               let: { orderId: '$_id' },
-              pipeline: [{
-                $match: {
-                  _status: 1,
-                  $expr: { $eq: ['$_orderSaleId', '$$orderId'] },
+              pipeline: [
+                {
+                  $match: {
+                    _status: 1,
+                    $expr: { $eq: ['$_orderSaleId', '$$orderId'] },
+                  },
                 },
-              },
-              {
-                $match: {
-                  _subCategoryId: {$in:newSettingsId}
-                  
+                {
+                  $match: {
+                    _subCategoryId: { $in: newSettingsId },
+                  },
                 },
-              }
-            
-            ],
+                {
+                  $project: {
+                    _id: 1,
+                  },
+                },
+              ],
               as: 'mongoCheckSubItems',
             },
           },
           {
             $match: { mongoCheckSubItems: { $ne: [] } },
           },
-          );
+        );
       }
       if (dto.relationshipManagerIds.length > 0) {
         const shopMongoCheckPipeline = () => {
@@ -858,7 +859,7 @@ export class OrderSalesService {
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
-      console.log("arrayAggregation  "+JSON.stringify(arrayAggregation));
+      console.log('arrayAggregation  ' + JSON.stringify(arrayAggregation));
       switch (dto.sortType) {
         case 0:
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
@@ -1188,11 +1189,8 @@ export class OrderSalesService {
             ),
           );
 
-
-
-
-
-          const isorderSaleHistoriesDeliveryProvider = dto.screenType.includes(133);
+          const isorderSaleHistoriesDeliveryProvider =
+            dto.screenType.includes(133);
           if (isorderSaleHistoriesDeliveryProvider) {
             pipeline.push(
               {
@@ -1221,16 +1219,6 @@ export class OrderSalesService {
               },
             );
           }
-
-
-
-
-
-
-
-
-
-
 
           const isorderSaleHistoriesUser = dto.screenType.includes(114);
 
@@ -2761,14 +2749,8 @@ export class OrderSalesService {
             ),
           );
 
-
-
-
-
-
-
-
-          const isorderSaleHistoriesDeliveryProvider = dto.screenType.includes(133);
+          const isorderSaleHistoriesDeliveryProvider =
+            dto.screenType.includes(133);
           if (isorderSaleHistoriesDeliveryProvider) {
             pipeline.push(
               {
@@ -2797,11 +2779,6 @@ export class OrderSalesService {
               },
             );
           }
-
-
-
-
-
 
           const isorderSaleHistoriesUser = dto.screenType.includes(114);
 
@@ -3047,9 +3024,6 @@ export class OrderSalesService {
             );
           }
 
-
-
-          
           const isorderSaleshopCity = dto.screenType.includes(134);
           if (isorderSaleshopCity) {
             pipeline.push(
