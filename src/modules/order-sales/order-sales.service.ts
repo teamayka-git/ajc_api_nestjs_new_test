@@ -1894,7 +1894,7 @@ export class OrderSalesService {
           _status: 1,
         });
       }
-
+console.log("arrayAggregation  "+JSON.stringify(arrayAggregation));
       var result = await this.orderSaleMainModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
