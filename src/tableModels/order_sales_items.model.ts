@@ -16,7 +16,7 @@ export const OrderSalesItemsSchema = new mongoose.Schema({
   },
   _quantity: { type: String, required: true, default: 'nil' },
   _size: { type: String, required: true, default: 'nil' },
-  _weight: { type: Number, required: true, default: -1 },
+  _weight: { type: String, required: true, default: 'nil' },
   _stoneColour: { type: String, required: true, default: 'nil' },
   _productId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -57,7 +57,7 @@ export interface OrderSalesItems {
   _subCategoryId: string;
   _quantity: string;
   _size: string;
-  _weight: number;
+  _weight: string;
   _uid: string;
   _stoneColour: string;
   _productData: object;
