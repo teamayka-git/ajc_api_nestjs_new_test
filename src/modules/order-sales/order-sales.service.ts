@@ -727,7 +727,7 @@ console.log("____ order sale doc "+file.hasOwnProperty('documents'));
     }
   }
 
-  async list(dto: OrderSaleListDto) {
+  async list(dto: OrderSaleListDto) { 
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -2021,6 +2021,44 @@ console.log("____ order sale doc "+file.hasOwnProperty('documents'));
         ]);
       }
 
+
+
+      var resultGeneralsAppUpdate=[];
+      var codeGeneralsAppUpdate=[];
+
+      if (dto.screenType.includes( 502)) {//employee
+        codeGeneralsAppUpdate.push(100);
+        codeGeneralsAppUpdate.push(102);
+      }
+      if (dto.screenType.includes( 503)) {//customer
+        codeGeneralsAppUpdate.push(101);
+        codeGeneralsAppUpdate.push(103);
+
+      }
+if(codeGeneralsAppUpdate.length!=0){
+  resultGeneralsAppUpdate= await this.generalsModel.aggregate([
+    {$match:{
+      _code:{$in:codeGeneralsAppUpdate}
+    }},
+    {
+      $project:{
+        _code:1,
+        _string:1,
+        _number:1,
+
+      }
+    }
+  ]);
+}
+
+
+
+
+
+
+
+
+
       const responseJSON = {
         message: 'success',
         data: {
@@ -2030,6 +2068,7 @@ console.log("____ order sale doc "+file.hasOwnProperty('documents'));
           processMasters: resultProcessMasters,
           subCategory: resultSubCategory,
           generalSetting: generalSetting,
+          appUpdates:resultGeneralsAppUpdate
         },
       };
       if (
