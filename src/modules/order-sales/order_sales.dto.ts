@@ -77,8 +77,8 @@ class orderSaleItemsCreateList {
   @ApiProperty({ description: descriptionStockStatus })
   stockStatus: number;
 
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
+  
+  @IsString()
   @ApiProperty({})
   weight: number;
 
@@ -201,8 +201,8 @@ class orderSaleItemEditList {
   @ApiProperty({})
   size: string;
 
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
+  
+  @IsString()
   @ApiProperty({})
   weight: number;
 
