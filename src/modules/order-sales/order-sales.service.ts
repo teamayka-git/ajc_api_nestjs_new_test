@@ -740,8 +740,8 @@ console.log("____ order sale doc "+file.hasOwnProperty('documents'));
           $match: {
             $or: [
               { _name: new RegExp(dto.searchingText, 'i') },
-              { _uid: dto.searchingText },
-              { _referenceNumber: dto.searchingText },
+              { _uid: new RegExp(`^${dto.searchingText}$`, 'i') },
+              { _referenceNumber: new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });
