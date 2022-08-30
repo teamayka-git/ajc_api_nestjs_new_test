@@ -2438,6 +2438,8 @@ if(codeGeneralsAppUpdate.length!=0){
         dto.netWeightStart != -1 ||
         dto.netWeightEnd != -1 ||
         dto.huids.length != 0 ||
+        dto.productCreatedStartDate != -1 ||
+        dto.productCreatedEndDate != -1 ||
         (dto.invoiceDateStartDate != -1 && dto.invoiceDateEndDate != -1) ||
         dto.invoiceUids.length != 0
       ) {
