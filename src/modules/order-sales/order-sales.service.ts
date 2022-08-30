@@ -2250,6 +2250,171 @@ if(codeGeneralsAppUpdate.length!=0){
         );
       }
 
+
+
+
+//delivery
+      if (
+        dto.deliveryAssignedStartDate != -1 ||
+        dto.deliveryAssignedStartDate != -1 ){
+
+
+
+
+          const orderSaleItemsMongoCheckPipeline = () => {
+            const pipeline = [];
+            pipeline.push({
+              $match: {
+                _status: 1,
+                $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+              },
+            });
+           
+            
+  
+              const invoiceItemsMongoCheckPipeline = () => {
+                const pipeline = [];
+                pipeline.push({
+                  $match: {
+                    $expr: { $eq: ['$_orderSaleItemId', '$$orderSaleItemId'] },
+                  },
+                });
+  
+                const invoiceItemsInvoiceDetailsMongoCheckPipeline = () => {
+                  const pipeline = [];
+                  pipeline.push({
+                    $match: {
+                      $expr: { $eq: ['$_id', '$$invoiceId'] },
+                    },
+                  });
+  
+                  
+                  const invoiceItemsInvoiceDetailsDeliveryTempMongoCheckPipeline = () => {
+                    const pipeline = [];
+                    pipeline.push({
+                      $match: {
+                        _status: 1,
+                        $expr: { $eq: ['$_invoiceId', '$$invoiceIdForDelTemp'] },
+                      },
+                    });
+      
+                    if (dto.deliveryAssignedStartDate != -1) {
+                      pipeline.push({
+                        $match: {
+                          _createdAt: { $gte: dto.deliveryAssignedStartDate },
+                        },
+                      });
+                    }
+      
+                    if (dto.deliveryAssignedStartDate != -1) {
+                      pipeline.push({
+                        $match: {
+                          _createdAt: { $gte: dto.deliveryAssignedStartDate },
+                        },
+                      });
+                    }
+      
+                    
+                    pipeline.push({ $project: { _id: 1 } });
+                    return pipeline;
+                  }
+
+
+
+
+
+
+
+
+
+                  pipeline.push(
+                    {
+                      $lookup: {
+                        from: ModelNames.DELIVERY_TEMP,
+                        let: { invoiceIdForDelTemp: '$_id' },
+                        pipeline: invoiceItemsInvoiceDetailsDeliveryTempMongoCheckPipeline(),
+                        as: 'deliveryTempList',
+                      },
+                    },
+                    {
+                      $match: { deliveryTempList: { $ne: [] } },
+                    },
+                  );
+
+
+
+
+                  pipeline.push({ $project: { _id: 1 } });
+                  return pipeline;
+                };
+  
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.INVOICES,
+                      let: { invoiceId: '$_invoiceId' },
+                      pipeline: invoiceItemsInvoiceDetailsMongoCheckPipeline(),
+                      as: 'invoiceDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$invoiceDetails',
+                    },
+                  },
+                );
+  
+                pipeline.push({ $project: { _id: 1 } });
+                return pipeline;
+              };
+  
+              pipeline.push(
+                {
+                  $lookup: {
+                    from: ModelNames.INVOICE_ITEMS,
+                    let: { orderSaleItemId: '$_id' },
+                    pipeline: invoiceItemsMongoCheckPipeline(),
+                    as: 'mongoCheckInvoiceList',
+                  },
+                },
+                {
+                  $match: { mongoCheckInvoiceList: { $ne: [] } },
+                },
+              );
+            
+  
+            pipeline.push({ $project: { _id: 1 } });
+            return pipeline;
+          }
+
+
+
+
+
+
+
+          arrayAggregation.push(
+            {
+              $lookup: {
+                from: ModelNames.ORDER_SALES_ITEMS,
+                let: { orderSaleId: '$_id' },
+                pipeline: orderSaleItemsMongoCheckPipeline(),
+                as: 'mongoCheckOrderItemsDeliveryAssignList',
+              },
+            },
+            {
+              $match: { mongoCheckOrderItemsDeliveryAssignList: { $ne: [] } },
+            },
+          );
+
+
+        }
+
+
+
+
+
+
       //product
 
       if (
@@ -2270,6 +2435,8 @@ if(codeGeneralsAppUpdate.length!=0){
           if (
             dto.netWeightStart != -1 ||
             dto.netWeightEnd != -1 ||
+            dto.productCreatedStartDate != -1 ||
+            dto.productCreatedEndDate != -1 ||
             dto.huids.length != 0
           ) {
             const orderSaleItemsProductMongoCheckPipeline = () => {
@@ -2285,6 +2452,22 @@ if(codeGeneralsAppUpdate.length!=0){
                 pipeline.push({
                   $match: {
                     _netWeight: { $gte: dto.netWeightStart },
+                  },
+                });
+              }
+
+              if (dto.productCreatedStartDate != -1) {
+                pipeline.push({
+                  $match: {
+                    _createdAt: { $gte: dto.productCreatedStartDate },
+                  },
+                });
+              }
+
+              if (dto.productCreatedEndDate != -1) {
+                pipeline.push({
+                  $match: {
+                    _createdAt: { $lte: dto.productCreatedEndDate },
                   },
                 });
               }

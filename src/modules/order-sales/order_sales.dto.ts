@@ -400,6 +400,23 @@ export class OrderSaleReportListDto {
 
   @IsNumber()
   @ApiProperty({})
+  productCreatedStartDate: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  productCreatedEndDate: number;
+
+
+  @IsNumber()
+  @ApiProperty({})
+  deliveryAssignedStartDate: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  deliveryAssignedEndDate: number;
+
+  @IsNumber()
+  @ApiProperty({})
   netWeightEnd: number;
 
   @IsArray()
