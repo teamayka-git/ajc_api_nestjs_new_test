@@ -2112,9 +2112,17 @@ if(codeGeneralsAppUpdate.length!=0){
       //   });
       // }
       if (dto.orderSaleUids.length > 0) {
+
+        var arrayTemp=[];
+        dto.orderSaleUids.forEach((eachElement=>{
+          arrayTemp.push(new RegExp(`^${eachElement}$`, 'i'))
+        }));
+        
+
+
         arrayAggregation.push({
           $match: {
-            _uid: { $in: dto.orderSaleUids },
+            _uid: { $in: arrayTemp },
           },
         });
       }
@@ -2138,9 +2146,18 @@ if(codeGeneralsAppUpdate.length!=0){
       }
 
       if (dto.referenceIds.length > 0) {
+
+
+        var arrayTemp=[];
+        dto.referenceIds.forEach((eachElement=>{
+          arrayTemp.push(new RegExp(`^${eachElement}$`, 'i'))
+        }));
+        
+
+
         arrayAggregation.push({
           $match: {
-            _referenceNumber: { $in: dto.referenceIds },
+            _referenceNumber: { $in: arrayTemp },
           },
         });
       }
@@ -2481,9 +2498,15 @@ if(codeGeneralsAppUpdate.length!=0){
               }
 
               if (dto.huids.length != 0) {
+
+var arrayTemp=[];
+dto.huids.forEach((eachElement=>{
+  arrayTemp.push(new RegExp(`^${eachElement}$`, 'i'))
+}));
+
                 pipeline.push({
                   $match: {
-                    _huId: { $in: dto.huids },
+                    _huId: { $in: arrayTemp },
                   },
                 });
               }
@@ -2541,9 +2564,17 @@ if(codeGeneralsAppUpdate.length!=0){
                   });
                 }
                 if (dto.invoiceUids.length != 0) {
+
+                  var arrayTemp=[];
+                  dto.invoiceUids.forEach((eachElement=>{
+                    arrayTemp.push(new RegExp(`^${eachElement}$`, 'i'))
+                  }));
+                  
+
+
                   pipeline.push({
                     $match: {
-                      _uid: { $in: dto.invoiceUids },
+                      _uid: { $in: arrayTemp },
                     },
                   });
                 }
