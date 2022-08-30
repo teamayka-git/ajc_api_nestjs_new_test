@@ -779,12 +779,12 @@ export class ShopsService {
           $match: {
             $or: [
               // { _id: { $in: userIdsSearch } },
-              { _uid: dto.searchingText },
+              { _uid: new RegExp(`^${dto.searchingText}$`, 'i') },
               { _name: new RegExp(dto.searchingText, 'i') },
               { _displayName: new RegExp(dto.searchingText, 'i') },
               { _address: new RegExp(dto.searchingText, 'i') },
-              { _panCardNumber: dto.searchingText },
-              { _gstNumber: dto.searchingText },
+              { _panCardNumber:new RegExp(`^${dto.searchingText}$`, 'i') },
+              { _gstNumber:new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });
@@ -1920,7 +1920,9 @@ var smsGatewayArray=[];
           .aggregate([
             {
               $match: {
-                $or: [{ _uid: dto.searchingText }],
+                $or: [
+                  { _uid: new RegExp(`^${dto.searchingText}$`, 'i') },
+                ],
                 _status: { $in: dto.statusArray },
               },
             },
@@ -1937,9 +1939,9 @@ var smsGatewayArray=[];
           $match: {
             $or: [
               { _customerId: { $in: userIdsSearch } },
-              { _email: dto.searchingText },
+              { _email: new RegExp(`^${dto.searchingText}$`, 'i') },
               { _name: new RegExp(dto.searchingText, 'i') },
-              { _mobile: dto.searchingText },
+              { _mobile: new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });

@@ -304,7 +304,7 @@ export class BranchService {
           $match: {
             $or: [
               { _name: new RegExp(dto.searchingText, 'i') },
-              { _uid: dto.searchingText },
+              { _uid: new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });

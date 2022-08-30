@@ -244,7 +244,7 @@ export class LogisticsPartnersService {
             $or: [
                 
                 { _name: new RegExp(dto.searchingText, 'i') },
-                { _trackingUrl: dto.searchingText },
+                { _trackingUrl: new RegExp(`^${dto.searchingText}$`, 'i') },
             
             ],
           },

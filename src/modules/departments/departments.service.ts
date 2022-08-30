@@ -168,8 +168,8 @@ export class DepartmentsService {
           $match: {
             $or: [
               { _name: new RegExp(dto.searchingText, 'i') },
-              { _code: dto.searchingText },
-              { _prefix: dto.searchingText },
+              { _code: new RegExp(`^${dto.searchingText}$`, 'i') },
+              { _prefix:new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });

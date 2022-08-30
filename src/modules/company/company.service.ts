@@ -179,7 +179,7 @@ export class CompanyService {
             $or: [
               { _name: new RegExp(dto.searchingText, 'i') },
               { _place: new RegExp(dto.searchingText, 'i') },
-              { _email: dto.searchingText },
+              { _email: new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });

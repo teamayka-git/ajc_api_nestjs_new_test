@@ -322,8 +322,8 @@ export class InvoicesService {
           $match: {
             $or: [
               { _description: new RegExp(dto.searchingText, 'i') },
-              { _uid: dto.searchingText },
-              { _referenceUrl: dto.searchingText },
+              { _uid: new RegExp(`^${dto.searchingText}$`, 'i') },
+              { _referenceUrl: new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });

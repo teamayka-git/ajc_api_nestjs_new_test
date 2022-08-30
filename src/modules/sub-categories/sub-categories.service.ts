@@ -361,7 +361,7 @@ export class SubCategoriesService {
             $or: [
               { _name: new RegExp(dto.searchingText, 'i') },
               { _description: new RegExp(dto.searchingText, 'i') },
-              { _code: dto.searchingText },
+              { _code: new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });

@@ -488,9 +488,9 @@ export class ProductsService {
           $match: {
             $or: [
               { _name: new RegExp(dto.searchingText, 'i') },
-              { _barcode: dto.searchingText },
-              { _huId: dto.searchingText },
-              { _designerId: dto.searchingText },
+              { _barcode: new RegExp(`^${dto.searchingText}$`, 'i') },
+              { _huId: new RegExp(`^${dto.searchingText}$`, 'i') },
+              { _designerId: new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });

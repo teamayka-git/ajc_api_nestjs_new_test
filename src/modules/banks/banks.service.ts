@@ -183,8 +183,8 @@ export class BanksService {
           $match: {
             $or: [
               { _branchName: new RegExp(dto.searchingText, 'i') },
-              { _acNo: new RegExp(dto.searchingText, 'i') },
-              { _ifsc: dto.searchingText },
+              { _acNo: new RegExp(`^${dto.searchingText}$`, 'i') },
+              { _ifsc:new RegExp(`^${dto.searchingText}$`, 'i') },
               { _acHolderName: new RegExp(dto.searchingText, 'i') },
             ],
           },

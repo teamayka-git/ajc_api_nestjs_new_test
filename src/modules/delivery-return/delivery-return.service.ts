@@ -526,7 +526,9 @@ export class DeliveryReturnService {
         //todo
         arrayAggregation.push({
           $match: {
-            $or: [{ _uid: dto.searchingText }],
+            $or: [
+              { _uid: new RegExp(`^${dto.searchingText}$`, 'i') },
+            ],
           },
         });
       }

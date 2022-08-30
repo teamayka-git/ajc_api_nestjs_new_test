@@ -455,8 +455,8 @@ export class AgentService {
               $match: {
                 $or: [
                   { _name: new RegExp(dto.searchingText, 'i') },
-                  { _email: dto.searchingText },
-                  { _mobile: new RegExp(dto.searchingText, 'i') },
+                  { _email: new RegExp(`^${dto.searchingText}$`, 'i') },
+                  { _mobile: new RegExp(`^${dto.searchingText}$`, 'i') },
                 ],
                 _status: { $in: dto.statusArray },
               },
@@ -472,7 +472,10 @@ export class AgentService {
 
         arrayAggregation.push({
           $match: {
-            $or: [{ _userId: { $in: userIdsSearch } }, { _uid: dto.searchingText }],
+            $or: [
+              { _userId: { $in: userIdsSearch } }, 
+              { _uid: new RegExp(`^${dto.searchingText}$`, 'i') },
+            ],
           },
         });
       }

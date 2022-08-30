@@ -172,7 +172,7 @@ export class GroupMastersService {
           $match: {
             $or: [
               { _name: new RegExp(dto.searchingText, 'i') },
-              { _hsnCode: dto.searchingText },
+              { _hsnCode: new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });

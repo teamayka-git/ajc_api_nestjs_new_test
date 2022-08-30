@@ -620,9 +620,9 @@ if(codeGeneralsAppUpdate.length!=0){
           $match: {
             $or: [
               { _name: new RegExp(dto.searchingText, 'i') },
-              { _email: dto.searchingText },
-              { _mobile: dto.searchingText },
-              { _deviceUniqueId: dto.searchingText },
+              { _email: new RegExp(`^${dto.searchingText}$`, 'i') },
+              { _mobile: new RegExp(`^${dto.searchingText}$`, 'i') },
+              { _deviceUniqueId: new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });

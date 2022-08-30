@@ -300,7 +300,7 @@ export class ProcessMasterService {
           $match: {
             $or: [
               { _name: new RegExp(dto.searchingText, 'i') },
-              { _code: dto.searchingText },
+              { _code: new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });

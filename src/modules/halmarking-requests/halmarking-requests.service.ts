@@ -207,8 +207,8 @@ export class HalmarkingRequestsService {
           $match: {
             $or: [
               { _description: new RegExp(dto.searchingText, 'i') },
-              { _uid: dto.searchingText },
-              { _hmValue: dto.searchingText },
+              { _uid: new RegExp(`^${dto.searchingText}$`, 'i') },
+              { _hmValue: new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });

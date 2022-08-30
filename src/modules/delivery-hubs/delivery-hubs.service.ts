@@ -232,7 +232,7 @@ export class DeliveryHubsService {
           $match: {
             $or: [
               { _name: new RegExp(dto.searchingText, 'i') },
-              { _code: dto.searchingText },
+              { _code: new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });
@@ -545,9 +545,9 @@ export class DeliveryHubsService {
         arrayAggregation.push({
           $match: {
             $or: [
-              { _email: dto.searchingText },
+              { _email: new RegExp(`^${dto.searchingText}$`, 'i') },
               { _name: new RegExp(dto.searchingText, 'i') },
-              { _mobile: dto.searchingText },
+              { _mobile: new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });

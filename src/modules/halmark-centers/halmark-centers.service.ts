@@ -479,9 +479,9 @@ export class HalmarkCentersService {
             $or: [
               { _name: new RegExp(dto.searchingText, 'i') },
               { _address: new RegExp(dto.searchingText, 'i') },
-              { _uid: dto.searchingText },
-              { _ahcNo: dto.searchingText },
-              { _mobile: dto.searchingText },
+              { _uid: new RegExp(`^${dto.searchingText}$`, 'i') },
+              { _ahcNo: new RegExp(`^${dto.searchingText}$`, 'i') },
+              { _mobile: new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });

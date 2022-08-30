@@ -458,7 +458,7 @@ export class SupplierService {
               $match: {
                 $or: [
                   { _name: new RegExp(dto.searchingText, 'i') },
-                  { _email: dto.searchingText },
+                  { _email: new RegExp(`^${dto.searchingText}$`, 'i') },
                   { _mobile: new RegExp(dto.searchingText, 'i') },
                 ],
                 _status: { $in: dto.statusArray },
@@ -477,7 +477,7 @@ export class SupplierService {
           $match: {
             $or: [
               { _userId: { $in: userIdsSearch } },
-              { _address: dto.searchingText },
+              { _address:new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });
