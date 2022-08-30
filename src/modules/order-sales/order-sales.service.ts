@@ -3701,24 +3701,74 @@ dto.huids.forEach((eachElement=>{
               const isorderSalesItemsInVoiceItemsInvoiceDetails =
                 dto.screenType.includes(132);
               if (isorderSalesItemsInVoiceItemsInvoiceDetails) {
+
+                const invoiceItemsDeliveryTempPipeline = () => {
+                  const pipeline = [];
+
+
+                  pipeline.push({
+                    $match: {
+                      $expr: {
+                        $eq: ['$_id', '$$invoiceId'],
+                      },
+                    },
+                  },
+                  new ModelWeightResponseFormat().invoiceTableResponseFormat(
+                    1320,
+                    dto.responseFormat,
+                  ),);
+                    
+                  const isorderSalesItemsInVoiceItemsInvoiceDeliveryTempDetails =
+                  dto.screenType.includes(135);
+                if (isorderSalesItemsInVoiceItemsInvoiceDeliveryTempDetails) {
+  
+                  pipeline.push(
+                    {
+                      $lookup: {
+                        from: ModelNames.DELIVERY_TEMP,
+                        let: { invoiceDeliveryTempId: '$_id' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: {
+                                $eq: ['$_invoiceId', '$$invoiceDeliveryTempId'],
+                              },
+                            },
+                          },
+                          new ModelWeightResponseFormat().deliveryTempTableResponseFormat(
+                            1350,
+                            dto.responseFormat,
+                          ),
+                        ],
+                        as: 'deliveryTempDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$deliveryTempDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                  );
+                }
+return pipeline;
+                }
+
+
+
+
+
+
+
+
+
+
                 pipeline.push(
                   {
                     $lookup: {
                       from: ModelNames.INVOICES,
                       let: { invoiceId: '$_invoiceId' },
-                      pipeline: [
-                        {
-                          $match: {
-                            $expr: {
-                              $eq: ['$_id', '$$invoiceId'],
-                            },
-                          },
-                        },
-                        new ModelWeightResponseFormat().invoiceTableResponseFormat(
-                          1320,
-                          dto.responseFormat,
-                        ),
-                      ],
+                      pipeline:invoiceItemsDeliveryTempPipeline() ,
                       as: 'invoiceDetails',
                     },
                   },
