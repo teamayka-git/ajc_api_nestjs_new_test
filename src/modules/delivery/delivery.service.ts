@@ -296,7 +296,7 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _status: 1,
-          });
+          }); 
         });
   
         await this.orderSaleMainHistoriesModel.insertMany(
@@ -329,7 +329,7 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
         dto.deliveryCompleteOrderSaleIds.forEach((eachItem) => {
           arraySalesOrderHistories.push({
             _orderSaleId: eachItem,
-            _userId: null,
+            _userId: dto.toUser,
             _type: 23,
             _shopId: null,
             _orderSaleItemId: null,
