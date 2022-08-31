@@ -55,15 +55,15 @@ export class DeliveryService {
       var deliveryTempIds = [];
       var orderSaleIds = [];
 
-
-
-
       dto.array.map((mapItem) => {
+        if (
+          shopIds.findIndex(
+            (shopFindIndex) => shopFindIndex == mapItem.shopId,
+          ) == -1
+        ) {
+          shopIds.push(mapItem.shopId);
+        }
 
-if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
-  shopIds.push(mapItem.shopId);
-}
-        
         deliveryTempIds.push(mapItem.deliveryTempId);
         orderSaleIds.push(...mapItem.orderIds);
       });
@@ -87,9 +87,6 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
           ++countUid;
         }
       });
-
-
-
 
       var resultCounterDelivery = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.DELIVERY },
@@ -123,9 +120,6 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
         }
       });
 
-
-
-      
       resultOldDelivery.push(...arrayToDelivery);
       await this.deliveryModel.insertMany(arrayToDelivery, {
         session: transactionSession,
@@ -152,9 +146,6 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
           });
         }
       });
-
-
-
 
       var result1 = await this.deliveryItemsModel.insertMany(
         arrayToDeliveryItems,
@@ -200,7 +191,7 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
           _type: 21,
           _shopId: null,
           _orderSaleItemId: null,
-          _deliveryProviderId:null,
+          _deliveryProviderId: null,
           _description: '',
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -245,18 +236,155 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      //check qr code scanned at right status
-      var getDeliveryItemsForCheck = await this.deliveryModel.find({
-        _id: { $in: dto.deliveryIds },
-        _workStatus: dto.fromWorkStatus,
-        _status: 1,
+      var deliveryIdsMongo = [];
+      dto.deliveryIds.forEach((eachItem) => {
+        deliveryIdsMongo.push(new mongoose.Types.ObjectId(eachItem));
       });
+
+      //check qr code scanned at right status
+      var getDeliveryItemsForCheck = await this.deliveryModel.aggregate([
+        {
+          $match: {
+            _id: { $in: deliveryIdsMongo },
+            _workStatus: dto.fromWorkStatus,
+            _status: 1,
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+          },
+        },
+        {
+          $lookup: {
+            from: ModelNames.DELIVERY_ITEMS,
+            let: { deliveryId: '$_id' },
+            pipeline: [
+              {
+                $match: {_status:1,
+                  $expr: { $eq: ['$_deliveryId', '$$deliveryId'] },
+                },
+              },
+              {
+                $project: {
+                  _id: 1,
+                  _deliveryId:1,
+                  _invoiceId:1
+                },
+              },
+              
+
+
+              {
+                $lookup: {
+                  from: ModelNames.INVOICES,
+                  let: { invoiceId: '$_invoiceId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$invoiceId'] },
+                      },
+                    },
+                    {
+                      $project: {
+                        _id: 1,
+                        
+                      },
+                    },
+                    {
+                      $lookup: {
+                        from: ModelNames.INVOICE_ITEMS,
+                        let: { invoiceItemId: '$_id' },
+                        pipeline: [
+                          {
+                            $match: {_status:1,
+                              $expr: { $eq: ['$_invoiceId', '$$invoiceItemId'] },
+                            },
+                          },
+                          {
+                            $project: {
+                              _id: 1,
+                              _orderSaleItemId:1,
+
+                            },
+                          },
+                          {
+                            $lookup: {
+                              from: ModelNames.ORDER_SALES_ITEMS,
+                              let: { orderSaleItemId: '$_orderSaleItemId' },
+                              pipeline: [
+                                {
+                                  $match: {
+                                    $expr: { $eq: ['$_id', '$$orderSaleItemId'] },
+                                  },
+                                },
+                                {
+                                  $project: {
+                                    _id: 1,
+                                    _orderSaleId:1,
+      
+                                  },
+                                },
+                                
+                              ],
+                              as: 'orderSaleItemDetails',
+                            },
+                          },
+                          {
+                            $unwind: {
+                              path: '$orderSaleItemDetails',
+                              preserveNullAndEmptyArrays: true,
+                            },
+                          },
+                        ],
+                        as: 'invoiceItems',
+                      },
+                    },
+                    
+                  ],
+                  as: 'invoiceDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$invoiceDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+      
+            ],
+            as: 'deliveryItems',
+          },
+        },
+        
+
+
+
+      ]);
       if (getDeliveryItemsForCheck.length != dto.deliveryIds.length) {
         throw new HttpException(
           'Delivery wrong status',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
+
+
+var orderSaleItemsIds=[];
+getDeliveryItemsForCheck.forEach((eachDelivery)=>{
+  eachDelivery.deliveryItems.forEach(eachDeliveryItems => {
+    eachDeliveryItems.invoiceDetails.invoiceItems.forEach(eachInvoiceItems => {
+      orderSaleItemsIds.push(eachInvoiceItems.orderSaleItemDetails._orderSaleId);  
+    });
+  });
+});
+
+
+
+
+
+
+
+
 
       var updateObj = {
         _updatedUserId: _userId_,
@@ -267,10 +395,9 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
       if (dto.workStatus == 1) {
         updateObj['_receivedUserId'] = dto.toUser;
 
-
         await this.orderSaleMainModel.updateMany(
           {
-            _id: { $in: dto.deliveryReceivingOrderSaleIds },
+            _id: { $in: orderSaleItemsIds },
           },
           {
             $set: {
@@ -281,38 +408,36 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
           },
           { new: true, session: transactionSession },
         );
-  
+
         var arraySalesOrderHistories = [];
-  
-        dto.deliveryReceivingOrderSaleIds.forEach((eachItem) => {
+
+        orderSaleItemsIds.forEach((eachItem) => {
           arraySalesOrderHistories.push({
             _orderSaleId: eachItem,
             _userId: dto.toUser,
             _type: 22,
             _shopId: null,
             _orderSaleItemId: null,
-            _deliveryProviderId:null,
+            _deliveryProviderId: null,
             _description: '',
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _status: 1,
-          }); 
+          });
         });
-  
+
         await this.orderSaleMainHistoriesModel.insertMany(
           arraySalesOrderHistories,
           {
             session: transactionSession,
           },
         );
-
-
       } else if (dto.workStatus == 2) {
         updateObj['_verifiedUserId'] = dto.toUser;
 
         await this.orderSaleMainModel.updateMany(
           {
-            _id: { $in: dto.deliveryCompleteOrderSaleIds },
+            _id: { $in: orderSaleItemsIds },
           },
           {
             $set: {
@@ -323,10 +448,10 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
           },
           { new: true, session: transactionSession },
         );
-  
+
         var arraySalesOrderHistories = [];
-  
-        dto.deliveryCompleteOrderSaleIds.forEach((eachItem) => {
+
+        orderSaleItemsIds.forEach((eachItem) => {
           arraySalesOrderHistories.push({
             _orderSaleId: eachItem,
             _userId: dto.toUser,
@@ -339,13 +464,11 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
             _status: 1,
           });
         });
-  
-       
 
-        if(dto.deliveryCompleteAcceptedOrderSaleIds.length!=0){
+        if (orderSaleItemsIds.length != 0) {
           await this.orderSaleMainModel.updateMany(
             {
-              _id: { $in:dto.deliveryCompleteAcceptedOrderSaleIds },
+              _id: { $in: orderSaleItemsIds },
             },
             {
               $set: {
@@ -356,14 +479,13 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
             },
             { new: true, session: transactionSession },
           );
-    
-    
-          dto.deliveryCompleteAcceptedOrderSaleIds.forEach((eachItem) => {
+
+          orderSaleItemsIds.forEach((eachItem) => {
             arraySalesOrderHistories.push({
               _orderSaleId: eachItem,
               _userId: null,
               _type: 35,
-              _deliveryProviderId:null,
+              _deliveryProviderId: null,
               _shopId: null,
               _orderSaleItemId: null,
               _description: '',
@@ -372,8 +494,6 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
               _status: 1,
             });
           });
-    
-         
         }
         await this.orderSaleMainHistoriesModel.insertMany(
           arraySalesOrderHistories,
@@ -417,15 +537,13 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
             _status: 1,
           });
 
-
-
           arrayToDeliveryRejectedOrderIdsList.forEach((eachItemChild) => {
             arraySalesOrderHistories.push({
               _orderSaleId: eachItemChild,
               _userId: dto.toUser,
               _type: 24,
               _shopId: null,
-              _deliveryProviderId:null,
+              _deliveryProviderId: null,
               _orderSaleItemId: null,
               _description: `Root cause: ${eachItem.rootCauseIdName}\n ${eachItem.rootCause}`,
               _createdUserId: _userId_,
@@ -433,12 +551,6 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
               _status: 1,
             });
           });
-
-
-
-
-
-
         });
 
         await this.deliveryRejectPendingModel.insertMany(
@@ -448,13 +560,9 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
           },
         );
 
-
-
-
-
         await this.orderSaleMainModel.updateMany(
           {
-            _id: { $in:arrayToDeliveryRejectedOrderIdsList },
+            _id: { $in: arrayToDeliveryRejectedOrderIdsList },
           },
           {
             $set: {
@@ -465,23 +573,13 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
           },
           { new: true, session: transactionSession },
         );
-  
-       
-  
-       
-  
+
         await this.orderSaleMainHistoriesModel.insertMany(
           arraySalesOrderHistories,
           {
             session: transactionSession,
           },
         );
-
-
-
-
-
-
       }
 
       const responseJSON = { message: 'success', data: result };
@@ -506,7 +604,7 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
     }
   }
 
-  async list(dto: DeliveryListDto) { 
+  async list(dto: DeliveryListDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -517,9 +615,7 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
         //todo
         arrayAggregation.push({
           $match: {
-            $or: [
-              { _uid:new RegExp(`^${dto.searchingText}$`, 'i') },
-            ],
+            $or: [{ _uid: new RegExp(`^${dto.searchingText}$`, 'i') }],
           },
         });
       }
@@ -590,10 +686,6 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
         });
       }
 
-
-
-
-
       if (
         dto.cityIds.length != 0 ||
         dto.relationshipManagerIds.length != 0 ||
@@ -615,7 +707,6 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
             },
           },
         );
-
 
         if (dto.cityIds.length > 0) {
           var newSettingsId = [];
@@ -647,31 +738,20 @@ if(shopIds.findIndex((shopFindIndex)=>shopFindIndex==mapItem.shopId)==-1){
           });
         }
 
-
-
-
-        arrayAggregation.push( {
-          $lookup: {
-            from: ModelNames.SHOPS,
-            let: { shopId: '$_shopId' },
-            pipeline: pipelineShop,
-            as: 'mongoCheckShopList',
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.SHOPS,
+              let: { shopId: '$_shopId' },
+              pipeline: pipelineShop,
+              as: 'mongoCheckShopList',
+            },
           },
-        },
-        {
-          $match: { mongoCheckShopList: { $ne: [] } },
-        },
+          {
+            $match: { mongoCheckShopList: { $ne: [] } },
+          },
         );
       }
-
-
-
-
-
-
-
-
-
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {
