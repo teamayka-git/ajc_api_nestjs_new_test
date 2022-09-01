@@ -32,6 +32,7 @@ export const DeliverySchema = new mongoose.Schema({
     default: null,
   },
   _workStatus: { type: Number, required: true, default: -1 },
+  _deliveryAcceptedAt: { type: Number, required: true, default: -1 },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -55,8 +56,9 @@ export interface Delivery {
   _employeeId: String;
   _receivedUserId: String;
   _verifiedUserId: String;
-  _hubId: String;
+  _hubId: String; 
   _shopId: string;
+  _deliveryAcceptedAt:Number;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -64,6 +66,7 @@ export interface Delivery {
   _status: Number;
 }
 
+DeliverySchema.index({ _deliveryAcceptedAt: 1 });
 DeliverySchema.index({ _receivedUserId: 1 });
 DeliverySchema.index({ _verifiedUserId: 1 });
 DeliverySchema.index({ _shopId: 1 });

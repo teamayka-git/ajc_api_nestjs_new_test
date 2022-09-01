@@ -109,6 +109,8 @@ export class DeliveryService {
             _hubId: dto.hubId == '' || dto.hubId == 'nil' ? null : dto.hubId,
             _type: dto.type,
             _workStatus: 0,
+            _deliveryAcceptedAt:0,
+            
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -434,7 +436,8 @@ getDeliveryItemsForCheck.forEach((eachDelivery)=>{
         );
       } else if (dto.workStatus == 2) {
         updateObj['_verifiedUserId'] = dto.toUser;
-
+        updateObj['_deliveryAcceptedAt'] = dateTime;
+        
         await this.orderSaleMainModel.updateMany(
           {
             _id: { $in: orderSaleItemsIds },

@@ -2068,7 +2068,8 @@ if(codeGeneralsAppUpdate.length!=0){
           processMasters: resultProcessMasters,
           subCategory: resultSubCategory,
           generalSetting: generalSetting,
-          appUpdates:resultGeneralsAppUpdate
+          appUpdates:resultGeneralsAppUpdate,
+          currentTime:dateTime
         },
       };
       if (
