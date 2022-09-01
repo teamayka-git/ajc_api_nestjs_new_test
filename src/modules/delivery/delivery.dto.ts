@@ -224,14 +224,22 @@ class DeliveryRejectList {
 }
 
 export class DeliveryEmployeeAssignDto {
+
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
   @IsArray()
   @ApiProperty({ type: [String] })
   deliveryIds: string[];
 
+  
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({ description: descriptionWorkStatus })
   workStatus: number;
 
+  
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({ description: descriptionWorkStatus })
   fromWorkStatus: number;
@@ -255,6 +263,7 @@ export class DeliveryEmployeeAssignDto {
   proofRootCauseId: string;
 
   
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   isBypass: number;
