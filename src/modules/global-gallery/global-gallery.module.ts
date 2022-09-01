@@ -8,11 +8,17 @@ import { CountersSchema } from 'src/tableModels/counters.model';
 import { GlobalGalleryCategoriesSchema } from 'src/tableModels/globalGallerycategories.model';
 
 @Module({
-  imports:[MongooseModule.forFeature([
-    {name:ModelNames.GLOBAL_GALLERIES,schema:GlobalGalleriesSchema},
-    {name:ModelNames.COUNTERS,schema:CountersSchema},{name:ModelNames.GLOBAL_GALLERY_CATEGORIES,schema:GlobalGalleryCategoriesSchema}
-  ])],
+  imports: [
+    MongooseModule.forFeature([
+      { name: ModelNames.GLOBAL_GALLERIES, schema: GlobalGalleriesSchema },
+      { name: ModelNames.COUNTERS, schema: CountersSchema },
+      {
+        name: ModelNames.GLOBAL_GALLERY_CATEGORIES,
+        schema: GlobalGalleryCategoriesSchema,
+      },
+    ]),
+  ],
   controllers: [GlobalGalleryController],
-  providers: [GlobalGalleryService]
+  providers: [GlobalGalleryService],
 })
 export class GlobalGalleryModule {}

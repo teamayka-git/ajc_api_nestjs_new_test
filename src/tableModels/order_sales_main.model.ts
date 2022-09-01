@@ -119,7 +119,7 @@ function schemaPostFunctionForDuplicate(error, doc, next) {
 _workStatus:{ 
   0 - order pending
   1 - order accept
-  2 - order reject
+  2 - order reject 
   3 - set process done
   4 - finished goods
   5 - product generate request
@@ -137,9 +137,7 @@ _workStatus:{
   17 - invoice generated
   18 - outof delivery pending
   20 - delivery job assigned
-  21 - delivery in transit
-  22 - delivered to customer          
-  23 - delivey accepted
+  21 - delivery in transit        
   24 - order declined collection pending || descrption, erorr type*(Int) ,rework status(Int)
   25 - order declined collected
   26 - order declined received
@@ -152,8 +150,11 @@ _workStatus:{
   32 - hub transfer delivered
   33 - hub transfer accepted(invoice pending)
   34 - order declined inscan
-  35 - Order completed
-  
+  35 - Order completed 
+  36 - delivered to customer, and pending for proof 
+  37 - delivered to customer bypass, and pending for proof 
+  38 - delivey accepted proof uploaded verification pending
+  39 - delivey accepted proof rejected
   
 }
 _type:{

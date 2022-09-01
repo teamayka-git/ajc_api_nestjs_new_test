@@ -97,5 +97,6 @@ _type:{
     5-employee
     6-supplier
     7-Shop
+    8-Shop delivery reject
 }
 */

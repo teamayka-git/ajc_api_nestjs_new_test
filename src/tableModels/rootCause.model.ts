@@ -71,5 +71,6 @@ _type:{
     2 - photography
     3 - Gold testing
     4 - delivery reject
+    5 - delivery proof reject
 }
  */

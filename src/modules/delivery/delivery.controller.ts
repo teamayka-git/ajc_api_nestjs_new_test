@@ -1,5 +1,6 @@
-import { Body, Controller, Post, Request } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Post, Request, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { DeliveryCreateDto, DeliveryEmployeeAssignDto, DeliveryListDto } from './delivery.dto';
 import { DeliveryService } from './delivery.service';
 
@@ -18,8 +19,28 @@ export class DeliveryController {
     
   
   @Post("deliveryWorkStatusUpdate")
-  deliveryWorkStatusUpdate(@Body() dto: DeliveryEmployeeAssignDto,@Request() req) {
-    return this.deliveryService.deliveryWorkStatusUpdate(dto,req["_userId_"]);
+  @ApiCreatedResponse({
+    description: 'files upload on these input feilds => [document]',
+  })
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        {
+          name: 'document',
+        },
+      ],
+      /*{
+        storage: diskStorage({
+          destination: FileMulterHelper.filePathGlobalGalleries,
+          filename: FileMulterHelper.customFileName,
+        }),
+      },*/
+    ),
+  )
+  deliveryWorkStatusUpdate(@Body() dto: DeliveryEmployeeAssignDto,@Request() req,
+  @UploadedFiles() file,) {
+    return this.deliveryService.deliveryWorkStatusUpdate(dto,req["_userId_"],
+    file == null ? {} : JSON.parse(JSON.stringify(file)));
   }
     
     @Post("list")

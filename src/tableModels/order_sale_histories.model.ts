@@ -89,9 +89,7 @@ _type:{
   17 - invoice generated
   18 - outof delivery pending
   20 - delivery job assigned
-  21 - delivery in transit
-  22 - delivered to customer          
-  23 - delivey accepted
+  21 - delivery in transit        
   24 - order declined collection pending 
   25 - order declined collected
   26 - order declined inscan
@@ -105,6 +103,10 @@ _type:{
   33 - hub transfer accepted
   34 - order declined inscan
   35 - Order completed
+  36 - delivered to customer, and pending for proof 
+  37 - delivered to customer bypass, and pending for proof 
+  38 - delivey accepted proof uploaded verification pending
+  39 - delivey accepted proof rejected
   
   100 - order editted
   101- sales order actived

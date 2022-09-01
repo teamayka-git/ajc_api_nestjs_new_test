@@ -11,10 +11,12 @@ import { RootCausesSchema } from 'src/tableModels/rootCause.model';
 import { DeliveryRejectedPendingsSchema } from 'src/tableModels/delivery_rejected_pendings.model';
 import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
 import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.model';
+import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
+      { name: ModelNames.GLOBAL_GALLERIES, schema: GlobalGalleriesSchema },
       { name: ModelNames.DELIVERY, schema: DeliverySchema },
       { name: ModelNames.DELIVERY_ITEMS, schema: DeliveryItemsSchema },
       { name: ModelNames.DELIVERY_TEMP, schema: DeliveryTempSchema },

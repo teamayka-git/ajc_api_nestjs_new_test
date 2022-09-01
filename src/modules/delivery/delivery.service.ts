@@ -20,10 +20,15 @@ import { RootCause } from 'aws-sdk/clients/costexplorer';
 import { DeliveryRejectedPendings } from 'src/tableModels/delivery_rejected_pendings.model';
 import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
+import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
+import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
+import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 
 @Injectable()
 export class DeliveryService {
   constructor(
+    @InjectModel(ModelNames.GLOBAL_GALLERIES)
+    private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
     @InjectModel(ModelNames.DELIVERY)
     private readonly deliveryModel: Model<Delivery>,
     @InjectModel(ModelNames.DELIVERY_TEMP)
@@ -109,8 +114,13 @@ export class DeliveryService {
             _hubId: dto.hubId == '' || dto.hubId == 'nil' ? null : dto.hubId,
             _type: dto.type,
             _workStatus: 0,
-            _deliveryAcceptedAt:0,
-            
+            _deliveryAcceptedAt: 0,
+            _isBypass: 0,
+            _proofRootCause: '',
+            _proofAcceptedUserId: null,
+            _proofRootCauseId: null,
+            _proofGlobalGalleryId: null,
+            _shopReceivedUserId: null,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -138,8 +148,6 @@ export class DeliveryService {
               mapItem.invoiceId == '' || mapItem.invoiceId == 'nil'
                 ? null
                 : mapItem.invoiceId,
-            _receivedUserId: null,
-            _verifiedUserId: null,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -233,6 +241,7 @@ export class DeliveryService {
   async deliveryWorkStatusUpdate(
     dto: DeliveryEmployeeAssignDto,
     _userId_: string,
+    file: Object,
   ) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
@@ -263,19 +272,18 @@ export class DeliveryService {
             let: { deliveryId: '$_id' },
             pipeline: [
               {
-                $match: {_status:1,
+                $match: {
+                  _status: 1,
                   $expr: { $eq: ['$_deliveryId', '$$deliveryId'] },
                 },
               },
               {
                 $project: {
                   _id: 1,
-                  _deliveryId:1,
-                  _invoiceId:1
+                  _deliveryId: 1,
+                  _invoiceId: 1,
                 },
               },
-              
-
 
               {
                 $lookup: {
@@ -290,7 +298,6 @@ export class DeliveryService {
                     {
                       $project: {
                         _id: 1,
-                        
                       },
                     },
                     {
@@ -299,15 +306,17 @@ export class DeliveryService {
                         let: { invoiceItemId: '$_id' },
                         pipeline: [
                           {
-                            $match: {_status:1,
-                              $expr: { $eq: ['$_invoiceId', '$$invoiceItemId'] },
+                            $match: {
+                              _status: 1,
+                              $expr: {
+                                $eq: ['$_invoiceId', '$$invoiceItemId'],
+                              },
                             },
                           },
                           {
                             $project: {
                               _id: 1,
-                              _orderSaleItemId:1,
-
+                              _orderSaleItemId: 1,
                             },
                           },
                           {
@@ -317,17 +326,17 @@ export class DeliveryService {
                               pipeline: [
                                 {
                                   $match: {
-                                    $expr: { $eq: ['$_id', '$$orderSaleItemId'] },
+                                    $expr: {
+                                      $eq: ['$_id', '$$orderSaleItemId'],
+                                    },
                                   },
                                 },
                                 {
                                   $project: {
                                     _id: 1,
-                                    _orderSaleId:1,
-      
+                                    _orderSaleId: 1,
                                   },
                                 },
-                                
                               ],
                               as: 'orderSaleItemDetails',
                             },
@@ -342,7 +351,6 @@ export class DeliveryService {
                         as: 'invoiceItems',
                       },
                     },
-                    
                   ],
                   as: 'invoiceDetails',
                 },
@@ -353,15 +361,10 @@ export class DeliveryService {
                   preserveNullAndEmptyArrays: true,
                 },
               },
-      
             ],
             as: 'deliveryItems',
           },
         },
-        
-
-
-
       ]);
       if (getDeliveryItemsForCheck.length != dto.deliveryIds.length) {
         throw new HttpException(
@@ -370,23 +373,18 @@ export class DeliveryService {
         );
       }
 
-
-var orderSaleItemsIds=[];
-getDeliveryItemsForCheck.forEach((eachDelivery)=>{
-  eachDelivery.deliveryItems.forEach(eachDeliveryItems => {
-    eachDeliveryItems.invoiceDetails.invoiceItems.forEach(eachInvoiceItems => {
-      orderSaleItemsIds.push(eachInvoiceItems.orderSaleItemDetails._orderSaleId);  
-    });
-  });
-});
-
-
-
-
-
-
-
-
+      var orderSaleIds = [];
+      getDeliveryItemsForCheck.forEach((eachDelivery) => {
+        eachDelivery.deliveryItems.forEach((eachDeliveryItems) => {
+          eachDeliveryItems.invoiceDetails.invoiceItems.forEach(
+            (eachInvoiceItems) => {
+              orderSaleIds.push(
+                eachInvoiceItems.orderSaleItemDetails._orderSaleId,
+              );
+            },
+          );
+        });
+      });
 
       var updateObj = {
         _updatedUserId: _userId_,
@@ -395,17 +393,25 @@ getDeliveryItemsForCheck.forEach((eachDelivery)=>{
       };
 
       if (dto.workStatus == 1) {
-        updateObj['_receivedUserId'] = dto.toUser;
+        //delivery done, not uploaded proof
+
+        updateObj['_shopReceivedUserId'] = dto.shopAcceptUserId;
+        updateObj['_isBypass'] = dto.isBypass;
+
+        var workStatusOrderAndTimeline = 36;
+        if (dto.isBypass == 1) {
+          workStatusOrderAndTimeline = 37;
+        }
 
         await this.orderSaleMainModel.updateMany(
           {
-            _id: { $in: orderSaleItemsIds },
+            _id: { $in: orderSaleIds },
           },
           {
             $set: {
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
-              _workStatus: 22,
+              _workStatus: workStatusOrderAndTimeline,
             },
           },
           { new: true, session: transactionSession },
@@ -413,11 +419,11 @@ getDeliveryItemsForCheck.forEach((eachDelivery)=>{
 
         var arraySalesOrderHistories = [];
 
-        orderSaleItemsIds.forEach((eachItem) => {
+        orderSaleIds.forEach((eachItem) => {
           arraySalesOrderHistories.push({
             _orderSaleId: eachItem,
-            _userId: dto.toUser,
-            _type: 22,
+            _userId: dto.shopAcceptUserId,
+            _type: workStatusOrderAndTimeline,
             _shopId: null,
             _orderSaleItemId: null,
             _deliveryProviderId: null,
@@ -435,18 +441,77 @@ getDeliveryItemsForCheck.forEach((eachDelivery)=>{
           },
         );
       } else if (dto.workStatus == 2) {
-        updateObj['_verifiedUserId'] = dto.toUser;
-        updateObj['_deliveryAcceptedAt'] = dateTime;
-        
+        //delivery proof verification pending
+        var proofGlobalGalleryId = null;
+
+        var resultUpload = {};
+        if (file.hasOwnProperty('document')) {
+          // var filePath =
+          //   __dirname +
+          //   `/../../../public${file['image'][0]['path'].split('public')[1]}`;
+          //   new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_BRANCH +
+          //     new StringUtils().makeThumbImageFileName(
+          //       file['image'][0]['filename'],
+          //     ));
+
+          resultUpload = await new S3BucketUtils().uploadMyFile(
+            file['document'][0],
+            UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP_DELIVERY_PROOF,
+          );
+
+          if (resultUpload['status'] == 0) {
+            throw new HttpException(
+              'File upload error',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
+        }
+
+        var globalGalleryId = null;
+        var proofUrl = "";
+        //globalGalleryAdd
+        if (file.hasOwnProperty('document')) {
+          var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
+            { _tableName: ModelNames.GLOBAL_GALLERIES },
+            {
+              $inc: {
+                _count: 1,
+              },
+            },
+            { new: true, session: transactionSession },
+          );
+
+          const globalGallery = new this.globalGalleryModel({
+            _name: file['document'][0]['originalname'],
+            _globalGalleryCategoryId: null,
+            _docType: 0,
+            _type: 8,
+            _uid: resultCounterPurchase._count,
+            _url: resultUpload['url'],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+          var resultGlobalGallery = await globalGallery.save({
+            session: transactionSession,
+          });
+          proofGlobalGalleryId = resultGlobalGallery._id;
+          proofUrl=resultUpload['url'];
+        }
+
+        updateObj['_proofGlobalGalleryId'] = proofGlobalGalleryId;
+
         await this.orderSaleMainModel.updateMany(
           {
-            _id: { $in: orderSaleItemsIds },
+            _id: { $in: orderSaleIds },
           },
           {
             $set: {
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
-              _workStatus: 23,
+              _workStatus: 38,
             },
           },
           { new: true, session: transactionSession },
@@ -454,13 +519,58 @@ getDeliveryItemsForCheck.forEach((eachDelivery)=>{
 
         var arraySalesOrderHistories = [];
 
-        orderSaleItemsIds.forEach((eachItem) => {
+        orderSaleIds.forEach((eachItem) => {
           arraySalesOrderHistories.push({
             _orderSaleId: eachItem,
-            _userId: dto.toUser,
-            _type: 23,
+            _userId: null,
+            _type: 38,
             _shopId: null,
             _orderSaleItemId: null,
+            _deliveryProviderId: null,
+            _description: proofUrl,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _status: 1,
+          });
+        });
+
+        await this.orderSaleMainHistoriesModel.insertMany(
+          arraySalesOrderHistories,
+          {
+            session: transactionSession,
+          },
+        );
+      } else if (dto.workStatus == 3) {
+        //delivery proof verification rejected
+
+        updateObj['_proofRootCause'] = dto.proofRootCause;
+
+        updateObj['_proofRootCauseId'] = dto.proofRootCauseId;
+
+        await this.orderSaleMainModel.updateMany(
+          {
+            _id: { $in: orderSaleIds },
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _workStatus: 39,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+        var arraySalesOrderHistories = [];
+
+        orderSaleIds.forEach((eachItem) => {
+          arraySalesOrderHistories.push({
+            _orderSaleId: eachItem,
+            _userId: dto.proofAcceptUserId,
+            _type: 39,
+            _shopId: null,
+            _orderSaleItemId: null,
+            _deliveryProviderId: null,
             _description: '',
             _createdUserId: _userId_,
             _createdAt: dateTime,
@@ -468,36 +578,49 @@ getDeliveryItemsForCheck.forEach((eachDelivery)=>{
           });
         });
 
-        if (orderSaleItemsIds.length != 0) {
-          await this.orderSaleMainModel.updateMany(
-            {
-              _id: { $in: orderSaleItemsIds },
-            },
-            {
-              $set: {
-                _updatedUserId: _userId_,
-                _updatedAt: dateTime,
-                _workStatus: 35,
-              },
-            },
-            { new: true, session: transactionSession },
-          );
+        await this.orderSaleMainHistoriesModel.insertMany(
+          arraySalesOrderHistories,
+          {
+            session: transactionSession,
+          },
+        );
+      } else if (dto.workStatus == 4) {
+        //delivery completed
 
-          orderSaleItemsIds.forEach((eachItem) => {
-            arraySalesOrderHistories.push({
-              _orderSaleId: eachItem,
-              _userId: null,
-              _type: 35,
-              _deliveryProviderId: null,
-              _shopId: null,
-              _orderSaleItemId: null,
-              _description: '',
-              _createdUserId: _userId_,
-              _createdAt: dateTime,
-              _status: 1,
-            });
+        updateObj['_proofAcceptedUserId'] = dto.proofAcceptUserId;
+        updateObj['_deliveryAcceptedAt'] = dateTime;
+
+        await this.orderSaleMainModel.updateMany(
+          {
+            _id: { $in: orderSaleIds },
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _workStatus: 35,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+        var arraySalesOrderHistories = [];
+
+        orderSaleIds.forEach((eachItem) => {
+          arraySalesOrderHistories.push({
+            _orderSaleId: eachItem,
+            _userId: dto.proofAcceptUserId,
+            _type: 35,
+            _shopId: null,
+            _orderSaleItemId: null,
+            _deliveryProviderId: null,
+            _description: '',
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _status: 1,
           });
-        }
+        });
+
         await this.orderSaleMainHistoriesModel.insertMany(
           arraySalesOrderHistories,
           {
@@ -515,75 +638,6 @@ getDeliveryItemsForCheck.forEach((eachDelivery)=>{
         },
         { new: true, session: transactionSession },
       );
-      if (dto.deliveryRejectedList.length != 0) {
-        var arrayToDeliveryRejectedList = [];
-        var arrayToDeliveryRejectedOrderIdsList = [];
-        var arraySalesOrderHistories = [];
-        dto.deliveryRejectedList.forEach((eachItem) => {
-          arrayToDeliveryRejectedOrderIdsList.push(eachItem.salesId);
-          arrayToDeliveryRejectedList.push({
-            _salesItemId: eachItem.salesItemId,
-            _salesId: eachItem.salesId,
-            _deliveryId: eachItem.deliveryId,
-            _invoiceId: eachItem.invoiceId,
-
-            _productedBarcode: eachItem.productBarcode,
-            _shopId: eachItem.shopId,
-            _rootCauseId: eachItem.rootCauseId,
-            _rootCause: eachItem.rootCause,
-            _reworkStatus: eachItem.reWorkStatus,
-            _mistakeType: eachItem.mistakeType,
-            _createdUserId: _userId_,
-            _createdAt: dateTime,
-            _updatedUserId: null,
-            _updatedAt: -1,
-            _status: 1,
-          });
-
-          arrayToDeliveryRejectedOrderIdsList.forEach((eachItemChild) => {
-            arraySalesOrderHistories.push({
-              _orderSaleId: eachItemChild,
-              _userId: dto.toUser,
-              _type: 24,
-              _shopId: null,
-              _deliveryProviderId: null,
-              _orderSaleItemId: null,
-              _description: `Root cause: ${eachItem.rootCauseIdName}\n ${eachItem.rootCause}`,
-              _createdUserId: _userId_,
-              _createdAt: dateTime,
-              _status: 1,
-            });
-          });
-        });
-
-        await this.deliveryRejectPendingModel.insertMany(
-          arrayToDeliveryRejectedList,
-          {
-            session: transactionSession,
-          },
-        );
-
-        await this.orderSaleMainModel.updateMany(
-          {
-            _id: { $in: arrayToDeliveryRejectedOrderIdsList },
-          },
-          {
-            $set: {
-              _updatedUserId: _userId_,
-              _updatedAt: dateTime,
-              _workStatus: 24,
-            },
-          },
-          { new: true, session: transactionSession },
-        );
-
-        await this.orderSaleMainHistoriesModel.insertMany(
-          arraySalesOrderHistories,
-          {
-            session: transactionSession,
-          },
-        );
-      }
 
       const responseJSON = { message: 'success', data: result };
       if (
@@ -659,33 +713,63 @@ getDeliveryItemsForCheck.forEach((eachDelivery)=>{
         });
       }
 
-      if (dto.receivedUserIds.length > 0) {
+      if (dto.proofRootCauseId.length > 0) {
         var newSettingsId = [];
-        dto.receivedUserIds.map((mapItem) => {
+        dto.proofRootCauseId.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
         arrayAggregation.push({
-          $match: { _receivedUserId: { $in: newSettingsId } },
+          $match: { _proofRootCauseId: { $in: newSettingsId } },
         });
       }
 
-      if (dto.verifiedUserIds.length > 0) {
+      if (dto.shopReceivedUserId.length > 0) {
         var newSettingsId = [];
-        dto.verifiedUserIds.map((mapItem) => {
+        dto.shopReceivedUserId.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
         arrayAggregation.push({
-          $match: { _verifiedUserId: { $in: newSettingsId } },
+          $match: { _shopReceivedUserId: { $in: newSettingsId } },
         });
       }
+
+      if (dto.proofAcceptedUserId.length > 0) {
+        var newSettingsId = [];
+        dto.proofAcceptedUserId.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _proofAcceptedUserId: { $in: newSettingsId } },
+        });
+      }
+
       if (dto.typeArray.length > 0) {
         arrayAggregation.push({
           $match: { _type: { $in: dto.typeArray } },
         });
       }
+      if (dto.isBypassed.length > 0) {
+        arrayAggregation.push({
+          $match: { _isBypass: { $in: dto.isBypassed } },
+        });
+      }
       if (dto.workStatus.length > 0) {
         arrayAggregation.push({
           $match: { _workStatus: { $in: dto.workStatus } },
+        });
+      }
+
+      if (
+        dto.deliveryCompleteStartDate != -1 &&
+        dto.deliveryCompleteEndDate != -1
+      ) {
+        arrayAggregation.push({
+          $match: {
+            _deliveryAcceptedAt: {
+              $lt: dto.deliveryCompleteEndDate,
+              $gt: dto.deliveryCompleteStartDate,
+            },
+          },
         });
       }
 
@@ -1102,6 +1186,201 @@ getDeliveryItemsForCheck.forEach((eachDelivery)=>{
           },
         });
       }
+
+      const proofGlobalGalleryDetails = dto.screenType.includes(111);
+      if (proofGlobalGalleryDetails) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.GLOBAL_GALLERIES,
+              let: { globalGalleryId: '$_proofGlobalGalleryId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                  },
+                },
+
+                new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                  1110,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'proofGlobalGalleryDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$proofGlobalGalleryDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      const proofRejectedRootCauseDetails = dto.screenType.includes(116);
+      if (proofRejectedRootCauseDetails) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ROOT_CAUSES,
+              let: { rootCauseId: '$_proofRootCauseId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$rootCauseId'] },
+                  },
+                },
+
+                new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                  1160,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'proofRootCauseDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$proofRootCauseDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.includes(112)) {
+        const employeeDetailsPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$shopReceivedUserId'] },
+              },
+            },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1120,
+              dto.responseFormat,
+            ),
+          );
+
+          const employeeDetailsGlobalGallery = dto.screenType.includes(113);
+          if (employeeDetailsGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1130,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
+          return pipeline;
+        };
+
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { shopReceivedUserId: '$_shopReceivedUserId' },
+              pipeline: employeeDetailsPipeline(),
+              as: 'shopReceivedUserDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$shopReceivedUserDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.includes(114)) {
+        const employeeDetailsPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$proofAcceptedUserId'] },
+              },
+            },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1140,
+              dto.responseFormat,
+            ),
+          );
+
+          const employeeDetailsGlobalGallery = dto.screenType.includes(115);
+          if (employeeDetailsGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1150,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
+          return pipeline;
+        };
+
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { proofAcceptedUserId: '$_proofAcceptedUserId' },
+              pipeline: employeeDetailsPipeline(),
+              as: 'proofAcceptedUserDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$proofAcceptedUserDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
       var result = await this.deliveryModel
         .aggregate(arrayAggregation)
         .session(transactionSession);

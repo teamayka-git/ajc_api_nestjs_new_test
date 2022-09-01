@@ -13,7 +13,7 @@ import { Optional } from '@nestjs/common';
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList =
-  '0-total documents count,100-shop details,101-employee details, 102-hub details, 103-delivery items list,105-delivery items under[103] invoice details, 106-employee details under[101] global gallery,108-delivery items under[103]  invoice details under[105] invoice item details, 109-delivery items under[103]  invoice details under[105] invoice item under[108] ordersaleItem details, 110 - delivery items under[103]  invoice details under[105] invoice item under[108] ordersaleItem under[109] sub category    , 500 - root cause list for delivery reject';
+  '0-total documents count,100-shop details,101-employee details, 102-hub details, 103-delivery items list,105-delivery items under[103] invoice details, 106-employee details under[101] global gallery,108-delivery items under[103]  invoice details under[105] invoice item details, 109-delivery items under[103]  invoice details under[105] invoice item under[108] ordersaleItem details, 110 - delivery items under[103]  invoice details under[105] invoice item under[108] ordersaleItem under[109] sub category, 111 - proof global gallery details, 112 - shop Received User Details, 113 - shop Received User under[112] global gallery details, 114 - proof accepted User Details, 115 - proof accepted User under[115] global gallery details, 116 - proof rejected root cause details     , 500 - root cause list for delivery reject';
 const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 const descriptionListSortOrder = '1-ascending, -1-descending';
@@ -22,7 +22,7 @@ const descriptionListSortType =
 const descriptionListScreenTypeForFilterLoading =
   '0-total documents count, 100-item details';
 const descriptionWorkStatus =
-  '  0 - intransit,1 - delivery pending,2 - delivery accept,3 - delivery reject,';
+  '  0 - intransit, 1 - delivery done, not uploaded proof, 2 - delivery proof verification pending, 3 - delivery proof verification rejected, 4 - delivery completed';
 
 const descriptionType = '0 - delivery to shop, 1 - hub transfer';
 const descriptionReWorkStatus = '0 - do cancel, 1 - do rework';
@@ -123,14 +123,38 @@ export class DeliveryListDto {
 
   @IsArray()
   @ApiProperty({ type: [String] })
-  receivedUserIds: string[];
+  proofRootCauseId: string[];
 
   
+  
+
   @IsArray()
   @ApiProperty({ type: [String] })
-  verifiedUserIds: string[];
+  shopReceivedUserId: string[];
 
+  
+  @IsNumber()
+  @ApiProperty({})
+  deliveryCompleteStartDate: number;
 
+  @IsNumber()
+  @ApiProperty({})
+  deliveryCompleteEndDate: number;
+
+  
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  proofAcceptedUserId: string[];
+
+  
+  
+
+  @IsArray()
+  @ApiProperty({ type: [Number] })
+  isBypassed: number[];
+
+  
 
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionType })
@@ -212,16 +236,29 @@ export class DeliveryEmployeeAssignDto {
   @ApiProperty({ description: descriptionWorkStatus })
   fromWorkStatus: number;
 
+  
+  @IsString()
+  @ApiProperty({})
+  shopAcceptUserId: string;
+
+  
+  @IsString()
+  @ApiProperty({})
+  proofAcceptUserId: string;
 
   @IsString()
   @ApiProperty({})
-  toUser: string;
+  proofRootCause: string;
+
+  @IsString()
+  @ApiProperty({})
+  proofRootCauseId: string;
 
   
+  @IsNumber()
+  @ApiProperty({})
+  isBypass: number;
 
-  @IsArray()
-  @ApiProperty({ type: [DeliveryRejectList] })
-  @ValidateNested({ each: true })
-  @Type(() => DeliveryRejectList)
-  deliveryRejectedList: DeliveryRejectList[];
+
+
 }
