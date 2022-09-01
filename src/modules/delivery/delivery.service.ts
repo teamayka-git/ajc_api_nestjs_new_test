@@ -571,7 +571,7 @@ export class DeliveryService {
             _shopId: null,
             _orderSaleItemId: null,
             _deliveryProviderId: null,
-            _description: '',
+            _description:"desc: "+dto.proofRootCauseIdName+" - "+ dto.proofRootCause,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _status: 1,

@@ -262,6 +262,10 @@ export class DeliveryEmployeeAssignDto {
   @ApiProperty({})
   proofRootCauseId: string;
 
+  @IsString()
+  @ApiProperty({})
+  proofRootCauseIdName: string;
+
   
   @Transform(({ value }) => Number(value))
   @IsNumber()
