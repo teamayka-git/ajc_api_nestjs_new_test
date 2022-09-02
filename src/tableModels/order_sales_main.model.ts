@@ -24,6 +24,12 @@ export const OrderSalesMainSchema = new mongoose.Schema({
     default: null,
   },
   
+  _parentOrderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.ORDER_SALES_MAIN,
+    default: null,
+  },
+  
   _isInvoiceGenerated: { type: Number, required: true, default: -1 },
   _isProductGenerated: { type: Number, required: true, default: -1 },
   _description: { type: String, default: '' },
@@ -54,6 +60,7 @@ export interface OrderSalesMain {
   _dueDate: number;//
   _workStatus: number;//
   _rootCauseId: String;//
+  _parentOrderId:String;
   _deliveryType:number;//
   _referenceNumber: String;//
   _type: number;//
@@ -72,6 +79,7 @@ export interface OrderSalesMain {
 }
 
 
+OrderSalesMainSchema.index({ _parentOrderId: 1 });
 OrderSalesMainSchema.index({ _isProductGenerated: 1 });
 OrderSalesMainSchema.index({ _isInvoiceGenerated: 1 });
 OrderSalesMainSchema.index({ _referenceNumber: 1 });

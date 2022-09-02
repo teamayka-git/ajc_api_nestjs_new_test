@@ -272,6 +272,8 @@ export class OrderSalesService {
         _isInvoiceGenerated: 0,
         _isProductGenerated: 0,
         _type: dto.type,
+        
+      _parentOrderId:null,
         _isReWork: 0,
         _rootCause: '',
         _orderHeadId: shopDetails[0]._orderHeadId,
