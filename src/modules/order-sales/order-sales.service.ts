@@ -268,7 +268,7 @@ export class OrderSalesService {
         _dueDate: dto.dueDate,
         _workStatus: 0,
         _rootCauseId: null,
-        _deliveryType: dto.deliveryType,
+        _deliveryType: dto.deliveryType, 
         _isInvoiceGenerated: 0,
         _isProductGenerated: 0,
         _type: dto.type,

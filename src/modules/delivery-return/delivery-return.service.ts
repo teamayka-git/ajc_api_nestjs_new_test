@@ -17,10 +17,18 @@ import { Counters } from 'src/tableModels/counters.model';
 import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { OrderSaleSetProcesses } from 'src/tableModels/order_sale_set_processes.model';
+import { OrderSalesItems } from 'src/tableModels/order_sales_items.model';
+import { OrderSalesDocuments } from 'src/tableModels/order_sales_documents.model';
 
 @Injectable()
 export class DeliveryReturnService {
   constructor(
+    
+    @InjectModel(ModelNames.ORDER_SALES_ITEMS)
+    private readonly orderSaleItemsModel: mongoose.Model<OrderSalesItems>,
+    
+    @InjectModel(ModelNames.ORDER_SALES_DOCUMENTS)
+    private readonly orderSaleDocumentModel: mongoose.Model<OrderSalesDocuments>,
     @InjectModel(ModelNames.ORDER_SALE_SET_PROCESSES)
     private readonly orderSaleSetProcessModel: mongoose.Model<OrderSaleSetProcesses>,
     @InjectModel(ModelNames.ORDER_SALES_MAIN)
@@ -178,19 +186,12 @@ export class DeliveryReturnService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-
-
-
-
-var deliveryReturnIdsMongo=[];
-if (dto.deliveryReturnIds.length > 0) {
-  
-  dto.deliveryReturnIds.map((mapItem) => {
-    deliveryReturnIdsMongo.push(new mongoose.Types.ObjectId(mapItem));
-  });
-
-  
-}
+      var deliveryReturnIdsMongo = [];
+      if (dto.deliveryReturnIds.length > 0) {
+        dto.deliveryReturnIds.map((mapItem) => {
+          deliveryReturnIdsMongo.push(new mongoose.Types.ObjectId(mapItem));
+        });
+      }
 
       //check qr code scanned at right status
       var getDeliveryItemsForCheck = await this.deliveryReturnModel.aggregate([
@@ -245,7 +246,6 @@ if (dto.deliveryReturnIds.length > 0) {
         },
       ]);
 
-
       if (getDeliveryItemsForCheck.length != dto.deliveryReturnIds.length) {
         throw new HttpException(
           'Delivery return wrong status',
@@ -263,10 +263,10 @@ if (dto.deliveryReturnIds.length > 0) {
 
         var arraySalesOrderHistories = [];
         var arrayOrderSaleIdCancelled = [];
+        var arrayOrderSaleIdRework = [];
 
         getDeliveryItemsForCheck.forEach((eachItem) => {
           eachItem.deliveryReturnItems.forEach((eachItemChild) => {
-            
             arraySalesOrderHistories.push({
               _orderSaleId: eachItemChild.deleveryRejectPendingDetails._salesId,
               _userId: null,
@@ -284,7 +284,7 @@ if (dto.deliveryReturnIds.length > 0) {
               arrayOrderSaleIdCancelled.push(
                 eachItemChild.deleveryRejectPendingDetails._salesId,
               );
-              
+
               arraySalesOrderHistories.push({
                 _orderSaleId:
                   eachItemChild.deleveryRejectPendingDetails._salesId,
@@ -298,10 +298,26 @@ if (dto.deliveryReturnIds.length > 0) {
                 _createdAt: dateTime,
                 _status: 1,
               });
-              
+            } else {
+              arrayOrderSaleIdRework.push(
+                eachItemChild.deleveryRejectPendingDetails._salesId,
+              );
+
+              arraySalesOrderHistories.push({
+                _orderSaleId:
+                  eachItemChild.deleveryRejectPendingDetails._salesId,
+                _userId: null,
+                _type: 40,
+                _shopId: null,
+                _orderSaleItemId:
+                  eachItemChild.deleveryRejectPendingDetails._salesItemId,
+                _description: '',
+                _createdUserId: _userId_,
+                _createdAt: dateTime,
+                _status: 1,
+              });
             }
           });
-          
         });
 
         if (arrayOrderSaleIdCancelled.length != 0) {
@@ -318,6 +334,180 @@ if (dto.deliveryReturnIds.length > 0) {
             },
             { new: true, session: transactionSession },
           );
+        }
+
+        //doing remork
+        if (arrayOrderSaleIdCancelled.length != 0) {
+          await this.orderSaleModel.updateMany(
+            {
+              _id: { $in: arrayOrderSaleIdRework },
+            },
+            {
+              $set: {
+                _updatedUserId: _userId_,
+                _updatedAt: dateTime,
+                _workStatus: 40,
+              },
+            },
+            { new: true, session: transactionSession },
+          );
+        }
+
+        if (arrayOrderSaleIdRework.length != 0) {
+          var arrayOrderSaleIdReworkMongo = [];
+          arrayOrderSaleIdRework.forEach((eachItem) => {
+            arrayOrderSaleIdReworkMongo.push(
+              new mongoose.Types.ObjectId(eachItem),
+            );
+          });
+
+          var resultOrderSaleOld = await this.orderSaleModel.aggregate([
+            {
+              $match: {
+                _id: { $in: arrayOrderSaleIdReworkMongo },
+              },
+            },
+
+            {
+              $lookup: {
+                from: ModelNames.ORDER_SALES_ITEMS,
+                let: { orderSaleId: '$_id' },
+                pipeline: [
+                  {
+                    $match: {
+                      _status: 1,
+                      $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+                    },
+                  },
+                ],
+                as: 'ordersaleItemsList',
+              },
+            },
+            {
+              $lookup: {
+                from: ModelNames.ORDER_SALES_DOCUMENTS,
+                let: { orderSaleId: '$_id' },
+                pipeline: [
+                  {
+                    $match: {
+                      _status: 1,
+                      $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+                    },
+                  },
+                ],
+                as: 'ordersaleDocumentsList',
+              },
+            },
+          ]);
+
+          var arrayToMongoOrderSaleMain = [];
+          var arrayToMongoOrderSaleItems = [];
+          var arrayToMongoOrderSaleDocuments = [];
+
+          arrayOrderSaleIdRework.forEach((eachItem) => {
+            var indexCount = resultOrderSaleOld.findIndex(
+              (findIndexItem) => findIndexItem._id == eachItem,
+            );
+            var orderSaleMainId = new mongoose.Types.ObjectId();
+            arrayToMongoOrderSaleMain.push({
+              _id: orderSaleMainId,
+              _shopId: resultOrderSaleOld[indexCount]._shopId,
+              _uid: resultOrderSaleOld[indexCount]._uid + 'R',
+              _referenceNumber: resultOrderSaleOld[indexCount]._referenceNumber,
+              _dueDate: resultOrderSaleOld[indexCount]._dueDate,
+              _workStatus: 0,
+              _rootCauseId: null,
+              _deliveryType: resultOrderSaleOld[indexCount]._deliveryType,
+              _isInvoiceGenerated: 0,
+              _isProductGenerated: 0,
+              _type: resultOrderSaleOld[indexCount]._type,
+              _isReWork: 1,
+              _rootCause: '',
+              _orderHeadId: resultOrderSaleOld[indexCount]._orderHeadId,
+              _description: resultOrderSaleOld[indexCount]._description,
+              _generalRemark: '',
+              _createdUserId: resultOrderSaleOld[indexCount]._createdUserId,
+              _createdAt: dateTime,
+              _updatedUserId: null,
+              _updatedAt: -1,
+              _status: 1,
+            });
+
+            resultOrderSaleOld[indexCount].ordersaleItemsList.forEach(
+              (osItemEachItem) => {
+                arrayToMongoOrderSaleItems.push({
+                  _orderSaleId: orderSaleMainId,
+                  _subCategoryId: osItemEachItem._subCategoryId,
+                  _quantity: osItemEachItem._quantity,
+                  _size: osItemEachItem._size,
+                  _weight: osItemEachItem._weight,
+                  _isDeliveryRejected: 1,
+                  _uid: osItemEachItem._uid + 'R',
+                  _stoneColour: osItemEachItem._stoneColour,
+                  _productData: { _idDone: 0 },
+                  _productId: null,
+                  _designId: null,
+                  _stockStatus: osItemEachItem._stockStatus,
+                  _isRhodium: osItemEachItem._isRhodium,
+                  _isMatFinish: osItemEachItem._isMatFinish,
+                  _isEnamel: osItemEachItem._isEnamel,
+                  _isDullFinish: osItemEachItem._isDullFinish,
+                  _createdUserId: _userId_,
+                  _createdAt: dateTime,
+                  _updatedUserId: null,
+                  _updatedAt: -1,
+                  _status: 1,
+                });
+              },
+            );
+
+            resultOrderSaleOld[indexCount].ordersaleDocumentsList.forEach(
+              (osItemEachItem) => {
+                arrayToMongoOrderSaleDocuments.push({
+                  _orderSaleId: orderSaleMainId,
+                  _globalGalleryId: osItemEachItem._globalGalleryId,
+                  _createdUserId: _userId_,
+                  _createdAt: dateTime,
+                  _updatedUserId: null,
+                  _updatedAt: -1,
+                  _status: 1,
+                });
+              },
+            );
+            arraySalesOrderHistories.push({
+              _orderSaleId: orderSaleMainId,
+              _userId: null,
+              _orderSaleItemId: null,
+              _shopId: resultOrderSaleOld[indexCount]._shopId,
+              _type: 0,
+              _deliveryProviderId: null,
+              _description: '',
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _status: 1,
+            });
+          });
+
+          await this.orderSaleModel.insertMany(
+            arrayToMongoOrderSaleMain,
+            {
+              session: transactionSession,
+            },
+          );
+          await this.orderSaleItemsModel.insertMany(
+            arrayToMongoOrderSaleItems,
+            {
+              session: transactionSession,
+            },
+          );
+          await this.orderSaleDocumentModel.insertMany(
+            arrayToMongoOrderSaleDocuments,
+            {
+              session: transactionSession,
+            },
+          );
+
+          
         }
 
         await this.orderSaleHistoriesModel.insertMany(

@@ -155,6 +155,7 @@ _workStatus:{
   37 - delivered to customer bypass, and pending for proof 
   38 - delivey accepted proof uploaded verification pending
   39 - delivey accepted proof rejected
+  40 - order send to rework
   
 }
 _type:{
