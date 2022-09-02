@@ -27,11 +27,6 @@ export const DeliveryReturnSchema = new mongoose.Schema({
     ref: ModelNames.USER,
     default: null,
   },
-    _verifiedUserId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.USER,
-    default: null,
-  },
   _workStatus: { type: Number, required: true, default: -1 },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -57,7 +52,6 @@ export interface DeliveryReturn {
   _hubId: String;
   _shopId: string;
   _receivedUserId: String;
-  _verifiedUserId: String;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -66,7 +60,6 @@ export interface DeliveryReturn {
 }
 
 DeliveryReturnSchema.index({ _receivedUserId: 1 });
-DeliveryReturnSchema.index({ _verifiedUserId: 1 });
 DeliveryReturnSchema.index({ _shopId: 1 });
 DeliveryReturnSchema.index({ _uid: 1 });
 DeliveryReturnSchema.index({ _status: 1 });
@@ -84,7 +77,6 @@ _type:{
 
 _workStatus:{
     0 - intransit,
-    1 - delivery return pending,
-    2 - delivery return completed
+    1 - delivery return completed
 }
 */

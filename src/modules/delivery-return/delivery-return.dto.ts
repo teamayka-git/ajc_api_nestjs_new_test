@@ -171,10 +171,6 @@ export class DeliveryReturnListDto {
 
   @IsArray()
   @ApiProperty({ type: [String] })
-  verifiedUserIds: string[];
-
-  @IsArray()
-  @ApiProperty({ type: [String] })
   hubIds: string[];
 
   @IsArray()

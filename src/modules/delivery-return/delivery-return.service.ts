@@ -66,7 +66,6 @@ export class DeliveryReturnService {
         _hubId: dto.hubId == '' || dto.hubId == 'nil' ? null : dto.hubId,
         _shopId: dto.shopId == '' || dto.shopId == 'nil' ? null : dto.shopId,
         _receivedUserId: null,
-        _verifiedUserId: null,
         _createdUserId: null,
         _createdAt: dateTime,
         _updatedUserId: null,
@@ -231,49 +230,8 @@ export class DeliveryReturnService {
         _workStatus: dto.workStatus,
       };
 
-      if (dto.workStatus == 1) {
+       if (dto.workStatus == 1) {
         updateObj['_receivedUserId'] = dto.toUser;
-        
-        await this.orderSaleModel.updateMany(
-          {
-            _id: { $in: dto.deliveryReceivingOrderSaleIds },
-          },
-          {
-            $set: {
-              _updatedUserId: _userId_,
-              _updatedAt: dateTime,
-              _workStatus: 26,
-            },
-          },
-          { new: true, session: transactionSession },
-        );
-  
-        var arraySalesOrderHistories = [];
-  
-        dto.deliveryReceivingOrderSaleIds.forEach((eachItem) => {
-          arraySalesOrderHistories.push({
-            _orderSaleId: eachItem,
-            _userId: dto.toUser,
-            _type: 26,
-            _shopId: null,
-            _deliveryProviderId:null,
-            _orderSaleItemId: null,
-            _description: '',
-            _createdUserId: _userId_,
-            _createdAt: dateTime,
-            _status: 1,
-          });
-        });
-  
-        await this.orderSaleHistoriesModel.insertMany(
-          arraySalesOrderHistories,
-          {
-            session: transactionSession,
-          },
-        );
-
-      } else if (dto.workStatus == 2) {
-        updateObj['_verifiedUserId'] = dto.toUser;
 
 
 
@@ -480,17 +438,6 @@ export class DeliveryReturnService {
         });
       }
       
-      if (dto.verifiedUserIds.length > 0) {
-        var newSettingsId = [];
-        dto.verifiedUserIds.map((mapItem) => {
-          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
-        });
-        arrayAggregation.push({
-          $match: { _verifiedUserId: { $in: newSettingsId } },
-        });
-      }
-
-
 
       if (dto.hubIds.length > 0) {
         var newSettingsId = [];
