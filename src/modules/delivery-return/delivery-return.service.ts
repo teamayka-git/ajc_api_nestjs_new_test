@@ -645,7 +645,7 @@ console.log("____resultOrderSaleOld    "+JSON.stringify(resultOrderSaleOld));
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-     // await transactionSession.commitTransaction();
+     await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return responseJSON;
     } catch (error) {
