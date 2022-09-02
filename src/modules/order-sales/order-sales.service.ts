@@ -81,8 +81,7 @@ export class OrderSalesService {
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
 
-
-console.log("____ order sale doc "+file.hasOwnProperty('documents'));
+      console.log('____ order sale doc ' + file.hasOwnProperty('documents'));
 
       if (file.hasOwnProperty('documents')) {
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
@@ -652,16 +651,6 @@ console.log("____ order sale doc "+file.hasOwnProperty('documents'));
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-
-
-
-
-
-
-
-
-
-
       var result = await this.orderSaleMainModel.updateMany(
         {
           _id: { $in: dto.orderSaleIds },
@@ -727,7 +716,7 @@ console.log("____ order sale doc "+file.hasOwnProperty('documents'));
     }
   }
 
-  async list(dto: OrderSaleListDto) { 
+  async list(dto: OrderSaleListDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -870,54 +859,37 @@ console.log("____ order sale doc "+file.hasOwnProperty('documents'));
         );
       }
 
-
       if (dto.setProcessOrderStatus.length != 0) {
-      
-        
-
-
-        arrayAggregation.push( {
-          $lookup: {
-            from: ModelNames.ORDER_SALE_SET_PROCESSES,
-            let: { orderId: '$_id' },
-            pipeline: [{
-              $match: {
-                $expr: { $eq: ['$_orderSaleId', '$$orderId'] },
-              },
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALE_SET_PROCESSES,
+              let: { orderId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_orderSaleId', '$$orderId'] },
+                  },
+                },
+                {
+                  $match: {
+                    _orderStatus: { $in: dto.setProcessOrderStatus },
+                  },
+                },
+                {
+                  $project: {
+                    _id: 1,
+                  },
+                },
+              ],
+              as: 'mongoCheckSetProcessList',
             },
-          {$match:{
-            _orderStatus:{ $in: dto.setProcessOrderStatus }
-          }},
-          {$project:{
-            _id:1
-          }}
-          
-          
-          ],
-            as: 'mongoCheckSetProcessList',
           },
-        },
-        {
-          $match: { mongoCheckSetProcessList: { $ne: [] } },
-        },);
-
-
-
+          {
+            $match: { mongoCheckSetProcessList: { $ne: [] } },
+          },
+        );
       }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
@@ -1002,8 +974,6 @@ console.log("____ order sale doc "+file.hasOwnProperty('documents'));
             $expr: { $eq: ['$_orderSaleId', '$$orderSaleSetProcess'] },
           },
         });
-
-        
 
         pipeline.push(
           new ModelWeightResponseFormat().orderSaleSetProcessTableResponseFormat(
@@ -1848,6 +1818,273 @@ console.log("____ order sale doc "+file.hasOwnProperty('documents'));
                 );
               }
 
+              const isorderSalesItemsinvItems = dto.screenType.includes(134);
+              if (isorderSalesItemsinvItems) {
+                const isorderSalesItemsinvItemsPipeline = () => {
+                  const pipeline = [];
+                  pipeline.push(
+                    {
+                      $match: {
+                        _status: 1,
+                        $expr: {
+                          $eq: ['$_orderSaleItemId', '$$osItemId'],
+                        },
+                      },
+                    },
+                    new ModelWeightResponseFormat().invoiceItemsTableResponseFormat(
+                      1340,
+                      dto.responseFormat,
+                    ),
+                  );
+
+
+
+
+
+
+
+
+
+
+
+
+                  const isorderSalesItemsinvItemsInvDetails = dto.screenType.includes(135);
+                  if (isorderSalesItemsinvItemsInvDetails) {
+                    const isorderSalesItemsinvItemsInvDetailsPipeline = () => {
+                      const pipeline = [];
+                      pipeline.push(
+                        {
+                          $match: {
+                            $expr: {
+                              $eq: ['$_id', '$$invItemId'],
+                            },
+                          },
+                        },
+                        new ModelWeightResponseFormat().invoiceTableResponseFormat(
+                          1350,
+                          dto.responseFormat,
+                        ),
+                      );
+
+
+
+
+
+
+
+
+
+
+
+                      const isorderSalesItemsinvItemsInvDelItemDetails = dto.screenType.includes(136);
+                      if (isorderSalesItemsinvItemsInvDelItemDetails) {
+                        const isorderSalesItemsinvItemsInvDelItemDetailsPipeline = () => {
+                          const pipeline = [];
+                          pipeline.push(
+                            {
+                              $match: {_status:1,
+                                $expr: {
+                                  $eq: ['$_invoiceId', '$$invItemId'],
+                                },
+                              },
+                            },
+                            new ModelWeightResponseFormat().deliveryItemsTableResponseFormat(
+                              1360,
+                              dto.responseFormat,
+                            ),
+                          );
+        
+
+
+
+
+
+
+
+                          const isorderSalesItemsinvItemsInvDelItemDeliveryDetails = dto.screenType.includes(137);
+                          if (isorderSalesItemsinvItemsInvDelItemDeliveryDetails) {
+                            const isorderSalesItemsinvItemsInvDelItemDeliveryDetailsPipeline = () => {
+                              const pipeline = [];
+                              pipeline.push(
+                                {
+                                  $match: {
+                                    $expr: {
+                                      $eq: ['$_id', '$$deliveryId'],
+                                    },
+                                  },
+                                },
+                                new ModelWeightResponseFormat().deliveryTableResponseFormat(
+                                  1370,
+                                  dto.responseFormat,
+                                ),
+                              );
+            
+                              return pipeline;
+                            };
+            
+                            pipeline.push(
+                              {
+                                $lookup: {
+                                  from: ModelNames.DELIVERY,
+                                  let: { deliveryId: '$_deliveryId' },
+                                  pipeline: isorderSalesItemsinvItemsInvDelItemDeliveryDetailsPipeline(),
+                                  as: 'deliveryDetails',
+                                },
+                              },
+                              {
+                                $unwind: {
+                                  path: '$deliveryDetails',
+                                  preserveNullAndEmptyArrays: true,
+                                },
+                              },
+                            );
+                          }
+             
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                          return pipeline;
+                        };
+        
+                        pipeline.push(
+                          {
+                            $lookup: {
+                              from: ModelNames.DELIVERY_ITEMS,
+                              let: { invItemId: '$_id' },
+                              pipeline: isorderSalesItemsinvItemsInvDelItemDetailsPipeline(),
+                              as: 'deliveryItemDetails',
+                            },
+                          },
+                          {
+                            $unwind: {
+                              path: '$deliveryItemDetails',
+                              preserveNullAndEmptyArrays: true,
+                            },
+                          },
+                        );
+                      }
+         
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+                      return pipeline;
+                    };
+    
+                    pipeline.push(
+                      {
+                        $lookup: {
+                          from: ModelNames.INVOICES,
+                          let: { invItemId: '$_invoiceId' },
+                          pipeline: isorderSalesItemsinvItemsInvDetailsPipeline(),
+                          as: 'invoiceDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$invoiceDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    );
+                  }
+     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                  
+                  return pipeline;
+                };
+
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.INVOICE_ITEMS,
+                      let: { osItemId: '$_id' },
+                      pipeline: isorderSalesItemsinvItemsPipeline(),
+                      as: 'invoiceItemDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$invoiceItemDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                );
+              }
+
               return pipeline;
             };
 
@@ -2021,43 +2258,35 @@ console.log("____ order sale doc "+file.hasOwnProperty('documents'));
         ]);
       }
 
+      var resultGeneralsAppUpdate = [];
+      var codeGeneralsAppUpdate = [];
 
-
-      var resultGeneralsAppUpdate=[];
-      var codeGeneralsAppUpdate=[];
-
-      if (dto.screenType.includes( 502)) {//employee
+      if (dto.screenType.includes(502)) {
+        //employee
         codeGeneralsAppUpdate.push(100);
         codeGeneralsAppUpdate.push(102);
       }
-      if (dto.screenType.includes( 503)) {//customer
+      if (dto.screenType.includes(503)) {
+        //customer
         codeGeneralsAppUpdate.push(101);
         codeGeneralsAppUpdate.push(103);
-
       }
-if(codeGeneralsAppUpdate.length!=0){
-  resultGeneralsAppUpdate= await this.generalsModel.aggregate([
-    {$match:{
-      _code:{$in:codeGeneralsAppUpdate}
-    }},
-    {
-      $project:{
-        _code:1,
-        _string:1,
-        _number:1,
-
+      if (codeGeneralsAppUpdate.length != 0) {
+        resultGeneralsAppUpdate = await this.generalsModel.aggregate([
+          {
+            $match: {
+              _code: { $in: codeGeneralsAppUpdate },
+            },
+          },
+          {
+            $project: {
+              _code: 1,
+              _string: 1,
+              _number: 1,
+            },
+          },
+        ]);
       }
-    }
-  ]);
-}
-
-
-
-
-
-
-
-
 
       const responseJSON = {
         message: 'success',
@@ -2068,8 +2297,8 @@ if(codeGeneralsAppUpdate.length!=0){
           processMasters: resultProcessMasters,
           subCategory: resultSubCategory,
           generalSetting: generalSetting,
-          appUpdates:resultGeneralsAppUpdate,
-          currentTime:dateTime
+          appUpdates: resultGeneralsAppUpdate,
+          currentTime: dateTime,
         },
       };
       if (
@@ -2113,13 +2342,10 @@ if(codeGeneralsAppUpdate.length!=0){
       //   });
       // }
       if (dto.orderSaleUids.length > 0) {
-
-        var arrayTemp=[];
-        dto.orderSaleUids.forEach((eachElement=>{
-          arrayTemp.push(new RegExp(`^${eachElement}$`, 'i'))
-        }));
-        
-
+        var arrayTemp = [];
+        dto.orderSaleUids.forEach((eachElement) => {
+          arrayTemp.push(new RegExp(`^${eachElement}$`, 'i'));
+        });
 
         arrayAggregation.push({
           $match: {
@@ -2147,14 +2373,10 @@ if(codeGeneralsAppUpdate.length!=0){
       }
 
       if (dto.referenceIds.length > 0) {
-
-
-        var arrayTemp=[];
-        dto.referenceIds.forEach((eachElement=>{
-          arrayTemp.push(new RegExp(`^${eachElement}$`, 'i'))
-        }));
-        
-
+        var arrayTemp = [];
+        dto.referenceIds.forEach((eachElement) => {
+          arrayTemp.push(new RegExp(`^${eachElement}$`, 'i'));
+        });
 
         arrayAggregation.push({
           $match: {
@@ -2268,170 +2490,137 @@ if(codeGeneralsAppUpdate.length!=0){
         );
       }
 
-
-
-
-//delivery
+      //delivery
       if (
         dto.deliveryAssignedStartDate != -1 ||
-        dto.deliveryAssignedStartDate != -1 ){
+        dto.deliveryAssignedStartDate != -1
+      ) {
+        const orderSaleItemsMongoCheckPipeline = () => {
+          const pipeline = [];
+          pipeline.push({
+            $match: {
+              _status: 1,
+              $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+            },
+          });
 
-
-
-
-          const orderSaleItemsMongoCheckPipeline = () => {
+          const invoiceItemsMongoCheckPipeline = () => {
             const pipeline = [];
             pipeline.push({
               $match: {
-                _status: 1,
-                $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+                $expr: { $eq: ['$_orderSaleItemId', '$$orderSaleItemId'] },
               },
             });
-           
-            
-  
-              const invoiceItemsMongoCheckPipeline = () => {
-                const pipeline = [];
-                pipeline.push({
-                  $match: {
-                    $expr: { $eq: ['$_orderSaleItemId', '$$orderSaleItemId'] },
-                  },
-                });
-  
-                const invoiceItemsInvoiceDetailsMongoCheckPipeline = () => {
+
+            const invoiceItemsInvoiceDetailsMongoCheckPipeline = () => {
+              const pipeline = [];
+              pipeline.push({
+                $match: {
+                  $expr: { $eq: ['$_id', '$$invoiceId'] },
+                },
+              });
+
+              const invoiceItemsInvoiceDetailsDeliveryTempMongoCheckPipeline =
+                () => {
                   const pipeline = [];
                   pipeline.push({
                     $match: {
-                      $expr: { $eq: ['$_id', '$$invoiceId'] },
+                      _status: 1,
+                      $expr: { $eq: ['$_invoiceId', '$$invoiceIdForDelTemp'] },
                     },
                   });
-  
-                  
-                  const invoiceItemsInvoiceDetailsDeliveryTempMongoCheckPipeline = () => {
-                    const pipeline = [];
+
+                  if (dto.deliveryAssignedStartDate != -1) {
                     pipeline.push({
                       $match: {
-                        _status: 1,
-                        $expr: { $eq: ['$_invoiceId', '$$invoiceIdForDelTemp'] },
+                        _createdAt: { $gte: dto.deliveryAssignedStartDate },
                       },
                     });
-      
-                    if (dto.deliveryAssignedStartDate != -1) {
-                      pipeline.push({
-                        $match: {
-                          _createdAt: { $gte: dto.deliveryAssignedStartDate },
-                        },
-                      });
-                    }
-      
-                    if (dto.deliveryAssignedStartDate != -1) {
-                      pipeline.push({
-                        $match: {
-                          _createdAt: { $gte: dto.deliveryAssignedStartDate },
-                        },
-                      });
-                    }
-      
-                    
-                    pipeline.push({ $project: { _id: 1 } });
-                    return pipeline;
                   }
 
-
-
-
-
-
-
-
-
-                  pipeline.push(
-                    {
-                      $lookup: {
-                        from: ModelNames.DELIVERY_TEMP,
-                        let: { invoiceIdForDelTemp: '$_id' },
-                        pipeline: invoiceItemsInvoiceDetailsDeliveryTempMongoCheckPipeline(),
-                        as: 'deliveryTempList',
+                  if (dto.deliveryAssignedStartDate != -1) {
+                    pipeline.push({
+                      $match: {
+                        _createdAt: { $gte: dto.deliveryAssignedStartDate },
                       },
-                    },
-                    {
-                      $match: { deliveryTempList: { $ne: [] } },
-                    },
-                  );
-
-
-
+                    });
+                  }
 
                   pipeline.push({ $project: { _id: 1 } });
                   return pipeline;
                 };
-  
-                pipeline.push(
-                  {
-                    $lookup: {
-                      from: ModelNames.INVOICES,
-                      let: { invoiceId: '$_invoiceId' },
-                      pipeline: invoiceItemsInvoiceDetailsMongoCheckPipeline(),
-                      as: 'invoiceDetails',
-                    },
-                  },
-                  {
-                    $unwind: {
-                      path: '$invoiceDetails',
-                    },
-                  },
-                );
-  
-                pipeline.push({ $project: { _id: 1 } });
-                return pipeline;
-              };
-  
+
               pipeline.push(
                 {
                   $lookup: {
-                    from: ModelNames.INVOICE_ITEMS,
-                    let: { orderSaleItemId: '$_id' },
-                    pipeline: invoiceItemsMongoCheckPipeline(),
-                    as: 'mongoCheckInvoiceList',
+                    from: ModelNames.DELIVERY_TEMP,
+                    let: { invoiceIdForDelTemp: '$_id' },
+                    pipeline:
+                      invoiceItemsInvoiceDetailsDeliveryTempMongoCheckPipeline(),
+                    as: 'deliveryTempList',
                   },
                 },
                 {
-                  $match: { mongoCheckInvoiceList: { $ne: [] } },
+                  $match: { deliveryTempList: { $ne: [] } },
                 },
               );
-            
-  
+
+              pipeline.push({ $project: { _id: 1 } });
+              return pipeline;
+            };
+
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.INVOICES,
+                  let: { invoiceId: '$_invoiceId' },
+                  pipeline: invoiceItemsInvoiceDetailsMongoCheckPipeline(),
+                  as: 'invoiceDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$invoiceDetails',
+                },
+              },
+            );
+
             pipeline.push({ $project: { _id: 1 } });
             return pipeline;
-          }
+          };
 
-
-
-
-
-
-
-          arrayAggregation.push(
+          pipeline.push(
             {
               $lookup: {
-                from: ModelNames.ORDER_SALES_ITEMS,
-                let: { orderSaleId: '$_id' },
-                pipeline: orderSaleItemsMongoCheckPipeline(),
-                as: 'mongoCheckOrderItemsDeliveryAssignList',
+                from: ModelNames.INVOICE_ITEMS,
+                let: { orderSaleItemId: '$_id' },
+                pipeline: invoiceItemsMongoCheckPipeline(),
+                as: 'mongoCheckInvoiceList',
               },
             },
             {
-              $match: { mongoCheckOrderItemsDeliveryAssignList: { $ne: [] } },
+              $match: { mongoCheckInvoiceList: { $ne: [] } },
             },
           );
 
+          pipeline.push({ $project: { _id: 1 } });
+          return pipeline;
+        };
 
-        }
-
-
-
-
-
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_ITEMS,
+              let: { orderSaleId: '$_id' },
+              pipeline: orderSaleItemsMongoCheckPipeline(),
+              as: 'mongoCheckOrderItemsDeliveryAssignList',
+            },
+          },
+          {
+            $match: { mongoCheckOrderItemsDeliveryAssignList: { $ne: [] } },
+          },
+        );
+      }
 
       //product
 
@@ -2501,11 +2690,10 @@ if(codeGeneralsAppUpdate.length!=0){
               }
 
               if (dto.huids.length != 0) {
-
-var arrayTemp=[];
-dto.huids.forEach((eachElement=>{
-  arrayTemp.push(new RegExp(`^${eachElement}$`, 'i'))
-}));
+                var arrayTemp = [];
+                dto.huids.forEach((eachElement) => {
+                  arrayTemp.push(new RegExp(`^${eachElement}$`, 'i'));
+                });
 
                 pipeline.push({
                   $match: {
@@ -2567,13 +2755,10 @@ dto.huids.forEach((eachElement=>{
                   });
                 }
                 if (dto.invoiceUids.length != 0) {
-
-                  var arrayTemp=[];
-                  dto.invoiceUids.forEach((eachElement=>{
-                    arrayTemp.push(new RegExp(`^${eachElement}$`, 'i'))
-                  }));
-                  
-
+                  var arrayTemp = [];
+                  dto.invoiceUids.forEach((eachElement) => {
+                    arrayTemp.push(new RegExp(`^${eachElement}$`, 'i'));
+                  });
 
                   pipeline.push({
                     $match: {
@@ -2767,52 +2952,38 @@ dto.huids.forEach((eachElement=>{
         );
       }
 
-
-
-
-
-
-
-
-
-
-
       if (dto.setProcessOrderStatus.length != 0) {
-      
-        
-
-
-        arrayAggregation.push( {
-          $lookup: {
-            from: ModelNames.ORDER_SALE_SET_PROCESSES,
-            let: { orderId: '$_id' },
-            pipeline: [{
-              $match: {
-                $expr: { $eq: ['$_orderSaleId', '$$orderId'] },
-              },
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALE_SET_PROCESSES,
+              let: { orderId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_orderSaleId', '$$orderId'] },
+                  },
+                },
+                {
+                  $match: {
+                    _orderStatus: { $in: dto.setProcessOrderStatus },
+                  },
+                },
+                {
+                  $project: {
+                    _id: 1,
+                  },
+                },
+              ],
+              as: 'mongoCheckSetProcessList',
             },
-          {$match:{
-            _orderStatus:{ $in: dto.setProcessOrderStatus }
-          }},
-          {$project:{
-            _id:1
-          }}
-          
-          
-          ],
-            as: 'mongoCheckSetProcessList',
           },
-        },
-        {
-          $match: { mongoCheckSetProcessList: { $ne: [] } },
-        },);
-
-
-
+          {
+            $match: { mongoCheckSetProcessList: { $ne: [] } },
+          },
+        );
       }
 
-
-      
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
       switch (dto.sortType) {
@@ -2895,9 +3066,6 @@ dto.huids.forEach((eachElement=>{
             $expr: { $eq: ['$_orderSaleId', '$$orderSaleSetProcess'] },
           },
         });
-
-      
-        
 
         pipeline.push(
           new ModelWeightResponseFormat().orderSaleSetProcessTableResponseFormat(
@@ -3702,74 +3870,67 @@ dto.huids.forEach((eachElement=>{
               const isorderSalesItemsInVoiceItemsInvoiceDetails =
                 dto.screenType.includes(132);
               if (isorderSalesItemsInVoiceItemsInvoiceDetails) {
-
                 const invoiceItemsDeliveryTempPipeline = () => {
                   const pipeline = [];
 
-
-                  pipeline.push({
-                    $match: {
-                      $expr: {
-                        $eq: ['$_id', '$$invoiceId'],
-                      },
-                    },
-                  },
-                  new ModelWeightResponseFormat().invoiceTableResponseFormat(
-                    1320,
-                    dto.responseFormat,
-                  ),);
-                    
-                  const isorderSalesItemsInVoiceItemsInvoiceDeliveryTempDetails =
-                  dto.screenType.includes(135);
-                if (isorderSalesItemsInVoiceItemsInvoiceDeliveryTempDetails) {
-  
                   pipeline.push(
                     {
-                      $lookup: {
-                        from: ModelNames.DELIVERY_TEMP,
-                        let: { invoiceDeliveryTempId: '$_id' },
-                        pipeline: [
-                          {
-                            $match: {
-                              $expr: {
-                                $eq: ['$_invoiceId', '$$invoiceDeliveryTempId'],
+                      $match: {
+                        $expr: {
+                          $eq: ['$_id', '$$invoiceId'],
+                        },
+                      },
+                    },
+                    new ModelWeightResponseFormat().invoiceTableResponseFormat(
+                      1320,
+                      dto.responseFormat,
+                    ),
+                  );
+
+                  const isorderSalesItemsInVoiceItemsInvoiceDeliveryTempDetails =
+                    dto.screenType.includes(135);
+                  if (isorderSalesItemsInVoiceItemsInvoiceDeliveryTempDetails) {
+                    pipeline.push(
+                      {
+                        $lookup: {
+                          from: ModelNames.DELIVERY_TEMP,
+                          let: { invoiceDeliveryTempId: '$_id' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: {
+                                  $eq: [
+                                    '$_invoiceId',
+                                    '$$invoiceDeliveryTempId',
+                                  ],
+                                },
                               },
                             },
-                          },
-                          new ModelWeightResponseFormat().deliveryTempTableResponseFormat(
-                            1350,
-                            dto.responseFormat,
-                          ),
-                        ],
-                        as: 'deliveryTempDetails',
+                            new ModelWeightResponseFormat().deliveryTempTableResponseFormat(
+                              1350,
+                              dto.responseFormat,
+                            ),
+                          ],
+                          as: 'deliveryTempDetails',
+                        },
                       },
-                    },
-                    {
-                      $unwind: {
-                        path: '$deliveryTempDetails',
-                        preserveNullAndEmptyArrays: true,
+                      {
+                        $unwind: {
+                          path: '$deliveryTempDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
                       },
-                    },
-                  );
-                }
-return pipeline;
-                }
-
-
-
-
-
-
-
-
-
+                    );
+                  }
+                  return pipeline;
+                };
 
                 pipeline.push(
                   {
                     $lookup: {
                       from: ModelNames.INVOICES,
                       let: { invoiceId: '$_invoiceId' },
-                      pipeline:invoiceItemsDeliveryTempPipeline() ,
+                      pipeline: invoiceItemsDeliveryTempPipeline(),
                       as: 'invoiceDetails',
                     },
                   },
