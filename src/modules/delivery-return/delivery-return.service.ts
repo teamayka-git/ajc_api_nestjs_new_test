@@ -178,6 +178,10 @@ export class DeliveryReturnService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+console.log("____del reject dto   "+JSON.stringify(dto));
+
+
       //check qr code scanned at right status
       var getDeliveryItemsForCheck = await this.deliveryReturnModel.aggregate([
         {
