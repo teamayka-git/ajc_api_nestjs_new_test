@@ -113,14 +113,6 @@ export class DeliveryReturnService {
         session: transactionSession,
       });
 
-
-
-
-
-
-
-
-
       await this.orderSaleModel.updateMany(
         {
           _id: { $in: arrayOrderSalesIds },
@@ -144,7 +136,7 @@ export class DeliveryReturnService {
           _type: 25,
           _shopId: null,
           _orderSaleItemId: null,
-          _deliveryProviderId:null,
+          _deliveryProviderId: null,
           _description: '',
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -152,24 +144,9 @@ export class DeliveryReturnService {
         });
       });
 
-      await this.orderSaleHistoriesModel.insertMany(
-        arraySalesOrderHistories,
-        {
-          session: transactionSession,
-        },
-      );
-
-
-
-
-
-
-
-
-
-
-
-
+      await this.orderSaleHistoriesModel.insertMany(arraySalesOrderHistories, {
+        session: transactionSession,
+      });
 
       const responseJSON = { message: 'success', data: result1 };
       if (
@@ -201,28 +178,64 @@ export class DeliveryReturnService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-
-
       //check qr code scanned at right status
-      var getDeliveryItemsForCheck = await this.deliveryReturnModel.find({
-        _id: { $in: dto.deliveryReturnIds },
-        _workStatus: dto.fromWorkStatus,
-        _status: 1,
-      });
+      var getDeliveryItemsForCheck = await this.deliveryReturnModel.aggregate([
+        {
+          $match: {
+            _id: { $in: dto.deliveryReturnIds },
+            _workStatus: dto.fromWorkStatus,
+            _status: 1,
+          },
+        },
+
+        {
+          $lookup: {
+            from: ModelNames.DELIVERY_RETURN_ITEMS,
+            let: { returnId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_deliveryReturnId', '$$returnId'] },
+                },
+              },
+              {
+                $project: {
+                  _deliveryRejectPendingId: 1,
+                },
+              },
+
+              {
+                $lookup: {
+                  from: ModelNames.DELIVERY_REJECTED_PENDINGS,
+                  let: { delRejPendingId: '$_deliveryRejectPendingId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$delRejPendingId'] },
+                      },
+                    },
+                  ],
+                  as: 'deleveryRejectPendingDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$deleveryRejectPendingDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            ],
+            as: 'deliveryReturnItems',
+          },
+        },
+      ]);
       if (getDeliveryItemsForCheck.length != dto.deliveryReturnIds.length) {
         throw new HttpException(
           'Delivery return wrong status',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-    
-
-
-
-
-
-
-
 
       var updateObj = {
         _updatedUserId: _userId_,
@@ -230,19 +243,72 @@ export class DeliveryReturnService {
         _workStatus: dto.workStatus,
       };
 
-       if (dto.workStatus == 1) {
+      if (dto.workStatus == 1) {
         updateObj['_receivedUserId'] = dto.toUser;
 
-
-
-       
-
-
-
-
-  
         var arraySalesOrderHistories = [];
-  
+        var arrayOrderSaleIdCancelled = [];
+
+        getDeliveryItemsForCheck.forEach((eachItem) => {
+          eachItem.deliveryReturnItems.eachItem((eachItemChild) => {
+            arraySalesOrderHistories.push({
+              _orderSaleId: eachItemChild.deleveryRejectPendingDetails._salesId,
+              _userId: null,
+              _type: 34,
+              _shopId: null,
+              _orderSaleItemId:
+                eachItemChild.deleveryRejectPendingDetails._salesItemId,
+              _description: '',
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _status: 1,
+            });
+
+            if (eachItemChild.deleveryRejectPendingDetails._reworkStatus == 0) {
+              arrayOrderSaleIdCancelled.push(
+                eachItemChild.deleveryRejectPendingDetails._salesId,
+              );
+              arraySalesOrderHistories.push({
+                _orderSaleId:
+                  eachItemChild.deleveryRejectPendingDetails._salesId,
+                _userId: null,
+                _type: 27,
+                _shopId: null,
+                _orderSaleItemId:
+                  eachItemChild.deleveryRejectPendingDetails._salesItemId,
+                _description: '',
+                _createdUserId: _userId_,
+                _createdAt: dateTime,
+                _status: 1,
+              });
+            }
+          });
+        });
+
+        if (arrayOrderSaleIdCancelled.length != 0) {
+          await this.orderSaleModel.updateMany(
+            {
+              _id: { $in: arrayOrderSaleIdCancelled },
+            },
+            {
+              $set: {
+                _updatedUserId: _userId_,
+                _updatedAt: dateTime,
+                _workStatus: 27,
+              },
+            },
+            { new: true, session: transactionSession },
+          );
+        }
+
+        await this.orderSaleHistoriesModel.insertMany(
+          arraySalesOrderHistories,
+          {
+            session: transactionSession,
+          },
+        );
+
+        /*
         dto.deliveryCompleteOrderSaleIds.forEach((eachItem) => {
           arraySalesOrderHistories.push({
             _orderSaleId: eachItem,
@@ -335,39 +401,7 @@ export class DeliveryReturnService {
           });
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-  
-        await this.orderSaleHistoriesModel.insertMany(
-          arraySalesOrderHistories,
-          {
-            session: transactionSession,
-          },
-        );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+*/
       }
       var result = await this.deliveryReturnModel.updateMany(
         {
@@ -426,8 +460,6 @@ export class DeliveryReturnService {
         });
       }
 
-
-
       if (dto.receivedUserIds.length > 0) {
         var newSettingsId = [];
         dto.receivedUserIds.map((mapItem) => {
@@ -437,7 +469,6 @@ export class DeliveryReturnService {
           $match: { _receivedUserId: { $in: newSettingsId } },
         });
       }
-      
 
       if (dto.hubIds.length > 0) {
         var newSettingsId = [];
@@ -473,9 +504,7 @@ export class DeliveryReturnService {
         //todo
         arrayAggregation.push({
           $match: {
-            $or: [
-              { _uid: new RegExp(`^${dto.searchingText}$`, 'i') },
-            ],
+            $or: [{ _uid: new RegExp(`^${dto.searchingText}$`, 'i') }],
           },
         });
       }

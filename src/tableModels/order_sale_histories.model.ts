@@ -93,7 +93,7 @@ _type:{
   24 - order declined collection pending 
   25 - order declined collected
   26 - order declined inscan
-  27 - order cancelled
+  27 - order cancelled 
   28 - delivery reshedule requested
 
   29 - hub tranfer pending
