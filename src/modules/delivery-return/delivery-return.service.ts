@@ -399,16 +399,19 @@ export class DeliveryReturnService {
               },
             },
           ]);
-
+console.log("____resultOrderSaleOld    "+JSON.stringify(resultOrderSaleOld));
           var arrayToMongoOrderSaleMain = [];
           var arrayToMongoOrderSaleItems = [];
           var arrayToMongoOrderSaleDocuments = [];
 
           arrayOrderSaleIdRework.forEach((eachItem) => {
+            console.log("___s1");
             var indexCount = resultOrderSaleOld.findIndex(
               (findIndexItem) => findIndexItem._id == eachItem,
             );
+            console.log("___s2");
             var orderSaleMainId = new mongoose.Types.ObjectId();
+            console.log("___s3");
             arrayToMongoOrderSaleMain.push({
               _id: orderSaleMainId,
               _shopId: resultOrderSaleOld[indexCount]._shopId,
@@ -432,7 +435,7 @@ export class DeliveryReturnService {
               _updatedAt: -1,
               _status: 1,
             });
-
+            console.log("___s4");
             resultOrderSaleOld[indexCount].ordersaleItemsList.forEach(
               (osItemEachItem) => {
                 arrayToMongoOrderSaleItems.push({
@@ -458,9 +461,10 @@ export class DeliveryReturnService {
                   _updatedAt: -1,
                   _status: 1,
                 });
+                console.log("___s5");
               },
             );
-
+            console.log("___s6");
             resultOrderSaleOld[indexCount].ordersaleDocumentsList.forEach(
               (osItemEachItem) => {
                 arrayToMongoOrderSaleDocuments.push({
@@ -472,8 +476,10 @@ export class DeliveryReturnService {
                   _updatedAt: -1,
                   _status: 1,
                 });
+                console.log("___s7");
               },
             );
+            console.log("___s8");
             arraySalesOrderHistories.push({
               _orderSaleId: orderSaleMainId,
               _userId: null,
@@ -486,20 +492,23 @@ export class DeliveryReturnService {
               _createdAt: dateTime,
               _status: 1,
             });
+            console.log("___s9");
           });
-
+          console.log("___s10");
           await this.orderSaleModel.insertMany(
             arrayToMongoOrderSaleMain,
             {
               session: transactionSession,
             },
           );
+          console.log("___s11");
           await this.orderSaleItemsModel.insertMany(
             arrayToMongoOrderSaleItems,
             {
               session: transactionSession,
             },
           );
+          console.log("___s12");
           await this.orderSaleDocumentModel.insertMany(
             arrayToMongoOrderSaleDocuments,
             {
@@ -507,16 +516,16 @@ export class DeliveryReturnService {
             },
           );
 
-          
+          console.log("___s13");
         }
-
+        console.log("___s14");
         await this.orderSaleHistoriesModel.insertMany(
           arraySalesOrderHistories,
           {
             session: transactionSession,
           },
         );
-
+        console.log("___s15");
         /*
         dto.deliveryCompleteOrderSaleIds.forEach((eachItem) => {
           arraySalesOrderHistories.push({
