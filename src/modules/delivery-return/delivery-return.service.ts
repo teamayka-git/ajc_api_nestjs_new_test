@@ -271,7 +271,7 @@ if (dto.deliveryReturnIds.length > 0) {
         var arrayOrderSaleIdCancelled = [];
 
         getDeliveryItemsForCheck.forEach((eachItem) => {
-          eachItem["deliveryReturnItems"].eachItem((eachItemChild) => {
+          eachItem.deliveryReturnItems.forEach((eachItemChild) => {
             
       console.log("___del rej 5");
             arraySalesOrderHistories.push({
