@@ -187,7 +187,7 @@ export class DeliveryReturnService {
             _status: 1,
           },
         },
-
+/*
         {
           $lookup: {
             from: ModelNames.DELIVERY_RETURN_ITEMS,
@@ -228,7 +228,7 @@ export class DeliveryReturnService {
             ],
             as: 'deliveryReturnItems',
           },
-        },
+        },*/
       ]);
 
 console.log("__getDeliveryItemsForCheck   "+JSON.stringify(getDeliveryItemsForCheck));
@@ -236,6 +236,11 @@ console.log("__getDeliveryItemsForCheck   "+JSON.stringify(getDeliveryItemsForCh
       if (getDeliveryItemsForCheck.length != dto.deliveryReturnIds.length) {
         throw new HttpException(
           'Delivery return wrong status',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }else{
+        throw new HttpException(
+          'working',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
