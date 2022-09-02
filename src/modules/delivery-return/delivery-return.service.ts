@@ -179,7 +179,6 @@ export class DeliveryReturnService {
     transactionSession.startTransaction();
     try {
 
-console.log("____del reject dto   "+JSON.stringify(dto));
 
 
 
@@ -246,7 +245,6 @@ if (dto.deliveryReturnIds.length > 0) {
         },
       ]);
 
-      console.log("___del rej 1");
 
       if (getDeliveryItemsForCheck.length != dto.deliveryReturnIds.length) {
         throw new HttpException(
@@ -254,26 +252,21 @@ if (dto.deliveryReturnIds.length > 0) {
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-
-      console.log("___del rej 2");
       var updateObj = {
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
         _workStatus: dto.workStatus,
       };
 
-      console.log("___del rej 3");
       if (dto.workStatus == 1) {
         updateObj['_receivedUserId'] = dto.toUser;
 
-        console.log("___del rej 4");
         var arraySalesOrderHistories = [];
         var arrayOrderSaleIdCancelled = [];
 
         getDeliveryItemsForCheck.forEach((eachItem) => {
           eachItem.deliveryReturnItems.forEach((eachItemChild) => {
             
-      console.log("___del rej 5");
             arraySalesOrderHistories.push({
               _orderSaleId: eachItemChild.deleveryRejectPendingDetails._salesId,
               _userId: null,
@@ -287,13 +280,11 @@ if (dto.deliveryReturnIds.length > 0) {
               _status: 1,
             });
 
-            console.log("___del rej 6");
             if (eachItemChild.deleveryRejectPendingDetails._reworkStatus == 0) {
               arrayOrderSaleIdCancelled.push(
                 eachItemChild.deleveryRejectPendingDetails._salesId,
               );
               
-      console.log("___del rej 7");
               arraySalesOrderHistories.push({
                 _orderSaleId:
                   eachItemChild.deleveryRejectPendingDetails._salesId,
@@ -308,14 +299,11 @@ if (dto.deliveryReturnIds.length > 0) {
                 _status: 1,
               });
               
-      console.log("___del rej 8");
             }
           });
           
-      console.log("___del rej 9");
         });
 
-        console.log("___del rej 10");
         if (arrayOrderSaleIdCancelled.length != 0) {
           await this.orderSaleModel.updateMany(
             {
@@ -332,7 +320,6 @@ if (dto.deliveryReturnIds.length > 0) {
           );
         }
 
-        console.log("___del rej 11");
         await this.orderSaleHistoriesModel.insertMany(
           arraySalesOrderHistories,
           {
@@ -340,7 +327,6 @@ if (dto.deliveryReturnIds.length > 0) {
           },
         );
 
-        console.log("___del rej 12");
         /*
         dto.deliveryCompleteOrderSaleIds.forEach((eachItem) => {
           arraySalesOrderHistories.push({
