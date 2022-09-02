@@ -404,7 +404,7 @@ console.log("____resultOrderSaleOld    "+JSON.stringify(resultOrderSaleOld));
           var arrayToMongoOrderSaleItems = [];
           var arrayToMongoOrderSaleDocuments = [];
 
-          arrayOrderSaleIdRework.forEach((eachItem) => {
+          arrayOrderSaleIdReworkMongo.forEach((eachItem) => {
             console.log("___s1");
             var indexCount = resultOrderSaleOld.findIndex(
               (findIndexItem) => findIndexItem._id == eachItem,
@@ -643,7 +643,7 @@ console.log("____resultOrderSaleOld    "+JSON.stringify(resultOrderSaleOld));
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-      await transactionSession.commitTransaction();
+     // await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return responseJSON;
     } catch (error) {
