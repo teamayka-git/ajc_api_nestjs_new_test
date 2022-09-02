@@ -406,6 +406,8 @@ console.log("____resultOrderSaleOld    "+JSON.stringify(resultOrderSaleOld));
 
           arrayOrderSaleIdReworkMongo.forEach((eachItem) => {
             console.log("___s1");
+            console.log("___s1.0  " +eachItem);
+            console.log("___s1.1  " +resultOrderSaleOld[0]._id);
             var indexCount = resultOrderSaleOld.findIndex(
               (findIndexItem) => findIndexItem._id == eachItem,
             );
