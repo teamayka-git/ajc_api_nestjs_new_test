@@ -65,7 +65,7 @@ export class DeliveryRejectedPendingService {
       });
 
 
-  var resultOsCheck= await this.orderSaleMainModel.find({_id:{$in:arrayOrderIds,_workStatus:35}},{_id:1});
+  var resultOsCheck= await this.orderSaleMainModel.find({_id:{$in:arrayOrderIds},_workStatus:35},{_id:1});
 if(resultOsCheck.length != dto.array.length){
   throw new HttpException('Order status mismatch', HttpStatus.INTERNAL_SERVER_ERROR);
 }
