@@ -409,7 +409,7 @@ console.log("____resultOrderSaleOld    "+JSON.stringify(resultOrderSaleOld));
             console.log("___s1.0  " +eachItem);
             console.log("___s1.1  " +resultOrderSaleOld[0]._id);
             var indexCount = resultOrderSaleOld.findIndex(
-              (findIndexItem) => findIndexItem._id == eachItem,
+              (findIndexItem) => findIndexItem["_id"] == eachItem,
             );
             console.log("___s2 "+indexCount);
             var orderSaleMainId = new mongoose.Types.ObjectId();
