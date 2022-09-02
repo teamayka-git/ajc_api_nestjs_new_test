@@ -1433,12 +1433,36 @@ export class DeliveryService {
         );
       }
 
+
+      
+      var resultProofRejectRootCause = [];
+      if (dto.screenType.includes(501)) {
+        var aggregateDeliveryReject = [];
+        aggregateDeliveryReject.push(
+          {
+            $match: {
+              _type: { $in: [5] },
+              _status: 1,
+            },
+          },
+          new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+            5010,
+            dto.responseFormat,
+          ),
+        );
+
+        resultProofRejectRootCause = await this.rootCauseModel.aggregate(
+          aggregateDeliveryReject,
+        );
+      }
+
       const responseJSON = {
         message: 'success',
         data: {
           list: result,
           totalCount: totalCount,
           deliveryRejectRootCause: resultDeliveryRejectRootCause,
+          proofRejectRootCause:resultProofRejectRootCause
         },
       };
       if (
