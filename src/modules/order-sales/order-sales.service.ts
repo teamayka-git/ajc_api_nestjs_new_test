@@ -2118,7 +2118,7 @@ export class OrderSalesService {
           },
         });
       }
-
+console.log("aggregate    "+JSON.stringify(arrayAggregation));
       var resultWorkets = [];
       var resultProcessMasters = [];
       var resultSubCategory = [];
