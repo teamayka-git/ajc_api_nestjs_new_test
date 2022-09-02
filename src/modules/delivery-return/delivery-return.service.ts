@@ -230,6 +230,9 @@ export class DeliveryReturnService {
           },
         },
       ]);
+
+console.log("__getDeliveryItemsForCheck   "+JSON.stringify(getDeliveryItemsForCheck));
+
       if (getDeliveryItemsForCheck.length != dto.deliveryReturnIds.length) {
         throw new HttpException(
           'Delivery return wrong status',
