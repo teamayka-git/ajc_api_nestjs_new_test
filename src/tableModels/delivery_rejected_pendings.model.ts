@@ -60,7 +60,7 @@ export interface DeliveryRejectedPendings {
   _salesId: string;
   _deliveryId: string; 
   _invoiceId: string;
-  _shopId: string;
+  _shopId: string; 
   _rootCauseId: string;
   _productedBarcode:string;
   _rootCause: string;

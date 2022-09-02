@@ -4,17 +4,138 @@ import { Model } from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { DeliveryRejectedPendings } from 'src/tableModels/delivery_rejected_pendings.model';
 import * as mongoose from 'mongoose';
-import { DeliveryRejectListListDto } from './delivery-rejected-pending.dto';
+import { DeliveryRejectListListDto, DeliveryRejectPendingCreateDto } from './delivery-rejected-pending.dto';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 import { GlobalConfig } from 'src/config/global_config';
+import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
+import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 
 @Injectable()
 export class DeliveryRejectedPendingService {
   constructor(
+    @InjectModel(ModelNames.ORDER_SALES_MAIN)
+    private readonly orderSaleMainModel: Model<OrderSalesMain>,
+    @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
+    private readonly orderSaleMainHistoriesModel: Model<OrderSaleHistories>,
     @InjectModel(ModelNames.DELIVERY_REJECTED_PENDINGS)
     private readonly deliveryRejectedPendingModel: Model<DeliveryRejectedPendings>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
+
+
+
+  async create(dto: DeliveryRejectPendingCreateDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var arrayToStates = [];
+      var arrayOrderIds = [];
+      var arrayOrderItemIds = [];
+
+      dto.array.map((mapItem) => {
+        arrayOrderIds.push(mapItem.salesId);
+        arrayOrderItemIds.push(mapItem.salesItemId);
+        
+        arrayToStates.push({
+          _salesItemId:mapItem.salesItemId,
+          _salesId:mapItem.salesId,
+          _deliveryId:mapItem.deliveryId,
+          _invoiceId:mapItem.invoiceId,
+          _shopId:mapItem.shopId,
+          _rootCauseId:mapItem.rootcauseId,
+          _productedBarcode:mapItem.productBarcode,
+          _rootCause:mapItem.rootcause,
+          _reworkStatus:mapItem.reworkStatus,
+          _mistakeType:mapItem.mistakeType,
+
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
+        });
+      });
+
+      var result1 = await this.deliveryRejectedPendingModel.insertMany(arrayToStates, {
+        session: transactionSession,
+      });
+
+
+
+
+
+
+      await this.orderSaleMainModel.updateMany(
+        {
+          _id: { $in: arrayOrderIds },
+        },
+        {
+          $set: {
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+            _workStatus: 24,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      var arraySalesOrderHistories = [];
+
+      arrayOrderIds.forEach((eachItem,index) => {
+        arraySalesOrderHistories.push({
+          _orderSaleId: eachItem,
+          _userId: null,
+          _type: 24,
+          _shopId: null,
+          _orderSaleItemId: dto.array[index].salesItemId,
+          _deliveryProviderId: null,
+          _description: `Reason: ${dto.array[index].rootcauseIdName} - ${dto.array[index].rootcause}`,
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _status: 1,
+        });
+      });
+
+      await this.orderSaleMainHistoriesModel.insertMany(
+        arraySalesOrderHistories,
+        {
+          session: transactionSession,
+        },
+      );
+
+
+
+
+
+
+
+
+      const responseJSON = { message: 'success', data: { list: result1 } };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+
+
+
   async list(dto: DeliveryRejectListListDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();

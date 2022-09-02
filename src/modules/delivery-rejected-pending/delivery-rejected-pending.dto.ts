@@ -23,6 +23,64 @@ const descriptionListSortType =
 const descriptionReWorkStatus = '0 - do cancel, 1 - do rework';
 const descriptionMistakeType = '0 - mistake by ajc,1 - mistake by customer,';
 
+class DeliveryRejectPendingCreateList {
+  @IsString()
+  @ApiProperty({})
+  salesItemId: string;
+
+  @IsString()
+  @ApiProperty({})
+  salesId: string;
+
+  @IsString()
+  @ApiProperty({})
+  deliveryId: string;
+
+  @IsString()
+  @ApiProperty({})
+  invoiceId: string;
+
+  @IsString()
+  @ApiProperty({})
+  shopId: string;
+
+  @IsString()
+  @ApiProperty({})
+  rootcauseId: string;
+
+  @IsString()
+  @ApiProperty({})
+  productBarcode: string;
+
+  @IsString()
+  @ApiProperty({})
+  rootcause: string;
+
+  
+  @IsString()
+  @ApiProperty({})
+  rootcauseIdName: string;
+
+  
+  
+  @IsNumber()
+  @ApiProperty({ description: descriptionReWorkStatus })
+  reworkStatus: number;
+
+  
+  @IsNumber()
+  @ApiProperty({ description: descriptionMistakeType })
+  mistakeType: number;
+}
+  
+
+export class DeliveryRejectPendingCreateDto {
+  @IsArray()
+  @ApiProperty({ type: [DeliveryRejectPendingCreateList] })
+  @ValidateNested({ each: true })
+  @Type(() => DeliveryRejectPendingCreateList)
+  array: DeliveryRejectPendingCreateList[];
+}
 export class DeliveryRejectListListDto {
   @IsNumber()
   @ApiProperty({ description: descriptionListSortType })
