@@ -33,6 +33,13 @@ export class DeliveryRejectedPendingService {
       var arrayOrderIds = [];
       var arrayOrderItemIds = [];
 
+
+
+
+
+
+
+
       dto.array.map((mapItem) => {
         arrayOrderIds.push(mapItem.salesId);
         arrayOrderItemIds.push(mapItem.salesItemId);
@@ -56,6 +63,20 @@ export class DeliveryRejectedPendingService {
           _status: 1,
         });
       });
+
+
+  var resultOsCheck= await this.orderSaleMainModel.find({_id:{$in:arrayOrderIds,_workStatus:35}},{_id:1});
+if(resultOsCheck.length != dto.array.length){
+  throw new HttpException('Order status mismatch', HttpStatus.INTERNAL_SERVER_ERROR);
+}
+
+
+
+
+
+
+
+
 
       var result1 = await this.deliveryRejectedPendingModel.insertMany(arrayToStates, {
         session: transactionSession,

@@ -36,10 +36,13 @@ import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_respons
 import { pipe } from 'rxjs';
 import { SubCategories } from 'src/tableModels/sub_categories.model';
 import { Generals } from 'src/tableModels/generals.model';
+import { RootCause } from 'aws-sdk/clients/costexplorer';
 
 @Injectable()
 export class OrderSalesService {
   constructor(
+    @InjectModel(ModelNames.ROOT_CAUSES)
+    private readonly rootCauseModel: Model<RootCause>,
     @InjectModel(ModelNames.ORDER_SALES_MAIN)
     private readonly orderSaleMainModel: Model<OrderSalesMain>,
     @InjectModel(ModelNames.ORDER_SALES_ITEMS)
@@ -2188,6 +2191,23 @@ export class OrderSalesService {
           },
         ]);
       }
+      var resultDeliveryRejectRootCause=[];
+      if (dto.screenType.includes(504)) {
+        var pipeline = [];
+        pipeline.push({
+          $match: {
+            _status: 1,_type:{$in:[4]}
+          },
+        });
+        pipeline.push(
+          new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+            5040,
+            dto.responseFormat,
+          ),
+        );
+
+        resultDeliveryRejectRootCause = await this.rootCauseModel.aggregate(pipeline);
+      }
 
       const responseJSON = {
         message: 'success',
@@ -2199,6 +2219,7 @@ export class OrderSalesService {
           subCategory: resultSubCategory,
           generalSetting: generalSetting,
           appUpdates: resultGeneralsAppUpdate,
+          delRejectRootCause:resultDeliveryRejectRootCause,
           currentTime: dateTime,
         },
       };

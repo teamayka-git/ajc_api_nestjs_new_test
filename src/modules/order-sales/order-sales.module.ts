@@ -17,6 +17,7 @@ import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
 import { OrderSalesItemsSchema } from 'src/tableModels/order_sales_items.model';
 import { SubCategoriesSchema } from 'src/tableModels/sub_categories.model';
 import { GeneralsSchema } from 'src/tableModels/generals.model';
+import { RootCausesSchema } from 'src/tableModels/rootCause.model';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { GeneralsSchema } from 'src/tableModels/generals.model';
       { name: ModelNames.SUB_CATEGORIES, schema:SubCategoriesSchema },
       { name: ModelNames.GENERALS, schema:GeneralsSchema },
       { name: ModelNames.SHOPS, schema: ShopsSchema },
+      { name: ModelNames.ROOT_CAUSES, schema: RootCausesSchema },
       {
         name: ModelNames.ORDER_SALE_HISTORIES,
         schema: OrderSaleHistoriesSchema,
