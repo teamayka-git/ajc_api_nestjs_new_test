@@ -182,16 +182,27 @@ export class DeliveryReturnService {
 console.log("____del reject dto   "+JSON.stringify(dto));
 
 
+
+var deliveryReturnIdsMongo=[];
+if (dto.deliveryReturnIds.length > 0) {
+  
+  dto.deliveryReturnIds.map((mapItem) => {
+    deliveryReturnIdsMongo.push(new mongoose.Types.ObjectId(mapItem));
+  });
+
+  
+}
+
       //check qr code scanned at right status
       var getDeliveryItemsForCheck = await this.deliveryReturnModel.aggregate([
         {
           $match: {
-            _id: { $in: dto.deliveryReturnIds },
+            _id: { $in: deliveryReturnIdsMongo },
             _workStatus: dto.fromWorkStatus,
             _status: 1,
           },
         },
-/*
+
         {
           $lookup: {
             from: ModelNames.DELIVERY_RETURN_ITEMS,
@@ -232,7 +243,7 @@ console.log("____del reject dto   "+JSON.stringify(dto));
             ],
             as: 'deliveryReturnItems',
           },
-        },*/
+        },
       ]);
 
 console.log("__getDeliveryItemsForCheck   "+JSON.stringify(getDeliveryItemsForCheck));
@@ -240,11 +251,6 @@ console.log("__getDeliveryItemsForCheck   "+JSON.stringify(getDeliveryItemsForCh
       if (getDeliveryItemsForCheck.length != dto.deliveryReturnIds.length) {
         throw new HttpException(
           'Delivery return wrong status',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }else{
-        throw new HttpException(
-          'working',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
