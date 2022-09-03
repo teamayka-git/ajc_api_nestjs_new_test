@@ -545,8 +545,14 @@ export class DeliveryService {
 
         updateObj['_proofRootCause'] = dto.proofRootCause;
 
-        updateObj['_proofRootCauseId'] = dto.proofRootCauseId;
+        if(dto.proofRootCauseId=="" || dto.proofRootCauseId=="nil"){
+          updateObj['_proofRootCauseId'] = null;
 
+        }else{
+          updateObj['_proofRootCauseId'] = dto.proofRootCauseId;
+
+        }
+        
         await this.orderSaleMainModel.updateMany(
           {
             _id: { $in: orderSaleIds },
