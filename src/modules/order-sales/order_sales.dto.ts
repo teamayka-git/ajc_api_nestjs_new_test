@@ -135,6 +135,12 @@ export class OrderSalesCreateDto {
   @ApiProperty({})
   description: string;
 
+  
+  @IsOptional()
+  @IsString()
+  @ApiProperty({})
+  generalRemark: string;
+
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
   )
@@ -310,6 +316,22 @@ export class OrderSaleListDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   orderSaleIdsIds: string[];
+
+
+
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  uids: string[];
+
+
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  referenceNumbers: string[];
+
+
+
 
   @IsNumber()
   @ApiProperty({})

@@ -13,6 +13,7 @@ import { CommonNames } from './common/common_names';
 import { ModelNames } from './common/model_names';
 import { GlobalConfig } from './config/global_config';
 import { ModelWeight } from './model_weight/model_weight';
+import { ModelWeightResponseFormat } from './model_weight/model_weight_response_format';
 import { Categories } from './tableModels/categories.model';
 import { Cities } from './tableModels/cities.model';
 import { Colours } from './tableModels/colourMasters.model';
@@ -476,6 +477,37 @@ if(codeGeneralsAppUpdate.length!=0){
 
     resultCompany = resultCompanyList[0];
 
+
+ var   resultGeneralRemarks=[];
+
+var generalsAggregatePipeline=[];
+if(dto.generalsCodes != null &&  dto.generalsCodes.length!=0){
+
+  generalsAggregatePipeline.push({$match:{
+    _code:{$in:dto.generalsCodes}
+  }});
+}
+if(dto.generalsTypes != null &&  dto.generalsTypes.length!=0){
+
+  generalsAggregatePipeline.push({$match:{
+    _type:{$in:dto.generalsTypes}
+  }});
+}
+if(resultGeneralRemarks.length!=0){
+
+  
+
+
+  var resultGeneralRemarks=await this.generalsModel.aggregate(generalsAggregatePipeline);
+}
+
+
+
+
+
+
+
+
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
 
@@ -484,6 +516,7 @@ if(codeGeneralsAppUpdate.length!=0){
       data: {
         userDetails: resultEmployee[0],
         goldTimelinesList: listGoldTimelines,
+        generalRemarks: resultGeneralRemarks,
         currentDateTime: dateTime,
         company: resultCompany,
       },

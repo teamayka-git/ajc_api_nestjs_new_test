@@ -278,7 +278,7 @@ export class OrderSalesService {
         _rootCause: '',
         _orderHeadId: shopDetails[0]._orderHeadId,
         _description: dto.description,
-        _generalRemark: '',
+        _generalRemark: (dto.generalRemark !=null)?dto.generalRemark:"",
         _createdUserId: _userId_,
         _createdAt: dateTime,
         _updatedUserId: null,
@@ -740,6 +740,36 @@ export class OrderSalesService {
           },
         });
       }
+
+      if (dto.uids!=null &&   dto.uids.length > 0) {
+        var arrayTemp = [];
+        dto.uids.forEach((eachElement) => {
+          arrayTemp.push(new RegExp(`^${eachElement}$`, 'i'));
+        });
+
+        arrayAggregation.push({
+          $match: {
+            _uid: { $in: arrayTemp },
+          },
+        });
+      }
+      if (dto.referenceNumbers!=null &&   dto.referenceNumbers.length > 0) {
+        var arrayTemp = [];
+        dto.referenceNumbers.forEach((eachElement) => {
+          arrayTemp.push(new RegExp(`^${eachElement}$`, 'i'));
+        });
+
+        arrayAggregation.push({
+          $match: {
+            _referenceNumber: { $in: arrayTemp },
+          },
+        });
+      }
+
+
+
+
+
       if (dto.orderSaleIdsIds.length > 0) {
         var newSettingsId = [];
         dto.orderSaleIdsIds.map((mapItem) => {
