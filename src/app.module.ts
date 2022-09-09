@@ -87,6 +87,7 @@ import { CategoriesSchema } from './tableModels/categories.model';
 import { SubCategoriesSchema } from './tableModels/sub_categories.model';
 import { RootCausesSchema } from './tableModels/rootCause.model';
 import { UserAttendanceSchema } from './tableModels/user_attendances.model';
+import { DeliveryCounterModule } from './modules/delivery-counter/delivery-counter.module';
 
 @Module({
   imports: [
@@ -186,6 +187,7 @@ import { UserAttendanceSchema } from './tableModels/user_attendances.model';
     DeliveryReturnModule,
     OtpModule,
     BulkApiTempModule,
+    DeliveryCounterModule,
 
     // SalesReturnRequestStatusesModule,
   ],
