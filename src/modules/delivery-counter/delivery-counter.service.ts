@@ -5,6 +5,7 @@ import { DeliveryCounters } from 'src/tableModels/delivery_counters.model';
 import * as mongoose from 'mongoose';
 import { DeliveryCounterCreateDto, DeliveryCounterEditDto, DeliveryCounterListDto, DeliveryCounterStatusChangeDto } from './delivery_counter.dto';
 import { GlobalConfig } from 'src/config/global_config';
+import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 
 @Injectable()
 export class DeliveryCounterService {
@@ -179,8 +180,13 @@ export class DeliveryCounterService {
             arrayAggregation.push({ $skip: dto.skip });
             arrayAggregation.push({ $limit: dto.limit });
           }
-        
           
+          arrayAggregation.push(
+            new ModelWeightResponseFormat().deliveryCounterResponseFormat(
+              0,
+              dto.responseFormat,
+            ),
+          );
     
           var result = await this.deliveryCounterModel
             .aggregate(arrayAggregation)

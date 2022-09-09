@@ -141,6 +141,7 @@ export class DeliveryReturnService {
           _orderSaleId: eachItem,
           _userId: null,
           _type: 25,
+          _deliveryCounterId:null,
           _shopId: null,
           _orderSaleItemId: null,
           _deliveryProviderId: null,
@@ -270,6 +271,7 @@ export class DeliveryReturnService {
               _orderSaleId: eachItemChild.deleveryRejectPendingDetails._salesId,
               _userId: null,
               _type: 34,
+              _deliveryCounterId:null,
               _shopId: null,
               _orderSaleItemId:
                 eachItemChild.deleveryRejectPendingDetails._salesItemId,
@@ -289,6 +291,7 @@ export class DeliveryReturnService {
                   eachItemChild.deleveryRejectPendingDetails._salesId,
                 _userId: null,
                 _type: 27,
+                _deliveryCounterId:null,
                 _shopId: null,
                 _orderSaleItemId:
                   eachItemChild.deleveryRejectPendingDetails._salesItemId,
@@ -308,6 +311,7 @@ export class DeliveryReturnService {
                 _userId: null,
                 _type: 40,
                 _shopId: null,
+                _deliveryCounterId:null,
                 _orderSaleItemId:
                   eachItemChild.deleveryRejectPendingDetails._salesItemId,
                 _description: '',
@@ -492,6 +496,7 @@ export class DeliveryReturnService {
               _orderSaleItemId: null,
               _shopId: resultOrderSaleOld[indexCount]._shopId,
               _type: 0,
+              _deliveryCounterId:null,
               _deliveryProviderId: null,
               _description: '',
               _createdUserId: _userId_,
@@ -787,6 +792,10 @@ export class DeliveryReturnService {
           },
         );
       }
+
+
+
+      
 
       if (dto.screenType.includes(101)) {
         arrayAggregation.push(
@@ -1104,7 +1113,7 @@ export class DeliveryReturnService {
                           },
                         },
                         new ModelWeightResponseFormat().shopTableResponseFormat(
-                          112,
+                          0,
                           dto.responseFormat,
                         ),
                       ],

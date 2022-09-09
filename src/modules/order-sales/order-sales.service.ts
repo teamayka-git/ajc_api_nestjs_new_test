@@ -352,6 +352,7 @@ export class OrderSalesService {
         _orderSaleId: result1._id,
         _userId: null,
         _orderSaleItemId: null,
+        _deliveryCounterId:null,
         _shopId: dto.shopId,
         _type: 0,
         _deliveryProviderId: null,
@@ -537,6 +538,7 @@ export class OrderSalesService {
         _orderSaleId: dto.orderSaleId,
         _userId: null,
         _type: 100,
+        _deliveryCounterId:null,
         _deliveryProviderId: null,
         _shopId: null,
         _orderSaleItemId: null,
@@ -614,6 +616,7 @@ export class OrderSalesService {
           _userId: null,
           _type: type,
           _deliveryProviderId: null,
+          _deliveryCounterId:null,
           _shopId: null,
           _orderSaleItemId: null,
           _description: '',
@@ -680,6 +683,7 @@ export class OrderSalesService {
           _userId: null,
           _type: dto.workStatus,
           _deliveryProviderId: null,
+          _deliveryCounterId:null,
           _orderSaleItemId: null,
           _shopId: null,
           _description: '',
@@ -5046,6 +5050,9 @@ export class OrderSalesService {
                   $expr: { $eq: ['$_id', '$$deliveryProviderId'] },
                 },
               },
+              {
+                $project: new ModelWeight().deliveryProviderTableLight(),
+              },
             ],
             as: 'deliveryProviderDetails',
           },
@@ -5053,6 +5060,29 @@ export class OrderSalesService {
         {
           $unwind: {
             path: '$deliveryProviderDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: ModelNames.DELIVERY_COUNTERS,
+            let: { deliveryCounterId: '$_deliveryCounterId' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$_id', '$$deliveryCounterId'] },
+                },
+              },
+              {
+                $project: new ModelWeight().deliveryCounterTableLight(),
+              },
+            ],
+            as: 'deliveryCounterDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$deliveryCounterDetails',
             preserveNullAndEmptyArrays: true,
           },
         },

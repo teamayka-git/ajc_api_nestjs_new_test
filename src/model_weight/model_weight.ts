@@ -495,6 +495,7 @@ export class ModelWeight {
       _uid: 1,
       _name: 1,
       _displayName: 1,
+      _globalGalleryId: 1,
     };
   }
   public shopTableMinimum(): Object {
@@ -2185,6 +2186,94 @@ export class ModelWeight {
       _prefix:1,
       _processMasterId:1,
       _lastLogin:1,
+      _dataGuard:1,
+      _createdUserId:1,
+      _createdAt:1,
+      _updatedUserId:1,
+      _updatedAt:1,
+      _status:1,
+    };
+  }
+
+
+
+  
+  public deliveryCounterBundleTableLight(): Object {
+    return {
+      _id:1,
+      _uid:1,
+      _workStatus:1,
+     
+    };
+  }
+  public deliveryCounterBundleTableMinimum(): Object {
+    return {
+      _id:1,
+      _uid:1,
+      _workStatus:1,
+      _employeeId:1,
+      _deliveryCounterId:1,
+      _receivedUserId:1,
+      _createdUserId:1,
+      _status:1,
+    };
+  }
+  public deliveryCounterBundleTableMedium(): Object {
+    return {
+      _id:1,
+      _uid:1,
+      _workStatus:1,
+      _employeeId:1,
+      _deliveryCounterId:1,
+      _receivedUserId:1,
+      _status:1,
+    };
+  }
+  public deliveryCounterBundleTableMaximum(): Object {
+    return {
+      _id:1,
+      _uid:1,
+      _workStatus:1,
+      _employeeId:1,
+      _deliveryCounterId:1,
+      _receivedUserId:1,
+      _createdUserId:1,
+      _createdAt:1,
+      _updatedUserId:1,
+      _updatedAt:1,
+      _status:1,
+    };
+  }
+
+  
+  public deliveryCounterTableLight(): Object {
+    return {
+      _id:1,
+      _name:1,
+     
+    };
+  }
+  public deliveryCounterTableMinimum(): Object {
+    return {
+      _id:1,
+      _name:1,
+     
+      _createdUserId:1,
+      _status:1,
+    };
+  }
+  public deliveryCounterTableMedium(): Object {
+    return {
+      _id:1,
+      _name:1,
+      _dataGuard:1,
+      _status:1,
+    };
+  }
+  public deliveryCounterTableMaximum(): Object {
+    return {
+      _id:1,
+      _name:1,
       _dataGuard:1,
       _createdUserId:1,
       _createdAt:1,

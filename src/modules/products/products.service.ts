@@ -316,7 +316,7 @@ export class ProductsService {
                 _updatedAt: dateTime,
                 _isProductGenerated: 1,
                 _orderItemId: orderItemId,
-                _workStatus: (dto.arrayItems.findIndex((it)=>it.hmSealingStatus==1)!=-1) ? 8 : 16, 
+                _workStatus: (dto.arrayItems.findIndex((it)=>it.hmSealingStatus==1)!=-1) ? 8 : 6,  
               },
             },
             { new: true, session: transactionSession },
@@ -326,6 +326,7 @@ export class ProductsService {
             _userId: null,
             _type: 6,
             _shopId: null,
+            _deliveryCounterId:null,
             _deliveryProviderId:null,
             _orderSaleItemId: null,
             _description: '',
@@ -333,20 +334,20 @@ export class ProductsService {
             _createdAt: dateTime,
             _status: 1,
           });
-          if (dto.arrayItems[i].hmSealingStatus == 0) {
-            arrayOrderSaleHistory.push({
-              _orderSaleId: dto.orderId,
-              _userId: null,
-              _type: 16,
-              _shopId: null,
-              _deliveryProviderId:null,
-              _orderSaleItemId: null,
-              _description: '',
-              _createdUserId: _userId_,
-              _createdAt: dateTime,
-              _status: 1,
-            });
-          }
+          // if (dto.arrayItems[i].hmSealingStatus == 0) {
+          //   arrayOrderSaleHistory.push({
+          //     _orderSaleId: dto.orderId,
+          //     _userId: null,
+          //     _type: 16,
+          //     _shopId: null,
+          //     _deliveryProviderId:null,
+          //     _orderSaleItemId: null,
+          //     _description: '',
+          //     _createdUserId: _userId_,
+          //     _createdAt: dateTime,
+          //     _status: 1,
+          //   });
+          // }
         }
         if (dto.arrayItems[i].eCommerceStatus == 1 && orderId != null) {
           var resultCounterPhotographer =
@@ -385,6 +386,7 @@ export class ProductsService {
             _userId: resultPhotographer[0].employeeList[0]._userId,
             _type: 105,
             _deliveryProviderId:null,
+            _deliveryCounterId:null,
             _shopId: null,
             _orderSaleItemId: null,
             _description: 'Photography request UID: '+photographyUid,
@@ -430,6 +432,7 @@ export class ProductsService {
             _userId: null,
             _type: 8,
             _orderSaleItemId: null,
+            _deliveryCounterId:null,
             _deliveryProviderId:null,
             _shopId: null,
             _description: '',
