@@ -4279,7 +4279,7 @@ export class OrderSalesService {
           $match: { _orderStatus: { $in: dto.workStatusArray } },
         });
       }
-
+console.log("___dto  "+JSON.stringify(dto));
       //check nested
       if (
         (dto.searchingText != null && dto.searchingText != '') ||
