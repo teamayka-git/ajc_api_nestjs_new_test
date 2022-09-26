@@ -4310,8 +4310,10 @@ console.log("___dto  "+JSON.stringify(dto));
 
             pipeline.push({
               $match: {
-                _uid: dto.searchingText,
-                _referenceNumber: dto.searchingText,
+                $or: [
+                  { _uid: new RegExp(`^${dto.searchingText}$`, 'i') },
+                  { _referenceNumber: new RegExp(`^${dto.searchingText}$`, 'i') },
+                ],
               },
             });
           }
