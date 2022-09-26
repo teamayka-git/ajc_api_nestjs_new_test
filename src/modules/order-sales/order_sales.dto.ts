@@ -601,6 +601,35 @@ export class SetProcessAssignedOrderSaleListDto {
   @ApiProperty({ type: [String] })
   employeesArray: string[];
 
+
+  
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  shopIds: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  subCategoryIds: string[];
+
+  
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty({})
+  dueStartDate: number;
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty({})
+  dueEndDate: number;
+
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({})
+  searchingText: string;
+
   @IsNumber()
   @ApiProperty({})
   limit: number;
