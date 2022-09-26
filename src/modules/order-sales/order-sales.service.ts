@@ -4301,10 +4301,17 @@ console.log("___dto  "+JSON.stringify(dto));
           });
 
           if (dto.searchingText != null && dto.searchingText != '') {
+            // pipeline.push({
+            //   $match: {
+            //     _uid: new RegExp(`^${dto.searchingText}$`, 'i'),
+            //     _referenceNumber: new RegExp(`^${dto.searchingText}$`, 'i'),
+            //   },
+            // });
+
             pipeline.push({
               $match: {
-                _uid: new RegExp(`^${dto.searchingText}$`, 'i'),
-                _referenceNumber: new RegExp(`^${dto.searchingText}$`, 'i'),
+                _uid: dto.searchingText,
+                _referenceNumber: dto.searchingText,
               },
             });
           }
