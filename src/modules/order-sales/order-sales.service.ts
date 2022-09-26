@@ -268,17 +268,17 @@ export class OrderSalesService {
         _dueDate: dto.dueDate,
         _workStatus: 0,
         _rootCauseId: null,
-        _deliveryType: dto.deliveryType, 
+        _deliveryType: dto.deliveryType,
         _isInvoiceGenerated: 0,
         _isProductGenerated: 0,
         _type: dto.type,
-        
-      _parentOrderId:null,
+
+        _parentOrderId: null,
         _isReWork: 0,
         _rootCause: '',
         _orderHeadId: shopDetails[0]._orderHeadId,
         _description: dto.description,
-        _generalRemark: (dto.generalRemark !=null)?dto.generalRemark:"",
+        _generalRemark: dto.generalRemark != null ? dto.generalRemark : '',
         _createdUserId: _userId_,
         _createdAt: dateTime,
         _updatedUserId: null,
@@ -741,7 +741,7 @@ export class OrderSalesService {
         });
       }
 
-      if (dto.uids!=null &&   dto.uids.length > 0) {
+      if (dto.uids != null && dto.uids.length > 0) {
         var arrayTemp = [];
         dto.uids.forEach((eachElement) => {
           arrayTemp.push(new RegExp(`^${eachElement}$`, 'i'));
@@ -753,7 +753,7 @@ export class OrderSalesService {
           },
         });
       }
-      if (dto.referenceNumbers!=null &&   dto.referenceNumbers.length > 0) {
+      if (dto.referenceNumbers != null && dto.referenceNumbers.length > 0) {
         var arrayTemp = [];
         dto.referenceNumbers.forEach((eachElement) => {
           arrayTemp.push(new RegExp(`^${eachElement}$`, 'i'));
@@ -765,10 +765,6 @@ export class OrderSalesService {
           },
         });
       }
-
-
-
-
 
       if (dto.orderSaleIdsIds.length > 0) {
         var newSettingsId = [];
@@ -1853,8 +1849,6 @@ export class OrderSalesService {
                 );
               }
 
-             
-
               return pipeline;
             };
 
@@ -2008,8 +2002,7 @@ export class OrderSalesService {
                     $lookup: {
                       from: ModelNames.INVOICES,
                       let: { invItemId: '$_invoiceId' },
-                      pipeline:
-                        isorderSalesItemsinvItemsInvDetailsPipeline(),
+                      pipeline: isorderSalesItemsinvItemsInvDetailsPipeline(),
                       as: 'invoiceDetails',
                     },
                   },
@@ -2223,12 +2216,13 @@ export class OrderSalesService {
           },
         ]);
       }
-      var resultDeliveryRejectRootCause=[];
+      var resultDeliveryRejectRootCause = [];
       if (dto.screenType.includes(504)) {
         var pipeline = [];
         pipeline.push({
           $match: {
-            _status: 1,_type:{$in:[4]}
+            _status: 1,
+            _type: { $in: [4] },
           },
         });
         pipeline.push(
@@ -2238,7 +2232,9 @@ export class OrderSalesService {
           ),
         );
 
-        resultDeliveryRejectRootCause = await this.rootCauseModel.aggregate(pipeline);
+        resultDeliveryRejectRootCause = await this.rootCauseModel.aggregate(
+          pipeline,
+        );
       }
 
       const responseJSON = {
@@ -2251,7 +2247,7 @@ export class OrderSalesService {
           subCategory: resultSubCategory,
           generalSetting: generalSetting,
           appUpdates: resultGeneralsAppUpdate,
-          delRejectRootCause:resultDeliveryRejectRootCause,
+          delRejectRootCause: resultDeliveryRejectRootCause,
           currentTime: dateTime,
         },
       };
@@ -4283,6 +4279,117 @@ export class OrderSalesService {
           $match: { _orderStatus: { $in: dto.workStatusArray } },
         });
       }
+
+      //check nested
+      if (
+        (dto.searchingText != null && dto.searchingText != '') ||
+        (dto.shopIds != null && dto.shopIds.length != 0) ||
+        (dto.subCategoryIds != null && dto.subCategoryIds.length != 0) ||
+        (dto.dueStartDate != null &&
+          dto.dueEndDate != null &&
+          dto.dueStartDate != -1 &&
+          dto.dueEndDate != -1)
+      ) {
+        // _orderSaleId
+
+        const orderSaleMainFilterPipeline = () => {
+          const pipeline = [];
+          pipeline.push({
+            $match: {
+              $expr: { $eq: ['$_id', '$$orderId'] },
+            },
+          });
+
+          if (dto.searchingText != null && dto.searchingText != '') {
+            pipeline.push({
+              $match: {
+                _uid: new RegExp(`^${dto.searchingText}$`, 'i'),
+                _referenceNumber: new RegExp(`^${dto.searchingText}$`, 'i'),
+              },
+            });
+          }
+          if (dto.shopIds != null && dto.shopIds.length != 0) {
+            var newSettingsId = [];
+            dto.shopIds.map((mapItem) => {
+              newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+            });
+            pipeline.push({
+              $match: { _shopId: { $in: newSettingsId } },
+            });
+          }
+          if (dto.subCategoryIds != null && dto.subCategoryIds.length != 0) {
+            var newSettingsId = [];
+            dto.subCategoryIds.map((mapItem) => {
+              newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+            });
+            arrayAggregation.push(
+              {
+                $lookup: {
+                  from: ModelNames.ORDER_SALES_ITEMS,
+                  let: { orderId: '$_id' },
+                  pipeline: [
+                    {
+                      $match: {
+                        _status: 1,
+                        $expr: { $eq: ['$_orderSaleId', '$$orderId'] },
+                      },
+                    },
+                    {
+                      $match: {
+                        _subCategoryId: { $in: newSettingsId },
+                      },
+                    },
+                    {
+                      $project: {
+                        _id: 1,
+                      },
+                    },
+                  ],
+                  as: 'mongoCheckSubItems',
+                },
+              },
+              {
+                $match: { mongoCheckSubItems: { $ne: [] } },
+              },
+            );
+          }
+          if (
+            dto.dueStartDate != null &&
+            dto.dueEndDate != null &&
+            dto.dueStartDate != -1 &&
+            dto.dueEndDate != -1
+          ) {
+            pipeline.push({
+              $match: {
+                _dueDate: { $lt: dto.dueEndDate, $gt: dto.dueStartDate },
+              },
+            });
+          }
+
+          pipeline.push({
+            $project: {
+              _id: 1,
+            },
+          });
+
+          return pipeline;
+        };
+
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_MAIN,
+              let: { orderId: '$_orderSaleId' },
+              pipeline: orderSaleMainFilterPipeline(),
+              as: 'mongoCheckOrderSale',
+            },
+          },
+          {
+            $match: { mongoCheckOrderSale: { $ne: [] } },
+          },
+        );
+      }
+
       arrayAggregation.push({
         $match: {
           _status: 1,
