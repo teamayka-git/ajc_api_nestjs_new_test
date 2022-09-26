@@ -4389,7 +4389,7 @@ export class OrderSalesService {
           },
         );
       }
-
+console.log("____ os setprocess   "+JSON.stringify(arrayAggregation));
       arrayAggregation.push({
         $match: {
           _status: 1,
