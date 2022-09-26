@@ -5327,11 +5327,11 @@ if(result.length==0){
    
   ]);
   result.forEach((eachitem)=>{
-    resultItems.push(eachitem._id);
+    resultItems.push(eachitem.orderSaleItemsDetails._orderSaleId);
   });
 }else{
   result.forEach((eachitem)=>{
-    resultItems.push(eachitem.orderSaleItemsDetails._orderSaleId);
+    resultItems.push(eachitem._id);
   });
 }
    
