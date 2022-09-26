@@ -23,6 +23,7 @@ import { RateCards } from 'src/tableModels/rateCards.model';
 import { RateCardPercentages } from 'src/tableModels/rateCardPercentages.model';
 import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 import { Generals } from 'src/tableModels/generals.model';
+import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 
 @Injectable()
 export class SubCategoriesService {
@@ -405,7 +406,13 @@ export class SubCategoriesService {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
-
+      arrayAggregation.push(
+        new ModelWeightResponseFormat().subCategoryTableResponseFormat(
+          0,
+          dto.responseFormat,
+        ),
+      );
+      
       if (dto.screenType.includes(100)) {
         arrayAggregation.push(
           {

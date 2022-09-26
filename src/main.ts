@@ -9,7 +9,7 @@ import { SocketIoAdapter } from './socket/socket_adapter';
 import { config } from 'aws-sdk';
 
 
-
+//last
 
 async function bootstrap() {
   config.update({
