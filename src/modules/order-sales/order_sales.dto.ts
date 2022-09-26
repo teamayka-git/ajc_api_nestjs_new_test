@@ -585,6 +585,13 @@ export class OrderSalesWorkStatusChangeDto {
   @ApiProperty({})
   rootCauseId: string;
 }
+
+export class OrderSalesGetOrderIdFromQrBarcodeDto {
+ 
+  @IsString()
+  @ApiProperty({})
+  value: string;
+}
 export class SetProcessAssignedOrderSaleListDto {
   @IsArray()
   @ApiProperty({

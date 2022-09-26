@@ -22,6 +22,7 @@ import {
   OrderSalesChangeDto,
   OrderSalesCreateDto,
   OrderSalesEditDto,
+  OrderSalesGetOrderIdFromQrBarcodeDto,
   OrderSalesWorkStatusChangeDto,
   SetProcessAssignedOrderSaleListDto,
 } from './order_sales.dto';
@@ -136,4 +137,15 @@ export class OrderSalesController {
       req['_userId_'],
     );
   }
+
+
+  @Post('getOrderIdFromQrBarCode')
+  getOrderIdFromQrBarCode(
+    @Body() dto: OrderSalesGetOrderIdFromQrBarcodeDto,
+    @Request() req,
+  ) {
+    return this.orderSalesService.getOrderIdFromQrBarCode(dto, req['_userId_']);
+  }
+
+
 }

@@ -12,6 +12,7 @@ import {
   OrderSalesChangeDto,
   OrderSalesCreateDto,
   OrderSalesEditDto,
+  OrderSalesGetOrderIdFromQrBarcodeDto,
   OrderSalesWorkStatusChangeDto,
   SetProcessAssignedOrderSaleListDto,
 } from './order_sales.dto';
@@ -37,12 +38,15 @@ import { pipe } from 'rxjs';
 import { SubCategories } from 'src/tableModels/sub_categories.model';
 import { Generals } from 'src/tableModels/generals.model';
 import { RootCause } from 'aws-sdk/clients/costexplorer';
+import { InvoiceItems } from 'src/tableModels/invoice_items.model';
 
 @Injectable()
 export class OrderSalesService {
   constructor(
     @InjectModel(ModelNames.ROOT_CAUSES)
     private readonly rootCauseModel: Model<RootCause>,
+    @InjectModel(ModelNames.INVOICE_ITEMS)
+    private readonly invoiceItemsModel: Model<InvoiceItems>,
     @InjectModel(ModelNames.ORDER_SALES_MAIN)
     private readonly orderSaleMainModel: Model<OrderSalesMain>,
     @InjectModel(ModelNames.ORDER_SALES_ITEMS)
@@ -721,6 +725,7 @@ export class OrderSalesService {
     }
   }
 
+  
   async list(dto: OrderSaleListDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
@@ -4279,7 +4284,6 @@ export class OrderSalesService {
           $match: { _orderStatus: { $in: dto.workStatusArray } },
         });
       }
-console.log("___dto  "+JSON.stringify(dto));
       //check nested
       if (
         (dto.searchingText != null && dto.searchingText != '') ||
@@ -4301,12 +4305,7 @@ console.log("___dto  "+JSON.stringify(dto));
           });
 
           if (dto.searchingText != null && dto.searchingText != '') {
-            // pipeline.push({
-            //   $match: {
-            //     _uid: new RegExp(`^${dto.searchingText}$`, 'i'),
-            //     _referenceNumber: new RegExp(`^${dto.searchingText}$`, 'i'),
-            //   },
-            // });
+         
 
             pipeline.push({
               $match: {
@@ -4398,7 +4397,6 @@ console.log("___dto  "+JSON.stringify(dto));
           },
         );
       }
-console.log("____ os setprocess   "+JSON.stringify(arrayAggregation));
       arrayAggregation.push({
         $match: {
           _status: 1,
@@ -5263,4 +5261,101 @@ console.log("____ os setprocess   "+JSON.stringify(arrayAggregation));
       throw error;
     }
   }
+  
+  async getOrderIdFromQrBarCode(
+    dto: OrderSalesGetOrderIdFromQrBarcodeDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+
+var resultItems=[];
+
+      var result = await this.orderSaleMainModel.aggregate([
+        {
+          $match: {
+            $or: [
+              { _uid: new RegExp(`^${dto.value}$`, 'i') },
+              { _referenceNumber: new RegExp(`^${dto.value}$`, 'i') },
+            ],
+          },
+        },{$project:{
+          _id:1
+        }}
+      ]);
+if(result.length==0){
+
+  result = await this.invoiceItemsModel.aggregate([
+    {
+      $match: {
+        $or: [
+          { _productBarcode: new RegExp(`^${dto.value}$`, 'i') },
+        ],
+      },
+    },
+    {$project:{
+      _orderSaleItemId:1
+    }},
+    {
+      $lookup: {
+        from: ModelNames.ORDER_SALES_ITEMS,
+        let: { orderSaleItemsId: '$_orderSaleItemId' },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ['$_id', '$$orderSaleItemsId'] },
+            },
+          },
+          {
+            $project:{
+              _orderSaleId:1
+            }
+          }
+        ],
+        as: 'orderSaleItemsDetails',
+      },
+    },
+    {
+      $unwind: {
+        path: '$orderSaleItemsDetails',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    
+   
+  ]);
+  result.forEach((eachitem)=>{
+    resultItems.push(eachitem._id);
+  });
+}else{
+  result.forEach((eachitem)=>{
+    resultItems.push(eachitem.orderSaleItemsDetails._orderSaleId);
+  });
+}
+   
+
+      const responseJSON = { message: 'success', data: {list:resultItems} };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
 }
