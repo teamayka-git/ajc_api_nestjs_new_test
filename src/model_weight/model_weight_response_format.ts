@@ -239,6 +239,8 @@ export class ModelWeightResponseFormat {
       return { $project: new ModelWeight().productTableMinimum() };
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().productTableMedium() };
+    } else if (responseFormatArray.includes(startIndex + 4)) {
+      return { $project: new ModelWeight().productTableCustom1() };
     } else {
       return { $project: {   _: 0,  } };
     }

@@ -400,6 +400,7 @@ export class ResponseFormatService {
         Minimum: new ModelWeight().productTableMinimum(),
         Medium: new ModelWeight().productTableMedium(),
         Maximum: new ModelWeight().productTableMaximum(),
+        custom1:new ModelWeight().productTableCustom1(),
       },
     };
     return responseJSON;

@@ -1106,6 +1106,17 @@ export class ModelWeight {
       _status: 1,
     };
   }
+  public productTableCustom1(): Object {
+    return {
+      _id: 1,
+     
+      _grossWeight: 1,
+     
+      _totalStoneWeight: 1,
+      _netWeight: 1,
+     
+    };
+  }
 
   public categoryTableLight(): Object {
     return {
