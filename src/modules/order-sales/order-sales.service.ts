@@ -1026,7 +1026,7 @@ export class OrderSalesService {
                 let: { processId: '$_processId' },
                 pipeline: [
                   { $match: { $expr: { $eq: ['$_id', '$$processId'] } } },
-                  new ModelWeightResponseFormat().orderSaleSetProcessTableResponseFormat(
+                  new ModelWeightResponseFormat().processMasterTableResponseFormat(
                     1080,
                     dto.responseFormat,
                   ),
@@ -3037,7 +3037,7 @@ export class OrderSalesService {
                 let: { processId: '$_processId' },
                 pipeline: [
                   { $match: { $expr: { $eq: ['$_id', '$$processId'] } } },
-                  new ModelWeightResponseFormat().orderSaleSetProcessTableResponseFormat(
+                  new ModelWeightResponseFormat().processMasterTableResponseFormat(
                     1080,
                     dto.responseFormat,
                   ),
