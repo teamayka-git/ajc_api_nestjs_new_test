@@ -19,6 +19,7 @@ import { SubCategoriesSchema } from 'src/tableModels/sub_categories.model';
 import { GeneralsSchema } from 'src/tableModels/generals.model';
 import { RootCausesSchema } from 'src/tableModels/rootCause.model';
 import { InvoiceItemsSchema } from 'src/tableModels/invoice_items.model';
+import { ProductsSchema } from 'src/tableModels/products.model';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { InvoiceItemsSchema } from 'src/tableModels/invoice_items.model';
       { name: ModelNames.SHOPS, schema: ShopsSchema },
       { name: ModelNames.ROOT_CAUSES, schema: RootCausesSchema },
       { name: ModelNames.INVOICE_ITEMS, schema: InvoiceItemsSchema },
+      { name: ModelNames.PRODUCTS, schema: ProductsSchema },
       {
         name: ModelNames.ORDER_SALE_HISTORIES,
         schema: OrderSaleHistoriesSchema,

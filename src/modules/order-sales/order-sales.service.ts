@@ -39,12 +39,15 @@ import { SubCategories } from 'src/tableModels/sub_categories.model';
 import { Generals } from 'src/tableModels/generals.model';
 import { RootCause } from 'aws-sdk/clients/costexplorer';
 import { InvoiceItems } from 'src/tableModels/invoice_items.model';
+import { Products } from 'src/tableModels/products.model';
 
 @Injectable()
 export class OrderSalesService {
   constructor(
     @InjectModel(ModelNames.ROOT_CAUSES)
     private readonly rootCauseModel: Model<RootCause>,
+    @InjectModel(ModelNames.PRODUCTS)
+    private readonly productModel: Model<Products>,
     @InjectModel(ModelNames.INVOICE_ITEMS)
     private readonly invoiceItemsModel: Model<InvoiceItems>,
     @InjectModel(ModelNames.ORDER_SALES_MAIN)
@@ -725,7 +728,6 @@ export class OrderSalesService {
     }
   }
 
-  
   async list(dto: OrderSaleListDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
@@ -4305,13 +4307,13 @@ export class OrderSalesService {
           });
 
           if (dto.searchingText != null && dto.searchingText != '') {
-         
-
             pipeline.push({
               $match: {
                 $or: [
                   { _uid: new RegExp(`^${dto.searchingText}$`, 'i') },
-                  { _referenceNumber: new RegExp(`^${dto.searchingText}$`, 'i') },
+                  {
+                    _referenceNumber: new RegExp(`^${dto.searchingText}$`, 'i'),
+                  },
                 ],
               },
             });
@@ -5261,7 +5263,7 @@ export class OrderSalesService {
       throw error;
     }
   }
-  
+
   async getOrderIdFromQrBarCode(
     dto: OrderSalesGetOrderIdFromQrBarcodeDto,
     _userId_: string,
@@ -5270,8 +5272,8 @@ export class OrderSalesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-console.log("___ barcode "+JSON.stringify(dto));
-var resultItems=[];
+      console.log('___ barcode ' + JSON.stringify(dto));
+      var resultItems = [];
 
       var result = await this.orderSaleMainModel.aggregate([
         {
@@ -5281,62 +5283,61 @@ var resultItems=[];
               { _referenceNumber: new RegExp(`^${dto.value}$`, 'i') },
             ],
           },
-        },{$project:{
-          _id:1
-        }}
+        },
+        {
+          $project: {
+            _id: 1,
+          },
+        },
       ]);
-if(result.length==0){
-
-  result = await this.invoiceItemsModel.aggregate([
-    {
-      $match: {
-        $or: [
-          { _productBarcode: new RegExp(`^${dto.value}$`, 'i') },
-        ],
-      },
-    },
-    {$project:{
-      _orderSaleItemId:1
-    }},
-    {
-      $lookup: {
-        from: ModelNames.ORDER_SALES_ITEMS,
-        let: { orderSaleItemsId: '$_orderSaleItemId' },
-        pipeline: [
+      if (result.length == 0) {
+        result = await this.productModel.aggregate([
           {
             $match: {
-              $expr: { $eq: ['$_id', '$$orderSaleItemsId'] },
+              $or: [{ _barcode: new RegExp(`^${dto.value}$`, 'i') }],
             },
           },
           {
-            $project:{
-              _orderSaleId:1
-            }
-          }
-        ],
-        as: 'orderSaleItemsDetails',
-      },
-    },
-    {
-      $unwind: {
-        path: '$orderSaleItemsDetails',
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    
-   
-  ]);
-  result.forEach((eachitem)=>{
-    resultItems.push(eachitem.orderSaleItemsDetails._orderSaleId);
-  });
-}else{
-  result.forEach((eachitem)=>{
-    resultItems.push(eachitem._id);
-  });
-}
-   
+            $project: {
+              _orderItemId: 1,
+            },
+          },
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_ITEMS,
+              let: { orderSaleItemsId: '$_orderItemId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$orderSaleItemsId'] },
+                  },
+                },
+                {
+                  $project: {
+                    _orderSaleId: 1,
+                  },
+                },
+              ],
+              as: 'orderSaleItemsDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderSaleItemsDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        ]);
+        result.forEach((eachitem) => {
+          resultItems.push(eachitem.orderSaleItemsDetails._orderSaleId);
+        });
+      } else {
+        result.forEach((eachitem) => {
+          resultItems.push(eachitem._id);
+        });
+      }
 
-      const responseJSON = { message: 'success', data: {list:resultItems} };
+      const responseJSON = { message: 'success', data: { list: resultItems } };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
@@ -5357,5 +5358,4 @@ if(result.length==0){
       throw error;
     }
   }
-
 }
