@@ -3129,8 +3129,28 @@ if(dto.agingStartCount !=-1 || dto.agingEndCount!=-1){
         
         
         
-        {$project:{
-      _createdAt: 1,
+        {$project:{ _id: 1,
+          _shopId: 1,
+          _uid: 1,
+          _dueDate: 1,
+          _workStatus: 1,
+          _rootCauseId: 1,
+          _deliveryType: 1,
+          _parentOrderId:1,
+          _isInvoiceGenerated: 1,
+          _isProductGenerated: 1,
+          _type: 1,
+          _isReWork: 1,
+          _referenceNumber: 1,
+          _rootCause: 1,
+          _orderHeadId: 1,
+          _description: 1,
+          _generalRemark: 1,
+          _createdUserId: 1,
+          _createdAt: 1,
+          _updatedUserId: 1,
+          _updatedAt: 1,
+          _status: 1,
         aging: {
           $dateDiff:
              {
@@ -3171,12 +3191,12 @@ if(dto.agingStartCount !=-1 || dto.agingEndCount!=-1){
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      arrayAggregation.push(
-        new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
-          0,
-          dto.responseFormat,
-        ),
-      );
+      // arrayAggregation.push(
+      //   new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+      //     0,
+      //     dto.responseFormat,
+      //   ),
+      // );
 console.log("___ arrayAggregation  "+JSON.stringify(arrayAggregation));
       const isorderSaleSetProcess = dto.screenType.includes(105);
       const isorderSaleSetProcessPipeline = () => {
