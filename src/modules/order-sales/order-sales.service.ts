@@ -3167,18 +3167,18 @@ if(dto.agingStartCount !=-1 || dto.agingEndCount!=-1){
       
       
       );
-      if(dto.agingStartCount !=-1){
-        arrayAggregation.push({$match:{
-          aging:{$gte:dto.agingStartCount}
-        }});
+      // if(dto.agingStartCount !=-1){
+      //   arrayAggregation.push({$match:{
+      //     aging:{$gte:dto.agingStartCount}
+      //   }});
   
-      }
-      if(dto.agingEndCount !=-1){
-        arrayAggregation.push({$match:{
-          aging:{$lte:dto.agingEndCount}
-        }});
+      // }
+      // if(dto.agingEndCount !=-1){
+      //   arrayAggregation.push({$match:{
+      //     aging:{$lte:dto.agingEndCount}
+      //   }});
   
-      }
+      // }
     }
 
 
