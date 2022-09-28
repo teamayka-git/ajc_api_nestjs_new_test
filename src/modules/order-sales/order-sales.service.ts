@@ -5270,7 +5270,7 @@ export class OrderSalesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-
+console.log("___ barcode "+JSON.stringify(dto));
 var resultItems=[];
 
       var result = await this.orderSaleMainModel.aggregate([
