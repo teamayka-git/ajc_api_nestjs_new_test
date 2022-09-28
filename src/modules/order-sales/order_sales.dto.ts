@@ -460,6 +460,14 @@ export class OrderSaleReportListDto {
 
   @IsNumber()
   @ApiProperty({})
+  agingStartCount: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  agingEndCount: number;
+
+  @IsNumber()
+  @ApiProperty({})
   netWeightEnd: number;
 
   @IsArray()

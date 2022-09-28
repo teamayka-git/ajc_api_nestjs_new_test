@@ -3121,8 +3121,15 @@ export class OrderSalesService {
 
 
 
-
-      arrayAggregation.push( {$project:{
+if(dto.agingStartCount !=-1 || dto.agingEndCount!=-1){
+  
+      arrayAggregation.push(
+        
+        {$match:{_workStatus:{$ne:35}}},
+        
+        
+        
+        {$project:{
         _id: 1,
       _shopId: 1,
       _uid: 1,
@@ -3145,11 +3152,11 @@ export class OrderSalesService {
       _updatedUserId: 1,
       _updatedAt: 1,
       _status: 1,
-        aaaa: {
+        aging: {
           $dateDiff:
              {
                  startDate: {$toDate:"$_createdAt"},
-                 endDate: {$toDate:1664365550180},
+                 endDate: {$toDate:dateTime},
                  unit: "day"
              }
         }
@@ -3161,6 +3168,7 @@ export class OrderSalesService {
       
       );
 
+    }
 
 
 
