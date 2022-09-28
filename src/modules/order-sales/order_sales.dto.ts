@@ -453,11 +453,17 @@ export class OrderSaleReportListDto {
 
   @IsNumber()
   @ApiProperty({})
-  deliveryCompletedStartDate: number;
+  deliveryCompleteStartDate: number;
 
   @IsNumber()
   @ApiProperty({})
-  deliveryCompletedEndDate: number;
+  deliveryCompleteEndDate: number;
+
+
+  @IsArray()
+  @ApiProperty({ type: [Number] })
+  deliveryStatus: number[];
+
 
   @IsNumber()
   @ApiProperty({})
@@ -479,6 +485,10 @@ export class OrderSaleReportListDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   deliveryExecutiveIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  logisticsPartnerIds: string[];
 
   @IsArray()
   @ApiProperty({ type: [String] })

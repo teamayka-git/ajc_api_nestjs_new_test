@@ -2388,9 +2388,6 @@ export class OrderSalesService {
         });
       }
 
-
-
-
       if (
         dto.cityIds.length > 0 ||
         dto.branchIds.length > 0 ||
@@ -2451,9 +2448,10 @@ export class OrderSalesService {
       //delivery
 
       if (
-        (dto.deliveryCompletedEndDate != -1 &&
-          dto.deliveryCompletedStartDate != -1) ||
-        dto.deliveryExecutiveIds.length != 0
+        (dto.deliveryCompleteEndDate != -1 &&
+          dto.deliveryCompleteStartDate != -1) ||
+        dto.deliveryExecutiveIds.length != 0 ||
+        dto.deliveryStatus.length != 0
       ) {
         var listMatchDeliveryTable = [];
         listMatchDeliveryTable.push({
@@ -2465,18 +2463,25 @@ export class OrderSalesService {
         });
 
         if (
-          dto.deliveryCompletedEndDate != -1 &&
-          dto.deliveryCompletedStartDate != -1
+          dto.deliveryCompleteEndDate != -1 &&
+          dto.deliveryCompleteStartDate != -1
         ) {
           listMatchDeliveryTable.push({
             $match: {
               _deliveryAcceptedAt: {
-                $lte: dto.deliveryCompletedEndDate,
-                $gte: dto.deliveryCompletedStartDate,
+                $lte: dto.deliveryCompleteEndDate,
+                $gte: dto.deliveryCompleteStartDate,
               },
             },
           });
         }
+
+        if (dto.deliveryStatus.length != 0) {
+          listMatchDeliveryTable.push({
+            $match: { _workStatus: { $in: dto.deliveryStatus } },
+          });
+        }
+
         if (dto.deliveryExecutiveIds.length != 0) {
           var newSettingsId = [];
           dto.deliveryExecutiveIds.map((mapItem) => {
@@ -3115,8 +3120,6 @@ export class OrderSalesService {
           break;
       }
 
-
-
       arrayAggregation.push(
         new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
           0,
@@ -3124,46 +3127,38 @@ export class OrderSalesService {
         ),
       );
 
+      if (dto.agingStartCount != -1 || dto.agingEndCount != -1) {
+        arrayAggregation[arrayAggregation.length - 1].$project.aging = {
+          $dateDiff: {
+            startDate: { $toDate: '$_createdAt' },
+            endDate: { $toDate: dateTime },
+            unit: 'day',
+          },
+        };
 
+        arrayAggregation.push({ $match: { _workStatus: { $ne: 35 } } });
 
-if(dto.agingStartCount !=-1 || dto.agingEndCount!=-1){
-  
-      arrayAggregation[arrayAggregation.length-1].$project.aging={
-        $dateDiff:
-           {
-               startDate: {$toDate:"$_createdAt"},
-               endDate: {$toDate:dateTime},
-               unit: "day"
-           }
-      };
-    
-      arrayAggregation.push(
-        {$match:{_workStatus:{$ne:35}}},);
-    
-      if(dto.agingStartCount !=-1){
-        arrayAggregation.push({$match:{
-          aging:{$gte:dto.agingStartCount}
-        }});
-  
+        if (dto.agingStartCount != -1) {
+          arrayAggregation.push({
+            $match: {
+              aging: { $gte: dto.agingStartCount },
+            },
+          });
+        }
+        if (dto.agingEndCount != -1) {
+          arrayAggregation.push({
+            $match: {
+              aging: { $lte: dto.agingEndCount },
+            },
+          });
+        }
       }
-      if(dto.agingEndCount !=-1){
-        arrayAggregation.push({$match:{
-          aging:{$lte:dto.agingEndCount}
-        }});
-  
-      }
-    }
-
-
-
-
 
       if (dto.skip != -1) {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-     
       const isorderSaleSetProcess = dto.screenType.includes(105);
       const isorderSaleSetProcessPipeline = () => {
         const orderSaleSetProcessUserPipeline = () => {
@@ -4451,9 +4446,7 @@ if(dto.agingStartCount !=-1 || dto.agingEndCount!=-1){
     dto: SetProcessAssignedOrderSaleListDto,
     _userId_: string,
   ) {
-
-console.log("req setprocess    "+JSON.stringify(dto));
-
+    console.log('req setprocess    ' + JSON.stringify(dto));
 
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
