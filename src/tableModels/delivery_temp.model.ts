@@ -25,6 +25,7 @@ export const DeliveryTempSchema = new mongoose.Schema({
     ref: ModelNames.DELIVERY_PROVIDER,
     default: null,
   },
+  _assignedAt: { type: Number, required: true, default: -1 },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -47,6 +48,7 @@ export interface DeliveryTemp {
   _employeeId: String;
   _hubId: String;
   _deliveryProviderId:String;
+  _assignedAt:Number;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -54,6 +56,7 @@ export interface DeliveryTemp {
   _status: Number;
 }
 
+DeliveryTempSchema.index({ _assignedAt: 1 });
 DeliveryTempSchema.index({ _deliveryProviderId: 1 });
 DeliveryTempSchema.index({ _status: 1 });
 DeliveryTempSchema.index({ _type: 1 });

@@ -700,6 +700,15 @@ export class DeliveryService {
           $match: { _employeeId: { $in: newSettingsId } },
         });
       }
+      if (dto.deliveryExcutiveIds!=null &&  dto.deliveryExcutiveIds.length > 0) {
+        var newSettingsId = [];
+        dto.deliveryExcutiveIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _employeeId: { $in: newSettingsId } },
+        });
+      }
       if (dto.shopIds.length > 0) {
         var newSettingsId = [];
         dto.shopIds.map((mapItem) => {

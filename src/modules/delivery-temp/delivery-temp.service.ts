@@ -51,7 +51,7 @@ export class DeliveryTempService {
             mapItem.deliveryProviderId != 'nil'
               ? mapItem.deliveryProviderId
               : null,
-
+              _assignedAt:0,
           _rootCauseId: null,
           _rootCause: '',
           _reworkStatus: -1,
@@ -105,6 +105,7 @@ export class DeliveryTempService {
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
             _employeeId: dto.employeeId, 
+            _assignedAt:dateTime
           },
         },
         { new: true, session: transactionSession },
@@ -187,6 +188,7 @@ export class DeliveryTempService {
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
             _deliveryProviderId: dto.deliveryProviderId,
+            _assignedAt:dateTime
           },
         },
         { new: true, session: transactionSession },

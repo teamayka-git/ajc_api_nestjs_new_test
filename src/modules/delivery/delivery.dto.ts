@@ -4,6 +4,7 @@ import {
   IsEmail,
   IsNumber,
   isNumber,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -115,6 +116,11 @@ export class DeliveryListDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   employeeIds: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  deliveryExcutiveIds: string[];
 
   @IsArray()
   @ApiProperty({ type: [String] })

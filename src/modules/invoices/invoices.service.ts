@@ -194,13 +194,13 @@ export class InvoicesService {
           });
         });
 
-        arrayToDeliveryTemp.push({
+        arrayToDeliveryTemp.push({ 
           _type: -1,
           _invoiceId: invoiceId,
           _employeeId: null,
           _hubId: null,
           _deliveryProviderId: null,
-
+          _assignedAt:0,
           // _rootCauseId: null,
           // _rootCause: '',
           // _reworkStatus: -1,
