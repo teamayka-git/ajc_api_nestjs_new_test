@@ -108,12 +108,6 @@ export class AppService {
       // new SmsUtils().sendSms("9895680203","AAAAAA");
 
 
-console.log("___optional  "+dto.searchingText);
-if(dto.searchingText==null){
-console.log("___ null");
-}else{
-  console.log("___ notnull");
-}
 
       const responseJSON = {
         message: 'success',

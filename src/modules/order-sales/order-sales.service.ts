@@ -91,7 +91,6 @@ export class OrderSalesService {
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
 
-      console.log('____ order sale doc ' + file.hasOwnProperty('documents'));
 
       if (file.hasOwnProperty('documents')) {
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
@@ -733,6 +732,9 @@ export class OrderSalesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+console.log("__-req ordersale list  "+JSON.stringify(dto));
+
       var arrayAggregation = [];
 
       if (dto.searchingText != '') {
@@ -2053,7 +2055,6 @@ export class OrderSalesService {
           },
         });
       }
-      console.log('aggregate    ' + JSON.stringify(arrayAggregation));
       var resultWorkets = [];
       var resultProcessMasters = [];
       var resultSubCategory = [];
@@ -5282,7 +5283,6 @@ export class OrderSalesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      console.log('___ barcode ' + JSON.stringify(dto));
       var resultItems = [];
 
       var result = await this.orderSaleMainModel.aggregate([
