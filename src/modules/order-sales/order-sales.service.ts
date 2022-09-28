@@ -4451,6 +4451,10 @@ if(dto.agingStartCount !=-1 || dto.agingEndCount!=-1){
     dto: SetProcessAssignedOrderSaleListDto,
     _userId_: string,
   ) {
+
+console.log("req setprocess    "+JSON.stringify(dto));
+
+
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
