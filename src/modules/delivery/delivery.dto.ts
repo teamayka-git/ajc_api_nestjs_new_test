@@ -101,6 +101,16 @@ export class DeliveryListDto {
   @ApiProperty({ type: [String] })
   shopIds: string[];
 
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  branchIds: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  ordersaleUids: string[];
+
   @IsArray()
   @ApiProperty({ type: [String] })
   orderHeadIds: string[];
@@ -120,7 +130,7 @@ export class DeliveryListDto {
   @IsOptional()
   @IsArray()
   @ApiProperty({ type: [String] })
-  deliveryExcutiveIds: string[];
+  deliveryExecutiveIds: string[];
 
   @IsArray()
   @ApiProperty({ type: [String] })
@@ -132,6 +142,16 @@ export class DeliveryListDto {
   proofRootCauseId: string[];
 
   
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty({  })
+  deliveryAssignedStartDate: number;
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty({  })
+  deliveryAssignedEndDate: number;
+
   
 
   @IsArray()

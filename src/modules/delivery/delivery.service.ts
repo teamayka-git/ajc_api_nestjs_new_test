@@ -468,7 +468,7 @@ export class DeliveryService {
         }
 
         var globalGalleryId = null;
-        var proofUrl = "";
+        var proofUrl = '';
         //globalGalleryAdd
         if (file.hasOwnProperty('document')) {
           var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
@@ -498,7 +498,7 @@ export class DeliveryService {
             session: transactionSession,
           });
           proofGlobalGalleryId = resultGlobalGallery._id;
-          proofUrl=resultUpload['url'];
+          proofUrl = resultUpload['url'];
         }
 
         updateObj['_proofGlobalGalleryId'] = proofGlobalGalleryId;
@@ -545,14 +545,12 @@ export class DeliveryService {
 
         updateObj['_proofRootCause'] = dto.proofRootCause;
 
-        if(dto.proofRootCauseId=="" || dto.proofRootCauseId=="nil"){
+        if (dto.proofRootCauseId == '' || dto.proofRootCauseId == 'nil') {
           updateObj['_proofRootCauseId'] = null;
-
-        }else{
+        } else {
           updateObj['_proofRootCauseId'] = dto.proofRootCauseId;
-
         }
-        
+
         await this.orderSaleMainModel.updateMany(
           {
             _id: { $in: orderSaleIds },
@@ -577,7 +575,8 @@ export class DeliveryService {
             _shopId: null,
             _orderSaleItemId: null,
             _deliveryProviderId: null,
-            _description:"desc: "+dto.proofRootCauseIdName+" - "+ dto.proofRootCause,
+            _description:
+              'desc: ' + dto.proofRootCauseIdName + ' - ' + dto.proofRootCause,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _status: 1,
@@ -691,24 +690,224 @@ export class DeliveryService {
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
 
+      var employeeIds = [];
       if (dto.employeeIds.length > 0) {
-        var newSettingsId = [];
         dto.employeeIds.map((mapItem) => {
-          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+          employeeIds.push(new mongoose.Types.ObjectId(mapItem));
         });
+        // arrayAggregation.push({
+        //   $match: { _employeeId: { $in: newSettingsId } },
+        // });
+      }
+      if (
+        dto.deliveryExecutiveIds != null &&
+        dto.deliveryExecutiveIds.length > 0
+      ) {
+        dto.deliveryExecutiveIds.map((mapItem) => {
+          employeeIds.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        // arrayAggregation.push({
+        //   $match: { _employeeId: { $in: newSettingsId } },
+        // });
+      }
+      if (employeeIds.length != 0) {
         arrayAggregation.push({
-          $match: { _employeeId: { $in: newSettingsId } },
+          $match: { _employeeId: { $in: employeeIds } },
         });
       }
-      if (dto.deliveryExcutiveIds!=null &&  dto.deliveryExcutiveIds.length > 0) {
+
+      if (
+        dto.deliveryAssignedStartDate != null &&
+        dto.deliveryAssignedEndDate != null &&
+        dto.deliveryAssignedStartDate != -1 &&
+        dto.deliveryAssignedEndDate != -1
+      ) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.DELIVERY_ITEMS,
+              let: { deliveryId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    _status: 1,
+                    $expr: { $eq: ['$_deliveryId', '$$deliveryId'] },
+                  },
+                },
+                {
+                  $project: {
+                    _invoiceId: 1,
+                  },
+                },
+
+                {
+                  $lookup: {
+                    from: ModelNames.DELIVERY_TEMP,
+                    let: { invoiceId: '$_invoiceId' },
+                    pipeline: [
+                      {
+                        $match: {
+                          _status: 1,
+                          _assignedAt: {
+                            $gte: dto.deliveryAssignedStartDate,
+                            $lte: dto.deliveryAssignedEndDate,
+                          },
+                          $expr: { $eq: ['$_invoiceId', '$$invoiceId'] },
+                        },
+                      },
+                      {
+                        $project: {
+                          _id: 1,
+                        },
+                      },
+                    ],
+                    as: 'mongoCheckDeliveryTemp',
+                  },
+                },
+                {
+                  $match: { mongoCheckDeliveryTemp: { $ne: [] } },
+                },
+              ],
+              as: 'mongoCheckDeliveryItems',
+            },
+          },
+          {
+            $match: { mongoCheckDeliveryItems: { $ne: [] } },
+          },
+        );
+      }
+      if (dto.ordersaleUids != null && dto.ordersaleUids.length != 0) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.DELIVERY_ITEMS,
+              let: { deliveryId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    _status: 1,
+                    $expr: { $eq: ['$_deliveryId', '$$deliveryId'] },
+                  },
+                },
+                {
+                  $project: {
+                    _invoiceId: 1,
+                  },
+                },
+
+                {
+                  $lookup: {
+                    from: ModelNames.INVOICE_ITEMS,
+                    let: { invoiceId: '$_invoiceId' },
+                    pipeline: [
+                      {
+                        $match: {
+                          _status: 1,
+
+                          $expr: { $eq: ['$_invoiceId', '$$invoiceId'] },
+                        },
+                      },
+                      {
+                        $project: {
+                          _orderSaleItemId: 1,
+                        },
+                      },
+
+                      {
+                        $lookup: {
+                          from: ModelNames.ORDER_SALES_ITEMS,
+                          let: { orderSaleItemId: '$_orderSaleItemId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: { $eq: ['$_id', '$$orderSaleItemId'] },
+                              },
+                            },
+                            {
+                              $project: {
+                                _orderSaleId: 1,
+                              },
+                            },
+
+                            {
+                              $lookup: {
+                                from: ModelNames.ORDER_SALES_MAIN,
+                                let: { orderSaleId: '$_orderSaleId' },
+                                pipeline: [
+                                  {
+                                    $match: {
+                                      _uid: { $in: dto.ordersaleUids },
+                                      $expr: { $eq: ['$_id', '$$orderSaleId'] },
+                                    },
+                                  },
+                                  {
+                                    $project: {
+                                      _id: 1,
+                                    },
+                                  },
+                                ],
+                                as: 'mongoCheckOrderSale',
+                              },
+                            },
+                            {
+                              $match: { mongoCheckOrderSale: { $ne: [] } },
+                            },
+                          ],
+                          as: 'mongoCheckOrderSaleItem',
+                        },
+                      },
+                      {
+                        $match: { mongoCheckOrderSaleItem: { $ne: [] } },
+                      },
+                    ],
+                    as: 'mongoCheckInvoiceItems',
+                  },
+                },
+                {
+                  $match: { mongoCheckInvoiceItems: { $ne: [] } },
+                },
+              ],
+              as: 'mongoCheckUids',
+            },
+          },
+          {
+            $match: { mongoCheckUids: { $ne: [] } },
+          },
+        );
+      }
+
+      if (dto.branchIds != null && dto.branchIds.length > 0) {
         var newSettingsId = [];
-        dto.deliveryExcutiveIds.map((mapItem) => {
+        dto.branchIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
-        arrayAggregation.push({
-          $match: { _employeeId: { $in: newSettingsId } },
-        });
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.SHOPS,
+              let: { shopId: '$_shopId' },
+              pipeline: [
+                {
+                  $match: {
+                    _branchId: { $in: newSettingsId },
+                    $expr: { $eq: ['$_id', '$$shopId'] },
+                  },
+                },
+                {
+                  $project: {
+                    _id: 1,
+                  },
+                },
+              ],
+              as: 'mongoCheckBranch',
+            },
+          },
+          {
+            $match: { mongoCheckBranch: { $ne: [] } },
+          },
+        );
       }
+
       if (dto.shopIds.length > 0) {
         var newSettingsId = [];
         dto.shopIds.map((mapItem) => {
@@ -1448,8 +1647,6 @@ export class DeliveryService {
         );
       }
 
-
-      
       var resultProofRejectRootCause = [];
       if (dto.screenType.includes(501)) {
         var aggregateDeliveryReject = [];
@@ -1477,7 +1674,7 @@ export class DeliveryService {
           list: result,
           totalCount: totalCount,
           deliveryRejectRootCause: resultDeliveryRejectRootCause,
-          proofRejectRootCause:resultProofRejectRootCause
+          proofRejectRootCause: resultProofRejectRootCause,
         },
       };
       if (
