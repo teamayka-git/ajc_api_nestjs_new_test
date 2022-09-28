@@ -11,7 +11,7 @@ export const OrderSalesMainSchema = new mongoose.Schema({
   },
   _deliveryType: { type: Number, required: true, default: -1 },
   _rootCause: { type: String, default: '' },
-  _referenceNumber: { type: String, default: '' },
+  _referenceNumber: { type: String, default: '' }, 
   _dueDate: { type: Number, required: true, default: -1 },
   _orderHeadId: {
     type: mongoose.Schema.Types.ObjectId,

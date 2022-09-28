@@ -58,13 +58,6 @@ export class OrderSaleSetProcessService {
       var arrayProcessIds = [];
       var arrayOrdersaleIds = [];
 
-
-
-
-
-
-
-
       dto.array.map((mapItem) => {
         arrayOrdersaleIds.push(mapItem.orderSaleId);
 
@@ -73,14 +66,17 @@ export class OrderSaleSetProcessService {
         });
       });
 
-      var resultCheckOrderSale=await this.orderSaleMainModel.find(
-        {
-          _id: { $in: arrayOrdersaleIds },_workStatus:1
-        });
+      var resultCheckOrderSale = await this.orderSaleMainModel.find({
+        _id: { $in: arrayOrdersaleIds },
+        _workStatus: 1,
+      });
 
-if(resultCheckOrderSale.length != arrayOrdersaleIds.length){
-  throw new HttpException('Already done setprocess', HttpStatus.INTERNAL_SERVER_ERROR);
-}
+      if (resultCheckOrderSale.length != arrayOrdersaleIds.length) {
+        throw new HttpException(
+          'Already done setprocess',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
 
       var resultSubProcess = await this.subProcessModel.find(
         { _processMasterId: { $in: arrayProcessIds }, _status: 1 },
@@ -105,6 +101,7 @@ if(resultCheckOrderSale.length != arrayOrdersaleIds.length){
             _workStartedTime: -1,
             _workCompletedTime: -1,
             _rootCause: '',
+            _dueDate:mapItem1.dueDate,
             _description: mapItem1.description,
             _index: mapItem1.index,
             _orderStatus: 0,
@@ -141,7 +138,7 @@ if(resultCheckOrderSale.length != arrayOrdersaleIds.length){
               _status: 1,
             });
           });
-          arrayToSetProcessHistories.push({ 
+          arrayToSetProcessHistories.push({
             _orderSaleId: mapItem.orderSaleId,
             _userId: null,
             _type: 0,
@@ -153,12 +150,12 @@ if(resultCheckOrderSale.length != arrayOrdersaleIds.length){
             _status: 1,
           });
         });
-      
+
         arrayToOrderSaleHistories.push({
           _orderSaleId: mapItem.orderSaleId,
           _userId: null,
           _shopId: null,
-          _deliveryProviderId:null,
+          _deliveryProviderId: null,
           _orderSaleItemId: null,
           _type: 3,
           _description: '',
@@ -326,43 +323,43 @@ if(resultCheckOrderSale.length != arrayOrdersaleIds.length){
       });
 
       // if (dto.orderStatus == 6) {
-        // const orderSaleNewSetProcess = new this.orderSaleSetProcessModel({
-        //   _orderSaleId: result._orderSaleId,
-        //   _userId: null,
-        //   _orderStatus: 0,
+      // const orderSaleNewSetProcess = new this.orderSaleSetProcessModel({
+      //   _orderSaleId: result._orderSaleId,
+      //   _userId: null,
+      //   _orderStatus: 0,
 
-        //   _workAssignedTime: -1,
-        //   _workStartedTime: -1,
-        //   _workCompletedTime: -1,
-        //   _index: result._index,
-        //   _rootCauseId: null,
-        //   _rootCause: '',
-        //   _description: '',
-        //   _processId: result._processId,
-        //   _isLastItem: result._isLastItem,
-        //   _createdUserId: result._createdUserId,
-        //   _createdAt: dateTime,
-        //   _status: 1,
-        // });
-        // await orderSaleNewSetProcess.save({
-        //   session: transactionSession,
-        // });
+      //   _workAssignedTime: -1,
+      //   _workStartedTime: -1,
+      //   _workCompletedTime: -1,
+      //   _index: result._index,
+      //   _rootCauseId: null,
+      //   _rootCause: '',
+      //   _description: '',
+      //   _processId: result._processId,
+      //   _isLastItem: result._isLastItem,
+      //   _createdUserId: result._createdUserId,
+      //   _createdAt: dateTime,
+      //   _status: 1,
+      // });
+      // await orderSaleNewSetProcess.save({
+      //   session: transactionSession,
+      // });
 
-        // const orderSaleNewSetProcessHistory =
-        //   new this.orderSaleSetProcessHistoriesModel({
-        //     _orderSaleId: result._orderSaleId,
-        //     _userId: null,
-        //     _type: 8, 
-        //     _orderSaleSetProcessId: null,
-        //     _processId: null,
-        //     _description: '',
-        //     _createdUserId: null,
-        //     _createdAt: dateTime,
-        //     _status: 1,
-        //   });
-        // await orderSaleNewSetProcessHistory.save({
-        //   session: transactionSession,
-        // });
+      // const orderSaleNewSetProcessHistory =
+      //   new this.orderSaleSetProcessHistoriesModel({
+      //     _orderSaleId: result._orderSaleId,
+      //     _userId: null,
+      //     _type: 8,
+      //     _orderSaleSetProcessId: null,
+      //     _processId: null,
+      //     _description: '',
+      //     _createdUserId: null,
+      //     _createdAt: dateTime,
+      //     _status: 1,
+      //   });
+      // await orderSaleNewSetProcessHistory.save({
+      //   session: transactionSession,
+      // });
       // }
 
       if (dto.orderStatus == 2 || dto.orderStatus == 3) {
@@ -541,7 +538,7 @@ if(resultCheckOrderSale.length != arrayOrdersaleIds.length){
           _userId: null,
           _shopId: null,
           _type: 4,
-          _deliveryProviderId:null,
+          _deliveryProviderId: null,
           _description: '',
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -598,7 +595,7 @@ if(resultCheckOrderSale.length != arrayOrdersaleIds.length){
         new this.orderSaleSetProcessHistoriesModel({
           _orderSaleId: result._orderSaleId,
           _userId: null,
-          _type: 6, 
+          _type: 6,
           _processId: result._processId,
           _description: dto.description,
           _createdUserId: _userId_,

@@ -31,6 +31,14 @@ const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType = '0-Created Date, 1-Status,2-due date';
 const descriptionListDocType = '0-image, 1-video, 2-pdf, 3-audio, 4-document';
 
+
+
+const descriptionSetProcessListSortOrder = '1-ascending, -1-descending';
+const descriptionSetProcessListSortType = '0-Created Date, 1-Status,2-due date';
+
+
+
+
 const descriptionFileOriginalName =
   "file name givent while uploading, if there is no image then give 'nil; here";
 
@@ -593,6 +601,18 @@ export class OrderSalesGetOrderIdFromQrBarcodeDto {
   value: string;
 }
 export class SetProcessAssignedOrderSaleListDto {
+
+  @IsNumber()
+  @ApiProperty({ description: descriptionSetProcessListSortType })
+  sortType: number;
+  @IsNumber()
+  @ApiProperty({ description: descriptionSetProcessListSortOrder })
+  sortOrder: number;
+
+
+
+
+
   @IsArray()
   @ApiProperty({
     type: [Number],

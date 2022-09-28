@@ -931,7 +931,6 @@ export class OrderSalesService {
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
-      console.log('arrayAggregation  ' + JSON.stringify(arrayAggregation));
       switch (dto.sortType) {
         case 0:
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
@@ -4405,6 +4404,17 @@ export class OrderSalesService {
         },
       });
 
+      switch (dto.sortType) {
+        case 0:
+          arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
+          break;
+        case 1:
+          arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
+          break;
+        case 2:
+          arrayAggregation.push({ $sort: { _dueDate: dto.sortOrder } });
+          break;
+      }
       if (dto.skip != -1) {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });

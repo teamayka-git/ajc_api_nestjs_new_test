@@ -1941,6 +1941,7 @@ export class ModelWeight {
       _workStartedTime: 1,
       _workCompletedTime: 1,
       _index: 1,
+      _dueDate:1,
       _rootCauseId: 1,
       _rootCause: 1,
       _description: 1,

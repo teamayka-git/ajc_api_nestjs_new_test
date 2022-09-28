@@ -10,12 +10,13 @@ export const OrderSaleSetProcessesSchema = new mongoose.Schema({
     ref: ModelNames.ORDER_SALES_MAIN,
     default: null,
   },
-  _userId: {  
+  _userId: {   
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
     default: null,
   },
   _index: { type: Number, required: true, default: -1 },
+  _dueDate: { type: Number, required: true, default: -1 },
   _workAssignedTime: { type: Number, required: true, default: -1 },
   _workCompletedTime: { type: Number, required: true, default: -1 },
   _workStartedTime: { type: Number, required: true, default: -1 },
@@ -52,6 +53,7 @@ export interface OrderSaleSetProcesses {
   _workAssignedTime: number; 
   _workStartedTime: number; 
   _workCompletedTime: number; 
+  _dueDate: number;//
   _index:number;
   _rootCauseId: String;
   _rootCause: String;
@@ -63,6 +65,7 @@ export interface OrderSaleSetProcesses {
   _status: Number;
 }
 
+OrderSaleSetProcessesSchema.index({ _dueDate: 1 });
 OrderSaleSetProcessesSchema.index({ _rootCauseId: 1 });
 OrderSaleSetProcessesSchema.index({ _rootCause: 1 });
 OrderSaleSetProcessesSchema.index({ _index: 1 });
