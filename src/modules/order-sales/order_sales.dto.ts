@@ -445,6 +445,19 @@ export class OrderSaleReportListDto {
   @ApiProperty({})
   deliveryAssignedEndDate: number;
 
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleIds: string[];
+
+
+  @IsNumber()
+  @ApiProperty({})
+  deliveryCompletedStartDate: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  deliveryCompletedEndDate: number;
+
   @IsNumber()
   @ApiProperty({})
   netWeightEnd: number;
@@ -453,9 +466,10 @@ export class OrderSaleReportListDto {
   @ApiProperty({ type: [String] })
   huids: string[];
 
+
   @IsArray()
   @ApiProperty({ type: [String] })
-  orderSaleIds: string[];
+  deliveryExecutiveIds: string[];
 
   @IsArray()
   @ApiProperty({ type: [String] })

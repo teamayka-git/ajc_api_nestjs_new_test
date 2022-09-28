@@ -91,7 +91,6 @@ export class OrderSalesService {
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
 
-
       if (file.hasOwnProperty('documents')) {
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
@@ -732,8 +731,7 @@ export class OrderSalesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-
-console.log("__-req ordersale list  "+JSON.stringify(dto));
+      console.log('__-req ordersale list  ' + JSON.stringify(dto));
 
       var arrayAggregation = [];
 
@@ -2448,6 +2446,165 @@ console.log("__-req ordersale list  "+JSON.stringify(dto));
       }
 
       //delivery
+
+      if (
+        (dto.deliveryCompletedEndDate != -1 &&
+          dto.deliveryCompletedStartDate != -1) ||
+        dto.deliveryExecutiveIds.length != 0
+      ) {
+        var listMatchDeliveryTable = [];
+        listMatchDeliveryTable.push({
+          $match: {
+            $expr: {
+              $eq: ['$_id', '$$deliveryId'],
+            },
+          },
+        });
+
+        if (
+          dto.deliveryCompletedEndDate != -1 &&
+          dto.deliveryCompletedStartDate != -1
+        ) {
+          listMatchDeliveryTable.push({
+            $match: {
+              _deliveryAcceptedAt: {
+                $lte: dto.deliveryCompletedEndDate,
+                $gte: dto.deliveryCompletedStartDate,
+              },
+            },
+          });
+        }
+        if (dto.deliveryExecutiveIds.length != 0) {
+          var newSettingsId = [];
+          dto.deliveryExecutiveIds.map((mapItem) => {
+            newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+          });
+          listMatchDeliveryTable.push({
+            $match: { _employeeId: { $in: newSettingsId } },
+          });
+        }
+
+        listMatchDeliveryTable.push({
+          $project: {
+            _id: 1,
+          },
+        });
+
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_ITEMS,
+              let: { orderSaleId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    _status: 1,
+                    $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+                  },
+                },
+                {
+                  $project: {
+                    _id: 1,
+                  },
+                },
+
+                {
+                  $lookup: {
+                    from: ModelNames.INVOICE_ITEMS,
+                    let: { orderSaleItemId: '$_id' },
+                    pipeline: [
+                      {
+                        $match: {
+                          _status: 1,
+                          $expr: {
+                            $eq: ['$_orderSaleItemId', '$$orderSaleItemId'],
+                          },
+                        },
+                      },
+                      {
+                        $project: {
+                          _id: 1,
+                        },
+                      },
+
+                      {
+                        $lookup: {
+                          from: ModelNames.INVOICES,
+                          let: { invoiceId: '$_id' },
+                          pipeline: [
+                            {
+                              $match: {
+                                _status: 1,
+                                $expr: { $eq: ['$_invoiceId', '$$invoiceId'] },
+                              },
+                            },
+                            {
+                              $project: {
+                                _id: 1,
+                              },
+                            },
+
+                            {
+                              $lookup: {
+                                from: ModelNames.DELIVERY_ITEMS,
+                                let: { invoiceId: '$_id' },
+                                pipeline: [
+                                  {
+                                    $match: {
+                                      _status: 1,
+                                      $expr: {
+                                        $eq: ['$_invoiceId', '$$invoiceId'],
+                                      },
+                                    },
+                                  },
+                                  {
+                                    $project: {
+                                      _deliveryId: 1,
+                                    },
+                                  },
+
+                                  {
+                                    $lookup: {
+                                      from: ModelNames.DELIVERY,
+                                      let: { deliveryId: '$_deliveryId' },
+                                      pipeline: listMatchDeliveryTable,
+                                      as: 'mongoCheckDelivery',
+                                    },
+                                  },
+                                  {
+                                    $match: { mongoCheckDelivery: { $ne: [] } },
+                                  },
+                                ],
+                                as: 'mongoCheckDeliveryItems',
+                              },
+                            },
+                            {
+                              $match: { mongoCheckDeliveryItems: { $ne: [] } },
+                            },
+                          ],
+                          as: 'mongoCheckInvoice',
+                        },
+                      },
+                      {
+                        $match: { mongoCheckInvoice: { $ne: [] } },
+                      },
+                    ],
+                    as: 'mongoCheckInvoiceItems',
+                  },
+                },
+                {
+                  $match: { mongoCheckInvoiceItems: { $ne: [] } },
+                },
+              ],
+              as: 'mongoCheckOrdersaleItems',
+            },
+          },
+          {
+            $match: { mongoCheckOrdersaleItems: { $ne: [] } },
+          },
+        );
+      }
+
       if (
         dto.deliveryAssignedStartDate != -1 ||
         dto.deliveryAssignedStartDate != -1
