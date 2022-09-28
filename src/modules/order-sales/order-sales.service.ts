@@ -3167,6 +3167,11 @@ if(dto.agingStartCount !=-1 || dto.agingEndCount!=-1){
       
       
       );
+
+      arrayAggregation.push({$match:{
+            aging:37
+          }});
+
       // if(dto.agingStartCount !=-1){
       //   arrayAggregation.push({$match:{
       //     aging:{$gte:dto.agingStartCount}
