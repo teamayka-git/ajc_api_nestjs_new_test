@@ -785,7 +785,7 @@ console.log("__-req ordersale list  "+JSON.stringify(dto));
       if (dto.dueStartDate != -1 && dto.dueEndDate != -1) {
         arrayAggregation.push({
           $match: {
-            _dueDate: { $lt: dto.dueEndDate, $gt: dto.dueStartDate },
+            _dueDate: { $lte: dto.dueEndDate, $gte: dto.dueStartDate },
           },
         });
       }
