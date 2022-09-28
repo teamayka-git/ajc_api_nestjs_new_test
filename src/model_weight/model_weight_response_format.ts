@@ -198,7 +198,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 1)) {
       return { $project: new ModelWeight().orderSaleTableMinimum() };
     } else if (responseFormatArray.includes(startIndex + 2)) {
-      return { $project: new ModelWeight().orderSaleTab leMedium() };
+      return { $project: new ModelWeight().orderSaleTableMedium() };
     } else {
       return { $project: {   _: 0,  } };
     }
