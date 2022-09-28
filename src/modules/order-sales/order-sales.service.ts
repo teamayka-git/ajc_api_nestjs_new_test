@@ -2388,6 +2388,88 @@ export class OrderSalesService {
         });
       }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      arrayAggregation.push( {$project:{
+        _id:1,
+        _createdAt:1, 
+        aaaa: {
+          $dateDiff:
+             {
+                 startDate: {$toDate:"$_createdAt"},
+                 endDate: {$toDate:1664365550180},
+                 unit: "day"
+             }
+        }
+      }},
+      
+      
+      
+      
+      
+      );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       if (
         dto.cityIds.length > 0 ||
         dto.branchIds.length > 0 ||
@@ -3117,12 +3199,12 @@ export class OrderSalesService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      arrayAggregation.push(
-        new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
-          0,
-          dto.responseFormat,
-        ),
-      );
+      // arrayAggregation.push(
+      //   new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+      //     0,
+      //     dto.responseFormat,
+      //   ),
+      // );
 
       const isorderSaleSetProcess = dto.screenType.includes(105);
       const isorderSaleSetProcessPipeline = () => {
