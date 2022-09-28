@@ -2314,7 +2314,7 @@ console.log("__-req ordersale list  "+JSON.stringify(dto));
       if (dto.dueStartDate != -1 && dto.dueEndDate != -1) {
         arrayAggregation.push({
           $match: {
-            _dueDate: { $lt: dto.dueEndDate, $gt: dto.dueStartDate },
+            _dueDate: { $lte: dto.dueEndDate, $gte: dto.dueStartDate },
           },
         });
       }
@@ -2322,8 +2322,8 @@ console.log("__-req ordersale list  "+JSON.stringify(dto));
         arrayAggregation.push({
           $match: {
             _createdAt: {
-              $lt: dto.createdDateEndDate,
-              $gt: dto.createdDateStartDate,
+              $lte: dto.createdDateEndDate,
+              $gte: dto.createdDateStartDate,
             },
           },
         });
@@ -2705,8 +2705,8 @@ console.log("__-req ordersale list  "+JSON.stringify(dto));
                   pipeline.push({
                     $match: {
                       _createdAt: {
-                        $gt: dto.invoiceDateStartDate,
-                        $lt: dto.invoiceDateEndDate,
+                        $gte: dto.invoiceDateStartDate,
+                        $lte: dto.invoiceDateEndDate,
                       },
                     },
                   });
@@ -4371,7 +4371,7 @@ console.log("__-req ordersale list  "+JSON.stringify(dto));
           ) {
             pipeline.push({
               $match: {
-                _dueDate: { $lt: dto.dueEndDate, $gt: dto.dueStartDate },
+                _dueDate: { $lte: dto.dueEndDate, $gte: dto.dueStartDate },
               },
             });
           }

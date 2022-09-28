@@ -781,8 +781,8 @@ export class DeliveryService {
         arrayAggregation.push({
           $match: {
             _deliveryAcceptedAt: {
-              $lt: dto.deliveryCompleteEndDate,
-              $gt: dto.deliveryCompleteStartDate,
+              $lte: dto.deliveryCompleteEndDate,
+              $gte: dto.deliveryCompleteStartDate,
             },
           },
         });

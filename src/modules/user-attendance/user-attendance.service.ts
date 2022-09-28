@@ -101,12 +101,12 @@ export class UserAttendanceService {
 
       if (dto.startTime != -1) {
         arrayAggregation.push({
-          $match: { _startTime: { $gt: dto.startTime } },
+          $match: { _startTime: { $gte: dto.startTime } },
         });
       }
       if (dto.stopTime != -1) {
         arrayAggregation.push({
-          $match: { _stopTime: { $gt: dto.stopTime } },
+          $match: { _stopTime: { $gte: dto.stopTime } },
         });
       }
 
