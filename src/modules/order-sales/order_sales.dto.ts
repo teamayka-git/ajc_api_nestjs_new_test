@@ -404,6 +404,7 @@ export class OrderSaleReportListDto {
   screenType: number[];
 
   @IsArray()
+  @ArrayMinSize(1)
   @ApiProperty({ type: [Number] })
   responseFormat: number[];
 

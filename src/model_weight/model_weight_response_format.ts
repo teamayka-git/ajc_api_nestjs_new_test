@@ -190,7 +190,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: {   _: 0,  } };
+      return { $project: new ModelWeight().orderSaleTableMaximum() };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -200,7 +200,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().orderSaleTableMedium() };
     } else {
-      return { $project: {   _: 0,  } };
+      return { $project: new ModelWeight().orderSaleTableMaximum() };
     }
   }
 
