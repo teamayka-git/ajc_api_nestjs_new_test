@@ -3164,7 +3164,6 @@ if(dto.agingStartCount !=-1 || dto.agingEndCount!=-1){
       }
 
      
-console.log("___ arrayAggregation  "+JSON.stringify(arrayAggregation));
       const isorderSaleSetProcess = dto.screenType.includes(105);
       const isorderSaleSetProcessPipeline = () => {
         const orderSaleSetProcessUserPipeline = () => {
