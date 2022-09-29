@@ -2516,7 +2516,7 @@ export class OrderSalesService {
                   },
                 },
 
-               /* {
+                {
                   $lookup: {
                     from: ModelNames.INVOICE_ITEMS,
                     let: { orderSaleItemId: '$_id' },
@@ -2535,7 +2535,7 @@ export class OrderSalesService {
                         },
                       },
 
-                      {
+                   /*   {
                         $lookup: {
                           from: ModelNames.INVOICES,
                           let: { invoiceId: '$_id' },
@@ -2595,14 +2595,14 @@ export class OrderSalesService {
                       },
                       {
                         $match: { mongoCheckInvoice: { $ne: [] } },
-                      },
+                      },*/
                     ],
                     as: 'mongoCheckInvoiceItems',
                   },
                 },
                 {
                   $match: { mongoCheckInvoiceItems: { $ne: [] } },
-                },*/
+                },
               ],
               as: 'mongoCheckOrdersaleItems',
             },
