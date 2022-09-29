@@ -4657,7 +4657,7 @@ console.log("___ report aggragate   "+JSON.stringify(arrayAggregation));
       );
 
 console.log("____duplicate  "+JSON.stringify(arrayAggregation));
-
+/*
 
       const isorderSaleSetSubProcess = dto.screenType.includes(101);
       if (isorderSaleSetSubProcess) {
@@ -5122,6 +5122,8 @@ console.log("____duplicate  "+JSON.stringify(arrayAggregation));
           },
         );
       }
+
+      */
       
       var result = await this.orderSaleSetProcessModel
         .aggregate(arrayAggregation)
