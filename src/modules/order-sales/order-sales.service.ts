@@ -2614,9 +2614,34 @@ export class OrderSalesService {
       }
 
       if (
-        dto.deliveryAssignedStartDate != -1 ||
+       ( dto.deliveryAssignedStartDate != -1 ||
         dto.deliveryAssignedStartDate != -1
-      ) {
+      ) ||(dto.logisticsPartnerIds.length!=0)) {
+
+
+        var logisticsPartnerIdsMongo = [];
+
+
+        if (dto.logisticsPartnerIds.length > 0) {
+        
+          dto.logisticsPartnerIds.map((mapItem) => {
+            logisticsPartnerIdsMongo.push(new mongoose.Types.ObjectId(mapItem));
+          });
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         const orderSaleItemsMongoCheckPipeline = () => {
           const pipeline = [];
           pipeline.push({
@@ -2667,7 +2692,13 @@ export class OrderSalesService {
                       },
                     });
                   }
-
+if(logisticsPartnerIdsMongo.length!=0){
+  pipeline.push({
+    $match: {
+      _deliveryProviderId: { $in: logisticsPartnerIdsMongo },
+    },
+  });
+}
                   pipeline.push({ $project: { _id: 1 } });
                   return pipeline;
                 };
