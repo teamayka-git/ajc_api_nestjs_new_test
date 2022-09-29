@@ -2462,19 +2462,19 @@ export class OrderSalesService {
           },
         });
 
-        // if (
-        //   dto.deliveryCompleteEndDate != -1 &&
-        //   dto.deliveryCompleteStartDate != -1
-        // ) {
-        //   listMatchDeliveryTable.push({
-        //     $match: {
-        //       _deliveryAcceptedAt: {
-        //         $lte: dto.deliveryCompleteEndDate,
-        //         $gte: dto.deliveryCompleteStartDate,
-        //       },
-        //     },
-        //   });
-        // }
+        if (
+          dto.deliveryCompleteEndDate != -1 &&
+          dto.deliveryCompleteStartDate != -1
+        ) {
+          listMatchDeliveryTable.push({
+            $match: {
+              _deliveryAcceptedAt: {
+                $lte: dto.deliveryCompleteEndDate,
+                $gte: dto.deliveryCompleteStartDate,
+              },
+            },
+          });
+        }
 
         if (dto.deliveryStatus.length != 0) {
           listMatchDeliveryTable.push({
