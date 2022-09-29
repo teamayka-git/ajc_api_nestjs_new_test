@@ -4621,7 +4621,7 @@ export class OrderSalesService {
           dto.responseFormat,
         ),
       );
-
+/*
       const isorderSaleSetSubProcess = dto.screenType.includes(101);
       if (isorderSaleSetSubProcess) {
         const orderSaleSetSubProcessPipeline = () => {
@@ -5085,6 +5085,7 @@ export class OrderSalesService {
           },
         );
       }
+      */
       var result = await this.orderSaleSetProcessModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
