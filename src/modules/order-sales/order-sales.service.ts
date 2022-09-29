@@ -2552,7 +2552,7 @@ export class OrderSalesService {
                               },
                             },
 
-                           /* {
+                            {
                               $lookup: {
                                 from: ModelNames.DELIVERY_ITEMS,
                                 let: { invoiceId: '$_id' },
@@ -2588,7 +2588,7 @@ export class OrderSalesService {
                             },
                             {
                               $match: { mongoCheckDeliveryItems: { $ne: [] } },
-                            },*/
+                            },
                           ],
                           as: 'mongoCheckInvoice',
                         },
