@@ -3127,6 +3127,9 @@ export class OrderSalesService {
         ),
       );
 
+
+console.log("___ report aggragate   "+JSON.stringify(arrayAggregation));
+
       if (dto.agingStartCount != -1 || dto.agingEndCount != -1) {
         arrayAggregation[arrayAggregation.length - 1].$project.aging = {
           $dateDiff: {

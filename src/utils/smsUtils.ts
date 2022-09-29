@@ -27,8 +27,10 @@ export class SmsUtils {
       headers: {'Content-Type': 'application/json'},
       body: '{}'
     }).then(response => {
-      console.log(response);
-    }).catch(err => {console.log(err);});
+     // console.log(response);
+    }).catch(err => {
+     // console.log(err);
+    });
   }
   
 }
