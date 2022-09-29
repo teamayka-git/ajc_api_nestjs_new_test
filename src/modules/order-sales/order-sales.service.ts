@@ -2447,7 +2447,7 @@ export class OrderSalesService {
 
       //delivery
 
-      if (
+      /*if (
         (dto.deliveryCompleteEndDate != -1 &&
           dto.deliveryCompleteStartDate != -1) ||
         dto.deliveryExecutiveIds.length != 0 ||
@@ -2611,7 +2611,7 @@ export class OrderSalesService {
             $match: { mongoCheckOrdersaleItems: { $ne: [] } },
           },
         );
-      }
+      }*/
 
       if (
         dto.deliveryAssignedStartDate != -1 ||
