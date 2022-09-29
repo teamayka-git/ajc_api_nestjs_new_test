@@ -747,7 +747,7 @@ export class DeliveryService {
                     pipeline: [
                       {
                         $match: {
-                          _status: 1,
+                          // _status: 1,
                           _assignedAt: {
                             $gte: dto.deliveryAssignedStartDate,
                             $lte: dto.deliveryAssignedEndDate,
