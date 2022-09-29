@@ -2447,7 +2447,7 @@ export class OrderSalesService {
 
       //delivery
 
-      /*if (
+      if (
         (dto.deliveryCompleteEndDate != -1 &&
           dto.deliveryCompleteStartDate != -1) ||
         dto.deliveryExecutiveIds.length != 0 ||
@@ -2516,7 +2516,7 @@ export class OrderSalesService {
                   },
                 },
 
-                {
+               /* {
                   $lookup: {
                     from: ModelNames.INVOICE_ITEMS,
                     let: { orderSaleItemId: '$_id' },
@@ -2602,7 +2602,7 @@ export class OrderSalesService {
                 },
                 {
                   $match: { mongoCheckInvoiceItems: { $ne: [] } },
-                },
+                },*/
               ],
               as: 'mongoCheckOrdersaleItems',
             },
@@ -2611,7 +2611,7 @@ export class OrderSalesService {
             $match: { mongoCheckOrdersaleItems: { $ne: [] } },
           },
         );
-      }*/
+      }
 
       if (
         dto.deliveryAssignedStartDate != -1 ||
