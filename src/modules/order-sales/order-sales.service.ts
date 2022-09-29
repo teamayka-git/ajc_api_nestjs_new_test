@@ -4621,6 +4621,9 @@ export class OrderSalesService {
           dto.responseFormat,
         ),
       );
+
+console.log("____duplicate  "+JSON.stringify(arrayAggregation));
+
 /*
       const isorderSaleSetSubProcess = dto.screenType.includes(101);
       if (isorderSaleSetSubProcess) {
