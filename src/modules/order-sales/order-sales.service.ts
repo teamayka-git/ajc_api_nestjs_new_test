@@ -2531,19 +2531,19 @@ export class OrderSalesService {
                       },
                       {
                         $project: {
-                          _id: 1,
+                          _invoiceId: 1,
                         },
                       },
 
                       {
                         $lookup: {
                           from: ModelNames.INVOICES,
-                          let: { invoiceId: '$_id' },
+                          let: { invoiceId: '$_invoiceId' },
                           pipeline: [
                             {
                               $match: {
                                 _status: 1,
-                                $expr: { $eq: ['$_invoiceId', '$$invoiceId'] },
+                                $expr: { $eq: ['$_id', '$$invoiceId'] },
                               },
                             },
                             {
