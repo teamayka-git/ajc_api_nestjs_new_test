@@ -2647,7 +2647,7 @@ export class OrderSalesService {
                   const pipeline = [];
                   pipeline.push({
                     $match: {
-                      _status: 1,
+                      // _status: 1,
                       $expr: { $eq: ['$_invoiceId', '$$invoiceIdForDelTemp'] },
                     },
                   });
