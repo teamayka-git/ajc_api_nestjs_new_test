@@ -451,7 +451,7 @@ export class EmployeesService {
 
       if (smsGatewayArray.length != 0) {
         smsGatewayArray.forEach((elementSmsGateway) => {
-          new SmsUtils().sendSms(
+          new SmsUtils().sendSmsTwilio(
             elementSmsGateway.mobile,
             elementSmsGateway.text,
           );

@@ -64,7 +64,7 @@ export class OtpService {
       });
       smsGatewayArray.push({
         mobile: dto.mobile,
-        text: otpValue + ' is your AJC OMS verification code.',
+        text: otpValue ,
       });
 
       const responseJSON = { message: 'success', data: resultOtp };
@@ -84,7 +84,7 @@ export class OtpService {
 
       if (smsGatewayArray.length != 0) {
         smsGatewayArray.forEach((elementSmsGateway) => {
-          new SmsUtils().sendSms(
+          new SmsUtils().sendSmsSMSBits(
             elementSmsGateway.mobile,
             elementSmsGateway.text,
           );

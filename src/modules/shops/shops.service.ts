@@ -460,7 +460,7 @@ export class ShopsService {
 
       if (smsGatewayArray.length != 0) {
         smsGatewayArray.forEach((elementSmsGateway) => {
-          new SmsUtils().sendSms(
+          new SmsUtils().sendSmsTwilio(
             elementSmsGateway.mobile,
             elementSmsGateway.text,
           );
@@ -729,7 +729,7 @@ export class ShopsService {
 
       if (smsGatewayArray.length != 0) {
         smsGatewayArray.forEach((elementSmsGateway) => {
-          new SmsUtils().sendSms(
+          new SmsUtils().sendSmsTwilio(
             elementSmsGateway.mobile,
             elementSmsGateway.text,
           );
@@ -1731,7 +1731,7 @@ export class ShopsService {
 
       if (smsGatewayArray.length != 0) {
         smsGatewayArray.forEach((elementSmsGateway) => {
-          new SmsUtils().sendSms(
+          new SmsUtils().sendSmsTwilio(
             elementSmsGateway.mobile,
             elementSmsGateway.text,
           );
@@ -1888,7 +1888,7 @@ var smsGatewayArray=[];
 
       if (smsGatewayArray.length != 0) {
         smsGatewayArray.forEach((elementSmsGateway) => {
-          new SmsUtils().sendSms(
+          new SmsUtils().sendSmsTwilio(
             elementSmsGateway.mobile,
             elementSmsGateway.text,
           );
