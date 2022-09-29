@@ -4641,7 +4641,7 @@ console.log("___ report aggragate   "+JSON.stringify(arrayAggregation));
           arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _dueDate: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _dueDate: dto.sortOrder,_id:dto.sortOrder } });
           break;
       }
       if (dto.skip != -1) {
