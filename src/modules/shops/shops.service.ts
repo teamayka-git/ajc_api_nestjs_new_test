@@ -342,7 +342,7 @@ export class ShopsService {
             _updatedAt: -1,
             _status: 1,
           });
-          smsGatewayArray.push({mobile:dto.arrayUsersNew[i].mobile,text:'Use ' + password + ' as AJC OMS password reset code.'});
+          smsGatewayArray.push({mobile:dto.arrayUsersNew[i].mobile,text: password,userName:dto.arrayUsersNew[i].name});//password
 		
 		
         }
@@ -385,7 +385,7 @@ export class ShopsService {
         _updatedAt: -1,
         _status: 1,
       });
-      smsGatewayArray.push({mobile:dto.mobile,text:'Use ' + passwordMainUser + ' as AJC OMS password reset code.'});
+      smsGatewayArray.push({mobile:dto.mobile,text: passwordMainUser ,userName:dto.name});//password
 		
       await this.userModel.insertMany(arrayToUsers, {
         session: transactionSession,
@@ -460,9 +460,10 @@ export class ShopsService {
 
       if (smsGatewayArray.length != 0) {
         smsGatewayArray.forEach((elementSmsGateway) => {
-          new SmsUtils().sendSmsTwilio(
+          new SmsUtils().sendSmsSMSBits(
             elementSmsGateway.mobile,
             elementSmsGateway.text,
+            elementSmsGateway.userName,
           );
         });
       }
@@ -674,7 +675,7 @@ export class ShopsService {
             _updatedAt: -1,
             _status: 1,
           });
-          smsGatewayArray.push({mobile:dto.arrayUsersNew[i].mobile,text: 'Use ' + password + ' as AJC OMS password reset code.'});
+          smsGatewayArray.push({mobile:dto.arrayUsersNew[i].mobile,text:  password ,userName:dto.arrayUsersNew[i].name});
 		
         }
 
@@ -729,9 +730,10 @@ export class ShopsService {
 
       if (smsGatewayArray.length != 0) {
         smsGatewayArray.forEach((elementSmsGateway) => {
-          new SmsUtils().sendSmsTwilio(
+          new SmsUtils().sendSmsSMSBits(
             elementSmsGateway.mobile,
             elementSmsGateway.text,
+            elementSmsGateway.userName
           );
         });
       }
@@ -1703,7 +1705,7 @@ export class ShopsService {
             _updatedAt: -1,
             _status: 1,
           });
-          smsGatewayArray.push({mobile: dto.arrayUsersNew[i].mobile,text: 'Use ' + password + ' as AJC OMS password reset code.'});
+          smsGatewayArray.push({mobile: dto.arrayUsersNew[i].mobile,text:  password,userName: dto.arrayUsersNew[i].name});//password
 		
          
           
@@ -1731,9 +1733,10 @@ export class ShopsService {
 
       if (smsGatewayArray.length != 0) {
         smsGatewayArray.forEach((elementSmsGateway) => {
-          new SmsUtils().sendSmsTwilio(
+          new SmsUtils().sendSmsSMSBits(
             elementSmsGateway.mobile,
             elementSmsGateway.text,
+            elementSmsGateway.userName
           );
         });
       }
@@ -1857,7 +1860,7 @@ var smsGatewayArray=[];
             _updatedAt: -1,
             _status: 1,
           });
-          smsGatewayArray.push({mobile: dto.arrayUsersNew[i].mobile,text:'Use ' + password + ' as AJC OMS password reset code.'});
+          smsGatewayArray.push({mobile: dto.arrayUsersNew[i].mobile,text: password ,userName:dto.arrayUsersNew[i].name});
 		
         }
 
@@ -1888,9 +1891,10 @@ var smsGatewayArray=[];
 
       if (smsGatewayArray.length != 0) {
         smsGatewayArray.forEach((elementSmsGateway) => {
-          new SmsUtils().sendSmsTwilio(
+          new SmsUtils().sendSmsSMSBits(
             elementSmsGateway.mobile,
             elementSmsGateway.text,
+            elementSmsGateway.userName
           );
         });
       }

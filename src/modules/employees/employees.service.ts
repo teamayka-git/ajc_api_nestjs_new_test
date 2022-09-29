@@ -408,7 +408,8 @@ export class EmployeesService {
       if (resultUserUpdated._password == encryptedPassword) {
         smsGatewayArray.push({
           mobile: dto.mobile,
-          text: 'Use ' + password + ' as AJC OMS password reset code.',
+          text:  password, //password
+          userName:resultUserUpdated._name
         });
       }
 
@@ -451,9 +452,10 @@ export class EmployeesService {
 
       if (smsGatewayArray.length != 0) {
         smsGatewayArray.forEach((elementSmsGateway) => {
-          new SmsUtils().sendSmsTwilio(
+          new SmsUtils().sendSmsSMSBits(
             elementSmsGateway.mobile,
             elementSmsGateway.text,
+            elementSmsGateway.userName
           );
         });
       }

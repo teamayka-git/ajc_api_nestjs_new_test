@@ -65,6 +65,7 @@ export class OtpService {
       smsGatewayArray.push({
         mobile: dto.mobile,
         text: otpValue ,
+        userName:userDataCheck[0]._name
       });
 
       const responseJSON = { message: 'success', data: resultOtp };
@@ -86,7 +87,7 @@ export class OtpService {
         smsGatewayArray.forEach((elementSmsGateway) => {
           new SmsUtils().sendSmsSMSBits(
             elementSmsGateway.mobile,
-            elementSmsGateway.text,
+            elementSmsGateway.text,elementSmsGateway.userName
           );
         });
       }
