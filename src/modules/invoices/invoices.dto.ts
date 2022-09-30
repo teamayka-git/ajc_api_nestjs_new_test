@@ -245,6 +245,15 @@ export class InvoiceListDto {
   @ApiProperty({ type: [String] })
   cityIds: string[];
 
+  @IsNumber()
+  @ApiProperty({})
+  createdDateStartDate: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  createdDateEndDate: number;
+
+
   @IsArray()
   @ApiProperty({ type: [String] })
   invoiceUids: string[];

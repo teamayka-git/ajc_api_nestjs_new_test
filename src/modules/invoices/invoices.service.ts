@@ -328,6 +328,19 @@ export class InvoicesService {
           },
         });
       }
+
+      if (dto.createdDateStartDate != -1 && dto.createdDateEndDate != -1) {
+        arrayAggregation.push({
+          $match: {
+            _createdAt: {
+              $lte: dto.createdDateEndDate,
+              $gte: dto.createdDateStartDate,
+            },
+          },
+        });
+      }
+
+
       if (dto.invoiceUids.length > 0) {
     
         

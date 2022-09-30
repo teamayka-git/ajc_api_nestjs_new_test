@@ -394,6 +394,7 @@ export class OrderSaleReportListDto {
   @IsNumber()
   @ApiProperty({ description: descriptionListSortType })
   sortType: number;
+  
   @IsNumber()
   @ApiProperty({ description: descriptionListSortOrder })
   sortOrder: number;
