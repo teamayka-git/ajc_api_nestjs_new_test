@@ -233,9 +233,9 @@ export class OrderSaleSetProcessService {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-    try {
+    try { 
       var objectUpdateOrderSaleSetProcess = {
-        _userId: dto.userId,
+        _userId: dto.userId == '' || dto.userId == 'nil'?null: dto.userId,
         _orderStatus: dto.orderStatus,
         _description: dto.description,
         _rootCause: dto.rootCause,

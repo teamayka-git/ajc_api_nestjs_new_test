@@ -6,6 +6,7 @@ import * as mongoose from 'mongoose';
 import { OrderSalesDocuments } from 'src/tableModels/order_sales_documents.model';
 import {
   EditOrderSaleGeneralRemarkDto,
+  GlobalSearchDto,
   OrderSaleHistoryListDto,
   OrderSaleListDto,
   OrderSaleReportListDto,
@@ -500,6 +501,7 @@ export class OrderSalesService {
           dto.shopId == '' || dto.shopId == 'nil' ? _userId_ : dto.shopId,
         _type: dto.type,
         _dueDate: dto.dueDate,
+        _generalRemark: dto.generalRemark != null ? dto.generalRemark : '',
 
         _referenceNumber: dto.referenceNumber,
         _description: dto.description,
@@ -731,8 +733,6 @@ export class OrderSalesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      console.log('__-req ordersale list  ' + JSON.stringify(dto));
-
       var arrayAggregation = [];
 
       if (dto.searchingText != '') {
@@ -2614,33 +2614,17 @@ export class OrderSalesService {
       }
 
       if (
-       ( dto.deliveryAssignedStartDate != -1 ||
-        dto.deliveryAssignedStartDate != -1
-      ) ||(dto.logisticsPartnerIds.length!=0)) {
-
-
+        dto.deliveryAssignedStartDate != -1 ||
+        dto.deliveryAssignedStartDate != -1 ||
+        dto.logisticsPartnerIds.length != 0
+      ) {
         var logisticsPartnerIdsMongo = [];
 
-
         if (dto.logisticsPartnerIds.length > 0) {
-        
           dto.logisticsPartnerIds.map((mapItem) => {
             logisticsPartnerIdsMongo.push(new mongoose.Types.ObjectId(mapItem));
           });
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         const orderSaleItemsMongoCheckPipeline = () => {
           const pipeline = [];
@@ -2692,13 +2676,13 @@ export class OrderSalesService {
                       },
                     });
                   }
-if(logisticsPartnerIdsMongo.length!=0){
-  pipeline.push({
-    $match: {
-      _deliveryProviderId: { $in: logisticsPartnerIdsMongo },
-    },
-  });
-}
+                  if (logisticsPartnerIdsMongo.length != 0) {
+                    pipeline.push({
+                      $match: {
+                        _deliveryProviderId: { $in: logisticsPartnerIdsMongo },
+                      },
+                    });
+                  }
                   pipeline.push({ $project: { _id: 1 } });
                   return pipeline;
                 };
@@ -3157,9 +3141,6 @@ if(logisticsPartnerIdsMongo.length!=0){
           dto.responseFormat,
         ),
       );
-
-
-console.log("___ report aggragate   "+JSON.stringify(arrayAggregation));
 
       if (dto.agingStartCount != -1 || dto.agingEndCount != -1) {
         arrayAggregation[arrayAggregation.length - 1].$project.aging = {
@@ -4480,8 +4461,6 @@ console.log("___ report aggragate   "+JSON.stringify(arrayAggregation));
     dto: SetProcessAssignedOrderSaleListDto,
     _userId_: string,
   ) {
-    console.log('req setprocess    ' + JSON.stringify(dto));
-
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -4641,7 +4620,9 @@ console.log("___ report aggragate   "+JSON.stringify(arrayAggregation));
           arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _dueDate: dto.sortOrder,_id:dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _dueDate: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
       }
       if (dto.skip != -1) {
@@ -4655,9 +4636,6 @@ console.log("___ report aggragate   "+JSON.stringify(arrayAggregation));
           dto.responseFormat,
         ),
       );
-
-console.log("____duplicate  "+JSON.stringify(arrayAggregation));
-
 
       const isorderSaleSetSubProcess = dto.screenType.includes(101);
       if (isorderSaleSetSubProcess) {
@@ -5123,8 +5101,6 @@ console.log("____duplicate  "+JSON.stringify(arrayAggregation));
         );
       }
 
-      
-      
       var result = await this.orderSaleSetProcessModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
@@ -5582,6 +5558,219 @@ console.log("____duplicate  "+JSON.stringify(arrayAggregation));
       }
 
       const responseJSON = { message: 'success', data: { list: resultItems } };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async globalSearch(dto: GlobalSearchDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var orderSaleIds = [];
+      if (dto.type == 0) {
+        var resultOrderSale = await this.orderSaleMainModel.aggregate([
+          {
+            $match: {
+              $or: [
+                { _uid: new RegExp(`^${dto.mainValue}$`, 'i') },
+                { _referenceNumber: new RegExp(`^${dto.mainValue}$`, 'i') },
+              ],
+            },
+          },
+          { $project: { _id: 1 } },
+        ]);
+
+        resultOrderSale.forEach((element) => {
+          orderSaleIds.push(new mongoose.Types.ObjectId(element._id));
+        });
+      }
+
+      var arrayAggregation = [];
+      arrayAggregation.push({
+        $match: {
+          _id: { $in: orderSaleIds },
+        },
+      });
+
+      switch (dto.sortType) {
+        case 0:
+          arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
+          break;
+        case 1:
+          arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
+          break;
+        case 2:
+          arrayAggregation.push({ $sort: { _dueDate: dto.sortOrder } });
+          break;
+      }
+
+      if (dto.skip != -1) {
+        arrayAggregation.push({ $skip: dto.skip });
+        arrayAggregation.push({ $limit: dto.limit });
+      }
+      arrayAggregation.push(
+        new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+          0,
+          dto.responseFormat,
+        ),
+      );
+
+      const isorderSaledocuments = dto.screenType.includes(101);
+
+      if (isorderSaledocuments) {
+        const orderSaleDocumentsPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                _status: 1,
+                $expr: { $eq: ['$_orderSaleId', '$$orderSaleIdId'] },
+              },
+            },
+            new ModelWeightResponseFormat().orderSaleDocumentsTableResponseFormat(
+              1010,
+              dto.responseFormat,
+            ),
+          );
+
+          const isorderSaledocumentsGlobalGallery =
+            dto.screenType.includes(102);
+
+          if (isorderSaledocumentsGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } },
+                    },
+
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1020,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.ORDER_SALES_DOCUMENTS,
+            let: { orderSaleIdId: '$_id' },
+            pipeline: orderSaleDocumentsPipeline(),
+            as: 'orderSaleDocumentList',
+          },
+        });
+      }
+
+
+
+
+
+      const isorderSaleShopDetails =
+      dto.screenType.includes(103);
+
+    if (isorderSaleShopDetails) {
+      arrayAggregation.push(
+        {
+          $lookup: {
+            from: ModelNames.SHOPS,
+            let: { shopId: '$_shopId' },
+            pipeline: [
+              {
+                $match: { $expr: { $eq: ['$_id', '$$shopId'] } },
+              },
+
+              new ModelWeightResponseFormat().shopTableResponseFormat(
+                1030,
+                dto.responseFormat,
+              ),
+            ],
+            as: 'shopDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$shopDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      );
+    }
+
+
+
+    const isorderSaleItems =
+    dto.screenType.includes(100);
+
+  if (isorderSaleItems) {
+    arrayAggregation.push(
+      {
+        $lookup: {
+          from: ModelNames.ORDER_SALES_ITEMS,
+          let: { orderId: '$_id' },
+          pipeline: [
+            {
+              $match: { $expr: { $eq: ['$_orderSaleId', '$$orderId'] } },
+            },
+
+            new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+              1000,
+              dto.responseFormat,
+            ),
+          ],
+          as: 'ordersaleItemsList',
+        },
+      }
+    );
+  }
+
+
+
+
+
+
+
+
+
+      var resultOrderSaleResponse = await this.orderSaleMainModel.aggregate(
+        arrayAggregation,
+      );
+
+      const responseJSON = {
+        message: 'success',
+        data: { list: resultOrderSaleResponse },
+      };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=

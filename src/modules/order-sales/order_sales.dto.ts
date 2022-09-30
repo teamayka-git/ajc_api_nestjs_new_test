@@ -30,14 +30,14 @@ const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType = '0-Created Date, 1-Status,2-due date';
 const descriptionListDocType = '0-image, 1-video, 2-pdf, 3-audio, 4-document';
-
+const descriptionGlobalSearchType="0-Order, 1-shop, 2-Invoice, 3-orderhead, 4-shop phone, 5-net weight";
 
 
 const descriptionSetProcessListSortOrder = '1-ascending, -1-descending';
 const descriptionSetProcessListSortType = '0-Created Date, 1-Status,2-due date';
 
 
-
+const descriptionScreenTypeGlobalSearch="0 - total documents count, 100 - ordersale items, 101 - ordersale documents, 102 - ordersale documents under[101] global gallery details, 103 - shop details";
 
 const descriptionFileOriginalName =
   "file name givent while uploading, if there is no image then give 'nil; here";
@@ -251,6 +251,13 @@ export class OrderSalesEditDto {
   @IsNumber()
   @ApiProperty({})
   dueDate: number;
+
+  
+  @IsOptional()
+  @IsString()
+  @ApiProperty({})
+  generalRemark: string;
+
 
   @IsString()
   @ApiProperty({})
@@ -629,9 +636,55 @@ export class OrderSalesWorkStatusChangeDto {
 
 export class OrderSalesGetOrderIdFromQrBarcodeDto {
  
+
+
   @IsString()
   @ApiProperty({})
   value: string;
+}
+
+export class GlobalSearchDto {
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortType })
+  sortType: number;
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortOrder })
+  sortOrder: number;
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @ApiProperty({ type: [Number], description: descriptionStatus })
+  statusArray: number[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionScreenTypeGlobalSearch,
+  })
+  screenType: number[];
+
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
+  @IsNumber()
+  @ApiProperty({})
+  limit: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  skip: number;
+
+
+  @IsNumber()
+  @ApiProperty({ description: descriptionGlobalSearchType })
+  type: number;
+
+
+  @IsString()
+  @ApiProperty({})
+  mainValue: string;
 }
 export class SetProcessAssignedOrderSaleListDto {
 

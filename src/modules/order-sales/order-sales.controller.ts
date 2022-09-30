@@ -16,6 +16,7 @@ import { diskStorage } from 'multer';
 import { FileMulterHelper } from 'src/shared/file_multter_helper';
 import {
   EditOrderSaleGeneralRemarkDto,
+  GlobalSearchDto,
   OrderSaleHistoryListDto,
   OrderSaleListDto,
   OrderSaleReportListDto,
@@ -145,6 +146,14 @@ export class OrderSalesController {
     @Request() req,
   ) {
     return this.orderSalesService.getOrderIdFromQrBarCode(dto, req['_userId_']);
+  }
+
+  @Post('globalSearch')
+  globalSearch(
+    @Body() dto: GlobalSearchDto,
+    @Request() req,
+  ) {
+    return this.orderSalesService.globalSearch(dto, req['_userId_']);
   }
 
 
