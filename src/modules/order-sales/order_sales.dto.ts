@@ -663,6 +663,13 @@ export class GlobalSearchDto {
   })
   screenType: number[];
 
+  @IsNumber()
+  @ApiProperty({})
+  startValue: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  endValue: number;
 
   @IsArray()
   @ApiProperty({ type: [Number], })

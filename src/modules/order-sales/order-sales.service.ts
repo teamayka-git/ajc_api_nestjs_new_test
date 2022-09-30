@@ -41,12 +41,15 @@ import { Generals } from 'src/tableModels/generals.model';
 import { RootCause } from 'aws-sdk/clients/costexplorer';
 import { InvoiceItems } from 'src/tableModels/invoice_items.model';
 import { Products } from 'src/tableModels/products.model';
+import { Invoices } from 'src/tableModels/invoices.model';
 
 @Injectable()
 export class OrderSalesService {
   constructor(
     @InjectModel(ModelNames.ROOT_CAUSES)
     private readonly rootCauseModel: Model<RootCause>,
+    @InjectModel(ModelNames.INVOICES)
+    private readonly invoiceModel: Model<Invoices>,
     @InjectModel(ModelNames.PRODUCTS)
     private readonly productModel: Model<Products>,
     @InjectModel(ModelNames.INVOICE_ITEMS)
@@ -5600,6 +5603,221 @@ export class OrderSalesService {
         resultOrderSale.forEach((element) => {
           orderSaleIds.push(new mongoose.Types.ObjectId(element._id));
         });
+      } else if (dto.type == 1) {
+        var shopIds = [];
+        var resultShops = await this.shopsModel.aggregate([
+          {
+            $match: {
+              $or: [
+                { _uid: new RegExp(dto.mainValue, 'i') },
+                { _name: new RegExp(dto.mainValue, 'i') },
+                { _displayName: new RegExp(dto.mainValue, 'i') },
+                { _address: new RegExp(dto.mainValue, 'i') },
+                { _panCardNumber: new RegExp(dto.mainValue, 'i') },
+                { _gstNumber: new RegExp(dto.mainValue, 'i') },
+              ],
+            },
+          },
+          { $project: { _id: 1 } },
+        ]);
+
+        resultShops.forEach((element) => {
+          shopIds.push(new mongoose.Types.ObjectId(element._id));
+        });
+
+        var resultOrders = await this.orderSaleMainModel.aggregate([
+          {
+            $match: {
+              _shopId: { $in: shopIds },
+            },
+          },
+        ]);
+
+        resultOrders.forEach((element) => {
+          orderSaleIds.push(new mongoose.Types.ObjectId(element._id));
+        });
+      }else if (dto.type == 2) {//invoice
+        var resultInvoice = await this.invoiceModel.aggregate([
+          {
+            $match: {
+              $or: [
+                { _uid: new RegExp(dto.mainValue, 'i') },
+                { _description: new RegExp(dto.mainValue, 'i') },
+               
+              ],
+            },
+          },
+          { $project: { _id: 1 } },
+          {
+            $lookup: {
+              from: ModelNames.INVOICE_ITEMS,
+              let: { invoiceId: '$_id' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_invoiceId', '$$invoiceId'] } },
+                },
+
+                { $project: { _orderSaleItemId: 1 } },
+                {
+                  $lookup: {
+                    from: ModelNames.ORDER_SALES_ITEMS,
+                    let: { ordersaleItemId: '$_orderSaleItemId' },
+                    pipeline: [
+                      {
+                        $match: { $expr: { $eq: ['$_id', '$$ordersaleItemId'] } },
+                      },
+      
+                      { $project: { _orderSaleId: 1 } },
+                      
+                    ],
+                    as: 'orderItemsDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$orderItemsDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              ],
+              as: 'invoiceItemsList',
+            },
+          },
+
+        ]);
+
+        resultInvoice.forEach((element) => {
+          element.invoiceItemsList.forEach((elementChild) => {
+            orderSaleIds.push(new mongoose.Types.ObjectId(elementChild.orderItemsDetails._orderSaleId));
+          });
+        });
+
+     
+
+       
+      }else if (dto.type == 3) {//oh
+        
+        var shopIds = [];
+        var resultUser = await this.userModel.aggregate([
+          {
+            $match: {
+              $or: [
+                { _name: new RegExp(dto.mainValue, 'i') },
+                { _email: new RegExp(dto.mainValue, 'i') },
+                { _mobile: new RegExp(dto.mainValue, 'i') },
+              
+              ],
+              _shopId:{$ne:null}
+            },
+          },
+          { $project: { _id: 1,_shopId:1 } },
+
+
+
+
+        ]);
+
+        resultUser.forEach((element) => {
+          shopIds.push(new mongoose.Types.ObjectId(element._id));
+        });
+
+        var resultOrders = await this.orderSaleMainModel.aggregate([
+          {
+            $match: {
+              _orderHeadId: { $in: shopIds },
+            },
+          },
+        ]);
+
+        resultOrders.forEach((element) => {
+          orderSaleIds.push(new mongoose.Types.ObjectId(element._id));
+        });
+
+
+      }else if (dto.type == 4) {//shop phone
+        
+        var shopIds = [];
+        var resultUser = await this.userModel.aggregate([
+          {
+            $match: {
+              $or: [
+                { _name: new RegExp(dto.mainValue, 'i') },
+                { _email: new RegExp(dto.mainValue, 'i') },
+                { _mobile: new RegExp(dto.mainValue, 'i') },
+              
+              ],
+              _shopId:{$ne:null}
+            },
+          },
+          { $project: { _id: 1,_shopId:1 } },
+
+
+
+
+        ]);
+
+        resultUser.forEach((element) => {
+          shopIds.push(new mongoose.Types.ObjectId(element._shopId));
+        });
+
+        var resultOrders = await this.orderSaleMainModel.aggregate([
+          {
+            $match: {
+              _shopId: { $in: shopIds },
+            },
+          },
+        ]);
+
+        resultOrders.forEach((element) => {
+          orderSaleIds.push(new mongoose.Types.ObjectId(element._id));
+        });
+
+
+
+        
+      }else if (dto.type == 5) {//product phone
+        
+        var shopIds = [];
+        var resultOrders = await this.productModel.aggregate([
+          {
+            $match: {
+              _netWeight:{$lte:dto.endValue,$gte:dto.startValue}
+            },
+          },
+          { $project: { _id: 1,_orderItemId:1 } },
+
+
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_ITEMS,
+              let: { ordersaleItemId: '$_orderItemId' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$ordersaleItemId'] } },
+                },
+
+                { $project: { _orderSaleId: 1 } },
+                
+              ],
+              as: 'orderItemsDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderItemsDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+
+        ]);
+
+       
+        resultOrders.forEach((element) => {
+          orderSaleIds.push(new mongoose.Types.ObjectId(element.orderItemsDetails._orderSaleId));
+        });
+
+
+
       }
 
       var arrayAggregation = [];

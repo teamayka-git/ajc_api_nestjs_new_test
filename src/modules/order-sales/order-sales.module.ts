@@ -20,11 +20,13 @@ import { GeneralsSchema } from 'src/tableModels/generals.model';
 import { RootCausesSchema } from 'src/tableModels/rootCause.model';
 import { InvoiceItemsSchema } from 'src/tableModels/invoice_items.model';
 import { ProductsSchema } from 'src/tableModels/products.model';
+import { InvoicesSchema } from 'src/tableModels/invoices.model';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: ModelNames.USER, schema: UserSchema },
+      { name: ModelNames.INVOICES, schema: InvoicesSchema },
       { name: ModelNames.GLOBAL_GALLERIES, schema: GlobalGalleriesSchema },
       { name: ModelNames.COUNTERS, schema: CountersSchema },
       { name: ModelNames.EMPLOYEES, schema: EmployeeSchema },
