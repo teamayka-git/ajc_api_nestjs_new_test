@@ -5742,30 +5742,32 @@ export class OrderSalesService {
             ),
           );
 
-          if(dto.screenType.includes(106)){
-            pipeline.push( {
-              $lookup: {
-                from: ModelNames.PROCESS_MASTER,
-                let: { processId: '$_processId' },
-                pipeline: [
-                  {
-                    $match: { $expr: { $eq: ['$_id', '$$processId'] } },
-                  },
-  
-                  new ModelWeightResponseFormat().processMasterTableResponseFormat(
-                    1060,
-                    dto.responseFormat,
-                  ),
-                ],
-                as: 'processDetails',
+          if (dto.screenType.includes(106)) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.PROCESS_MASTER,
+                  let: { processId: '$_processId' },
+                  pipeline: [
+                    {
+                      $match: { $expr: { $eq: ['$_id', '$$processId'] } },
+                    },
+
+                    new ModelWeightResponseFormat().processMasterTableResponseFormat(
+                      1060,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'processDetails',
+                },
               },
-            },
-            {
-              $unwind: {
-                path: '$processDetails',
-                preserveNullAndEmptyArrays: true,
+              {
+                $unwind: {
+                  path: '$processDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
               },
-            },);
+            );
           }
           return pipeline;
         };
@@ -5795,7 +5797,7 @@ export class OrderSalesService {
               dto.responseFormat,
             ),
           );
-          if (dto.screenType.includes(104))
+          if (dto.screenType.includes(104)) {
             pipeline.push(
               {
                 $lookup: {
@@ -5823,6 +5825,36 @@ export class OrderSalesService {
                 },
               },
             );
+          }
+          if (dto.screenType.includes(107)) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.SUB_CATEGORIES,
+                  let: { subCategoryId: '$_subCategoryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$subCategoryId'] },
+                      },
+                    },
+
+                    new ModelWeightResponseFormat().subCategoryTableResponseFormat(
+                      1070,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'subCategoryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$subCategoryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
 
           return pipeline;
         };
