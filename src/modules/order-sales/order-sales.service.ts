@@ -5723,30 +5723,61 @@ export class OrderSalesService {
         );
       }
 
-
-
       const orderSaleSetProcess = dto.screenType.includes(105);
 
       if (orderSaleSetProcess) {
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.ORDER_SALE_SET_PROCESSES,
-              let: { orderId: '$_id' },
-              pipeline: [
-                {
-                  $match: {_status:1, $expr: { $eq: ['$_orderSaleId', '$$orderId'] } },
-                },
-
-                new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
-                  1050,
-                  dto.responseFormat,
-                ),
-              ],
-              as: 'setProcessList',
+        const orderSaleOrderSetProcessPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                _status: 1,
+                $expr: { $eq: ['$_orderSaleId', '$$orderId'] },
+              },
             },
+
+            new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+              1050,
+              dto.responseFormat,
+            ),
+          );
+
+          if(dto.screenType.includes(106)){
+            pipeline.push( {
+              $lookup: {
+                from: ModelNames.PROCESS_MASTER,
+                let: { processId: '$_processId' },
+                pipeline: [
+                  {
+                    $match: { $expr: { $eq: ['$_id', '$$processId'] } },
+                  },
+  
+                  new ModelWeightResponseFormat().processMasterTableResponseFormat(
+                    1060,
+                    dto.responseFormat,
+                  ),
+                ],
+                as: 'processDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$processDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },);
+          }
+          return pipeline;
+        };
+
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.ORDER_SALE_SET_PROCESSES,
+            let: { orderId: '$_id' },
+            pipeline: orderSaleOrderSetProcessPipeline(),
+            as: 'setProcessList',
           },
-        );
+        });
       }
 
       const isorderSaleItems = dto.screenType.includes(100);
@@ -5764,33 +5795,34 @@ export class OrderSalesService {
               dto.responseFormat,
             ),
           );
-          if(dto.screenType.includes(104))
-          pipeline.push({
-            $lookup: {
-              from: ModelNames.PRODUCTS,
-              let: { orderItemId: '$_id' },
-              pipeline: [
-                {
-                  $match: { $expr: { $eq: ['$_orderItemId', '$$orderItemId'] } },
+          if (dto.screenType.includes(104))
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.PRODUCTS,
+                  let: { orderItemId: '$_id' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_orderItemId', '$$orderItemId'] },
+                      },
+                    },
+
+                    new ModelWeightResponseFormat().productTableResponseFormat(
+                      1040,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'productDetails',
                 },
-
-                new ModelWeightResponseFormat().productTableResponseFormat(
-                  1040,
-                  dto.responseFormat,
-                ),
-              ],
-              as: 'productDetails',
-            },
-          },
-          {
-            $unwind: {
-              path: '$productDetails',
-              preserveNullAndEmptyArrays: true,
-            },
-          },);
-
-
-
+              },
+              {
+                $unwind: {
+                  path: '$productDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
 
           return pipeline;
         };
