@@ -861,47 +861,52 @@ export class OrderSalesService {
           },
         );
       }
-      if ((dto.cityIds!=null&& dto.cityIds.length > 0)&&(dto.branchIds!=null&& dto.branchIds.length > 0)) {
+      if (
+        dto.cityIds != null &&
+        dto.cityIds.length > 0 &&
+        dto.branchIds != null &&
+        dto.branchIds.length > 0
+      ) {
         var branchIds = [];
         var cityIds = [];
 
-        if(dto.cityIds!=null&& dto.cityIds.length > 0){
+        if (dto.cityIds != null && dto.cityIds.length > 0) {
           dto.cityIds.map((mapItem) => {
             cityIds.push(new mongoose.Types.ObjectId(mapItem));
           });
-  
-       }
-       if(dto.branchIds!=null&& dto.branchIds.length > 0){
-         dto.branchIds.map((mapItem) => {
-          branchIds.push(new mongoose.Types.ObjectId(mapItem));
-         });
- 
-      }
+        }
+        if (dto.branchIds != null && dto.branchIds.length > 0) {
+          dto.branchIds.map((mapItem) => {
+            branchIds.push(new mongoose.Types.ObjectId(mapItem));
+          });
+        }
 
-var shopPipeline=[];
-shopPipeline.push({
-  $match: {
-    _status: 1,
-    $expr: { $eq: ['$_id', '$$shopId'] },
-  },
-},);
-if( branchIds.length!=0){
-shopPipeline.push( {
-  $match: {
-    _branchId: { $in: branchIds },
-  },
-},);}
-if(cityIds.length!=0){
-shopPipeline.push( {
-  $match: {
-    _cityId: { $in: cityIds },
-  },
-},);}
-shopPipeline.push({
-  $project: {
-    _id: 1,
-  },
-},);
+        var shopPipeline = [];
+        shopPipeline.push({
+          $match: {
+            _status: 1,
+            $expr: { $eq: ['$_id', '$$shopId'] },
+          },
+        });
+        if (branchIds.length != 0) {
+          shopPipeline.push({
+            $match: {
+              _branchId: { $in: branchIds },
+            },
+          });
+        }
+        if (cityIds.length != 0) {
+          shopPipeline.push({
+            $match: {
+              _cityId: { $in: cityIds },
+            },
+          });
+        }
+        shopPipeline.push({
+          $project: {
+            _id: 1,
+          },
+        });
 
         arrayAggregation.push(
           {
@@ -2649,98 +2654,6 @@ shopPipeline.push({
                               $match: { mongoCheckDeliveryItems: { $ne: [] } },
                             },
                           ],
-                          as: 'mongoCheckInvoice',
-                        },
-                      },
-                      {
-                        $match: { mongoCheckInvoice: { $ne: [] } },
-                      },
-                    ],
-                    as: 'mongoCheckInvoiceItems',
-                  },
-                },
-                {
-                  $match: { mongoCheckInvoiceItems: { $ne: [] } },
-                },
-              ],
-              as: 'mongoCheckOrdersaleItems',
-            },
-          },
-          {
-            $match: { mongoCheckOrdersaleItems: { $ne: [] } },
-          },
-        );
-      }
-      if (
-        (dto.invoiceGeneratedStartDate != -1 &&
-          dto.invoiceGeneratedEndDate != -1)  ) {
-       var invoiceTableCreatedDate=[];
-       invoiceTableCreatedDate.push( {
-        $match: {
-          _status: 1,
-          $expr: { $eq: ['$_id', '$$invoiceId'] },
-        },
-      });
-  invoiceTableCreatedDate.push( {
-    $match: {
-      _createdAt: {
-        $lte: dto.invoiceGeneratedEndDate,
-        $gte: dto.invoiceGeneratedStartDate,
-      },
-    },
-  });
-
-
-
-
-
-      invoiceTableCreatedDate.push(      {
-        $project: {
-          _id: 1,
-        },
-      },);
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.ORDER_SALES_ITEMS,
-              let: { orderSaleId: '$_id' },
-              pipeline: [
-                {
-                  $match: {
-                    _status: 1,
-                    $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
-                  },
-                },
-                {
-                  $project: {
-                    _id: 1,
-                  },
-                },
-
-                {
-                  $lookup: {
-                    from: ModelNames.INVOICE_ITEMS,
-                    let: { orderSaleItemId: '$_id' },
-                    pipeline: [
-                      {
-                        $match: {
-                          _status: 1,
-                          $expr: {
-                            $eq: ['$_orderSaleItemId', '$$orderSaleItemId'],
-                          },
-                        },
-                      },
-                      {
-                        $project: {
-                          _invoiceId: 1,
-                        },
-                      },
-
-                      {
-                        $lookup: {
-                          from: ModelNames.INVOICES,
-                          let: { invoiceId: '$_invoiceId' },
-                          pipeline: invoiceTableCreatedDate,
                           as: 'mongoCheckInvoice',
                         },
                       },
@@ -5784,14 +5697,14 @@ shopPipeline.push({
         resultOrders.forEach((element) => {
           orderSaleIds.push(new mongoose.Types.ObjectId(element._id));
         });
-      }else if (dto.type == 2) {//invoice
+      } else if (dto.type == 2) {
+        //invoice
         var resultInvoice = await this.invoiceModel.aggregate([
           {
             $match: {
               $or: [
                 { _uid: new RegExp(dto.mainValue, 'i') },
                 { _description: new RegExp(dto.mainValue, 'i') },
-               
               ],
             },
           },
@@ -5812,11 +5725,12 @@ shopPipeline.push({
                     let: { ordersaleItemId: '$_orderSaleItemId' },
                     pipeline: [
                       {
-                        $match: { $expr: { $eq: ['$_id', '$$ordersaleItemId'] } },
+                        $match: {
+                          $expr: { $eq: ['$_id', '$$ordersaleItemId'] },
+                        },
                       },
-      
+
                       { $project: { _orderSaleId: 1 } },
-                      
                     ],
                     as: 'orderItemsDetails',
                   },
@@ -5831,20 +5745,20 @@ shopPipeline.push({
               as: 'invoiceItemsList',
             },
           },
-
         ]);
 
         resultInvoice.forEach((element) => {
           element.invoiceItemsList.forEach((elementChild) => {
-            orderSaleIds.push(new mongoose.Types.ObjectId(elementChild.orderItemsDetails._orderSaleId));
+            orderSaleIds.push(
+              new mongoose.Types.ObjectId(
+                elementChild.orderItemsDetails._orderSaleId,
+              ),
+            );
           });
         });
+      } else if (dto.type == 3) {
+        //oh
 
-     
-
-       
-      }else if (dto.type == 3) {//oh
-        
         var shopIds = [];
         var resultUser = await this.userModel.aggregate([
           {
@@ -5853,15 +5767,10 @@ shopPipeline.push({
                 { _name: new RegExp(dto.mainValue, 'i') },
                 { _email: new RegExp(dto.mainValue, 'i') },
                 { _mobile: new RegExp(dto.mainValue, 'i') },
-              
-              ]
+              ],
             },
           },
-          { $project: { _id: 1,_shopId:1 } },
-
-
-
-
+          { $project: { _id: 1, _shopId: 1 } },
         ]);
 
         resultUser.forEach((element) => {
@@ -5879,10 +5788,9 @@ shopPipeline.push({
         resultOrders.forEach((element) => {
           orderSaleIds.push(new mongoose.Types.ObjectId(element._id));
         });
+      } else if (dto.type == 4) {
+        //shop phone
 
-
-      }else if (dto.type == 4) {//shop phone
-        
         var shopIds = [];
         var resultUser = await this.userModel.aggregate([
           {
@@ -5891,16 +5799,11 @@ shopPipeline.push({
                 { _name: new RegExp(dto.mainValue, 'i') },
                 { _email: new RegExp(dto.mainValue, 'i') },
                 { _mobile: new RegExp(dto.mainValue, 'i') },
-              
               ],
-              _shopId:{$ne:null}
+              _shopId: { $ne: null },
             },
           },
-          { $project: { _id: 1,_shopId:1 } },
-
-
-
-
+          { $project: { _id: 1, _shopId: 1 } },
         ]);
 
         resultUser.forEach((element) => {
@@ -5918,21 +5821,17 @@ shopPipeline.push({
         resultOrders.forEach((element) => {
           orderSaleIds.push(new mongoose.Types.ObjectId(element._id));
         });
+      } else if (dto.type == 5) {
+        //product phone
 
-
-
-        
-      }else if (dto.type == 5) {//product phone
-        
         var shopIds = [];
         var resultOrders = await this.productModel.aggregate([
           {
             $match: {
-              _netWeight:{$lte:dto.endValue,$gte:dto.startValue}
+              _netWeight: { $lte: dto.endValue, $gte: dto.startValue },
             },
           },
-          { $project: { _id: 1,_orderItemId:1 } },
-
+          { $project: { _id: 1, _orderItemId: 1 } },
 
           {
             $lookup: {
@@ -5944,7 +5843,6 @@ shopPipeline.push({
                 },
 
                 { $project: { _orderSaleId: 1 } },
-                
               ],
               as: 'orderItemsDetails',
             },
@@ -5955,16 +5853,13 @@ shopPipeline.push({
               preserveNullAndEmptyArrays: true,
             },
           },
-
         ]);
 
-       
         resultOrders.forEach((element) => {
-          orderSaleIds.push(new mongoose.Types.ObjectId(element.orderItemsDetails._orderSaleId));
+          orderSaleIds.push(
+            new mongoose.Types.ObjectId(element.orderItemsDetails._orderSaleId),
+          );
         });
-
-
-
       }
 
       var arrayAggregation = [];

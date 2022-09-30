@@ -553,14 +553,6 @@ export class OrderSaleReportListDto {
   @ApiProperty({})
   createdDateEndDate: number;
 
-  @IsNumber()
-  @ApiProperty({})
-  invoiceGeneratedStartDate: number;
-
-  @IsNumber()
-  @ApiProperty({})
-  invoiceGeneratedEndDate: number;
-
   @IsArray()
   @ApiProperty({ type: [String] })
   cityIds: string[];

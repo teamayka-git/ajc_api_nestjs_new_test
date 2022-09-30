@@ -329,12 +329,12 @@ export class InvoicesService {
         });
       }
 
-      if (dto.invoiceGeneratedStartDate != -1 && dto.invoiceGeneratedEndDate != -1) {
+      if (dto.invoiceDateStartDate != -1 && dto.invoiceDateEndDate != -1) {
         arrayAggregation.push({
           $match: {
             _createdAt: {
-              $lte: dto.invoiceGeneratedEndDate,
-              $gte: dto.invoiceGeneratedStartDate,
+              $lte: dto.invoiceDateEndDate,
+              $gte: dto.invoiceDateStartDate,
             },
           },
         });
