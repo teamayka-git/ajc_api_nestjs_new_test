@@ -5736,7 +5736,7 @@ export class OrderSalesService {
               },
             },
 
-            new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+            new ModelWeightResponseFormat().orderSaleSetProcessTableResponseFormat(
               1050,
               dto.responseFormat,
             ),
