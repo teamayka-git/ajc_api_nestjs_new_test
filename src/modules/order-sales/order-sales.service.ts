@@ -5706,8 +5706,7 @@ export class OrderSalesService {
                 { _email: new RegExp(dto.mainValue, 'i') },
                 { _mobile: new RegExp(dto.mainValue, 'i') },
               
-              ],
-              _shopId:{$ne:null}
+              ]
             },
           },
           { $project: { _id: 1,_shopId:1 } },
