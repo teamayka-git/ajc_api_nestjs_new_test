@@ -547,6 +547,14 @@ export class OrderSaleReportListDto {
 
   @IsNumber()
   @ApiProperty({})
+  createdDateStartDate: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  createdDateEndDate: number;
+
+  @IsNumber()
+  @ApiProperty({})
   invoiceGeneratedStartDate: number;
 
   @IsNumber()

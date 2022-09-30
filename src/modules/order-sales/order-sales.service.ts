@@ -2375,12 +2375,12 @@ shopPipeline.push({
           },
         });
       }
-      if (dto.invoiceGeneratedStartDate != -1 && dto.invoiceGeneratedEndDate != -1) {
+      if (dto.createdDateStartDate != -1 && dto.createdDateEndDate != -1) {
         arrayAggregation.push({
           $match: {
             _createdAt: {
-              $lte: dto.invoiceGeneratedEndDate,
-              $gte: dto.invoiceGeneratedStartDate,
+              $lte: dto.createdDateEndDate,
+              $gte: dto.createdDateStartDate,
             },
           },
         });
@@ -2649,6 +2649,98 @@ shopPipeline.push({
                               $match: { mongoCheckDeliveryItems: { $ne: [] } },
                             },
                           ],
+                          as: 'mongoCheckInvoice',
+                        },
+                      },
+                      {
+                        $match: { mongoCheckInvoice: { $ne: [] } },
+                      },
+                    ],
+                    as: 'mongoCheckInvoiceItems',
+                  },
+                },
+                {
+                  $match: { mongoCheckInvoiceItems: { $ne: [] } },
+                },
+              ],
+              as: 'mongoCheckOrdersaleItems',
+            },
+          },
+          {
+            $match: { mongoCheckOrdersaleItems: { $ne: [] } },
+          },
+        );
+      }
+      if (
+        (dto.invoiceGeneratedStartDate != -1 &&
+          dto.invoiceGeneratedEndDate != -1)  ) {
+       var invoiceTableCreatedDate=[];
+       invoiceTableCreatedDate.push( {
+        $match: {
+          _status: 1,
+          $expr: { $eq: ['$_id', '$$invoiceId'] },
+        },
+      });
+  invoiceTableCreatedDate.push( {
+    $match: {
+      _createdAt: {
+        $lte: dto.invoiceGeneratedEndDate,
+        $gte: dto.invoiceGeneratedStartDate,
+      },
+    },
+  });
+
+
+
+
+
+      invoiceTableCreatedDate.push(      {
+        $project: {
+          _id: 1,
+        },
+      },);
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_ITEMS,
+              let: { orderSaleId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    _status: 1,
+                    $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+                  },
+                },
+                {
+                  $project: {
+                    _id: 1,
+                  },
+                },
+
+                {
+                  $lookup: {
+                    from: ModelNames.INVOICE_ITEMS,
+                    let: { orderSaleItemId: '$_id' },
+                    pipeline: [
+                      {
+                        $match: {
+                          _status: 1,
+                          $expr: {
+                            $eq: ['$_orderSaleItemId', '$$orderSaleItemId'],
+                          },
+                        },
+                      },
+                      {
+                        $project: {
+                          _invoiceId: 1,
+                        },
+                      },
+
+                      {
+                        $lookup: {
+                          from: ModelNames.INVOICES,
+                          let: { invoiceId: '$_invoiceId' },
+                          pipeline: invoiceTableCreatedDate,
                           as: 'mongoCheckInvoice',
                         },
                       },
