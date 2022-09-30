@@ -861,6 +861,62 @@ export class OrderSalesService {
           },
         );
       }
+      if ((dto.cityIds!=null&& dto.cityIds.length > 0)&&(dto.branchIds!=null&& dto.branchIds.length > 0)) {
+        var branchIds = [];
+        var cityIds = [];
+
+        if(dto.cityIds!=null&& dto.cityIds.length > 0){
+          dto.cityIds.map((mapItem) => {
+            cityIds.push(new mongoose.Types.ObjectId(mapItem));
+          });
+  
+       }
+       if(dto.branchIds!=null&& dto.branchIds.length > 0){
+         dto.branchIds.map((mapItem) => {
+          branchIds.push(new mongoose.Types.ObjectId(mapItem));
+         });
+ 
+      }
+
+var shopPipeline=[];
+shopPipeline.push({
+  $match: {
+    _status: 1,
+    $expr: { $eq: ['$_id', '$$shopId'] },
+  },
+},);
+if( branchIds.length!=0){
+shopPipeline.push( {
+  $match: {
+    _branchId: { $in: branchIds },
+  },
+},);}
+if(cityIds.length!=0){
+shopPipeline.push( {
+  $match: {
+    _cityId: { $in: cityIds },
+  },
+},);}
+shopPipeline.push({
+  $project: {
+    _id: 1,
+  },
+},);
+
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.SHOPS,
+              let: { shopId: '$_shopId' },
+              pipeline: shopPipeline,
+              as: 'mongoCheckShop',
+            },
+          },
+          {
+            $match: { mongoCheckShop: { $ne: [] } },
+          },
+        );
+      }
       if (dto.relationshipManagerIds.length > 0) {
         const shopMongoCheckPipeline = () => {
           const pipeline = [];
@@ -2319,12 +2375,12 @@ export class OrderSalesService {
           },
         });
       }
-      if (dto.createdDateStartDate != -1 && dto.createdDateEndDate != -1) {
+      if (dto.invoiceGeneratedStartDate != -1 && dto.invoiceGeneratedEndDate != -1) {
         arrayAggregation.push({
           $match: {
             _createdAt: {
-              $lte: dto.createdDateEndDate,
-              $gte: dto.createdDateStartDate,
+              $lte: dto.invoiceGeneratedEndDate,
+              $gte: dto.invoiceGeneratedStartDate,
             },
           },
         });

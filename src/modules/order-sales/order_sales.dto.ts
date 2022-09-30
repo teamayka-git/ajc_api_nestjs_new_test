@@ -346,6 +346,17 @@ export class OrderSaleListDto {
   referenceNumbers: string[];
 
 
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  cityIds: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  branchIds: string[];
+
+
 
 
   @IsNumber()
@@ -394,7 +405,7 @@ export class OrderSaleReportListDto {
   @IsNumber()
   @ApiProperty({ description: descriptionListSortType })
   sortType: number;
-  
+
   @IsNumber()
   @ApiProperty({ description: descriptionListSortOrder })
   sortOrder: number;
@@ -536,11 +547,11 @@ export class OrderSaleReportListDto {
 
   @IsNumber()
   @ApiProperty({})
-  createdDateStartDate: number;
+  invoiceGeneratedStartDate: number;
 
   @IsNumber()
   @ApiProperty({})
-  createdDateEndDate: number;
+  invoiceGeneratedEndDate: number;
 
   @IsArray()
   @ApiProperty({ type: [String] })

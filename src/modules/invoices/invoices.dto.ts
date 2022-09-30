@@ -247,11 +247,11 @@ export class InvoiceListDto {
 
   @IsNumber()
   @ApiProperty({})
-  createdDateStartDate: number;
+  invoiceGeneratedStartDate: number;
 
   @IsNumber()
   @ApiProperty({})
-  createdDateEndDate: number;
+  invoiceGeneratedEndDate: number;
 
 
   @IsArray()
