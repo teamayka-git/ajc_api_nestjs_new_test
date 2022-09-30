@@ -5744,7 +5744,7 @@ export class OrderSalesService {
               $match: { $expr: { $eq: ['$_orderSaleId', '$$orderId'] } },
             },
 
-            new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+            new ModelWeightResponseFormat().orderSaleItemsTableResponseFormat(
               1000,
               dto.responseFormat,
             ),
