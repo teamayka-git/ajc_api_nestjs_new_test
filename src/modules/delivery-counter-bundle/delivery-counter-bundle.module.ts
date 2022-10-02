@@ -8,10 +8,12 @@ import { DeliveryCounterBundleItemsSchema } from 'src/tableModels/delivery_count
 import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
 import { OrderSalesDocumentsSchema } from 'src/tableModels/order_sales_documents.model';
 import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.model';
+import { OrderSalesItemsSchema } from 'src/tableModels/order_sales_items.model';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
+      { name: ModelNames.ORDER_SALES_ITEMS, schema:OrderSalesItemsSchema },
       { name: ModelNames.DELIVERY_COUNTER_BUNDLES, schema:DeliveryBundlesSchema },
       { name: ModelNames.DELIVERY_COUNTER_BUNDLE_ITEMS, schema:DeliveryCounterBundleItemsSchema },
       { name: ModelNames.ORDER_SALES_MAIN, schema:OrderSalesMainSchema },
