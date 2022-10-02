@@ -800,5 +800,43 @@ export class ModelWeightResponseFormat {
     }
   }
 
+  public deliveryCounterBundleResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: {   _: 0,  } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().deliveryCounterBundleTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().deliveryCounterBundleTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().deliveryCounterBundleTableMedium() };
+    } else {
+      return { $project: {   _: 0,  } };
+    }
+  }
+
+  public deliveryCounterResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: {   _: 0,  } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().deliveryCounterTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().deliveryCounterTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().deliveryCounterTableMedium() };
+    } else {
+      return { $project: {   _: 0,  } };
+    }
+  }
+
 
 }

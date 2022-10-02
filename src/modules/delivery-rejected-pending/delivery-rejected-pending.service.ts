@@ -109,6 +109,7 @@ if(resultOsCheck.length != dto.array.length){
           _userId: null,
           _type: 24,
           _shopId: null,
+          _deliveryCounterId:null,
           _orderSaleItemId: dto.array[index].salesItemId,
           _deliveryProviderId: null,
           _description: `Reason: ${dto.array[index].rootcauseIdName} - ${dto.array[index].rootcause}`,

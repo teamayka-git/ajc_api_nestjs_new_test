@@ -164,6 +164,7 @@ _workStatus:{
   38 - delivey accepted proof uploaded verification pending
   39 - delivey accepted proof rejected
   40 - order send to rework
+  41 - delivery counter intransit
   
 }
 _type:{

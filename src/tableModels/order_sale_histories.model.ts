@@ -21,6 +21,11 @@ export const OrderSaleHistoriesSchema = new mongoose.Schema({
     ref: ModelNames.DELIVERY_PROVIDER,
     default: null,
   },
+  _deliveryCounterId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.DELIVERY_COUNTERS,
+    default: null,
+  },
   _userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -47,6 +52,7 @@ export interface OrderSaleHistories {
   _orderSaleId: String;
   _orderSaleItemId: String;
   _deliveryProviderId:String;
+  _deliveryCounterId:String;
   _shopId: string;
   _userId: String;
   _type: number;
@@ -56,6 +62,7 @@ export interface OrderSaleHistories {
   _status: Number;
 }
 
+OrderSaleHistoriesSchema.index({ _deliveryCounterId: 1 });
 OrderSaleHistoriesSchema.index({ _deliveryProviderId: 1 });
 OrderSaleHistoriesSchema.index({ _shopId: 1 });
 OrderSaleHistoriesSchema.index({ _orderSaleId: 1 });
@@ -108,6 +115,7 @@ _type:{
   38 - delivey accepted proof uploaded verification pending
   39 - delivey accepted proof rejected
   40 - order send to rework
+  41 - delivery counter intransit
   
   100 - order editted
   101- sales order actived
@@ -116,5 +124,6 @@ _type:{
   104- sales order general remark editted
   105- photography request generated
   106- Delivery pending
+  107- Delivery counter received
 }
 */
