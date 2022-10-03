@@ -25,7 +25,7 @@ import { Counters } from 'src/tableModels/counters.model';
 import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
-import { OrderSaleSetProcessDocuments } from 'src/tableModels/set_process_documents.model copy';
+import { OrderSaleSetProcessDocuments } from 'src/tableModels/set_process_documents.model';
 
 @Injectable()
 export class OrderSaleSetProcessService {

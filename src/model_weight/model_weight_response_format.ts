@@ -165,6 +165,25 @@ export class ModelWeightResponseFormat {
     }
   }
   
+  public orderSaleSetprocessDocumentsTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: {   _: 0,  } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().orderSaleDocumentsTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().orderSaleDocumentsTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().orderSaleDocumentsTableMedium() };
+    } else {
+      return { $project: {   _: 0,  } };
+    }
+  }
+  
   public shopTableResponseFormat(
     startIndex: int,
     responseFormatArray: List,

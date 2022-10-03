@@ -1024,6 +1024,48 @@ export class ModelWeight {
     };
   }
 
+  public orderSaleSetprocessDocumentsTableLight(): Object {
+    return {
+      _id: 1,
+      _setProcessId: 1,
+      _globalGalleryId: 1,
+    
+    };
+  }
+
+  public orderSaleSetprocessDocumentsTableMinimum(): Object {
+    return {
+      _id: 1,
+      _setProcessId: 1,
+      _globalGalleryId: 1,
+      _status: 1,
+    };
+  }
+
+  public orderSaleSetprocessDocumentsTableMedium(): Object {
+    return {
+      _id: 1,
+      _setProcessId: 1,
+      _globalGalleryId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _status: 1,
+    };
+  }
+
+  public orderSaleSetprocessDocumentsTableMaximum(): Object {
+    return {
+      _id: 1,
+      _setProcessId: 1,
+      _globalGalleryId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
   public productTableLight(): Object {
     return {
       _id: 1,

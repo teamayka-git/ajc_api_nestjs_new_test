@@ -67,7 +67,7 @@ export class DeliveryCounterBundleService {
 
         _workStatus: 0,
         _employeeId: _userId_,
-        _deliveryCounterId: null,
+        _deliveryCounterId: dto.deliveryCounterId,
         _receivedUserId: null,
         _createdUserId: _userId_,
         _createdAt: dateTime,

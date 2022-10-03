@@ -37,6 +37,10 @@ export class DeliveryCounterBundleCreateDto {
   @ApiProperty({})
   employeeId: string;
 
+  @IsString()
+  @ApiProperty({})
+  deliveryCounterId: string;
+
   
 
   @IsArray()

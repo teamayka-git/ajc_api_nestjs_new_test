@@ -13,7 +13,7 @@ import { EmployeeSchema } from 'src/tableModels/employee.model';
 import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
 import { CountersSchema } from 'src/tableModels/counters.model';
 import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
-import { OrderSaleSetProcessDocumentsSchema } from 'src/tableModels/set_process_documents.model copy';
+import { OrderSaleSetProcessDocumentsSchema } from 'src/tableModels/set_process_documents.model';
 
 @Module({
   imports:[MongooseModule.forFeature([
