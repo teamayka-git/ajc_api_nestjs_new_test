@@ -1,4 +1,4 @@
-import { ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { OrderSaleSetProcessService } from './order-sale-set-process.service';
 import {
   ChangeProcessDescriptionOrderStatusDto,
@@ -17,10 +17,13 @@ import {
   Post,
   Put,
   Request,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Roles } from 'src/Auth/roles.decorator';
 import { request } from 'http';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Order Sale Set Process Docs')
 @Controller('order-sale-set-process')
@@ -36,13 +39,33 @@ export class OrderSaleSetProcessController {
   }
 
   @Post('changeProcessOrderStatus')
+  @ApiCreatedResponse({
+    description: 'files upload on these input feilds => [documents]',
+  })
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        {
+          name: 'documents',
+        },
+      ],
+      /*{
+        storage: diskStorage({
+          destination: FileMulterHelper.filePathTempShop,
+          filename: FileMulterHelper.customFileName,
+        }),
+      },*/
+    ),
+  )
   changeProcessOrderStatus(
     @Body() dto: ChangeProcessOrderStatusDto,
     @Request() req,
+    @UploadedFiles() file,
   ) {
     return this.orderSaleSetProcessService.changeProcessOrderStatus(
       dto,
       req['_userId_'],
+      file == null ? {} : JSON.parse(JSON.stringify(file)),
     );
   }
   @Post('changeProcessDescriptionOrderStatus')

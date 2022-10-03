@@ -11,6 +11,9 @@ import { SubProcessMasterSchema } from 'src/tableModels/subProcessMaster.model';
 import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.model';
 import { EmployeeSchema } from 'src/tableModels/employee.model';
 import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
+import { CountersSchema } from 'src/tableModels/counters.model';
+import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
+import { OrderSaleSetProcessDocumentsSchema } from 'src/tableModels/set_process_documents.model copy';
 
 @Module({
   imports:[MongooseModule.forFeature([
@@ -22,6 +25,9 @@ import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
     {name:ModelNames.ORDER_SALE_SET_SUB_PROCESSES,schema:OrderSaleSetSubProcessesSchema},
     {name:ModelNames.ORDER_SALE_SET_SUB_PROCESS_HISTORIES,schema:OrderSaleSetSubProcessHistoriesSchema},
     {name:ModelNames.EMPLOYEES,schema:EmployeeSchema},
+    {name:ModelNames.COUNTERS,schema:CountersSchema},
+    {name:ModelNames.GLOBAL_GALLERIES,schema:GlobalGalleriesSchema},
+    {name:ModelNames.ORDER_SALE_SET_PROCESSES_DOCUMENTS,schema:OrderSaleSetProcessDocumentsSchema},
   
   ])],
   controllers: [OrderSaleSetProcessController],

@@ -12,6 +12,7 @@ export enum UploadedFileDirectoryPath {
   GLOBAL_GALLERY_SUPPLIER = 'upload_files/supplier/',
   GLOBAL_GALLERY_OTHERS = 'upload_files/others/',
   CHAT_DOCUMENTS = 'upload_files/chatDocuments/',
+  GLOBAL_GALLERY_SET_PROCESS_NOTES = 'upload_files/set_process_notes/',
 }
 
 /*export enum UploadedFileDirectoryPath {

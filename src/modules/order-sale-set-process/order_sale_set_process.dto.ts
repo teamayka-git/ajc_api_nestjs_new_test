@@ -18,6 +18,10 @@ const DescriptionOrderSaleChangeProcessOrderStatus =
 const DescriptionAddSubProcessHistory =
   '0-no need to add any history for sub process, 1-add subprocess history like started finished like';
 
+  const descriptionListDocType = '0-image, 1-video, 2-pdf, 3-audio, 4-document';
+  const descriptionFileOriginalName =
+  "file name givent while uploading, if there is no image then give 'nil; here";
+
 const DescriptionSetProcessHistoryType =
   '/order-sale-set-process/setProcessHistories';
 const DescriptionOrderSaleSetProcessHistories =
@@ -58,7 +62,16 @@ export class SetProcessCreateDto {
   @Type(() => SetProcessCreateList)
   array: SetProcessCreateList[];
 }
+class SetProcessNotesDocumentList {
+  @IsString()
+  @ApiProperty({ description: descriptionFileOriginalName })
+  fileOriginalName: string;
 
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({ description: descriptionListDocType })
+  docType: number;
+}
 export class ChangeProcessOrderStatusDto {
   @IsString()
   @ApiProperty({})
@@ -84,18 +97,33 @@ export class ChangeProcessOrderStatusDto {
   @ApiProperty({})
   rootCause: string;
 
+  
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({ description: DescriptionOrderSaleChangeProcessOrderStatus })
   orderStatus: number;
 
   
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({  })
   isLastSetProcess: number;
 
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({ description: DescriptionSetProcessHistoryType })
   setProcessHistoryType: number;
+
+  
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
+  @IsArray()
+  @ApiProperty({ type: [SetProcessNotesDocumentList] })
+  @ValidateNested({ each: true })
+  @Type(() => SetProcessNotesDocumentList)
+  arrayDocuments: SetProcessNotesDocumentList[];
+
 }
 export class ChangeProcessDescriptionOrderStatusDto {
   @IsString()

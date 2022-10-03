@@ -21,10 +21,21 @@ import { GlobalConfig } from 'src/config/global_config';
 import { Employee } from 'src/tableModels/employee.model';
 import { ModelWeight } from 'src/model_weight/model_weight';
 import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
+import { Counters } from 'src/tableModels/counters.model';
+import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
+import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
+import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
+import { OrderSaleSetProcessDocuments } from 'src/tableModels/set_process_documents.model copy';
 
 @Injectable()
 export class OrderSaleSetProcessService {
   constructor(
+    @InjectModel(ModelNames.ORDER_SALE_SET_PROCESSES_DOCUMENTS)
+    private readonly ordersaleSetprocessDocumentsModel: mongoose.Model<OrderSaleSetProcessDocuments>,
+    @InjectModel(ModelNames.GLOBAL_GALLERIES)
+    private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
+    @InjectModel(ModelNames.COUNTERS)
+    private readonly counterModel: mongoose.Model<Counters>,
     @InjectModel(ModelNames.ORDER_SALE_SET_PROCESSES)
     private readonly orderSaleSetProcessModel: mongoose.Model<OrderSaleSetProcesses>,
     @InjectModel(ModelNames.ORDER_SALE_SET_PROCESS_HISTORIES)
@@ -227,14 +238,107 @@ export class OrderSaleSetProcessService {
     }
   }
 
-  async changeProcessOrderStatus(
+  async changeProcessOrderStatus( 
     dto: ChangeProcessOrderStatusDto,
-    _userId_: string,
+    _userId_: string, file: Object
   ) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try { 
+
+
+      var arrayGlobalGalleries = [];
+      var arrayGlobalGalleriesDocuments = [];
+
+      if (file.hasOwnProperty('documents')) {
+        var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
+          { _tableName: ModelNames.GLOBAL_GALLERIES },
+          {
+            $inc: {
+              _count: dto.arrayDocuments.length,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+        for (var i = 0; i < file['documents'].length; i++) {
+          var resultUpload = await new S3BucketUtils().uploadMyFile(
+            file['documents'][i],
+            UploadedFileDirectoryPath.GLOBAL_GALLERY_SET_PROCESS_NOTES,
+          );
+
+          if (resultUpload['status'] == 0) {
+            throw new HttpException(
+              'File upload error',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
+
+          var count = dto.arrayDocuments.findIndex(
+            (it) => it.fileOriginalName == file['documents'][i]['originalname'],
+          );
+          if (count != -1) {
+            dto.arrayDocuments[count]['url'] = resultUpload['url'];
+          } else {
+            dto.arrayDocuments[count]['url'] = 'nil';
+          }
+        }
+
+        for (var i = 0; i < dto.arrayDocuments.length; i++) {
+          var count = file['documents'].findIndex(
+            (it) => it.originalname == dto.arrayDocuments[i].fileOriginalName,
+          );
+          if (count != -1) {
+            var globalGalleryId = new mongoose.Types.ObjectId();
+            arrayGlobalGalleries.push({
+              _id: globalGalleryId,
+              _name: dto.arrayDocuments[i].fileOriginalName,
+              _globalGalleryCategoryId: null,
+              _docType: dto.arrayDocuments[i].docType,
+              _type: 7,
+              _uid:
+                resultCounterPurchase._count -
+                dto.arrayDocuments.length +
+                (i + 1),
+              _url: dto.arrayDocuments[i]['url'],
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _updatedUserId: null,
+              _updatedAt: -1,
+              _status: 1,
+            });
+            arrayGlobalGalleriesDocuments.push({
+              _setProcessId: dto.orderSaleSetProcessId,
+              _globalGalleryId: globalGalleryId,
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _updatedUserId: null,
+              _updatedAt: -1,
+              _status: 1,
+            });
+          }
+        }
+
+        await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
+          session: transactionSession,
+        });
+        await this.ordersaleSetprocessDocumentsModel.insertMany(
+          arrayGlobalGalleriesDocuments,
+          {
+            session: transactionSession,
+          },
+        );
+      }
+
+
+
+
+
+
+
+
+
       var objectUpdateOrderSaleSetProcess = {
         _userId: dto.userId == '' || dto.userId == 'nil'?null: dto.userId,
         _orderStatus: dto.orderStatus,
