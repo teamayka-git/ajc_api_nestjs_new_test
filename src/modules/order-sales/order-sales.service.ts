@@ -5296,7 +5296,7 @@ export class OrderSalesService {
             as: 'completedSetprocessList',
           },
         },{$match:{
-          "$completedSetprocessList.setProcessDocumentsList":{$ne:[]}
+          "completedSetprocessList.setProcessDocumentsList":{$ne:[]}
         }});
       }
 
