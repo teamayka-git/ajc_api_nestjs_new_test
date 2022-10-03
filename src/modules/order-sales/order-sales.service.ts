@@ -5223,7 +5223,7 @@ export class OrderSalesService {
                 {
                   $match: {
                     _status: 1,
-                    $expr: { $eq: ['$_orderSaleId', '$$orderSaleMainId'] },
+                    $expr: { $eq: ['$_setProcessId', '$$setProcessId'] },
                   },
                 },
                 new ModelWeightResponseFormat().orderSaleSetprocessDocumentsTableResponseFormat(
@@ -5267,8 +5267,8 @@ export class OrderSalesService {
             };
             pipeline.push({
               $lookup: {
-                from: ModelNames.ORDER_SALES_DOCUMENTS,
-                let: { orderSaleMainId: '$_id' },
+                from: ModelNames.ORDER_SALE_SET_PROCESSES_DOCUMENTS,
+                let: { setProcessId: '$_id' },
                 pipeline: orderSaleDocumentsPipeline(),
                 as: 'setProcessDocumentsList',
               },
