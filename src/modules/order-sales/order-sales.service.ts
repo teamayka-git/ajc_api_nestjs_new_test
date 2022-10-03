@@ -5273,6 +5273,7 @@ export class OrderSalesService {
                 as: 'setProcessDocumentsList',
               },
             });
+            pipeline.push({$match:{setProcessDocumentsList:{$ne:[]}}});
           }
 
 
@@ -5295,9 +5296,7 @@ export class OrderSalesService {
             pipeline: orderSaleCompletedSetprocessPipeline(),
             as: 'completedSetprocessList',
           },
-        },{$match:{
-          "$$completedSetprocessList.setProcessDocumentsList":{$ne:[]}
-        }});
+        });
       }
 
       var result = await this.orderSaleSetProcessModel
