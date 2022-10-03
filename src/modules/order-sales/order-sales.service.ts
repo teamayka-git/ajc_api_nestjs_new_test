@@ -5270,7 +5270,7 @@ export class OrderSalesService {
                 from: ModelNames.ORDER_SALES_DOCUMENTS,
                 let: { orderSaleMainId: '$_id' },
                 pipeline: orderSaleDocumentsPipeline(),
-                as: 'orderSaleDocumentsList',
+                as: 'setProcessDocumentsList',
               },
             });
           }
