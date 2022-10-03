@@ -5295,7 +5295,9 @@ export class OrderSalesService {
             pipeline: orderSaleCompletedSetprocessPipeline(),
             as: 'completedSetprocessList',
           },
-        });
+        },{$match:{
+          "$completedSetprocessList.setProcessDocumentsList":{$ne:[]}
+        }});
       }
 
       var result = await this.orderSaleSetProcessModel
