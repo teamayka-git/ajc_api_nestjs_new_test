@@ -867,10 +867,10 @@ export class OrderSalesService {
         );
       }
       if (
-        dto.cityIds != null &&
-        dto.cityIds.length > 0 &&
-        dto.branchIds != null &&
-        dto.branchIds.length > 0
+       ( dto.cityIds != null &&
+        dto.cityIds.length > 0) ||
+        (dto.branchIds != null &&
+        dto.branchIds.length > 0)
       ) {
         var branchIds = [];
         var cityIds = [];
