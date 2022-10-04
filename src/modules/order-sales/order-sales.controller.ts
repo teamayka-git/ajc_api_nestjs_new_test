@@ -23,6 +23,7 @@ import {
   OrderSalesChangeDto,
   OrderSalesCreateDto,
   OrderSalesEditDto,
+  OrderSalesGetOrderDetailsFromQrBarcodeDto,
   OrderSalesGetOrderIdFromQrBarcodeDto,
   OrderSalesWorkStatusChangeDto,
   SetProcessAssignedOrderSaleListDto,
@@ -154,6 +155,14 @@ export class OrderSalesController {
     @Request() req,
   ) {
     return this.orderSalesService.globalSearch(dto, req['_userId_']);
+  }
+
+  @Post('getOrderDetailsFromQrBarCode')
+  getOrderDetailsFromQrBarCode(
+    @Body() dto: OrderSalesGetOrderDetailsFromQrBarcodeDto,
+    @Request() req,
+  ) {
+    return this.orderSalesService.getOrderDetailsFromQrBarCode(dto, req['_userId_']);
   }
 
 

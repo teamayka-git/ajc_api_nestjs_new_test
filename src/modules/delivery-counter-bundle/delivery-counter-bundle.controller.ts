@@ -1,7 +1,9 @@
 import { Body, Controller, Post, Request } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { DeliveryCounterBundleService } from './delivery-counter-bundle.service';
 import { DeliveryCounterBundleCreateDto, DeliveryCounterModuleWorkStatusChangeDto, DeliveryReturnListDto } from './delivery-counter_bundle.dto';
 
+@ApiTags("delivery-counter-bundle Docs") 
 @Controller('delivery-counter-bundle')
 export class DeliveryCounterBundleController {
   constructor(private readonly deliveryCounterBundleService: DeliveryCounterBundleService) {}

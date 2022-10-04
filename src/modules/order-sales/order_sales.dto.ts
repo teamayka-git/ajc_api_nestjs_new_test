@@ -38,6 +38,7 @@ const descriptionSetProcessListSortType = '0-Created Date, 1-Status,2-due date';
 
 
 const descriptionScreenTypeGlobalSearch="0 - total documents count, 100 - ordersale items, 101 - ordersale documents, 102 - ordersale documents under[101] global gallery details, 103 - shop details, 104-ordersale items under [100] product details, 105 - set process,106 - set process under[105] process master, 107 - ordersale items under [100] sub category details ";
+const descriptionScreenTypeQrBardodeOrderDetails="0 - total documents count, 100 - ordersale items, 101 - ordersale documents, 102 - ordersale documents under[101] global gallery details, 103 - shop details, 104-ordersale items under [100] product details, 105 - set process,106 - set process under[105] process master, 107 - ordersale items under [100] sub category details ";
 
 const descriptionFileOriginalName =
   "file name givent while uploading, if there is no image then give 'nil; here";
@@ -648,6 +649,28 @@ export class OrderSalesWorkStatusChangeDto {
 
 export class OrderSalesGetOrderIdFromQrBarcodeDto {
  
+
+
+  @IsString()
+  @ApiProperty({})
+  value: string;
+}
+
+export class OrderSalesGetOrderDetailsFromQrBarcodeDto {
+ 
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionScreenTypeQrBardodeOrderDetails,
+  })
+  screenType: number[];
+
+
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
 
 
   @IsString()
