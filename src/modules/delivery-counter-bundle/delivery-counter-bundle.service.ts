@@ -15,6 +15,7 @@ import { DeliveryCounterBundleItems } from 'src/tableModels/delivery_counter_bun
 import { DeliveryBundles } from 'src/tableModels/delivery_counter_bundles.model';
 import { GlobalConfig } from 'src/config/global_config';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
+import { pipe } from 'rxjs';
 @Injectable()
 export class DeliveryCounterBundleService {
   constructor(
@@ -460,235 +461,272 @@ export class DeliveryCounterBundleService {
         );
       }
 
-      if (dto.screenType.includes(102)) {
-        const orderSalePipeline = () => {
+      if (dto.screenType.includes(110)) {
+        const deliveryBundlePipeline = () => {
           const pipeline = [];
-          pipeline.push(
-            {
-              $match: {
-                $expr: { $eq: ['$_id', '$$orderSaleId'] },
-              },
+          pipeline.push( {
+            $match: {_status:1,
+              $expr: { $eq: ['$_bundleId', '$$deliveryBundleId'] },
             },
-            new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
-              1020,
-              dto.responseFormat,
-            ),
-          );
+          },
+          new ModelWeightResponseFormat().deliveryCounterBundleItemsResponseFormat(
+            1010,
+            dto.responseFormat,
+          ),);
 
-          if (dto.screenType.includes(103)) {
-            const orderSaleItemPipeline = () => {
+
+
+
+
+
+          if (dto.screenType.includes(102)) {
+            const orderSalePipeline = () => {
               const pipeline = [];
               pipeline.push(
                 {
                   $match: {
-                    $expr: { $eq: ['$_orderSaleId', '$$salesId'] },
+                    $expr: { $eq: ['$_id', '$$orderSaleId'] },
                   },
                 },
-                new ModelWeightResponseFormat().orderSaleItemsTableResponseFormat(
-                  1030,
+                new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+                  1020,
                   dto.responseFormat,
                 ),
               );
-
-              if (dto.screenType.includes(104)) {
+    
+              if (dto.screenType.includes(103)) {
+                const orderSaleItemPipeline = () => {
+                  const pipeline = [];
+                  pipeline.push(
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_orderSaleId', '$$salesId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().orderSaleItemsTableResponseFormat(
+                      1030,
+                      dto.responseFormat,
+                    ),
+                  );
+    
+                  if (dto.screenType.includes(104)) {
+                    pipeline.push(
+                      {
+                        $lookup: {
+                          from: ModelNames.SUB_CATEGORIES,
+                          let: { subCategoryId: '$_subCategoryId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: { $eq: ['$_id', '$$subCategoryId'] },
+                              },
+                            },
+                            new ModelWeightResponseFormat().subCategoryTableResponseFormat(
+                              1040,
+                              dto.responseFormat,
+                            ),
+                          ],
+                          as: 'subCategoryDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$subCategoryDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    );
+                  }
+    
+                  if (dto.screenType.includes(109)) {
+                    pipeline.push(
+                      {
+                        $lookup: {
+                          from: ModelNames.PRODUCTS,
+                          let: { productId: '$_productId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: { $eq: ['$_id', '$$productId'] },
+                              },
+                            },
+                            new ModelWeightResponseFormat().productTableResponseFormat(
+                              1090,
+                              dto.responseFormat,
+                            ),
+                          ],
+                          as: 'productDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$productDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    );
+                  }
+    
+                  return pipeline;
+                };
+    
+                pipeline.push({
+                  $lookup: {
+                    from: ModelNames.ORDER_SALES_ITEMS,
+                    let: { salesId: '$_id' },
+                    pipeline: orderSaleItemPipeline(),
+                    as: 'orderSaleItemDetails',
+                  },
+                });
+              }
+    
+    
+    
+    
+    
+    
+              if (dto.screenType.includes(105)) {
                 pipeline.push(
                   {
                     $lookup: {
-                      from: ModelNames.SUB_CATEGORIES,
-                      let: { subCategoryId: '$_subCategoryId' },
+                      from: ModelNames.SHOPS,
+                      let: { shopId: '$_shopId' },
                       pipeline: [
                         {
                           $match: {
-                            $expr: { $eq: ['$_id', '$$subCategoryId'] },
+                            $expr: { $eq: ['$_id', '$$shopId'] },
                           },
                         },
-                        new ModelWeightResponseFormat().subCategoryTableResponseFormat(
-                          1040,
+                        new ModelWeightResponseFormat().shopTableResponseFormat(
+                            1050,
                           dto.responseFormat,
                         ),
                       ],
-                      as: 'subCategoryDetails',
+                      as: 'shopDetails',
                     },
                   },
                   {
                     $unwind: {
-                      path: '$subCategoryDetails',
+                      path: '$shopDetails',
                       preserveNullAndEmptyArrays: true,
                     },
                   },
                 );
               }
-
-              if (dto.screenType.includes(109)) {
-                pipeline.push(
-                  {
-                    $lookup: {
-                      from: ModelNames.PRODUCTS,
-                      let: { productId: '$_productId' },
-                      pipeline: [
-                        {
-                          $match: {
-                            $expr: { $eq: ['$_id', '$$productId'] },
-                          },
+    
+    
+              
+              if (dto.screenType.includes(106)) {
+                const orderSaleMainDocumentsPipeline = () => {
+                  const pipeline = [];
+                  pipeline.push(
+                    {
+                      $match: {
+                        _status: 1,
+                        $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().orderSaleDocumentsTableResponseFormat(
+                      1060,
+                      dto.responseFormat,
+                    ),
+                  );
+                  if (dto.screenType.includes(107)) {
+                    pipeline.push(
+                      {
+                        $lookup: {
+                          from: ModelNames.GLOBAL_GALLERIES,
+                          let: { globalGalleryId: '$_globalGalleryId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: {
+                                  $eq: ['$_id', '$$globalGalleryId'],
+                                },
+                              },
+                            },
+                            new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                              1070,
+                              dto.responseFormat,
+                            ),
+                          ],
+                          as: 'globalGalleryDetails',
                         },
-                        new ModelWeightResponseFormat().productTableResponseFormat(
-                          1090,
-                          dto.responseFormat,
-                        ),
-                      ],
-                      as: 'productDetails',
-                    },
+                      },
+                      {
+                        $unwind: {
+                          path: '$globalGalleryDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    );
+                  }
+                  return pipeline;
+                };
+    
+                pipeline.push({
+                  $lookup: {
+                    from: ModelNames.ORDER_SALES_DOCUMENTS,
+                    let: { orderSaleId: '$_id' },
+                    pipeline: orderSaleMainDocumentsPipeline(),
+                    as: 'orderSaleDocuments',
                   },
-                  {
-                    $unwind: {
-                      path: '$productDetails',
-                      preserveNullAndEmptyArrays: true,
-                    },
-                  },
-                );
+                });
               }
-
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
               return pipeline;
             };
-
-            pipeline.push({
-              $lookup: {
-                from: ModelNames.ORDER_SALES_ITEMS,
-                let: { salesId: '$_id' },
-                pipeline: orderSaleItemPipeline(),
-                as: 'orderSaleItemDetails',
-              },
-            });
-          }
-
-
-
-
-
-
-          if (dto.screenType.includes(105)) {
+    
             pipeline.push(
               {
                 $lookup: {
-                  from: ModelNames.SHOPS,
-                  let: { shopId: '$_shopId' },
-                  pipeline: [
-                    {
-                      $match: {
-                        $expr: { $eq: ['$_id', '$$shopId'] },
-                      },
-                    },
-                    new ModelWeightResponseFormat().shopTableResponseFormat(
-                        1050,
-                      dto.responseFormat,
-                    ),
-                  ],
-                  as: 'shopDetails',
+                  from: ModelNames.ORDER_SALES_MAIN,
+                  let: { orderSaleId: '$_orderSaleId' },
+                  pipeline: orderSalePipeline(),
+                  as: 'orderSaleDetails',
                 },
               },
               {
                 $unwind: {
-                  path: '$shopDetails',
+                  path: '$orderSaleDetails',
                   preserveNullAndEmptyArrays: true,
                 },
               },
             );
           }
-
-
-          
-          if (dto.screenType.includes(106)) {
-            const orderSaleMainDocumentsPipeline = () => {
-              const pipeline = [];
-              pipeline.push(
-                {
-                  $match: {
-                    _status: 1,
-                    $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
-                  },
-                },
-                new ModelWeightResponseFormat().orderSaleDocumentsTableResponseFormat(
-                  1060,
-                  dto.responseFormat,
-                ),
-              );
-              if (dto.screenType.includes(107)) {
-                pipeline.push(
-                  {
-                    $lookup: {
-                      from: ModelNames.GLOBAL_GALLERIES,
-                      let: { globalGalleryId: '$_globalGalleryId' },
-                      pipeline: [
-                        {
-                          $match: {
-                            $expr: {
-                              $eq: ['$_id', '$$globalGalleryId'],
-                            },
-                          },
-                        },
-                        new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
-                          1070,
-                          dto.responseFormat,
-                        ),
-                      ],
-                      as: 'globalGalleryDetails',
-                    },
-                  },
-                  {
-                    $unwind: {
-                      path: '$globalGalleryDetails',
-                      preserveNullAndEmptyArrays: true,
-                    },
-                  },
-                );
-              }
-              return pipeline;
-            };
-
-            pipeline.push({
-              $lookup: {
-                from: ModelNames.ORDER_SALES_DOCUMENTS,
-                let: { orderSaleId: '$_id' },
-                pipeline: orderSaleMainDocumentsPipeline(),
-                as: 'orderSaleDocuments',
-              },
-            });
-          }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
           return pipeline;
-        };
+        }
+
 
         arrayAggregation.push(
           {
             $lookup: {
-              from: ModelNames.ORDER_SALES_MAIN,
-              let: { orderSaleId: '$_orderSaleId' },
-              pipeline: orderSalePipeline(),
-              as: 'orderSaleDetails',
-            },
-          },
-          {
-            $unwind: {
-              path: '$orderSaleDetails',
-              preserveNullAndEmptyArrays: true,
+              from: ModelNames.DELIVERY_COUNTER_BUNDLE_ITEMS,
+              let: { deliveryBundleId: '$_id' },
+              pipeline: deliveryBundlePipeline()
+               
+              ,
+              as: 'deliveryCounterItems',
             },
           },
         );
       }
+
+     
 
 
       

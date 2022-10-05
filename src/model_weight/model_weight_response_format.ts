@@ -838,6 +838,25 @@ export class ModelWeightResponseFormat {
     }
   }
 
+  public deliveryCounterBundleItemsResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: {   _: 0,  } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().deliveryCounterBundleItemsTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().deliveryCounterBundleItemsTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().deliveryCounterBundleItemsTableMedium() };
+    } else {
+      return { $project: {   _: 0,  } };
+    }
+  }
+
   public deliveryCounterResponseFormat(
     startIndex: int,
     responseFormatArray: List,

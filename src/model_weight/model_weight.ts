@@ -2301,6 +2301,47 @@ export class ModelWeight {
   }
 
   
+  public deliveryCounterBundleItemsTableLight(): Object {
+    return {
+      _id:1,
+      _bundleId:1,
+_orderSaleId:1,
+_status:1,
+     
+    };
+  }
+  public deliveryCounterBundleItemsTableMinimum(): Object {
+    return {
+      _id:1,
+      _bundleId:1,
+_orderSaleId:1,
+_status:1,
+     
+    };
+  }
+  public deliveryCounterBundleItemsTableMedium(): Object {
+    return {
+      _id:1,
+      _bundleId:1,
+_orderSaleId:1,
+_status:1,
+     
+    };
+  }
+  public deliveryCounterBundleItemsTableMaximum(): Object {
+    return {
+      _id:1,
+      _bundleId:1,
+_orderSaleId:1,
+_createdUserId:1,
+_createdAt:1,
+_updatedUserId:1,
+_updatedAt:1,
+_status:1,
+     
+    };
+  }
+  
   public deliveryCounterTableLight(): Object {
     return {
       _id:1,
