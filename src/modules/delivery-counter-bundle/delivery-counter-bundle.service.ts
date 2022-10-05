@@ -519,6 +519,35 @@ export class DeliveryCounterBundleService {
                 );
               }
 
+              if (dto.screenType.includes(109)) {
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.PRODUCTS,
+                      let: { productId: '$_productId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$productId'] },
+                          },
+                        },
+                        new ModelWeightResponseFormat().productTableResponseFormat(
+                          1090,
+                          dto.responseFormat,
+                        ),
+                      ],
+                      as: 'productDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$productDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                );
+              }
+
               return pipeline;
             };
 
@@ -697,7 +726,7 @@ export class DeliveryCounterBundleService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.includes(0)) {
+      if (dto.screenType.includes(0)) { 
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
