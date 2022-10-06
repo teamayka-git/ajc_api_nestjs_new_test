@@ -1155,7 +1155,7 @@ export class ModelWeight {
      
       _grossWeight: 1,
       _createdAt: 1,
-     
+      _barcode:1,
       _totalStoneWeight: 1,
       _netWeight: 1,
      
