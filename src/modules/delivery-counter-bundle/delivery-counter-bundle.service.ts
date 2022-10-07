@@ -193,11 +193,11 @@ export class DeliveryCounterBundleService {
           {
             $lookup: {
               from: ModelNames.DELIVERY_COUNTER_BUNDLE_ITEMS,
-              let: { bundleId: '$_bundleId' },
+              let: { bundleId: '$_id' },
               pipeline: [
                 {
                   $match: {
-                    $expr: { $eq: ['$_id', '$$bundleId'] },
+                    $expr: { $eq: ['$_bundleId', '$$bundleId'] },
                   },
                 },
                 {
