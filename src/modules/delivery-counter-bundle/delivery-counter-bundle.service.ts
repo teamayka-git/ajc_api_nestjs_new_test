@@ -303,18 +303,7 @@ export class DeliveryCounterBundleService {
               _createdAt: dateTime,
               _status: 1,
             });
-            arraySalesOrderHistories.push({
-              _orderSaleId: eachBundlesItem._orderSaleId,
-              _userId: null,
-              _type: 6,
-              _shopId: null,
-              _orderSaleItemId: null,
-              _deliveryCounterId: null,
-              _description: '',
-              _createdUserId: _userId_,
-              _createdAt: dateTime,
-              _status: 1,
-            });
+      
           });
         });
 
@@ -326,7 +315,7 @@ export class DeliveryCounterBundleService {
             $set: {
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
-              _workStatus: 16,
+              _workStatus: 6,
             },
           },
           { new: true, session: transactionSession },
