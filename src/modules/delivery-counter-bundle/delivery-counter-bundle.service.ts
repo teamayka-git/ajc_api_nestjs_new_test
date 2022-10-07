@@ -220,6 +220,8 @@ export class DeliveryCounterBundleService {
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
+      console.log("getDeliveryItemsForCheck   "+JSON.stringify(getDeliveryItemsForCheck));
+
       var updateObj = {
         _receivedUserId:
           dto.receivingUsertoUser == '' || dto.receivingUsertoUser == 'nil'
@@ -266,7 +268,7 @@ export class DeliveryCounterBundleService {
             });
           });
         });
-
+console.log("__1  "+JSON.stringify(arrayOrderSaleIds));
         await this.orderSaleModel.updateMany(
           {
             _id: { $in: arrayOrderSaleIds },
@@ -309,6 +311,7 @@ export class DeliveryCounterBundleService {
             });
           });
         });
+        console.log("__2  "+JSON.stringify(arrayOrderSaleIds));
 
         await this.orderSaleModel.updateMany(
           {
