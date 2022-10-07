@@ -65,7 +65,7 @@ export class DeliveryCounterBundleService {
       const deliveryBundle = new this.deliveryCounterBundlesModel({
         _id: deliveryBundleId,
         _uid: resultCounterDeliveryReturn._count,
-        _completedTime:0,
+        _completedTime: 0,
         _workStatus: 0,
         _employeeId: _userId_,
         _deliveryCounterId: dto.deliveryCounterId,
@@ -203,7 +203,7 @@ export class DeliveryCounterBundleService {
                 {
                   $project: {
                     _id: 1,
-                    _orderSaleId:1
+                    _orderSaleId: 1,
                   },
                 },
               ],
@@ -221,7 +221,10 @@ export class DeliveryCounterBundleService {
         );
       }
       var updateObj = {
-        _receivedUserId: (dto.receivingUsertoUser=="" || dto.receivingUsertoUser=="nil")?null:dto.receivingUsertoUser,
+        _receivedUserId:
+          dto.receivingUsertoUser == '' || dto.receivingUsertoUser == 'nil'
+            ? null
+            : dto.receivingUsertoUser,
         _deliveryCounterId: dto.deliveryCounterId,
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
@@ -229,7 +232,7 @@ export class DeliveryCounterBundleService {
       };
 
       if (dto.workStatus == 1) {
-        updateObj["_completedTime"]=dateTime;
+        updateObj['_completedTime'] = dateTime;
         var arrayOrderSaleIds = [];
         var arraySalesOrderHistories = [];
         getDeliveryItemsForCheck.forEach((eachItem) => {
@@ -284,7 +287,7 @@ export class DeliveryCounterBundleService {
             session: transactionSession,
           },
         );
-      }else if(dto.workStatus == 2){
+      } else if (dto.workStatus == 2) {
         var arrayOrderSaleIds = [];
         var arraySalesOrderHistories = [];
         getDeliveryItemsForCheck.forEach((eachItem) => {
@@ -304,7 +307,6 @@ export class DeliveryCounterBundleService {
               _createdAt: dateTime,
               _status: 1,
             });
-      
           });
         });
 
@@ -396,21 +398,19 @@ export class DeliveryCounterBundleService {
         });
       }
 
-
-      if(dto.deliveryBundleCompletedStartTime !=-1 && dto.deliveryBundleCompletedEndTime !=-1  ){
+      if (
+        dto.deliveryBundleCompletedStartTime != -1 &&
+        dto.deliveryBundleCompletedEndTime != -1
+      ) {
         arrayAggregation.push({
-          $match: { _completedTime: { $gte: dto.deliveryBundleCompletedStartTime,$lte: dto.deliveryBundleCompletedEndTime  } },
+          $match: {
+            _completedTime: {
+              $gte: dto.deliveryBundleCompletedStartTime,
+              $lte: dto.deliveryBundleCompletedEndTime,
+            },
+          },
         });
       }
- 
-
-
-
-
-
-
-
-
 
       if (dto.deliveryCounterIds.length > 0) {
         var newSettingsId = [];
@@ -465,7 +465,7 @@ export class DeliveryCounterBundleService {
         ),
       );
 
-      if (dto.screenType.includes(100)) { 
+      if (dto.screenType.includes(100)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -526,20 +526,18 @@ export class DeliveryCounterBundleService {
       if (dto.screenType.includes(110)) {
         const deliveryBundlePipeline = () => {
           const pipeline = [];
-          pipeline.push( {
-            $match: {_status:1,
-              $expr: { $eq: ['$_bundleId', '$$deliveryBundleId'] },
+          pipeline.push(
+            {
+              $match: {
+                _status: 1,
+                $expr: { $eq: ['$_bundleId', '$$deliveryBundleId'] },
+              },
             },
-          },
-          new ModelWeightResponseFormat().deliveryCounterBundleItemsResponseFormat(
-            1010,
-            dto.responseFormat,
-          ),);
-
-
-
-
-
+            new ModelWeightResponseFormat().deliveryCounterBundleItemsResponseFormat(
+              1010,
+              dto.responseFormat,
+            ),
+          );
 
           if (dto.screenType.includes(102)) {
             const orderSalePipeline = () => {
@@ -555,7 +553,7 @@ export class DeliveryCounterBundleService {
                   dto.responseFormat,
                 ),
               );
-    
+
               if (dto.screenType.includes(103)) {
                 const orderSaleItemPipeline = () => {
                   const pipeline = [];
@@ -570,7 +568,7 @@ export class DeliveryCounterBundleService {
                       dto.responseFormat,
                     ),
                   );
-    
+
                   if (dto.screenType.includes(104)) {
                     pipeline.push(
                       {
@@ -599,7 +597,7 @@ export class DeliveryCounterBundleService {
                       },
                     );
                   }
-    
+
                   if (dto.screenType.includes(109)) {
                     pipeline.push(
                       {
@@ -628,10 +626,250 @@ export class DeliveryCounterBundleService {
                       },
                     );
                   }
+
+                  if (dto.screenType.includes(111)) {
+                    const invoiceItemPipeline = () => {
+                      const pipeline = [];
+                      pipeline.push(
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_orderSaleItemId', '$$osItemId'] },
+                          },
+                        },
+                        new ModelWeightResponseFormat().invoiceItemsTableResponseFormat(
+                          1110,
+                          dto.responseFormat,
+                        ),
+                      );
+
+                      if (dto.screenType.includes(112)) {
+                        const invoicePipeline = () => {
+                          const pipeline = [];
+                          pipeline.push(
+                            {
+                              $match: {
+                                $expr: { $eq: ['$_id', '$$invItemId'] },
+                              },
+                            },
+                            new ModelWeightResponseFormat().invoiceTableResponseFormat(
+                              1120,
+                              dto.responseFormat,
+                            ),
+                          );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                          if (dto.screenType.includes(113)) {
+                            const deliveryitemPipeline = () => {
+                              const pipeline = [];
+                              pipeline.push(
+                                {
+                                  $match: {
+                                    $expr: { $eq: ['$_invoiceId', '$$invoiceId'] },
+                                  },
+                                },
+                                new ModelWeightResponseFormat().deliveryItemsTableResponseFormat(
+                                  1130,
+                                  dto.responseFormat,
+                                ),
+                              );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                              if (dto.screenType.includes(114)) {
+                                const deliveryPipeline = () => {
+                                  const pipeline = [];
+                                  pipeline.push(
+                                    {
+                                      $match: {
+                                        $expr: { $eq: ['$_id', '$$deliveryId'] },
+                                      },
+                                    },
+                                    new ModelWeightResponseFormat().deliveryTableResponseFormat(
+                                      1140,
+                                      dto.responseFormat,
+                                    ),
+                                  );
+                                  
+                                  return pipeline;
+                                };
+        
+                                pipeline.push(
+                                  {
+                                    $lookup: {
+                                      from: ModelNames.DELIVERY,
+                                      let: { deliveryId: '$_deliveryId' },
+                                      pipeline: deliveryPipeline(),
+                                      as: 'deliveryDetails',
+                                    },
+                                  },
+                                  {
+                                    $unwind: {
+                                      path: '$deliveryDetails',
+                                      preserveNullAndEmptyArrays: true,
+                                    },
+                                  },
+                                );
+                              }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                              
+                              return pipeline;
+                            };
     
+                            pipeline.push(
+                              {
+                                $lookup: {
+                                  from: ModelNames.DELIVERY_ITEMS,
+                                  let: { invoiceId: '$_id' },
+                                  pipeline: deliveryitemPipeline(),
+                                  as: 'deliveryItemDetails',
+                                },
+                              },
+                              {
+                                $unwind: {
+                                  path: '$deliveryItemDetails',
+                                  preserveNullAndEmptyArrays: true,
+                                },
+                              },
+                            );
+                          }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                          return pipeline;
+                        };
+
+                        pipeline.push(
+                          {
+                            $lookup: {
+                              from: ModelNames.INVOICES,
+                              let: { invItemId: '$_invoiceId' },
+                              pipeline: invoicePipeline(),
+                              as: 'invoiceDetails',
+                            },
+                          },
+                          {
+                            $unwind: {
+                              path: '$invoiceDetails',
+                              preserveNullAndEmptyArrays: true,
+                            },
+                          },
+                        );
+                      }
+
+                      return pipeline;
+                    };
+
+                    pipeline.push(
+                      {
+                        $lookup: {
+                          from: ModelNames.INVOICE_ITEMS,
+                          let: { osItemId: '$_id' },
+                          pipeline: invoiceItemPipeline(),
+                          as: 'invoiceItemDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$invoiceItemDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    );
+                  }
+
                   return pipeline;
                 };
-    
+
                 pipeline.push({
                   $lookup: {
                     from: ModelNames.ORDER_SALES_ITEMS,
@@ -641,12 +879,7 @@ export class DeliveryCounterBundleService {
                   },
                 });
               }
-    
-    
-    
-    
-    
-    
+
               if (dto.screenType.includes(105)) {
                 pipeline.push(
                   {
@@ -660,7 +893,7 @@ export class DeliveryCounterBundleService {
                           },
                         },
                         new ModelWeightResponseFormat().shopTableResponseFormat(
-                            1050,
+                          1050,
                           dto.responseFormat,
                         ),
                       ],
@@ -675,9 +908,7 @@ export class DeliveryCounterBundleService {
                   },
                 );
               }
-    
-    
-              
+
               if (dto.screenType.includes(106)) {
                 const orderSaleMainDocumentsPipeline = () => {
                   const pipeline = [];
@@ -725,7 +956,7 @@ export class DeliveryCounterBundleService {
                   }
                   return pipeline;
                 };
-    
+
                 pipeline.push({
                   $lookup: {
                     from: ModelNames.ORDER_SALES_DOCUMENTS,
@@ -735,24 +966,41 @@ export class DeliveryCounterBundleService {
                   },
                 });
               }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+              if (dto.screenType.includes(110)) {
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.USER,
+                      let: { ohId: '$_orderHeadId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: {
+                              $eq: ['$_id', '$$ohId'],
+                            },
+                          },
+                        },
+                        new ModelWeightResponseFormat().userTableResponseFormat(
+                          1100,
+                          dto.responseFormat,
+                        ),
+                      ],
+                      as: 'ohDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$ohDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                );
+              }
+
               return pipeline;
             };
-    
+
             pipeline.push(
               {
                 $lookup: {
@@ -771,28 +1019,20 @@ export class DeliveryCounterBundleService {
             );
           }
           return pipeline;
-        }
+        };
 
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.DELIVERY_COUNTER_BUNDLE_ITEMS,
+            let: { deliveryBundleId: '$_id' },
+            pipeline: deliveryBundlePipeline(),
 
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.DELIVERY_COUNTER_BUNDLE_ITEMS,
-              let: { deliveryBundleId: '$_id' },
-              pipeline: deliveryBundlePipeline()
-               
-              ,
-              as: 'deliveryCounterItems',
-            },
+            as: 'deliveryCounterItems',
           },
-        );
+        });
       }
 
-     
-
-
-      
-      if (dto.screenType.includes(108)) { 
+      if (dto.screenType.includes(108)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -826,7 +1066,7 @@ export class DeliveryCounterBundleService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.includes(0)) { 
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
