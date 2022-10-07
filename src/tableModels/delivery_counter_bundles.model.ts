@@ -22,6 +22,7 @@ export const DeliveryBundlesSchema = new mongoose.Schema({
     default: null,
   },
   _workStatus: { type: Number, required: true, default: -1 },
+  _completedTime: { type: Number, required: true, default: -1 },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -45,12 +46,14 @@ export interface DeliveryBundles {
   _deliveryCounterId: String;
   _receivedUserId: String;
   _createdUserId: String;
+  _completedTime: Number;
   _createdAt: Number;
   _updatedUserId: String;
   _updatedAt: Number;
   _status: Number;
 }
 
+DeliveryBundlesSchema.index({ _completedTime: 1 });
 DeliveryBundlesSchema.index({ _receivedUserId: 1 });
 DeliveryBundlesSchema.index({ _deliveryCounterId: 1 });
 DeliveryBundlesSchema.index({ _uid: 1 });

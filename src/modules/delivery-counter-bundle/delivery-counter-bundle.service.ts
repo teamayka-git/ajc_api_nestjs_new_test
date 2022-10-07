@@ -65,7 +65,7 @@ export class DeliveryCounterBundleService {
       const deliveryBundle = new this.deliveryCounterBundlesModel({
         _id: deliveryBundleId,
         _uid: resultCounterDeliveryReturn._count,
-
+        _completedTime:0,
         _workStatus: 0,
         _employeeId: _userId_,
         _deliveryCounterId: dto.deliveryCounterId,
@@ -220,7 +220,7 @@ export class DeliveryCounterBundleService {
         );
       }
       var updateObj = {
-        _receivedUserId: dto.receivingUsertoUser,
+        _receivedUserId: (dto.receivingUsertoUser=="" || dto.receivingUsertoUser=="nil")?null:dto.receivingUsertoUser,
         _deliveryCounterId: dto.deliveryCounterId,
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
@@ -228,6 +228,7 @@ export class DeliveryCounterBundleService {
       };
 
       if (dto.workStatus == 1) {
+        updateObj["_completedTime"]=dateTime;
         var arrayOrderSaleIds = [];
         var arraySalesOrderHistories = [];
         getDeliveryItemsForCheck.forEach((eachItem) => {
@@ -251,6 +252,61 @@ export class DeliveryCounterBundleService {
               _orderSaleId: eachBundlesItem._orderSaleId,
               _userId: null,
               _type: 16,
+              _shopId: null,
+              _orderSaleItemId: null,
+              _deliveryCounterId: null,
+              _description: '',
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _status: 1,
+            });
+          });
+        });
+
+        await this.orderSaleModel.updateMany(
+          {
+            _id: { $in: arrayOrderSaleIds },
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _workStatus: 16,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+        await this.orderSaleHistoriesModel.insertMany(
+          arraySalesOrderHistories,
+          {
+            session: transactionSession,
+          },
+        );
+      }else if(dto.workStatus == 2){
+        var arrayOrderSaleIds = [];
+        var arraySalesOrderHistories = [];
+        getDeliveryItemsForCheck.forEach((eachItem) => {
+          eachItem.bundleItems.forEach((eachBundlesItem) => {
+            arrayOrderSaleIds.push(eachBundlesItem._orderSaleId);
+
+            arraySalesOrderHistories.push({
+              _orderSaleId: eachBundlesItem._orderSaleId,
+              _userId: null,
+              _type: 108,
+              _shopId: null,
+              _orderSaleItemId: null,
+              _description: '',
+
+              _deliveryCounterId: dto.deliveryCounterId,
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _status: 1,
+            });
+            arraySalesOrderHistories.push({
+              _orderSaleId: eachBundlesItem._orderSaleId,
+              _userId: null,
+              _type: 6,
               _shopId: null,
               _orderSaleItemId: null,
               _deliveryCounterId: null,
@@ -349,6 +405,22 @@ export class DeliveryCounterBundleService {
           $match: { _receivedUserId: { $in: newSettingsId } },
         });
       }
+
+
+      if(dto.deliveryBundleCompletedStartTime !=-1 && dto.deliveryBundleCompletedEndTime !=-1  ){
+        arrayAggregation.push({
+          $match: { _completedTime: { $gte: dto.deliveryBundleCompletedStartTime,$lte: dto.deliveryBundleCompletedEndTime  } },
+        });
+      }
+ 
+
+
+
+
+
+
+
+
 
       if (dto.deliveryCounterIds.length > 0) {
         var newSettingsId = [];

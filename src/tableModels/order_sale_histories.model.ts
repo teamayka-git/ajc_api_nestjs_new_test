@@ -125,5 +125,6 @@ _type:{
   105- photography request generated
   106- Delivery pending
   107- Delivery counter received
+  108- delivery counter rejected
 }
 */
