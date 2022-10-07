@@ -203,6 +203,7 @@ export class DeliveryCounterBundleService {
                 {
                   $project: {
                     _id: 1,
+                    _orderSaleId:1
                   },
                 },
               ],
