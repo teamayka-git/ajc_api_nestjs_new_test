@@ -20,3 +20,4 @@ import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
   providers: [BranchService]
 })
 export class BranchModule {}
+ 

@@ -89,6 +89,7 @@ import { RootCausesSchema } from './tableModels/rootCause.model';
 import { UserAttendanceSchema } from './tableModels/user_attendances.model';
 import { DeliveryCounterModule } from './modules/delivery-counter/delivery-counter.module';
 import { DeliveryCounterBundleModule } from './modules/delivery-counter-bundle/delivery-counter-bundle.module';
+import { TagMastersModule } from './modules/tag-masters/tag-masters.module';
 
 @Module({
   imports: [
@@ -190,6 +191,7 @@ import { DeliveryCounterBundleModule } from './modules/delivery-counter-bundle/d
     BulkApiTempModule,
     DeliveryCounterModule,
     DeliveryCounterBundleModule,
+    TagMastersModule,
 
     // SalesReturnRequestStatusesModule,
   ],
