@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Post, Put, Request } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { DeliveryCounterService } from './delivery-counter.service';
-import { DeliveryCounterCreateDto, DeliveryCounterEditDto, DeliveryCounterListDto, DeliveryCounterStatusChangeDto } from './delivery_counter.dto';
+import { DeliveryCounterCreateDto, DeliveryCounterEditDto, DeliveryCounterLinkUnlinkCreateDto, DeliveryCounterListDto, DeliveryCounterStatusChangeDto } from './delivery_counter.dto';
 
 
 @ApiTags("Delivery Counter Docs") 
@@ -31,5 +31,10 @@ export class DeliveryCounterController {
   }
 
 
+
+  @Post("linkAndUnlinkUser")
+  linkAndUnlinkUser(@Body() dto: DeliveryCounterLinkUnlinkCreateDto,@Request() req) {
+    return this.deliveryCounterService.linkAndUnlinkUser(dto,req["_userId_"]);
+  }
 
 }

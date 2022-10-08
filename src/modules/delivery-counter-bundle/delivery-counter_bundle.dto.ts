@@ -153,4 +153,22 @@ export class DeliveryReturnListDto {
   @IsNumber()
   @ApiProperty({})
   skip: number;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 }

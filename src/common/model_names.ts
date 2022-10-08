@@ -74,6 +74,7 @@ export enum ModelNames {
   DELIVERY_COUNTERS = 'delivery_counters',
   DELIVERY_COUNTER_BUNDLES = 'delivery_counter_bundles',
   DELIVERY_COUNTER_BUNDLE_ITEMS = 'delivery_counter_bundle_items',
+  DELIVERY_COUNTER_USER_LINKINGS = 'delivery_counter_user_linkings',
 
   CHAT_PERSONAL_CHAT_MESSAGES = 'chat_personal_chat_messages',
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',

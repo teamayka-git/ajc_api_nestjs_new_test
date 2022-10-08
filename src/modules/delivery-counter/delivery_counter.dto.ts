@@ -13,7 +13,7 @@ import { Optional } from '@nestjs/common';
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList =
-  '0-total documents count ';
+  '0-total documents count , 100-list linked, 101 - list linked under[100] user details ';
 const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 const descriptionListType =
@@ -27,6 +27,13 @@ class DeliveryCounterCreateList {
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })
   dataGuard: number[];
+
+  
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  userIdsForLink: string[];
+
+
 }
 
 export class DeliveryCounterCreateDto {
@@ -49,6 +56,20 @@ export class DeliveryCounterEditDto {
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })
   dataGuard: number[];
+
+  
+  
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  userIdsForLink: string[];
+
+
+  
+  
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  userLinkingIdsForUnlink: string[];
+
 }
 
 export class DeliveryCounterListDto {
@@ -94,4 +115,25 @@ export class DeliveryCounterStatusChangeDto {
   @IsNumber()
   @ApiProperty({ description: descriptionStatus })
   status: number;
+}
+
+export class DeliveryCounterLinkUnlinkCreateDto {
+ 
+  @IsString()
+  @ApiProperty({})
+  dcId: string;
+
+  
+  
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  userIdsForLink: string[];
+
+
+  
+  
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  userLinkingIdsForUnlink: string[];
+
 }
