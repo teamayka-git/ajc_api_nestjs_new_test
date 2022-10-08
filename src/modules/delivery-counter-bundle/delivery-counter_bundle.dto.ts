@@ -161,6 +161,49 @@ export class DeliveryReturnListDto {
 
 
 
+  @IsNumber()
+  @ApiProperty({})
+  dcbCreatedStartDate
+
+  @IsNumber()
+  @ApiProperty({})
+  dcbCreatedEndDate: number;
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  dcbTransferDoneUserIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleUids: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderHeadIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  shopIds: string[];
+
+  @IsNumber()
+  @ApiProperty({})
+  invoiceDateStartDate: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  invoiceDateEndDate: number;
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  invoiceUids: string[];
+
+  @IsNumber()
+  @ApiProperty({})
+  deliveryCompleteStartDate: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  deliveryCompleteEndDate: number;
 
 
 

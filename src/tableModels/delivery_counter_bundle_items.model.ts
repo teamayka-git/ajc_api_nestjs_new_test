@@ -19,7 +19,7 @@ export const DeliveryCounterBundleItemsSchema = new mongoose.Schema({
     ref: ModelNames.USER,
     default: null,
   },
-  _createdAt: { type: Number, required: true, default: -1 },
+  _createdAt: { type: Number, required: true, default: -1 }, 
   _updatedUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
