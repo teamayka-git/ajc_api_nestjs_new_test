@@ -375,6 +375,7 @@ export class DeliveryCounterService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+      var resultLinkAndUnlink=[];
       var resultCheck = await this.deliveryCounterUserLinkingModel.find({
         _deliveryCounterId: dto.dcId,
         _userId: { $in: dto.userIdsForLink },
@@ -403,7 +404,7 @@ export class DeliveryCounterService {
       });
 
       if (arrayToLinkingUser.length != 0) {
-        await this.deliveryCounterUserLinkingModel.insertMany(
+        resultLinkAndUnlink=   await this.deliveryCounterUserLinkingModel.insertMany(
           arrayToLinkingUser,
           {
             session: transactionSession,
@@ -431,7 +432,7 @@ export class DeliveryCounterService {
         );
       }
 
-      const responseJSON = { message: 'success', data: {} };
+      const responseJSON = { message: 'success', data: {listLinkUnlink:resultLinkAndUnlink} };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
