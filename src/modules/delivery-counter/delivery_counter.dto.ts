@@ -54,6 +54,10 @@ export class DeliveryCounterEditDto {
 
   @IsString()
   @ApiProperty({})
+  code: string;
+
+  @IsString()
+  @ApiProperty({})
   name: string;
 
 

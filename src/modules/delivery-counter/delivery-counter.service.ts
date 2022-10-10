@@ -114,6 +114,7 @@ export class DeliveryCounterService {
         {
           $set: {
             _name: dto.name,
+            _code: dto.code,
             _dataGuard: dto.dataGuard,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
@@ -240,7 +241,8 @@ export class DeliveryCounterService {
         //todo
         arrayAggregation.push({
           $match: {
-            $or: [{ _name: new RegExp(dto.searchingText, 'i') }],
+            $or: [{ _name: new RegExp(dto.searchingText, 'i') },
+            { _code: new RegExp(`^${dto.searchingText}$`, 'i') }],
           },
         });
       }
