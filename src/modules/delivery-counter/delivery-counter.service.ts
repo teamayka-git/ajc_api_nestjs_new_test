@@ -272,7 +272,7 @@ export class DeliveryCounterService {
         const fcLinkingPipeline = () => {
           const pipeline = [];
           pipeline.push({
-            $match: { $expr: { $eq: ['$_deliveryCounterId', '$$dcId'] } },
+            $match: {_status:1, $expr: { $eq: ['$_deliveryCounterId', '$$dcId'] } },
           });
 
           if (dto.screenType.includes(101)) {
