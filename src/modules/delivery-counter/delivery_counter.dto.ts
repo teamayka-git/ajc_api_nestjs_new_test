@@ -23,6 +23,10 @@ class DeliveryCounterCreateList {
   @IsString()
   @ApiProperty({})
   name: string;
+  
+  @IsString()
+  @ApiProperty({})
+  code: string;
 
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionListDataGuard })

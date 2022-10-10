@@ -5,6 +5,7 @@ import { GlobalConfig } from 'src/config/global_config';
 export const DeliveryCountersSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
   _name: { type: String, required: true, default: 'nil' },
+  _code: { type: String, required: false, default: '' },
   _dataGuard: { type: Object, required: true, default: [] },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -24,6 +25,7 @@ export const DeliveryCountersSchema = new mongoose.Schema({
 export interface DeliveryCounters {
   _id: String;
   _name: String;
+  _code: String;
   _dataGuard: Object;
   _createdUserId: String;
   _createdAt: Number;
@@ -32,6 +34,7 @@ export interface DeliveryCounters {
   _status: Number;
 }
 
+DeliveryCountersSchema.index({ _code: 1 });
 DeliveryCountersSchema.index({ _status: 1 });
 DeliveryCountersSchema.index({ _name: 1, _id: 1 });
 DeliveryCountersSchema.index(

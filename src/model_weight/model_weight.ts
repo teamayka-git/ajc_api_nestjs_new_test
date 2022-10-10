@@ -2337,12 +2337,14 @@ export class ModelWeight {
     return {
       _id: 1,
       _name: 1,
+      _code: 1,
     };
   }
   public deliveryCounterTableMinimum(): Object {
     return {
       _id: 1,
       _name: 1,
+      _code: 1,
 
       _createdUserId: 1,
       _status: 1,
@@ -2352,6 +2354,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _name: 1,
+      _code: 1,
       _dataGuard: 1,
       _status: 1,
     };
@@ -2360,6 +2363,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _name: 1,
+      _code: 1,
       _dataGuard: 1,
       _createdUserId: 1,
       _createdAt: 1,

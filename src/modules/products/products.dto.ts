@@ -33,10 +33,12 @@ class StonesList {
   @ApiProperty({})
   colourId: string;
 
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   stoneWeight: number;
 
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   quantity: number;
@@ -66,6 +68,7 @@ class ProductCreateList {
   moldNumber: string;
 
 
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   isStone: number;
@@ -75,26 +78,32 @@ class ProductCreateList {
   @ApiProperty({})
   orderItemId: string;
 
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   grossWeight: number;
 
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   hmSealingStatus: number;
 
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   eCommerceStatus: number;
 
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   totalStoneWeight: number;
 
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   netWeight: number;
 
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({ description: descriptionType })
   type: number;
@@ -103,6 +112,9 @@ class ProductCreateList {
   @ApiProperty({})
   subCategoryId: string;
 
+  @Transform(({ value }) =>
+  typeof value == 'string' ? JSON.parse(value) : value,
+)
   @IsArray()
   @ApiProperty({ type: [StonesList] })
   @ValidateNested({ each: true })
@@ -133,7 +145,9 @@ export class ProductCreateDto {
   @ApiProperty({})
   orderId: string;
 
-
+  @Transform(({ value }) =>
+  typeof value == 'string' ? JSON.parse(value) : value,
+)
   @IsArray()
   @ApiProperty({ type: [ProductCreateList] })
   @ValidateNested({ each: true })

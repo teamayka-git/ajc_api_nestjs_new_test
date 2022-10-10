@@ -36,6 +36,7 @@ export class DeliveryCounterService {
         arrayToStates.push({
           _id: dcId,
           _name: mapItem.name,
+          _code: mapItem.code,
           _dataGuard: mapItem.dataGuard,
           _createdUserId: _userId_,
           _createdAt: dateTime,
