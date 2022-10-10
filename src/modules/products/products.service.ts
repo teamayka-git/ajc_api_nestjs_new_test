@@ -23,10 +23,18 @@ import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 import { OrderSalesItems } from 'src/tableModels/order_sales_items.model';
 import { ProductTagLinkings } from 'src/tableModels/product_tag_linkings.model';
+import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
+import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
+import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
+import { ProductsDocuments } from 'src/tableModels/products_documents.model';
 
 @Injectable()
 export class ProductsService {
   constructor(
+    @InjectModel(ModelNames.GLOBAL_GALLERIES)
+    private readonly globalGalleryModel: Model<GlobalGalleries>,
+    @InjectModel(ModelNames.PRODUCT_DOCUMENTS_LINKIGS)
+    private readonly productDocumentModel: Model<ProductsDocuments>,
     @InjectModel(ModelNames.PRODUCTS)
     private readonly productModel: Model<Products>,
     @InjectModel(ModelNames.PRODUCT_TAG_LINKINGS)
@@ -53,22 +61,132 @@ export class ProductsService {
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
-  async create(dto: ProductCreateDto, _userId_: string) {
+  async create(dto: ProductCreateDto, _userId_: string, file: Object) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+      var arrayGlobalGalleries = [];
+      var arrayGlobalGalleriesDocuments = [];
 
+      if (file.hasOwnProperty('image')) {
+        var totalCountDocuments = 0;
 
+        dto.arrayItems.forEach((elements) => {
+          elements['mongoId'] = new mongoose.Types.ObjectId();
+          totalCountDocuments += elements.arrayDocuments.length;
+        });
 
+        var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
+          { _tableName: ModelNames.GLOBAL_GALLERIES },
+          {
+            $inc: {
+              _count: totalCountDocuments,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
 
+        // for (var i = 0; i < dto.arrayDocuments.length; i++) {
+        //   var count = file['documents'].findIndex(
+        //     (it) => dto.arrayDocuments[i].fileOriginalName == it.originalname,
+        //   );
 
+        //   if (count != -1) {
+        //     if (dto.arrayDocuments[i].docType == 0) {
+        //       var filePath =
+        //         __dirname +
+        //         `/../../../public${
+        //           file['documents'][count]['path'].split('public')[1]
+        //         }`;
 
+        //       new ThumbnailUtils().generateThumbnail(
+        //         filePath,
+        //         UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP +
+        //           new StringUtils().makeThumbImageFileName(
+        //             file['documents'][count]['filename'],
+        //           ),
+        //       );
+        //     }
+        //   }
+        // }
+        for (var i = 0; i < file['documents'].length; i++) {
+          var resultUpload = await new S3BucketUtils().uploadMyFile(
+            file['documents'][i],
+            UploadedFileDirectoryPath.GLOBAL_GALLERY_PRODUCT,
+          );
 
+          if (resultUpload['status'] == 0) {
+            throw new HttpException(
+              'File upload error',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
 
+          for (var j = 0; j < dto.arrayItems.length; j++) {
+            var count = dto.arrayItems[j].arrayDocuments.findIndex(
+              (it) =>
+                it.fileOriginalName == file['documents'][i]['originalname'],
+            );
+            if (count != -1) {
+              dto.arrayItems[j].arrayDocuments[count]['url'] =
+                resultUpload['url'];
+            } else {
+              dto.arrayItems[j].arrayDocuments[count]['url'] = 'nil';
+            }
+          }
+        }
 
+        for (var j = 0; j < dto.arrayItems.length; j++) {
+          for (var i = 0; i < dto.arrayItems[j].arrayDocuments.length; i++) {
+            var count = file['documents'].findIndex(
+              (it) =>
+                it.originalname ==
+                dto.arrayItems[j].arrayDocuments[i].fileOriginalName,
+            );
+            if (count != -1) {
+              var globalGalleryId = new mongoose.Types.ObjectId();
+              arrayGlobalGalleries.push({
+                _id: globalGalleryId,
+                _name: dto.arrayItems[j].arrayDocuments[i].fileOriginalName,
+                _globalGalleryCategoryId: null,
+                _docType: dto.arrayItems[j].arrayDocuments[i].docType,
+                _type: 7,
+                _uid:
+                  resultCounterPurchase._count -
+                  dto.arrayItems[j].arrayDocuments.length +
+                  (i + 1),
+                _url: dto.arrayItems[j].arrayDocuments[i]['url'],
+                _createdUserId: _userId_,
+                _createdAt: dateTime,
+                _updatedUserId: null,
+                _updatedAt: -1,
+                _status: 1,
+              });
+              arrayGlobalGalleriesDocuments.push({
+                _productId: dto.arrayItems[j]['mongoId'],
+                _globalGalleryId: globalGalleryId,
+                _createdUserId: _userId_,
+                _createdAt: dateTime,
+                _updatedUserId: null,
+                _updatedAt: -1,
+                _status: 1,
+              });
+            }
+          }
+        }
 
-      
+        await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
+          session: transactionSession,
+        });
+        await this.productDocumentModel.insertMany(
+          arrayGlobalGalleriesDocuments,
+          {
+            session: transactionSession,
+          },
+        );
+      }
+
       var arrayToProducts = [];
 
       var arrayStonesLinkings = [];
@@ -247,7 +365,7 @@ export class ProductsService {
         }
 
         var autoIncrementNumber = resultProduct._count - i;
-        var productId = new mongoose.Types.ObjectId();
+        var productId = dto.arrayItems[i]['mongoId'];
         var shopId = dto.shopId;
         var orderId = dto.orderId;
         var orderItemId = dto.arrayItems[i].orderItemId;
@@ -285,9 +403,11 @@ export class ProductsService {
           _netWeight: dto.arrayItems[i].netWeight,
           _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
           _grossWeight: dto.arrayItems[i].grossWeight,
-          _barcode:(dto.arrayItems[i].type==0)?
-            BarCodeQrCodePrefix.PRODUCT_AND_INVOICE +
-            new StringUtils().intToDigitString(autoIncrementNumber, 8):"",
+          _barcode:
+            dto.arrayItems[i].type == 0
+              ? BarCodeQrCodePrefix.PRODUCT_AND_INVOICE +
+                new StringUtils().intToDigitString(autoIncrementNumber, 8)
+              : '',
           _categoryId: resultSubcategory[subCategoryIndex]._categoryId,
           _subCategoryId: dto.arrayItems[i].subCategoryId,
           _groupId:
@@ -299,8 +419,8 @@ export class ProductsService {
           _hmSealingStatus: dto.arrayItems[i].hmSealingStatus,
           _huId: [],
           _eCommerceStatus: dto.arrayItems[i].eCommerceStatus,
-          _isStone:dto.arrayItems[i].isStone,
-          _moldNumber:dto.arrayItems[i].moldNumber,
+          _isStone: dto.arrayItems[i].isStone,
+          _moldNumber: dto.arrayItems[i].moldNumber,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
@@ -332,7 +452,11 @@ export class ProductsService {
                 _updatedAt: dateTime,
                 _isProductGenerated: 1,
                 _orderItemId: orderItemId,
-                _workStatus: (dto.arrayItems.findIndex((it)=>it.hmSealingStatus==1)!=-1) ? 8 : 6,  
+                _workStatus:
+                  dto.arrayItems.findIndex((it) => it.hmSealingStatus == 1) !=
+                  -1
+                    ? 8
+                    : 6,
               },
             },
             { new: true, session: transactionSession },
@@ -342,8 +466,8 @@ export class ProductsService {
             _userId: null,
             _type: 6,
             _shopId: null,
-            _deliveryCounterId:null,
-            _deliveryProviderId:null,
+            _deliveryCounterId: null,
+            _deliveryProviderId: null,
             _orderSaleItemId: null,
             _description: '',
             _createdUserId: _userId_,
@@ -377,7 +501,7 @@ export class ProductsService {
               { new: true, session: transactionSession },
             );
 
-            var photographyUid=resultCounterPhotographer._count;
+          var photographyUid = resultCounterPhotographer._count;
 
           const photographerRequestModel = new this.photographerRequestModel({
             _rootCauseId: null,
@@ -401,11 +525,11 @@ export class ProductsService {
             _orderSaleId: dto.orderId,
             _userId: resultPhotographer[0].employeeList[0]._userId,
             _type: 105,
-            _deliveryProviderId:null,
-            _deliveryCounterId:null,
+            _deliveryProviderId: null,
+            _deliveryCounterId: null,
             _shopId: null,
             _orderSaleItemId: null,
-            _description: 'Photography request UID: '+photographyUid,
+            _description: 'Photography request UID: ' + photographyUid,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _status: 1,
@@ -448,8 +572,8 @@ export class ProductsService {
             _userId: null,
             _type: 8,
             _orderSaleItemId: null,
-            _deliveryCounterId:null,
-            _deliveryProviderId:null,
+            _deliveryCounterId: null,
+            _deliveryProviderId: null,
             _shopId: null,
             _description: '',
             _createdUserId: _userId_,
@@ -506,6 +630,7 @@ export class ProductsService {
         arrayAggregation.push({
           $match: {
             $or: [
+              { _moldNumber: new RegExp(`^${dto.searchingText}$`, 'i') },
               { _name: new RegExp(dto.searchingText, 'i') },
               { _barcode: new RegExp(`^${dto.searchingText}$`, 'i') },
               { _huId: new RegExp(`^${dto.searchingText}$`, 'i') },
@@ -582,6 +707,12 @@ export class ProductsService {
         });
       }
 
+      if (dto.isStone.length > 0) {
+        arrayAggregation.push({
+          $match: { _isStone: { $in: dto.isStone } },
+        });
+      }
+
       if (dto.type.length > 0) {
         arrayAggregation.push({
           $match: { _type: { $in: dto.type } },
@@ -597,12 +728,6 @@ export class ProductsService {
           $match: { _hmSealingStatus: { $in: dto.hmStealingStatus } },
         });
       }
-
-
-
-
-
-
 
       if (
         dto.cityIds.length != 0 ||
@@ -625,8 +750,6 @@ export class ProductsService {
             },
           },
         );
-
-
 
         if (dto.cityIds.length > 0) {
           var newSettingsId = [];
@@ -658,9 +781,6 @@ export class ProductsService {
           });
         }
 
-
-
-
         arrayAggregation.push(
           {
             $lookup: {
@@ -673,27 +793,8 @@ export class ProductsService {
           {
             $match: { mongoCheckShopList: { $ne: [] } },
           },
-          
         );
       }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {
@@ -1222,6 +1323,128 @@ export class ProductsService {
             let: { productId: '$_id' },
             pipeline: productDocumentsLinkingPipeline(),
             as: 'documentList',
+          },
+        });
+      }
+      if (dto.screenType.includes(115)) {
+        const productTagsLinkingPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                _status: 1,
+                $expr: {
+                  $and: [{ $eq: ['$_productId', '$$productId'] }],
+                },
+              },
+            },
+            new ModelWeightResponseFormat().productTagLinkingResponseFormat(
+              1150,
+              dto.responseFormat,
+            ),
+          );
+
+          const productTagLinkingTagMaster = dto.screenType.includes(116);
+          if (productTagLinkingTagMaster) {
+            const productTagsLinkingTagMasterPipeline = () => {
+              const pipeline = [];
+              pipeline.push(
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$tagId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().tagMasterResponseFormat(
+                  1160,
+                  dto.responseFormat,
+                ),
+              );
+
+              if (dto.screenType.includes(117)) {
+                const productTagsDocumentsLinkingPipeline = () => {
+                  const pipeline = [];
+                  pipeline.push(
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_tagId', '$$tagChildId'] },
+                      },
+                    },
+                    { $sort: { _priority: 1 } },
+                    new ModelWeightResponseFormat().tagDocumentsLinkingResponseFormat(
+                      1170,
+                      dto.responseFormat,
+                    ),
+                  );
+
+                  if (dto.screenType.includes(118)) {
+                    pipeline.push(
+                      {
+                        $lookup: {
+                          from: ModelNames.GLOBAL_GALLERIES,
+                          let: { globalGalleryId: '$_globalGalleryId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                              },
+                            },
+                            new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                              1080,
+                              dto.responseFormat,
+                            ),
+                          ],
+                          as: 'globalGalleryDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$globalGalleryDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    );
+                  }
+                  return pipeline;
+                };
+
+                pipeline.push({
+                  $lookup: {
+                    from: ModelNames.TAG_MASTER_DOCUMENTS,
+                    let: { tagChildId: '$_id' },
+                    pipeline: productTagsDocumentsLinkingPipeline(),
+                    as: 'tagDocumentsLinkings',
+                  },
+                });
+              }
+              return pipeline;
+            };
+
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.TAG_MASTERS,
+                  let: { tagId: '$_tagId' },
+                  pipeline: productTagsLinkingTagMasterPipeline(),
+                  as: 'tagDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$tagDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.PRODUCT_TAG_LINKINGS,
+            let: { productId: '$_id' },
+            pipeline: productTagsLinkingPipeline(),
+            as: 'tagLinkings',
           },
         });
       }

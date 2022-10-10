@@ -15,6 +15,8 @@ import { DepartmentsSchema } from 'src/tableModels/departments.model';
 import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
 import { OrderSalesItemsSchema } from 'src/tableModels/order_sales_items.model';
 import { ProductTagLinkingsSchema } from 'src/tableModels/product_tag_linkings.model';
+import { ProductsDocumentsSchema } from 'src/tableModels/products_documents.model';
+import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
 
 @Module({
   imports: [
@@ -31,6 +33,8 @@ import { ProductTagLinkingsSchema } from 'src/tableModels/product_tag_linkings.m
       { name: ModelNames.ORDER_SALES_MAIN, schema: OrderSalesMainSchema },
       { name: ModelNames.ORDER_SALES_ITEMS, schema: OrderSalesItemsSchema },
       { name: ModelNames.PRODUCT_TAG_LINKINGS, schema: ProductTagLinkingsSchema },
+      { name: ModelNames.PRODUCT_DOCUMENTS_LINKIGS, schema: ProductsDocumentsSchema },
+      { name: ModelNames.GLOBAL_GALLERIES, schema: GlobalGalleriesSchema },
       {
         name: ModelNames.ORDER_SALE_HISTORIES,
         schema: OrderSaleHistoriesSchema,

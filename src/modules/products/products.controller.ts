@@ -1,4 +1,5 @@
-import { Body, Controller, Post, Request } from '@nestjs/common';
+import { Body, Controller, Post, Request, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import {
   ProductCreateDto,
@@ -12,9 +13,25 @@ import { ProductsService } from './products.service';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Post()
-  create(@Body() dto: ProductCreateDto, @Request() req) {
-    return this.productsService.create(dto, req['_userId_']);
+  @Post() 
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        {
+          name: 'documents',
+        },
+      ],
+      /*{
+        storage: diskStorage({
+          destination: FileMulterHelper.filePathTempBranch,
+          filename: FileMulterHelper.customFileName,
+        }),
+      },*/
+    ),
+  )
+  create(@Body() dto: ProductCreateDto, @Request() req, @UploadedFiles() file) {
+    return this.productsService.create(dto, req['_userId_'],
+    file == null ? {} : JSON.parse(JSON.stringify(file)),);
   }
 
   @Post('list')

@@ -13,11 +13,16 @@ import { Optional } from '@nestjs/common';
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList =
-  '0-total documents count,100-shop, 101-order item Details, 102-subCategoryDetails, 103-CategoryDetails, 104-groupDetails, 105-stone linking, 106-product documents, 107- shop under[100] global gallery, 108 - products documents under[106] global gallery, 109 - stone list under[105] stone details, 110 - stone list under[105] stone details under[109] global gallery, 111 - stone list under[105] colour master details, 112- order sale item details under[101] ordersale main details, 113- order sale item details under[101] ordersale main details under[112] order sale documents, 114- order sale item details under[101] ordersale main details under[112] order sale documents under[113] global gallery details ';
+  '0-total documents count,100-shop, 101-order item Details, 102-subCategoryDetails, 103-CategoryDetails, 104-groupDetails, 105-stone linking, 106-product documents, 107- shop under[100] global gallery, 108 - products documents under[106] global gallery, 109 - stone list under[105] stone details, 110 - stone list under[105] stone details under[109] global gallery, 111 - stone list under[105] colour master details, 112- order sale item details under[101] ordersale main details, 113- order sale item details under[101] ordersale main details under[112] order sale documents, 114- order sale item details under[101] ordersale main details under[112] order sale documents under[113] global gallery details, 115-product tag linking list, 116 - product tag linking under[115] tag master details, 117 - product tag linking under[115] tag master details under[116] documents list, 118 - product tag linking under[115] tag master details under[116] documents list under[117] global gallery details ';
 const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType =
   '0-Created Date, 1-Status,2-Name, 3-designerId, 4-grossWeight, 5-type, 6-purity, 7-hmSealing, 8-huid, 9-eCommerceStatus';
 const descriptionType = '0-order sale, 1-Stock sale';
+
+const descriptionListDocType = '0-image, 1-video, 2-pdf, 3-audio, 4-document';
+
+const descriptionFileOriginalName =
+  "file name givent while uploading, if there is no image then give 'nil; here";
 
 class StonesList {
   @IsString()
@@ -35,6 +40,19 @@ class StonesList {
   @IsNumber()
   @ApiProperty({})
   quantity: number;
+}
+
+
+class productDocumentCreateList {
+  @IsString()
+  @ApiProperty({ description: descriptionFileOriginalName })
+  fileOriginalName: string;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({ description: descriptionListDocType })
+  docType: number;
+
 }
 class ProductCreateList {
 
@@ -91,6 +109,15 @@ class ProductCreateList {
   @Type(() => StonesList)
   stonesArray: StonesList[];
 
+
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
+  @IsArray()
+  @ApiProperty({ type: [productDocumentCreateList] })
+  @ValidateNested({ each: true })
+  @Type(() => productDocumentCreateList)
+  arrayDocuments: productDocumentCreateList[];
 
 }
 
@@ -192,6 +219,12 @@ export class ProductListDto {
     description: descriptionListScreenTypeForList,
   })
   type: number[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+  })
+  isStone: number[];
 
   @IsArray()
   @ApiProperty({

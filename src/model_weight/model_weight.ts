@@ -119,7 +119,7 @@ export class ModelWeight {
       _id: 1,
       _userId: 1,
       _uid: 1,
-      _createdAt:1,
+      _createdAt: 1,
     };
   }
   public invoiceTableMinimum(): Object {
@@ -266,7 +266,7 @@ export class ModelWeight {
       _dueDate: 1,
       _workStatus: 1,
       _referenceNumber: 1,
-      _parentOrderId:1,
+      _parentOrderId: 1,
       _type: 1,
       _rootCauseId: 1,
       _createdUserId: 1,
@@ -285,7 +285,7 @@ export class ModelWeight {
       _workStatus: 1,
       _type: 1,
       _rootCauseId: 1,
-      _parentOrderId:1,
+      _parentOrderId: 1,
       _isInvoiceGenerated: 1,
       _isProductGenerated: 1,
       _referenceNumber: 1,
@@ -307,7 +307,7 @@ export class ModelWeight {
       _workStatus: 1,
       _rootCauseId: 1,
       _deliveryType: 1,
-      _parentOrderId:1,
+      _parentOrderId: 1,
       _isInvoiceGenerated: 1,
       _isProductGenerated: 1,
       _type: 1,
@@ -781,11 +781,11 @@ export class ModelWeight {
       _id: 1,
       _uid: 1,
       _type: 1,
-      _proofRootCause:1,
-      _proofRootCauseId:1,
-      _proofGlobalGalleryId:1,
-      _deliveryAcceptedAt:1,
-      _proofAcceptedUserId:1,
+      _proofRootCause: 1,
+      _proofRootCauseId: 1,
+      _proofGlobalGalleryId: 1,
+      _deliveryAcceptedAt: 1,
+      _proofAcceptedUserId: 1,
       _employeeId: 1,
       _shopReceivedUserId: 1,
       _createdUserId: 1,
@@ -797,12 +797,12 @@ export class ModelWeight {
       _id: 1,
       _uid: 1,
       _type: 1,
-      _isBypass:1,
-      _proofRootCause:1,
-      _proofRootCauseId:1,
-      _proofGlobalGalleryId:1,
-      _proofAcceptedUserId:1,
-      _deliveryAcceptedAt:1,
+      _isBypass: 1,
+      _proofRootCause: 1,
+      _proofRootCauseId: 1,
+      _proofGlobalGalleryId: 1,
+      _proofAcceptedUserId: 1,
+      _deliveryAcceptedAt: 1,
       _workStatus: 1,
       _employeeId: 1,
       _shopReceivedUserId: 1,
@@ -817,12 +817,12 @@ export class ModelWeight {
       _uid: 1,
       _type: 1,
       _workStatus: 1,
-      _isBypass:1,
-      _proofRootCause:1,
-      _proofRootCauseId:1,
-      _proofGlobalGalleryId:1,
-      _deliveryAcceptedAt:1,
-      _proofAcceptedUserId:1,
+      _isBypass: 1,
+      _proofRootCause: 1,
+      _proofRootCauseId: 1,
+      _proofGlobalGalleryId: 1,
+      _deliveryAcceptedAt: 1,
+      _proofAcceptedUserId: 1,
       _shopReceivedUserId: 1,
       _hubId: 1,
       _shopId: 1,
@@ -1030,7 +1030,6 @@ export class ModelWeight {
       _id: 1,
       _setProcessId: 1,
       _globalGalleryId: 1,
-    
     };
   }
 
@@ -1153,13 +1152,12 @@ export class ModelWeight {
   public productTableCustom1(): Object {
     return {
       _id: 1,
-     
+
       _grossWeight: 1,
       _createdAt: 1,
-      _barcode:1,
+      _barcode: 1,
       _totalStoneWeight: 1,
       _netWeight: 1,
-     
     };
   }
 
@@ -1986,7 +1984,7 @@ export class ModelWeight {
       _workStartedTime: 1,
       _workCompletedTime: 1,
       _index: 1,
-      _dueDate:1,
+      _dueDate: 1,
       _rootCauseId: 1,
       _rootCause: 1,
       _description: 1,
@@ -2159,7 +2157,6 @@ export class ModelWeight {
       _name: 1,
       _prefix: 1,
       _code: 1,
-     
     };
   }
   public departmentTableMinimum(): Object {
@@ -2204,98 +2201,254 @@ export class ModelWeight {
   }
   public employeeTableLight(): Object {
     return {
-      _id:1,
-      _uid:1,
-      _prefix:1,
+      _id: 1,
+      _uid: 1,
+      _prefix: 1,
     };
   }
   public employeeTableMinimum(): Object {
     return {
-      _id:1,
-      _userId:1,
-      _uid:1,
-      _departmentId:1,
-      _prefix:1,
-      _processMasterId:1,
-     
+      _id: 1,
+      _userId: 1,
+      _uid: 1,
+      _departmentId: 1,
+      _prefix: 1,
+      _processMasterId: 1,
     };
   }
   public employeeTableMedium(): Object {
     return {
-      _id:1,
-      _userId:1,
-      _uid:1,
-      _departmentId:1,
-      _prefix:1,
-      _processMasterId:1,
-      _lastLogin:1,
-      _dataGuard:1,
-      _status:1,
+      _id: 1,
+      _userId: 1,
+      _uid: 1,
+      _departmentId: 1,
+      _prefix: 1,
+      _processMasterId: 1,
+      _lastLogin: 1,
+      _dataGuard: 1,
+      _status: 1,
     };
   }
   public employeeTableMaximum(): Object {
     return {
-      _id:1,
-      _userId:1,
-      _uid:1,
-      _departmentId:1,
-      _prefix:1,
-      _processMasterId:1,
-      _lastLogin:1,
-      _dataGuard:1,
-      _createdUserId:1,
-      _createdAt:1,
-      _updatedUserId:1,
-      _updatedAt:1,
-      _status:1,
+      _id: 1,
+      _userId: 1,
+      _uid: 1,
+      _departmentId: 1,
+      _prefix: 1,
+      _processMasterId: 1,
+      _lastLogin: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
     };
   }
 
-
-
-  
   public deliveryCounterBundleTableLight(): Object {
     return {
-      _id:1,
-      _uid:1,
-      _workStatus:1,
-     
+      _id: 1,
+      _uid: 1,
+      _workStatus: 1,
     };
   }
   public deliveryCounterBundleTableMinimum(): Object {
     return {
-      _id:1,
-      _uid:1,
-      _workStatus:1,
-      _completedTime:1,
-      _employeeId:1,
-      _deliveryCounterId:1,
-      _receivedUserId:1,
-      _createdUserId:1,
-      _status:1,
+      _id: 1,
+      _uid: 1,
+      _workStatus: 1,
+      _completedTime: 1,
+      _employeeId: 1,
+      _deliveryCounterId: 1,
+      _receivedUserId: 1,
+      _createdUserId: 1,
+      _status: 1,
     };
   }
   public deliveryCounterBundleTableMedium(): Object {
     return {
-      _id:1,
-      _uid:1,
-      _workStatus:1,
-      _completedTime:1,
-      _employeeId:1,
-      _deliveryCounterId:1,
-      _receivedUserId:1,
-      _status:1,
+      _id: 1,
+      _uid: 1,
+      _workStatus: 1,
+      _completedTime: 1,
+      _employeeId: 1,
+      _deliveryCounterId: 1,
+      _receivedUserId: 1,
+      _status: 1,
     };
   }
   public deliveryCounterBundleTableMaximum(): Object {
     return {
-      _id:1,
-      _uid:1,
-      _workStatus:1,
-      _employeeId:1,
-      _deliveryCounterId:1,
-      _completedTime:1,
-      _receivedUserId:1,
+      _id: 1,
+      _uid: 1,
+      _workStatus: 1,
+      _employeeId: 1,
+      _deliveryCounterId: 1,
+      _completedTime: 1,
+      _receivedUserId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+  public deliveryCounterBundleItemsTableLight(): Object {
+    return {
+      _id: 1,
+      _bundleId: 1,
+      _orderSaleId: 1,
+      _status: 1,
+    };
+  }
+  public deliveryCounterBundleItemsTableMinimum(): Object {
+    return {
+      _id: 1,
+      _bundleId: 1,
+      _orderSaleId: 1,
+      _status: 1,
+    };
+  }
+  public deliveryCounterBundleItemsTableMedium(): Object {
+    return {
+      _id: 1,
+      _bundleId: 1,
+      _orderSaleId: 1,
+      _status: 1,
+    };
+  }
+  public deliveryCounterBundleItemsTableMaximum(): Object {
+    return {
+      _id: 1,
+      _bundleId: 1,
+      _orderSaleId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+  public deliveryCounterTableLight(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+    };
+  }
+  public deliveryCounterTableMinimum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+
+      _createdUserId: 1,
+      _status: 1,
+    };
+  }
+  public deliveryCounterTableMedium(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _dataGuard: 1,
+      _status: 1,
+    };
+  }
+  public deliveryCounterTableMaximum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+  public productTagLinkingTableLight(): Object {
+    return {
+      _id: 1,
+      _tagId: 1,
+      _productId: 1,
+    };
+  }
+
+  public productTagLinkingTableMinimum(): Object {
+    return {
+      _id: 1,
+      _tagId: 1,
+      _productId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _status: 1,
+    };
+  }
+
+  public productTagLinkingTableMedium(): Object {
+    return {
+      _id: 1,
+      _tagId: 1,
+      _productId: 1,
+      _status: 1,
+    };
+  }
+
+  public productTagLinkingTableMaximum(): Object {
+    return {
+      _id: 1,
+      _tagId: 1,
+      _productId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+  public tagMasterTableLight(): Object {
+    return {
+      _id: 1,
+      _name:1,
+      _priority:1,
+      _isShowEcommerce:1,
+     
+    };
+  }
+  public tagMasterTableMinimum(): Object {
+    return {
+      _id: 1,
+      _name:1,
+      _dataGuard:1,
+      _priority:1,
+      _isShowEcommerce:1,
+      _status:1,
+
+     
+    };
+  }
+  public tagMasterTableMedium(): Object {
+    return {
+      _id: 1,
+      _name:1,
+      _dataGuard:1,
+      _priority:1,
+      _isShowEcommerce:1,
+      _createdUserId:1,
+      _createdAt:1,
+      _status:1,
+    };
+  }
+  public tagMasterTableMaximum(): Object {
+    return {
+      _id: 1,
+      _name:1,
+      _dataGuard:1,
+      _priority:1,
+      _isShowEcommerce:1,
       _createdUserId:1,
       _createdAt:1,
       _updatedUserId:1,
@@ -2303,78 +2456,41 @@ export class ModelWeight {
       _status:1,
     };
   }
-
-  
-  public deliveryCounterBundleItemsTableLight(): Object {
+  public tagDocumentLinkingTableLight(): Object {
     return {
-      _id:1,
-      _bundleId:1,
-_orderSaleId:1,
-_status:1,
+      _id: 1,
+      _tagId:1,
+      _globalGalleryId:1,
+      _priority:1,
      
     };
   }
-  public deliveryCounterBundleItemsTableMinimum(): Object {
+  public tagDocumentLinkingTableMinimum(): Object {
     return {
-      _id:1,
-      _bundleId:1,
-_orderSaleId:1,
-_status:1,
-     
-    };
-  }
-  public deliveryCounterBundleItemsTableMedium(): Object {
-    return {
-      _id:1,
-      _bundleId:1,
-_orderSaleId:1,
-_status:1,
-     
-    };
-  }
-  public deliveryCounterBundleItemsTableMaximum(): Object {
-    return {
-      _id:1,
-      _bundleId:1,
-_orderSaleId:1,
-_createdUserId:1,
-_createdAt:1,
-_updatedUserId:1,
-_updatedAt:1,
-_status:1,
-     
-    };
-  }
-  
-  public deliveryCounterTableLight(): Object {
-    return {
-      _id:1,
-      _name:1,
-     
-    };
-  }
-  public deliveryCounterTableMinimum(): Object {
-    return {
-      _id:1,
-      _name:1,
-     
+      _id: 1,
+      _tagId:1,
+      _globalGalleryId:1,
+      _priority:1,
       _createdUserId:1,
+      _createdAt:1,
       _status:1,
     };
   }
-  public deliveryCounterTableMedium(): Object {
+  public tagDocumentLinkingTableMedium(): Object {
     return {
-      _id:1,
-      _name:1,
-      _dataGuard:1,
+      _id: 1,
+      _tagId:1,
+      _globalGalleryId:1,
+      _priority:1,
       _status:1,
     };
   }
-  public deliveryCounterTableMaximum(): Object {
+  public tagDocumentLinkingTableMaximum(): Object {
     return {
-      _id:1,
-      _name:1,
-      _dataGuard:1,
+      _id: 1,
+      _tagId:1,
+      _globalGalleryId:1,
+      _priority:1,
       _createdUserId:1,
       _createdAt:1,
       _updatedUserId:1,
