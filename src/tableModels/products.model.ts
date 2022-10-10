@@ -18,7 +18,7 @@ export const ProductsSchema = new mongoose.Schema({
   },
 
   _grossWeight: { type: Number, required: true, default: -1 },
-  _barcode: { type: String, required: true, default: 'nil' },
+  _barcode: { type: String, required: false, default: '' },
   _categoryId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.CATEGORIES,
@@ -41,6 +41,8 @@ export const ProductsSchema = new mongoose.Schema({
   _hmSealingStatus: { type: Number, required: true, default: -1 },
   _huId: { type: Object, required: true, default: [] },
   _eCommerceStatus: { type: Number, required: true, default: -1 },
+  _moldNumber: { type: String, required: false, default: '' },
+  _isStone: { type: Number, required: true, default: -1 },
 
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -58,7 +60,7 @@ export const ProductsSchema = new mongoose.Schema({
 });
 
 export interface Products {
-  _id: String;
+  _id: String; 
   _name: String;
   _designerId: String;
   _shopId: String;
@@ -75,6 +77,8 @@ export interface Products {
   _netWeight: Number;
   _huId: Object;
   _eCommerceStatus: Number;
+  _moldNumber: Number;
+  _isStone: Number;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -82,6 +86,8 @@ export interface Products {
   _status: Number;
 }
 
+ProductsSchema.index({ _isStone: 1 });
+ProductsSchema.index({ _moldNumber: 1 });
 ProductsSchema.index({ _name: 1 });
 ProductsSchema.index({ _designerId: 1, _id: 1 });
 ProductsSchema.index({ _shopId: 1 });

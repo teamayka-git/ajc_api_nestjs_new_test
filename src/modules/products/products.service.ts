@@ -22,12 +22,15 @@ import { BarCodeQrCodePrefix } from 'src/common/barcode_qrcode_prefix';
 import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 import { OrderSalesItems } from 'src/tableModels/order_sales_items.model';
+import { ProductTagLinkings } from 'src/tableModels/product_tag_linkings.model';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectModel(ModelNames.PRODUCTS)
     private readonly productModel: Model<Products>,
+    @InjectModel(ModelNames.PRODUCT_TAG_LINKINGS)
+    private readonly productTagLinkingModel: Model<ProductTagLinkings>,
     @InjectModel(ModelNames.PRODUCT_STONE_LINKIGS)
     private readonly productStoneLinkingsModel: Model<ProductStoneLinkings>,
     @InjectModel(ModelNames.SUB_CATEGORIES)
@@ -55,6 +58,17 @@ export class ProductsService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+
+
+
+
+
+
+
+
+
+      
       var arrayToProducts = [];
 
       var arrayStonesLinkings = [];
@@ -271,9 +285,9 @@ export class ProductsService {
           _netWeight: dto.arrayItems[i].netWeight,
           _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
           _grossWeight: dto.arrayItems[i].grossWeight,
-          _barcode:
+          _barcode:(dto.arrayItems[i].type==0)?
             BarCodeQrCodePrefix.PRODUCT_AND_INVOICE +
-            new StringUtils().intToDigitString(autoIncrementNumber, 8),
+            new StringUtils().intToDigitString(autoIncrementNumber, 8):"",
           _categoryId: resultSubcategory[subCategoryIndex]._categoryId,
           _subCategoryId: dto.arrayItems[i].subCategoryId,
           _groupId:
@@ -285,6 +299,8 @@ export class ProductsService {
           _hmSealingStatus: dto.arrayItems[i].hmSealingStatus,
           _huId: [],
           _eCommerceStatus: dto.arrayItems[i].eCommerceStatus,
+          _isStone:dto.arrayItems[i].isStone,
+          _moldNumber:dto.arrayItems[i].moldNumber,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,

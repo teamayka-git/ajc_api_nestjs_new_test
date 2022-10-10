@@ -124,6 +124,7 @@ export class TagMastersService {
             arrayGlobalGalleriesDocuments.push({
               _tagId: tagMasterId,
               _globalGalleryId: globalGalleryId,
+              _priority:dto.arrayDocuments[i].priority,
               _createdUserId: _userId_,
               _createdAt: dateTime,
               _updatedUserId: null,

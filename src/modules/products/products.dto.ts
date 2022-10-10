@@ -45,6 +45,16 @@ class ProductCreateList {
 
   @IsString()
   @ApiProperty({})
+  moldNumber: string;
+
+
+  @IsNumber()
+  @ApiProperty({})
+  isStone: number;
+
+
+  @IsString()
+  @ApiProperty({})
   orderItemId: string;
 
   @IsNumber()

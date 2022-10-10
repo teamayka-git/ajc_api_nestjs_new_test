@@ -14,6 +14,7 @@ import { HalmarkingRequestsSchema } from 'src/tableModels/halmarking_requests.mo
 import { DepartmentsSchema } from 'src/tableModels/departments.model';
 import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
 import { OrderSalesItemsSchema } from 'src/tableModels/order_sales_items.model';
+import { ProductTagLinkingsSchema } from 'src/tableModels/product_tag_linkings.model';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { OrderSalesItemsSchema } from 'src/tableModels/order_sales_items.model';
       },{name:ModelNames.DEPARTMENT,schema:DepartmentsSchema},
       { name: ModelNames.ORDER_SALES_MAIN, schema: OrderSalesMainSchema },
       { name: ModelNames.ORDER_SALES_ITEMS, schema: OrderSalesItemsSchema },
+      { name: ModelNames.PRODUCT_TAG_LINKINGS, schema: ProductTagLinkingsSchema },
       {
         name: ModelNames.ORDER_SALE_HISTORIES,
         schema: OrderSaleHistoriesSchema,

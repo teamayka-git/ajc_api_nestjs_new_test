@@ -42,6 +42,11 @@ class orderSaleCreateList {
   @IsNumber()
   @ApiProperty({ description: descriptionListDocType })
   docType: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({  })
+  priority: number;
 }
 export class TagMasterCreateDto {
   @IsString()
