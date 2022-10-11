@@ -163,7 +163,7 @@ export class DeliveryReturnListDto {
 
   @IsNumber()
   @ApiProperty({})
-  dcbCreatedStartDate
+  dcbCreatedStartDate: number;
 
   @IsNumber()
   @ApiProperty({})
