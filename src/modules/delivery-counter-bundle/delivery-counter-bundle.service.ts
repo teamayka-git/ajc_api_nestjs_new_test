@@ -774,10 +774,9 @@ export class DeliveryCounterBundleService {
               {
                 $unwind: {
                   path: '$orderSaleDetailsMongo',
-                  preserveNullAndEmptyArrays: true,
                 },
               },
-            );
+            ); 
           }
 
           return pipeline;
