@@ -829,6 +829,12 @@ export class DeliveryCounterBundleService {
           arrayAggregation.push({ $sort: { _workStatus: dto.sortOrder } });
           break;
       }
+
+
+
+console.log("dc bunlde dto   "+JSON.stringify(dto));
+
+
       if (dto.skip != -1) {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
