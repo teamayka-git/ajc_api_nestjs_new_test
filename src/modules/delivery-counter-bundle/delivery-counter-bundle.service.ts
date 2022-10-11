@@ -832,7 +832,7 @@ export class DeliveryCounterBundleService {
 
 
 
-console.log("dc bunlde dto   "+JSON.stringify(dto));
+console.log("dc bunlde arrayAggregation   "+JSON.stringify(arrayAggregation));
 
 
       if (dto.skip != -1) {
