@@ -251,15 +251,17 @@ export class EmployeesService {
       resultCompany = resultCompanyList[0];
 
 
-var resultCounterLinkingUsers=await this.deliveryCounterUserLinkingModel.count({_userId:resultEmployee[0]._id,_status:1});
-
-
+var resultCounterLinkingUsers=await this.deliveryCounterUserLinkingModel.find({_userId:resultEmployee[0]._id,_status:1},{_deliveryCounterId:1});
+var resultCounterLinkingUsersCounterIds=[];
+resultCounterLinkingUsers.forEach((element)=>{
+  resultCounterLinkingUsersCounterIds.push(element._deliveryCounterId);
+});
 
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
 
       return {
-        isDeliveryCounterUser:(resultCounterLinkingUsers==0)?false:true,
+        deliveryCounterIds:resultCounterLinkingUsersCounterIds,
         userDetails: resultUser[0],
         goldTimeline: listGoldTimelines,
         resultCompany: resultCompany,

@@ -499,9 +499,11 @@ if(resultGeneralRemarks.length!=0){
 }
 
 
-var resultCounterLinkingUsers=await this.deliveryCounterUserLinkingModel.count({_userId:resultEmployee[0]._id,_status:1});
-
- 
+var resultCounterLinkingUsers=await this.deliveryCounterUserLinkingModel.find({_userId:resultEmployee[0]._id,_status:1},{_deliveryCounterId:1});
+var resultCounterLinkingUsersCounterIds=[];
+resultCounterLinkingUsers.forEach((element)=>{
+  resultCounterLinkingUsersCounterIds.push(element._deliveryCounterId);
+});
 
 
 
@@ -513,7 +515,7 @@ var resultCounterLinkingUsers=await this.deliveryCounterUserLinkingModel.count({
     return {
       message: 'success',
       data: {
-        _isDeliveryCounterUser:(resultCounterLinkingUsers==0)?false:true,
+        deliveryCounterIds:resultCounterLinkingUsersCounterIds,
         userDetails: resultEmployee[0],
         goldTimelinesList: listGoldTimelines,
         generalRemarks: resultGeneralRemarks,
