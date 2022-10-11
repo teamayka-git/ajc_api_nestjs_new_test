@@ -11,6 +11,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
 import { GoldRateTimelinesSchema } from 'src/tableModels/gold_rate_timelines.model';
 import { CompanySchema } from 'src/tableModels/companies.model';
+import { DeliveryCounterUserLinkingsSchema } from 'src/tableModels/delivery_counter_user_linkings.model';
 
 @Module({  imports: [
   JwtModule.register({
@@ -19,6 +20,7 @@ import { CompanySchema } from 'src/tableModels/companies.model';
   }), //jwt implement
   MongooseModule.forFeature([
     { name: ModelNames.USER, schema: UserSchema },
+    { name: ModelNames.DELIVERY_COUNTER_USER_LINKINGS, schema: DeliveryCounterUserLinkingsSchema },
     { name: ModelNames.EMPLOYEES, schema: EmployeeSchema },
     { name: ModelNames.COUNTERS, schema: CountersSchema },
     { name: ModelNames.GOLD_RATE_TIMELINES, schema:GoldRateTimelinesSchema },

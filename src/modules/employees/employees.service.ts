@@ -24,11 +24,14 @@ import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 import { GoldRateTimelines } from 'src/tableModels/gold_rate_timelines.model';
 import { Company } from 'src/tableModels/companies.model';
 import { SmsUtils } from 'src/utils/smsUtils';
+import { DeliveryCounterUserLinkings } from 'src/tableModels/delivery_counter_user_linkings.model';
 const crypto = require('crypto');
 
 @Injectable()
 export class EmployeesService {
   constructor(
+    @InjectModel(ModelNames.DELIVERY_COUNTER_USER_LINKINGS)
+    private readonly deliveryCounterUserLinkingModel: mongoose.Model<DeliveryCounterUserLinkings>,
     @InjectModel(ModelNames.USER)
     private readonly userModel: mongoose.Model<User>,
     @InjectModel(ModelNames.GLOBAL_GALLERIES)
@@ -247,10 +250,16 @@ export class EmployeesService {
 
       resultCompany = resultCompanyList[0];
 
+
+var resultCounterLinkingUsers=await this.deliveryCounterUserLinkingModel.count({_userId:resultEmployee[0]._id,_status:1});
+
+
+
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
 
       return {
+        isDeliveryCounterUser:(resultCounterLinkingUsers==0)?false:true,
         userDetails: resultUser[0],
         goldTimeline: listGoldTimelines,
         resultCompany: resultCompany,

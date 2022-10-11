@@ -19,6 +19,7 @@ import { Cities } from './tableModels/cities.model';
 import { Colours } from './tableModels/colourMasters.model';
 import { Company } from './tableModels/companies.model';
 import { Counters } from './tableModels/counters.model';
+import { DeliveryCounterUserLinkings } from './tableModels/delivery_counter_user_linkings.model';
 import { Departments } from './tableModels/departments.model';
 import { Districts } from './tableModels/districts.model';
 import { Employee } from './tableModels/employee.model';
@@ -46,6 +47,8 @@ const crypto = require('crypto');
 @Injectable()
 export class AppService {
   constructor(
+    @InjectModel(ModelNames.DELIVERY_COUNTER_USER_LINKINGS)
+    private readonly deliveryCounterUserLinkingModel: mongoose.Model<DeliveryCounterUserLinkings>,
     @InjectModel(ModelNames.ROOT_CAUSES)
     private readonly rootCauseModel: mongoose.Model<RootCausesModel>,
     @InjectModel(ModelNames.USER_ATTENDANCES)
@@ -302,7 +305,7 @@ if(codeGeneralsAppUpdate.length!=0){
             pipeline: [
               { $match: { $expr: { $eq: ['$_id', '$$employeeId'] } } },
 
-              {
+              { 
                 $lookup: {
                   from: ModelNames.DEPARTMENT,
                   let: { departmentId: '$_departmentId' },
@@ -496,7 +499,9 @@ if(resultGeneralRemarks.length!=0){
 }
 
 
+var resultCounterLinkingUsers=await this.deliveryCounterUserLinkingModel.count({_userId:resultEmployee[0]._id,_status:1});
 
+ 
 
 
 
@@ -508,6 +513,7 @@ if(resultGeneralRemarks.length!=0){
     return {
       message: 'success',
       data: {
+        _isDeliveryCounterUser:(resultCounterLinkingUsers==0)?false:true,
         userDetails: resultEmployee[0],
         goldTimelinesList: listGoldTimelines,
         generalRemarks: resultGeneralRemarks,

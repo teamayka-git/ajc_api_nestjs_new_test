@@ -78,6 +78,7 @@ export class EmployeesController {
       goldTimelinesList: returnData['goldTimeline'],
       currentDateTime: new Date().getTime(),
       company: returnData["resultCompany"],
+      _isDeliveryCounterUser:returnData['isDeliveryCounterUser'],
       token: jwt,
     };
   }

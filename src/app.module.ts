@@ -90,6 +90,7 @@ import { UserAttendanceSchema } from './tableModels/user_attendances.model';
 import { DeliveryCounterModule } from './modules/delivery-counter/delivery-counter.module';
 import { DeliveryCounterBundleModule } from './modules/delivery-counter-bundle/delivery-counter-bundle.module';
 import { TagMastersModule } from './modules/tag-masters/tag-masters.module';
+import { DeliveryCounterUserLinkingsSchema } from './tableModels/delivery_counter_user_linkings.model';
 
 @Module({
   imports: [
@@ -124,6 +125,7 @@ import { TagMastersModule } from './modules/tag-masters/tag-masters.module';
         schema: GlobalGalleryCategoriesSchema,
       },
 
+      { name: ModelNames.DELIVERY_COUNTER_USER_LINKINGS, schema: DeliveryCounterUserLinkingsSchema },
       {
         name: ModelNames.CHAT_PENDING_MESSAGES,
         schema: ChatPendingMessagesSchema,
