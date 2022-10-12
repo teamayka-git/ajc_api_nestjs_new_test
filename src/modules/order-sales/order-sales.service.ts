@@ -1011,7 +1011,7 @@ export class OrderSalesService {
           arrayAggregation.push({ $sort: { _dueDate: dto.sortOrder } });
           break;
       }
-
+console.log("os list aggregation "+JSON.stringify(arrayAggregation));
       if (dto.skip != -1) {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
