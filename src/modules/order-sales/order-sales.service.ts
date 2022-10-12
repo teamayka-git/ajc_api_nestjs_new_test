@@ -2203,7 +2203,6 @@ export class OrderSalesService {
         });
       }
       
-console.log("os list aggregation "+JSON.stringify(arrayAggregation));
       var result = await this.orderSaleMainModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
