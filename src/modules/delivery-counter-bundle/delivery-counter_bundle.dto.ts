@@ -156,6 +156,10 @@ export class DeliveryReturnListDto {
 
 
 
+  @IsArray()
+  @ApiProperty({ type: [Number] })
+  isInvoiceGenerated: number[];
+
 
 
 

@@ -446,6 +446,7 @@ export class DeliveryCounterBundleService {
       }
 
       if (
+        dto.isInvoiceGenerated.length != 0 ||
         dto.orderSaleUids.length != 0 ||
         dto.orderHeadIds.length != 0 ||
         dto.shopIds.length != 0 ||
@@ -471,6 +472,7 @@ export class DeliveryCounterBundleService {
           );
 
           if (
+            dto.isInvoiceGenerated.length != 0 ||
             dto.orderSaleUids.length != 0 ||
             dto.orderHeadIds.length != 0 ||
             dto.shopIds.length != 0 ||
@@ -492,9 +494,18 @@ export class DeliveryCounterBundleService {
                     _orderHeadId: 1,
                     _uid: 1,
                     _shopId: 1,
+                    _isInvoiceGenerated: 1,
                   },
                 },
               );
+              if (dto.isInvoiceGenerated.length != 0) {
+                pipeline.push({
+                  $match: {
+                    _isInvoiceGenerated: { $in: dto.isInvoiceGenerated },
+                  },
+                });
+              }
+
               if (dto.orderSaleUids.length != 0) {
                 pipeline.push({ $match: { _uid: { $in: dto.orderSaleUids } } });
               }
@@ -776,7 +787,7 @@ export class DeliveryCounterBundleService {
                   path: '$orderSaleDetailsMongo',
                 },
               },
-            ); 
+            );
           }
 
           return pipeline;
@@ -828,11 +839,6 @@ export class DeliveryCounterBundleService {
           arrayAggregation.push({ $sort: { _workStatus: dto.sortOrder } });
           break;
       }
-
-
-
-console.log("dc bunlde arrayAggregation   "+JSON.stringify(arrayAggregation));
-
 
       if (dto.skip != -1) {
         arrayAggregation.push({ $skip: dto.skip });
