@@ -365,7 +365,7 @@ export class ProductsService {
         }
 
         var autoIncrementNumber = resultProduct._count - i;
-        var productId = dto.arrayItems[i]['mongoId'];
+        var productId = (dto.arrayItems[i]['mongoId']!=null)?dto.arrayItems[i]['mongoId']:new mongoose.Types.ObjectId();
         var shopId = dto.shopId;
         var orderId = dto.orderId;
         var orderItemId = dto.arrayItems[i].orderItemId;
