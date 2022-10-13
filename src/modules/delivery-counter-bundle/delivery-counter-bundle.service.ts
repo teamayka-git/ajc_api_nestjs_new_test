@@ -851,7 +851,7 @@ export class DeliveryCounterBundleService {
         ),
       );
 
-      console.log("___a1");
+      console.log("___a1   "+JSON.stringify(arrayAggregation));
 
       //imp
       if (dto.isInvoiceGenerated.length != 0 ||
