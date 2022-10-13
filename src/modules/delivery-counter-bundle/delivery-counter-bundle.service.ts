@@ -808,6 +808,9 @@ export class DeliveryCounterBundleService {
         );
       }
 
+
+
+
       if (dto.workStatus.length > 0) {
         arrayAggregation.push({
           $match: { _workStatus: { $in: dto.workStatus } },
@@ -840,10 +843,6 @@ export class DeliveryCounterBundleService {
           break;
       }
 
-      if (dto.skip != -1) {
-        arrayAggregation.push({ $skip: dto.skip });
-        arrayAggregation.push({ $limit: dto.limit });
-      }
 
       arrayAggregation.push(
         new ModelWeightResponseFormat().deliveryCounterBundleResponseFormat(
@@ -852,6 +851,22 @@ export class DeliveryCounterBundleService {
         ),
       );
 
+
+      //imp
+      if (dto.isInvoiceGenerated.length != 0 ||
+        dto.invoiceUids.length != 0 ||
+        (dto.invoiceDateEndDate != -1 &&
+          dto.invoiceDateStartDate != -1)) {
+        arrayAggregation[arrayAggregation.length - 1].$project.aaa = "aaas";
+      }
+
+
+
+      
+      if (dto.skip != -1) {
+        arrayAggregation.push({ $skip: dto.skip });
+        arrayAggregation.push({ $limit: dto.limit });
+      }
       if (dto.screenType.includes(100)) {
         arrayAggregation.push(
           {
@@ -1135,13 +1150,7 @@ export class DeliveryCounterBundleService {
                           {
                             $unwind: {
                               path: '$invoiceDetails',
-                              preserveNullAndEmptyArrays:
-                                dto.isInvoiceGenerated.length != 0 ||
-                                dto.invoiceUids.length != 0 ||
-                                (dto.invoiceDateEndDate != -1 &&
-                                  dto.invoiceDateStartDate != -1)
-                                  ? false
-                                  : true,
+                              preserveNullAndEmptyArrays: true,
                             },
                           },
                         );
