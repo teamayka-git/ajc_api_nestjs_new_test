@@ -1135,7 +1135,13 @@ export class DeliveryCounterBundleService {
                           {
                             $unwind: {
                               path: '$invoiceDetails',
-                              preserveNullAndEmptyArrays: true,
+                              preserveNullAndEmptyArrays:
+                                dto.isInvoiceGenerated.length != 0 ||
+                                dto.invoiceUids.length != 0 ||
+                                (dto.invoiceDateEndDate != -1 &&
+                                  dto.invoiceDateStartDate != -1)
+                                  ? false
+                                  : true,
                             },
                           },
                         );
