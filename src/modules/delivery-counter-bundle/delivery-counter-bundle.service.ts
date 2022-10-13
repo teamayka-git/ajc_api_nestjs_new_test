@@ -851,19 +851,19 @@ export class DeliveryCounterBundleService {
         ),
       );
 
-      console.log("___a1   "+JSON.stringify(arrayAggregation));
+      // console.log("___a1   "+JSON.stringify(arrayAggregation));
 
-      //imp
-      if (dto.isInvoiceGenerated.length != 0 ||
-        dto.invoiceUids.length != 0 ||
-        (dto.invoiceDateEndDate != -1 &&
-          dto.invoiceDateStartDate != -1)) {
-            console.log("___a2");
-        arrayAggregation[arrayAggregation.length - 1].$project.aaa = "$_id";
-      }
-      console.log("arrayAggregation dbl   "+JSON.stringify(arrayAggregation));
+      // //imp
+      // if (dto.isInvoiceGenerated.length != 0 ||
+      //   dto.invoiceUids.length != 0 ||
+      //   (dto.invoiceDateEndDate != -1 &&
+      //     dto.invoiceDateStartDate != -1)) {
+      //       console.log("___a2");
+      //   arrayAggregation[arrayAggregation.length - 1].$project.aaa = "$_id";
+      // }
+      // console.log("arrayAggregation dbl   "+JSON.stringify(arrayAggregation));
 
-      console.log("___a3");
+      // console.log("___a3");
       
       if (dto.skip != -1) {
         arrayAggregation.push({ $skip: dto.skip });
