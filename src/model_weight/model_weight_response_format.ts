@@ -814,7 +814,7 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: { _: 0 } };
+      return new ModelWeight().deliveryCounterBundleTableMaximum();
     }
 
     if (responseFormatArray.includes(startIndex)) {
