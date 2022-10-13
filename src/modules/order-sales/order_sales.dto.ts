@@ -360,6 +360,17 @@ export class OrderSaleListDto {
 
 
 
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty({})
+  productCreatedStartDate: number;
+
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty({})
+  productCreatedEndDate: number;
+
   @IsNumber()
   @ApiProperty({})
   limit: number;

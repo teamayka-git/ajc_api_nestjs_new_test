@@ -867,10 +867,8 @@ export class OrderSalesService {
         );
       }
       if (
-       ( dto.cityIds != null &&
-        dto.cityIds.length > 0) ||
-        (dto.branchIds != null &&
-        dto.branchIds.length > 0)
+        (dto.cityIds != null && dto.cityIds.length > 0) ||
+        (dto.branchIds != null && dto.branchIds.length > 0)
       ) {
         var branchIds = [];
         var cityIds = [];
@@ -994,6 +992,66 @@ export class OrderSalesService {
           },
           {
             $match: { mongoCheckSetProcessList: { $ne: [] } },
+          },
+        );
+      }
+      if (
+        dto.productCreatedStartDate != null &&
+        dto.productCreatedEndDate != null &&
+        dto.productCreatedEndDate != -1 &&
+        dto.productCreatedStartDate != -1
+      ) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_ITEMS,
+              let: { orderId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    _status: 1,
+                    $expr: { $eq: ['$_orderSaleId', '$$orderId'] },
+                  },
+                },
+                {
+                  $project: {
+                    _orderSaleId: 1,
+                  },
+                },
+
+                {
+                  $lookup: {
+                    from: ModelNames.PRODUCTS,
+                    let: { productId: '$_productId' },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: { $eq: ['$_id', '$$productId'] },
+
+                          _createdAt: {
+                            $lte: dto.productCreatedEndDate,
+                            $gte: dto.productCreatedStartDate,
+                          },
+                        },
+                      },
+                      {
+                        $project: {
+                          _createdAt: 1,
+                        },
+                      },
+                    ],
+                    as: 'mongoCheckSubItemsProduct',
+                  },
+                },
+                {
+                  $match: { mongoCheckSubItemsProduct: { $ne: [] } },
+                },
+              ],
+              as: 'mongoCheckSubItemsProductCheck',
+            },
+          },
+          {
+            $match: { mongoCheckSubItemsProductCheck: { $ne: [] } },
           },
         );
       }
@@ -2202,7 +2260,7 @@ export class OrderSalesService {
           _status: 1,
         });
       }
-      
+
       var result = await this.orderSaleMainModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
@@ -5215,7 +5273,6 @@ export class OrderSalesService {
             );
           }
 
-
           const isorderSaleDocuments = dto.screenType.includes(117);
           if (isorderSaleDocuments) {
             const orderSaleDocumentsPipeline = () => {
@@ -5274,18 +5331,8 @@ export class OrderSalesService {
                 as: 'setProcessDocumentsList',
               },
             });
-            pipeline.push({$match:{setProcessDocumentsList:{$ne:[]}}});
+            pipeline.push({ $match: { setProcessDocumentsList: { $ne: [] } } });
           }
-
-
-
-
-
-
-
-
-
-
 
           return pipeline;
         };
@@ -5804,7 +5851,6 @@ export class OrderSalesService {
     }
   }
 
-  
   async getOrderDetailsFromQrBarCode(
     dto: OrderSalesGetOrderDetailsFromQrBarcodeDto,
     _userId_: string,
@@ -5814,7 +5860,7 @@ export class OrderSalesService {
     transactionSession.startTransaction();
     try {
       var resultItems = [];
-var orderSaleIds=[];
+      var orderSaleIds = [];
       var result = await this.orderSaleMainModel.aggregate([
         {
           $match: {
@@ -5869,7 +5915,11 @@ var orderSaleIds=[];
           },
         ]);
         result.forEach((eachitem) => {
-          orderSaleIds.push(new mongoose.Types.ObjectId(eachitem.orderSaleItemsDetails._orderSaleId));
+          orderSaleIds.push(
+            new mongoose.Types.ObjectId(
+              eachitem.orderSaleItemsDetails._orderSaleId,
+            ),
+          );
         });
       } else {
         result.forEach((eachitem) => {
@@ -5877,17 +5927,14 @@ var orderSaleIds=[];
         });
       }
 
-
-
-
       var arrayAggregation = [];
       arrayAggregation.push({
         $match: {
           _id: { $in: orderSaleIds },
         },
       });
-	  
-	   arrayAggregation.push(
+
+      arrayAggregation.push(
         new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
           0,
           dto.responseFormat,
@@ -6135,11 +6182,10 @@ var orderSaleIds=[];
         arrayAggregation,
       );
 
-
-
-
-
-      const responseJSON = { message: 'success', data: { list: resultOrderSaleResponse } };
+      const responseJSON = {
+        message: 'success',
+        data: { list: resultOrderSaleResponse },
+      };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
