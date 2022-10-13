@@ -859,7 +859,7 @@ export class DeliveryCounterBundleService {
           dto.invoiceDateStartDate != -1)) {
         arrayAggregation[arrayAggregation.length - 1].$project.aaa = "$_id";
       }
-
+      console.log("arrayAggregation dbl   "+JSON.stringify(arrayAggregation));
 
 
       
