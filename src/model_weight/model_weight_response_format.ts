@@ -826,7 +826,7 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().deliveryCounterBundleTableMedium() };
     } else {
-      return { $project: { _: 0 } };
+      return  new ModelWeight().deliveryCounterBundleTableMaximum();
     }
   }
 
