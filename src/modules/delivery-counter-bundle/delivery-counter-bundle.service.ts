@@ -857,7 +857,7 @@ export class DeliveryCounterBundleService {
         dto.invoiceUids.length != 0 ||
         (dto.invoiceDateEndDate != -1 &&
           dto.invoiceDateStartDate != -1)) {
-        arrayAggregation[arrayAggregation.length - 1].$project.aaa = "aaas";
+        arrayAggregation[arrayAggregation.length - 1].$project.aaa = "$_id";
       }
 
 
