@@ -859,6 +859,42 @@ console.log("dto  "+JSON.stringify(dto));
           },
         );
       }
+
+
+
+      if (dto.screenType.includes(112)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.DELIVERY_PROVIDER,
+              let: { delProviderId: '$_deliveryProviderId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$delProviderId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().deliveryProviderTableResponseFormat(
+                  1120,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'deliveryProviderDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$deliveryProviderDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+
+
+
+
       var result = await this.deliveryTempModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
