@@ -262,6 +262,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _shopId: 1,
+      _orderSaleId:1,
       _uid: 1,
       _dueDate: 1,
       _workStatus: 1,
@@ -283,6 +284,7 @@ export class ModelWeight {
       _uid: 1,
       _dueDate: 1,
       _workStatus: 1,
+      _orderSaleId:1,
       _type: 1,
       _rootCauseId: 1,
       _parentOrderId: 1,
@@ -302,6 +304,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _shopId: 1,
+      _orderSaleId:1,
       _uid: 1,
       _dueDate: 1,
       _workStatus: 1,
@@ -314,7 +317,7 @@ export class ModelWeight {
       _isReWork: 1,
       _referenceNumber: 1,
       _rootCause: 1,
-      _orderHeadId: 1,
+      _orderHeadId: 1, 
       _description: 1,
       _generalRemark: 1,
       _createdUserId: 1,
