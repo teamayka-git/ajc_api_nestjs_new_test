@@ -251,7 +251,7 @@ export class OrderSaleSetProcessService {
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
 
-      if (file.hasOwnProperty('documents')) {
+      if (file.hasOwnProperty('documents') && dto.arrayDocuments != null) {
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
