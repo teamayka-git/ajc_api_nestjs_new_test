@@ -4,7 +4,6 @@ import {
   IsEmail,
   IsNumber,
   isNumber,
-  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -116,7 +115,6 @@ export class ChangeProcessOrderStatusDto {
   setProcessHistoryType: number;
 
   
-  @IsOptional()
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
   )
