@@ -503,6 +503,9 @@ export class DeliveryTempService {
       }
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+   
+   console.log(" del temp     "+JSON.stringify(arrayAggregation));
+   
       switch (dto.sortType) {
         case 0:
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
