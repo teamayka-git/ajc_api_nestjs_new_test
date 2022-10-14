@@ -261,6 +261,9 @@ export class DeliveryTempService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+console.log("dto  "+JSON.stringify(dto));
+
       var arrayAggregation = [];
       var arrayEmployeeIds = [];
       if (dto.deliveryTempIds.length > 0) {
