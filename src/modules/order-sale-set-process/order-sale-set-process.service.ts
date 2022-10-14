@@ -236,7 +236,7 @@ export class OrderSaleSetProcessService {
       await transactionSession.endSession();
       throw error;
     }
-  }
+  }   
 
   async changeProcessOrderStatus( 
     dto: ChangeProcessOrderStatusDto,
