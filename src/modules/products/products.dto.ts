@@ -183,7 +183,7 @@ export class ProductListDto {
   
   @IsArray()
   @ApiProperty({ type: [String] })
-  ordersaleUids: string[];
+  orderSaleUids: string[];
 
   @IsArray()
   @ApiProperty({ type: [String] })

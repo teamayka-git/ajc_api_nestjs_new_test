@@ -795,7 +795,7 @@ export class ProductsService {
           },
         );
       }
-      if(dto.ordersaleUids.length!=0){
+      if(dto.orderSaleUids.length!=0){
 
         arrayAggregation.push(
           {
@@ -820,7 +820,7 @@ export class ProductsService {
                     let: { ordersaleId: '$_orderSaleId' },
                     pipeline: [
                       {
-                        $match: {_uid:{$in:dto.ordersaleUids},
+                        $match: {_uid:{$in:dto.orderSaleUids},
                           $expr: { $eq: ['$_id', '$$ordersaleId'] },
                         },
                       },{
