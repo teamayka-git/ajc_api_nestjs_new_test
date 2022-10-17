@@ -618,9 +618,9 @@ export class ProductsService {
     }
   }
 
-  async list(dto: ProductListDto) {
-    var dateTime = new Date().getTime();
-    const transactionSession = await this.connection.startSession();
+  async list(dto: ProductListDto) {      
+    var dateTime = new Date().getTime();   
+    const transactionSession = await this.connection.startSession();   
     transactionSession.startTransaction();
     try {
       var arrayAggregation = [];
@@ -794,6 +794,71 @@ export class ProductsService {
             $match: { mongoCheckShopList: { $ne: [] } },
           },
         );
+      }
+      if(dto.ordersaleUids.length!=0){
+
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_ITEMS,
+              let: { ordersaleItemsId: '$_orderItemId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$ordersaleItemsId'] },
+                  },
+                },{
+                  $project:{
+                    _orderSaleId:1
+                  }
+                },
+
+
+                {
+                  $lookup: {
+                    from: ModelNames.ORDER_SALES_MAIN,
+                    let: { ordersaleId: '$_orderSaleId' },
+                    pipeline: [
+                      {
+                        $match: {_uid:{$in:dto.ordersaleUids},
+                          $expr: { $eq: ['$_id', '$$ordersaleId'] },
+                        },
+                      },{
+                        $project:{
+                          _uid:1
+                        }
+                      }
+                    ],
+                    as: 'ordersaleDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$ordersaleDetails',
+                  },
+                },
+
+
+
+
+
+
+
+
+
+
+              ],
+              as: 'ordersaleItems',
+            },
+          },
+          {
+            $unwind: {
+              path: '$ordersaleItems',
+            },
+          },
+        );
+
+
       }
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });

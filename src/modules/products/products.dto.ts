@@ -180,6 +180,11 @@ export class ProductListDto {
   @ApiProperty({ type: [String] })
   relationshipManagerIds: string[];
 
+  
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  ordersaleUids: string[];
+
   @IsArray()
   @ApiProperty({ type: [String] })
   orderHeadIds: string[];
