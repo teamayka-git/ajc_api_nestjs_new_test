@@ -4739,6 +4739,7 @@ export class OrderSalesService {
           _status: 1,
         },
       });
+      console.log('array dto   ' + JSON.stringify(dto));
       console.log('array aggregation   ' + JSON.stringify(arrayAggregation));
       switch (dto.sortType) {
         case 0:
