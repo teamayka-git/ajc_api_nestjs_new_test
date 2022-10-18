@@ -4739,7 +4739,7 @@ export class OrderSalesService {
           _status: 1,
         },
       });
-
+      console.log('array aggregation   ' + JSON.stringify(arrayAggregation));
       switch (dto.sortType) {
         case 0:
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
