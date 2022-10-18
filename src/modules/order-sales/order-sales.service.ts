@@ -4667,7 +4667,7 @@ export class OrderSalesService {
             dto.subCategoryIds.map((mapItem) => {
               newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
             });
-            arrayAggregation.push(
+            pipeline.push(
               {
                 $lookup: {
                   from: ModelNames.ORDER_SALES_ITEMS,
