@@ -510,12 +510,27 @@ export class DeliveryCounterBundleService {
                 pipeline.push({ $match: { _uid: { $in: dto.orderSaleUids } } });
               }
               if (dto.orderHeadIds.length != 0) {
+
+
+                var newSettingsId = [];
+                dto.orderHeadIds.map((mapItem) => {
+                  newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+                });
+
+
                 pipeline.push({
-                  $match: { _orderHeadId: { $in: dto.orderHeadIds } },
+                  $match: { _orderHeadId: { $in: newSettingsId } },
                 });
               }
               if (dto.shopIds.length != 0) {
-                pipeline.push({ $match: { _shopId: { $in: dto.shopIds } } });
+
+
+                var newSettingsId = [];
+                dto.shopIds.map((mapItem) => {
+                  newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+                });
+
+                pipeline.push({ $match: { _shopId: { $in:newSettingsId } } });
               }
 
               if (
