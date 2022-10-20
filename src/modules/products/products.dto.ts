@@ -197,24 +197,24 @@ export class ProductEditDto {
   isStone: number;
 
 
-  @IsString()
-  @ApiProperty({})
-  orderItemId: string;
+  // @IsString()
+  // @ApiProperty({})
+  // orderItemId: string;
 
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   grossWeight: number;
 
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({})
-  hmSealingStatus: number;
+  // @Transform(({ value }) => Number(value))
+  // @IsNumber()
+  // @ApiProperty({})
+  // hmSealingStatus: number;
 
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({})
-  eCommerceStatus: number;
+//   @Transform(({ value }) => Number(value))
+//   @IsNumber()
+//   @ApiProperty({})
+//   eCommerceStatus: number;
 
   @Transform(({ value }) => Number(value))
   @IsNumber()

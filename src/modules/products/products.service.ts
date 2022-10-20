@@ -960,7 +960,6 @@ export class ProductsService {
             _purity:
               resultSubcategory[subCategoryIndex].categoryDetails.groupDetails
                 ._purity,
-            _hmSealingStatus: dto.hmSealingStatus,
             _isStone: dto.isStone,
             _moldNumber: dto.moldNumber,
             _updatedUserId: _userId_,
