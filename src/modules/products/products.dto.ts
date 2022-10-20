@@ -117,6 +117,17 @@ class ProductCreateList {
   @ApiProperty({})
   subCategoryId: string;
 
+
+  @Transform(({ value }) =>
+  typeof value == 'string' ? JSON.parse(value) : value,
+)
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  tagIds: string[];
+
+
+
+
   @Transform(({ value }) =>
   typeof value == 'string' ? JSON.parse(value) : value,
 )
@@ -160,6 +171,123 @@ export class ProductCreateDto {
   arrayItems: ProductCreateList[];
 }
 
+export class ProductEditDto {
+
+  @IsString()
+  @ApiProperty({})
+  productId: string;
+
+  @IsString()
+  @ApiProperty({})
+  name: string;
+
+  @IsString()
+  @ApiProperty({})
+  orderId: string;
+
+
+  @IsString()
+  @ApiProperty({})
+  moldNumber: string;
+
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  isStone: number;
+
+
+  @IsString()
+  @ApiProperty({})
+  orderItemId: string;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  grossWeight: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  hmSealingStatus: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  eCommerceStatus: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  totalStoneWeight: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  netWeight: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({ description: descriptionType })
+  type: number;
+
+  @IsString()
+  @ApiProperty({})
+  subCategoryId: string;
+
+
+  @Transform(({ value }) =>
+  typeof value == 'string' ? JSON.parse(value) : value,
+)
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  tagIds: string[];
+
+
+  @Transform(({ value }) =>
+  typeof value == 'string' ? JSON.parse(value) : value,
+)
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  documentRemoveLinkingIds: string[];
+
+  @Transform(({ value }) =>
+  typeof value == 'string' ? JSON.parse(value) : value,
+)
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  stoneRemoveLinkingIds: string[];
+
+  @Transform(({ value }) =>
+  typeof value == 'string' ? JSON.parse(value) : value,
+)
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  tagRemoveLinkingIds: string[];
+
+
+
+
+  @Transform(({ value }) =>
+  typeof value == 'string' ? JSON.parse(value) : value,
+)
+  @IsArray()
+  @ApiProperty({ type: [StonesList] })
+  @ValidateNested({ each: true })
+  @Type(() => StonesList)
+  stonesArray: StonesList[];
+
+
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
+  @IsArray()
+  @ApiProperty({ type: [productDocumentCreateList] })
+  @ValidateNested({ each: true })
+  @Type(() => productDocumentCreateList)
+  arrayDocuments: productDocumentCreateList[];
+
+}
 export class ProductListDto {
   @IsNumber()
   @ApiProperty({ description: descriptionListSortType })

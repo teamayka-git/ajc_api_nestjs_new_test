@@ -12,6 +12,7 @@ import { SubCategories } from 'src/tableModels/sub_categories.model';
 import {
   ProductCreateDto,
   ProductEcommerceStatusChangeDto,
+  ProductEditDto,
   ProductListDto,
 } from './products.dto';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
@@ -190,6 +191,7 @@ export class ProductsService {
       var arrayToProducts = [];
 
       var arrayStonesLinkings = [];
+      var arrayTagLinkings = [];
       var arrayOrderSaleHistory = [];
       var arraySubCategoryidsMDB = [];
 
@@ -399,6 +401,18 @@ export class ProductsService {
           });
         });
 
+        dto.arrayItems[i].tagIds.map((mapItem1) => {
+          arrayTagLinkings.push({
+            _tagId: mapItem1,
+            _productId: productId,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+        });
+
         arrayToProducts.push({
           _id: productId,
           _name: dto.arrayItems[i].name,
@@ -597,6 +611,9 @@ export class ProductsService {
       await this.productStoneLinkingsModel.insertMany(arrayStonesLinkings, {
         session: transactionSession,
       });
+      await this.productTagLinkingModel.insertMany(arrayTagLinkings, {
+        session: transactionSession,
+      });
 
       if (arrayOrderSaleHistory.length != 0) {
         await this.orderSaleHistoriesModel.insertMany(arrayOrderSaleHistory, {
@@ -604,6 +621,432 @@ export class ProductsService {
         });
       }
       const responseJSON = { message: 'success', data: { list: result1 } };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async edit(dto: ProductEditDto, _userId_: string, file: Object) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var arrayGlobalGalleries = [];
+      var arrayGlobalGalleriesDocuments = [];
+
+      if (file.hasOwnProperty('image')) {
+        var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
+          { _tableName: ModelNames.GLOBAL_GALLERIES },
+          {
+            $inc: {
+              _count: dto.arrayDocuments,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+        // for (var i = 0; i < dto.arrayDocuments.length; i++) {
+        //   var count = file['documents'].findIndex(
+        //     (it) => dto.arrayDocuments[i].fileOriginalName == it.originalname,
+        //   );
+
+        //   if (count != -1) {
+        //     if (dto.arrayDocuments[i].docType == 0) {
+        //       var filePath =
+        //         __dirname +
+        //         `/../../../public${
+        //           file['documents'][count]['path'].split('public')[1]
+        //         }`;
+
+        //       new ThumbnailUtils().generateThumbnail(
+        //         filePath,
+        //         UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP +
+        //           new StringUtils().makeThumbImageFileName(
+        //             file['documents'][count]['filename'],
+        //           ),
+        //       );
+        //     }
+        //   }
+        // }
+        for (var i = 0; i < file['documents'].length; i++) {
+          var resultUpload = await new S3BucketUtils().uploadMyFile(
+            file['documents'][i],
+            UploadedFileDirectoryPath.GLOBAL_GALLERY_PRODUCT,
+          );
+
+          if (resultUpload['status'] == 0) {
+            throw new HttpException(
+              'File upload error',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
+
+          var count = dto.arrayDocuments.findIndex(
+            (it) => it.fileOriginalName == file['documents'][i]['originalname'],
+          );
+          if (count != -1) {
+            dto.arrayDocuments[count]['url'] = resultUpload['url'];
+          } else {
+            dto.arrayDocuments[count]['url'] = 'nil';
+          }
+        }
+
+        for (var i = 0; i < dto.arrayDocuments.length; i++) {
+          var count = file['documents'].findIndex(
+            (it) => it.originalname == dto.arrayDocuments[i].fileOriginalName,
+          );
+          if (count != -1) {
+            var globalGalleryId = new mongoose.Types.ObjectId();
+            arrayGlobalGalleries.push({
+              _id: globalGalleryId,
+              _name: dto.arrayDocuments[i].fileOriginalName,
+              _globalGalleryCategoryId: null,
+              _docType: dto.arrayDocuments[i].docType,
+              _type: 7,
+              _uid:
+                resultCounterPurchase._count -
+                dto.arrayDocuments.length +
+                (i + 1),
+              _url: dto.arrayDocuments[i]['url'],
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _updatedUserId: null,
+              _updatedAt: -1,
+              _status: 1,
+            });
+            arrayGlobalGalleriesDocuments.push({
+              _productId: dto.productId,
+              _globalGalleryId: globalGalleryId,
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _updatedUserId: null,
+              _updatedAt: -1,
+              _status: 1,
+            });
+          }
+        }
+
+        await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
+          session: transactionSession,
+        });
+        await this.productDocumentModel.insertMany(
+          arrayGlobalGalleriesDocuments,
+          {
+            session: transactionSession,
+          },
+        );
+      }
+
+      var arrayToProducts = [];
+
+      var arrayStonesLinkings = [];
+      var arrayTagLinkings = [];
+      var arrayOrderSaleHistory = [];
+      var arraySubCategoryidsMDB = [];
+
+      var resultSubcategory = await this.subCategoriesModel.aggregate([
+        {
+          $match: {
+            _id: { $in: arraySubCategoryidsMDB },
+          },
+        },
+        {
+          $project: {
+            _categoryId: 1,
+            _code: 1,
+          },
+        },
+        {
+          $lookup: {
+            from: ModelNames.CATEGORIES,
+            let: { categoryId: '$_categoryId' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$_id', '$$categoryId'] },
+                },
+              },
+              { $project: { _groupId: 1 } },
+
+              {
+                $lookup: {
+                  from: ModelNames.GROUP_MASTERS,
+                  let: { groupId: '$_groupId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$groupId'] },
+                      },
+                    },
+                    {
+                      $project: {
+                        _purity: 1,
+                      },
+                    },
+                  ],
+                  as: 'groupDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$groupDetails',
+                },
+              },
+            ],
+            as: 'categoryDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$categoryDetails',
+          },
+        },
+      ]);
+
+      if (resultSubcategory.length == 0) {
+        throw new HttpException(
+          'subCategory Is Empty',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      /*
+      var resultPhotographer = await this.departmentsModel.aggregate([
+        {
+          $match: {
+            _code: 1004,
+            _status: 1,
+          },
+        },
+        { $project: { _id: 1 } },
+        {
+          $lookup: {
+            from: ModelNames.EMPLOYEES,
+            let: { departmentId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_departmentId', '$$departmentId'] },
+                },
+              },
+
+              {
+                $lookup: {
+                  from: ModelNames.PHOTOGRAPHER_REQUESTS,
+                  let: { userId: '$_userId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        _status: 1,
+                        $expr: { $eq: ['$_userId', '$$userId'] },
+                      },
+                    },
+                    { $project: { _id: 1 } },
+                  ],
+                  as: 'photographyRequestList',
+                },
+              },
+              {
+                $project: {
+                  _userId: 1,
+                  photographyRequestCount: {
+                    $size: '$photographyRequestList',
+                  },
+                },
+              },
+            ],
+            as: 'employeeList',
+          },
+        },
+        {
+          $unwind: {
+            path: '$employeeList',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        { $sort: { 'employeeList.photographyRequestCount': 1 } },
+        { $limit: 1 },
+        {
+          $group: {
+            _id: '$_id',
+            employeeList: {
+              $push: '$employeeList',
+            },
+          },
+        },
+      ]);
+      if (resultPhotographer.length == 0) {
+        throw new HttpException(
+          'Photography department not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      if (resultPhotographer[0].employeeList.length == 0) {
+        throw new HttpException(
+          'Photography employees not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }*/
+      let subCategoryIndex = resultSubcategory.findIndex(
+        (it) => it._id == dto.subCategoryId,
+      );
+      if (subCategoryIndex == -1) {
+        throw new HttpException(
+          'Subcategory mismatch',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      dto.stonesArray.map((mapItem1) => {
+        arrayStonesLinkings.push({
+          _productId: dto.productId,
+          _stoneId: mapItem1.stoneId,
+          _stoneColourId: mapItem1.colourId,
+          _stoneWeight: mapItem1.stoneWeight,
+
+          _stoneAmount: mapItem1.stoneAmount,
+          _quantity: mapItem1.quantity,
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
+        });
+      });
+
+      dto.tagIds.map((mapItem1) => {
+        arrayTagLinkings.push({
+          _tagId: mapItem1,
+          _productId: dto.productId,
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
+        });
+      });
+
+      await this.productModel.findOneAndUpdate(
+        {
+          _id: dto.productId,
+        },
+        {
+          $set: {
+            _name: dto.name,
+            _netWeight: dto.netWeight,
+            _totalStoneWeight: dto.totalStoneWeight,
+            _grossWeight: dto.grossWeight,
+            _categoryId: resultSubcategory[subCategoryIndex]._categoryId,
+            _subCategoryId: dto.subCategoryId,
+            _groupId:
+              resultSubcategory[subCategoryIndex].categoryDetails._groupId,
+            _type: dto.type,
+            _purity:
+              resultSubcategory[subCategoryIndex].categoryDetails.groupDetails
+                ._purity,
+            _hmSealingStatus: dto.hmSealingStatus,
+            _isStone: dto.isStone,
+            _moldNumber: dto.moldNumber,
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+      arrayOrderSaleHistory.push({
+        _orderSaleId: dto.orderId,
+        _userId: null,
+        _type: 109,
+        _orderSaleItemId: null,
+        _deliveryCounterId: null,
+        _deliveryProviderId: null,
+        _shopId: null,
+        _description: '',
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _status: 1,
+      });
+
+      if (arrayStonesLinkings.length != 0) {
+        await this.productStoneLinkingsModel.insertMany(arrayStonesLinkings, {
+          session: transactionSession,
+        });
+      }
+      if (arrayTagLinkings.length != 0) {
+        await this.productTagLinkingModel.insertMany(arrayTagLinkings, {
+          session: transactionSession,
+        });
+      }
+
+      if (arrayOrderSaleHistory.length != 0) {
+        await this.orderSaleHistoriesModel.insertMany(arrayOrderSaleHistory, {
+          session: transactionSession,
+        });
+      }
+
+      if (dto.documentRemoveLinkingIds.length != 0) {
+        await this.productDocumentModel.updateMany(
+          {
+            _id: { $in: dto.documentRemoveLinkingIds },
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _status: 0,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
+      if (dto.tagRemoveLinkingIds.length != 0) {
+        await this.productTagLinkingModel.updateMany(
+          {
+            _id: { $in: dto.tagRemoveLinkingIds },
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _status: 0,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
+      if (dto.stoneRemoveLinkingIds.length != 0) {
+        await this.productStoneLinkingsModel.updateMany(
+          {
+            _id: { $in: dto.stoneRemoveLinkingIds },
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _status: 0,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
+
+      const responseJSON = { message: 'success', data: {} };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
