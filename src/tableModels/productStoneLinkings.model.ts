@@ -20,6 +20,7 @@ export const ProductStoneLinkingsSchema = new mongoose.Schema({
     default: null,
   },
   _stoneWeight: { type: Number, required: true, default: -1 },
+  _stoneAmount: { type: Number, required: true, default: -1 },
   _quantity: { type: Number, required: true, default: -1 },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -42,6 +43,7 @@ export interface ProductStoneLinkings {
   _stoneId: String;
   _stoneColourId: string;
   _stoneWeight: Number;
+  _stoneAmount: Number;
   _quantity: Number;
   _createdUserId: String;
   _createdAt: Number;
@@ -50,6 +52,7 @@ export interface ProductStoneLinkings {
   _status: Number;
 }
 
+ProductStoneLinkingsSchema.index({ _stoneAmount: 1 });
 ProductStoneLinkingsSchema.index({ _quantity: 1 });
 ProductStoneLinkingsSchema.index({ _stoneWeight: 1 });
 ProductStoneLinkingsSchema.index({ _stoneColourId: 1 });

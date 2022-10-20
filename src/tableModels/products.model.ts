@@ -35,6 +35,7 @@ export const ProductsSchema = new mongoose.Schema({
     default: null,
   },
   _type: { type: Number, required: true, default: -1 },
+  _productType: { type: Number, required: true, default: -1 },
   _purity: { type: Number, required: true, default: -1 },
   _totalStoneWeight: { type: Number, required: true, default: -1 },
   _netWeight: { type: Number, required: true, default: -1 },
@@ -71,6 +72,7 @@ export interface Products {
   _subCategoryId: String;
   _groupId: String;
   _type: Number;
+  _productType: Number;
   _purity: Number;
   _hmSealingStatus: Number;
   _totalStoneWeight: Number;
@@ -86,6 +88,7 @@ export interface Products {
   _status: Number;
 }
 
+ProductsSchema.index({ _productType: 1 });
 ProductsSchema.index({ _isStone: 1 });
 ProductsSchema.index({ _moldNumber: 1 });
 ProductsSchema.index({ _name: 1 });

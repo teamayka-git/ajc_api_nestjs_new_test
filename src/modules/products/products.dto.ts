@@ -41,6 +41,11 @@ class StonesList {
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
+  stoneAmount: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
   quantity: number;
 }
 

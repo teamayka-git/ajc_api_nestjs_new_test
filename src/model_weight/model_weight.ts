@@ -1092,6 +1092,7 @@ export class ModelWeight {
       _purity: 1,
       _hmSealingStatus: 1,
       _huId: 1,
+      _productType:1,
       _eCommerceStatus: 1,
       _designerId: 1,
       _status: 1,
@@ -1114,6 +1115,7 @@ export class ModelWeight {
       _barcode: 1,
       _categoryId: 1,
       _subCategoryId: 1,
+      _productType:1,
       _groupId: 1,
       _type: 1,
       _purity: 1,
@@ -1137,6 +1139,7 @@ export class ModelWeight {
       _barcode: 1,
       _categoryId: 1,
       _subCategoryId: 1,
+      _productType:1,
       _groupId: 1,
       _type: 1,
       _purity: 1,
@@ -1806,6 +1809,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _stoneWeight: 1,
+      _stoneAmount:1,
       _quantity: 1,
       _status: 1,
     };
@@ -1817,6 +1821,7 @@ export class ModelWeight {
       _stoneId: 1,
       _stoneColourId: 1,
       _stoneWeight: 1,
+      _stoneAmount:1,
       _quantity: 1,
       _status: 1,
     };
@@ -1828,6 +1833,7 @@ export class ModelWeight {
       _stoneId: 1,
       _stoneColourId: 1,
       _stoneWeight: 1,
+      _stoneAmount:1,
       _quantity: 1,
       _status: 1,
     };
@@ -1839,6 +1845,7 @@ export class ModelWeight {
       _stoneId: 1,
       _stoneColourId: 1,
       _stoneWeight: 1,
+      _stoneAmount:1,
       _quantity: 1,
       _createdUserId: 1,
       _createdAt: 1,

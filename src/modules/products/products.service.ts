@@ -365,7 +365,10 @@ export class ProductsService {
         }
 
         var autoIncrementNumber = resultProduct._count - i;
-        var productId = (dto.arrayItems[i]['mongoId']!=null)?dto.arrayItems[i]['mongoId']:new mongoose.Types.ObjectId();
+        var productId =
+          dto.arrayItems[i]['mongoId'] != null
+            ? dto.arrayItems[i]['mongoId']
+            : new mongoose.Types.ObjectId();
         var shopId = dto.shopId;
         var orderId = dto.orderId;
         var orderItemId = dto.arrayItems[i].orderItemId;
@@ -385,6 +388,8 @@ export class ProductsService {
             _stoneId: mapItem1.stoneId,
             _stoneColourId: mapItem1.colourId,
             _stoneWeight: mapItem1.stoneWeight,
+
+            _stoneAmount: mapItem1.stoneAmount,
             _quantity: mapItem1.quantity,
             _createdUserId: _userId_,
             _createdAt: dateTime,
@@ -400,6 +405,8 @@ export class ProductsService {
           _designerId: `${resultSubcategory[subCategoryIndex]._code}-${autoIncrementNumber}`,
           _shopId: shopId,
           _orderItemId: orderItemId,
+
+          _productType: 0,
           _netWeight: dto.arrayItems[i].netWeight,
           _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
           _grossWeight: dto.arrayItems[i].grossWeight,
@@ -618,9 +625,9 @@ export class ProductsService {
     }
   }
 
-  async list(dto: ProductListDto) {      
-    var dateTime = new Date().getTime();   
-    const transactionSession = await this.connection.startSession();   
+  async list(dto: ProductListDto) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
       var arrayAggregation = [];
@@ -795,8 +802,7 @@ export class ProductsService {
           },
         );
       }
-      if(dto.orderSaleUids.length!=0){
-
+      if (dto.orderSaleUids.length != 0) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -807,12 +813,12 @@ export class ProductsService {
                   $match: {
                     $expr: { $eq: ['$_id', '$$ordersaleItemsId'] },
                   },
-                },{
-                  $project:{
-                    _orderSaleId:1
-                  }
                 },
-
+                {
+                  $project: {
+                    _orderSaleId: 1,
+                  },
+                },
 
                 {
                   $lookup: {
@@ -820,14 +826,16 @@ export class ProductsService {
                     let: { ordersaleId: '$_orderSaleId' },
                     pipeline: [
                       {
-                        $match: {_uid:{$in:dto.orderSaleUids},
+                        $match: {
+                          _uid: { $in: dto.orderSaleUids },
                           $expr: { $eq: ['$_id', '$$ordersaleId'] },
                         },
-                      },{
-                        $project:{
-                          _uid:1
-                        }
-                      }
+                      },
+                      {
+                        $project: {
+                          _uid: 1,
+                        },
+                      },
                     ],
                     as: 'ordersaleDetails',
                   },
@@ -837,16 +845,6 @@ export class ProductsService {
                     path: '$ordersaleDetails',
                   },
                 },
-
-
-
-
-
-
-
-
-
-
               ],
               as: 'ordersaleItems',
             },
@@ -857,8 +855,6 @@ export class ProductsService {
             },
           },
         );
-
-
       }
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
