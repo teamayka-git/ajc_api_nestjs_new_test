@@ -111,7 +111,7 @@ ProductsSchema.index({ _status: 1 });
 
 ProductsSchema.index(
   { _designerId: 1 },
-  { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },
+  { unique: true, partialFilterExpression: { _designerId: { $ne: null } } },
 );
 ProductsSchema.index(
   { _orderId: 1 },
