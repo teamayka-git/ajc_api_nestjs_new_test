@@ -52,7 +52,7 @@ export class PhotographyRequestService {
         arrayToStates.push({
           _rootCauseId: null,
           _orderItemId: mapItem.orderItemId,
-          _productId: mapItem.productId,
+          _designerId: mapItem.designerId,
           _requestStatus: 0,
           _description: mapItem.description,
           _userId: mapItem.assignUserId,

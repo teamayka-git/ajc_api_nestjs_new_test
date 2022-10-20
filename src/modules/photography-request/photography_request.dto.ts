@@ -22,7 +22,7 @@ class PhotographyRequestCreateList {
   orderItemId: string;
   @IsString()
   @ApiProperty({})
-  productId: string;
+  designerId: string;
 
   @IsString()
   @ApiProperty({})

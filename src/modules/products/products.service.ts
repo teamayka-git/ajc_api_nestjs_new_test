@@ -560,7 +560,7 @@ export class ProductsService {
           const photographerRequestModel = new this.photographerRequestModel({
             _rootCauseId: null,
             _orderItemId: orderItemId,
-            _productId: productId,
+            _designerId: designId,
             _requestStatus: 0,
             _description: '',
             _uid: photographyUid,
