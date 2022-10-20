@@ -413,10 +413,12 @@ export class ProductsService {
           });
         });
 
+
+        var designId=new mongoose.Types.ObjectId();
         arrayToProducts.push({
           _id: productId,
           _name: dto.arrayItems[i].name,
-          _designerId: `${resultSubcategory[subCategoryIndex]._code}-${autoIncrementNumber}`,
+          _designerId:designId,
           _shopId: shopId,
           _orderItemId: orderItemId,
 
@@ -440,6 +442,37 @@ export class ProductsService {
           _hmSealingStatus: dto.arrayItems[i].hmSealingStatus,
           _huId: [],
           _eCommerceStatus: dto.arrayItems[i].eCommerceStatus,
+          _isStone: dto.arrayItems[i].isStone,
+          _moldNumber: dto.arrayItems[i].moldNumber,
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
+        });
+        arrayToProducts.push({
+          _id: designId,
+          _name: dto.arrayItems[i].name,
+          _designerId: null,
+          _shopId: null,
+          _orderItemId: null,
+
+          _productType: 1,
+          _netWeight: dto.arrayItems[i].netWeight,
+          _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
+          _grossWeight: dto.arrayItems[i].grossWeight,
+          _barcode:'',
+          _categoryId: resultSubcategory[subCategoryIndex]._categoryId,
+          _subCategoryId: dto.arrayItems[i].subCategoryId,
+          _groupId:
+            resultSubcategory[subCategoryIndex].categoryDetails._groupId,
+          _type: -1,
+          _purity:
+            resultSubcategory[subCategoryIndex].categoryDetails.groupDetails
+              ._purity,
+          _hmSealingStatus: 0,
+          _huId: [],
+          _eCommerceStatus: 1,
           _isStone: dto.arrayItems[i].isStone,
           _moldNumber: dto.arrayItems[i].moldNumber,
           _createdUserId: _userId_,
