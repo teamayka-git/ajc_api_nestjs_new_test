@@ -223,6 +223,7 @@ export class AppModule {
         process.env.GLOBAL_PREFIX_FOR_API + '/generals/list',
         process.env.GLOBAL_PREFIX_FOR_API + '/otp/createOtp',
         process.env.GLOBAL_PREFIX_FOR_API + '/changeUserPassword',
+        process.env.GLOBAL_PREFIX_FOR_API + '/states/(.*)',
       )
       .forRoutes('*');
   }
