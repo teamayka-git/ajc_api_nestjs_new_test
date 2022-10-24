@@ -412,7 +412,7 @@ export class SubCategoriesService {
           dto.responseFormat,
         ),
       );
-      
+       
       if (dto.screenType.includes(100)) {
         arrayAggregation.push(
           {
@@ -421,6 +421,10 @@ export class SubCategoriesService {
               let: { categoryId: '$_categoryId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$categoryId'] } } },
+                new ModelWeightResponseFormat().categoryTableResponseFormat(
+                  1000,
+                  dto.responseFormat,
+                )
               ],
               as: 'categoryDetails',
             },
@@ -442,6 +446,10 @@ export class SubCategoriesService {
               let: { globalGalleryId: '$_globalGalleryId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+                new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                  500,
+                  dto.responseFormat,
+                )
               ],
               as: 'globalGalleryDetails',
             },
