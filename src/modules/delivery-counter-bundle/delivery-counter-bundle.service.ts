@@ -383,6 +383,17 @@ export class DeliveryCounterBundleService {
         );
       }
 
+      if (
+        dto.screenType.includes(116) &&
+        dto.invoiceUids.length == 0 &&
+        (dto.invoiceDateStartDate == -1 || dto.invoiceDateEndDate == -1)
+      ) {
+        throw new HttpException(
+          'inv related data not found, Bcz screenType contains 116',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
       if (dto.deliveryBundleIds.length > 0) {
         var newSettingsId = [];
         dto.deliveryBundleIds.map((mapItem) => {
@@ -1078,12 +1089,38 @@ export class DeliveryCounterBundleService {
                       if (dto.screenType.includes(112)) {
                         const invoicePipeline = () => {
                           const pipeline = [];
-                          pipeline.push(
-                            {
-                              $match: {
-                                $expr: { $eq: ['$_id', '$$invItemId'] },
-                              },
+                          pipeline.push({
+                            $match: {
+                              $expr: { $eq: ['$_id', '$$invItemId'] },
                             },
+                          });
+
+
+
+                          if (dto.invoiceUids.length != 0) {
+                            pipeline.push({
+                              $match: {
+                                _uid: { $in: dto.invoiceUids },
+                              },
+                            });
+                          }
+                          if (
+                            dto.invoiceDateStartDate != -1 &&
+                            dto.invoiceDateEndDate != -1
+                          ) {
+                            pipeline.push({
+                              $match: {
+                                _createdAt: {
+                                  $lte: dto.invoiceDateEndDate,
+                                  $gte: dto.invoiceDateStartDate,
+                                },
+                              },
+                            });
+                          }
+
+
+
+                          pipeline.push(
                             new ModelWeightResponseFormat().invoiceTableResponseFormat(
                               1120,
                               dto.responseFormat,
@@ -1181,7 +1218,6 @@ export class DeliveryCounterBundleService {
                           {
                             $unwind: {
                               path: '$invoiceDetails',
-                              preserveNullAndEmptyArrays: true,
                             },
                           },
                         );
@@ -1202,7 +1238,6 @@ export class DeliveryCounterBundleService {
                       {
                         $unwind: {
                           path: '$invoiceItemDetails',
-                          preserveNullAndEmptyArrays: true,
                         },
                       },
                     );
