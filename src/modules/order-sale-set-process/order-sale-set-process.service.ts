@@ -186,6 +186,7 @@ export class OrderSaleSetProcessService {
 
       /////////set process automatic assign start
 
+      console.log("____s-1  "+JSON.stringify(dto));
       console.log("____s0  "+JSON.stringify(result1));
       console.log("____s1");
 
