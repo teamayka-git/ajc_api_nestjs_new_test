@@ -1333,6 +1333,70 @@ export class OrderSalesService {
         });
       }
 
+      if (dto.screenType.includes(120)) {
+        const orderSaleShopOrderHeadPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$userId'] },
+              },
+            },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1200,
+              dto.responseFormat,
+            ),
+          );
+          if (dto.screenType.includes(121)) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $eq: ['$_id', '$$globalGalleryId'],
+                        },
+                      },
+                    },
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1210,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { userId: '$_orderHeadId' },
+              pipeline: orderSaleShopOrderHeadPipeline(),
+              as: 'orderHeadDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderHeadDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
       if (dto.screenType.includes(103)) {
         arrayAggregation.push(
           {
@@ -1652,72 +1716,7 @@ export class OrderSalesService {
               },
             );
           }
-          const isorderSaleshopOrderHead = dto.screenType.includes(120);
-          if (isorderSaleshopOrderHead) {
-            const orderSaleShopOrderHeadPipeline = () => {
-              const pipeline = [];
-              pipeline.push(
-                {
-                  $match: {
-                    $expr: { $eq: ['$_id', '$$userId'] },
-                  },
-                },
-                new ModelWeightResponseFormat().userTableResponseFormat(
-                  1200,
-                  dto.responseFormat,
-                ),
-              );
-              const isorderSaleshopOrderHeadGlobalgallery =
-                dto.screenType.includes(121);
-              if (isorderSaleshopOrderHeadGlobalgallery) {
-                pipeline.push(
-                  {
-                    $lookup: {
-                      from: ModelNames.GLOBAL_GALLERIES,
-                      let: { globalGalleryId: '$_globalGalleryId' },
-                      pipeline: [
-                        {
-                          $match: {
-                            $expr: {
-                              $eq: ['$_id', '$$globalGalleryId'],
-                            },
-                          },
-                        },
-                        new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
-                          1210,
-                          dto.responseFormat,
-                        ),
-                      ],
-                      as: 'globalGalleryDetails',
-                    },
-                  },
-                  {
-                    $unwind: {
-                      path: '$globalGalleryDetails',
-                      preserveNullAndEmptyArrays: true,
-                    },
-                  },
-                );
-              }
-              return pipeline;
-            };
-            pipeline.push(
-              {
-                $lookup: {
-                  from: ModelNames.USER,
-                  let: { userId: '$_orderHeadId' },
-                  pipeline: orderSaleShopOrderHeadPipeline(),
-                  as: 'orderHeadDetails',
-                },
-              },
-              {
-                $unwind: {
-                  path: '$orderHeadDetails',
-                  preserveNullAndEmptyArrays: true,
-                },
-              },
-            );
-          }
+        
           const isorderSaleshopRelationshipManager =
             dto.screenType.includes(122);
           if (isorderSaleshopRelationshipManager) {
@@ -3553,7 +3552,69 @@ export class OrderSalesService {
           },
         });
       }
-
+      if (dto.screenType.includes(120)) {
+        const orderSaleShopOrderHeadPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$userId'] },
+              },
+            },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1200,
+              dto.responseFormat,
+            ),
+          );
+          if (dto.screenType.includes(121)) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $eq: ['$_id', '$$globalGalleryId'],
+                        },
+                      },
+                    },
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1210,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { userId: '$_orderHeadId' },
+              pipeline: orderSaleShopOrderHeadPipeline(),
+              as: 'orderHeadDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderHeadDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
       if (dto.screenType.includes(103)) {
         arrayAggregation.push(
           {
@@ -3934,72 +3995,7 @@ export class OrderSalesService {
             );
           }
 
-          const isorderSaleshopOrderHead = dto.screenType.includes(120);
-          if (isorderSaleshopOrderHead) {
-            const orderSaleShopOrderHeadPipeline = () => {
-              const pipeline = [];
-              pipeline.push(
-                {
-                  $match: {
-                    $expr: { $eq: ['$_id', '$$userId'] },
-                  },
-                },
-                new ModelWeightResponseFormat().userTableResponseFormat(
-                  1200,
-                  dto.responseFormat,
-                ),
-              );
-              const isorderSaleshopOrderHeadGlobalgallery =
-                dto.screenType.includes(121);
-              if (isorderSaleshopOrderHeadGlobalgallery) {
-                pipeline.push(
-                  {
-                    $lookup: {
-                      from: ModelNames.GLOBAL_GALLERIES,
-                      let: { globalGalleryId: '$_globalGalleryId' },
-                      pipeline: [
-                        {
-                          $match: {
-                            $expr: {
-                              $eq: ['$_id', '$$globalGalleryId'],
-                            },
-                          },
-                        },
-                        new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
-                          1210,
-                          dto.responseFormat,
-                        ),
-                      ],
-                      as: 'globalGalleryDetails',
-                    },
-                  },
-                  {
-                    $unwind: {
-                      path: '$globalGalleryDetails',
-                      preserveNullAndEmptyArrays: true,
-                    },
-                  },
-                );
-              }
-              return pipeline;
-            };
-            pipeline.push(
-              {
-                $lookup: {
-                  from: ModelNames.USER,
-                  let: { userId: '$_orderHeadId' },
-                  pipeline: orderSaleShopOrderHeadPipeline(),
-                  as: 'orderHeadDetails',
-                },
-              },
-              {
-                $unwind: {
-                  path: '$orderHeadDetails',
-                  preserveNullAndEmptyArrays: true,
-                },
-              },
-            );
-          }
+        
           const isorderSaleshopRelationshipManager =
             dto.screenType.includes(122);
           if (isorderSaleshopRelationshipManager) {
