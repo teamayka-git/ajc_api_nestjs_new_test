@@ -376,6 +376,13 @@ export class DeliveryCounterBundleService {
       var arrayAggregation = [];
       var arrayEmployeeIds = [];
 
+      if (dto.screenType.includes(115) && dto.orderHeadIds.length == 0) {
+        throw new HttpException(
+          'orderHeadIds is empty, Bcz screenType contains 115',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
       if (dto.deliveryBundleIds.length > 0) {
         var newSettingsId = [];
         dto.deliveryBundleIds.map((mapItem) => {
@@ -510,27 +517,22 @@ export class DeliveryCounterBundleService {
                 pipeline.push({ $match: { _uid: { $in: dto.orderSaleUids } } });
               }
               if (dto.orderHeadIds.length != 0) {
-
-
                 var newSettingsId = [];
                 dto.orderHeadIds.map((mapItem) => {
                   newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
                 });
-
 
                 pipeline.push({
                   $match: { _orderHeadId: { $in: newSettingsId } },
                 });
               }
               if (dto.shopIds.length != 0) {
-
-
                 var newSettingsId = [];
                 dto.shopIds.map((mapItem) => {
                   newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
                 });
 
-                pipeline.push({ $match: { _shopId: { $in:newSettingsId } } });
+                pipeline.push({ $match: { _shopId: { $in: newSettingsId } } });
               }
 
               if (
@@ -823,9 +825,6 @@ export class DeliveryCounterBundleService {
         );
       }
 
-
-
-
       if (dto.workStatus.length > 0) {
         arrayAggregation.push({
           $match: { _workStatus: { $in: dto.workStatus } },
@@ -858,7 +857,6 @@ export class DeliveryCounterBundleService {
           break;
       }
 
-
       arrayAggregation.push(
         new ModelWeightResponseFormat().deliveryCounterBundleResponseFormat(
           0,
@@ -879,7 +877,7 @@ export class DeliveryCounterBundleService {
       // console.log("arrayAggregation dbl   "+JSON.stringify(arrayAggregation));
 
       // console.log("___a3");
-      
+
       if (dto.skip != -1) {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
@@ -961,12 +959,28 @@ export class DeliveryCounterBundleService {
           if (dto.screenType.includes(102)) {
             const orderSalePipeline = () => {
               const pipeline = [];
-              pipeline.push(
-                {
-                  $match: {
-                    $expr: { $eq: ['$_id', '$$orderSaleId'] },
-                  },
+              pipeline.push({
+                $match: {
+                  $expr: { $eq: ['$_id', '$$orderSaleId'] },
                 },
+              });
+
+              if (
+                dto.screenType.includes(115) &&
+                dto.orderHeadIds.length == 0
+              ) {
+                var newSettingsId = [];
+                dto.orderHeadIds.map((mapItem) => {
+                  newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+                });
+                pipeline.push({
+                  $match: {
+                    _orderHeadId: { $in: newSettingsId },
+                  },
+                });
+              }
+
+              pipeline.push(
                 new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
                   1020,
                   dto.responseFormat,
@@ -1319,7 +1333,6 @@ export class DeliveryCounterBundleService {
                   {
                     $unwind: {
                       path: '$ohDetails',
-                      preserveNullAndEmptyArrays: true,
                     },
                   },
                 );
@@ -1340,7 +1353,6 @@ export class DeliveryCounterBundleService {
               {
                 $unwind: {
                   path: '$orderSaleDetails',
-                  preserveNullAndEmptyArrays: true,
                 },
               },
             );
@@ -1391,7 +1403,9 @@ export class DeliveryCounterBundleService {
       var result = await this.deliveryCounterBundlesModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
-console.log("____ dcb arrayAggregation  "+JSON.stringify(arrayAggregation));
+      console.log(
+        '____ dcb arrayAggregation  ' + JSON.stringify(arrayAggregation),
+      );
       var totalCount = 0;
       if (dto.screenType.includes(0)) {
         //Get total count
