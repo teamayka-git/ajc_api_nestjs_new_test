@@ -26,6 +26,7 @@ import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { OrderSaleSetProcessDocuments } from 'src/tableModels/set_process_documents.model';
+import { ProcessMaster } from 'src/tableModels/processMaster.model';
 
 @Injectable()
 export class OrderSaleSetProcessService {
@@ -49,6 +50,8 @@ export class OrderSaleSetProcessService {
     @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
     private readonly orderSaleHistoriesModel: mongoose.Model<OrderSaleHistories>,
 
+    @InjectModel(ModelNames.PROCESS_MASTER)
+    private readonly processMasterModel: mongoose.Model<ProcessMaster>,
     @InjectModel(ModelNames.ORDER_SALES_MAIN)
     private readonly orderSaleMainModel: mongoose.Model<OrderSalesMain>,
     @InjectModel(ModelNames.SUB_PROCESS_MASTER)
@@ -101,7 +104,7 @@ export class OrderSaleSetProcessService {
           if (mapItem.arrayProcess.length - 1 == index) {
             isLastItem = 1;
           }
-
+          mapItem1['setProcessId'] = processId;
           arrayToSetProcess.push({
             _id: processId,
             _orderSaleId: mapItem.orderSaleId,
@@ -186,39 +189,60 @@ export class OrderSaleSetProcessService {
 
       /////////set process automatic assign start
 
-      console.log("____s-1  "+JSON.stringify(dto));
-      console.log("____s0  "+JSON.stringify(result1));
-      console.log("____s1");
+      console.log('____s-1  ' + JSON.stringify(dto));
+      console.log('____s0  ' + JSON.stringify(result1));
+      console.log('____s1');
 
       for (var i = 0; i < dto.array.length; i++) {
-        console.log("____s2");
-        var orderSaleSetProcess = await this.orderSaleSetProcessModel
-          .aggregate([
-            {
-              $match: {
-                _orderSaleId: dto.array[i].orderSaleId,
-                _userId: null,
-                _status: 1,
-              },
-            },
-          ])
-          .session(transactionSession);
+        console.log('____s2');
+        // var orderSaleSetProcess = await this.orderSaleSetProcessModel
+        //   .aggregate([
+        //     {
+        //       $match: {
+        //         _orderSaleId: dto.array[i].orderSaleId,
+        //         _userId: null,
+        //         _status: 1,
+        //       },
+        //     },
+        //     { $sort: { _index: 1 } },
+        //     { $limit: 1 },
+        //     {
+        //       $lookup: {
+        //         from: ModelNames.PROCESS_MASTER,
+        //         let: { processId: '$_processId' },
+        //         pipeline: [
+        //           { $match: { $expr: { $eq: ['$_id', '$$processId'] } } },
+        //         ],
+        //         as: 'processDetails',
+        //       },
+        //     },
+        //     {
+        //       $unwind: {
+        //         path: '$processDetails',
+        //       },
+        //     },
+        //   ])
+        //   .session(transactionSession);
 
-          console.log("____s2.1  "+JSON.stringify(orderSaleSetProcess));
-        if (orderSaleSetProcess.length == 0) {
+        var processMasterDetails = await this.processMasterModel.find({
+          _id: dto.array[i].arrayProcess[0].processId,
+        });
+
+        // console.log("____s2.1  "+JSON.stringify(orderSaleSetProcess));
+        if (processMasterDetails.length == 0) {
           throw new HttpException(
-            'Next set process not found',
+            'process not found',
             HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }
-        console.log("____s3");
-        if (orderSaleSetProcess[0].processDetails._isAutomatic == 1) {
-          console.log("____s4");
+        console.log('____s3');
+        if (processMasterDetails[0]._isAutomatic == 1) {
+          console.log('____s4');
           var resultEmployees = await this.employeeModel.aggregate([
             {
               $match: {
                 _processMasterId: new mongoose.Types.ObjectId(
-                  orderSaleSetProcess[0]._processId,
+                  processMasterDetails[0]._id,
                 ),
               },
             },
@@ -272,15 +296,15 @@ export class OrderSaleSetProcessService {
               },
             },
           ]);
-          console.log("____s5");
+          console.log('____s5');
           let sortedArray = resultEmployees.sort((n1, n2) =>
             n2.workCount < n1.workCount ? 1 : -1,
           );
           if (sortedArray.length != 0) {
-            console.log("____s6");
+            console.log('____s6');
             await this.orderSaleSetProcessModel.findOneAndUpdate(
               {
-                _id: orderSaleSetProcess[0]._id,
+                _id: dto.array[i].arrayProcess[0]['setProcessId'],
               },
               {
                 $set: {
@@ -290,12 +314,12 @@ export class OrderSaleSetProcessService {
               },
               { new: true, session: transactionSession },
             );
-            console.log("____s7");
+            console.log('____s7');
             arrayToSetProcessHistories.push({
               _orderSaleId: dto.array[i].orderSaleId,
               _userId: sortedArray[0]._userId,
               _type: 1,
-              _processId: orderSaleSetProcess[0]._processId,
+              _processId: dto.array[i].arrayProcess[0].processId,
               _createdUserId: _userId_,
               _createdAt: dateTime,
               _description: '',
@@ -304,7 +328,7 @@ export class OrderSaleSetProcessService {
           }
         }
       }
-      console.log("____s8");
+      console.log('____s8');
       /////////set process automatic assign end
 
       await this.orderSaleSetSubProcessModel.insertMany(arrayToSetSubProcess, {
