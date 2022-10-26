@@ -309,6 +309,7 @@ export class OrderSaleSetProcessService {
               {
                 $set: {
                   _userId: sortedArray[0]._userId,
+                  _workAssignedTime:dateTime,
                   _orderStatus: 1,
                 },
               },
@@ -739,6 +740,7 @@ export class OrderSaleSetProcessService {
               {
                 $set: {
                   _userId: sortedArray[0]._userId,
+                  _workAssignedTime:dateTime,
                   _orderStatus: 1,
                 },
               },
