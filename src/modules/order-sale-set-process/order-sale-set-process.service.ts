@@ -112,7 +112,7 @@ export class OrderSaleSetProcessService {
             _workStartedTime: -1,
             _workCompletedTime: -1,
             _rootCause: '',
-            _dueDate:mapItem1.dueDate,
+            _dueDate: mapItem1.dueDate,
             _description: mapItem1.description,
             _index: mapItem1.index,
             _orderStatus: 0,
@@ -168,7 +168,7 @@ export class OrderSaleSetProcessService {
           _shopId: null,
           _deliveryProviderId: null,
           _orderSaleItemId: null,
-          _deliveryCounterId:null,
+          _deliveryCounterId: null,
           _type: 3,
           _description: '',
           _createdUserId: _userId_,
@@ -183,6 +183,136 @@ export class OrderSaleSetProcessService {
           session: transactionSession,
         },
       );
+
+      /////////set process automatic assign start
+      for (var i = 0; i < dto.array.length; i++) {
+        var orderSaleSetProcess = await this.orderSaleSetProcessModel
+          .aggregate([
+            {
+              $match: {
+                _orderSaleId: dto.array[i].orderSaleId,
+                _userId: null,
+                _status: 1,
+              },
+            },
+            { $sort: { _index: 1 } },
+            { $limit: 1 },
+            {
+              $lookup: {
+                from: ModelNames.PROCESS_MASTER,
+                let: { processId: '$_processId' },
+                pipeline: [
+                  { $match: { $expr: { $eq: ['$_id', '$$processId'] } } },
+                ],
+                as: 'processDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$processDetails',
+              },
+            },
+          ])
+          .session(transactionSession);
+
+        if (orderSaleSetProcess.length == 0) {
+          throw new HttpException(
+            'Next set process not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+        if (orderSaleSetProcess[0].processDetails._isAutomatic == 1) {
+          var resultEmployees = await this.employeeModel.aggregate([
+            {
+              $match: {
+                _processMasterId: new mongoose.Types.ObjectId(
+                  orderSaleSetProcess[0]._processId,
+                ),
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                _userId: 1,
+              },
+            },
+            {
+              $lookup: {
+                from: ModelNames.USER_ATTENDANCES,
+                let: { userId: '$_userId' },
+                pipeline: [
+                  {
+                    $match: {
+                      _stopTime: 0,
+                      _status: 1,
+                      $expr: { $eq: ['$_userId', '$$userId'] },
+                    },
+                  },
+                ],
+                as: 'userAttendance',
+              },
+            },
+            {
+              $match: { userAttendance: { $ne: [] } },
+            },
+            {
+              $lookup: {
+                from: ModelNames.ORDER_SALE_SET_PROCESSES,
+                let: { userId: '$_userId' },
+                pipeline: [
+                  {
+                    $match: {
+                      _orderStatus: { $in: [0, 1, 2] },
+                      _status: 1,
+                      $expr: { $eq: ['$_userId', '$$userId'] },
+                    },
+                  },
+                ],
+                as: 'setProcessWorkList',
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                _userId: 1,
+                userAttendance: { _id: 1 },
+                workCount: { $size: '$setProcessWorkList' },
+              },
+            },
+          ]);
+
+          let sortedArray = resultEmployees.sort((n1, n2) =>
+            n2.workCount < n1.workCount ? 1 : -1,
+          );
+          if (sortedArray.length != 0) {
+            await this.orderSaleSetProcessModel.findOneAndUpdate(
+              {
+                _id: orderSaleSetProcess[0]._id,
+              },
+              {
+                $set: {
+                  _userId: sortedArray[0]._userId,
+                  _orderStatus: 1,
+                },
+              },
+              { new: true, session: transactionSession },
+            );
+
+            arrayToSetProcessHistories.push({
+              _orderSaleId: dto.array[i].orderSaleId,
+              _userId: sortedArray[0]._userId,
+              _type: 1,
+              _processId: orderSaleSetProcess[0]._processId,
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _description: '',
+              _status: 1,
+            });
+          }
+        }
+      }
+      /////////set process automatic assign end
+
       await this.orderSaleSetSubProcessModel.insertMany(arrayToSetSubProcess, {
         session: transactionSession,
       });
@@ -236,20 +366,19 @@ export class OrderSaleSetProcessService {
       await transactionSession.endSession();
       throw error;
     }
-  }   
+  }
 
-  async changeProcessOrderStatus( 
+  async changeProcessOrderStatus(
     dto: ChangeProcessOrderStatusDto,
-    _userId_: string, file: Object
+    _userId_: string,
+    file: Object,
   ) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-    try { 
-
-
+    try {
       var arrayGlobalGalleries = [];
-      var arrayGlobalGalleriesDocuments = [];   
+      var arrayGlobalGalleriesDocuments = [];
 
       if (file.hasOwnProperty('documents') && dto.arrayDocuments != null) {
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
@@ -331,16 +460,8 @@ export class OrderSaleSetProcessService {
         );
       }
 
-
-
-
-
-
-
-
-
       var objectUpdateOrderSaleSetProcess = {
-        _userId: dto.userId == '' || dto.userId == 'nil'?null: dto.userId,
+        _userId: dto.userId == '' || dto.userId == 'nil' ? null : dto.userId,
         _orderStatus: dto.orderStatus,
         _description: dto.description,
         _rootCause: dto.rootCause,
@@ -642,7 +763,7 @@ export class OrderSaleSetProcessService {
           _orderSaleId: result._orderSaleId,
           _userId: null,
           _shopId: null,
-          _deliveryCounterId:null,
+          _deliveryCounterId: null,
           _type: 4,
           _deliveryProviderId: null,
           _description: '',
