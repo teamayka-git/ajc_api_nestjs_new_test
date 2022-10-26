@@ -1391,7 +1391,7 @@ export class DeliveryCounterBundleService {
       var result = await this.deliveryCounterBundlesModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
-
+console.log("____ dcb arrayAggregation  "+JSON.stringify(arrayAggregation));
       var totalCount = 0;
       if (dto.screenType.includes(0)) {
         //Get total count
