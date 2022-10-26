@@ -591,7 +591,7 @@ export class DeliveryCounterBundleService {
                           {
                             $project: {
                               _id: 1,
-                              _invoiceId:1
+                              _invoiceId: 1,
                             },
                           },
                         );
@@ -1096,8 +1096,6 @@ export class DeliveryCounterBundleService {
                             },
                           });
 
-
-
                           if (dto.invoiceUids.length != 0) {
                             pipeline.push({
                               $match: {
@@ -1118,8 +1116,6 @@ export class DeliveryCounterBundleService {
                               },
                             });
                           }
-
-
 
                           pipeline.push(
                             new ModelWeightResponseFormat().invoiceTableResponseFormat(
@@ -1254,6 +1250,9 @@ export class DeliveryCounterBundleService {
                     pipeline: orderSaleItemPipeline(),
                     as: 'orderSaleItemDetails',
                   },
+                });
+                pipeline.push({
+                  $match: { orderSaleItemDetails: { $ne: [] } },
                 });
               }
 
