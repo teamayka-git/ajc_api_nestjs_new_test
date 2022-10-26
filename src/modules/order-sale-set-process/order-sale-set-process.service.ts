@@ -186,6 +186,7 @@ export class OrderSaleSetProcessService {
 
       /////////set process automatic assign start
 
+      console.log("____s0  "+JSON.stringify(result1));
       console.log("____s1");
 
       for (var i = 0; i < dto.array.length; i++) {
@@ -219,6 +220,7 @@ export class OrderSaleSetProcessService {
           ])
           .session(transactionSession);
 
+          console.log("____s2.1  "+JSON.stringify(orderSaleSetProcess));
         if (orderSaleSetProcess.length == 0) {
           throw new HttpException(
             'Next set process not found',
