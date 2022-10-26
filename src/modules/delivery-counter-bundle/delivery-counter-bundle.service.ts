@@ -621,7 +621,10 @@ export class DeliveryCounterBundleService {
                                 },
                               );
 
-                              if (dto.invoiceUids.length != 0) {
+                              if (
+                                dto.screenType.includes(116) &&
+                                
+                                dto.invoiceUids.length != 0    ) {
                                 pipeline.push({
                                   $match: {
                                     _uid: { $in: dto.invoiceUids },
@@ -629,8 +632,11 @@ export class DeliveryCounterBundleService {
                                 });
                               }
                               if (
+                                
+                                dto.screenType.includes(116) &&
+                              (
                                 dto.invoiceDateStartDate != -1 &&
-                                dto.invoiceDateEndDate != -1
+                                dto.invoiceDateEndDate != -1)
                               ) {
                                 pipeline.push({
                                   $match: {
@@ -876,19 +882,6 @@ export class DeliveryCounterBundleService {
         ),
       );
 
-      // console.log("___a1   "+JSON.stringify(arrayAggregation));
-
-      // //imp
-      // if (dto.isInvoiceGenerated.length != 0 ||
-      //   dto.invoiceUids.length != 0 ||
-      //   (dto.invoiceDateEndDate != -1 &&
-      //     dto.invoiceDateStartDate != -1)) {
-      //       console.log("___a2");
-      //   arrayAggregation[arrayAggregation.length - 1].$project.aaa = "$_id";
-      // }
-      // console.log("arrayAggregation dbl   "+JSON.stringify(arrayAggregation));
-
-      // console.log("___a3");
 
       if (dto.skip != -1) {
         arrayAggregation.push({ $skip: dto.skip });
