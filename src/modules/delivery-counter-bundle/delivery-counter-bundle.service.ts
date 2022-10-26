@@ -967,7 +967,7 @@ export class DeliveryCounterBundleService {
 
               if (
                 dto.screenType.includes(115) &&
-                dto.orderHeadIds.length == 0
+                dto.orderHeadIds.length != 0
               ) {
                 var newSettingsId = [];
                 dto.orderHeadIds.map((mapItem) => {
