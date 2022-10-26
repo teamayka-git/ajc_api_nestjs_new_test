@@ -185,7 +185,11 @@ export class OrderSaleSetProcessService {
       );
 
       /////////set process automatic assign start
+
+      console.log("____s1");
+
       for (var i = 0; i < dto.array.length; i++) {
+        console.log("____s2");
         var orderSaleSetProcess = await this.orderSaleSetProcessModel
           .aggregate([
             {
@@ -221,7 +225,9 @@ export class OrderSaleSetProcessService {
             HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }
+        console.log("____s3");
         if (orderSaleSetProcess[0].processDetails._isAutomatic == 1) {
+          console.log("____s4");
           var resultEmployees = await this.employeeModel.aggregate([
             {
               $match: {
@@ -280,11 +286,12 @@ export class OrderSaleSetProcessService {
               },
             },
           ]);
-
+          console.log("____s5");
           let sortedArray = resultEmployees.sort((n1, n2) =>
             n2.workCount < n1.workCount ? 1 : -1,
           );
           if (sortedArray.length != 0) {
+            console.log("____s6");
             await this.orderSaleSetProcessModel.findOneAndUpdate(
               {
                 _id: orderSaleSetProcess[0]._id,
@@ -297,7 +304,7 @@ export class OrderSaleSetProcessService {
               },
               { new: true, session: transactionSession },
             );
-
+            console.log("____s7");
             arrayToSetProcessHistories.push({
               _orderSaleId: dto.array[i].orderSaleId,
               _userId: sortedArray[0]._userId,
@@ -311,6 +318,7 @@ export class OrderSaleSetProcessService {
           }
         }
       }
+      console.log("____s8");
       /////////set process automatic assign end
 
       await this.orderSaleSetSubProcessModel.insertMany(arrayToSetSubProcess, {
