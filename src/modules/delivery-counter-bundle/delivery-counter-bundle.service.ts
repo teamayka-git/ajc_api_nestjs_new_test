@@ -623,8 +623,8 @@ export class DeliveryCounterBundleService {
 
                               if (
                                 dto.screenType.includes(116) &&
-                                
-                                dto.invoiceUids.length != 0    ) {
+                                dto.invoiceUids.length != 0
+                              ) {
                                 pipeline.push({
                                   $match: {
                                     _uid: { $in: dto.invoiceUids },
@@ -632,11 +632,9 @@ export class DeliveryCounterBundleService {
                                 });
                               }
                               if (
-                                
                                 dto.screenType.includes(116) &&
-                              (
                                 dto.invoiceDateStartDate != -1 &&
-                                dto.invoiceDateEndDate != -1)
+                                dto.invoiceDateEndDate != -1
                               ) {
                                 pipeline.push({
                                   $match: {
@@ -882,7 +880,6 @@ export class DeliveryCounterBundleService {
         ),
       );
 
-
       if (dto.skip != -1) {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
@@ -981,6 +978,17 @@ export class DeliveryCounterBundleService {
                 pipeline.push({
                   $match: {
                     _orderHeadId: { $in: newSettingsId },
+                  },
+                });
+              }
+
+              if (
+                dto.screenType.includes(116) &&
+                dto.isInvoiceGenerated.length != 0
+              ) {
+                pipeline.push({
+                  $match: {
+                    _isInvoiceGenerated: { $in: dto.isInvoiceGenerated },
                   },
                 });
               }
@@ -1388,15 +1396,20 @@ export class DeliveryCounterBundleService {
           return pipeline;
         };
 
-        arrayAggregation.push({
-          $lookup: {
-            from: ModelNames.DELIVERY_COUNTER_BUNDLE_ITEMS,
-            let: { deliveryBundleId: '$_id' },
-            pipeline: deliveryBundlePipeline(),
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.DELIVERY_COUNTER_BUNDLE_ITEMS,
+              let: { deliveryBundleId: '$_id' },
+              pipeline: deliveryBundlePipeline(),
 
-            as: 'deliveryCounterItems',
+              as: 'deliveryCounterItems',
+            },
           },
-        });
+          {
+            $match: { deliveryCounterItems: { $ne: [] } },
+          },
+        );
       }
 
       if (dto.screenType.includes(108)) {
