@@ -74,9 +74,9 @@ export class ModelWeightResponseFormat {
       return { $project: new ModelWeight().globalGalleryTableMinimum() };
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().globalGalleryTableMedium() };
-    }else if (responseFormatArray.includes(startIndex + 4)) {
+    }else if (responseFormatArray.includes(startIndex + 3)) {
       return { $project: new ModelWeight().globalGalleryTableMaximum() };
-    } else if (responseFormatArray.includes(startIndex + 5)) {
+    } else if (responseFormatArray.includes(startIndex + 4)) {
       return { $project: new ModelWeight().globalGalleryTableCustom1() };
     } else {
       return { $project: { _: 0 } };
