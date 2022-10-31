@@ -518,7 +518,7 @@ export class TagMastersService {
             const productDocumentLinkingPipeline = () => {
               const pipeline = [];
               pipeline.push(
-                { $match: { $expr: { $eq: ['$_productId', '$$productId'] } } },
+                { $match: { $expr: { $eq: ['$_productId', '$$productSubId'] } } },
                 new ModelWeightResponseFormat().productDocumentLinkingTableResponseFormat(
                   1010,
                   dto.responseFormat,
@@ -559,7 +559,7 @@ export class TagMastersService {
             pipeline.push({
               $lookup: {
                 from: ModelNames.PRODUCT_DOCUMENTS_LINKIGS,
-                let: { productId: '$_id' },
+                let: { productSubId: '$_id' },
                 pipeline: productDocumentLinkingPipeline(),
                 as: 'productDocumentLinking',
               },
