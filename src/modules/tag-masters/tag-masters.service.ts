@@ -43,7 +43,6 @@ export class TagMastersService {
 
       if (file.hasOwnProperty('documents')) {
 
-        console.log("___a1");
         var resultCounterPurchase = await this.countersModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
@@ -77,13 +76,13 @@ export class TagMastersService {
         //     }
         //   }
         // }
-        console.log("___a2");
+        
         for (var i = 0; i < file['documents'].length; i++) {
           var resultUpload = await new S3BucketUtils().uploadMyFile(
             file['documents'][i],
             UploadedFileDirectoryPath.GLOBAL_GALLERY_TAG_MASTER,
           );
-console.log("resultUpload   "+JSON.stringify(resultUpload));
+          
           if (resultUpload['status'] == 0) {
             throw new HttpException(
               'File upload error',
@@ -95,14 +94,12 @@ console.log("resultUpload   "+JSON.stringify(resultUpload));
             (it) => it.fileOriginalName == file['documents'][i]['originalname'],
           );
           if (count != -1) {
-            console.log("___a2.1");
-            console.log("___a2.2   "+resultUpload['url']);
-            dto.arrayDocuments[count]['url'] = resultUpload['url'];
+              dto.arrayDocuments[count]['url'] = resultUpload['url'];
           } else {
             dto.arrayDocuments[count]['url'] = 'nil';
           }
         }
-        console.log("___a3");
+        
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
             (it) => it.originalname == dto.arrayDocuments[i].fileOriginalName,
@@ -138,10 +135,7 @@ console.log("resultUpload   "+JSON.stringify(resultUpload));
             });
           }
         }
-        console.log("___a4");
-        console.log("___a5  "+arrayGlobalGalleries.length);
-        console.log("___a6  "+arrayGlobalGalleriesDocuments.length);
-        await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
+       await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
         });
         await this.tagMasterDocumentModel.insertMany(
@@ -152,7 +146,6 @@ console.log("resultUpload   "+JSON.stringify(resultUpload));
         );
       }
 
-      console.log("___a7");
       const newsettingsModel = new this.tagMasterModel({
         _id: tagMasterId,
         _name: dto.name,
