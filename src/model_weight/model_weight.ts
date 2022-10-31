@@ -2428,7 +2428,6 @@ export class ModelWeight {
       _id: 1,
       _name:1,
       _priority:1,
-      _isShowEcommerce:1,
      
     };
   }
@@ -2436,6 +2435,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _name:1,
+      _type:1,
       _dataGuard:1,
       _priority:1,
       _isShowEcommerce:1,
@@ -2449,6 +2449,7 @@ export class ModelWeight {
       _id: 1,
       _name:1,
       _dataGuard:1,
+      _type:1,
       _priority:1,
       _isShowEcommerce:1,
       _createdUserId:1,
@@ -2461,6 +2462,7 @@ export class ModelWeight {
       _id: 1,
       _name:1,
       _dataGuard:1,
+      _type:1,
       _priority:1,
       _isShowEcommerce:1,
       _createdUserId:1,

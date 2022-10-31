@@ -17,6 +17,7 @@ import {
 import { TagMasterDocuments } from 'src/tableModels/tag_master_documents.model';
 import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
+import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 
 @Injectable()
 export class TagMastersService {
@@ -341,12 +342,22 @@ export class TagMastersService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
+      arrayAggregation.push(
+        new ModelWeightResponseFormat().tagMasterResponseFormat(
+          0,
+          dto.responseFormat,
+        ),
+      );
       if (dto.screenType.includes(100)) {
         const tagDocumentsPipeline = () => {
           const pipeline = [];
           pipeline.push({
             $match: { _status: 1, $expr: { $eq: ['$_tagId', '$$tagId'] } },
-          });
+          },
+          new ModelWeightResponseFormat().tagDocumentsLinkingResponseFormat(
+            1000,
+            dto.responseFormat,
+          ),);
           if (dto.screenType.includes(101)) {
             pipeline.push(
               {
@@ -357,10 +368,14 @@ export class TagMastersService {
                     {
                       $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } },
                     },
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1010,
+                      dto.responseFormat,
+                    )
                   ],
                   as: 'globalGalleryDetails',
                 },
-              },
+              }, 
               {
                 $unwind: {
                   path: '$globalGalleryDetails',
