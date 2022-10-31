@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Post, Put, Request, UploadedFiles, UseInterce
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { TagMastersService } from './tag-masters.service';
-import { CheckNameExistDto, TagMasterCreateDto, TagMasterEditDto, TagMasterListDto, TagMasterStatusChangeDto } from './tag_masters.dto';
+import { CheckNameExistDto, TagLinkedProductListDto, TagMasterCreateDto, TagMasterEditDto, TagMasterListDto, TagMasterStatusChangeDto } from './tag_masters.dto';
 
 
 @ApiTags('Tag master Docs')
@@ -77,6 +77,10 @@ export class TagMastersController {
     return this.tagMastersService.list(dto);
   }
 
+  @Post('tagLinkedProducts')
+  tagLinkedProducts(@Body() dto: TagLinkedProductListDto) {
+    return this.tagMastersService.tagLinkedProducts(dto);
+  }
   @Post('checkNameExisting')
   checkNameExisting(@Body() dto: CheckNameExistDto) {
     return this.tagMastersService.checkNameExisting(dto);

@@ -25,6 +25,7 @@ const descriptionListDataGuard =
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType = '0-Created Date, 1-Status,2-Name, 3-Priority';
+const descriptionListSortTypeTagLinkedProducts = '0-Created Date, 1-Status';
 const descriptionType="0-tag, 1-sub tag";
 const descriptionListDocType = '0-image, 1-video, 2-pdf, 3-audio, 4-document';
 
@@ -178,6 +179,50 @@ export class TagMasterListDto {
   @ApiProperty({ type: [String] })
   parentTagMasterIds: string[];
 
+  @IsNumber()
+  @ApiProperty({})
+  limit: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  skip: number;
+
+  @IsString()
+  @ApiProperty({})
+  searchingText: string;
+}
+
+
+
+
+export class TagLinkedProductListDto {
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortTypeTagLinkedProducts })
+  sortType: number;
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortOrder })
+  sortOrder: number;
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @ApiProperty({ type: [Number], description: descriptionStatus })
+  statusArray: number[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionListScreenTypeForBranchList,
+  })
+  screenType: number[];
+
+
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  responseFormat: number[];
+  
+
+  
+  
   @IsNumber()
   @ApiProperty({})
   limit: number;
