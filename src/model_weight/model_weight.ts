@@ -694,6 +694,12 @@ export class ModelWeight {
       _status: 1,
     };
   }
+  public globalGalleryTableCustom1(): Object {
+    return {
+      _url: 1,
+     
+    };
+  }
 
   public userTableLight(): Object {
     return {
@@ -1812,6 +1818,11 @@ export class ModelWeight {
       _updatedUserId: 1,
       _updatedAt: 1,
       _status: 1,
+    };
+  }
+  public productDocumentLinkingTableCustom1(): Object {
+    return {
+      _globalGalleryId: 1,
     };
   }
   public productStonelinkingTableLight(): Object {

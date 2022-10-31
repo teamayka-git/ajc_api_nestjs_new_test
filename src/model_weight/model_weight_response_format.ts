@@ -74,6 +74,8 @@ export class ModelWeightResponseFormat {
       return { $project: new ModelWeight().globalGalleryTableMinimum() };
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().globalGalleryTableMedium() };
+    }else if (responseFormatArray.includes(startIndex + 3)) {
+      return { $project: new ModelWeight().globalGalleryTableCustom1() };
     } else {
       return { $project: { _: 0 } };
     }
@@ -647,6 +649,10 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return {
         $project: new ModelWeight().productDocumentLinkingTableMedium(),
+      };
+    }else if (responseFormatArray.includes(startIndex + 3)) {
+      return {
+        $project: new ModelWeight().productDocumentLinkingTableCustom1(),
       };
     } else {
       return { $project: { _: 0 } };
