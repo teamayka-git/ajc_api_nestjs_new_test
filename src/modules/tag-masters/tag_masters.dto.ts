@@ -19,6 +19,8 @@ import { Optional } from '@nestjs/common';
 
 const descriptionListScreenTypeForBranchList =
   '0-total documents count,100-tag documets, 101 - dag documents under[100] global gallery details';
+  const descriptionListScreenTypeForTagProductLinkingList =
+    '0-total documents count,100-product details, 101 - product details under[100] document linkung list, 102 - product details under[100] document linkung list under[101] global gallery detils';
 const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 

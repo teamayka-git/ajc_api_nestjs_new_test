@@ -504,18 +504,76 @@ export class TagMastersService {
       );
 
       if (dto.screenType.includes(100)) {
+        const productPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            { $match: { $expr: { $eq: ['$_id', '$$productId'] } } },
+            new ModelWeightResponseFormat().productTableResponseFormat(
+              1000,
+              dto.responseFormat,
+            ),
+          );
+
+          if (dto.screenType.includes(101)) {
+            const productDocumentLinkingPipeline = () => {
+              const pipeline = [];
+              pipeline.push(
+                { $match: { $expr: { $eq: ['$_productId', '$$productId'] } } },
+                new ModelWeightResponseFormat().productDocumentLinkingTableResponseFormat(
+                  1010,
+                  dto.responseFormat,
+                ),
+              );
+
+              if (dto.screenType.includes(102)) {
+              pipeline.push(
+                {
+                  $lookup: {
+                    from: ModelNames.GLOBAL_GALLERIES,
+                    let: { globalGalleryId: '$_globalGalleryId' },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                        },
+                      },
+                      new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                        1020,
+                        dto.responseFormat,
+                      ),
+                    ],
+                    as: 'globalGalleryDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$globalGalleryDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              );
+              }
+              return pipeline;
+            };
+
+            pipeline.push({
+              $lookup: {
+                from: ModelNames.PRODUCT_DOCUMENTS_LINKIGS,
+                let: { productId: '$_id' },
+                pipeline: productDocumentLinkingPipeline(),
+                as: 'productDocumentLinking',
+              },
+            });
+          }
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.PRODUCTS,
               let: { productId: '$_productId' },
-              pipeline: [
-                { $match: { $expr: { $eq: ['$_id', '$$productId'] } } },
-                new ModelWeightResponseFormat().productTableResponseFormat(
-                  1000,
-                  dto.responseFormat,
-                ),
-              ],
+              pipeline: productPipeline(),
               as: 'productDetails',
             },
           },
@@ -531,13 +589,15 @@ export class TagMastersService {
       // if (dto.screenType.includes(100)) {
       //   const tagDocumentsPipeline = () => {
       //     const pipeline = [];
-      //     pipeline.push({
-      //       $match: { _status: 1, $expr: { $eq: ['$_tagId', '$$tagId'] } },
-      //     },
-      //     new ModelWeightResponseFormat().tagDocumentsLinkingResponseFormat(
-      //       1000,
-      //       dto.responseFormat,
-      //     ),);
+      //     pipeline.push(
+      //       {
+      //         $match: { _status: 1, $expr: { $eq: ['$_tagId', '$$tagId'] } },
+      //       },
+      //       new ModelWeightResponseFormat().tagDocumentsLinkingResponseFormat(
+      //         1000,
+      //         dto.responseFormat,
+      //       ),
+      //     );
       //     if (dto.screenType.includes(101)) {
       //       pipeline.push(
       //         {
@@ -551,7 +611,7 @@ export class TagMastersService {
       //               new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
       //                 1010,
       //                 dto.responseFormat,
-      //               )
+      //               ),
       //             ],
       //             as: 'globalGalleryDetails',
       //           },
