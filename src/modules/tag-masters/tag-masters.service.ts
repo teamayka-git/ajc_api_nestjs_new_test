@@ -584,7 +584,7 @@ export class TagMastersService {
             },
           },
         );
-      }
+      }console.log("___arrayAggregation   "+JSON.stringify(arrayAggregation));
 
       // if (dto.screenType.includes(100)) {
       //   const tagDocumentsPipeline = () => {
