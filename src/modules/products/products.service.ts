@@ -1987,7 +1987,7 @@ export class ProductsService {
       var result = await this.productModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
-
+console.log("arrayAggregation product __  "+JSON.stringify(arrayAggregation));
       var totalCount = 0;
       if (dto.screenType.includes(0)) {
         //Get total count
