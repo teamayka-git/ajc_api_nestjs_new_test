@@ -83,7 +83,7 @@ export class TagMastersService {
             file['documents'][i],
             UploadedFileDirectoryPath.GLOBAL_GALLERY_TAG_MASTER,
           );
-
+console.log("resultUpload   "+JSON.stringify(resultUpload));
           if (resultUpload['status'] == 0) {
             throw new HttpException(
               'File upload error',
