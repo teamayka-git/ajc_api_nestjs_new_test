@@ -152,7 +152,7 @@ export class TagMastersService {
         _priority: dto.priority,
         _type: dto.type,
         _isShowEcommerce: dto.isShowEcommerce,
-        _tagId: dto.tagId,
+        _tagId: (dto.tagId=="")?null:dto.tagId,
         _createdUserId: null,
         _createdAt: dateTime,
         _updatedUserId: null,
@@ -198,7 +198,7 @@ export class TagMastersService {
         _dataGuard: dto.dataGuard,
         _priority: dto.priority,
         _type: dto.type,
-        _tagId: dto.tagId,
+        _tagId: (dto.tagId=="")?null:dto.tagId,
         _isShowEcommerce: dto.isShowEcommerce,
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
@@ -386,7 +386,7 @@ export class TagMastersService {
 
 
 
-      
+
       var result = await this.tagMasterModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
