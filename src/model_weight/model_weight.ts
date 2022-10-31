@@ -1158,13 +1158,21 @@ export class ModelWeight {
   public productTableCustom1(): Object {
     return {
       _id: 1,
-      _name: 1,
 
       _grossWeight: 1,
       _createdAt: 1,
       _barcode: 1,
       _totalStoneWeight: 1,
       _netWeight: 1,
+    };
+  }
+
+  public productTableCustom2(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+
+      _grossWeight: 1,
     };
   }
 
