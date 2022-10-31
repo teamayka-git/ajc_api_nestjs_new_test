@@ -553,7 +553,6 @@ export class TagMastersService {
                 },
               );
               }
-              return pipeline;
             };
 
             pipeline.push({
