@@ -150,6 +150,7 @@ export class TagMastersService {
         _name: dto.name,
         _dataGuard: dto.dataGuard,
         _priority: dto.priority,
+        _type: dto.priority,
         _isShowEcommerce: dto.isShowEcommerce,
         _createdUserId: null,
         _createdAt: dateTime,
@@ -195,6 +196,7 @@ export class TagMastersService {
         _name: dto.name,
         _dataGuard: dto.dataGuard,
         _priority: dto.priority,
+        _type: dto.priority,
         _isShowEcommerce: dto.isShowEcommerce,
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
@@ -298,6 +300,12 @@ export class TagMastersService {
       if (dto.isShowEcommerce.length > 0) {
         arrayAggregation.push({
           $match: { _isShowEcommerce: { $in: dto.isShowEcommerce } },
+        });
+      }
+
+      if (dto.type.length > 0) {
+        arrayAggregation.push({
+          $match: { _type: { $in: dto.type } },
         });
       }
 

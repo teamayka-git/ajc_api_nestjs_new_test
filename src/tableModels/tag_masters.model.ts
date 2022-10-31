@@ -8,6 +8,7 @@ export const TagMatersSchema = new mongoose.Schema({
   _dataGuard: { type: Object, required: true, default: [] },
   _priority: { type: Number, required: true, default: -1 },
   _isShowEcommerce: { type: Number, required: true, default: -1 },
+  _type: { type: Number, required: true, default: -1 },
 
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -29,6 +30,7 @@ export interface TagMaters {
   _name: String;
   _dataGuard: Object;
   _priority:Number;
+  _type:Number;
   _isShowEcommerce:Number;
   _createdUserId: String;
   _createdAt: Number;
@@ -37,6 +39,7 @@ export interface TagMaters {
   _status: Number;
 }
 
+TagMatersSchema.index({ _type: 1 });
 TagMatersSchema.index({ _isShowEcommerce: 1 });
 TagMatersSchema.index({ _priority: 1 });
 TagMatersSchema.index({ _status: 1 });
@@ -69,4 +72,8 @@ function schemaPostFunctionForDuplicate(error, doc, next) {
 }
 
 /*
+_type:{
+  0 - tag
+  1 - sub tag
+}
  */
