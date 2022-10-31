@@ -95,6 +95,8 @@ console.log("resultUpload   "+JSON.stringify(resultUpload));
             (it) => it.fileOriginalName == file['documents'][i]['originalname'],
           );
           if (count != -1) {
+            console.log("___a2.1");
+            console.log("___a2.2   "+resultUpload['url']);
             dto.arrayDocuments[count]['url'] = resultUpload['url'];
           } else {
             dto.arrayDocuments[count]['url'] = 'nil';
