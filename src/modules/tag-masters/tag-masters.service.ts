@@ -42,6 +42,8 @@ export class TagMastersService {
       var arrayGlobalGalleriesDocuments = [];
 
       if (file.hasOwnProperty('documents')) {
+
+        console.log("___a1");
         var resultCounterPurchase = await this.countersModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
@@ -75,6 +77,7 @@ export class TagMastersService {
         //     }
         //   }
         // }
+        console.log("___a2");
         for (var i = 0; i < file['documents'].length; i++) {
           var resultUpload = await new S3BucketUtils().uploadMyFile(
             file['documents'][i],
@@ -97,7 +100,7 @@ export class TagMastersService {
             dto.arrayDocuments[count]['url'] = 'nil';
           }
         }
-
+        console.log("___a3");
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
             (it) => it.originalname == dto.arrayDocuments[i].fileOriginalName,
@@ -133,7 +136,9 @@ export class TagMastersService {
             });
           }
         }
-
+        console.log("___a4");
+        console.log("___a5  "+arrayGlobalGalleries.length);
+        console.log("___a6  "+arrayGlobalGalleriesDocuments.length);
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
         });
@@ -145,6 +150,7 @@ export class TagMastersService {
         );
       }
 
+      console.log("___a7");
       const newsettingsModel = new this.tagMasterModel({
         _id: tagMasterId,
         _name: dto.name,
