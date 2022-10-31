@@ -53,6 +53,10 @@ export class TagMasterCreateDto {
   @ApiProperty({})
   name: string;
   
+  @IsString()
+  @ApiProperty({})
+  tagId: string;
+  
   
   @Transform(({ value }) => Number(value))
   @IsNumber()
@@ -96,6 +100,10 @@ export class TagMasterEditDto {
   @IsString()
   @ApiProperty({})
   name: string;
+  
+  @IsString()
+  @ApiProperty({})
+  tagId: string;
   
   
   @Transform(({ value }) => Number(value))
@@ -165,6 +173,10 @@ export class TagMasterListDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   tagMasterIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  parentTagMasterIds: string[];
 
   @IsNumber()
   @ApiProperty({})

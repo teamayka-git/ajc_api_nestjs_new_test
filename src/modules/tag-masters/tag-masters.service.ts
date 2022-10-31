@@ -41,7 +41,7 @@ export class TagMastersService {
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
 
-      if (file.hasOwnProperty('image')) {
+      if (file.hasOwnProperty('documents')) {
         var resultCounterPurchase = await this.countersModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
@@ -150,8 +150,9 @@ export class TagMastersService {
         _name: dto.name,
         _dataGuard: dto.dataGuard,
         _priority: dto.priority,
-        _type: dto.priority,
+        _type: dto.type,
         _isShowEcommerce: dto.isShowEcommerce,
+        _tagId: dto.tagId,
         _createdUserId: null,
         _createdAt: dateTime,
         _updatedUserId: null,
@@ -196,7 +197,8 @@ export class TagMastersService {
         _name: dto.name,
         _dataGuard: dto.dataGuard,
         _priority: dto.priority,
-        _type: dto.priority,
+        _type: dto.type,
+        _tagId: dto.tagId,
         _isShowEcommerce: dto.isShowEcommerce,
         _updatedUserId: _userId_,
         _updatedAt: dateTime,
@@ -297,6 +299,13 @@ export class TagMastersService {
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
+      if (dto.parentTagMasterIds.length > 0) {
+        var newSettingsId = [];
+        dto.parentTagMasterIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _tagId: { $in: newSettingsId } } });
+      }
       if (dto.isShowEcommerce.length > 0) {
         arrayAggregation.push({
           $match: { _isShowEcommerce: { $in: dto.isShowEcommerce } },
@@ -371,6 +380,13 @@ export class TagMastersService {
           },
         });
       }
+
+
+
+
+
+
+      
       var result = await this.tagMasterModel
         .aggregate(arrayAggregation)
         .session(transactionSession);

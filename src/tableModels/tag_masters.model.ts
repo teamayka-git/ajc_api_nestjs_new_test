@@ -10,6 +10,11 @@ export const TagMatersSchema = new mongoose.Schema({
   _isShowEcommerce: { type: Number, required: true, default: -1 },
   _type: { type: Number, required: true, default: -1 },
 
+  _tagId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.TAG_MASTERS,
+    default: null,
+  },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -33,12 +38,14 @@ export interface TagMaters {
   _type:Number;
   _isShowEcommerce:Number;
   _createdUserId: String;
+  _tagId: String;
   _createdAt: Number;
   _updatedUserId: String;
   _updatedAt: Number;
   _status: Number;
 }
 
+TagMatersSchema.index({ _tagId: 1 });
 TagMatersSchema.index({ _type: 1 });
 TagMatersSchema.index({ _isShowEcommerce: 1 });
 TagMatersSchema.index({ _priority: 1 });
