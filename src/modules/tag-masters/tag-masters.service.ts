@@ -473,7 +473,13 @@ export class TagMastersService {
         //   },
         // });
       }
-
+      if (dto.tagIds.length > 0) {
+        var newSettingsId = [];
+        dto.tagIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _tagId: { $in: newSettingsId } } });
+      }
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
       switch (dto.sortType) {

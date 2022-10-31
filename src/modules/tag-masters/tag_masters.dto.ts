@@ -221,6 +221,10 @@ export class TagLinkedProductListDto {
   responseFormat: number[];
   
 
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  tagIds: string[];
+
   
   
   @IsNumber()
