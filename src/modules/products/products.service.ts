@@ -1758,7 +1758,7 @@ export class ProductsService {
                 },
               },
             );
-
+            }
             const productStoneLinkingColourMaster =
               dto.screenType.includes(111);
             if (productStoneLinkingColourMaster) {
@@ -1789,7 +1789,7 @@ export class ProductsService {
                 },
               );
             }
-          }
+          
           return pipeline;
         };
 
