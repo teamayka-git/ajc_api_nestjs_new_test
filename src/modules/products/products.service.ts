@@ -452,6 +452,8 @@ export class ProductsService {
           _updatedAt: -1,
           _status: 1,
         });
+        
+        console.log("___a3");
         arrayToProducts.push({
           _id: designId,
           _name: dto.arrayItems[i].name,
@@ -484,6 +486,7 @@ export class ProductsService {
           _status: 1,
         });
 
+        console.log("___a4");
         if (orderItemId != null) {
           await this.orderSaleItemsModel.findOneAndUpdate(
             {

@@ -5,7 +5,11 @@ import { GlobalConfig } from 'src/config/global_config';
 export const ProductsSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
   _name: { type: String, required: true, default: 'nil' },
-  _designerId: { type: String, required: true, default: 'nil' },
+  _designerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.PRODUCTS,
+    default: null,
+  },
   _shopId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.SHOPS,
