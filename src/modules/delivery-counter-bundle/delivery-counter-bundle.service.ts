@@ -376,7 +376,7 @@ export class DeliveryCounterBundleService {
       var arrayAggregation = [];
       var arrayEmployeeIds = [];
 
-      if (dto.screenType.includes(115) && dto.orderHeadIds.length == 0) {
+     /* if (dto.screenType.includes(115) && dto.orderHeadIds.length == 0) {
         throw new HttpException(
           'orderHeadIds is empty, Bcz screenType contains 115',
           HttpStatus.INTERNAL_SERVER_ERROR,
@@ -392,7 +392,7 @@ export class DeliveryCounterBundleService {
           'inv related data not found, Bcz screenType contains 116',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
-      }
+      }*/
 
       if (dto.deliveryBundleIds.length > 0) {
         var newSettingsId = [];
