@@ -91,6 +91,10 @@ export class OrderSalesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+
+console.log("oc dto  "+JSON.stringify(dto));
+
       var orderSaleId = new mongoose.Types.ObjectId();
 
       var arrayGlobalGalleries = [];
