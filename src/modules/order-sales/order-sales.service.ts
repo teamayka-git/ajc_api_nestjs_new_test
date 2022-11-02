@@ -94,7 +94,7 @@ export class OrderSalesService {
 
 
 console.log("oc dto  "+JSON.stringify(dto));
-
+console.log("___d1");
       var orderSaleId = new mongoose.Types.ObjectId();
 
       var arrayGlobalGalleries = [];
@@ -156,7 +156,7 @@ console.log("oc dto  "+JSON.stringify(dto));
             dto.arrayDocuments[count]['url'] = 'nil';
           }
         }
-
+        console.log("___d2");
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
             (it) => it.originalname == dto.arrayDocuments[i].fileOriginalName,
@@ -191,7 +191,7 @@ console.log("oc dto  "+JSON.stringify(dto));
             });
           }
         }
-
+        console.log("___d3");
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
         });
@@ -263,7 +263,7 @@ console.log("oc dto  "+JSON.stringify(dto));
           },
         },
       ]);
-
+      console.log("___d4");
       if (shopDetails.length == 0) {
         throw new HttpException(
           'Shop not found',
@@ -331,7 +331,7 @@ console.log("oc dto  "+JSON.stringify(dto));
       var result1 = await newsettingsModel.save({
         session: transactionSession,
       });
-
+      console.log("___d5");
       var arraySalesItems = [];
       dto.arrayItems.forEach((eachItem, index) => {
         arraySalesItems.push({
@@ -378,7 +378,7 @@ console.log("oc dto  "+JSON.stringify(dto));
       await orderSaleHistoryModel.save({
         session: transactionSession,
       });
-
+      console.log("___d6");
       const responseJSON = { message: 'success', data: result1 };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
