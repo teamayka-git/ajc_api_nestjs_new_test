@@ -69,6 +69,16 @@ class orderSaleCreateList {
   docType: number;
 }
 class orderSaleItemsCreateList {
+  @IsOptional()
+  @IsString()
+  @ApiProperty({})
+  productId: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({})
+  designId: string;
+
   @IsString()
   @ApiProperty({})
   subCategoryId: string;
