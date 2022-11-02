@@ -177,9 +177,6 @@ export class TagMasterListDto {
   @ApiProperty({ type: [String] })
   tagMasterIds: string[];
 
-  @IsArray()
-  @ApiProperty({ type: [String] })
-  tagMasterIdsExtraPopulate: string[];
 
   @IsArray()
   @ApiProperty({ type: [String] })
