@@ -101,6 +101,7 @@ console.log("___d1");
       var arrayGlobalGalleriesDocuments = [];
 
       if (file.hasOwnProperty('documents')) {
+        console.log("___d1.1");
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
@@ -202,6 +203,8 @@ console.log("___d1");
           },
         );
       }
+      
+      console.log("___d3.1");
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.ORDER_SALES_MAIN },
         {
@@ -211,6 +214,8 @@ console.log("___d1");
         },
         { new: true, session: transactionSession },
       );
+      
+      console.log("___d3.2");
       var shopDetails = await this.shopsModel.aggregate([
         {
           $match: {
