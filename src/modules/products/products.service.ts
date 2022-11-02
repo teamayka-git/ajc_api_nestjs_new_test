@@ -412,15 +412,15 @@ export class ProductsService {
             _status: 1,
           });
         });
-        console.log("___a1");
+        console.log('___a1');
 
-        var designId=new mongoose.Types.ObjectId();
+        var designId = new mongoose.Types.ObjectId();
 
-        console.log("___a2");
-                arrayToProducts.push({
+        console.log('___a2');
+        arrayToProducts.push({
           _id: productId,
           _name: dto.arrayItems[i].name,
-          _designerId:designId,
+          _designerId: dto.arrayItems[i].eCommerceStatus == 0 ? null : designId,
           _shopId: shopId,
           _orderItemId: orderItemId,
 
@@ -452,41 +452,42 @@ export class ProductsService {
           _updatedAt: -1,
           _status: 1,
         });
-        
-        console.log("___a3");
-        arrayToProducts.push({
-          _id: designId,
-          _name: dto.arrayItems[i].name,
-          _designerId: null,
-          _shopId: null,
-          _orderItemId: null,
 
-          _productType: 1,
-          _netWeight: dto.arrayItems[i].netWeight,
-          _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
-          _grossWeight: dto.arrayItems[i].grossWeight,
-          _barcode:'',
-          _categoryId: resultSubcategory[subCategoryIndex]._categoryId,
-          _subCategoryId: dto.arrayItems[i].subCategoryId,
-          _groupId:
-            resultSubcategory[subCategoryIndex].categoryDetails._groupId,
-          _type: -1,
-          _purity:
-            resultSubcategory[subCategoryIndex].categoryDetails.groupDetails
-              ._purity,
-          _hmSealingStatus: 0,
-          _huId: [],
-          _eCommerceStatus: 1,
-          _isStone: dto.arrayItems[i].isStone,
-          _moldNumber: dto.arrayItems[i].moldNumber,
-          _createdUserId: _userId_,
-          _createdAt: dateTime,
-          _updatedUserId: null,
-          _updatedAt: -1,
-          _status: 1,
-        });
+        console.log('___a3');
+        if (dto.arrayItems[i].eCommerceStatus == 1) {
+          arrayToProducts.push({
+            _id: designId,
+            _name: dto.arrayItems[i].name,
+            _designerId: null,
+            _shopId: null,
+            _orderItemId: null,
 
-        console.log("___a4");
+            _productType: 1,
+            _netWeight: dto.arrayItems[i].netWeight,
+            _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
+            _grossWeight: dto.arrayItems[i].grossWeight,
+            _barcode: '',
+            _categoryId: resultSubcategory[subCategoryIndex]._categoryId,
+            _subCategoryId: dto.arrayItems[i].subCategoryId,
+            _groupId:
+              resultSubcategory[subCategoryIndex].categoryDetails._groupId,
+            _type: 3,
+            _purity:
+              resultSubcategory[subCategoryIndex].categoryDetails.groupDetails
+                ._purity,
+            _hmSealingStatus: 0,
+            _huId: [],
+            _eCommerceStatus: 1,
+            _isStone: dto.arrayItems[i].isStone,
+            _moldNumber: dto.arrayItems[i].moldNumber,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+        }
+        console.log('___a4');
         if (orderItemId != null) {
           await this.orderSaleItemsModel.findOneAndUpdate(
             {
@@ -1763,38 +1764,37 @@ export class ProductsService {
                 },
               },
             );
-            }
-            const productStoneLinkingColourMaster =
-              dto.screenType.includes(111);
-            if (productStoneLinkingColourMaster) {
-              pipeline.push(
-                {
-                  $lookup: {
-                    from: ModelNames.COLOUR_MASTERS,
-                    let: { stoneColourId: '$_stoneColourId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$stoneColourId'] },
-                        },
+          }
+          const productStoneLinkingColourMaster = dto.screenType.includes(111);
+          if (productStoneLinkingColourMaster) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.COLOUR_MASTERS,
+                  let: { stoneColourId: '$_stoneColourId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$stoneColourId'] },
                       },
-                      new ModelWeightResponseFormat().colourMasterTableResponseFormat(
-                        1110,
-                        dto.responseFormat,
-                      ),
-                    ],
-                    as: 'stoneColourDetails',
-                  },
+                    },
+                    new ModelWeightResponseFormat().colourMasterTableResponseFormat(
+                      1110,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'stoneColourDetails',
                 },
-                {
-                  $unwind: {
-                    path: '$stoneColourDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
+              },
+              {
+                $unwind: {
+                  path: '$stoneColourDetails',
+                  preserveNullAndEmptyArrays: true,
                 },
-              );
-            }
-          
+              },
+            );
+          }
+
           return pipeline;
         };
 
@@ -1992,7 +1992,9 @@ export class ProductsService {
       var result = await this.productModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
-console.log("arrayAggregation product __  "+JSON.stringify(arrayAggregation));
+      console.log(
+        'arrayAggregation product __  ' + JSON.stringify(arrayAggregation),
+      );
       var totalCount = 0;
       if (dto.screenType.includes(0)) {
         //Get total count

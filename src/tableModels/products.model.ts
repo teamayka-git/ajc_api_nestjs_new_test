@@ -148,5 +148,7 @@ function schemaPostFunctionForDuplicate(error, doc, next) {
 _type:{
     0 - from order sale
     1 - from stock sale
+    2 - stock product
+    3 - design
 }
  */
