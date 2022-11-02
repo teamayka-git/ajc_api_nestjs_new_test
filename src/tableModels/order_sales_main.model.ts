@@ -173,6 +173,7 @@ _type:{
 }
 
 _deliveryType:{
+  -1 - pending
   0 - bundle delivery,
   1 - get me the ready item first
 }

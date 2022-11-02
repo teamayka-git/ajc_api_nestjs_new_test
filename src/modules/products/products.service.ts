@@ -412,10 +412,12 @@ export class ProductsService {
             _status: 1,
           });
         });
-
+        console.log("___a1");
 
         var designId=new mongoose.Types.ObjectId();
-        arrayToProducts.push({
+
+        console.log("___a2");
+                arrayToProducts.push({
           _id: productId,
           _name: dto.arrayItems[i].name,
           _designerId:designId,
