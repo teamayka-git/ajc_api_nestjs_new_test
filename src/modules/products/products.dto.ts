@@ -73,6 +73,11 @@ class ProductCreateList {
   moldNumber: string;
 
 
+  @IsString()
+  @ApiProperty({})
+  designId: string;
+
+
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})

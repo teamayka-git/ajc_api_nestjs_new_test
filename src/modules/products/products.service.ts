@@ -414,7 +414,10 @@ export class ProductsService {
         });
         console.log('___a1');
 
-        var designId = new mongoose.Types.ObjectId();
+        var designId =
+          dto.arrayItems[i].designId == ''
+            ? new mongoose.Types.ObjectId()
+            : dto.arrayItems[i].designId;
 
         console.log('___a2');
         arrayToProducts.push({
