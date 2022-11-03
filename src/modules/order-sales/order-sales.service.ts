@@ -348,7 +348,7 @@ console.log("___d1");
           _isDeliveryRejected: 0,
           _uid:
             uidSalesOrder + new StringUtils().numberToEncodedLetter(index + 1),
-          _stoneColour: eachItem.stoneColor,
+          _stoneColour: eachItem.stoneColor, 
           _productData: { _idDone: 0 },
           _productId: (eachItem.productId!= null && eachItem.productId!="")?eachItem.productId:null,
           _designId:(eachItem.designId!= null && eachItem.designId!="")?eachItem.designId:null,

@@ -17,7 +17,7 @@ export const OrderSalesItemsSchema = new mongoose.Schema({
   _quantity: { type: String, required: true, default: 'nil' },
   _size: { type: String, required: true, default: 'nil' },
   _weight: { type: String, required: true, default: 'nil' },
-  _stoneColour: { type: String, required: true, default: 'nil' },
+  _stoneColour: { type: String, required: false, default: '' },
   _productId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.PRODUCTS,
