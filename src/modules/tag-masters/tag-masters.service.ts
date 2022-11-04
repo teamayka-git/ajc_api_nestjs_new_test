@@ -488,17 +488,17 @@ console.log("___ tag master  "+JSON.stringify(dto));
         }
         if (dto.gwStart != -1 && dto.gwEnd != -1) {
           pipeline.push({
-            $match: { _grossWeight: { $lte: dto.gwEnd, $gte: dto.gwEnd } },
+            $match: { _grossWeight: { $lte: dto.gwEnd, $gte: dto.gwStart } },
           });
         }
         if (dto.swStart != -1 && dto.swEnd != -1) {
           pipeline.push({
-            $match: { _totalStoneWeight: { $lte: dto.swEnd, $gte: dto.swEnd } },
+            $match: { _totalStoneWeight: { $lte: dto.swEnd, $gte: dto.swStart } },
           });
         }
         if (dto.nwStart != -1 && dto.nwEnd != -1) {
           pipeline.push({
-            $match: { _netWeight: { $lte: dto.nwEnd, $gte: dto.nwEnd } },
+            $match: { _netWeight: { $lte: dto.nwEnd, $gte: dto.nwStart } },
           });
         }
 
