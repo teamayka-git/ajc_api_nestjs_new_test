@@ -228,6 +228,41 @@ export class TagLinkedProductListDto {
   @ApiProperty({ type: [String] })
   tagIds: string[];
 
+
+
+
+  
+  @IsNumber()
+  @ApiProperty({})
+  gwStart: number;
+
+  
+  @IsNumber()
+  @ApiProperty({})
+  gwEnd: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  nwStart: number;
+
+  
+  @IsNumber()
+  @ApiProperty({})
+  nwEnd: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  swStart: number;
+
+  
+  @IsNumber()
+  @ApiProperty({})
+  swEnd: number;
+
+  
+  
+
+
   
   
   @IsNumber()

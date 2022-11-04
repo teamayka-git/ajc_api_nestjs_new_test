@@ -465,28 +465,59 @@ export class TagMastersService {
     try {
       var arrayAggregation = [];
 
-      if (dto.searchingText != '') {
-        arrayAggregation.push( {
-          $lookup: {
-            from: ModelNames.PRODUCTS,
-            let: { productId: '$_productId' },
-            pipeline: [
-              {
-                $match: { _name: new RegExp(dto.searchingText, 'i'),
-                  $expr: { $eq: ['$_id', '$$productId'] },
-                },
-              },
-              { $project: {_id:1} }
-            ],
-            as: 'productNameMongoCheck',
-          },
-        },
-        {
-          $unwind: {
-            path: '$productNameMongoCheck',
+      if (
+        dto.searchingText != '' ||
+        (dto.gwStart != -1 && dto.gwEnd != -1) ||
+        (dto.nwStart != -1 && dto.nwEnd != -1) ||
+        (dto.swStart != -1 && dto.swEnd != -1)
+      ) {
+        var pipeline = [];
+        pipeline.push({
+          $match: {
+            $expr: { $eq: ['$_id', '$$productId'] },
           },
         });
+
+        if (dto.searchingText != '') {
+          pipeline.push({
+            $match: { _name: new RegExp(dto.searchingText, 'i') },
+          });
+        }
+        if (dto.gwStart != -1 && dto.gwEnd != -1) {
+          pipeline.push({
+            $match: { _grossWeight: { $lte: dto.gwEnd, $gte: dto.gwEnd } },
+          });
+        }
+        if (dto.swStart != -1 && dto.swEnd != -1) {
+          pipeline.push({
+            $match: { _totalStoneWeight: { $lte: dto.swEnd, $gte: dto.swEnd } },
+          });
+        }
+        if (dto.nwStart != -1 && dto.nwEnd != -1) {
+          pipeline.push({
+            $match: { _netWeight: { $lte: dto.nwEnd, $gte: dto.nwEnd } },
+          });
+        }
+
+        pipeline.push({ $project: { _id: 1 } });
+        // _name: new RegExp(dto.searchingText, 'i'),
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.PRODUCTS,
+              let: { productId: '$_productId' },
+              pipeline: pipeline,
+              as: 'productNameMongoCheck',
+            },
+          },
+          {
+            $unwind: {
+              path: '$productNameMongoCheck',
+            },
+          },
+        );
       }
+
       if (dto.tagIds.length > 0) {
         var newSettingsId = [];
         dto.tagIds.map((mapItem) => {
@@ -532,7 +563,9 @@ export class TagMastersService {
             const productDocumentLinkingPipeline = () => {
               const pipeline = [];
               pipeline.push(
-                { $match: { $expr: { $eq: ['$_productId', '$$productSubId'] } } },
+                {
+                  $match: { $expr: { $eq: ['$_productId', '$$productSubId'] } },
+                },
                 new ModelWeightResponseFormat().productDocumentLinkingTableResponseFormat(
                   1010,
                   dto.responseFormat,
@@ -540,32 +573,32 @@ export class TagMastersService {
               );
 
               if (dto.screenType.includes(102)) {
-              pipeline.push(
-                {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.GLOBAL_GALLERIES,
+                      let: { globalGalleryId: '$_globalGalleryId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                          },
                         },
-                      },
-                      new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
-                        1020,
-                        dto.responseFormat,
-                      ),
-                    ],
-                    as: 'globalGalleryDetails',
+                        new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                          1020,
+                          dto.responseFormat,
+                        ),
+                      ],
+                      as: 'globalGalleryDetails',
+                    },
                   },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
+                  {
+                    $unwind: {
+                      path: '$globalGalleryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
                   },
-                },
-              );
+                );
               }
               return pipeline;
             };
@@ -598,7 +631,8 @@ export class TagMastersService {
             },
           },
         );
-      }console.log("___arrayAggregation   "+JSON.stringify(arrayAggregation));
+      }
+      console.log('___arrayAggregation   ' + JSON.stringify(arrayAggregation));
 
       // if (dto.screenType.includes(100)) {
       //   const tagDocumentsPipeline = () => {

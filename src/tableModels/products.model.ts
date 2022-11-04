@@ -84,7 +84,7 @@ export interface Products {
   _huId: Object;
   _eCommerceStatus: Number;
   _moldNumber: Number;
-  _isStone: Number;
+  _isStone: Number; 
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
