@@ -465,6 +465,9 @@ export class TagMastersService {
     try {
       var arrayAggregation = [];
 
+
+console.log("___ tag master  "+JSON.stringify(dto));
+
       if (
         dto.searchingText != '' ||
         (dto.gwStart != -1 && dto.gwEnd != -1) ||
