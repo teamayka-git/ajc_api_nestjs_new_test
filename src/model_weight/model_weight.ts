@@ -1178,6 +1178,8 @@ export class ModelWeight {
       _id: 1,
       _name: 1,
 
+      _type: 1,
+
       _grossWeight: 1,
     };
   }
