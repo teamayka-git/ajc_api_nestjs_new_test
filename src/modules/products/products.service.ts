@@ -432,6 +432,11 @@ export class ProductsService {
           _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
           _grossWeight: dto.arrayItems[i].grossWeight,
           _barcode:
+
+
+
+          BarCodeQrCodePrefix.PRODUCT_AND_INVOICE +
+
                 new StringUtils().intToDigitString(autoIncrementNumber, 8)
               ,
           _categoryId: resultSubcategory[subCategoryIndex]._categoryId,
