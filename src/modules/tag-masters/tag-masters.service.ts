@@ -466,12 +466,26 @@ export class TagMastersService {
       var arrayAggregation = [];
 
       if (dto.searchingText != '') {
-        //todo
-        // arrayAggregation.push({
-        //   $match: {
-        //     $or: [{ _name: new RegExp(dto.searchingText, 'i') }],
-        //   },
-        // });
+        arrayAggregation.push( {
+          $lookup: {
+            from: ModelNames.PRODUCTS,
+            let: { productId: '$_productId' },
+            pipeline: [
+              {
+                $match: { _name: new RegExp(dto.searchingText, 'i'),
+                  $expr: { $eq: ['$_id', '$$productId'] },
+                },
+              },
+              { $project: {_id:1} }
+            ],
+            as: 'productNameMongoCheck',
+          },
+        },
+        {
+          $unwind: {
+            path: '$productNameMongoCheck',
+          },
+        });
       }
       if (dto.tagIds.length > 0) {
         var newSettingsId = [];
