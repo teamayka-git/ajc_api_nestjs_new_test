@@ -201,16 +201,18 @@ console.log("___d1");
 
       dto.arrayItems.forEach(elementEach => {
         if(elementEach.globalGalleryIds!=null && elementEach.globalGalleryIds.length!=0){
+        elementEach.globalGalleryIds.forEach(elementEachChild => {
           arrayGlobalGalleriesDocuments.push({
             _orderSaleId: orderSaleId,
-            _globalGalleryId: elementEach,
+            _globalGalleryId: elementEachChild,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _updatedUserId: null,
             _updatedAt: -1,
             _status: 1,
           });
-        }
+        });
+      }
       });
 
 
