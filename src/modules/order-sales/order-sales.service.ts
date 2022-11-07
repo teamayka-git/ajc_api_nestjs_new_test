@@ -2218,6 +2218,7 @@ if(arrayGlobalGalleriesDocuments.length!=0){
       var resultWorkets = [];
       var resultProcessMasters = [];
       var resultSubCategory = [];
+      var resultShop = [];
 
       if (dto.screenType.includes(107)) {
         var resultDepartment = await this.departmentModel.find({
@@ -2344,6 +2345,37 @@ if(arrayGlobalGalleriesDocuments.length!=0){
 
         resultSubCategory = await this.subCategoryModel.aggregate(pipeline);
       }
+
+      if (dto.screenType.includes(505)) {
+        var pipeline = [];
+        pipeline.push({
+          $match: {
+            _status: 1,
+          },
+        });
+
+       
+
+          var newSettingsIdShop = [];
+          dto.shopIds.map((mapItem) => {
+            newSettingsIdShop.push(new mongoose.Types.ObjectId(mapItem));
+          });
+          pipeline.push({
+            $match: {
+              _id:{$in:newSettingsIdShop},
+            },
+          });
+        
+
+        pipeline.push(
+          new ModelWeightResponseFormat().shopTableResponseFormat(
+            5050,
+            dto.responseFormat,
+          ),
+        );
+
+        resultShop = await this.shopsModel.aggregate(pipeline);
+      }
       var generalSetting = [];
       if (dto.screenType.includes(501)) {
         generalSetting = await this.generalsModel.aggregate([
@@ -2413,6 +2445,7 @@ if(arrayGlobalGalleriesDocuments.length!=0){
           workers: resultWorkets,
           processMasters: resultProcessMasters,
           subCategory: resultSubCategory,
+          shopDetails:resultShop,
           generalSetting: generalSetting,
           appUpdates: resultGeneralsAppUpdate,
           delRejectRootCause: resultDeliveryRejectRootCause,

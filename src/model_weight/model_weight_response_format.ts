@@ -200,11 +200,13 @@ export class ModelWeightResponseFormat {
       return { $project: { _: 0 } };
     }else if (responseFormatArray.includes(startIndex + 4)) {
       return { $project: new ModelWeight().shopTableCustom1() };
+    } else if (responseFormatArray.includes(startIndex + 5)) {
+      return { $project: new ModelWeight().shopTableCustom2() };
     } else {
       return { $project: { _: 0 } };
     }
-  }shopTableCustom1
-
+  }
+  
   public orderSaleMainTableResponseFormat(
     startIndex: int,
     responseFormatArray: List,
