@@ -68,9 +68,12 @@ class ProductCreateList {
   name: string;
 
 
-  @IsString()
-  @ApiProperty({})
-  moldNumber: string;
+  @Transform(({ value }) =>
+  typeof value == 'string' ? JSON.parse(value) : value,
+)
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  moldNumber: string[];
 
 
   @IsString()
@@ -191,9 +194,13 @@ export class ProductEditDto {
   orderId: string;
 
 
-  @IsString()
-  @ApiProperty({})
-  moldNumber: string;
+
+  @Transform(({ value }) =>
+  typeof value == 'string' ? JSON.parse(value) : value,
+)
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  moldNumber: string[];
 
 
   @Transform(({ value }) => Number(value))
