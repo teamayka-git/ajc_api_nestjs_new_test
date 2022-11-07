@@ -615,6 +615,101 @@ console.log("___ tag master  "+JSON.stringify(dto));
               },
             });
           }
+
+
+
+
+          if (dto.screenType.includes(103)) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.SUB_CATEGORIES,
+                  let: { subcategoryId: '$_subCategoryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$subcategoryId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().subCategoryTableResponseFormat(
+                      1030,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'subCategoryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$subCategoryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
+
+
+
+          if (dto.screenType.includes(104)) {
+            const productStoneLinkingPipeline = () => {
+              const pipeline = [];
+              pipeline.push(
+                {
+                  $match: {_status:1, $expr: { $eq: ['$_productId', '$$productId'] } },
+                },
+                new ModelWeightResponseFormat().productStoneLinkingTableResponseFormat(
+                  1040,
+                  dto.responseFormat,
+                ),
+              );
+
+              if (dto.screenType.includes(105)) {
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.COLOUR_MASTERS,
+                      let: { colorId: '$_stoneColourId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$colorId'] },
+                          },
+                        },
+                        new ModelWeightResponseFormat().colourMasterTableResponseFormat(
+                          1050,
+                          dto.responseFormat,
+                        ),
+                      ],
+                      as: 'colorDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$colorDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                );
+              }
+              return pipeline;
+            };
+
+            pipeline.push({
+              $lookup: {
+                from: ModelNames.PRODUCT_STONE_LINKIGS,
+                let: { productId: '$_id' },
+                pipeline: productStoneLinkingPipeline(),
+                as: 'productStoneLinking',
+              },
+            });
+          }
+
+
+
+
+
+
           return pipeline;
         };
 
