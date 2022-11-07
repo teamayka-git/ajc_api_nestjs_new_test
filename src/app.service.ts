@@ -1200,6 +1200,20 @@ resultCounterLinkingUsers.forEach((element)=>{
         { upsert: true, new: true, session: transactionSession },
       );
       await this.countersModel.findOneAndUpdate(
+        { _tableName: ModelNames.PRODUCTS+"_design" },
+        {
+          $setOnInsert: {
+            _count: 0,
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+      await this.countersModel.findOneAndUpdate(
         { _tableName: ModelNames.HALMARK_CENTERS },
         {
           $setOnInsert: {

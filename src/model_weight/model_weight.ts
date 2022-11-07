@@ -2427,6 +2427,7 @@ export class ModelWeight {
       _tagId: 1,
       _productId: 1,
       _createdUserId: 1,
+      _designUid:1,
       _createdAt: 1,
       _status: 1,
     };
@@ -2447,6 +2448,7 @@ export class ModelWeight {
       _tagId: 1,
       _productId: 1,
       _createdUserId: 1,
+      _designUid:1,
       _createdAt: 1,
       _updatedUserId: 1,
       _updatedAt: 1,

@@ -5,6 +5,7 @@ import { GlobalConfig } from 'src/config/global_config';
 export const ProductsSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
   _name: { type: String, required: true, default: 'nil' },
+  _designUid: { type: String, required: false, default: '' },
   _designerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.PRODUCTS,
@@ -67,6 +68,7 @@ export const ProductsSchema = new mongoose.Schema({
 export interface Products {
   _id: String; 
   _name: String;
+  _designUid:String;
   _designerId: String;
   _shopId: String;
   _orderItemId: String;
@@ -92,6 +94,7 @@ export interface Products {
   _status: Number;
 }
 
+ProductsSchema.index({ _designUid: 1 });
 ProductsSchema.index({ _productType: 1 });
 ProductsSchema.index({ _isStone: 1 });
 ProductsSchema.index({ _moldNumber: 1 });
@@ -120,6 +123,10 @@ ProductsSchema.index(
 ProductsSchema.index(
   { _orderId: 1 },
   { unique: true, partialFilterExpression: { _orderId: { $ne: null } } },
+);
+ProductsSchema.index(
+  { _designUid: 1 },
+  { unique: true, partialFilterExpression: { _designUid: { $ne: "" } } },
 );
 ProductsSchema.post('save', async function (error, doc, next) {
   schemaPostFunctionForDuplicate(error, doc, next);

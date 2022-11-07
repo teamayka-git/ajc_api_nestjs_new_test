@@ -384,6 +384,20 @@ export class ProductsService {
           orderItemId = null;
         }
 
+        var designUid = '';
+        if (dto.arrayItems[i].type != 3) {
+          var resultDesignUid = await this.counterModel.findOneAndUpdate(
+            { _tableName: ModelNames.PRODUCTS + '_design' },
+            {
+              $inc: {
+                _count: dto.arrayItems.length,
+              },
+            },
+            { new: true, session: transactionSession },
+          );
+          designUid = resultDesignUid._count.toString();
+        }
+
         dto.arrayItems[i].stonesArray.map((mapItem1) => {
           arrayStonesLinkings.push({
             _productId: productId,
@@ -426,19 +440,14 @@ export class ProductsService {
           _designerId: dto.arrayItems[i].eCommerceStatus == 0 ? null : designId,
           _shopId: shopId,
           _orderItemId: orderItemId,
-
+          _designUid: designUid,
           _productType: 0,
           _netWeight: dto.arrayItems[i].netWeight,
           _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
           _grossWeight: dto.arrayItems[i].grossWeight,
           _barcode:
-
-
-
-          BarCodeQrCodePrefix.PRODUCT_AND_INVOICE +
-
-                new StringUtils().intToDigitString(autoIncrementNumber, 8)
-              ,
+            BarCodeQrCodePrefix.PRODUCT_AND_INVOICE +
+            new StringUtils().intToDigitString(autoIncrementNumber, 8),
           _categoryId: resultSubcategory[subCategoryIndex]._categoryId,
           _subCategoryId: dto.arrayItems[i].subCategoryId,
           _groupId:
@@ -461,12 +470,26 @@ export class ProductsService {
 
         console.log('___a3');
         if (dto.arrayItems[i].eCommerceStatus == 1) {
+          var designUidSecondary = '';
+          var resultDesignUidSecondary =
+            await this.counterModel.findOneAndUpdate(
+              { _tableName: ModelNames.PRODUCTS + '_design' },
+              {
+                $inc: {
+                  _count: dto.arrayItems.length,
+                },
+              },
+              { new: true, session: transactionSession },
+            );
+          designUidSecondary = resultDesignUidSecondary._count.toString();
+
           arrayToProducts.push({
             _id: designId,
             _name: dto.arrayItems[i].name,
             _designerId: null,
             _shopId: null,
             _orderItemId: null,
+            _designUid: designUidSecondary,
 
             _productType: 1,
             _netWeight: dto.arrayItems[i].netWeight,
