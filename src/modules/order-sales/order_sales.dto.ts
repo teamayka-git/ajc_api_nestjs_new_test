@@ -36,7 +36,7 @@ const descriptionGlobalSearchType="0-Order, 1-shop, 2-Invoice, 3-orderhead, 4-sh
 const descriptionSetProcessListSortOrder = '1-ascending, -1-descending';
 const descriptionSetProcessListSortType = '0-Created Date, 1-Status,2-due date';
 
-
+const descriptionGLobalGalleryIds="this is for while stocksale add design documents to order documents";
 const descriptionScreenTypeGlobalSearch="0 - total documents count, 100 - ordersale items, 101 - ordersale documents, 102 - ordersale documents under[101] global gallery details, 103 - shop details, 104-ordersale items under [100] product details, 105 - set process,106 - set process under[105] process master, 107 - ordersale items under [100] sub category details ";
 const descriptionScreenTypeQrBardodeOrderDetails="0 - total documents count, 100 - ordersale items, 101 - ordersale documents, 102 - ordersale documents under[101] global gallery details, 103 - shop details, 104-ordersale items under [100] product details, 105 - set process,106 - set process under[105] process master, 107 - ordersale items under [100] sub category details ";
 
@@ -95,6 +95,17 @@ class orderSaleItemsCreateList {
   @IsNumber()
   @ApiProperty({ description: descriptionStockStatus })
   stockStatus: number;
+
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ type: [String],description:descriptionGLobalGalleryIds })
+  globalGalleryIds: string[];
+
+
+
 
   
   @IsString()

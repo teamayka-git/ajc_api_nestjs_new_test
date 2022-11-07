@@ -196,13 +196,39 @@ console.log("___d1");
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
         });
-        await this.orderSaleDocumentsModel.insertMany(
-          arrayGlobalGalleriesDocuments,
-          {
-            session: transactionSession,
-          },
-        );
+      
       }
+
+      dto.arrayItems.forEach(elementEach => {
+        if(elementEach.globalGalleryIds!=null && elementEach.globalGalleryIds.length!=0){
+          arrayGlobalGalleriesDocuments.push({
+            _orderSaleId: orderSaleId,
+            _globalGalleryId: elementEach,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+        }
+      });
+
+
+
+if(arrayGlobalGalleriesDocuments.length!=0){
+  await this.orderSaleDocumentsModel.insertMany(
+    arrayGlobalGalleriesDocuments,
+    {
+      session: transactionSession,
+    },
+  );
+}
+
+
+
+
+
+
       
       console.log("___d3.1");
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
