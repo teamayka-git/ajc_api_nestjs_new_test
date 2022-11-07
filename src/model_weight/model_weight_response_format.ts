@@ -675,6 +675,10 @@ export class ModelWeightResponseFormat {
       return { $project: new ModelWeight().productStonelinkingTableMinimum() };
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().productStonelinkingTableMedium() };
+    } else if (responseFormatArray.includes(startIndex + 3)) {
+      return { $project: { _: 0 } };
+    } else if (responseFormatArray.includes(startIndex + 4)) {
+      return { $project: new ModelWeight().productStonelinkingTableCustom1() };
     } else {
       return { $project: { _: 0 } };
     }

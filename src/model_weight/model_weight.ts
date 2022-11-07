@@ -1832,7 +1832,6 @@ export class ModelWeight {
   public productStonelinkingTableLight(): Object {
     return {
       _id: 1,
-      _stoneColourId:1,
       _stoneWeight: 1,
       _stoneAmount:1,
       _quantity: 1,
@@ -1880,6 +1879,12 @@ export class ModelWeight {
     };
   }
 
+  public productStonelinkingTableCustom1(): Object {
+    return {
+      _id: 1,
+      _stoneColourId:1,
+    };
+  }
   public stoneMasterTableLight(): Object {
     return {
       _id: 1,
