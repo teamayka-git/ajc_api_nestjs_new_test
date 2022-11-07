@@ -89,6 +89,7 @@ export const ShopsSchema = new mongoose.Schema({
     },
   },
   _dataGuard: { type: Object, required: true, default: [] },
+  _themeStore: { type:Object, required: true, default:{} },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -115,6 +116,7 @@ export interface Shops {
   _shopType: Number;
   _branchId: String;
   _orderHeadId: String;
+  _themeStore:Object;
   _address: String;
   _relationshipManagerId: String;
   _isSupplier: number;
@@ -151,6 +153,7 @@ ShopsSchema.index({ _name: 1 });
 ShopsSchema.index({ _displayName: 1 });
 ShopsSchema.index({ _tdsTcsStatus: 1 });
 ShopsSchema.index({ _address: 1 });
+ShopsSchema.index({ _themeStore: 1 });
 ShopsSchema.index({ _isTaxIgstEnabled: 1 });
 
 ShopsSchema.index({ _commisionType: 1 });

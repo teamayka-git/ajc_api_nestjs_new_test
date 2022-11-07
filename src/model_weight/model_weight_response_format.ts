@@ -196,10 +196,14 @@ export class ModelWeightResponseFormat {
       return { $project: new ModelWeight().shopTableMinimum() };
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().shopTableMedium() };
+    }else if (responseFormatArray.includes(startIndex + 3)) {
+      return { $project: { _: 0 } };
+    }else if (responseFormatArray.includes(startIndex + 4)) {
+      return { $project: new ModelWeight().shopTableCustom1() };
     } else {
       return { $project: { _: 0 } };
     }
-  }
+  }shopTableCustom1
 
   public orderSaleMainTableResponseFormat(
     startIndex: int,

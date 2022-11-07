@@ -606,6 +606,29 @@ export class ModelWeight {
       _status: 1,
     };
   }
+  public shopTableCustom1(): Object {
+    return {
+      _id: 1,
+      _cityId: 1,
+      _uid: 1,
+      _displayName: 1,
+      _name: 1,
+      _branchId: 1,
+      _orderHeadId: 1,
+      _globalGalleryId: 1,
+      _relationshipManagerId: 1,
+      _rateCardId: 1,
+      _tdsId: 1,
+      _tcsId: 1,
+      _rateBaseMasterId: 1,
+      _agentId: 1,
+      _createdUserId: 1,
+      _dataGuard: 1,
+      _themeStore:1,
+
+      _status: 1,
+    };
+  }
   public deliveryHubTableLight(): Object {
     return {
       _id: 1,
