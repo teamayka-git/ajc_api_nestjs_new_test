@@ -259,10 +259,14 @@ export class ModelWeightResponseFormat {
       return { $project: new ModelWeight().productTableMinimum() };
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().productTableMedium() };
+    }else if (responseFormatArray.includes(startIndex + 3)) {
+      return { $project: { _: 0 } };
     } else if (responseFormatArray.includes(startIndex + 4)) {
       return { $project: new ModelWeight().productTableCustom1() };
     } else if (responseFormatArray.includes(startIndex + 5)) {
       return { $project: new ModelWeight().productTableCustom2() };
+    } else if (responseFormatArray.includes(startIndex + 6)) {
+      return { $project: new ModelWeight().productTableCustom3() };
     } else {
       return { $project: { _: 0 } };
     }

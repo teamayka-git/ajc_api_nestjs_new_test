@@ -1223,6 +1223,14 @@ export class ModelWeight {
     };
   }
 
+  public productTableCustom3(): Object {
+    return {
+      _id: 1,
+      _designUid:1,
+      _moldNumber:1
+    };
+  }
+
   public categoryTableLight(): Object {
     return {
       _id: 1,

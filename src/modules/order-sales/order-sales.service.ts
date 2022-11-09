@@ -1900,7 +1900,7 @@ if(arrayGlobalGalleriesDocuments.length!=0){
               {
                 $lookup: {
                   from: ModelNames.PRODUCTS,
-                  let: { designId: '$_designId' },
+                  let: { designId: '$_designId' }, 
                   pipeline: [
                     {
                       $match: {
