@@ -198,12 +198,15 @@ console.log("___a1");
       var arrayOrderSaleHistory = [];
       var arraySubCategoryidsMDB = [];
 
+      console.log("___a2.0");
       dto.arrayItems.forEach((it) => {
         arraySubCategoryidsMDB.push(
           new mongoose.Types.ObjectId(it.subCategoryId),
         );
       });
 
+      console.log("___a2.1");
+      console.log("___a2.2  "+JSON.stringify(arraySubCategoryidsMDB));
       var resultSubcategory = await this.subCategoriesModel.aggregate([
         {
           $match: {
