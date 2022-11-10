@@ -69,7 +69,7 @@ export class ProductsService {
     try {
 
 console.log("___dto  "+JSON.stringify(dto));
-
+console.log("___a1");
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
 
@@ -190,7 +190,7 @@ console.log("___dto  "+JSON.stringify(dto));
           },
         );
       }
-
+      console.log("___a2");
       var arrayToProducts = [];
 
       var arrayStonesLinkings = [];
@@ -262,7 +262,7 @@ console.log("___dto  "+JSON.stringify(dto));
           },
         },
       ]);
-
+      console.log("___a3");
       if (resultSubcategory.length == 0) {
         throw new HttpException(
           'subCategory Is Empty',
@@ -357,7 +357,7 @@ console.log("___dto  "+JSON.stringify(dto));
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-
+      console.log("___a4");
       for (var i = 0; i < dto.arrayItems.length; i++) {
         let subCategoryIndex = resultSubcategory.findIndex(
           (it) => it._id == dto.arrayItems[i].subCategoryId,
@@ -400,7 +400,7 @@ console.log("___dto  "+JSON.stringify(dto));
           );
           designUid = resultDesignUid._count.toString();
         }
-
+        console.log("___a5");
         dto.arrayItems[i].stonesArray.map((mapItem1) => {
           arrayStonesLinkings.push({
             _productId: productId,
