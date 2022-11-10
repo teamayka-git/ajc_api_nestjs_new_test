@@ -280,6 +280,7 @@ console.log("___a1");
         );
       }
 
+      console.log("___a3.0");
       var resultProduct = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.PRODUCTS },
         {
@@ -290,6 +291,7 @@ console.log("___a1");
         { new: true, session: transactionSession },
       );
 
+      console.log("___a3.1   "+JSON.stringify(resultProduct));
       var resultPhotographer = await this.departmentsModel.aggregate([
         {
           $match: {
@@ -355,12 +357,16 @@ console.log("___a1");
           },
         },
       ]);
+      
+      console.log("___a3.2");
       if (resultPhotographer.length == 0) {
         throw new HttpException(
           'Photography department not found',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
+      
+      console.log("___a3.3");
       if (resultPhotographer[0].employeeList.length == 0) {
         throw new HttpException(
           'Photography employees not found',
