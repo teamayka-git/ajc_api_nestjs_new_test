@@ -203,6 +203,8 @@ console.log("___a1");
         
       console.log("___a2.00");
       console.log("___a2.01   "+it.subCategoryId);
+      
+      console.log("___a2.011");
         arraySubCategoryidsMDB.push(
           new mongoose.Types.ObjectId(it.subCategoryId),
         );
