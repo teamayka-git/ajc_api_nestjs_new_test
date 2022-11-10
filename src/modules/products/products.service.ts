@@ -67,6 +67,9 @@ export class ProductsService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+console.log("___dto  "+JSON.stringify(dto));
+
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
 
