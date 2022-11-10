@@ -73,7 +73,7 @@ console.log("___a1");
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
 
-      if (file.hasOwnProperty('image')) {
+      if (file.hasOwnProperty('documents')) {
         var totalCountDocuments = 0;
 
         dto.arrayItems.forEach((elements) => {
