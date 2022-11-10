@@ -206,6 +206,8 @@ console.log("___a1");
         arraySubCategoryidsMDB.push(
           new mongoose.Types.ObjectId(it.subCategoryId),
         );
+        
+      console.log("___a2.02");
       });
 
       console.log("___a2.1");
