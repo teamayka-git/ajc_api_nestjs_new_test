@@ -430,6 +430,7 @@ console.log("___a1");
           });
         });
         console.log('___a1');
+        console.log('___a1.1');
 
         var designId =
           dto.arrayItems[i].designId == ''
