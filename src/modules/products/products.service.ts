@@ -200,6 +200,9 @@ console.log("___a1");
 
       console.log("___a2.0");
       dto.arrayItems.forEach((it) => {
+        
+      console.log("___a2.00");
+      console.log("___a2.01   "+it.subCategoryId);
         arraySubCategoryidsMDB.push(
           new mongoose.Types.ObjectId(it.subCategoryId),
         );
