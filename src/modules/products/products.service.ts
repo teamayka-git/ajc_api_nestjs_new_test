@@ -436,7 +436,9 @@ console.log("___a1");
             ? new mongoose.Types.ObjectId()
             : dto.arrayItems[i].designId;
 
-        console.log('___a2  '+designId);
+            console.log('___a2  '+designId);
+            console.log('___a2.1  '+designId);
+            console.log('___a2.2  '+dto.arrayItems[i].designId);
         arrayToProducts.push({
           _id: productId,
           _name: dto.arrayItems[i].name,
