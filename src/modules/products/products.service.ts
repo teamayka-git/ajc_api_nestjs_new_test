@@ -853,7 +853,7 @@ console.log("___a1");
       var resultSubcategory = await this.subCategoriesModel.aggregate([
         {
           $match: {
-            _id: { $in: arraySubCategoryidsMDB },
+            _id:  new mongoose.Types.ObjectId(dto.subCategoryId) ,
           },
         },
         {
