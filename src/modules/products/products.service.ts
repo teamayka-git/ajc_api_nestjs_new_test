@@ -404,7 +404,7 @@ console.log("___a1");
         }
 
         var designUid = '';
-        if (dto.arrayItems[i].type != 3) {
+        if (dto.arrayItems[i].type == 3) {
           var resultDesignUid = await this.counterModel.findOneAndUpdate(
             { _tableName: ModelNames.PRODUCTS + '_design' },
             {
