@@ -67,9 +67,8 @@ export class ProductsService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-
-console.log("___dto  "+JSON.stringify(dto));
-console.log("___a1");
+      console.log('___dto  ' + JSON.stringify(dto));
+      console.log('___a1');
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
 
@@ -190,7 +189,7 @@ console.log("___a1");
           },
         );
       }
-      console.log("___a2");
+      console.log('___a2');
       var arrayToProducts = [];
 
       var arrayStonesLinkings = [];
@@ -198,22 +197,21 @@ console.log("___a1");
       var arrayOrderSaleHistory = [];
       var arraySubCategoryidsMDB = [];
 
-      console.log("___a2.0");
+      console.log('___a2.0');
       dto.arrayItems.forEach((it) => {
-        
-      console.log("___a2.00");
-      console.log("___a2.01   "+it.subCategoryId);
-      
-      console.log("___a2.011");
+        console.log('___a2.00');
+        console.log('___a2.01   ' + it.subCategoryId);
+
+        console.log('___a2.011');
         arraySubCategoryidsMDB.push(
           new mongoose.Types.ObjectId(it.subCategoryId),
         );
-        
-      console.log("___a2.02");
+
+        console.log('___a2.02');
       });
 
-      console.log("___a2.1");
-      console.log("___a2.2  "+JSON.stringify(arraySubCategoryidsMDB));
+      console.log('___a2.1');
+      console.log('___a2.2  ' + JSON.stringify(arraySubCategoryidsMDB));
       var resultSubcategory = await this.subCategoriesModel.aggregate([
         {
           $match: {
@@ -272,7 +270,7 @@ console.log("___a1");
           },
         },
       ]);
-      console.log("___a3");
+      console.log('___a3');
       if (resultSubcategory.length == 0) {
         throw new HttpException(
           'subCategory Is Empty',
@@ -280,7 +278,7 @@ console.log("___a1");
         );
       }
 
-      console.log("___a3.0");
+      console.log('___a3.0');
       var resultProduct = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.PRODUCTS },
         {
@@ -291,7 +289,7 @@ console.log("___a1");
         { new: true, session: transactionSession },
       );
 
-      console.log("___a3.1   "+JSON.stringify(resultProduct));
+      console.log('___a3.1   ' + JSON.stringify(resultProduct));
       var resultPhotographer = await this.departmentsModel.aggregate([
         {
           $match: {
@@ -357,23 +355,23 @@ console.log("___a1");
           },
         },
       ]);
-      
-      console.log("___a3.2");
+
+      console.log('___a3.2');
       if (resultPhotographer.length == 0) {
         throw new HttpException(
           'Photography department not found',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-      
-      console.log("___a3.3");
+
+      console.log('___a3.3');
       if (resultPhotographer[0].employeeList.length == 0) {
         throw new HttpException(
           'Photography employees not found',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-      console.log("___a4");
+      console.log('___a4');
       for (var i = 0; i < dto.arrayItems.length; i++) {
         let subCategoryIndex = resultSubcategory.findIndex(
           (it) => it._id == dto.arrayItems[i].subCategoryId,
@@ -416,7 +414,7 @@ console.log("___a1");
           );
           designUid = resultDesignUid._count.toString();
         }
-        console.log("___a5");
+        console.log('___a5');
         dto.arrayItems[i].stonesArray.map((mapItem1) => {
           arrayStonesLinkings.push({
             _productId: productId,
@@ -453,13 +451,18 @@ console.log("___a1");
             ? new mongoose.Types.ObjectId()
             : dto.arrayItems[i].designId;
 
-            console.log('___a2  '+designId);
-            console.log('___a2.1  '+designId);
-            console.log('___a2.2  '+dto.arrayItems[i].designId);
+        console.log('___a2  ' + designId);
+        console.log('___a2.1  ' + designId);
+        console.log('___a2.2  ' + dto.arrayItems[i].designId);
         arrayToProducts.push({
           _id: productId,
           _name: dto.arrayItems[i].name,
-          _designerId: (dto.arrayItems[i].eCommerceStatus == 0 && dto.arrayItems[i].type!=3) ? null : designId,
+          _designerId:
+            dto.arrayItems[i].type == 3
+              ? null
+              : dto.arrayItems[i].eCommerceStatus == 0
+              ? null
+              : designId,
           _shopId: shopId,
           _orderItemId: orderItemId,
           _designUid: designUid,
@@ -467,9 +470,11 @@ console.log("___a1");
           _netWeight: dto.arrayItems[i].netWeight,
           _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
           _grossWeight: dto.arrayItems[i].grossWeight,
-          _barcode:(dto.arrayItems[i].type!=3)?
-            BarCodeQrCodePrefix.PRODUCT_AND_INVOICE +
-            new StringUtils().intToDigitString(autoIncrementNumber, 8):"",
+          _barcode:
+            dto.arrayItems[i].type != 3
+              ? BarCodeQrCodePrefix.PRODUCT_AND_INVOICE +
+                new StringUtils().intToDigitString(autoIncrementNumber, 8)
+              : '',
           _categoryId: resultSubcategory[subCategoryIndex]._categoryId,
           _subCategoryId: dto.arrayItems[i].subCategoryId,
           _groupId:
@@ -491,7 +496,10 @@ console.log("___a1");
         });
 
         console.log('___a3');
-        if (dto.arrayItems[i].eCommerceStatus == 1 && dto.arrayItems[i].type!=3) {
+        if (
+          dto.arrayItems[i].eCommerceStatus == 1 &&
+          dto.arrayItems[i].type != 3
+        ) {
           var designUidSecondary = '';
           var resultDesignUidSecondary =
             await this.counterModel.findOneAndUpdate(
@@ -853,7 +861,7 @@ console.log("___a1");
       var resultSubcategory = await this.subCategoriesModel.aggregate([
         {
           $match: {
-            _id:  new mongoose.Types.ObjectId(dto.subCategoryId) ,
+            _id: new mongoose.Types.ObjectId(dto.subCategoryId),
           },
         },
         {
@@ -1058,21 +1066,21 @@ console.log("___a1");
         },
         { new: true, session: transactionSession },
       );
-      if(dto.orderId!=""){
-      arrayOrderSaleHistory.push({
-        _orderSaleId: dto.orderId,
-        _userId: null,
-        _type: 109,
-        _orderSaleItemId: null,
-        _deliveryCounterId: null,
-        _deliveryProviderId: null,
-        _shopId: null,
-        _description: '',
-        _createdUserId: _userId_,
-        _createdAt: dateTime,
-        _status: 1,
-      });
-    }
+      if (dto.orderId != '') {
+        arrayOrderSaleHistory.push({
+          _orderSaleId: dto.orderId,
+          _userId: null,
+          _type: 109,
+          _orderSaleItemId: null,
+          _deliveryCounterId: null,
+          _deliveryProviderId: null,
+          _shopId: null,
+          _description: '',
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _status: 1,
+        });
+      }
 
       if (arrayStonesLinkings.length != 0) {
         await this.productStoneLinkingsModel.insertMany(arrayStonesLinkings, {
