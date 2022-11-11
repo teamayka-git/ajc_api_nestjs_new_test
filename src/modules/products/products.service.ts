@@ -459,7 +459,7 @@ console.log("___a1");
         arrayToProducts.push({
           _id: productId,
           _name: dto.arrayItems[i].name,
-          _designerId: dto.arrayItems[i].eCommerceStatus == 0 ? null : designId,
+          _designerId: (dto.arrayItems[i].eCommerceStatus == 0 && dto.arrayItems[i].type!=3) ? null : designId,
           _shopId: shopId,
           _orderItemId: orderItemId,
           _designUid: designUid,
@@ -467,9 +467,9 @@ console.log("___a1");
           _netWeight: dto.arrayItems[i].netWeight,
           _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
           _grossWeight: dto.arrayItems[i].grossWeight,
-          _barcode:
+          _barcode:(dto.arrayItems[i].type!=3)?
             BarCodeQrCodePrefix.PRODUCT_AND_INVOICE +
-            new StringUtils().intToDigitString(autoIncrementNumber, 8),
+            new StringUtils().intToDigitString(autoIncrementNumber, 8):"",
           _categoryId: resultSubcategory[subCategoryIndex]._categoryId,
           _subCategoryId: dto.arrayItems[i].subCategoryId,
           _groupId:
