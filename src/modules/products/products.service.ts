@@ -491,7 +491,7 @@ console.log("___a1");
         });
 
         console.log('___a3');
-        if (dto.arrayItems[i].eCommerceStatus == 1) {
+        if (dto.arrayItems[i].eCommerceStatus == 1 && dto.arrayItems[i].type!=3) {
           var designUidSecondary = '';
           var resultDesignUidSecondary =
             await this.counterModel.findOneAndUpdate(
