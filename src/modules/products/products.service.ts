@@ -1058,6 +1058,7 @@ console.log("___a1");
         },
         { new: true, session: transactionSession },
       );
+      if(dto.orderId!=""){
       arrayOrderSaleHistory.push({
         _orderSaleId: dto.orderId,
         _userId: null,
@@ -1071,6 +1072,7 @@ console.log("___a1");
         _createdAt: dateTime,
         _status: 1,
       });
+    }
 
       if (arrayStonesLinkings.length != 0) {
         await this.productStoneLinkingsModel.insertMany(arrayStonesLinkings, {
