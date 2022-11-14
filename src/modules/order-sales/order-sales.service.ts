@@ -405,6 +405,10 @@ console.log("___d1");
       });
 
       
+      await this.orderSaleItemsModel.insertMany(arraySalesItems, {
+        session: transactionSession,
+      });
+      
       await this.ordersaleItemDocumentsModel.insertMany(arrayOrderSaleItemGlobalGallery, {
         session: transactionSession,
       });
