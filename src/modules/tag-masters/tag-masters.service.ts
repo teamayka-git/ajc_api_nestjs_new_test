@@ -155,6 +155,8 @@ export class TagMastersService {
         _name: dto.name,
         _dataGuard: dto.dataGuard,
         _priority: dto.priority,
+        _startAt: dto.startAt,
+        _endAt: dto.endAt,
         _type: dto.type,
         _isShowEcommerce: dto.isShowEcommerce,
         _tagId: dto.tagId == '' ? null : dto.tagId,
@@ -203,6 +205,8 @@ export class TagMastersService {
         _dataGuard: dto.dataGuard,
         _priority: dto.priority,
         _type: dto.type,
+        _startAt: dto.startAt,
+        _endAt: dto.endAt,
         _tagId: dto.tagId == '' ? null : dto.tagId,
         _isShowEcommerce: dto.isShowEcommerce,
         _updatedUserId: _userId_,
@@ -322,6 +326,31 @@ export class TagMastersService {
           $match: { _type: { $in: dto.type } },
         });
       }
+      if (dto.startAt != -1) {
+        arrayAggregation.push({
+          $match: {
+            $or: [
+              { _startAt: { $eq: -1 } },
+              { _startAt: { $gte: dto.startAt } },
+            ],
+          },
+        });
+      }
+      if (dto.endAt != -1) {
+        arrayAggregation.push({
+          $match: {
+            $or: [{ _endAt: { $eq: -1 } }, { _endAt: { $lte: dto.endAt } }],
+          },
+        });
+      }
+
+      // _endAt: { $eq: -1, $lte: dto.endAt }
+      // _startAt: { $eq: -1, $gte: dto.startAt }
+      // requestConference.push({
+      //   $match: {
+      //     $or: [{ _expiryDate: { $gt: dateTime } }, { _expiryDate: -1 }],
+      //   },
+      // });
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
@@ -337,6 +366,12 @@ export class TagMastersService {
           break;
         case 3:
           arrayAggregation.push({ $sort: { _priority: dto.sortOrder } });
+          break;
+        case 4:
+          arrayAggregation.push({ $sort: { _startAt: dto.sortOrder } });
+          break;
+        case 5:
+          arrayAggregation.push({ $sort: { _endAt: dto.sortOrder } });
           break;
       }
 
@@ -465,8 +500,21 @@ export class TagMastersService {
     try {
       var arrayAggregation = [];
 
+      console.log('___ tag master  ' + JSON.stringify(dto));
 
-console.log("___ tag master  "+JSON.stringify(dto));
+      arrayAggregation.push({
+        $match: {
+          $and: [
+            { $or: [{ _endAt: { $eq: -1 } }, { _endAt: { $gte: dateTime } }] },
+            {
+              $or: [
+                { _startAt: { $eq: -1 } },
+                { _startAt: { $lte: dateTime } },
+              ],
+            },
+          ],
+        },
+      });
 
       if (
         dto.searchingText != '' ||
@@ -493,7 +541,9 @@ console.log("___ tag master  "+JSON.stringify(dto));
         }
         if (dto.swStart != -1 && dto.swEnd != -1) {
           pipeline.push({
-            $match: { _totalStoneWeight: { $lte: dto.swEnd, $gte: dto.swStart } },
+            $match: {
+              _totalStoneWeight: { $lte: dto.swEnd, $gte: dto.swStart },
+            },
           });
         }
         if (dto.nwStart != -1 && dto.nwEnd != -1) {
@@ -616,9 +666,6 @@ console.log("___ tag master  "+JSON.stringify(dto));
             });
           }
 
-
-
-
           if (dto.screenType.includes(103)) {
             pipeline.push(
               {
@@ -648,15 +695,15 @@ console.log("___ tag master  "+JSON.stringify(dto));
             );
           }
 
-
-
-
           if (dto.screenType.includes(104)) {
             const productStoneLinkingPipeline = () => {
               const pipeline = [];
               pipeline.push(
                 {
-                  $match: {_status:1, $expr: { $eq: ['$_productId', '$$productId'] } },
+                  $match: {
+                    _status: 1,
+                    $expr: { $eq: ['$_productId', '$$productId'] },
+                  },
                 },
                 new ModelWeightResponseFormat().productStoneLinkingTableResponseFormat(
                   1040,
@@ -704,11 +751,6 @@ console.log("___ tag master  "+JSON.stringify(dto));
               },
             });
           }
-
-
-
-
-
 
           return pipeline;
         };

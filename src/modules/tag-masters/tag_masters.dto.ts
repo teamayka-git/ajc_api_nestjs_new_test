@@ -26,7 +26,7 @@ const descriptionListDataGuard =
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListSortOrder = '1-ascending, -1-descending';
-const descriptionListSortType = '0-Created Date, 1-Status,2-Name, 3-Priority';
+const descriptionListSortType = '0-Created Date, 1-Status,2-Name, 3-Priority, 4-start at, 5-start at';
 const descriptionListSortTypeTagLinkedProducts = '0-Created Date, 1-Status';
 const descriptionType="0-tag, 1-sub tag";
 const descriptionListDocType = '0-image, 1-video, 2-pdf, 3-audio, 4-document';
@@ -65,6 +65,17 @@ export class TagMasterCreateDto {
   @IsNumber()
   @ApiProperty({})
   priority: number;
+
+  
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  startAt: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  endAt: number;
 
   @Transform(({ value }) => Number(value))
   @IsNumber()
@@ -123,6 +134,17 @@ export class TagMasterEditDto {
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
+  startAt: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  endAt: number;
+
+  
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
   isShowEcommerce: number;
 
 
@@ -162,6 +184,14 @@ export class TagMasterListDto {
   
 
   
+  @IsNumber()
+  @ApiProperty({})
+  startAt: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  endAt: number;
+
   
 
   @IsArray()

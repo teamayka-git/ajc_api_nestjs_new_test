@@ -262,7 +262,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _shopId: 1,
-      _orderSaleId:1,
+      _orderSaleId: 1,
       _uid: 1,
       _dueDate: 1,
       _workStatus: 1,
@@ -284,7 +284,7 @@ export class ModelWeight {
       _uid: 1,
       _dueDate: 1,
       _workStatus: 1,
-      _orderSaleId:1,
+      _orderSaleId: 1,
       _type: 1,
       _rootCauseId: 1,
       _parentOrderId: 1,
@@ -304,7 +304,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _shopId: 1,
-      _orderSaleId:1,
+      _orderSaleId: 1,
       _uid: 1,
       _dueDate: 1,
       _workStatus: 1,
@@ -317,7 +317,7 @@ export class ModelWeight {
       _isReWork: 1,
       _referenceNumber: 1,
       _rootCause: 1,
-      _orderHeadId: 1, 
+      _orderHeadId: 1,
       _description: 1,
       _generalRemark: 1,
       _createdUserId: 1,
@@ -624,7 +624,7 @@ export class ModelWeight {
       _agentId: 1,
       _createdUserId: 1,
       _dataGuard: 1,
-      _themeStore:1,
+      _themeStore: 1,
 
       _status: 1,
     };
@@ -636,8 +636,7 @@ export class ModelWeight {
       _uid: 1,
       _displayName: 1,
       _name: 1,
-      _themeStore:1,
-
+      _themeStore: 1,
     };
   }
   public deliveryHubTableLight(): Object {
@@ -731,7 +730,6 @@ export class ModelWeight {
   public globalGalleryTableCustom1(): Object {
     return {
       _url: 1,
-     
     };
   }
 
@@ -1131,9 +1129,9 @@ export class ModelWeight {
       _type: 1,
       _purity: 1,
       _hmSealingStatus: 1,
-      _designUid:1,
+      _designUid: 1,
       _huId: 1,
-      _productType:1,
+      _productType: 1,
       _eCommerceStatus: 1,
       _designerId: 1,
       _status: 1,
@@ -1156,8 +1154,8 @@ export class ModelWeight {
       _barcode: 1,
       _categoryId: 1,
       _subCategoryId: 1,
-      _productType:1,
-      _designUid:1,
+      _productType: 1,
+      _designUid: 1,
       _groupId: 1,
       _type: 1,
       _purity: 1,
@@ -1181,8 +1179,8 @@ export class ModelWeight {
       _barcode: 1,
       _categoryId: 1,
       _subCategoryId: 1,
-      _productType:1,
-      _designUid:1,
+      _productType: 1,
+      _designUid: 1,
       _groupId: 1,
       _type: 1,
       _purity: 1,
@@ -1226,8 +1224,8 @@ export class ModelWeight {
   public productTableCustom3(): Object {
     return {
       _id: 1,
-      _designUid:1,
-      _moldNumber:1
+      _designUid: 1,
+      _moldNumber: 1,
     };
   }
 
@@ -1878,7 +1876,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _stoneWeight: 1,
-      _stoneAmount:1,
+      _stoneAmount: 1,
       _quantity: 1,
       _status: 1,
     };
@@ -1890,7 +1888,7 @@ export class ModelWeight {
       _stoneId: 1,
       _stoneColourId: 1,
       _stoneWeight: 1,
-      _stoneAmount:1,
+      _stoneAmount: 1,
       _quantity: 1,
       _status: 1,
     };
@@ -1902,7 +1900,7 @@ export class ModelWeight {
       _stoneId: 1,
       _stoneColourId: 1,
       _stoneWeight: 1,
-      _stoneAmount:1,
+      _stoneAmount: 1,
       _quantity: 1,
       _status: 1,
     };
@@ -1914,7 +1912,7 @@ export class ModelWeight {
       _stoneId: 1,
       _stoneColourId: 1,
       _stoneWeight: 1,
-      _stoneAmount:1,
+      _stoneAmount: 1,
       _quantity: 1,
       _createdUserId: 1,
       _createdAt: 1,
@@ -1927,7 +1925,7 @@ export class ModelWeight {
   public productStonelinkingTableCustom1(): Object {
     return {
       _id: 1,
-      _stoneColourId:1,
+      _stoneColourId: 1,
     };
   }
   public stoneMasterTableLight(): Object {
@@ -2501,92 +2499,92 @@ export class ModelWeight {
   public tagMasterTableLight(): Object {
     return {
       _id: 1,
-      _name:1,
-      _priority:1,
-     
+      _name: 1,
+      _priority: 1,
     };
   }
   public tagMasterTableMinimum(): Object {
     return {
       _id: 1,
-      _name:1,
-      _type:1,
-      _dataGuard:1,
-      _priority:1,
-      _isShowEcommerce:1,
-      _status:1,
-
-     
+      _name: 1,
+      _type: 1,
+      _dataGuard: 1,
+      _priority: 1,
+      _isShowEcommerce: 1,
+      _status: 1,
     };
   }
   public tagMasterTableMedium(): Object {
     return {
       _id: 1,
-      _name:1,
-      _dataGuard:1,
-      _type:1,
-      _priority:1,
-      _isShowEcommerce:1,
-      _createdUserId:1,
-      _createdAt:1,
-      _status:1,
+      _name: 1,
+      _dataGuard: 1,
+      _type: 1,
+      _priority: 1,
+      _startAt: 1,
+      _endAt: 1,
+      _isShowEcommerce: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _status: 1,
     };
   }
   public tagMasterTableMaximum(): Object {
     return {
       _id: 1,
-      _name:1,
-      _dataGuard:1,
-      _type:1,
-      _priority:1,
-      _isShowEcommerce:1,
-      _createdUserId:1,
-      _createdAt:1,
-      _updatedUserId:1,
-      _updatedAt:1,
-      _status:1,
+      _name: 1,
+      _dataGuard: 1,
+      _type: 1,
+      _priority: 1,
+      _startAt: 1,
+      _endAt: 1,
+      _isShowEcommerce: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
     };
   }
   public tagDocumentLinkingTableLight(): Object {
     return {
       _id: 1,
-      _tagId:1,
-      _globalGalleryId:1,
-      _priority:1,
-     
+      _tagId: 1,
+      _globalGalleryId: 1,
+      _priority: 1,
     };
   }
   public tagDocumentLinkingTableMinimum(): Object {
     return {
       _id: 1,
-      _tagId:1,
-      _globalGalleryId:1,
-      _priority:1,
-      _createdUserId:1,
-      _createdAt:1,
-      _status:1,
+      _tagId: 1,
+      _globalGalleryId: 1,
+      _priority: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _status: 1,
     };
   }
   public tagDocumentLinkingTableMedium(): Object {
     return {
       _id: 1,
-      _tagId:1,
-      _globalGalleryId:1,
-      _priority:1,
-      _status:1,
+      _tagId: 1,
+      _globalGalleryId: 1,
+      _priority: 1,
+      _status: 1,
     };
   }
   public tagDocumentLinkingTableMaximum(): Object {
     return {
       _id: 1,
-      _tagId:1,
-      _globalGalleryId:1,
-      _priority:1,
-      _createdUserId:1,
-      _createdAt:1,
-      _updatedUserId:1,
-      _updatedAt:1,
-      _status:1,
+      _tagId: 1,
+      _globalGalleryId: 1,
+      _priority: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
     };
   }
 }
