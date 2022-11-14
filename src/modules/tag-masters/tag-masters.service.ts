@@ -502,19 +502,8 @@ export class TagMastersService {
 
       console.log('___ tag master  ' + JSON.stringify(dto));
 
-      arrayAggregation.push({
-        $match: {
-          $and: [
-            { $or: [{ _endAt: { $eq: -1 } }, { _endAt: { $gte: dateTime } }] },
-            {
-              $or: [
-                { _startAt: { $eq: -1 } },
-                { _startAt: { $lte: dateTime } },
-              ],
-            },
-          ],
-        },
-      });
+   
+      
 
       if (
         dto.searchingText != '' ||
