@@ -78,6 +78,7 @@ export enum ModelNames {
   TAG_MASTERS = 'tag_masters',
   TAG_MASTER_DOCUMENTS = 'tag_master_documents',
   PRODUCT_TAG_LINKINGS = 'product_tag_linkings',
+  ORDER_SALE_ITEM_DOCUMENTS = 'order_sale_item_documents',
 
   CHAT_PERSONAL_CHAT_MESSAGES = 'chat_personal_chat_messages',
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',

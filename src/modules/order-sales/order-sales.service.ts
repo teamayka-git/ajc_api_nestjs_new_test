@@ -43,10 +43,13 @@ import { RootCause } from 'aws-sdk/clients/costexplorer';
 import { InvoiceItems } from 'src/tableModels/invoice_items.model';
 import { Products } from 'src/tableModels/products.model';
 import { Invoices } from 'src/tableModels/invoices.model';
+import { OrderSaleItemsDocuments } from 'src/tableModels/order_sale_items_documents.model';
 
 @Injectable()
 export class OrderSalesService {
   constructor(
+    @InjectModel(ModelNames.ORDER_SALE_ITEM_DOCUMENTS)
+    private readonly ordersaleItemDocumentsModel: Model<OrderSaleItemsDocuments>,
     @InjectModel(ModelNames.ROOT_CAUSES)
     private readonly rootCauseModel: Model<RootCause>,
     @InjectModel(ModelNames.INVOICES)
@@ -99,6 +102,7 @@ console.log("___d1");
 
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
+      var arrayOrderSaleItemGlobalGallery = [];
 
       if (file.hasOwnProperty('documents')) {
         console.log("___d1.1");
@@ -196,35 +200,18 @@ console.log("___d1");
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
         });
+        await this.orderSaleDocumentsModel.insertMany(
+          arrayGlobalGalleriesDocuments,
+          {
+            session: transactionSession,
+          },
+        );
       
       }
 
-      dto.arrayItems.forEach(elementEach => {
-        if(elementEach.globalGalleryIds!=null && elementEach.globalGalleryIds.length!=0){
-        elementEach.globalGalleryIds.forEach(elementEachChild => {
-          arrayGlobalGalleriesDocuments.push({
-            _orderSaleId: orderSaleId,
-            _globalGalleryId: elementEachChild,
-            _createdUserId: _userId_,
-            _createdAt: dateTime,
-            _updatedUserId: null,
-            _updatedAt: -1,
-            _status: 1,
-          });
-        });
-      }
-      });
 
 
 
-if(arrayGlobalGalleriesDocuments.length!=0){
-  await this.orderSaleDocumentsModel.insertMany(
-    arrayGlobalGalleriesDocuments,
-    {
-      session: transactionSession,
-    },
-  );
-}
 
 
 
@@ -367,7 +354,10 @@ if(arrayGlobalGalleriesDocuments.length!=0){
       console.log("___d5");
       var arraySalesItems = [];
       dto.arrayItems.forEach((eachItem, index) => {
+        
+        var orderSaleItemId = new mongoose.Types.ObjectId();
         arraySalesItems.push({
+          _id:orderSaleItemId,
           _orderSaleId: orderSaleId,
           _subCategoryId: eachItem.subCategoryId,
           _quantity: eachItem.quantity,
@@ -391,8 +381,31 @@ if(arrayGlobalGalleriesDocuments.length!=0){
           _updatedAt: -1,
           _status: 1,
         });
+
+
+
+          if(eachItem.globalGalleryIds!=null && eachItem.globalGalleryIds.length!=0){
+            eachItem.globalGalleryIds.forEach(elementEachChild => {
+            arrayOrderSaleItemGlobalGallery.push({
+              _orderSaleItemId: orderSaleItemId,
+              _globalGalleryId: elementEachChild,
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _updatedUserId: null,
+              _updatedAt: -1,
+              _status: 1,
+            });
+          });
+        }
+  
+
+
+
+
       });
-      await this.orderSaleItemsModel.insertMany(arraySalesItems, {
+
+      
+      await this.ordersaleItemDocumentsModel.insertMany(arrayOrderSaleItemGlobalGallery, {
         session: transactionSession,
       });
       const orderSaleHistoryModel = new this.orderSaleHistoriesModel({
@@ -1861,6 +1874,70 @@ if(arrayGlobalGalleriesDocuments.length!=0){
               dto.responseFormat,
             ),
           );
+
+
+          const isorderSaleItemdocuments = dto.screenType.includes(138);
+
+          if (isorderSaleItemdocuments) {
+            const orderSaleItemDocumentsPipeline = () => {
+              const pipeline = [];
+              pipeline.push(
+                {
+                  $match: {
+                    _status: 1,
+                    $expr: { $eq: ['$_orderSaleItemId', '$$orderSaleItemId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().orderSaleItemDocumentsTableResponseFormat(
+                  1380,
+                  dto.responseFormat,
+                ),
+              );
+    
+              const isorderSaledocumentsGlobalGallery =
+                dto.screenType.includes(139);
+    
+              if (isorderSaledocumentsGlobalGallery) {
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.GLOBAL_GALLERIES,
+                      let: { globalGalleryId: '$_globalGalleryId' },
+                      pipeline: [
+                        {
+                          $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } },
+                        },
+    
+                        new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                          1390,
+                          dto.responseFormat,
+                        ),
+                      ],
+                      as: 'globalGalleryDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$globalGalleryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                );
+              }
+              return pipeline;
+            };
+    
+            pipeline.push({
+              $lookup: {
+                from: ModelNames.ORDER_SALE_ITEM_DOCUMENTS,
+                let: { orderSaleItemId: '$_id' },
+                pipeline: orderSaleItemDocumentsPipeline(),
+                as: 'orderSaleItemDocumentList',
+              },
+            });
+          }
+
+
 
           const isorderSalesItemsProduct = dto.screenType.includes(125);
           if (isorderSalesItemsProduct) {
