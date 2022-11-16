@@ -290,13 +290,13 @@ console.log("___d1");
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-      let uidSalesOrder = resultCounterPurchase._count;
+      let uidSalesOrder = shopDetails[0].orderHeadDetails.employeeDetails._prefix + resultCounterPurchase._count;
 
       const newsettingsModel = new this.orderSaleMainModel({
         _id: orderSaleId,
         _shopId: dto.shopId,
         _uid:
-          shopDetails[0].orderHeadDetails.employeeDetails._prefix +
+         
           uidSalesOrder,
         _referenceNumber: dto.referenceNumber,
         _dueDate: dto.dueDate,
