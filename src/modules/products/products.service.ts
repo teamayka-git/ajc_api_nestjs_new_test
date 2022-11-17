@@ -460,13 +460,15 @@ export class ProductsService {
           _designerId:
             dto.arrayItems[i].type == 3
               ? null
+              : dto.arrayItems[i].type == 1
+              ? designId
               : dto.arrayItems[i].eCommerceStatus == 0
               ? null
               : designId,
           _shopId: shopId,
           _orderItemId: orderItemId,
           _designUid: designUid,
-          _productType: 0,
+          _productType: dto.arrayItems[i].type != 3 ? 0 : 1,
           _netWeight: dto.arrayItems[i].netWeight,
           _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
           _grossWeight: dto.arrayItems[i].grossWeight,
@@ -498,7 +500,7 @@ export class ProductsService {
         console.log('___a3');
         if (
           dto.arrayItems[i].eCommerceStatus == 1 &&
-          dto.arrayItems[i].type != 3
+          dto.arrayItems[i].type == 0
         ) {
           var designUidSecondary = '';
           var resultDesignUidSecondary =
