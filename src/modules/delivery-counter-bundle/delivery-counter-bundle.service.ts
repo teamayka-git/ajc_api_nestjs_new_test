@@ -1216,7 +1216,7 @@ export class DeliveryCounterBundleService {
                           {
                             $unwind: {
                               path: '$invoiceDetails',
-                              preserveNullAndEmptyArrays: true,//inv1
+                              preserveNullAndEmptyArrays:(dto.screenType.includes(116))?false: true,//inv1
                             },
                           },
                         );
@@ -1237,7 +1237,7 @@ export class DeliveryCounterBundleService {
                       {
                         $unwind: {
                           path: '$invoiceItemDetails',
-                          preserveNullAndEmptyArrays: true,//inv1
+                          preserveNullAndEmptyArrays:(dto.screenType.includes(116))?false: true,//inv1
                         },
                       },
                     );
@@ -1371,6 +1371,7 @@ export class DeliveryCounterBundleService {
                   {
                     $unwind: {
                       path: '$ohDetails',
+                      preserveNullAndEmptyArrays:(dto.screenType.includes(115))?false: true,//inv1
                     },
                   },
                 );
