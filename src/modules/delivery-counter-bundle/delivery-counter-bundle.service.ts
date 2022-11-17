@@ -1216,6 +1216,7 @@ export class DeliveryCounterBundleService {
                           {
                             $unwind: {
                               path: '$invoiceDetails',
+                              preserveNullAndEmptyArrays: true,//inv1
                             },
                           },
                         );
@@ -1236,6 +1237,7 @@ export class DeliveryCounterBundleService {
                       {
                         $unwind: {
                           path: '$invoiceItemDetails',
+                          preserveNullAndEmptyArrays: true,//inv1
                         },
                       },
                     );
