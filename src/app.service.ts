@@ -1169,7 +1169,7 @@ resultCounterLinkingUsers.forEach((element)=>{
         },
         { upsert: true, new: true, session: transactionSession },
       );
-
+   
       await this.countersModel.findOneAndUpdate(
         { _tableName: ModelNames.ORDER_SALES_MAIN },
         {
