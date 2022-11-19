@@ -84,7 +84,7 @@ export const ShopsSchema = new mongoose.Schema({
       default: 'Point',
     },
     coordinates: {
-      type: [Number],
+      type: [Number], 
       default: [0, 0],
     },
   },
