@@ -118,7 +118,7 @@ export class OrderSaleSetProcessService {
             _dueDate: mapItem1.dueDate,
             _description: mapItem1.description,
             _index: mapItem1.index,
-            _orderStatus: 0,
+            _orderStatus: index == 0 ? 0 : -1,
             _processId: mapItem1.processId,
             _createdUserId: _userId_,
             _createdAt: dateTime,
@@ -189,10 +189,7 @@ export class OrderSaleSetProcessService {
 
       /////////set process automatic assign start
 
-    
-
       for (var i = 0; i < dto.array.length; i++) {
-       
         // var orderSaleSetProcess = await this.orderSaleSetProcessModel
         //   .aggregate([
         //     {
@@ -233,7 +230,6 @@ export class OrderSaleSetProcessService {
           );
         }
         if (processMasterDetails[0]._isAutomatic == 1) {
-       
           var resultEmployees = await this.employeeModel.aggregate([
             {
               $match: {
@@ -303,7 +299,7 @@ export class OrderSaleSetProcessService {
               {
                 $set: {
                   _userId: sortedArray[0]._userId,
-                  _workAssignedTime:dateTime,
+                  _workAssignedTime: dateTime,
                   _orderStatus: 1,
                 },
               },
@@ -732,7 +728,7 @@ export class OrderSaleSetProcessService {
               {
                 $set: {
                   _userId: sortedArray[0]._userId,
-                  _workAssignedTime:dateTime,
+                  _workAssignedTime: dateTime,
                   _orderStatus: 1,
                 },
               },
