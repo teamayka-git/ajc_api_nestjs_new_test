@@ -1363,10 +1363,10 @@ export class DeliveryCounterBundleService {
                         new ModelWeightResponseFormat().userTableResponseFormat(
                           1100,
                           dto.responseFormat,
-                        ),
+                        ), 
                       ],
                       as: 'ohDetails',
-                    },
+                    },   
                   },
                   {
                     $unwind: {
