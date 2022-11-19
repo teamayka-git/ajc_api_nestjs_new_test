@@ -89,7 +89,7 @@ export const ShopsSchema = new mongoose.Schema({
     },
   },
   _dataGuard: { type: Object, required: true, default: [] },
-  _themeStore: { type:Object, required: true, default:null },
+  _themeStore: { type:Object, required: false, default:null },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
