@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
-import { ChangeMyPasswordDto, ChangeUserPasswordDto, ChatDocumentCreateDto, GetDashboardDto, GetUserDto, MeDto, TestDto } from './app.dto';
+import { ChangeMyPasswordDto, ChangeUserPasswordDto, ChatDocumentCreateDto, GetDashboardDto, GetUserDto, MeDto, tempWorktable, TestDto } from './app.dto';
 import { AppService } from './app.service';
 import { Roles } from './Auth/roles.decorator';
 import { diskStorage } from 'multer';
@@ -84,6 +84,10 @@ export class AppController {
   @Post('test')
   test(@Body() dto: TestDto,) {
     return this.appService.test(dto);
+  }
+  @Post('tempWorkTableUpdate')
+  tempWorkTableUpdate(@Body() dto: tempWorktable,) {
+    return this.appService.tempWorkTableUpdate(dto);
   }
 
   @Get()

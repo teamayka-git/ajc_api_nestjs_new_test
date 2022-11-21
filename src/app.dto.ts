@@ -53,6 +53,19 @@ export class MeDto {
   generalsTypes: number[];
 }
 
+export class tempWorktable {
+
+  @IsNumber()
+  @ApiProperty({})
+  limit: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  skip: number;
+
+  
+}
+
 export class GetUserDto {
   @IsArray()
   @ArrayMinSize(1)

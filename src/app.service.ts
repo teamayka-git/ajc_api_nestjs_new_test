@@ -7,6 +7,7 @@ import {
   GetDashboardDto,
   GetUserDto,
   MeDto,
+  tempWorktable,
   TestDto,
 } from './app.dto';
 import { CommonNames } from './common/common_names';
@@ -27,6 +28,7 @@ import { Generals } from './tableModels/generals.model';
 import { GlobalGalleryCategories } from './tableModels/globalGallerycategories.model';
 import { GoldRateTimelines } from './tableModels/gold_rate_timelines.model';
 import { GroupMasters } from './tableModels/groupMasters.model';
+import { OrderSalesMain } from './tableModels/order_sales_main.model';
 import { ProcessMaster } from './tableModels/processMaster.model';
 import { Purity } from './tableModels/purity.model';
 import { RootCausesModel } from './tableModels/rootCause.model';
@@ -57,6 +59,8 @@ export class AppService {
     private readonly stateModel: mongoose.Model<States>,
     @InjectModel(ModelNames.GROUP_MASTERS)
     private readonly groupmasterModel: mongoose.Model<GroupMasters>,
+    @InjectModel(ModelNames.ORDER_SALES_MAIN)
+    private readonly ordersaleMainModel: mongoose.Model<OrderSalesMain>,
     @InjectModel(ModelNames.CATEGORIES)
     private readonly categoryModel: mongoose.Model<Categories>,
     @InjectModel(ModelNames.SUB_CATEGORIES)
@@ -110,8 +114,6 @@ export class AppService {
 
       // new SmsUtils().sendSms("9895680203","AAAAAA");
 
-
-
       const responseJSON = {
         message: 'success',
         data: dto,
@@ -136,137 +138,183 @@ export class AppService {
       throw error;
     }
   }
-  async getDashboard(dto: GetDashboardDto,_userId_: string) {
+
+  async tempWorkTableUpdate(dto: tempWorktable) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+      var result1 = await this.ordersaleMainModel.aggregate([
+        { $match: { _status: 1, _workStatus: 3 } },
+        { $skip: dto.skip },
+        { $limit: dto.limit },
+        {
+          $lookup: {
+            from: ModelNames.ORDER_SALE_SET_PROCESSES,
+            let: { ordersaleId: '$_id' },
+            pipeline: [
+              {
+                $match: { $expr: { $eq: ['$_orderSaleId', '$$ordersaleId'] } },
+              },
+              { $sort: { _index: 1 } },
+            ],
+            as: 'setProcessList',
+          },
+        },
+     
+      ]);
 
-      var resultUserAttendance=[];
-      var resultUserDetails=[];
-      
-      if (dto.screenType.includes( 0)) {
+      const responseJSON = {
+        message: 'success',
+        data: { list: result1 },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async getDashboard(dto: GetDashboardDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var resultUserAttendance = [];
+      var resultUserDetails = [];
+
+      if (dto.screenType.includes(0)) {
         resultUserAttendance = await this.userAttendanceModel.aggregate([
           {
             $match: {
               _userId: new mongoose.Types.ObjectId(_userId_),
             },
           },
-  
+
           { $sort: { _id: -1 } },
-  
-          { $limit:1 }
+
+          { $limit: 1 },
         ]);
       }
- 
-      if (dto.screenType.includes( 1)) {
-        
+
+      if (dto.screenType.includes(1)) {
         var aggregationArrayChild = [];
-        aggregationArrayChild.push({
-          $match: {
-            _id: new mongoose.Types.ObjectId(_userId_),
-          },
-        },
-        {
-          $project:{
-            _permissions:1,
-            _email:1,
-            _employeeId:1,
-            _mobile:1,
-            _name:1,
-          }
-        });
-
-        if (dto.screenType.includes( 1)) {
-
-          aggregationArrayChild.push({
-            $lookup: {
-              from: ModelNames.EMPLOYEES,
-              let: { employeeId: '$_employeeId' },
-              pipeline: [
-                {
-                  $match: { $expr: { $eq: ['$_id', '$$employeeId'] } },
-                },
-                { $project: new ModelWeight().employeeTableMinimum() },
-                {
-                  $lookup: {
-                    from: ModelNames.DEPARTMENT,
-                    let: { departmentId: '$_departmentId' },
-                    pipeline: [
-                      {
-                        $match: { $expr: { $eq: ['$_id', '$$departmentId'] } },
-                      },
-                      
-                { $project: new ModelWeight().departmentTableLight() },
-                    ],
-                    as: 'departmentDetails',
-                  },
-                },
-                {
-                  $unwind: {
-                    path: '$departmentDetails',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                }
-              ],
-              as: 'employeeDetails',
+        aggregationArrayChild.push(
+          {
+            $match: {
+              _id: new mongoose.Types.ObjectId(_userId_),
             },
           },
           {
-            $unwind: {
-              path: '$employeeDetails',
-              preserveNullAndEmptyArrays: true,
+            $project: {
+              _permissions: 1,
+              _email: 1,
+              _employeeId: 1,
+              _mobile: 1,
+              _name: 1,
             },
-          },);
+          },
+        );
+
+        if (dto.screenType.includes(1)) {
+          aggregationArrayChild.push(
+            {
+              $lookup: {
+                from: ModelNames.EMPLOYEES,
+                let: { employeeId: '$_employeeId' },
+                pipeline: [
+                  {
+                    $match: { $expr: { $eq: ['$_id', '$$employeeId'] } },
+                  },
+                  { $project: new ModelWeight().employeeTableMinimum() },
+                  {
+                    $lookup: {
+                      from: ModelNames.DEPARTMENT,
+                      let: { departmentId: '$_departmentId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$departmentId'] },
+                          },
+                        },
+
+                        { $project: new ModelWeight().departmentTableLight() },
+                      ],
+                      as: 'departmentDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$departmentDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                ],
+                as: 'employeeDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$employeeDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          );
         }
-        resultUserDetails= await this.userModel.aggregate(
-          aggregationArrayChild
+        resultUserDetails = await this.userModel.aggregate(
+          aggregationArrayChild,
         );
       }
 
+      var resultGeneralsAppUpdate = [];
+      var codeGeneralsAppUpdate = [];
 
- 
-      var resultGeneralsAppUpdate=[];
-      var codeGeneralsAppUpdate=[];
-
-      if (dto.screenType.includes( 3)) {//employee
+      if (dto.screenType.includes(3)) {
+        //employee
         codeGeneralsAppUpdate.push(100);
         codeGeneralsAppUpdate.push(102);
       }
-      if (dto.screenType.includes( 4)) {//customer
+      if (dto.screenType.includes(4)) {
+        //customer
         codeGeneralsAppUpdate.push(101);
         codeGeneralsAppUpdate.push(103);
-
       }
-if(codeGeneralsAppUpdate.length!=0){
-  resultGeneralsAppUpdate= await this.generalsModel.aggregate([
-    {$match:{
-      _code:{$in:codeGeneralsAppUpdate}
-    }},
-    {
-      $project:{
-        _code:1,
-        _string:1,
-        _number:1,
-
+      if (codeGeneralsAppUpdate.length != 0) {
+        resultGeneralsAppUpdate = await this.generalsModel.aggregate([
+          {
+            $match: {
+              _code: { $in: codeGeneralsAppUpdate },
+            },
+          },
+          {
+            $project: {
+              _code: 1,
+              _string: 1,
+              _number: 1,
+            },
+          },
+        ]);
       }
-    }
-  ]);
-}
-
-
-
-
-
-
-
 
       const responseJSON = {
         message: 'success',
         data: {
-          listAttendance:resultUserAttendance,
-          userDetails:resultUserDetails[0],
-          appUpdates:resultGeneralsAppUpdate
+          listAttendance: resultUserAttendance,
+          userDetails: resultUserDetails[0],
+          appUpdates: resultGeneralsAppUpdate,
         },
       };
       if (
@@ -305,7 +353,7 @@ if(codeGeneralsAppUpdate.length!=0){
             pipeline: [
               { $match: { $expr: { $eq: ['$_id', '$$employeeId'] } } },
 
-              { 
+              {
                 $lookup: {
                   from: ModelNames.DEPARTMENT,
                   let: { departmentId: '$_departmentId' },
@@ -474,40 +522,38 @@ if(codeGeneralsAppUpdate.length!=0){
 
     resultCompany = resultCompanyList[0];
 
+    var resultGeneralRemarks = [];
 
- var   resultGeneralRemarks=[];
+    var generalsAggregatePipeline = [];
+    if (dto.generalsCodes != null && dto.generalsCodes.length != 0) {
+      generalsAggregatePipeline.push({
+        $match: {
+          _code: { $in: dto.generalsCodes },
+        },
+      });
+    }
+    if (dto.generalsTypes != null && dto.generalsTypes.length != 0) {
+      generalsAggregatePipeline.push({
+        $match: {
+          _type: { $in: dto.generalsTypes },
+        },
+      });
+    }
+    if (resultGeneralRemarks.length != 0) {
+      var resultGeneralRemarks = await this.generalsModel.aggregate(
+        generalsAggregatePipeline,
+      );
+    }
 
-var generalsAggregatePipeline=[];
-if(dto.generalsCodes != null &&  dto.generalsCodes.length!=0){
-
-  generalsAggregatePipeline.push({$match:{
-    _code:{$in:dto.generalsCodes}
-  }});
-}
-if(dto.generalsTypes != null &&  dto.generalsTypes.length!=0){
-
-  generalsAggregatePipeline.push({$match:{
-    _type:{$in:dto.generalsTypes}
-  }});
-}
-if(resultGeneralRemarks.length!=0){
-
-  
-
-
-  var resultGeneralRemarks=await this.generalsModel.aggregate(generalsAggregatePipeline);
-}
-
-
-var resultCounterLinkingUsers=await this.deliveryCounterUserLinkingModel.find({_userId:resultEmployee[0]._id,_status:1},{_deliveryCounterId:1});
-var resultCounterLinkingUsersCounterIds=[];
-resultCounterLinkingUsers.forEach((element)=>{
-  resultCounterLinkingUsersCounterIds.push(element._deliveryCounterId);
-});
-
-
-
-
+    var resultCounterLinkingUsers =
+      await this.deliveryCounterUserLinkingModel.find(
+        { _userId: resultEmployee[0]._id, _status: 1 },
+        { _deliveryCounterId: 1 },
+      );
+    var resultCounterLinkingUsersCounterIds = [];
+    resultCounterLinkingUsers.forEach((element) => {
+      resultCounterLinkingUsersCounterIds.push(element._deliveryCounterId);
+    });
 
     await transactionSession.commitTransaction();
     await transactionSession.endSession();
@@ -515,7 +561,7 @@ resultCounterLinkingUsers.forEach((element)=>{
     return {
       message: 'success',
       data: {
-        deliveryCounterIds:resultCounterLinkingUsersCounterIds,
+        deliveryCounterIds: resultCounterLinkingUsersCounterIds,
         userDetails: resultEmployee[0],
         goldTimelinesList: listGoldTimelines,
         generalRemarks: resultGeneralRemarks,
@@ -1169,7 +1215,7 @@ resultCounterLinkingUsers.forEach((element)=>{
         },
         { upsert: true, new: true, session: transactionSession },
       );
-    
+
       await this.countersModel.findOneAndUpdate(
         { _tableName: ModelNames.ORDER_SALES_MAIN },
         {
@@ -1200,7 +1246,7 @@ resultCounterLinkingUsers.forEach((element)=>{
         { upsert: true, new: true, session: transactionSession },
       );
       await this.countersModel.findOneAndUpdate(
-        { _tableName: ModelNames.PRODUCTS+"_design" },
+        { _tableName: ModelNames.PRODUCTS + '_design' },
         {
           $setOnInsert: {
             _count: 0,
@@ -1511,7 +1557,7 @@ resultCounterLinkingUsers.forEach((element)=>{
         { _name: 'Not as per requirement' },
         {
           $setOnInsert: {
-            _type: [0, 1, 2, 3, 4,5],
+            _type: [0, 1, 2, 3, 4, 5],
             _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,

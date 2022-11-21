@@ -91,6 +91,7 @@ import { DeliveryCounterModule } from './modules/delivery-counter/delivery-count
 import { DeliveryCounterBundleModule } from './modules/delivery-counter-bundle/delivery-counter-bundle.module';
 import { TagMastersModule } from './modules/tag-masters/tag-masters.module';
 import { DeliveryCounterUserLinkingsSchema } from './tableModels/delivery_counter_user_linkings.model';
+import { OrderSalesMainSchema } from './tableModels/order_sales_main.model';
 
 @Module({
   imports: [
@@ -106,6 +107,7 @@ import { DeliveryCounterUserLinkingsSchema } from './tableModels/delivery_counte
     MongooseModule.forFeature([
       
       { name: ModelNames.ROOT_CAUSES, schema: RootCausesSchema },
+      { name: ModelNames.ORDER_SALES_MAIN, schema: OrderSalesMainSchema },
       { name: ModelNames.USER, schema: UserSchema },
       { name: ModelNames.EMPLOYEES, schema: EmployeeSchema },
       { name: ModelNames.COUNTERS, schema: CountersSchema },
