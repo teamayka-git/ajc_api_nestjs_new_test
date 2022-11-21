@@ -657,6 +657,22 @@ export class OrderSaleSetProcessService {
             HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }
+
+
+//doing next setprocess workstatus to pending
+await this.orderSaleSetProcessModel.findOneAndUpdate(
+  {
+    _id: orderSaleSetProcess[0]._id,
+  },
+  {
+    $set: {
+      _orderStatus: 0,
+    },
+  },
+  { new: true, session: transactionSession },
+);
+
+
         if (orderSaleSetProcess[0].processDetails._isAutomatic == 1) {
           var resultEmployees = await this.employeeModel.aggregate([
             {
