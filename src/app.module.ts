@@ -92,6 +92,7 @@ import { DeliveryCounterBundleModule } from './modules/delivery-counter-bundle/d
 import { TagMastersModule } from './modules/tag-masters/tag-masters.module';
 import { DeliveryCounterUserLinkingsSchema } from './tableModels/delivery_counter_user_linkings.model';
 import { OrderSalesMainSchema } from './tableModels/order_sales_main.model';
+import { OrderSaleSetProcessesSchema } from './tableModels/order_sale_set_processes.model';
 
 @Module({
   imports: [
@@ -108,6 +109,7 @@ import { OrderSalesMainSchema } from './tableModels/order_sales_main.model';
       
       { name: ModelNames.ROOT_CAUSES, schema: RootCausesSchema },
       { name: ModelNames.ORDER_SALES_MAIN, schema: OrderSalesMainSchema },
+      { name: ModelNames.ORDER_SALE_SET_PROCESSES, schema: OrderSaleSetProcessesSchema },
       { name: ModelNames.USER, schema: UserSchema },
       { name: ModelNames.EMPLOYEES, schema: EmployeeSchema },
       { name: ModelNames.COUNTERS, schema: CountersSchema },

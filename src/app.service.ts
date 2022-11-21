@@ -29,6 +29,7 @@ import { GlobalGalleryCategories } from './tableModels/globalGallerycategories.m
 import { GoldRateTimelines } from './tableModels/gold_rate_timelines.model';
 import { GroupMasters } from './tableModels/groupMasters.model';
 import { OrderSalesMain } from './tableModels/order_sales_main.model';
+import { OrderSaleSetProcesses } from './tableModels/order_sale_set_processes.model';
 import { ProcessMaster } from './tableModels/processMaster.model';
 import { Purity } from './tableModels/purity.model';
 import { RootCausesModel } from './tableModels/rootCause.model';
@@ -49,6 +50,8 @@ const crypto = require('crypto');
 @Injectable()
 export class AppService {
   constructor(
+    @InjectModel(ModelNames.ORDER_SALE_SET_PROCESSES)
+    private readonly osSetPrcosessModel: mongoose.Model<OrderSaleSetProcesses>,
     @InjectModel(ModelNames.DELIVERY_COUNTER_USER_LINKINGS)
     private readonly deliveryCounterUserLinkingModel: mongoose.Model<DeliveryCounterUserLinkings>,
     @InjectModel(ModelNames.ROOT_CAUSES)
@@ -154,19 +157,41 @@ export class AppService {
             let: { ordersaleId: '$_id' },
             pipeline: [
               {
-                $match: { $expr: { $eq: ['$_orderSaleId', '$$ordersaleId'] } },
+                $match: {_status:1, $expr: { $eq: ['$_orderSaleId', '$$ordersaleId'] } },
               },
               { $sort: { _index: 1 } },
             ],
             as: 'setProcessList',
           },
         },
-     
       ]);
+
+      var setProcessList = [];
+      for (var i = 0; i < result1.length; i++) {
+        var isUpdateWorkStatus = false;
+        result1[i].setProcessList.array.forEach((element, index) => {
+          if (isUpdateWorkStatus == true) {
+            setProcessList.push(element._id);
+          }
+          if (element._orderStatus != 3) {
+            isUpdateWorkStatus = true;
+          }
+        });
+      }
+      // if (setProcessList.length != 0) {
+      //   await this.osSetPrcosessModel.updateMany(
+      //     { _id: { $in: setProcessList } },
+      //     { $set: { _orderStatus: -1 } },
+      //   );
+      // }
 
       const responseJSON = {
         message: 'success',
-        data: { list: result1 },
+        data: {
+          listForUpdate: setProcessList,
+
+          list: result1,
+        },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
