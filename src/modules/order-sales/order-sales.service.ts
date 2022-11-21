@@ -5317,6 +5317,82 @@ export class OrderSalesService {
                 );
               }
 
+
+
+
+              const isorderSaleItemdocuments = dto.screenType.includes(119);
+
+              if (isorderSaleItemdocuments) {
+                const orderSaleItemDocumentsPipeline = () => {
+                  const pipeline = [];
+                  pipeline.push(
+                    {
+                      $match: {
+                        _status: 1,
+                        $expr: { $eq: ['$_orderSaleItemId', '$$orderSaleItemId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().orderSaleItemDocumentsTableResponseFormat(
+                      1190,
+                      dto.responseFormat,
+                    ),
+                  );
+    
+                  const isorderSaledocumentsGlobalGallery =
+                    dto.screenType.includes(120);
+    
+                  if (isorderSaledocumentsGlobalGallery) {
+                    pipeline.push(
+                      {
+                        $lookup: {
+                          from: ModelNames.GLOBAL_GALLERIES,
+                          let: { globalGalleryId: '$_globalGalleryId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                              },
+                            },
+    
+                            new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                              1200,
+                              dto.responseFormat,
+                            ),
+                          ],
+                          as: 'globalGalleryDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$globalGalleryDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    );
+                  }
+                  return pipeline;
+                };
+    
+                pipeline.push({
+                  $lookup: {
+                    from: ModelNames.ORDER_SALE_ITEM_DOCUMENTS,
+                    let: { orderSaleItemId: '$_id' },
+                    pipeline: orderSaleItemDocumentsPipeline(),
+                    as: 'orderSaleItemDocumentList',
+                  },
+                });
+              }
+
+
+
+
+
+
+
+
+
+
+
               return pipeline;
             };
 
