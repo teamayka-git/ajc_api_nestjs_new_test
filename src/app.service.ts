@@ -178,12 +178,12 @@ export class AppService {
           }
         });
       }
-      // if (setProcessList.length != 0) {
-      //   await this.osSetPrcosessModel.updateMany(
-      //     { _id: { $in: setProcessList } },
-      //     { $set: { _orderStatus: -1 } },
-      //   );
-      // }
+      if (setProcessList.length != 0) {
+        await this.osSetPrcosessModel.updateMany(
+          { _id: { $in: setProcessList } },
+          { $set: { _orderStatus: -1 } },
+        );
+      }
 
       const responseJSON = {
         message: 'success',
