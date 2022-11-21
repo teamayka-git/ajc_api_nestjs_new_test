@@ -296,6 +296,12 @@ export class TagMastersService {
             });
           }
         }
+        await this.tagMasterDocumentModel.updateMany(
+          { _tagId: dto.tagMasterId, _status: 1 },
+          { $set: { _status: 0 } },
+          { new: true, session: transactionSession },
+        );
+      }
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
         });
@@ -306,12 +312,7 @@ export class TagMastersService {
           },
         );
 
-        await this.tagMasterDocumentModel.updateMany(
-          { _tagId: dto.tagMasterId, _status: 1 },
-          { $set: { _status: 0 } },
-          { new: true, session: transactionSession },
-        );
-      }
+     
 
       var updateObject = {
         _name: dto.name,
