@@ -5316,6 +5316,35 @@ export class OrderSalesService {
                   },
                 );
               }
+              const isorderSaleItemsDesign = dto.screenType.includes(121);
+              if (isorderSaleItemsDesign) {
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.PRODUCTS,
+                      let: { designId: '$_designId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$designId'] },
+                          },
+                        },
+                        new ModelWeightResponseFormat().productTableResponseFormat(
+                          1210,
+                          dto.responseFormat,
+                        ),
+                      ],
+                      as: 'designDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$designDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                );
+              }
 
 
 
