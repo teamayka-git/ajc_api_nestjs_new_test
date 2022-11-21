@@ -120,6 +120,16 @@ export class TagMasterEditDto {
   tagId: string;
   
   
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
+  @IsArray()
+  @ApiProperty({ type: [orderSaleCreateList] })
+  @ValidateNested({ each: true })
+  @Type(() => orderSaleCreateList)
+  arrayDocuments: orderSaleCreateList[];
+
+  
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})

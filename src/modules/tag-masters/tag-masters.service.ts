@@ -200,6 +200,119 @@ export class TagMastersService {
     try {
       //   _globalGalleryId:globalGalleryId,
 
+      var arrayGlobalGalleries = [];
+      var arrayGlobalGalleriesDocuments = [];
+
+      if (file.hasOwnProperty('documents')) {
+        var resultCounterPurchase = await this.countersModel.findOneAndUpdate(
+          { _tableName: ModelNames.GLOBAL_GALLERIES },
+          {
+            $inc: {
+              _count: dto.arrayDocuments.length,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+        // for (var i = 0; i < dto.arrayDocuments.length; i++) {
+        //   var count = file['documents'].findIndex(
+        //     (it) => dto.arrayDocuments[i].fileOriginalName == it.originalname,
+        //   );
+
+        //   if (count != -1) {
+        //     if (dto.arrayDocuments[i].docType == 0) {
+        //       var filePath =
+        //         __dirname +
+        //         `/../../../public${
+        //           file['documents'][count]['path'].split('public')[1]
+        //         }`;
+
+        //       new ThumbnailUtils().generateThumbnail(
+        //         filePath,
+        //         UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP +
+        //           new StringUtils().makeThumbImageFileName(
+        //             file['documents'][count]['filename'],
+        //           ),
+        //       );
+        //     }
+        //   }
+        // }
+
+        for (var i = 0; i < file['documents'].length; i++) {
+          var resultUpload = await new S3BucketUtils().uploadMyFile(
+            file['documents'][i],
+            UploadedFileDirectoryPath.GLOBAL_GALLERY_TAG_MASTER,
+          );
+
+          if (resultUpload['status'] == 0) {
+            throw new HttpException(
+              'File upload error',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
+
+          var count = dto.arrayDocuments.findIndex(
+            (it) => it.fileOriginalName == file['documents'][i]['originalname'],
+          );
+          if (count != -1) {
+            dto.arrayDocuments[count]['url'] = resultUpload['url'];
+          } else {
+            dto.arrayDocuments[count]['url'] = 'nil';
+          }
+        }
+
+        for (var i = 0; i < dto.arrayDocuments.length; i++) {
+          var count = file['documents'].findIndex(
+            (it) => it.originalname == dto.arrayDocuments[i].fileOriginalName,
+          );
+          if (count != -1) {
+            var globalGalleryId = new mongoose.Types.ObjectId();
+            arrayGlobalGalleries.push({
+              _id: globalGalleryId,
+              _name: dto.arrayDocuments[i].fileOriginalName,
+              _globalGalleryCategoryId: null,
+              _docType: dto.arrayDocuments[i].docType,
+              _type: 7,
+              _uid:
+                resultCounterPurchase._count -
+                dto.arrayDocuments.length +
+                (i + 1),
+              _url: dto.arrayDocuments[i]['url'],
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _updatedUserId: null,
+              _updatedAt: -1,
+              _status: 1,
+            });
+            arrayGlobalGalleriesDocuments.push({
+              _tagId: dto.tagMasterId,
+              _globalGalleryId: globalGalleryId,
+              _priority: dto.arrayDocuments[i].priority,
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _updatedUserId: null,
+              _updatedAt: -1,
+              _status: 1,
+            });
+          }
+        }
+        await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
+          session: transactionSession,
+        });
+        await this.tagMasterDocumentModel.insertMany(
+          arrayGlobalGalleriesDocuments,
+          {
+            session: transactionSession,
+          },
+        );
+
+        await this.tagMasterDocumentModel.updateMany(
+          { _tagId: dto.tagMasterId, _status: 1 },
+          { $set: { _status: 0 } },
+          { new: true, session: transactionSession },
+        );
+      }
+
       var updateObject = {
         _name: dto.name,
         _dataGuard: dto.dataGuard,
@@ -501,9 +614,6 @@ export class TagMastersService {
       var arrayAggregation = [];
 
       console.log('___ tag master  ' + JSON.stringify(dto));
-
-   
-      
 
       if (
         dto.searchingText != '' ||
