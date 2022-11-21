@@ -169,7 +169,7 @@ export class AppService {
       var setProcessList = [];
       for (var i = 0; i < result1.length; i++) {
         var isUpdateWorkStatus = false;
-        result1[i].setProcessList.array.forEach((element, index) => {
+        result1[i].setProcessList.forEach((element, index) => {
           if (isUpdateWorkStatus == true) {
             setProcessList.push(element._id);
           }
