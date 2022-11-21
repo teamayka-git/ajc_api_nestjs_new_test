@@ -94,10 +94,8 @@ export class OrderSalesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-
-
-console.log("oc dto  "+JSON.stringify(dto));
-console.log("___d1");
+      console.log('oc dto  ' + JSON.stringify(dto));
+      console.log('___d1');
       var orderSaleId = new mongoose.Types.ObjectId();
 
       var arrayGlobalGalleries = [];
@@ -105,7 +103,7 @@ console.log("___d1");
       var arrayOrderSaleItemGlobalGallery = [];
 
       if (file.hasOwnProperty('documents')) {
-        console.log("___d1.1");
+        console.log('___d1.1');
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
@@ -161,7 +159,7 @@ console.log("___d1");
             dto.arrayDocuments[count]['url'] = 'nil';
           }
         }
-        console.log("___d2");
+        console.log('___d2');
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
             (it) => it.originalname == dto.arrayDocuments[i].fileOriginalName,
@@ -196,7 +194,7 @@ console.log("___d1");
             });
           }
         }
-        console.log("___d3");
+        console.log('___d3');
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
         });
@@ -206,20 +204,9 @@ console.log("___d1");
             session: transactionSession,
           },
         );
-      
       }
 
-
-
-
-
-
-
-
-
-
-      
-      console.log("___d3.1");
+      console.log('___d3.1');
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.ORDER_SALES_MAIN },
         {
@@ -229,8 +216,8 @@ console.log("___d1");
         },
         { new: true, session: transactionSession },
       );
-      
-      console.log("___d3.2");
+
+      console.log('___d3.2');
       var shopDetails = await this.shopsModel.aggregate([
         {
           $match: {
@@ -283,21 +270,21 @@ console.log("___d1");
           },
         },
       ]);
-      console.log("___d4");
+      console.log('___d4');
       if (shopDetails.length == 0) {
         throw new HttpException(
           'Shop not found',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-      let uidSalesOrder = shopDetails[0].orderHeadDetails.employeeDetails._prefix + resultCounterPurchase._count;
+      let uidSalesOrder =
+        shopDetails[0].orderHeadDetails.employeeDetails._prefix +
+        resultCounterPurchase._count;
 
       const newsettingsModel = new this.orderSaleMainModel({
         _id: orderSaleId,
         _shopId: dto.shopId,
-        _uid:
-         
-          uidSalesOrder,
+        _uid: uidSalesOrder,
         _referenceNumber: dto.referenceNumber,
         _dueDate: dto.dueDate,
         _workStatus: 0,
@@ -351,13 +338,12 @@ console.log("___d1");
       var result1 = await newsettingsModel.save({
         session: transactionSession,
       });
-      console.log("___d5");
+      console.log('___d5');
       var arraySalesItems = [];
       dto.arrayItems.forEach((eachItem, index) => {
-        
         var orderSaleItemId = new mongoose.Types.ObjectId();
         arraySalesItems.push({
-          _id:orderSaleItemId,
+          _id: orderSaleItemId,
           _orderSaleId: orderSaleId,
           _subCategoryId: eachItem.subCategoryId,
           _quantity: eachItem.quantity,
@@ -366,10 +352,16 @@ console.log("___d1");
           _isDeliveryRejected: 0,
           _uid:
             uidSalesOrder + new StringUtils().numberToEncodedLetter(index + 1),
-          _stoneColour: eachItem.stoneColor, 
+          _stoneColour: eachItem.stoneColor,
           _productData: { _idDone: 0 },
-          _productId: (eachItem.productId!= null && eachItem.productId!="")?eachItem.productId:null,
-          _designId:(eachItem.designId!= null && eachItem.designId!="")?eachItem.designId:null,
+          _productId:
+            eachItem.productId != null && eachItem.productId != ''
+              ? eachItem.productId
+              : null,
+          _designId:
+            eachItem.designId != null && eachItem.designId != ''
+              ? eachItem.designId
+              : null,
           _stockStatus: eachItem.stockStatus,
           _isRhodium: eachItem.isRhodium,
           _isMatFinish: eachItem.isMatFinish,
@@ -382,10 +374,11 @@ console.log("___d1");
           _status: 1,
         });
 
-
-
-          if(eachItem.globalGalleryIds!=null && eachItem.globalGalleryIds.length!=0){
-            eachItem.globalGalleryIds.forEach(elementEachChild => {
+        if (
+          eachItem.globalGalleryIds != null &&
+          eachItem.globalGalleryIds.length != 0
+        ) {
+          eachItem.globalGalleryIds.forEach((elementEachChild) => {
             arrayOrderSaleItemGlobalGallery.push({
               _orderSaleItemId: orderSaleItemId,
               _globalGalleryId: elementEachChild,
@@ -397,21 +390,18 @@ console.log("___d1");
             });
           });
         }
-  
-
-
-
-
       });
 
-      
       await this.orderSaleItemsModel.insertMany(arraySalesItems, {
         session: transactionSession,
       });
-      
-      await this.ordersaleItemDocumentsModel.insertMany(arrayOrderSaleItemGlobalGallery, {
-        session: transactionSession,
-      });
+
+      await this.ordersaleItemDocumentsModel.insertMany(
+        arrayOrderSaleItemGlobalGallery,
+        {
+          session: transactionSession,
+        },
+      );
       const orderSaleHistoryModel = new this.orderSaleHistoriesModel({
         _orderSaleId: result1._id,
         _userId: null,
@@ -428,7 +418,7 @@ console.log("___d1");
       await orderSaleHistoryModel.save({
         session: transactionSession,
       });
-      console.log("___d6");
+      console.log('___d6');
       const responseJSON = { message: 'success', data: result1 };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -1770,7 +1760,7 @@ console.log("___d1");
               },
             );
           }
-        
+
           const isorderSaleshopRelationshipManager =
             dto.screenType.includes(122);
           if (isorderSaleshopRelationshipManager) {
@@ -1879,7 +1869,6 @@ console.log("___d1");
             ),
           );
 
-
           const isorderSaleItemdocuments = dto.screenType.includes(138);
 
           if (isorderSaleItemdocuments) {
@@ -1897,10 +1886,10 @@ console.log("___d1");
                   dto.responseFormat,
                 ),
               );
-    
+
               const isorderSaledocumentsGlobalGallery =
                 dto.screenType.includes(139);
-    
+
               if (isorderSaledocumentsGlobalGallery) {
                 pipeline.push(
                   {
@@ -1909,9 +1898,11 @@ console.log("___d1");
                       let: { globalGalleryId: '$_globalGalleryId' },
                       pipeline: [
                         {
-                          $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } },
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                          },
                         },
-    
+
                         new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
                           1390,
                           dto.responseFormat,
@@ -1930,7 +1921,7 @@ console.log("___d1");
               }
               return pipeline;
             };
-    
+
             pipeline.push({
               $lookup: {
                 from: ModelNames.ORDER_SALE_ITEM_DOCUMENTS,
@@ -1940,8 +1931,6 @@ console.log("___d1");
               },
             });
           }
-
-
 
           const isorderSalesItemsProduct = dto.screenType.includes(125);
           if (isorderSalesItemsProduct) {
@@ -1981,7 +1970,7 @@ console.log("___d1");
               {
                 $lookup: {
                   from: ModelNames.PRODUCTS,
-                  let: { designId: '$_designId' }, 
+                  let: { designId: '$_designId' },
                   pipeline: [
                     {
                       $match: {
@@ -2435,18 +2424,15 @@ console.log("___d1");
           },
         });
 
-       
-
-          var newSettingsIdShop = [];
-          dto.shopIds.map((mapItem) => {
-            newSettingsIdShop.push(new mongoose.Types.ObjectId(mapItem));
-          });
-          pipeline.push({
-            $match: {
-              _id:{$in:newSettingsIdShop},
-            },
-          });
-        
+        var newSettingsIdShop = [];
+        dto.shopIds.map((mapItem) => {
+          newSettingsIdShop.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        pipeline.push({
+          $match: {
+            _id: { $in: newSettingsIdShop },
+          },
+        });
 
         pipeline.push(
           new ModelWeightResponseFormat().shopTableResponseFormat(
@@ -2526,7 +2512,7 @@ console.log("___d1");
           workers: resultWorkets,
           processMasters: resultProcessMasters,
           subCategory: resultSubCategory,
-          shopDetails:resultShop,
+          shopDetails: resultShop,
           generalSetting: generalSetting,
           appUpdates: resultGeneralsAppUpdate,
           delRejectRootCause: resultDeliveryRejectRootCause,
@@ -3286,8 +3272,12 @@ console.log("___d1");
       }
 
       if (
-        dto.orderSetProcessWorkerIds.length != 0 &&
-        dto.orderSetProcessOrderStatus.length != 0
+        dto.orderSetProcessWorkerIds.length != 0 ||
+        dto.orderSetProcessOrderStatus.length != 0 ||
+        (dto.processAssignStartDate != -1 && dto.processAssignEndDate != -1) ||
+        (dto.processWorkCompletedStartDate != -1 &&
+          dto.processWorkCompletedEndDate != -1) ||
+        (dto.processWorkStartDate != -1 && dto.processWorkEndDate != -1)
       ) {
         var mongoWorkerIdsArray = [];
         dto.orderSetProcessWorkerIds.forEach((eachItem) => {
@@ -3301,14 +3291,59 @@ console.log("___d1");
               $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
             },
           });
+          if (dto.orderSetProcessWorkerIds.length != 0) {
+            pipeline.push({
+              $match: {
+                _userId: { $in: mongoWorkerIdsArray },
+              },
+            });
+          }
+          if (dto.orderSetProcessOrderStatus.length != 0) {
+            pipeline.push({
+              $match: {
+                _orderStatus: { $in: dto.orderSetProcessOrderStatus },
+              },
+            });
+          }
 
-          pipeline.push({
-            $match: {
-              _userId: { $in: mongoWorkerIdsArray },
+          if (
+            dto.processAssignStartDate != -1 &&
+            dto.processAssignEndDate != -1
+          ) {
+            pipeline.push({
+              $match: {
+                _workAssignedTime: {
+                  $gte: dto.processAssignStartDate,
+                  $lte: dto.processAssignEndDate,
+                },
+              },
+            });
+          }
 
-              _orderStatus: { $in: dto.orderSetProcessOrderStatus },
-            },
-          });
+          if (
+            dto.processWorkCompletedStartDate != -1 &&
+            dto.processWorkCompletedEndDate != -1
+          ) {
+            pipeline.push({
+              $match: {
+                _workCompletedTime: {
+                  $gte: dto.processWorkCompletedStartDate,
+                  $lte: dto.processWorkCompletedEndDate,
+                },
+              },
+            });
+          }
+
+          if (dto.processWorkStartDate != -1 && dto.processWorkEndDate != -1) {
+            pipeline.push({
+              $match: {
+                _workStartedTime: {
+                  $gte: dto.processWorkStartDate,
+                  $lte: dto.processWorkEndDate,
+                },
+              },
+            });
+          }
 
           pipeline.push({ $project: { _id: 1 } });
           return pipeline;
@@ -4146,7 +4181,6 @@ console.log("___d1");
             );
           }
 
-        
           const isorderSaleshopRelationshipManager =
             dto.screenType.includes(122);
           if (isorderSaleshopRelationshipManager) {

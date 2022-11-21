@@ -628,6 +628,34 @@ export class OrderSaleReportListDto {
 
 
 
+  @IsNumber()
+  @ApiProperty({})
+  processAssignStartDate: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  processAssignEndDate: number;
+
+
+
+  @IsNumber()
+  @ApiProperty({})
+  processWorkCompletedStartDate: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  processWorkCompletedEndDate: number;
+
+
+
+  @IsNumber()
+  @ApiProperty({})
+  processWorkStartDate: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  processWorkEndDate: number;
+
 
 
 
