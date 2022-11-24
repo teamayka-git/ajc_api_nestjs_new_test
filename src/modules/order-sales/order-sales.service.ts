@@ -6402,7 +6402,7 @@ export class OrderSalesService {
                   let: { orderItemId: '$_id' },
                   pipeline: [
                     {
-                      $match: {
+                      $match: {_status:1,
                         $expr: { $eq: ['$_orderItemId', '$$orderItemId'] },
                       },
                     },
