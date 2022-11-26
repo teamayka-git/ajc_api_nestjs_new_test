@@ -394,9 +394,12 @@ _id:1
 
 ]).session(transactionSession);
 console.log("resultOh   "+JSON.stringify(resultOh));
-if(resultOh.length==0){
+if(resultOh.length==0 || resultOh[0].employees==0 ){
  
   orderHeadId=shopDetails[0]._orderHeadId;
+}else{
+
+  orderHeadId=resultOh[0].employees[0].userId;
 }
 
 
