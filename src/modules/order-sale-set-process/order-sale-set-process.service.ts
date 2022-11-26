@@ -261,7 +261,7 @@ export class OrderSaleSetProcessService {
               },
             },
             {
-              $match: { userAttendance: { $ne: [] } },
+              $match: { userAttendance: { $ne: [] } }, 
             },
             {
               $lookup: {
@@ -287,7 +287,7 @@ export class OrderSaleSetProcessService {
                 workCount: { $size: '$setProcessWorkList' },
               },
             },
-          ]);
+          ]).session(transactionSession);
           let sortedArray = resultEmployees.sort((n1, n2) =>
             n2.workCount < n1.workCount ? 1 : -1,
           );

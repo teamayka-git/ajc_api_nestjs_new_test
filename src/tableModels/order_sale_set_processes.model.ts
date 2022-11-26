@@ -81,7 +81,7 @@ OrderSaleSetProcessesSchema.index({ _status: 1 });
 /*
 _orderStatus:{
   0 - pending
-  1 - assigned
+  1 - assigned 
   2 - onworking
   3 - completed
   4 - on holding
