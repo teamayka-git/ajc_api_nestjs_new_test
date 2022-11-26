@@ -376,6 +376,13 @@ _id:1
             path: '$userDetails',
           },
         },
+        {$project:{
+
+          userId:"$userDetails._id",
+          currentOrderCount:"$userDetails.orderCount",
+
+
+        }}
       ],
       as: 'employees',
     },
