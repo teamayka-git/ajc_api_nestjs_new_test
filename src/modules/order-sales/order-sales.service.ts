@@ -385,7 +385,7 @@ _id:1
       _id:1,
     }
   },
-  aaa:"$employees.userDetails"
+  aaa:"$employees.userDetails.orderCount"
   // currentOrderCount:{ $size: 'employees.userDetails.$setProcessWorkList' }
 
 }}
