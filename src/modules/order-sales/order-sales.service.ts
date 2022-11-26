@@ -362,7 +362,11 @@ _id:1
                     },
                   },
                  
+                  {$project:{
 
+                    orderCount:{ $size: 'orderCount' }
+                  
+                  }}
 
             ],
             as: 'userDetails',
@@ -376,19 +380,7 @@ _id:1
       as: 'employees',
     },
   },
-{$project:{
 
-  _id:1,
-  employees:{
-    _id:1,
-    userDetails:{
-      _id:1,
-    }
-  },
-  aaa:"$employees.userDetails.orderCount"
-  // currentOrderCount:{ $size: 'employees.userDetails.$setProcessWorkList' }
-
-}}
 
 ]).session(transactionSession);
 console.log("resultOh   "+JSON.stringify(resultOh));
