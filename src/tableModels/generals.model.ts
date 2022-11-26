@@ -32,7 +32,7 @@ export interface Generals {
   _name: String;
   _code: Number;
   _string: String;
-  _number: String;
+  _number: Number;
   _json: Object;
   _type: Number;
   _vlaueType: Number;

@@ -281,6 +281,114 @@ export class OrderSalesService {
         shopDetails[0].orderHeadDetails.employeeDetails._prefix +
         resultCounterPurchase._count;
 
+
+
+      //check and give oh
+var resultGeneralOhAutoAssign=await this.generalsModel.find({_code:1024});
+if(resultGeneralOhAutoAssign.length==0){
+  throw new HttpException(
+    'oh autoassign generals not found',
+    HttpStatus.INTERNAL_SERVER_ERROR,
+  );
+}
+var orderHeadId=null;
+if(resultGeneralOhAutoAssign[0]._number==0){
+  orderHeadId=shopDetails[0]._orderHeadId;
+}else{
+var resultOh=await this.departmentModel.aggregate([
+  {$match:{_code:1000}},
+  {$project:{
+_id:1
+  }},
+  {
+    $lookup: {
+      from: ModelNames.EMPLOYEES,
+      let: { departmentId: '$_id' },
+      pipeline: [
+        {
+          $match: {
+            $expr: { $eq: ['$_departmentId', '$$departmentId'] },
+          },
+        },
+        {$project:{
+          _id:1
+            }},
+        {
+          $lookup: {
+            from: ModelNames.USER,
+            let: { employeeId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$_employeeId', '$$employeeId'] },
+                },
+              },
+              {$project:{
+                _id:1
+                  }},
+                  {
+                    $lookup: {
+                      from: ModelNames.USER_ATTENDANCES,
+                      let: { userId: '$_id' },
+                      pipeline: [
+                        {
+                          $match: {
+                            _stopTime: 0,
+                            _status: 1,
+                            $expr: { $eq: ['$_userId', '$$userId'] },
+                          },
+                        },{$project:{_id:1}}
+                      ],
+                      as: 'userAttendance',
+                    },
+                  },
+                  {
+                    $match: { userAttendance: { $ne: [] } }, 
+                  },
+                  {
+                    $lookup: {
+                      from: ModelNames.ORDER_SALES_MAIN,
+                      let: { userId: '$_id' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_orderHeadId', '$$userId'] },
+                            _isProductGenerated:0,
+                            _workStatus:{$nin:[2,27,]}
+                          },
+                        },{$project:{_id:1}}
+                      ],
+                      as: 'orderCount',
+                    },
+                  },
+                 
+
+
+            ],
+            as: 'userDetails',
+          },
+        }, {
+          $unwind: {
+            path: '$userDetails',
+          },
+        },
+      ],
+      as: 'employees',
+    },
+  },
+
+
+]).session(transactionSession);
+console.log("resultOh   "+JSON.stringify(resultOh));
+if(resultOh.length==0){
+ 
+  orderHeadId=shopDetails[0]._orderHeadId;
+}
+
+
+}
+
+
       const newsettingsModel = new this.orderSaleMainModel({
         _id: orderSaleId,
         _shopId: dto.shopId,
@@ -297,7 +405,7 @@ export class OrderSalesService {
         _parentOrderId: null,
         _isReWork: 0,
         _rootCause: '',
-        _orderHeadId: shopDetails[0]._orderHeadId,
+        _orderHeadId: orderHeadId,
         _description: dto.description,
         _generalRemark: dto.generalRemark != null ? dto.generalRemark : '',
         _createdUserId: _userId_,
