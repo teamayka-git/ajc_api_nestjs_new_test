@@ -100,6 +100,7 @@ _code:{
     1021 - General tax
     1022 - Order maximum due date
     1023 - Invoice prefix
+    1024 - order head auto assign
 
 }
 _type:{
