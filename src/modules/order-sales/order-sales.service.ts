@@ -382,6 +382,9 @@ _id:1
           currentOrderCount:"$userDetails.orderCount",
 
 
+        }},
+        {$sort:{
+          currentOrderCount:1
         }}
       ],
       as: 'employees',
