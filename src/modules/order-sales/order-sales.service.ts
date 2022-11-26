@@ -364,7 +364,7 @@ _id:1
                  
                   {$project:{
 
-                    orderCount:{ $size: 'orderCount' }
+                    orderCount:{ $size: '$orderCount' }
                   
                   }}
 
