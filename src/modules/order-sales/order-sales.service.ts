@@ -277,9 +277,7 @@ export class OrderSalesService {
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-      let uidSalesOrder =
-        shopDetails[0].orderHeadDetails.employeeDetails._prefix +
-        resultCounterPurchase._count;
+    
 
 
 
@@ -292,8 +290,10 @@ if(resultGeneralOhAutoAssign.length==0){
   );
 }
 var orderHeadId=null;
+var ohPrefix="";
 if(resultGeneralOhAutoAssign[0]._number==0){
   orderHeadId=shopDetails[0]._orderHeadId;
+  ohPrefix=shopDetails[0].orderHeadDetails.employeeDetails._prefix;
 }else{
 var resultOh=await this.departmentModel.aggregate([
   {$match:{_code:1000}},
@@ -311,7 +311,8 @@ _id:1
           },
         },
         {$project:{
-          _id:1
+          _id:1,
+          _prefix:1
             }},
         {
           $lookup: {
@@ -379,6 +380,7 @@ _id:1
         {$project:{
 
           userId:"$userDetails._id",
+          _prefix:1,
           currentOrderCount:"$userDetails.orderCount",
 
 
@@ -397,14 +399,19 @@ console.log("resultOh   "+JSON.stringify(resultOh));
 if(resultOh.length==0 || resultOh[0].employees==0 ){
  
   orderHeadId=shopDetails[0]._orderHeadId;
+  ohPrefix=shopDetails[0].orderHeadDetails.employeeDetails._prefix;
 }else{
 
   orderHeadId=resultOh[0].employees[0].userId;
+  ohPrefix=resultOh[0].employees[0]._prefix;
 }
 
 
 }
-
+//shopDetails[0].orderHeadDetails.employeeDetails._prefix
+let uidSalesOrder =
+ ohPrefix+
+resultCounterPurchase._count;
 
       const newsettingsModel = new this.orderSaleMainModel({
         _id: orderSaleId,
