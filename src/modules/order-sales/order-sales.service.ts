@@ -7211,6 +7211,22 @@ export class OrderSalesService {
 
               return pipeline;
             };
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+                {$project:{
+                  _url:1
+                }}],
+                  as: 'globalGallery',
+                },
+              },
+              {
+                $unwind: { path: '$globalGallery', preserveNullAndEmptyArrays: true },
+              },
+            );
             pipeline.push({
               $lookup: {
                 from: ModelNames.ORDER_SALE_SET_PROCESSES,
@@ -7257,9 +7273,9 @@ export class OrderSalesService {
               $project: {
                 _id: 1,
                 _name: 1,
-
-                countAssigned: { $size: '$setProcessAssignedList' },
-                countFinished: { $size: '$setProcessFinishedList' },
+                globalGallery:1,
+                pending: { $size: '$setProcessAssignedList' },
+                completed: { $size: '$setProcessFinishedList' },
               },
             });
             return pipeline;
@@ -7366,6 +7382,30 @@ export class OrderSalesService {
 
               return pipeline;
             };
+
+
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+                {$project:{
+                  _url:1
+                }}],
+                  as: 'globalGallery',
+                },
+              },
+              {
+                $unwind: { path: '$globalGallery', preserveNullAndEmptyArrays: true },
+              },
+            );
+
+
+
+
+
+            
             pipeline.push({
               $lookup: {
                 from: ModelNames.ORDER_SALES_MAIN,
@@ -7413,9 +7453,9 @@ export class OrderSalesService {
               $project: {
                 _id: 1,
                 _name: 1,
-
-                productGeneratedList: { $size: '$productGeneratedList' },
-                productNotGeneratedList: { $size: '$productNotGeneratedList' },
+                globalGallery:1,
+                completed: { $size: '$productGeneratedList' },
+                pending: { $size: '$productNotGeneratedList' },
               },
             });
             return pipeline;
