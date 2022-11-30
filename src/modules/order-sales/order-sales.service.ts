@@ -7255,7 +7255,6 @@ export class OrderSalesService {
               $project: {
                 _id: 1,
                 _name: 1,
-                _mobile: 1,
 
                 countAssigned: { $size: '$setProcessAssignedList' },
                 countFinished: { $size: '$setProcessFinishedList' },
@@ -7270,12 +7269,12 @@ export class OrderSalesService {
                 from: ModelNames.USER,
                 let: { employeeId: '$_id' },
                 pipeline: userMongoCheckPipeline(),
-                as: 'userList',
+                as: 'userDetails',
               },
             },
             {
               $unwind: {
-                path: '$userList',
+                path: '$userDetails',
               },
             },
           );
@@ -7292,13 +7291,14 @@ export class OrderSalesService {
               as: 'employeeList',
             },
           },
-          // {
-          //   $unwind: {
-          //     path: '$employeeList',
-          //   },
-          // },
+      
         );
-
+        aggregateArray.push({
+          $project: {
+            _id: 1,
+            employeeList: 1,
+          },
+        });
         resultWorker = await this.departmentModel.aggregate(aggregateArray);
       }
 
@@ -7450,13 +7450,18 @@ export class OrderSalesService {
           //   },
           // },
         );
-
+        aggregateArray.push({
+          $project: {
+            _id: 1,
+            employeeList: 1,
+          },
+        });
         resultOh = await this.departmentModel.aggregate(aggregateArray);
       }
 
       const responseJSON = {
         message: 'success',
-        data: { listOh: resultOh, resultWorker: resultWorker },
+        data: { listOh: resultOh, listWorker: resultWorker },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
