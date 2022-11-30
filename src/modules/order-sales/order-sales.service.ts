@@ -7427,12 +7427,12 @@ export class OrderSalesService {
                 from: ModelNames.USER,
                 let: { employeeId: '$_id' },
                 pipeline: userMongoCheckPipeline(),
-                as: 'userList',
+                as: 'userDetails',
               },
             },
             {
               $unwind: {
-                path: '$userList',
+                path: '$userDetails',
               },
             },
           );
