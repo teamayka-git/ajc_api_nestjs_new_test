@@ -7184,7 +7184,6 @@ export class OrderSalesService {
               });
               pipeline.push({ $match: { _id: { $in: newSettingsId } } });
             }
-        
 
             const setProcessAssignedMongoCheckPipeline = () => {
               const pipeline = [];
@@ -7207,9 +7206,6 @@ export class OrderSalesService {
                   },
                 });
               }
-
-
-
 
               return pipeline;
             };
@@ -7244,9 +7240,6 @@ export class OrderSalesService {
                 });
               }
 
-
-
-
               return pipeline;
             };
             pipeline.push({
@@ -7258,15 +7251,16 @@ export class OrderSalesService {
               },
             });
 
-            pipeline.push({ $project: { _id: 1,
-              _name: 1,
-              _mobile: 1,
-              
-              countAssigned:{$size:"$setProcessAssignedList"} ,
-              countFinished:{$size:"$setProcessFinishedList"} ,
-            
-            
-            } });
+            pipeline.push({
+              $project: {
+                _id: 1,
+                _name: 1,
+                _mobile: 1,
+
+                countAssigned: { $size: '$setProcessAssignedList' },
+                countFinished: { $size: '$setProcessFinishedList' },
+              },
+            });
             return pipeline;
           };
 
@@ -7310,6 +7304,154 @@ export class OrderSalesService {
 
       if (dto.screenType.includes(100)) {
         //oh
+        var aggregateArray = []; 
+        aggregateArray.push({ $match: { _code: 1000, _status: 1 } });
+
+        const employeeMongoCheckPipeline = () => {
+          const pipeline = [];
+          pipeline.push({
+            $match: {
+              $expr: { $eq: ['$_departmentId', '$$departmentId'] },
+            },
+          });
+          pipeline.push({
+            $project: {
+              _id: 1,
+            },
+          });
+          const userMongoCheckPipeline = () => {
+            const pipeline = [];
+            pipeline.push({
+              $match: {
+                _status: 1,
+                $expr: { $eq: ['$_employeeId', '$$employeeId'] },
+              },
+            });
+            if (dto.ohIds.length > 0) {
+              var newSettingsId = [];
+              dto.ohIds.map((mapItem) => {
+                newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+              });
+              pipeline.push({ $match: { _id: { $in: newSettingsId } } });
+            }
+
+            const orderSaleProductNotGeneratedMongoCheckPipeline = () => {
+              const pipeline = [];
+              pipeline.push({
+                $match: {
+                  $expr: { $eq: ['$_orderHeadId', '$$userId'] },
+                  _status: 1,
+                  _isProductGenerated:0,
+                },
+              });
+              if (
+                dto.orderCreatedEndDate != -1 &&
+                dto.orderCreatedStartDate != -1
+              ) {
+                pipeline.push({
+                  $match: {
+                    _createdAt: {
+                      $lte: dto.orderCreatedEndDate,
+                      $gte: dto.orderCreatedStartDate,
+                    },
+                  },
+                });
+              }
+
+              return pipeline;
+            };
+            pipeline.push({
+              $lookup: {
+                from: ModelNames.ORDER_SALES_MAIN,
+                let: { userId: '$_id' },
+                pipeline: orderSaleProductNotGeneratedMongoCheckPipeline(),
+                as: 'productNotGeneratedList',
+              },
+            });
+
+            const orderSaleProductGeneratedMongoCheckPipeline = () => {
+              const pipeline = [];
+              pipeline.push({
+                $match: {
+                  $expr: { $eq: ['$_orderHeadId', '$$userId'] },
+                  _status: 1,
+                  _isProductGenerated:1,
+                },
+              });
+              if (
+                dto.orderCreatedEndDate != -1 &&
+                dto.orderCreatedStartDate != -1
+              ) {
+                pipeline.push({
+                  $match: {
+                    _createdAt: {
+                      $lte: dto.orderCreatedEndDate,
+                      $gte: dto.orderCreatedStartDate,
+                    },
+                  },
+                });
+              }
+
+              return pipeline;
+            };
+            pipeline.push({
+              $lookup: {
+                from: ModelNames.ORDER_SALES_MAIN,
+                let: { userId: '$_id' },
+                pipeline: orderSaleProductGeneratedMongoCheckPipeline(),
+                as: 'productGeneratedList',
+              },
+            });
+
+            pipeline.push({
+              $project: {
+                _id: 1,
+                _name: 1,
+                _mobile: 1,
+
+                productGeneratedList: { $size: '$productGeneratedList' },
+                productNotGeneratedList: { $size: '$productNotGeneratedList' },
+              },
+            });
+            return pipeline;
+          };
+
+          pipeline.push(
+            {
+              $lookup: {
+                from: ModelNames.USER,
+                let: { employeeId: '$_id' },
+                pipeline: userMongoCheckPipeline(),
+                as: 'userList',
+              },
+            },
+            {
+              $unwind: {
+                path: '$userList',
+              },
+            },
+          );
+
+          return pipeline;
+        };
+
+        aggregateArray.push(
+          {
+            $lookup: {
+              from: ModelNames.EMPLOYEES,
+              let: { departmentId: '$_id' },
+              pipeline: employeeMongoCheckPipeline(),
+              as: 'employeeList',
+            },
+          },
+          // {
+          //   $unwind: {
+          //     path: '$employeeList',
+          //   },
+          // },
+        );
+
+        resultOh = await this.departmentModel.aggregate(aggregateArray);
       }
 
       const responseJSON = {
