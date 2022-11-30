@@ -7242,7 +7242,6 @@ export class OrderSalesService {
                 });
               }
 
-              pipeline.push({ $project: { _id: 1 } });
 
               return pipeline;
             };
@@ -7255,6 +7254,7 @@ export class OrderSalesService {
               },
             });
 
+            pipeline.push({ $project: { _id: 1,count:{$size:"$setProcessList"} } });
             return pipeline;
           };
 
