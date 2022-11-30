@@ -7519,8 +7519,8 @@ export class OrderSalesService {
         message: 'success',
         data: {
           list: [
-            resultOh.length != 0 ? [...resultOh] : [],
-            resultWorker.length != 0 ? [...resultWorker] : [],
+            ...(resultOh.length != 0 ? [...resultOh] : []),
+            ...(resultWorker.length != 0 ? [...resultWorker] : []),
           ],
         },
       };
