@@ -7298,6 +7298,8 @@ export class OrderSalesService {
         aggregateArray.push({
           $project: {
             _id: 1,
+            _name:1,
+            _code:1,
             employeeList: 1,
           },
         });
@@ -7456,6 +7458,8 @@ export class OrderSalesService {
         aggregateArray.push({
           $project: {
             _id: 1,
+            _name:1,
+            _code:1,
             employeeList: 1,
           },
         });
