@@ -7167,6 +7167,8 @@ export class OrderSalesService {
           pipeline.push({
             $project: {
               _id: 1,
+              _name:1,
+              _code:1,
             },
           });
           const userMongoCheckPipeline = () => {
@@ -7317,6 +7319,8 @@ export class OrderSalesService {
           pipeline.push({
             $project: {
               _id: 1,
+              _name:1,
+              _code:1,
             },
           });
           const userMongoCheckPipeline = () => {
@@ -7460,7 +7464,7 @@ export class OrderSalesService {
 
       const responseJSON = {
         message: 'success',
-        data: { listOh: resultOh, listWorker: resultWorker },
+        data: { list:[resultOh[0],resultWorker[0]]   },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
