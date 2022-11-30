@@ -16,6 +16,7 @@ import { diskStorage } from 'multer';
 import { FileMulterHelper } from 'src/shared/file_multter_helper';
 import {
   EditOrderSaleGeneralRemarkDto,
+  GetWorkCountDto,
   GlobalSearchDto,
   OrderSaleHistoryListDto,
   OrderSaleListDto,
@@ -163,6 +164,15 @@ export class OrderSalesController {
     @Request() req,
   ) {
     return this.orderSalesService.getOrderDetailsFromQrBarCode(dto, req['_userId_']);
+  }
+
+
+  @Post('getWorkCount')
+  getWorkCount(
+    @Body() dto: GetWorkCountDto,
+    @Request() req,
+  ) {
+    return this.orderSalesService.getWorkCount(dto, req['_userId_']);
   }
 
 
