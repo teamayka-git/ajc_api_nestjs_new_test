@@ -7407,7 +7407,6 @@ export class OrderSalesService {
               $project: {
                 _id: 1,
                 _name: 1,
-                _mobile: 1,
 
                 productGeneratedList: { $size: '$productGeneratedList' },
                 productNotGeneratedList: { $size: '$productNotGeneratedList' },
