@@ -7167,8 +7167,8 @@ export class OrderSalesService {
           pipeline.push({
             $project: {
               _id: 1,
-              _name:1,
-              _code:1,
+              _name: 1,
+              _code: 1,
             },
           });
           const userMongoCheckPipeline = () => {
@@ -7216,15 +7216,24 @@ export class OrderSalesService {
                 $lookup: {
                   from: ModelNames.GLOBAL_GALLERIES,
                   let: { globalGalleryId: '$_globalGalleryId' },
-                  pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
-                {$project:{
-                  _url:1
-                }}],
+                  pipeline: [
+                    {
+                      $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } },
+                    },
+                    {
+                      $project: {
+                        _url: 1,
+                      },
+                    },
+                  ],
                   as: 'globalGallery',
                 },
               },
               {
-                $unwind: { path: '$globalGallery', preserveNullAndEmptyArrays: true },
+                $unwind: {
+                  path: '$globalGallery',
+                  preserveNullAndEmptyArrays: true,
+                },
               },
             );
             pipeline.push({
@@ -7273,7 +7282,7 @@ export class OrderSalesService {
               $project: {
                 _id: 1,
                 _name: 1,
-                globalGallery:1,
+                globalGallery: 1,
                 pending: { $size: '$setProcessAssignedList' },
                 completed: { $size: '$setProcessFinishedList' },
               },
@@ -7300,22 +7309,19 @@ export class OrderSalesService {
           return pipeline;
         };
 
-        aggregateArray.push(
-          {
-            $lookup: {
-              from: ModelNames.EMPLOYEES,
-              let: { departmentId: '$_id' },
-              pipeline: employeeMongoCheckPipeline(),
-              as: 'employeeList',
-            },
+        aggregateArray.push({
+          $lookup: {
+            from: ModelNames.EMPLOYEES,
+            let: { departmentId: '$_id' },
+            pipeline: employeeMongoCheckPipeline(),
+            as: 'employeeList',
           },
-      
-        );
+        });
         aggregateArray.push({
           $project: {
             _id: 1,
-            _name:1,
-            _code:1,
+            _name: 1,
+            _code: 1,
             employeeList: 1,
           },
         });
@@ -7324,7 +7330,7 @@ export class OrderSalesService {
 
       if (dto.screenType.includes(100)) {
         //oh
-        var aggregateArray = []; 
+        var aggregateArray = [];
         aggregateArray.push({ $match: { _code: 1000, _status: 1 } });
 
         const employeeMongoCheckPipeline = () => {
@@ -7337,8 +7343,8 @@ export class OrderSalesService {
           pipeline.push({
             $project: {
               _id: 1,
-              _name:1,
-              _code:1,
+              _name: 1,
+              _code: 1,
             },
           });
           const userMongoCheckPipeline = () => {
@@ -7363,7 +7369,7 @@ export class OrderSalesService {
                 $match: {
                   $expr: { $eq: ['$_orderHeadId', '$$userId'] },
                   _status: 1,
-                  _isProductGenerated:0,
+                  _isProductGenerated: 0,
                 },
               });
               if (
@@ -7383,29 +7389,32 @@ export class OrderSalesService {
               return pipeline;
             };
 
-
             pipeline.push(
               {
                 $lookup: {
                   from: ModelNames.GLOBAL_GALLERIES,
                   let: { globalGalleryId: '$_globalGalleryId' },
-                  pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
-                {$project:{
-                  _url:1
-                }}],
+                  pipeline: [
+                    {
+                      $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } },
+                    },
+                    {
+                      $project: {
+                        _url: 1,
+                      },
+                    },
+                  ],
                   as: 'globalGallery',
                 },
               },
               {
-                $unwind: { path: '$globalGallery', preserveNullAndEmptyArrays: true },
+                $unwind: {
+                  path: '$globalGallery',
+                  preserveNullAndEmptyArrays: true,
+                },
               },
             );
 
-
-
-
-
-            
             pipeline.push({
               $lookup: {
                 from: ModelNames.ORDER_SALES_MAIN,
@@ -7421,7 +7430,7 @@ export class OrderSalesService {
                 $match: {
                   $expr: { $eq: ['$_orderHeadId', '$$userId'] },
                   _status: 1,
-                  _isProductGenerated:1,
+                  _isProductGenerated: 1,
                 },
               });
               if (
@@ -7453,7 +7462,7 @@ export class OrderSalesService {
               $project: {
                 _id: 1,
                 _name: 1,
-                globalGallery:1,
+                globalGallery: 1,
                 completed: { $size: '$productGeneratedList' },
                 pending: { $size: '$productNotGeneratedList' },
               },
@@ -7498,8 +7507,8 @@ export class OrderSalesService {
         aggregateArray.push({
           $project: {
             _id: 1,
-            _name:1,
-            _code:1,
+            _name: 1,
+            _code: 1,
             employeeList: 1,
           },
         });
@@ -7508,7 +7517,12 @@ export class OrderSalesService {
 
       const responseJSON = {
         message: 'success',
-        data: { list:[resultOh[0],resultWorker[0]]   },
+        data: {
+          list: [
+            resultOh.length != 0 ? [...resultOh] : [],
+            resultWorker.length != 0 ? [...resultWorker] : [],
+          ],
+        },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
