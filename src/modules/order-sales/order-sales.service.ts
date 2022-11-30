@@ -7195,6 +7195,11 @@ export class OrderSalesService {
                   _status: 1,
                 },
               });
+              pipeline.push({
+                $match: {
+                  _workCompletedTime: -1,
+                },
+              });
               if (
                 dto.setProcessAssignedStartDate != -1 &&
                 dto.setProcessAssignedEndDate != -1
