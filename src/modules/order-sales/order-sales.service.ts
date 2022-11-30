@@ -7328,7 +7328,7 @@ export class OrderSalesService {
         resultWorker = await this.departmentModel.aggregate(aggregateArray);
       }
 
-      if (dto.screenType.includes(100)) {
+      if (dto.screenType.includes(101)) {
         //oh
         var aggregateArray = [];
         aggregateArray.push({ $match: { _code: 1000, _status: 1 } });
