@@ -777,15 +777,6 @@ export class GetWorkCountDto {
   @ApiProperty({})
   setProcessAssignedEndDate: number;
 
-
-  @IsNumber()
-  @ApiProperty({})
-  setProcessStartedStartDate: number;
-
-  @IsNumber()
-  @ApiProperty({})
-  setProcessStartedEndDate: number;
-
   @IsNumber()
   @ApiProperty({})
   setProcessFinishStartDate: number;

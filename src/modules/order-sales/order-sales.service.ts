@@ -7184,15 +7184,9 @@ export class OrderSalesService {
               });
               pipeline.push({ $match: { _id: { $in: newSettingsId } } });
             }
-            pipeline.push({
-              $project: {
-                _id: 1,
-                _name: 1,
-                _mobile: 1,
-              },
-            });
+        
 
-            const setProcessMongoCheckPipeline = () => {
+            const setProcessAssignedMongoCheckPipeline = () => {
               const pipeline = [];
               pipeline.push({
                 $match: {
@@ -7214,20 +7208,28 @@ export class OrderSalesService {
                 });
               }
 
-              if (
-                dto.setProcessStartedStartDate != -1 &&
-                dto.setProcessStartedEndDate != -1
-              ) {
-                pipeline.push({
-                  $match: {
-                    _workStartedTime: {
-                      $lte: dto.setProcessStartedEndDate,
-                      $gte: dto.setProcessStartedStartDate,
-                    },
-                  },
-                });
-              }
 
+
+
+              return pipeline;
+            };
+            pipeline.push({
+              $lookup: {
+                from: ModelNames.ORDER_SALE_SET_PROCESSES,
+                let: { userId: '$_id' },
+                pipeline: setProcessAssignedMongoCheckPipeline(),
+                as: 'setProcessAssignedList',
+              },
+            });
+
+            const setProcessFinishedMongoCheckPipeline = () => {
+              const pipeline = [];
+              pipeline.push({
+                $match: {
+                  $expr: { $eq: ['$_userId', '$$userId'] },
+                  _status: 1,
+                },
+              });
               if (
                 dto.setProcessFinishEndDate != -1 &&
                 dto.setProcessFinishStartDate != -1
@@ -7243,14 +7245,16 @@ export class OrderSalesService {
               }
 
 
+
+
               return pipeline;
             };
             pipeline.push({
               $lookup: {
                 from: ModelNames.ORDER_SALE_SET_PROCESSES,
                 let: { userId: '$_id' },
-                pipeline: setProcessMongoCheckPipeline(),
-                as: 'setProcessList',
+                pipeline: setProcessFinishedMongoCheckPipeline(),
+                as: 'setProcessFinishedList',
               },
             });
 
@@ -7258,7 +7262,11 @@ export class OrderSalesService {
               _name: 1,
               _mobile: 1,
               
-              count:{$size:"$setProcessList"} } });
+              countAssigned:{$size:"$setProcessAssignedList"} ,
+              countFinished:{$size:"$setProcessFinishedList"} ,
+            
+            
+            } });
             return pipeline;
           };
 
