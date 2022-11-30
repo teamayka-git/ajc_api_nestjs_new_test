@@ -7254,7 +7254,11 @@ export class OrderSalesService {
               },
             });
 
-            pipeline.push({ $project: { _id: 1,count:{$size:"$setProcessList"} } });
+            pipeline.push({ $project: { _id: 1,
+              _name: 1,
+              _mobile: 1,
+              
+              count:{$size:"$setProcessList"} } });
             return pipeline;
           };
 
@@ -7293,7 +7297,7 @@ export class OrderSalesService {
           // },
         );
 
-        resultOh = await this.departmentModel.aggregate(aggregateArray);
+        resultWorker = await this.departmentModel.aggregate(aggregateArray);
       }
 
       if (dto.screenType.includes(100)) {
