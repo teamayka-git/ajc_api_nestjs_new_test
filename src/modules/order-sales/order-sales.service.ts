@@ -7267,11 +7267,7 @@ export class OrderSalesService {
                 as: 'userList',
               },
             },
-            {
-              $unwind: {
-                path: '$userList',
-              },
-            },
+          
           );
 
           return pipeline;
