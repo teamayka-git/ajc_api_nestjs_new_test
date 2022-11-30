@@ -7273,7 +7273,6 @@ export class OrderSalesService {
               $project: {
                 _id: 1,
                 _name: 1,
-                globalGallery:1,
                 pending: { $size: '$setProcessAssignedList' },
                 completed: { $size: '$setProcessFinishedList' },
               },
@@ -7316,6 +7315,7 @@ export class OrderSalesService {
             _id: 1,
             _name:1,
             _code:1,
+            globalGallery:1,
             employeeList: 1,
           },
         });
