@@ -7236,6 +7236,28 @@ export class OrderSalesService {
                 },
               },
             );
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.USER_ATTENDANCES,
+                  let: { userId: '$_id' },
+                  pipeline: [
+                    {
+                      $match: {_status:1, $expr: { $eq: ['$_userId', '$$userId'] } },
+                    },
+                   {$sort:{_id:-1}},
+                   {$limit:1}
+                  ],
+                  as: 'attendanceDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$attendanceDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
             pipeline.push({
               $lookup: {
                 from: ModelNames.ORDER_SALE_SET_PROCESSES,
@@ -7283,6 +7305,7 @@ export class OrderSalesService {
                 _id: 1,
                 _name: 1,
                 globalGallery: 1,
+                attendanceDetails:1,
                 pending: { $size: '$setProcessAssignedList' },
                 completed: { $size: '$setProcessFinishedList' },
               },
@@ -7414,6 +7437,28 @@ export class OrderSalesService {
                 },
               },
             );
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.USER_ATTENDANCES,
+                  let: { userId: '$_id' },
+                  pipeline: [
+                    {
+                      $match: {_status:1, $expr: { $eq: ['$_userId', '$$userId'] } },
+                    },
+                   {$sort:{_id:-1}},
+                   {$limit:1}
+                  ],
+                  as: 'attendanceDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$attendanceDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
 
             pipeline.push({
               $lookup: {
@@ -7462,6 +7507,7 @@ export class OrderSalesService {
               $project: {
                 _id: 1,
                 _name: 1,
+                attendanceDetails:1,
                 globalGallery: 1,
                 completed: { $size: '$productGeneratedList' },
                 pending: { $size: '$productNotGeneratedList' },
