@@ -7267,7 +7267,11 @@ export class OrderSalesService {
                 as: 'userList',
               },
             },
-          
+            {
+              $unwind: {
+                path: '$userList',
+              },
+            },
           );
 
           return pipeline;
@@ -7282,11 +7286,11 @@ export class OrderSalesService {
               as: 'employeeList',
             },
           },
-          {
-            $unwind: {
-              path: '$employeeList',
-            },
-          },
+          // {
+          //   $unwind: {
+          //     path: '$employeeList',
+          //   },
+          // },
         );
 
         resultOh = await this.departmentModel.aggregate(aggregateArray);
