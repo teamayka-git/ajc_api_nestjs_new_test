@@ -7214,6 +7214,26 @@ export class OrderSalesService {
                 });
               }
 
+              pipeline.push(
+                {
+                  $lookup: {
+                    from: ModelNames.ORDER_SALES_MAIN,
+                    let: { osId: '$_orderSaleId' },
+                    pipeline: [{ $match: {_workStatus:{$nin:[
+                      2,27
+                    ]}, $expr: { $eq: ['$_id', '$$osId'] } } }
+                    
+                    ,{$project:{_id:1}}],
+                    as: 'orderDetails',
+                  },
+                },
+                {
+                  $unwind: { path: '$orderDetails',},
+                },
+              );
+
+
+
               return pipeline;
             };
             pipeline.push(
@@ -7293,7 +7313,23 @@ export class OrderSalesService {
                   },
                 });
               }
-
+              pipeline.push(
+                {
+                  $lookup: {
+                    from: ModelNames.ORDER_SALES_MAIN,
+                    let: { osId: '$_orderSaleId' },
+                    pipeline: [{ $match: {_workStatus:{$nin:[
+                      2,27
+                    ]}, $expr: { $eq: ['$_id', '$$osId'] } } }
+                    
+                    ,{$project:{_id:1}}],
+                    as: 'orderDetails',
+                  },
+                },
+                {
+                  $unwind: { path: '$orderDetails',},
+                },
+              );
               return pipeline;
             };
             pipeline.push({
@@ -7400,15 +7436,24 @@ export class OrderSalesService {
                   _isProductGenerated: 0,
                 },
               });
+
+              pipeline.push({$match:{
+                _workStatus:{$nin:[
+                  2,27
+                ]}
+              }});
+            
+              
+
               if (
-                dto.orderCreatedEndDate != -1 &&
-                dto.orderCreatedStartDate != -1
+                dto.pendingOrderCreatedEndDate != -1 &&
+                dto.pendingOrderCreatedStartDate != -1
               ) {
                 pipeline.push({
                   $match: {
                     _createdAt: {
-                      $lte: dto.orderCreatedEndDate,
-                      $gte: dto.orderCreatedStartDate,
+                      $lte: dto.pendingOrderCreatedEndDate,
+                      $gte: dto.pendingOrderCreatedStartDate,
                     },
                   },
                 });
@@ -7483,20 +7528,26 @@ export class OrderSalesService {
                   _isProductGenerated: 1,
                 },
               });
+              pipeline.push({$match:{
+                _workStatus:{$nin:[
+                  2,27
+                ]}
+              }});
               if (
-                dto.orderCreatedEndDate != -1 &&
-                dto.orderCreatedStartDate != -1
+                dto.completedOrderCreatedEndDate != -1 &&
+                dto.completedOrderCreatedStartDate != -1
               ) {
                 pipeline.push({
                   $match: {
                     _createdAt: {
-                      $lte: dto.orderCreatedEndDate,
-                      $gte: dto.orderCreatedStartDate,
+                      $lte: dto.completedOrderCreatedEndDate,
+                      $gte: dto.completedOrderCreatedStartDate,
                     },
                   },
                 });
               }
 
+           
               return pipeline;
             };
             pipeline.push({

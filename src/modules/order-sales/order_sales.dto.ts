@@ -761,11 +761,20 @@ export class GetWorkCountDto {
 
   @IsNumber()
   @ApiProperty({})
-  orderCreatedStartDate: number;
+  pendingOrderCreatedStartDate: number;
 
   @IsNumber()
   @ApiProperty({})
-  orderCreatedEndDate: number;
+  pendingOrderCreatedEndDate: number;
+
+
+  @IsNumber()
+  @ApiProperty({})
+  completedOrderCreatedStartDate: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  completedOrderCreatedEndDate: number;
 
 
 
