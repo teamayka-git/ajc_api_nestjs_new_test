@@ -780,6 +780,16 @@ export class GetWorkCountDto {
 
   @IsNumber()
   @ApiProperty({})
+  completedOrderProductCreatedStartDate: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  completedOrderProductCreatedEndDate: number;
+
+
+
+  @IsNumber()
+  @ApiProperty({})
   setProcessAssignedStartDate: number;
 
   @IsNumber()

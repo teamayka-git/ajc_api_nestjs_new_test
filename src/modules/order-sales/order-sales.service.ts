@@ -7458,9 +7458,10 @@ export class OrderSalesService {
                   },
                 });
               }
-
+            
               return pipeline;
             };
+          
 
             pipeline.push(
               {
@@ -7545,6 +7546,69 @@ export class OrderSalesService {
                     },
                   },
                 });
+              }
+              if (
+                dto.completedOrderProductCreatedEndDate != -1 &&
+                dto.completedOrderProductCreatedStartDate != -1
+              ) {
+  
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.ORDER_SALES_ITEMS,
+                      let: { osId: '$_id' },
+                      pipeline: [
+                        {
+                          $match: {_status:1, $expr: { $eq: ['$_orderSaleId', '$$osId'] } },
+                        },
+                        {
+                          $project: {
+                            _id: 1,
+                          },
+                        },
+                        {
+                          $lookup: {
+                            from: ModelNames.PRODUCTS,
+                            let: { osItemId: '$_id' },
+                            pipeline: [
+                              {
+                                $match: {_status:1, $expr: { $eq: ['$_orderItemId', '$$osItemId'] },
+                              
+                              
+                                _createdAt: {
+                                  $lte: dto.completedOrderProductCreatedEndDate,
+                                  $gte: dto.completedOrderProductCreatedStartDate,
+                                },
+                              
+                              
+                              
+                              },
+                              },
+
+                              {
+                                $project: {
+                                  _id: 1,
+                                },
+                              },
+                            ],
+                            as: 'osItemProduct',
+                          },
+                        },
+                      
+                        {
+                          $match: { osItemProduct: { $ne: [] } }, 
+                        }
+                      ],
+                      as: 'orderSaleItems',
+                    },
+                  },
+                
+                  {
+                    $match: { orderSaleItems: { $ne: [] } }, 
+                  }
+                );
+  
+  
               }
 
            
