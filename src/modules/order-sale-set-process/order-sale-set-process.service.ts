@@ -307,11 +307,12 @@ export class OrderSaleSetProcessService {
             },
             {
               $sort:{
-                workCount:1
+                workCount:1,
+                workCountCompleted:1
               }
             }
           ]).session(transactionSession);
-        var startDateofMonth=  startOfMonth(dateTime).getUTCMilliseconds;
+        var startDateofMonth=  startOfMonth(dateTime).;
         console.log("startDateofMonth  "+startDateofMonth);
 console.log("___test employee check  "+JSON.stringify(resultEmployees));
 throw new HttpException('Check', HttpStatus.INTERNAL_SERVER_ERROR);
