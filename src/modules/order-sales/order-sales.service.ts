@@ -353,7 +353,6 @@ export class OrderSalesService {
         },
       ]);
       console.log("___a  "+JSON.stringify(resultCheckOh));
-      throw new HttpException('checking', HttpStatus.INTERNAL_SERVER_ERROR);
       if (resultCheckOh.length != 0) {
         orderHeadId = _userId_;
         ohPrefix = resultCheckOh[0].employeeDetails._prefix;
