@@ -287,6 +287,7 @@ export class OrderSaleSetProcessService {
                 pipeline: [
                   {
                     $match: {
+                      _workCompletedTime :{$gte:startOfMonth(dateTime).getTime(),$lte:dateTime},
                       _orderStatus: { $in: [3] },
                       _status: 1,
                       $expr: { $eq: ['$_userId', '$$userId'] },
