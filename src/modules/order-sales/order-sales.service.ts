@@ -303,56 +303,56 @@ export class OrderSalesService {
             _id: 1,
           },
         },
-        {
-          $lookup: {
-            from: ModelNames.EMPLOYEES,
-            let: { userId: '$_id' },
-            pipeline: [
-              {
-                $match: {
-                  _status: 1,
-                  $expr: { $eq: ['$_userId', '$$userId'] },
-                },
-              },
-              {
-                $project: {
-                  _id: 1,
-                  _prefix: 1,
-                },
-              },
-              {
-                $lookup: {
-                  from: ModelNames.DEPARTMENT,
-                  let: { departmentId: '$_departmentId' },
-                  pipeline: [
-                    {
-                      $match: {
-                        _code: 1000,
-                        $expr: { $eq: ['$_id', '$$departmentId'] },
-                      },
-                    },
-                    {
-                      $project: {
-                        _id: 1,
-                      },
-                    },
-                  ],
-                  as: 'orderHeadDepartmentDetails',
-                },
-              },
-              {
-                $unwind: { path: '$orderHeadDepartmentDetails' },
-              },
-            ],
-            as: 'employeeDetails',
-          },
-        },
-        {
-          $unwind: { path: '$employeeDetails' },
-        },
+        // {
+        //   $lookup: {
+        //     from: ModelNames.EMPLOYEES,
+        //     let: { userId: '$_id' },
+        //     pipeline: [
+        //       {
+        //         $match: {
+        //           _status: 1,
+        //           $expr: { $eq: ['$_userId', '$$userId'] },
+        //         },
+        //       },
+        //       {
+        //         $project: {
+        //           _id: 1,
+        //           _prefix: 1,
+        //         },
+        //       },
+        //       {
+        //         $lookup: {
+        //           from: ModelNames.DEPARTMENT,
+        //           let: { departmentId: '$_departmentId' },
+        //           pipeline: [
+        //             {
+        //               $match: {
+        //                 _code: 1000,
+        //                 $expr: { $eq: ['$_id', '$$departmentId'] },
+        //               },
+        //             },
+        //             {
+        //               $project: {
+        //                 _id: 1,
+        //               },
+        //             },
+        //           ],
+        //           as: 'orderHeadDepartmentDetails',
+        //         },
+        //       },
+        //       {
+        //         $unwind: { path: '$orderHeadDepartmentDetails' },
+        //       },
+        //     ],
+        //     as: 'employeeDetails',
+        //   },
+        // },
+        // {
+        //   $unwind: { path: '$employeeDetails' },
+        // },
       ]);
       console.log("___a  "+JSON.stringify(resultCheckOh));
-
+      throw new HttpException('checking', HttpStatus.INTERNAL_SERVER_ERROR);
       if (resultCheckOh.length != 0) {
         orderHeadId = _userId_;
         ohPrefix = resultCheckOh[0].employeeDetails._prefix;
