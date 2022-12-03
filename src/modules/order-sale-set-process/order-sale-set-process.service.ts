@@ -313,22 +313,17 @@ export class OrderSaleSetProcessService {
               }
             }
           ]).session(transactionSession);
-        var startDateofMonth=  startOfMonth(dateTime).getTime();
-        console.log("startDateofMonth  "+startDateofMonth);
-console.log("___test employee check  "+JSON.stringify(resultEmployees));
-throw new HttpException('Check', HttpStatus.INTERNAL_SERVER_ERROR);
+       
 
-          let sortedArray = resultEmployees.sort((n1, n2) =>
-            n2.workCount < n1.workCount ? 1 : -1,
-          );
-          if (sortedArray.length != 0) {
+          
+          if (resultEmployees.length != 0) {
             await this.orderSaleSetProcessModel.findOneAndUpdate(
               {
                 _id: dto.array[i].arrayProcess[0]['setProcessId'],
               },
               {
                 $set: {
-                  _userId: sortedArray[0]._userId,
+                  _userId: resultEmployees[0]._userId,
                   _workAssignedTime: dateTime,
                   _orderStatus: 1,
                 },
@@ -337,7 +332,7 @@ throw new HttpException('Check', HttpStatus.INTERNAL_SERVER_ERROR);
             );
             arrayToSetProcessHistories.push({
               _orderSaleId: dto.array[i].orderSaleId,
-              _userId: sortedArray[0]._userId,
+              _userId: resultEmployees[0]._userId,
               _type: 1,
               _processId: dto.array[i].arrayProcess[0].processId,
               _createdUserId: _userId_,
@@ -707,7 +702,7 @@ await this.orderSaleSetProcessModel.findOneAndUpdate(
           var resultEmployees = await this.employeeModel.aggregate([
             {
               $match: {
-                _processMasterId: new mongoose.Types.ObjectId(
+                 _processMasterId: new mongoose.Types.ObjectId(
                   orderSaleSetProcess[0]._processId,
                 ),
               },
@@ -735,7 +730,7 @@ await this.orderSaleSetProcessModel.findOneAndUpdate(
               },
             },
             {
-              $match: { userAttendance: { $ne: [] } },
+              $match: { userAttendance: { $ne: [] } }, 
             },
             {
               $lookup: {
@@ -754,26 +749,48 @@ await this.orderSaleSetProcessModel.findOneAndUpdate(
               },
             },
             {
+              $lookup: {
+                from: ModelNames.ORDER_SALE_SET_PROCESSES,
+                let: { userId: '$_userId' },
+                pipeline: [
+                  {
+                    $match: {
+                      _workCompletedTime :{$gte:startOfMonth(dateTime).getTime(),$lte:dateTime},
+                      _orderStatus: { $in: [3] },
+                      _status: 1,
+                      $expr: { $eq: ['$_userId', '$$userId'] },
+                    },
+                  },
+                ],
+                as: 'setProcessWorkListCompleted',
+              },
+            },
+            {
               $project: {
                 _id: 1,
                 _userId: 1,
                 userAttendance: { _id: 1 },
                 workCount: { $size: '$setProcessWorkList' },
+                workCountCompleted: { $size: '$setProcessWorkListCompleted' },
               },
             },
-          ]);
+            {
+              $sort:{
+                workCount:1,
+                workCountCompleted:-1
+              }
+            }
+          ]).session(transactionSession);
 
-          let sortedArray = resultEmployees.sort((n1, n2) =>
-            n2.workCount < n1.workCount ? 1 : -1,
-          );
-          if (sortedArray.length != 0) {
+          
+          if (resultEmployees.length != 0) {
             await this.orderSaleSetProcessModel.findOneAndUpdate(
               {
                 _id: orderSaleSetProcess[0]._id,
               },
               {
                 $set: {
-                  _userId: sortedArray[0]._userId,
+                  _userId: resultEmployees[0]._userId,
                   _workAssignedTime: dateTime,
                   _orderStatus: 1,
                 },
@@ -784,7 +801,7 @@ await this.orderSaleSetProcessModel.findOneAndUpdate(
             const orderSaleSetProcessHistoryAutomation =
               new this.orderSaleSetProcessHistoriesModel({
                 _orderSaleId: result._orderSaleId,
-                _userId: sortedArray[0]._userId,
+                _userId: resultEmployees[0]._userId,
                 _type: 1,
                 _processId: orderSaleSetProcess[0]._processId,
                 _createdUserId: _userId_,
