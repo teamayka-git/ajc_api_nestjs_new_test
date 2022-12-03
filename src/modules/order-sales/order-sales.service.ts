@@ -320,26 +320,26 @@ export class OrderSalesService {
                   _prefix: 1,
                 },
               },
-              // {
-              //   $lookup: {
-              //     from: ModelNames.DEPARTMENT,
-              //     let: { departmentId: '$_departmentId' },
-              //     pipeline: [
-              //       {
-              //         $match: {
-              //           _code: 1000,
-              //           $expr: { $eq: ['$_id', '$$departmentId'] },
-              //         },
-              //       },
-              //       {
-              //         $project: {
-              //           _id: 1,
-              //         },
-              //       },
-              //     ],
-              //     as: 'orderHeadDepartmentDetails',
-              //   },
-              // },
+              {
+                $lookup: {
+                  from: ModelNames.DEPARTMENT,
+                  let: { departmentId: '$_departmentId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        // _code: 1000,
+                        $expr: { $eq: ['$_id', '$$departmentId'] },
+                      },
+                    },
+                    {
+                      $project: {
+                        _id: 1,
+                      },
+                    },
+                  ],
+                  as: 'orderHeadDepartmentDetails',
+                },
+              },
               // {
               //   $unwind: { path: '$orderHeadDepartmentDetails' },
               // },
@@ -347,9 +347,9 @@ export class OrderSalesService {
             as: 'employeeDetails',
           },
         },
-        // {
-        //   $unwind: { path: '$employeeDetails' },
-        // },
+        {
+          $unwind: { path: '$employeeDetails' },
+        },
       ]);
       console.log("___a  "+JSON.stringify(resultCheckOh));
       throw new HttpException('checking', HttpStatus.INTERNAL_SERVER_ERROR);
