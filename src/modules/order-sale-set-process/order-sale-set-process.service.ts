@@ -27,6 +27,7 @@ import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_pa
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { OrderSaleSetProcessDocuments } from 'src/tableModels/set_process_documents.model';
 import { ProcessMaster } from 'src/tableModels/processMaster.model';
+import {startOfMonth} from 'date-fns'
 
 @Injectable()
 export class OrderSaleSetProcessService {
@@ -310,7 +311,8 @@ export class OrderSaleSetProcessService {
               }
             }
           ]).session(transactionSession);
-
+        var startDateofMonth=  startOfMonth(dateTime);
+        console.log("startDateofMonth  "+startDateofMonth);
 console.log("___test employee check  "+JSON.stringify(resultEmployees));
 throw new HttpException('Check', HttpStatus.INTERNAL_SERVER_ERROR);
 
