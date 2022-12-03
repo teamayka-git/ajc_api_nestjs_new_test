@@ -304,6 +304,11 @@ export class OrderSaleSetProcessService {
                 workCountCompleted: { $size: '$setProcessWorkListCompleted' },
               },
             },
+            {
+              $sort:{
+                workCount:1
+              }
+            }
           ]).session(transactionSession);
 
 console.log("___test employee check  "+JSON.stringify(resultEmployees));
