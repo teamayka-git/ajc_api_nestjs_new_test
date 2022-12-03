@@ -292,9 +292,69 @@ export class OrderSalesService {
       var orderHeadId = null;
       var ohPrefix = '';
 
-      if (_userId_ == shopDetails[0]._orderHeadId) {
-        orderHeadId = shopDetails[0]._orderHeadId;
-        ohPrefix = shopDetails[0].orderHeadDetails.employeeDetails._prefix;
+      var resultCheckOh = await this.userModel.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(_userId_),
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+          },
+        },
+        {
+          $lookup: {
+            from: ModelNames.EMPLOYEES,
+            let: { userId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_userId', '$$userId'] },
+                },
+              },
+              {
+                $project: {
+                  _id: 1,
+                  _prefix: 1,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.DEPARTMENT,
+                  let: { departmentId: '$_departmentId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        _code: 1000,
+                        $expr: { $eq: ['$_id', '$$departmentId'] },
+                      },
+                    },
+                    {
+                      $project: {
+                        _id: 1,
+                      },
+                    },
+                  ],
+                  as: 'orderHeadDepartmentDetails',
+                },
+              },
+              {
+                $unwind: { path: '$orderHeadDepartmentDetails' },
+              },
+            ],
+            as: 'employeeDetails',
+          },
+        },
+        {
+          $unwind: { path: '$employeeDetails' },
+        },
+      ]);
+
+      if (resultCheckOh.length == 0) {
+        orderHeadId = _userId_;
+        ohPrefix = resultCheckOh[0].employeeDetails._prefix;
       } else {
         if (resultGeneralOhAutoAssign[0]._number == 0) {
           orderHeadId = shopDetails[0]._orderHeadId;
@@ -7198,6 +7258,7 @@ export class OrderSalesService {
               pipeline.push({
                 $match: {
                   _workCompletedTime: -1,
+                  _orderStatus: { $nin: [5, 6] },
                 },
               });
               if (
@@ -7219,20 +7280,23 @@ export class OrderSalesService {
                   $lookup: {
                     from: ModelNames.ORDER_SALES_MAIN,
                     let: { osId: '$_orderSaleId' },
-                    pipeline: [{ $match: {_workStatus:{$nin:[
-                      2,27
-                    ]}, $expr: { $eq: ['$_id', '$$osId'] } } }
-                    
-                    ,{$project:{_id:1}}],
+                    pipeline: [
+                      {
+                        $match: {
+                          _workStatus: { $nin: [2, 27] },
+                          $expr: { $eq: ['$_id', '$$osId'] },
+                        },
+                      },
+
+                      { $project: { _id: 1 } },
+                    ],
                     as: 'orderDetails',
                   },
                 },
                 {
-                  $unwind: { path: '$orderDetails',},
+                  $unwind: { path: '$orderDetails' },
                 },
               );
-
-
 
               return pipeline;
             };
@@ -7268,10 +7332,13 @@ export class OrderSalesService {
                   let: { userId: '$_id' },
                   pipeline: [
                     {
-                      $match: {_status:1, $expr: { $eq: ['$_userId', '$$userId'] } },
+                      $match: {
+                        _status: 1,
+                        $expr: { $eq: ['$_userId', '$$userId'] },
+                      },
                     },
-                   {$sort:{_id:-1}},
-                   {$limit:1}
+                    { $sort: { _id: -1 } },
+                    { $limit: 1 },
                   ],
                   as: 'attendanceDetails',
                 },
@@ -7318,16 +7385,21 @@ export class OrderSalesService {
                   $lookup: {
                     from: ModelNames.ORDER_SALES_MAIN,
                     let: { osId: '$_orderSaleId' },
-                    pipeline: [{ $match: {_workStatus:{$nin:[
-                      2,27
-                    ]}, $expr: { $eq: ['$_id', '$$osId'] } } }
-                    
-                    ,{$project:{_id:1}}],
+                    pipeline: [
+                      {
+                        $match: {
+                          _workStatus: { $nin: [2, 27] },
+                          $expr: { $eq: ['$_id', '$$osId'] },
+                        },
+                      },
+
+                      { $project: { _id: 1 } },
+                    ],
                     as: 'orderDetails',
                   },
                 },
                 {
-                  $unwind: { path: '$orderDetails',},
+                  $unwind: { path: '$orderDetails' },
                 },
               );
               return pipeline;
@@ -7346,7 +7418,7 @@ export class OrderSalesService {
                 _id: 1,
                 _name: 1,
                 globalGallery: 1,
-                attendanceDetails:1,
+                attendanceDetails: 1,
                 pending: { $size: '$setProcessAssignedList' },
                 completed: { $size: '$setProcessFinishedList' },
               },
@@ -7437,13 +7509,11 @@ export class OrderSalesService {
                 },
               });
 
-              pipeline.push({$match:{
-                _workStatus:{$nin:[
-                  2,27
-                ]}
-              }});
-            
-              
+              pipeline.push({
+                $match: {
+                  _workStatus: { $nin: [2, 27] },
+                },
+              });
 
               if (
                 dto.pendingOrderCreatedEndDate != -1 &&
@@ -7458,10 +7528,9 @@ export class OrderSalesService {
                   },
                 });
               }
-            
+
               return pipeline;
             };
-          
 
             pipeline.push(
               {
@@ -7495,10 +7564,13 @@ export class OrderSalesService {
                   let: { userId: '$_id' },
                   pipeline: [
                     {
-                      $match: {_status:1, $expr: { $eq: ['$_userId', '$$userId'] } },
+                      $match: {
+                        _status: 1,
+                        $expr: { $eq: ['$_userId', '$$userId'] },
+                      },
                     },
-                   {$sort:{_id:-1}},
-                   {$limit:1}
+                    { $sort: { _id: -1 } },
+                    { $limit: 1 },
                   ],
                   as: 'attendanceDetails',
                 },
@@ -7529,11 +7601,11 @@ export class OrderSalesService {
                   _isProductGenerated: 1,
                 },
               });
-              pipeline.push({$match:{
-                _workStatus:{$nin:[
-                  2,27
-                ]}
-              }});
+              pipeline.push({
+                $match: {
+                  _workStatus: { $nin: [2, 27] },
+                },
+              });
               if (
                 dto.completedOrderCreatedEndDate != -1 &&
                 dto.completedOrderCreatedStartDate != -1
@@ -7551,7 +7623,6 @@ export class OrderSalesService {
                 dto.completedOrderProductCreatedEndDate != -1 &&
                 dto.completedOrderProductCreatedStartDate != -1
               ) {
-  
                 pipeline.push(
                   {
                     $lookup: {
@@ -7559,7 +7630,10 @@ export class OrderSalesService {
                       let: { osId: '$_id' },
                       pipeline: [
                         {
-                          $match: {_status:1, $expr: { $eq: ['$_orderSaleId', '$$osId'] } },
+                          $match: {
+                            _status: 1,
+                            $expr: { $eq: ['$_orderSaleId', '$$osId'] },
+                          },
                         },
                         {
                           $project: {
@@ -7572,17 +7646,17 @@ export class OrderSalesService {
                             let: { osItemId: '$_id' },
                             pipeline: [
                               {
-                                $match: {_status:1, $expr: { $eq: ['$_orderItemId', '$$osItemId'] },
-                              
-                              
-                                _createdAt: {
-                                  $lte: dto.completedOrderProductCreatedEndDate,
-                                  $gte: dto.completedOrderProductCreatedStartDate,
+                                $match: {
+                                  _status: 1,
+                                  $expr: {
+                                    $eq: ['$_orderItemId', '$$osItemId'],
+                                  },
+
+                                  _createdAt: {
+                                    $lte: dto.completedOrderProductCreatedEndDate,
+                                    $gte: dto.completedOrderProductCreatedStartDate,
+                                  },
                                 },
-                              
-                              
-                              
-                              },
                               },
 
                               {
@@ -7594,24 +7668,21 @@ export class OrderSalesService {
                             as: 'osItemProduct',
                           },
                         },
-                      
+
                         {
-                          $match: { osItemProduct: { $ne: [] } }, 
-                        }
+                          $match: { osItemProduct: { $ne: [] } },
+                        },
                       ],
                       as: 'orderSaleItems',
                     },
                   },
-                
+
                   {
-                    $match: { orderSaleItems: { $ne: [] } }, 
-                  }
+                    $match: { orderSaleItems: { $ne: [] } },
+                  },
                 );
-  
-  
               }
 
-           
               return pipeline;
             };
             pipeline.push({
@@ -7627,7 +7698,7 @@ export class OrderSalesService {
               $project: {
                 _id: 1,
                 _name: 1,
-                attendanceDetails:1,
+                attendanceDetails: 1,
                 globalGallery: 1,
                 completed: { $size: '$productGeneratedList' },
                 pending: { $size: '$productNotGeneratedList' },
