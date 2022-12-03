@@ -312,7 +312,7 @@ export class OrderSaleSetProcessService {
               }
             }
           ]).session(transactionSession);
-        var startDateofMonth=  startOfMonth(dateTime).;
+        var startDateofMonth=  startOfMonth(dateTime);
         console.log("startDateofMonth  "+startDateofMonth);
 console.log("___test employee check  "+JSON.stringify(resultEmployees));
 throw new HttpException('Check', HttpStatus.INTERNAL_SERVER_ERROR);
