@@ -352,7 +352,7 @@ export class OrderSalesService {
         },
       ]);
 
-      if (resultCheckOh.length == 0) {
+      if (resultCheckOh.length != 0) {
         orderHeadId = _userId_;
         ohPrefix = resultCheckOh[0].employeeDetails._prefix;
       } else {
