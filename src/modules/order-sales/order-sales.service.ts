@@ -318,6 +318,7 @@ export class OrderSalesService {
                 $project: {
                   _id: 1,
                   _prefix: 1,
+                  _departmentId:1,
                 },
               },
               {
@@ -340,9 +341,9 @@ export class OrderSalesService {
                   as: 'orderHeadDepartmentDetails',
                 },
               },
-              // {
-              //   $unwind: { path: '$orderHeadDepartmentDetails' },
-              // },
+              {
+                $unwind: { path: '$orderHeadDepartmentDetails' },
+              },
             ],
             as: 'employeeDetails',
           },
