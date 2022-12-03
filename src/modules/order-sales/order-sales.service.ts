@@ -303,50 +303,50 @@ export class OrderSalesService {
             _id: 1,
           },
         },
-        // {
-        //   $lookup: {
-        //     from: ModelNames.EMPLOYEES,
-        //     let: { userId: '$_id' },
-        //     pipeline: [
-        //       {
-        //         $match: {
-        //           _status: 1,
-        //           $expr: { $eq: ['$_userId', '$$userId'] },
-        //         },
-        //       },
-        //       {
-        //         $project: {
-        //           _id: 1,
-        //           _prefix: 1,
-        //         },
-        //       },
-        //       {
-        //         $lookup: {
-        //           from: ModelNames.DEPARTMENT,
-        //           let: { departmentId: '$_departmentId' },
-        //           pipeline: [
-        //             {
-        //               $match: {
-        //                 _code: 1000,
-        //                 $expr: { $eq: ['$_id', '$$departmentId'] },
-        //               },
-        //             },
-        //             {
-        //               $project: {
-        //                 _id: 1,
-        //               },
-        //             },
-        //           ],
-        //           as: 'orderHeadDepartmentDetails',
-        //         },
-        //       },
-        //       {
-        //         $unwind: { path: '$orderHeadDepartmentDetails' },
-        //       },
-        //     ],
-        //     as: 'employeeDetails',
-        //   },
-        // },
+        {
+          $lookup: {
+            from: ModelNames.EMPLOYEES,
+            let: { userId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_userId', '$$userId'] },
+                },
+              },
+              {
+                $project: {
+                  _id: 1,
+                  _prefix: 1,
+                },
+              },
+              // {
+              //   $lookup: {
+              //     from: ModelNames.DEPARTMENT,
+              //     let: { departmentId: '$_departmentId' },
+              //     pipeline: [
+              //       {
+              //         $match: {
+              //           _code: 1000,
+              //           $expr: { $eq: ['$_id', '$$departmentId'] },
+              //         },
+              //       },
+              //       {
+              //         $project: {
+              //           _id: 1,
+              //         },
+              //       },
+              //     ],
+              //     as: 'orderHeadDepartmentDetails',
+              //   },
+              // },
+              // {
+              //   $unwind: { path: '$orderHeadDepartmentDetails' },
+              // },
+            ],
+            as: 'employeeDetails',
+          },
+        },
         // {
         //   $unwind: { path: '$employeeDetails' },
         // },
