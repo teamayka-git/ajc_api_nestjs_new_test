@@ -280,14 +280,35 @@ export class OrderSaleSetProcessService {
               },
             },
             {
+              $lookup: {
+                from: ModelNames.ORDER_SALE_SET_PROCESSES,
+                let: { userId: '$_userId' },
+                pipeline: [
+                  {
+                    $match: {
+                      _orderStatus: { $in: [3] },
+                      _status: 1,
+                      $expr: { $eq: ['$_userId', '$$userId'] },
+                    },
+                  },
+                ],
+                as: 'setProcessWorkListCompleted',
+              },
+            },
+            {
               $project: {
                 _id: 1,
                 _userId: 1,
                 userAttendance: { _id: 1 },
                 workCount: { $size: '$setProcessWorkList' },
+                workCountCompleted: { $size: '$setProcessWorkListCompleted' },
               },
             },
           ]).session(transactionSession);
+
+console.log("___test employee check  "+JSON.stringify(resultEmployees));
+throw new HttpException('Check', HttpStatus.INTERNAL_SERVER_ERROR);
+
           let sortedArray = resultEmployees.sort((n1, n2) =>
             n2.workCount < n1.workCount ? 1 : -1,
           );
