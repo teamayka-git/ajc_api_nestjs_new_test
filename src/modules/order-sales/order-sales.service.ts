@@ -328,7 +328,7 @@ export class OrderSalesService {
                   pipeline: [
                     {
                       $match: {
-                        // _code: 1000,
+                        _code: 1000,
                         $expr: { $eq: ['$_id', '$$departmentId'] },
                       },
                     },
