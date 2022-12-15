@@ -554,7 +554,7 @@ export class TagMastersService {
           {
             $lookup: {
               from: ModelNames.TAG_MASTERS,
-              let: { tagId: '$_id' },
+              let: { tagId: '$_tagId' },
               pipeline: [
                 {
                   $match: { $expr: { $eq: ['$_id', '$$tagId'] } },
