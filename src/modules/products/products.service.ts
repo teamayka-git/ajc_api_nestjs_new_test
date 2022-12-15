@@ -758,7 +758,7 @@ export class ProductsService {
           { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
             $inc: {
-              _count: dto.arrayDocuments,
+              _count: dto.arrayDocuments.length,
             },
           },
           { new: true, session: transactionSession },
