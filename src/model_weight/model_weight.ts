@@ -1196,12 +1196,13 @@ export class ModelWeight {
       _categoryId: 1,
       _subCategoryId: 1,
       _productType: 1,
-      _designUid: 1,
+      _designUid: 1, 
       _groupId: 1,
       _type: 1,
       _purity: 1,
       _hmSealingStatus: 1,
       _totalStoneWeight: 1,
+      _totalStoneAmount: 1,
       _netWeight: 1,
       _huId: 1,
       _eCommerceStatus: 1,
@@ -1227,6 +1228,7 @@ export class ModelWeight {
       _purity: 1,
       _hmSealingStatus: 1,
       _totalStoneWeight: 1,
+      _totalStoneAmount: 1,
       _netWeight: 1,
       _huId: 1,
       _eCommerceStatus: 1,
@@ -1245,6 +1247,7 @@ export class ModelWeight {
       _createdAt: 1,
       _barcode: 1,
       _totalStoneWeight: 1,
+      _totalStoneAmount: 1,
       _netWeight: 1,
     };
   }
@@ -1257,6 +1260,7 @@ export class ModelWeight {
       _subCategoryId: 1,
       _type: 1,
       _totalStoneWeight: 1,
+      _totalStoneAmount: 1,
       _netWeight: 1,
       _grossWeight: 1,
     };

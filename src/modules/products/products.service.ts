@@ -471,6 +471,7 @@ export class ProductsService {
           _productType: dto.arrayItems[i].type != 3 ? 0 : 1,
           _netWeight: dto.arrayItems[i].netWeight,
           _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
+          _totalStoneAmount: dto.arrayItems[i].totalStoneAmount,
           _grossWeight: dto.arrayItems[i].grossWeight,
           _barcode:
             dto.arrayItems[i].type != 3
@@ -526,6 +527,7 @@ export class ProductsService {
             _productType: 1,
             _netWeight: dto.arrayItems[i].netWeight,
             _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
+            _totalStoneAmount: dto.arrayItems[i].totalStoneAmount,
             _grossWeight: dto.arrayItems[i].grossWeight,
             _barcode: '',
             _categoryId: resultSubcategory[subCategoryIndex]._categoryId,
@@ -1051,6 +1053,7 @@ export class ProductsService {
             _name: dto.name,
             _netWeight: dto.netWeight,
             _totalStoneWeight: dto.totalStoneWeight,
+            _totalStoneAmount: dto.totalStoneAmount,
             _grossWeight: dto.grossWeight,
             _categoryId: resultSubcategory[subCategoryIndex]._categoryId,
             _subCategoryId: dto.subCategoryId,

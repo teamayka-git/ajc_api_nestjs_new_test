@@ -114,6 +114,11 @@ class ProductCreateList {
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
+  totalStoneAmount: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
   netWeight: number;
 
   @Transform(({ value }) => Number(value))
@@ -228,10 +233,15 @@ export class ProductEditDto {
 //   @ApiProperty({})
 //   eCommerceStatus: number;
 
-  @Transform(({ value }) => Number(value))
-  @IsNumber()
-  @ApiProperty({})
-  totalStoneWeight: number;
+@Transform(({ value }) => Number(value))
+@IsNumber()
+@ApiProperty({})
+totalStoneWeight: number;
+
+@Transform(({ value }) => Number(value))
+@IsNumber()
+@ApiProperty({})
+totalStoneAmount: number;
 
   @Transform(({ value }) => Number(value))
   @IsNumber()
