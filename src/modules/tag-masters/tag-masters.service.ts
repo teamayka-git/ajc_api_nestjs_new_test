@@ -302,17 +302,15 @@ export class TagMastersService {
           { new: true, session: transactionSession },
         );
       }
-        await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
+      await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
+        session: transactionSession,
+      });
+      await this.tagMasterDocumentModel.insertMany(
+        arrayGlobalGalleriesDocuments,
+        {
           session: transactionSession,
-        });
-        await this.tagMasterDocumentModel.insertMany(
-          arrayGlobalGalleriesDocuments,
-          {
-            session: transactionSession,
-          },
-        );
-
-     
+        },
+      );
 
       var updateObject = {
         _name: dto.name,
@@ -549,6 +547,33 @@ export class TagMastersService {
             as: 'tagDocumentsList',
           },
         });
+      }
+
+      if (dto.screenType.includes(102)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.TAG_MASTERS,
+              let: { tagId: '$_id' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$tagId'] } },
+                },
+                new ModelWeightResponseFormat().tagMasterResponseFormat(
+                  1020,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'tagMasterDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$tagMasterDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
       }
 
       var result = await this.tagMasterModel
