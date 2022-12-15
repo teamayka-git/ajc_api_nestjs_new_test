@@ -751,8 +751,9 @@ export class ProductsService {
     try {
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
-
+      console.log("___f1");
       if (file.hasOwnProperty('documents')) {
+        console.log("___f2");
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
@@ -762,7 +763,7 @@ export class ProductsService {
           },
           { new: true, session: transactionSession },
         );
-
+        console.log("___f3");
         // for (var i = 0; i < dto.arrayDocuments.length; i++) {
         //   var count = file['documents'].findIndex(
         //     (it) => dto.arrayDocuments[i].fileOriginalName == it.originalname,
@@ -787,28 +788,30 @@ export class ProductsService {
         //   }
         // }
         for (var i = 0; i < file['documents'].length; i++) {
+          console.log("___f4");
           var resultUpload = await new S3BucketUtils().uploadMyFile(
             file['documents'][i],
             UploadedFileDirectoryPath.GLOBAL_GALLERY_PRODUCT,
           );
-
+          console.log("___f5");
           if (resultUpload['status'] == 0) {
             throw new HttpException(
               'File upload error',
               HttpStatus.INTERNAL_SERVER_ERROR,
             );
           }
-
+          console.log("___f6");
           var count = dto.arrayDocuments.findIndex(
             (it) => it.fileOriginalName == file['documents'][i]['originalname'],
           );
+          console.log("___f7");
           if (count != -1) {
             dto.arrayDocuments[count]['url'] = resultUpload['url'];
           } else {
             dto.arrayDocuments[count]['url'] = 'nil';
           }
         }
-
+        console.log("___f8");
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
             (it) => it.originalname == dto.arrayDocuments[i].fileOriginalName,
@@ -843,7 +846,7 @@ export class ProductsService {
             });
           }
         }
-
+        console.log("___f9");
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
         });
@@ -854,7 +857,7 @@ export class ProductsService {
           },
         );
       }
-
+      console.log("___f10");
       var arrayToProducts = [];
 
       var arrayStonesLinkings = [];
