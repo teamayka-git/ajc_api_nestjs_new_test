@@ -752,7 +752,7 @@ export class ProductsService {
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
 
-      if (file.hasOwnProperty('image')) {
+      if (file.hasOwnProperty('documents')) {
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
