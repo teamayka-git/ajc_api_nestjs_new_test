@@ -6,6 +6,7 @@ export enum UploadedFileDirectoryPath {
   GLOBAL_GALLERY_PRODUCT = 'upload_files/product/',
   GLOBAL_GALLERY_AGENT = 'upload_files/agent/',
   GLOBAL_GALLERY_SHOP = 'upload_files/shop/',
+  GLOBAL_GALLERY_STORE_PROMOTIONS = 'upload_files/store_promotions/',
   GLOBAL_GALLERY_TAG_MASTER = 'upload_files/tag_master/',
   GLOBAL_GALLERY_SHOP_DELIVERY_PROOF = 'upload_files/shop_delivery_proof/',
   GLOBAL_GALLERY_BRANCH = 'upload_files/branch/',

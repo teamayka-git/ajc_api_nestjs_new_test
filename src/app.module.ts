@@ -93,6 +93,7 @@ import { TagMastersModule } from './modules/tag-masters/tag-masters.module';
 import { DeliveryCounterUserLinkingsSchema } from './tableModels/delivery_counter_user_linkings.model';
 import { OrderSalesMainSchema } from './tableModels/order_sales_main.model';
 import { OrderSaleSetProcessesSchema } from './tableModels/order_sale_set_processes.model';
+import { StorePromotionsModule } from './modules/store-promotions/store-promotions.module';
 
 @Module({
   imports: [
@@ -198,6 +199,7 @@ import { OrderSaleSetProcessesSchema } from './tableModels/order_sale_set_proces
     DeliveryCounterModule,
     DeliveryCounterBundleModule,
     TagMastersModule,
+    StorePromotionsModule,
 
     // SalesReturnRequestStatusesModule,
   ],
