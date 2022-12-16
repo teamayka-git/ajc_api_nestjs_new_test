@@ -51,7 +51,7 @@ export class DeliveryTempService {
             mapItem.deliveryProviderId != 'nil'
               ? mapItem.deliveryProviderId
               : null,
-              _assignedAt:0,
+          _assignedAt: 0,
           _rootCauseId: null,
           _rootCause: '',
           _reworkStatus: -1,
@@ -95,6 +95,70 @@ export class DeliveryTempService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+      var deliveryTempMongo = [];
+      dto.deliveryTempIds.forEach((elementEach) => {
+        deliveryTempMongo.push(new mongoose.Types.ObjectId(elementEach));
+      });
+
+      var deliveryTempFreezCheck = await this.deliveryTempModel.aggregate([
+        { $match: { _id: { $in: deliveryTempMongo } } },
+        {
+          $lookup: {
+            from: ModelNames.INVOICES,
+            let: { invoiceId: '$_invoiceId' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$_id', '$$invoiceId'] },
+                },
+              },
+              {
+                $project: {
+                  _shopId: 1,
+                },
+              },
+
+              {
+                $lookup: {
+                  from: ModelNames.SHOPS,
+                  let: { shopId: '$_shopId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        _isFreezed: 0,
+                        $expr: { $eq: ['$_id', '$$shopId'] },
+                      },
+                    },
+                    {
+                      $project: {
+                        _shopId: 1,
+                      },
+                    },
+                  ],
+                  as: 'shopDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$shopDetails',
+                },
+              },
+            ],
+            as: 'invoiceDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$invoiceDetails',
+          },
+        },
+      ]);
+      if (deliveryTempFreezCheck.length != dto.deliveryTempIds.length) {
+        throw new HttpException(
+          'Shop freezed, contact AJC',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
       var result = await this.deliveryTempModel.updateMany(
         {
           _id: { $in: dto.deliveryTempIds },
@@ -104,8 +168,8 @@ export class DeliveryTempService {
             _type: dto.type,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
-            _employeeId: dto.employeeId, 
-            _assignedAt:dateTime
+            _employeeId: dto.employeeId,
+            _assignedAt: dateTime,
           },
         },
         { new: true, session: transactionSession },
@@ -130,10 +194,10 @@ export class DeliveryTempService {
       dto.orderIds.forEach((eachItem) => {
         arraySalesOrderHistories.push({
           _orderSaleId: eachItem,
-          _userId: dto.employeeId, 
+          _userId: dto.employeeId,
           _type: 20,
           _shopId: null,
-          _deliveryCounterId:null,
+          _deliveryCounterId: null,
           _orderSaleItemId: null,
           _deliveryProviderId: null,
           _description: '',
@@ -189,7 +253,7 @@ export class DeliveryTempService {
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
             _deliveryProviderId: dto.deliveryProviderId,
-            _assignedAt:dateTime
+            _assignedAt: dateTime,
           },
         },
         { new: true, session: transactionSession },
@@ -217,7 +281,7 @@ export class DeliveryTempService {
           _userId: null,
           _deliveryProviderId: dto.deliveryProviderId,
           _type: 20,
-          _deliveryCounterId:null,
+          _deliveryCounterId: null,
           _shopId: null,
           _orderSaleItemId: null,
           _description: '',
@@ -261,8 +325,7 @@ export class DeliveryTempService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-
-console.log("dto  "+JSON.stringify(dto));
+      console.log('dto  ' + JSON.stringify(dto));
 
       var arrayAggregation = [];
       var arrayEmployeeIds = [];
@@ -340,7 +403,6 @@ console.log("dto  "+JSON.stringify(dto));
           },
         );
 
-
         if (dto.shopIds.length > 0) {
           var newSettingsId = [];
           dto.shopIds.map((mapItem) => {
@@ -380,9 +442,6 @@ console.log("dto  "+JSON.stringify(dto));
             $match: { _orderHeadId: { $in: newSettingsId } },
           });
         }
-
-
-
 
         arrayAggregation.push(
           {
@@ -498,17 +557,17 @@ console.log("dto  "+JSON.stringify(dto));
               as: 'mongoCheckInvoiceList',
             },
           },
-          
-        {
-          $match: { mongoCheckInvoiceList: { $ne: [] } },
-        },
+
+          {
+            $match: { mongoCheckInvoiceList: { $ne: [] } },
+          },
         );
       }
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
-   
-   console.log(" del temp     "+JSON.stringify(arrayAggregation));
-   
+
+      console.log(' del temp     ' + JSON.stringify(arrayAggregation));
+
       switch (dto.sortType) {
         case 0:
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
@@ -860,12 +919,10 @@ console.log("dto  "+JSON.stringify(dto));
         );
       }
 
-
-
       if (dto.screenType.includes(112)) {
         arrayAggregation.push(
           {
-            $lookup: { 
+            $lookup: {
               from: ModelNames.LOGISTICS_PARTNERS,
               let: { delProviderId: '$_deliveryProviderId' },
               pipeline: [
@@ -890,10 +947,6 @@ console.log("dto  "+JSON.stringify(dto));
           },
         );
       }
-
-
-
-
 
       var result = await this.deliveryTempModel
         .aggregate(arrayAggregation)

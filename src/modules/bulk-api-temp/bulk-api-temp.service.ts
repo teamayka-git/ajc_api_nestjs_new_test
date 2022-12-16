@@ -1420,7 +1420,9 @@ if(resultCompany[0].cityDetails.districtDetails.stateDetails._name!=resultCity[c
           _agentId: null,
           _agentCommision: 0,
           _location: { type: 'Point', coordinates: [0, 0] },
-
+          _isFreezed:0,
+          _freezedDescription:"",
+          _freezedRootCause:null,
           _dataGuard: [],
           _createdUserId: _userId_,
           _createdAt: dateTime,

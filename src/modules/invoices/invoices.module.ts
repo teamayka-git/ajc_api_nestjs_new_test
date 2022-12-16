@@ -10,6 +10,7 @@ import { DeliveryTempSchema } from 'src/tableModels/delivery_temp.model';
 import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.model';
 import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
 import { GeneralsSchema } from 'src/tableModels/generals.model';
+import { ShopsSchema } from 'src/tableModels/shops.model';
 
 @Module({
   imports: [
@@ -24,6 +25,8 @@ import { GeneralsSchema } from 'src/tableModels/generals.model';
         name: ModelNames.INVOICE_ITEMS,
         schema: InvoiceItemsSchema,
       },
+      
+      { name: ModelNames.SHOPS, schema: ShopsSchema },
       { name: ModelNames.COUNTERS, schema: CountersSchema },
       { name: ModelNames.GENERALS, schema: GeneralsSchema },
       { name: ModelNames.ORDER_SALES_MAIN, schema: OrderSalesMainSchema },

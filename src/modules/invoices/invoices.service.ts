@@ -16,6 +16,7 @@ import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 import { Generals } from 'src/tableModels/generals.model';
+import { Shops } from 'src/tableModels/shops.model';
 
 @Injectable()
 export class InvoicesService {
@@ -32,6 +33,9 @@ export class InvoicesService {
     private readonly generalsModel: mongoose.Model<Generals>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
+
+    @InjectModel(ModelNames.SHOPS)
+    private readonly shopsModel: mongoose.Model<Shops>,
     @InjectModel(ModelNames.ORDER_SALES_MAIN)
     private readonly orderSaleMainModel: mongoose.Model<OrderSalesMain>,
     @InjectConnection() private readonly connection: mongoose.Connection,
@@ -45,12 +49,31 @@ export class InvoicesService {
       var arrayToDeliveryChallanItems = [];
       var orderIds = [];
       var invoiceLocalIds = [];
+      var shopMongoIds = [];
       var arrayToDeliveryTemp = [];
       var arraySalesOrderHistories = [];
 
       dto.invoices.map((mapItem) => {
         invoiceLocalIds.push(mapItem.localId);
+        shopMongoIds.push(new mongoose.Types.ObjectId(mapItem.customerId));
       });
+
+      var shopDetails = await this.shopsModel.aggregate([
+        {
+          $match: {
+            _id: { $in: shopMongoIds },
+            _isFreezed: 0,
+            _status: 1,
+          },
+        },
+      ]);
+      console.log('___d4');
+      if (shopDetails.length != dto.invoices.length) {
+        throw new HttpException(
+          'Shop freezed, contact AJC',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
 
       let generalList = await this.generalsModel.aggregate([
         {
@@ -89,14 +112,13 @@ export class InvoicesService {
       dto.invoices.map((mapItem, index) => {
         var invoiceId = new mongoose.Types.ObjectId();
 
-
-        var inventoryUid=
-        generalList[0]._string +
-        (resultCounterPurchase._count - dto.invoices.length + (index + 1));
+        var inventoryUid =
+          generalList[0]._string +
+          (resultCounterPurchase._count - dto.invoices.length + (index + 1));
         arrayToDeliveryChallan.push({
           _id: invoiceId,
           _userId: _userId_,
-          _uid:inventoryUid,
+          _uid: inventoryUid,
           _halmarkingCharge: mapItem.halmarkingCharge,
           _otherCharge: mapItem.otherCharge,
           _roundOff: mapItem.roundOff,
@@ -173,10 +195,10 @@ export class InvoicesService {
             _userId: null,
             _type: 17,
             _orderSaleItemId: null,
-            _deliveryCounterId:null,
-            _deliveryProviderId:null,
+            _deliveryCounterId: null,
+            _deliveryProviderId: null,
             _shopId: null,
-            _description: 'Invoice UID: '+inventoryUid,
+            _description: 'Invoice UID: ' + inventoryUid,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _status: 1,
@@ -185,10 +207,10 @@ export class InvoicesService {
             _orderSaleId: mapItem1.orderId,
             _userId: null,
             _type: 106,
-            _deliveryCounterId:null,
+            _deliveryCounterId: null,
             _shopId: null,
             _orderSaleItemId: null,
-            _deliveryProviderId:null,
+            _deliveryProviderId: null,
             _description: '',
             _createdUserId: _userId_,
             _createdAt: dateTime,
@@ -196,13 +218,13 @@ export class InvoicesService {
           });
         });
 
-        arrayToDeliveryTemp.push({ 
+        arrayToDeliveryTemp.push({
           _type: -1,
           _invoiceId: invoiceId,
           _employeeId: null,
           _hubId: null,
           _deliveryProviderId: null,
-          _assignedAt:0,
+          _assignedAt: 0,
           // _rootCauseId: null,
           // _rootCause: '',
           // _reworkStatus: -1,
@@ -218,7 +240,7 @@ export class InvoicesService {
 
       await this.orderSaleMainModel.updateMany(
         { _id: { $in: orderIds } },
-        { $set: { _isInvoiceGenerated: 1, _workStatus: 18 } }, 
+        { $set: { _isInvoiceGenerated: 1, _workStatus: 18 } },
         { new: true, session: transactionSession },
       );
 
@@ -342,10 +364,7 @@ export class InvoicesService {
         });
       }
 
-
       if (dto.invoiceUids.length > 0) {
-    
-        
         arrayAggregation.push({ $match: { _uid: { $in: dto.invoiceUids } } });
       }
       if (dto.invoiceIds.length > 0) {

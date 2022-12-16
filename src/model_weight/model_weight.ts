@@ -500,6 +500,7 @@ export class ModelWeight {
       _name: 1,
       _displayName: 1,
       _globalGalleryId: 1,
+      _isFreezed: 1,
     };
   }
   public shopTableMinimum(): Object {
@@ -516,6 +517,7 @@ export class ModelWeight {
       _rateCardId: 1,
       _tdsId: 1,
       _tcsId: 1,
+      _isFreezed: 1,
       _rateBaseMasterId: 1,
       _agentId: 1,
       _createdUserId: 1,
@@ -533,6 +535,7 @@ export class ModelWeight {
       _name: 1,
       _orderSaleRate: 1,
       _stockSaleRate: 1,
+      _isFreezed: 1,
       _shopType: 1,
       _branchId: 1,
       _orderHeadId: 1,
@@ -568,6 +571,9 @@ export class ModelWeight {
       _id: 1,
       _cityId: 1,
       _uid: 1,
+      _isFreezed: 1,
+      _freezedDescription: 1,
+      _freezedRootCause: 1,
       _displayName: 1,
       _name: 1,
       _orderSaleRate: 1,
@@ -613,6 +619,7 @@ export class ModelWeight {
       _uid: 1,
       _displayName: 1,
       _name: 1,
+      _isFreezed: 1,
       _branchId: 1,
       _orderHeadId: 1,
       _globalGalleryId: 1,
@@ -633,6 +640,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _cityId: 1,
+      _isFreezed: 1,
       _uid: 1,
       _displayName: 1,
       _name: 1,
@@ -1066,8 +1074,6 @@ export class ModelWeight {
     };
   }
 
-
-  
   public orderSaleItemDocumentsTableLight(): Object {
     return {
       _orderSaleItemId: 1,
@@ -1196,7 +1202,7 @@ export class ModelWeight {
       _categoryId: 1,
       _subCategoryId: 1,
       _productType: 1,
-      _designUid: 1, 
+      _designUid: 1,
       _groupId: 1,
       _type: 1,
       _purity: 1,

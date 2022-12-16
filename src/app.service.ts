@@ -1594,6 +1594,22 @@ export class AppService {
         { upsert: true, new: true, session: transactionSession },
       );
 
+      await this.rootCauseModel.findOneAndUpdate(
+        { _name: 'Payment over due' },
+        {
+          $setOnInsert: {
+            _type: [6],
+            _dataGuard: [1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+
       var resultState = await this.stateModel.findOneAndUpdate(
         { _code: 1 },
         {

@@ -731,6 +731,7 @@ export class ShopAcrossEmployeesAndCustomersDto {
   @IsNumber()
   @ApiProperty({ description: descriptionListSortType })
   sortType: number;
+
   @IsNumber()
   @ApiProperty({ description: descriptionListSortOrder })
   sortOrder: number;
@@ -738,4 +739,25 @@ export class ShopAcrossEmployeesAndCustomersDto {
   @IsString()
   @ApiProperty({})
   searchingText: string;
+}
+
+export class ShopFreezStatusChangeDto {
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  shopIds: string[];
+
+
+
+  @IsNumber()
+  @ApiProperty({  })
+  isFreezed: number;
+
+
+  @IsString()
+  @ApiProperty({})
+  freezedDescription: string;
+
+  @IsString()
+  @ApiProperty({})
+  freezedRootCause: string;
 }

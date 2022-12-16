@@ -279,6 +279,13 @@ export class OrderSalesService {
         );
       }
 
+      if (shopDetails[0]._isFreezed == 1) {
+        throw new HttpException(
+          'Shop freezed, contact AJC',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
       //check and give oh
       var resultGeneralOhAutoAssign = await this.generalsModel.find({
         _code: 1024,
@@ -318,7 +325,7 @@ export class OrderSalesService {
                 $project: {
                   _id: 1,
                   _prefix: 1,
-                  _departmentId:1,
+                  _departmentId: 1,
                 },
               },
               {
@@ -352,7 +359,7 @@ export class OrderSalesService {
           $unwind: { path: '$employeeDetails' },
         },
       ]);
-      console.log("___a  "+JSON.stringify(resultCheckOh));
+      console.log('___a  ' + JSON.stringify(resultCheckOh));
       if (resultCheckOh.length != 0) {
         orderHeadId = _userId_;
         ohPrefix = resultCheckOh[0].employeeDetails._prefix;

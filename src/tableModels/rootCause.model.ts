@@ -72,5 +72,6 @@ _type:{
     3 - Gold testing
     4 - delivery reject
     5 - delivery proof reject
+    6 - shop freez
 }
  */

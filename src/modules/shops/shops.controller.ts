@@ -32,6 +32,7 @@ import {
   ShopAddRemoveUsersDto,
   ShopCreateDto,
   ShopEditeDto,
+  ShopFreezStatusChangeDto,
   ShopLoginDto,
 } from './shops.dto';
 
@@ -164,4 +165,12 @@ export class ShopsController {
       req['_userId_'],
     );
   }
+
+
+  @Post("freezedStatusChange")
+  freezedStatusChange(@Body() dto: ShopFreezStatusChangeDto, @Request() req) {
+    return this.shopService.freezedStatusChange(dto, req['_userId_']);
+  }
+
+
 }

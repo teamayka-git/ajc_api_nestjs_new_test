@@ -25,6 +25,7 @@ import {
   ShopAddRemoveUsersDto,
   ShopCreateDto,
   ShopEditeDto,
+  ShopFreezStatusChangeDto,
   ShopLoginDto,
 } from './shops.dto';
 import { Customers } from 'src/tableModels/customers.model';
@@ -188,7 +189,7 @@ export class ShopsService {
           );
         }
       }
-      var smsGatewayArray=[];
+      var smsGatewayArray = [];
       var globalGalleryId = null;
       //globalGalleryAdd
       if (file.hasOwnProperty('image')) {
@@ -270,7 +271,9 @@ export class ShopsService {
           dto.agentId == 'nil' || dto.agentId == '' ? null : dto.agentId,
         _agentCommision: dto.agentCommision,
         _location: { type: 'Point', coordinates: dto.location },
-
+        _isFreezed: 0,
+        _freezedDescription: '',
+        _freezedRootCause: null,
         _dataGuard: dto.dataGuard,
         _createdUserId: _userId_,
         _createdAt: dateTime,
@@ -342,9 +345,11 @@ export class ShopsService {
             _updatedAt: -1,
             _status: 1,
           });
-          smsGatewayArray.push({mobile:dto.arrayUsersNew[i].mobile,text: password,userName:dto.arrayUsersNew[i].name});//password
-		
-		
+          smsGatewayArray.push({
+            mobile: dto.arrayUsersNew[i].mobile,
+            text: password,
+            userName: dto.arrayUsersNew[i].name,
+          }); //password
         }
       }
 
@@ -385,8 +390,12 @@ export class ShopsService {
         _updatedAt: -1,
         _status: 1,
       });
-      smsGatewayArray.push({mobile:dto.mobile,text: passwordMainUser ,userName:dto.name});//password
-		
+      smsGatewayArray.push({
+        mobile: dto.mobile,
+        text: passwordMainUser,
+        userName: dto.name,
+      }); //password
+
       await this.userModel.insertMany(arrayToUsers, {
         session: transactionSession,
       });
@@ -490,7 +499,7 @@ export class ShopsService {
       //       file['image'][0]['filename'],
       //     ));
       var resultUpload = {};
-      var smsGatewayArray=[];
+      var smsGatewayArray = [];
       if (file.hasOwnProperty('image')) {
         resultUpload = await new S3BucketUtils().uploadMyFile(
           file['image'][0],
@@ -675,8 +684,11 @@ export class ShopsService {
             _updatedAt: -1,
             _status: 1,
           });
-          smsGatewayArray.push({mobile:dto.arrayUsersNew[i].mobile,text:  password ,userName:dto.arrayUsersNew[i].name});
-		
+          smsGatewayArray.push({
+            mobile: dto.arrayUsersNew[i].mobile,
+            text: password,
+            userName: dto.arrayUsersNew[i].name,
+          });
         }
 
         await this.userModel.insertMany(arrayToUsers, {
@@ -733,7 +745,7 @@ export class ShopsService {
           new SmsUtils().sendSmsSMSBits(
             elementSmsGateway.mobile,
             elementSmsGateway.text,
-            elementSmsGateway.userName
+            elementSmsGateway.userName,
           );
         });
       }
@@ -785,8 +797,8 @@ export class ShopsService {
               { _name: new RegExp(dto.searchingText, 'i') },
               { _displayName: new RegExp(dto.searchingText, 'i') },
               { _address: new RegExp(dto.searchingText, 'i') },
-              { _panCardNumber:new RegExp(`^${dto.searchingText}$`, 'i') },
-              { _gstNumber:new RegExp(`^${dto.searchingText}$`, 'i') },
+              { _panCardNumber: new RegExp(`^${dto.searchingText}$`, 'i') },
+              { _gstNumber: new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });
@@ -1627,7 +1639,7 @@ export class ShopsService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var smsGatewayArray=[];
+      var smsGatewayArray = [];
       if (dto.arrayUserIdsEsixting.length > 0) {
         for (var i = 0; i < dto.arrayUserIdsEsixting.length; i++) {
           await this.userModel.findOneAndUpdate(
@@ -1705,10 +1717,11 @@ export class ShopsService {
             _updatedAt: -1,
             _status: 1,
           });
-          smsGatewayArray.push({mobile: dto.arrayUsersNew[i].mobile,text:  password,userName: dto.arrayUsersNew[i].name});//password
-		
-         
-          
+          smsGatewayArray.push({
+            mobile: dto.arrayUsersNew[i].mobile,
+            text: password,
+            userName: dto.arrayUsersNew[i].name,
+          }); //password
         }
 
         await this.userModel.insertMany(arrayToUsers, {
@@ -1736,7 +1749,7 @@ export class ShopsService {
           new SmsUtils().sendSmsSMSBits(
             elementSmsGateway.mobile,
             elementSmsGateway.text,
-            elementSmsGateway.userName
+            elementSmsGateway.userName,
           );
         });
       }
@@ -1754,8 +1767,7 @@ export class ShopsService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      
-var smsGatewayArray=[];
+      var smsGatewayArray = [];
       if (dto.arrayUserIdsEsixting.length > 0) {
         for (var i = 0; i < dto.arrayUserIdsEsixting.length; i++) {
           await this.userModel.findOneAndUpdate(
@@ -1860,8 +1872,11 @@ var smsGatewayArray=[];
             _updatedAt: -1,
             _status: 1,
           });
-          smsGatewayArray.push({mobile: dto.arrayUsersNew[i].mobile,text: password ,userName:dto.arrayUsersNew[i].name});
-		
+          smsGatewayArray.push({
+            mobile: dto.arrayUsersNew[i].mobile,
+            text: password,
+            userName: dto.arrayUsersNew[i].name,
+          });
         }
 
         await this.userModel.insertMany(arrayToUsers, {
@@ -1888,18 +1903,16 @@ var smsGatewayArray=[];
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
 
-
       if (smsGatewayArray.length != 0) {
         smsGatewayArray.forEach((elementSmsGateway) => {
           new SmsUtils().sendSmsSMSBits(
             elementSmsGateway.mobile,
             elementSmsGateway.text,
-            elementSmsGateway.userName
+            elementSmsGateway.userName,
           );
         });
       }
 
-      
       return responseJSON;
     } catch (error) {
       await transactionSession.abortTransaction();
@@ -1924,9 +1937,7 @@ var smsGatewayArray=[];
           .aggregate([
             {
               $match: {
-                $or: [
-                  { _uid: new RegExp(`^${dto.searchingText}$`, 'i') },
-                ],
+                $or: [{ _uid: new RegExp(`^${dto.searchingText}$`, 'i') }],
                 _status: { $in: dto.statusArray },
               },
             },
@@ -2135,6 +2146,47 @@ var smsGatewayArray=[];
         message: 'success',
         data: { list: result, totalCount: totalCount },
       };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async freezedStatusChange(dto: ShopFreezStatusChangeDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var result = await this.shopsModel.updateMany(
+        {
+          _id: { $in: dto.shopIds },
+        },
+        {
+          $set: {
+            _isFreezed: dto.isFreezed,
+            _freezedDescription: dto.freezedDescription,
+            _freezedRootCause:
+              dto.freezedRootCause == '' ? null : dto.freezedRootCause,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      const responseJSON = { message: 'success', data: result };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=

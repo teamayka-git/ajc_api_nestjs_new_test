@@ -7,8 +7,14 @@ export const ShopsSchema = new mongoose.Schema({
   _uid: { type: String, required: true, default: 'nil' },
   _name: { type: String, required: true, default: 'nil' },
   _displayName: { type: String, required: true, default: 'nil' },
-
+  _freezedDescription: { type: String, required: false, default: '' },
   _orderSaleRate: { type: Number, required: true, default: -1 },
+  _freezedRootCause: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.ROOT_CAUSES,
+    default: null,
+  },
+  _isFreezed: { type: Number, required: true, default: -1 },
   _stockSaleRate: { type: Number, required: true, default: -1 },
   _shopType: { type: Number, required: true, default: -1 },
   _globalGalleryId: {
@@ -120,6 +126,9 @@ export interface Shops {
   _address: String;
   _relationshipManagerId: String;
   _isSupplier: number;
+  _isFreezed: number;
+  _freezedDescription: String;
+  _freezedRootCause: String;
   _globalGalleryId: String;
   _panCardNumber: String;
   _billingModeSale: Number;
@@ -155,6 +164,9 @@ ShopsSchema.index({ _tdsTcsStatus: 1 });
 ShopsSchema.index({ _address: 1 });
 ShopsSchema.index({ _themeStore: 1 });
 ShopsSchema.index({ _isTaxIgstEnabled: 1 });
+ShopsSchema.index({ _isFreezed: 1 });
+ShopsSchema.index({ _freezedDescription: 1 });
+ShopsSchema.index({ _freezedRootCause: 1 });
 
 ShopsSchema.index({ _commisionType: 1 });
 ShopsSchema.index({ _rateCardId: 1 });
