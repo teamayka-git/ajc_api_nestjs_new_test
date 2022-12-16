@@ -1755,7 +1755,7 @@ export class ProductsService {
           const pipeline = [];
           pipeline.push(
             {
-              $match: {
+              $match: {_status:1,
                 $expr: {
                   $and: [{ $eq: ['$_productId', '$$productId'] }],
                 },
