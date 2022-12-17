@@ -1318,10 +1318,14 @@ export class OrderSalesService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _dueDate: dto.sortOrder, _id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _dueDate: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
       }
       if (dto.skip != -1) {
@@ -1570,6 +1574,69 @@ export class OrderSalesService {
               let: { setProcess: '$_id' },
               pipeline: isorderSaleSetProcessPipeline(),
               as: 'orderSaleSetSubProcessList',
+            },
+          });
+        }
+
+        if (dto.screenType.includes(140)) {
+          const orderSaleSetProcessDocumentsPipeline = () => {
+            const pipeline = [];
+            pipeline.push(
+              {
+                $match: {
+                  _status: 1,
+                  $expr: {
+                    $eq: ['$_setProcessId', '$$setProcessId'],
+                  },
+                },
+              },
+
+              new ModelWeightResponseFormat().orderSaleSetprocessDocumentsTableResponseFormat(
+                1400,
+                dto.responseFormat,
+              ),
+            );
+
+            if (dto.screenType.includes(141)) {
+              pipeline.push(
+                {
+                  $lookup: {
+                    from: ModelNames.GLOBAL_GALLERIES,
+                    let: { globalGalleryId: '$_globalGalleryId' },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: {
+                            $eq: ['$_id', '$$globalGalleryId'],
+                          },
+                        },
+                      },
+
+                      new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                        1410,
+                        dto.responseFormat,
+                      ),
+                    ],
+                    as: 'globalGalleryDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$globalGalleryDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              );
+            }
+            return pipeline;
+          };
+
+          pipeline.push({
+            $lookup: {
+              from: ModelNames.ORDER_SALE_SET_PROCESSES_DOCUMENTS,
+              let: { setProcessId: '$_id' },
+              pipeline: orderSaleSetProcessDocumentsPipeline(),
+              as: 'orderSaleSetProcessDocuments',
             },
           });
         }
@@ -3651,10 +3718,14 @@ export class OrderSalesService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _dueDate: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _dueDate: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
       }
 
@@ -5138,7 +5209,9 @@ export class OrderSalesService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 2:
           arrayAggregation.push({
@@ -6927,10 +7000,14 @@ export class OrderSalesService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _dueDate: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _dueDate: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
       }
 
