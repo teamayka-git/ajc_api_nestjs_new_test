@@ -573,13 +573,13 @@ export class DeliveryTempService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _status: dto.sortOrder ,_id: dto.sortOrder } });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { type: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { type: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _code: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _code: dto.sortOrder ,_id: dto.sortOrder } });
           break;
       }
       if (dto.skip != -1) {

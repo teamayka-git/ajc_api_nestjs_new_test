@@ -259,10 +259,10 @@ export class RateCardService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _status: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _name: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _name: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
       }
 

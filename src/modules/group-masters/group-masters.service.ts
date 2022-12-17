@@ -198,27 +198,27 @@ export class GroupMastersService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _status: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _name: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _name: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 3:
           arrayAggregation.push({
-            $sort: { _rawMaterialStatus: dto.sortOrder },
+            $sort: { _rawMaterialStatus: dto.sortOrder  ,_id: dto.sortOrder},
           });
           break;
         case 4:
-          arrayAggregation.push({ $sort: { _hsnCode: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _hsnCode: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 5:
-          arrayAggregation.push({ $sort: { _meltingPurity: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _meltingPurity: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 6:
-          arrayAggregation.push({ $sort: { _taxPercentage: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _taxPercentage: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 7:
-          arrayAggregation.push({ $sort: { _purity: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _purity: dto.sortOrder ,_id: dto.sortOrder } });
           break;
       }
 

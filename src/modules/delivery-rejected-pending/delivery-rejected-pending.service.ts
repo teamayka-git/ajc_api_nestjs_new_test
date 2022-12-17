@@ -245,16 +245,16 @@ if(resultOsCheck.length != dto.array.length){
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _status: dto.sortOrder ,_id: dto.sortOrder } });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _shopId: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _shopId: dto.sortOrder ,_id: dto.sortOrder } });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _mistakeType: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _mistakeType: dto.sortOrder ,_id: dto.sortOrder } });
           break;
         case 4:
-          arrayAggregation.push({ $sort: { _reworkStatus: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _reworkStatus: dto.sortOrder ,_id: dto.sortOrder } });
           break;
       }
       if (dto.skip != -1) {

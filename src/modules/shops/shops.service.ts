@@ -885,46 +885,46 @@ export class ShopsService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _status: dto.sortOrder ,_id: dto.sortOrder } });
           break;
 
         case 2:
-          arrayAggregation.push({ $sort: { _uid: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _uid: dto.sortOrder ,_id: dto.sortOrder } });
           break;
 
         case 3:
-          arrayAggregation.push({ $sort: { _orderSaleRate: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _orderSaleRate: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 4:
-          arrayAggregation.push({ $sort: { _stockSaleRate: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _stockSaleRate: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 5:
-          arrayAggregation.push({ $sort: { _shopType: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _shopType: dto.sortOrder ,_id: dto.sortOrder } });
           break;
         case 6:
-          arrayAggregation.push({ $sort: { _billingModeSale: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _billingModeSale: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 7:
           arrayAggregation.push({
-            $sort: { _billingModePurchase: dto.sortOrder },
+            $sort: { _billingModePurchase: dto.sortOrder ,_id: dto.sortOrder },
           });
           break;
         case 8:
           arrayAggregation.push({
-            $sort: { _hallmarkingMandatoryStatus: dto.sortOrder },
+            $sort: { _hallmarkingMandatoryStatus: dto.sortOrder  ,_id: dto.sortOrder},
           });
           break;
         case 9:
-          arrayAggregation.push({ $sort: { _creditAmount: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _creditAmount: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 10:
-          arrayAggregation.push({ $sort: { _creditDays: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _creditDays: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 11:
-          arrayAggregation.push({ $sort: { _stonePricing: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _stonePricing: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 12:
-          arrayAggregation.push({ $sort: { _agentCommision: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _agentCommision: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
       }
 
@@ -2005,21 +2005,21 @@ export class ShopsService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _status: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
 
         case 2:
-          arrayAggregation.push({ $sort: { _name: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _name: dto.sortOrder ,_id: dto.sortOrder } });
           break;
 
         case 3:
-          arrayAggregation.push({ $sort: { _gender: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _gender: dto.sortOrder ,_id: dto.sortOrder } });
           break;
         case 4:
-          arrayAggregation.push({ $sort: { _email: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _email: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 5:
-          arrayAggregation.push({ $sort: { _mobile: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _mobile: dto.sortOrder ,_id: dto.sortOrder } });
           break;
       }
 

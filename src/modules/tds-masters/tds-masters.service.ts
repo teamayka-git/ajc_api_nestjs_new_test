@@ -165,9 +165,9 @@ export class TdsMastersService {
         arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
         switch(dto.sortType){
           case 0: arrayAggregation.push({ $sort: { _id: dto.sortOrder } });              break;
-          case 1:arrayAggregation.push({ $sort: { _status: dto.sortOrder } });               break;
-          case 2: arrayAggregation.push({ $sort: { _name: dto.sortOrder } });               break;
-          case 3: arrayAggregation.push({ $sort: { _percentage: dto.sortOrder } });               break;
+          case 1:arrayAggregation.push({ $sort: { _status: dto.sortOrder  ,_id: dto.sortOrder} });               break;
+          case 2: arrayAggregation.push({ $sort: { _name: dto.sortOrder ,_id: dto.sortOrder } });               break;
+          case 3: arrayAggregation.push({ $sort: { _percentage: dto.sortOrder ,_id: dto.sortOrder } });               break;
           
         }
 

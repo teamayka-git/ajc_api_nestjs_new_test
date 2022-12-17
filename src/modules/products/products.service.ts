@@ -1413,31 +1413,31 @@ export class ProductsService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _status: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _name: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _name: dto.sortOrder ,_id: dto.sortOrder} });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _designerId: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _designerId: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _grossWeight: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _grossWeight: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _type: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _type: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _purity: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _purity: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _hmSealingStatus: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _hmSealingStatus: dto.sortOrder ,_id: dto.sortOrder } });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _huId: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _huId: dto.sortOrder ,_id: dto.sortOrder } });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _eCommerceStatus: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _eCommerceStatus: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
       }
       if (dto.skip != -1) {

@@ -721,16 +721,16 @@ export class DeliveryReturnService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _status: dto.sortOrder ,_id: dto.sortOrder } });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _uid: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _uid: dto.sortOrder ,_id: dto.sortOrder } });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _type: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _type: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 4:
-          arrayAggregation.push({ $sort: { _workStatus: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _workStatus: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
       }
       if (dto.skip != -1) {
