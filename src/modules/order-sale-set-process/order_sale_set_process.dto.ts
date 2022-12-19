@@ -215,3 +215,9 @@ export class SetSubProcessHistoryListDto {
   })
   statusArray: number[];
 }
+export class SetProcessTakebackDto {
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleSetProcessIds: string[];
+
+}

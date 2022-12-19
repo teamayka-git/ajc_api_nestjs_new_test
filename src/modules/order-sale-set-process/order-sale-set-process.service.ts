@@ -7,6 +7,7 @@ import {
   ChangeSubProcessOrderStatusDto,
   SetProcessCreateDto,
   SetProcessHistoryListDto,
+  SetProcessTakebackDto,
   SetSubProcessHistoryListDto,
 } from './order_sale_set_process.dto';
 import * as mongoose from 'mongoose';
@@ -27,7 +28,7 @@ import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_pa
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { OrderSaleSetProcessDocuments } from 'src/tableModels/set_process_documents.model';
 import { ProcessMaster } from 'src/tableModels/processMaster.model';
-import {startOfMonth} from 'date-fns'
+import { startOfMonth } from 'date-fns';
 
 @Injectable()
 export class OrderSaleSetProcessService {
@@ -231,91 +232,94 @@ export class OrderSaleSetProcessService {
           );
         }
         if (processMasterDetails[0]._isAutomatic == 1) {
-          var resultEmployees = await this.employeeModel.aggregate([
-            {
-              $match: {
-                _processMasterId: new mongoose.Types.ObjectId(
-                  processMasterDetails[0]._id,
-                ),
+          var resultEmployees = await this.employeeModel
+            .aggregate([
+              {
+                $match: {
+                  _processMasterId: new mongoose.Types.ObjectId(
+                    processMasterDetails[0]._id,
+                  ),
+                },
               },
-            },
-            {
-              $project: {
-                _id: 1,
-                _userId: 1,
+              {
+                $project: {
+                  _id: 1,
+                  _userId: 1,
+                },
               },
-            },
-            {
-              $lookup: {
-                from: ModelNames.USER_ATTENDANCES,
-                let: { userId: '$_userId' },
-                pipeline: [
-                  {
-                    $match: {
-                      _stopTime: 0,
-                      _status: 1,
-                      $expr: { $eq: ['$_userId', '$$userId'] },
+              {
+                $lookup: {
+                  from: ModelNames.USER_ATTENDANCES,
+                  let: { userId: '$_userId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        _stopTime: 0,
+                        _status: 1,
+                        $expr: { $eq: ['$_userId', '$$userId'] },
+                      },
                     },
-                  },
-                ],
-                as: 'userAttendance',
+                  ],
+                  as: 'userAttendance',
+                },
               },
-            },
-            {
-              $match: { userAttendance: { $ne: [] } }, 
-            },
-            {
-              $lookup: {
-                from: ModelNames.ORDER_SALE_SET_PROCESSES,
-                let: { userId: '$_userId' },
-                pipeline: [
-                  {
-                    $match: {
-                      _orderStatus: { $in: [0, 1, 2] },
-                      _status: 1,
-                      $expr: { $eq: ['$_userId', '$$userId'] },
+              {
+                $match: { userAttendance: { $ne: [] } },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.ORDER_SALE_SET_PROCESSES,
+                  let: { userId: '$_userId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        _orderStatus: { $in: [0, 1, 2] },
+                        _status: 1,
+                        $expr: { $eq: ['$_userId', '$$userId'] },
+                      },
                     },
-                  },
-                ],
-                as: 'setProcessWorkList',
+                  ],
+                  as: 'setProcessWorkList',
+                },
               },
-            },
-            {
-              $lookup: {
-                from: ModelNames.ORDER_SALE_SET_PROCESSES,
-                let: { userId: '$_userId' },
-                pipeline: [
-                  {
-                    $match: {
-                      _workCompletedTime :{$gte:startOfMonth(dateTime).getTime(),$lte:dateTime},
-                      _orderStatus: { $in: [3] },
-                      _status: 1,
-                      $expr: { $eq: ['$_userId', '$$userId'] },
+              {
+                $lookup: {
+                  from: ModelNames.ORDER_SALE_SET_PROCESSES,
+                  let: { userId: '$_userId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        _workCompletedTime: {
+                          $gte: startOfMonth(dateTime).getTime(),
+                          $lte: dateTime,
+                        },
+                        _orderStatus: { $in: [3] },
+                        _status: 1,
+                        $expr: { $eq: ['$_userId', '$$userId'] },
+                      },
                     },
-                  },
-                ],
-                as: 'setProcessWorkListCompleted',
+                  ],
+                  as: 'setProcessWorkListCompleted',
+                },
               },
-            },
-            {
-              $project: {
-                _id: 1,
-                _userId: 1,
-                userAttendance: { _id: 1 },
-                workCount: { $size: '$setProcessWorkList' },
-                workCountCompleted: { $size: '$setProcessWorkListCompleted' },
+              {
+                $project: {
+                  _id: 1,
+                  _userId: 1,
+                  userAttendance: { _id: 1 },
+                  workCount: { $size: '$setProcessWorkList' },
+                  workCountCompleted: { $size: '$setProcessWorkListCompleted' },
+                },
               },
-            },
-            {
-              $sort:{
-                workCount:1,
-                workCountCompleted:-1
-              }
-            }
-          ]).session(transactionSession);
-       
+              {
+                $sort: {
+                  workCount: 1,
+                  workCountCompleted: -1,
+                },
+              },
+            ])
+            .session(transactionSession);
 
-          
           if (resultEmployees.length != 0) {
             await this.orderSaleSetProcessModel.findOneAndUpdate(
               {
@@ -683,106 +687,108 @@ export class OrderSaleSetProcessService {
           );
         }
 
-
-//doing next setprocess workstatus to pending
-await this.orderSaleSetProcessModel.findOneAndUpdate(
-  {
-    _id: orderSaleSetProcess[0]._id,
-  },
-  {
-    $set: {
-      _orderStatus: 0,
-    },
-  },
-  { new: true, session: transactionSession },
-);
-
+        //doing next setprocess workstatus to pending
+        await this.orderSaleSetProcessModel.findOneAndUpdate(
+          {
+            _id: orderSaleSetProcess[0]._id,
+          },
+          {
+            $set: {
+              _orderStatus: 0,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
 
         if (orderSaleSetProcess[0].processDetails._isAutomatic == 1) {
-          var resultEmployees = await this.employeeModel.aggregate([
-            {
-              $match: {
-                 _processMasterId: new mongoose.Types.ObjectId(
-                  orderSaleSetProcess[0]._processId,
-                ),
+          var resultEmployees = await this.employeeModel
+            .aggregate([
+              {
+                $match: {
+                  _processMasterId: new mongoose.Types.ObjectId(
+                    orderSaleSetProcess[0]._processId,
+                  ),
+                },
               },
-            },
-            {
-              $project: {
-                _id: 1,
-                _userId: 1,
+              {
+                $project: {
+                  _id: 1,
+                  _userId: 1,
+                },
               },
-            },
-            {
-              $lookup: {
-                from: ModelNames.USER_ATTENDANCES,
-                let: { userId: '$_userId' },
-                pipeline: [
-                  {
-                    $match: {
-                      _stopTime: 0,
-                      _status: 1,
-                      $expr: { $eq: ['$_userId', '$$userId'] },
+              {
+                $lookup: {
+                  from: ModelNames.USER_ATTENDANCES,
+                  let: { userId: '$_userId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        _stopTime: 0,
+                        _status: 1,
+                        $expr: { $eq: ['$_userId', '$$userId'] },
+                      },
                     },
-                  },
-                ],
-                as: 'userAttendance',
+                  ],
+                  as: 'userAttendance',
+                },
               },
-            },
-            {
-              $match: { userAttendance: { $ne: [] } }, 
-            },
-            {
-              $lookup: {
-                from: ModelNames.ORDER_SALE_SET_PROCESSES,
-                let: { userId: '$_userId' },
-                pipeline: [
-                  {
-                    $match: {
-                      _orderStatus: { $in: [0, 1, 2] },
-                      _status: 1,
-                      $expr: { $eq: ['$_userId', '$$userId'] },
+              {
+                $match: { userAttendance: { $ne: [] } },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.ORDER_SALE_SET_PROCESSES,
+                  let: { userId: '$_userId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        _orderStatus: { $in: [0, 1, 2] },
+                        _status: 1,
+                        $expr: { $eq: ['$_userId', '$$userId'] },
+                      },
                     },
-                  },
-                ],
-                as: 'setProcessWorkList',
+                  ],
+                  as: 'setProcessWorkList',
+                },
               },
-            },
-            {
-              $lookup: {
-                from: ModelNames.ORDER_SALE_SET_PROCESSES,
-                let: { userId: '$_userId' },
-                pipeline: [
-                  {
-                    $match: {
-                      _workCompletedTime :{$gte:startOfMonth(dateTime).getTime(),$lte:dateTime},
-                      _orderStatus: { $in: [3] },
-                      _status: 1,
-                      $expr: { $eq: ['$_userId', '$$userId'] },
+              {
+                $lookup: {
+                  from: ModelNames.ORDER_SALE_SET_PROCESSES,
+                  let: { userId: '$_userId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        _workCompletedTime: {
+                          $gte: startOfMonth(dateTime).getTime(),
+                          $lte: dateTime,
+                        },
+                        _orderStatus: { $in: [3] },
+                        _status: 1,
+                        $expr: { $eq: ['$_userId', '$$userId'] },
+                      },
                     },
-                  },
-                ],
-                as: 'setProcessWorkListCompleted',
+                  ],
+                  as: 'setProcessWorkListCompleted',
+                },
               },
-            },
-            {
-              $project: {
-                _id: 1,
-                _userId: 1,
-                userAttendance: { _id: 1 },
-                workCount: { $size: '$setProcessWorkList' },
-                workCountCompleted: { $size: '$setProcessWorkListCompleted' },
+              {
+                $project: {
+                  _id: 1,
+                  _userId: 1,
+                  userAttendance: { _id: 1 },
+                  workCount: { $size: '$setProcessWorkList' },
+                  workCountCompleted: { $size: '$setProcessWorkListCompleted' },
+                },
               },
-            },
-            {
-              $sort:{
-                workCount:1,
-                workCountCompleted:-1
-              }
-            }
-          ]).session(transactionSession);
+              {
+                $sort: {
+                  workCount: 1,
+                  workCountCompleted: -1,
+                },
+              },
+            ])
+            .session(transactionSession);
 
-          
           if (resultEmployees.length != 0) {
             await this.orderSaleSetProcessModel.findOneAndUpdate(
               {
@@ -1326,6 +1332,47 @@ await this.orderSaleSetProcessModel.findOneAndUpdate(
         .aggregate(arrayAggregation)
         .session(transactionSession);
 
+      const responseJSON = {
+        message: 'success',
+        data: { list: result },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async takeback(dto: SetProcessTakebackDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var result = await this.orderSaleSetProcessModel.updateMany(
+        {
+          _id: { $in: dto.orderSaleSetProcessIds },
+        },
+        {
+          $set: {
+            _status: 0,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+console.log("result   "+JSON.stringify(result));
       const responseJSON = {
         message: 'success',
         data: { list: result },

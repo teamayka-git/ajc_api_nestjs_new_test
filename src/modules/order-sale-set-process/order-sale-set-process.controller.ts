@@ -6,6 +6,7 @@ import {
   ChangeSubProcessOrderStatusDto,
   SetProcessCreateDto,
   SetProcessHistoryListDto,
+  SetProcessTakebackDto,
   SetSubProcessHistoryListDto,
 } from './order_sale_set_process.dto';
 import { RolesGuard } from 'src/Auth/roles.guard';
@@ -104,6 +105,14 @@ export class OrderSaleSetProcessController {
     @Request() req,
   ) {
     return this.orderSaleSetProcessService.setSubProcessHistories(
+      dto,
+      req['_userId_'],
+    );
+  }
+  
+  @Post('takeback')
+  takeback(@Body() dto: SetProcessTakebackDto, @Request() req) {
+    return this.orderSaleSetProcessService.takeback(
       dto,
       req['_userId_'],
     );
