@@ -26,6 +26,7 @@ import {
   OrderSalesEditDto,
   OrderSalesGetOrderDetailsFromQrBarcodeDto,
   OrderSalesGetOrderIdFromQrBarcodeDto,
+  OrderSalesReworkSetprocessDto,
   OrderSalesWorkStatusChangeDto,
   SetProcessAssignedOrderSaleListDto,
 } from './order_sales.dto';
@@ -173,6 +174,15 @@ export class OrderSalesController {
     @Request() req,
   ) {
     return this.orderSalesService.getWorkCount(dto, req['_userId_']);
+  }
+
+
+  @Post('reworkSetprocess')
+  reworkSetprocess(
+    @Body() dto: OrderSalesReworkSetprocessDto,
+    @Request() req,
+  ) {
+    return this.orderSalesService.reworkSetprocess(dto, req['_userId_']);
   }
 
 

@@ -693,6 +693,13 @@ export class OrderSalesGetOrderDetailsFromQrBarcodeDto {
   @ApiProperty({})
   value: string;
 }
+export class OrderSalesReworkSetprocessDto {
+
+  
+  @IsString()
+  @ApiProperty({})
+  ordersaleId: string;
+}
 
 export class GetWorkCountDto {
   @IsArray()

@@ -16,6 +16,7 @@ import {
   OrderSalesEditDto,
   OrderSalesGetOrderDetailsFromQrBarcodeDto,
   OrderSalesGetOrderIdFromQrBarcodeDto,
+  OrderSalesReworkSetprocessDto,
   OrderSalesWorkStatusChangeDto,
   SetProcessAssignedOrderSaleListDto,
 } from './order_sales.dto';
@@ -7845,6 +7846,77 @@ export class OrderSalesService {
             ...(resultWorker.length != 0 ? [...resultWorker] : []),
           ],
         },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async reworkSetprocess(dto: OrderSalesReworkSetprocessDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      await this.orderSaleMainModel.findOneAndUpdate(
+        {
+          _id: dto.ordersaleId,
+        },
+        {
+          $set: {
+            _workStatus: 1,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      await this.orderSaleSetProcessModel.updateMany(
+        {
+          _orderSaleId: dto.ordersaleId,
+        },
+        {
+          $set: { _status: 0 },
+        },
+        { new: true, session: transactionSession },
+      );
+      var arrayToOrderHistories = [];
+
+      arrayToOrderHistories.push({
+        _orderSaleId: dto.ordersaleId,
+        _userId: null,
+        _type: 110,
+        _deliveryProviderId: null,
+        _deliveryCounterId: null,
+        _shopId: null,
+        _orderSaleItemId: null,
+        _description: '',
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _status: 1,
+      });
+      await this.orderSaleHistoriesModel.insertMany(
+        arrayToOrderHistories,
+        {
+          session: transactionSession,
+        },
+      );
+      const responseJSON = {
+        message: 'success',
+        data: {},
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
