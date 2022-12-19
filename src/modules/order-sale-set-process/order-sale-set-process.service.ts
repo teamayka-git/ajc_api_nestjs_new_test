@@ -1378,7 +1378,7 @@ export class OrderSaleSetProcessService {
         {
           _orderSaleId: resultRemovedProcess._orderSaleId,
           _userId: null,
-          _orderStatus: resultRemovedProcess._orderStatus,
+          _orderStatus: 0,
           _workAssignedTime: -1,
           _workStartedTime: -1,
           _workCompletedTime: -1,
@@ -1404,7 +1404,7 @@ export class OrderSaleSetProcessService {
       arrayToSetProcessHistories.push({
         _orderSaleId: resultRemovedProcess._orderSaleId,
         _userId: null,
-        _type: 0,
+        _type: 8,
         _processId: resultRemovedProcess._processId,
         _orderSaleSetProcessId: null,
         _description: resultRemovedProcess._description,
