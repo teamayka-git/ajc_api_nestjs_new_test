@@ -87,5 +87,6 @@ _orderStatus:{
   4 - on holding
   5 - request to reassign
   6 - reject
+  7 - takeback
 }
 */

@@ -1361,21 +1361,69 @@ export class OrderSaleSetProcessService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var result = await this.orderSaleSetProcessModel.findOneAndUpdate(
-        {
-          _id: dto.orderSaleSetProcessIds ,
-        },
-        {
-          $set: {
-            _status: 0,
+      var resultRemovedProcess =
+        await this.orderSaleSetProcessModel.findOneAndUpdate(
+          {
+            _id: dto.orderSaleSetProcessId,
           },
+          {
+            $set: {
+              _status: 0,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+      const orderSaleSetProcessNewDataModel = new this.orderSaleSetProcessModel(
+        {
+          _orderSaleId: resultRemovedProcess._orderSaleId,
+          _userId: null,
+          _orderStatus: resultRemovedProcess._orderStatus,
+          _workAssignedTime: -1,
+          _workStartedTime: -1,
+          _workCompletedTime: -1,
+          _dueDate: resultRemovedProcess._dueDate,
+          _index: resultRemovedProcess._index,
+          _rootCauseId: null,
+          _rootCause: '',
+          _description: resultRemovedProcess._description,
+          _processId: resultRemovedProcess._processId,
+          _isLastItem: resultRemovedProcess._isLastItem,
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _status: 1,
         },
-        { new: true, session: transactionSession },
       );
-console.log("result   "+JSON.stringify(result));
+
+      await orderSaleSetProcessNewDataModel.save({
+        session: transactionSession,
+      });
+
+      var arrayToSetProcessHistories = [];
+
+      arrayToSetProcessHistories.push({
+        _orderSaleId: resultRemovedProcess._orderSaleId,
+        _userId: null,
+        _type: 0,
+        _processId: resultRemovedProcess._processId,
+        _orderSaleSetProcessId: null,
+        _description: resultRemovedProcess._description,
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _status: 1,
+      });
+      await this.orderSaleSetProcessHistoriesModel.insertMany(
+        arrayToSetProcessHistories,
+        {
+          session: transactionSession,
+        },
+      );
+     
+
+
       const responseJSON = {
         message: 'success',
-        data: { list: result },
+        data: { },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
