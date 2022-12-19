@@ -1361,9 +1361,9 @@ export class OrderSaleSetProcessService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var result = await this.orderSaleSetProcessModel.updateMany(
+      var result = await this.orderSaleSetProcessModel.findOneAndUpdate(
         {
-          _id: { $in: dto.orderSaleSetProcessIds },
+          _id: dto.orderSaleSetProcessIds ,
         },
         {
           $set: {
