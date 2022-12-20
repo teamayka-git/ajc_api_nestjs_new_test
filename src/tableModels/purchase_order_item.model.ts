@@ -33,7 +33,6 @@ export interface PurchaseOrderItem {
   _id: String;
   _purchaseOrderId: String;
   _purchaseBookingId: String;
-
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -47,5 +46,5 @@ PurchaseOrderItemSchema.index({ _createdUserId: 1 });
 PurchaseOrderItemSchema.index({ _status: 1 });
 
 /*
- */
+ */ 
  

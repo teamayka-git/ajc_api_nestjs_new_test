@@ -125,6 +125,45 @@ export class ModelWeightResponseFormat {
     }
   }
 
+  public purchaseOrderTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: { _: 0 } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().purchaseOrderTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().purchaseOrderTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().purchaseOrderTableMedium() };
+    } else {
+      return { $project: { _: 0 } };
+    }
+  }
+
+  
+  public purchaseOrderItemsTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: { _: 0 } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().purchaseOrderItemsTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().purchaseOrderItemsTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().purchaseOrderItemsTableMedium() };
+    } else {
+      return { $project: { _: 0 } };
+    }
+  }
+
   public purchaseBookingItemsTableResponseFormat(
     startIndex: int,
     responseFormatArray: List,

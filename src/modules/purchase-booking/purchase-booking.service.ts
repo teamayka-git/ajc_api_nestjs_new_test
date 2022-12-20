@@ -152,6 +152,14 @@ export class PurchaseBookingService {
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
+      
+      if (dto.invoiceIds.length > 0) {
+        var newSettingsId = [];
+        dto.invoiceIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _invoiceId: { $in: newSettingsId } } });
+      }
 
       if (dto.totalMetalWeightStart != -1 || dto.totalMetalWeightEnd != -1) {
         var totalWeihtMatchObject = {};
@@ -214,7 +222,7 @@ export class PurchaseBookingService {
               $match: { $expr: { $eq: ['$_id', '$$purchaseBookingId'] } },
             },
             new ModelWeightResponseFormat().purchaseBookingItemsTableResponseFormat(
-              1110,
+              1000,
               dto.responseFormat,
             ),
           );

@@ -9,6 +9,7 @@ export const PurchaseOrderSchema = new mongoose.Schema({
     ref: ModelNames.SUPPLIERS,
     default: null,
   },
+  _uid: { type: String, required: true, default: "nil" },
   _expectedDeliveryDate: { type: Number, required: true, default: -1 },
   _totalMetalWeight: { type: Number, required: true, default: -1 },
   _deliveryStatus: { type: Number, required: true, default: -1 },
@@ -30,6 +31,7 @@ export const PurchaseOrderSchema = new mongoose.Schema({
 export interface PurchaseOrder {
   _id: String;
   _supplierId: String;
+  _uid:String;
   _expectedDeliveryDate: Number;
   _totalMetalWeight: Number;
   _deliveryStatus: Number;
@@ -40,6 +42,7 @@ export interface PurchaseOrder {
   _status: Number;
 }
 
+PurchaseOrderSchema.index({ _uid: 1 });
 PurchaseOrderSchema.index({ _expectedDeliveryDate: 1 });
 PurchaseOrderSchema.index({ _supplierId: 1 });
 PurchaseOrderSchema.index({ _deliveryStatus: 1 });
@@ -52,4 +55,4 @@ _deliveryStatus:{
   1 - accepted
   2 - rejected
 }
- */ 
+ */  
