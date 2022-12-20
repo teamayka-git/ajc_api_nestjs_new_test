@@ -1582,7 +1582,7 @@ export class AppService {
         { _name: 'Not as per requirement' },
         {
           $setOnInsert: {
-            _type: [0, 1, 2, 3, 4, 5],
+            _type: [0, 1, 2, 3, 4, 5,7],
             _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,

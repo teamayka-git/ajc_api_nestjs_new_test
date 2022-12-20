@@ -73,5 +73,6 @@ _type:{
     4 - delivery reject
     5 - delivery proof reject
     6 - shop freez
+    7 - order hold
 }
  */

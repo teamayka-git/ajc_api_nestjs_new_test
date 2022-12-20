@@ -419,9 +419,11 @@ export class DeliveryReturnService {
               _uid: resultOrderSaleOld[indexCount]._uid + 'R',
               _referenceNumber: resultOrderSaleOld[indexCount]._referenceNumber,
               _dueDate: resultOrderSaleOld[indexCount]._dueDate,
-              _workStatus: 0,
+              _workStatus: 0,  
               _rootCauseId: null,
-
+              _isHold:0,
+              _holdDescription:"",
+              _holdRootCause:null,
               _parentOrderId: resultOrderSaleOld[indexCount]._id,
               _deliveryType: resultOrderSaleOld[indexCount]._deliveryType,
               _isInvoiceGenerated: 0,

@@ -23,12 +23,19 @@ export const OrderSalesMainSchema = new mongoose.Schema({
     ref: ModelNames.ROOT_CAUSES,
     default: null,
   },
-  
   _parentOrderId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.ORDER_SALES_MAIN,
     default: null,
   },
+
+  _holdRootCause: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.ROOT_CAUSES,
+    default: null,
+  },
+  _isHold: { type: Number, required: true, default: -1 },
+  _holdDescription: { type: String, required: false, default: '' },
   
   _isInvoiceGenerated: { type: Number, required: true, default: -1 },
   _isProductGenerated: { type: Number, required: true, default: -1 },
@@ -59,10 +66,16 @@ export interface OrderSalesMain {
   _uid: string;//
   _dueDate: number;//
   _workStatus: number;//
-  _rootCauseId: String;//
+  _rootCauseId: String;// 
   _parentOrderId:String;
   _deliveryType:number;//
   _referenceNumber: String;//
+
+  _holdRootCause:String;
+  _isHold:number;
+  _holdDescription:String;
+
+
   _type: number;//
   _isReWork:number;//
   _isInvoiceGenerated:number;
@@ -78,6 +91,9 @@ export interface OrderSalesMain {
   _status: Number;
 }
 
+OrderSalesMainSchema.index({ _holdRootCause: 1 });
+OrderSalesMainSchema.index({ _isHold: 1 });
+OrderSalesMainSchema.index({ _holdDescription: 1 });
 
 OrderSalesMainSchema.index({ _parentOrderId: 1 });
 OrderSalesMainSchema.index({ _isProductGenerated: 1 });
