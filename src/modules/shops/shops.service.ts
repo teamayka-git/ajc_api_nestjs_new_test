@@ -796,9 +796,9 @@ export class ShopsService {
               { _uid: new RegExp(`^${dto.searchingText}$`, 'i') },
               { _name: new RegExp(dto.searchingText, 'i') },
               { _displayName: new RegExp(dto.searchingText, 'i') },
-              { _address: new RegExp(dto.searchingText, 'i') },
-              { _panCardNumber: new RegExp(`^${dto.searchingText}$`, 'i') },
-              { _gstNumber: new RegExp(`^${dto.searchingText}$`, 'i') },
+              // { _address: new RegExp(dto.searchingText, 'i') },
+              // { _panCardNumber: new RegExp(`^${dto.searchingText}$`, 'i') },
+              // { _gstNumber: new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });
