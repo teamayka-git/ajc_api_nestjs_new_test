@@ -898,6 +898,42 @@ export class DeliveryTempService {
               },
             });
           }
+
+
+
+          const invoiceShopDetails =
+          dto.screenType.includes(113);
+        if (invoiceShopDetails) {
+          pipeline.push(
+            {
+              $lookup: {
+                from: ModelNames.SHOPS,
+                let: { shopId: '$_shopId' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$_id', '$$shopId'] },
+                    },
+                  },
+                  new ModelWeightResponseFormat().shopTableResponseFormat(
+                    1130,
+                    dto.responseFormat,
+                  ),
+                ],
+                as: 'shopDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$shopDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          );
+        }
+
+
+          
           return pipeline;
         };
 

@@ -80,6 +80,10 @@ export enum ModelNames {
   PRODUCT_TAG_LINKINGS = 'product_tag_linkings',
   ORDER_SALE_ITEM_DOCUMENTS = 'order_sale_item_documents',
   STORE_PROMOTIONS = 'store_promotions',
+  PURCHASE_BOOKINGS = 'purchase_bookings',
+  PURCHASE_BOOKING_ITEMS = 'purchase_booking_items',
+  PURCHASE_ORDERS = 'purchase_orders',
+  PURCHASE_ORDER_ITEMS = 'purchase_order_items',
 
   CHAT_PERSONAL_CHAT_MESSAGES = 'chat_personal_chat_messages',
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',

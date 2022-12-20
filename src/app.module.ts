@@ -94,6 +94,7 @@ import { DeliveryCounterUserLinkingsSchema } from './tableModels/delivery_counte
 import { OrderSalesMainSchema } from './tableModels/order_sales_main.model';
 import { OrderSaleSetProcessesSchema } from './tableModels/order_sale_set_processes.model';
 import { StorePromotionsModule } from './modules/store-promotions/store-promotions.module';
+import { PurchaseModule } from './modules/purchase/purchase.module';
 
 @Module({
   imports: [
@@ -200,6 +201,7 @@ import { StorePromotionsModule } from './modules/store-promotions/store-promotio
     DeliveryCounterBundleModule,
     TagMastersModule,
     StorePromotionsModule,
+    PurchaseModule,
 
     // SalesReturnRequestStatusesModule,
   ],
