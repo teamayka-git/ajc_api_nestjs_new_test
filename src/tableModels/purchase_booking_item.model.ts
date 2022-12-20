@@ -35,7 +35,6 @@ export interface PurchaseBookingItem {
   _purchaseBookingId: String;
   _metalWeight: Number;
   _groupId: String;
-
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -50,3 +49,4 @@ PurchaseBookingItemSchema.index({ _status: 1 });
 
 /*
  */
+ 

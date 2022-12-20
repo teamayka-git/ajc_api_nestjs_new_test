@@ -984,6 +984,91 @@ export class ModelWeight {
     };
   }
 
+  
+  public purchaseBookingItemsTableLight(): Object {
+    return {
+      _id: 1,
+      _purchaseBookingId: 1,
+      _metalWeight: 1,
+      _status: 1,
+    };
+  }
+  public purchaseBookingItemsTableMinimum(): Object {
+    return {
+      _id: 1,
+      _purchaseBookingId: 1,
+      _metalWeight: 1,
+      _groupId:1,
+      _status: 1,
+    };
+  }
+  public purchaseBookingItemsTableMedium(): Object {
+    return {
+      
+      _id: 1,
+      _purchaseBookingId: 1,
+      _metalWeight: 1,
+      _groupId:1,
+      _createdUserId: 1,
+      _createdAt:1,
+      _status: 1,
+    };
+  }
+  public purchaseBookingItemsTableMaximum(): Object {
+    return {
+      _id: 1,
+      _purchaseBookingId: 1,
+      _metalWeight: 1,
+      _groupId:1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+  
+  public purchaseBookingTableLight(): Object {
+    return {
+      _id: 1,
+      _totalMetalWeight: 1,
+      _confirmationStatus: 1,
+    };
+  }
+  public purchaseBookingTableMinimum(): Object {
+    return {
+      _id: 1,
+      _totalMetalWeight: 1,
+      _confirmationStatus: 1,
+      _invoiceId:1,
+      _status: 1,
+    };
+  }
+  public purchaseBookingTableMedium(): Object {
+    return {
+      _id: 1,
+      _totalMetalWeight: 1,
+      _confirmationStatus: 1,
+      _invoiceId:1,
+      _createdUserId:1,
+      _createdAt:1,
+    };
+  }
+  public purchaseBookingTableMaximum(): Object {
+    return {
+      _id: 1,
+      _totalMetalWeight: 1,
+      _confirmationStatus: 1,
+      _invoiceId:1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
   public orderSaleHistoryTableLight(): Object {
     return {
       _id: 1,

@@ -52,4 +52,4 @@ _deliveryStatus:{
   1 - accepted
   2 - rejected
 }
- */
+ */ 
