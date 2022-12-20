@@ -128,5 +128,7 @@ _type:{
   108- delivery counter rejected
   109 - product edtted 
   110 - rework to set process 
+  111 - order hold 
+  112 - order hold removed 
 }
 */

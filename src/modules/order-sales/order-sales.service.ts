@@ -16,6 +16,7 @@ import {
   OrderSalesEditDto,
   OrderSalesGetOrderDetailsFromQrBarcodeDto,
   OrderSalesGetOrderIdFromQrBarcodeDto,
+  OrderSalesHoldDto,
   OrderSalesReworkSetprocessDto,
   OrderSalesWorkStatusChangeDto,
   SetProcessAssignedOrderSaleListDto,
@@ -499,16 +500,16 @@ export class OrderSalesService {
         _uid: uidSalesOrder,
         _referenceNumber: dto.referenceNumber,
         _dueDate: dto.dueDate,
-        _workStatus: 0, 
+        _workStatus: 0,
         _rootCauseId: null,
         _deliveryType: dto.deliveryType,
         _isInvoiceGenerated: 0,
         _isProductGenerated: 0,
         _type: dto.type,
 
-        _isHold:0,
-        _holdDescription:"",
-        _holdRootCause:null,
+        _isHold: 0,
+        _holdDescription: '',
+        _holdRootCause: null,
         _parentOrderId: null,
         _isReWork: 0,
         _rootCause: '',
@@ -968,6 +969,72 @@ export class OrderSalesService {
         }
 
         arraySalesOrderHistories.push(objOrderHistory);
+      });
+      await this.orderSaleHistoriesModel.insertMany(arraySalesOrderHistories, {
+        session: transactionSession,
+      });
+
+      const responseJSON = { message: 'success', data: result };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async orderHold(dto: OrderSalesHoldDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+
+
+      var result = await this.orderSaleMainModel.updateMany(
+        {
+          _id: { $in: dto.orderSaleIds },
+        },
+        {
+          $set: {
+            _holdRootCause:
+              dto.rootCauseId == '' || dto.rootCauseId == 'nil'
+                ? null
+                : dto.rootCauseId,
+            _isHold: dto.isHold,
+            _holdDescription: dto.holdDescription,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      var arraySalesOrderHistories = [];
+      dto.orderSaleIds.map((mapItem) => {
+        arraySalesOrderHistories.push({
+          _orderSaleId: mapItem,
+          _userId: null,
+          _type:(dto.isHold==1)?111:112,
+          _deliveryProviderId: null,
+          _deliveryCounterId: null,
+          _orderSaleItemId: null,
+          _shopId: null,
+          _description: `${dto.rootCauseName} - ${dto.holdDescription}`,
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _status: 1,
+        });
       });
       await this.orderSaleHistoriesModel.insertMany(arraySalesOrderHistories, {
         session: transactionSession,
@@ -7911,12 +7978,9 @@ export class OrderSalesService {
         _createdAt: dateTime,
         _status: 1,
       });
-      await this.orderSaleHistoriesModel.insertMany(
-        arrayToOrderHistories,
-        {
-          session: transactionSession,
-        },
-      );
+      await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
+        session: transactionSession,
+      });
       const responseJSON = {
         message: 'success',
         data: {},

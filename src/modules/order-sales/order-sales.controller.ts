@@ -26,6 +26,7 @@ import {
   OrderSalesEditDto,
   OrderSalesGetOrderDetailsFromQrBarcodeDto,
   OrderSalesGetOrderIdFromQrBarcodeDto,
+  OrderSalesHoldDto,
   OrderSalesReworkSetprocessDto,
   OrderSalesWorkStatusChangeDto,
   SetProcessAssignedOrderSaleListDto,
@@ -104,6 +105,14 @@ export class OrderSalesController {
     @Request() req,
   ) {
     return this.orderSalesService.change_work_status(dto, req['_userId_']);
+  }
+
+  @Post('orderHold')
+  orderHold(
+    @Body() dto: OrderSalesHoldDto,
+    @Request() req,
+  ) {
+    return this.orderSalesService.orderHold(dto, req['_userId_']);
   }
 
   @Post('list')

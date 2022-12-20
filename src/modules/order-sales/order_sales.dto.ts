@@ -670,6 +670,27 @@ export class OrderSalesWorkStatusChangeDto {
   @ApiProperty({})
   rootCauseId: string;
 }
+export class OrderSalesHoldDto {
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleIds: string[];
+
+  @IsNumber()
+  @ApiProperty({  })
+  isHold: number;
+
+  @IsString()
+  @ApiProperty({})
+  holdDescription: string;
+
+  @IsString()
+  @ApiProperty({})
+  rootCauseId: string;
+
+  @IsString()
+  @ApiProperty({})
+  rootCauseName: string;
+}
 
 export class OrderSalesGetOrderIdFromQrBarcodeDto {
   @IsString()
