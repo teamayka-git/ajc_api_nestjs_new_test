@@ -10,6 +10,7 @@ import { StringUtils } from 'src/utils/string_utils';
 import { ProductStoneLinkings } from 'src/tableModels/productStoneLinkings.model';
 import { SubCategories } from 'src/tableModels/sub_categories.model';
 import {
+  GetBulkProductBarcodeDto,
   ProductCreateDto,
   ProductEcommerceStatusChangeDto,
   ProductEditDto,
@@ -751,9 +752,9 @@ export class ProductsService {
     try {
       var arrayGlobalGalleries = [];
       var arrayGlobalGalleriesDocuments = [];
-      console.log("___f1");
+      console.log('___f1');
       if (file.hasOwnProperty('documents')) {
-        console.log("___f2");
+        console.log('___f2');
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
@@ -763,7 +764,7 @@ export class ProductsService {
           },
           { new: true, session: transactionSession },
         );
-        console.log("___f3");
+        console.log('___f3');
         // for (var i = 0; i < dto.arrayDocuments.length; i++) {
         //   var count = file['documents'].findIndex(
         //     (it) => dto.arrayDocuments[i].fileOriginalName == it.originalname,
@@ -788,30 +789,30 @@ export class ProductsService {
         //   }
         // }
         for (var i = 0; i < file['documents'].length; i++) {
-          console.log("___f4");
+          console.log('___f4');
           var resultUpload = await new S3BucketUtils().uploadMyFile(
             file['documents'][i],
             UploadedFileDirectoryPath.GLOBAL_GALLERY_PRODUCT,
           );
-          console.log("___f5");
+          console.log('___f5');
           if (resultUpload['status'] == 0) {
             throw new HttpException(
               'File upload error',
               HttpStatus.INTERNAL_SERVER_ERROR,
             );
           }
-          console.log("___f6");
+          console.log('___f6');
           var count = dto.arrayDocuments.findIndex(
             (it) => it.fileOriginalName == file['documents'][i]['originalname'],
           );
-          console.log("___f7");
+          console.log('___f7');
           if (count != -1) {
             dto.arrayDocuments[count]['url'] = resultUpload['url'];
           } else {
             dto.arrayDocuments[count]['url'] = 'nil';
           }
         }
-        console.log("___f8");
+        console.log('___f8');
         for (var i = 0; i < dto.arrayDocuments.length; i++) {
           var count = file['documents'].findIndex(
             (it) => it.originalname == dto.arrayDocuments[i].fileOriginalName,
@@ -846,7 +847,7 @@ export class ProductsService {
             });
           }
         }
-        console.log("___f9");
+        console.log('___f9');
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
         });
@@ -857,7 +858,7 @@ export class ProductsService {
           },
         );
       }
-      console.log("___f10");
+      console.log('___f10');
       var arrayToProducts = [];
 
       var arrayStonesLinkings = [];
@@ -1413,31 +1414,49 @@ export class ProductsService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _name: dto.sortOrder ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _name: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _designerId: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _designerId: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _grossWeight: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _grossWeight: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _type: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _type: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _purity: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _purity: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _hmSealingStatus: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _hmSealingStatus: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _huId: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _huId: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _eCommerceStatus: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _eCommerceStatus: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
       }
       if (dto.skip != -1) {
@@ -1755,7 +1774,8 @@ export class ProductsService {
           const pipeline = [];
           pipeline.push(
             {
-              $match: {_status:1,
+              $match: {
+                _status: 1,
                 $expr: {
                   $and: [{ $eq: ['$_productId', '$$productId'] }],
                 },
@@ -2230,6 +2250,53 @@ export class ProductsService {
       ]);
 
       const responseJSON = { message: 'success', data: { list: result } };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async getBulkProductBarcode(dto: GetBulkProductBarcodeDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var barcodes = [];
+
+      var resultProduct = await this.counterModel.findOneAndUpdate(
+        { _tableName: ModelNames.PRODUCTS },
+        {
+          $inc: {
+            _count: dto.count,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      for (var i = 0; i < dto.count; i++) {
+        var autoIncrementNumber = resultProduct._count - i;
+
+        var barcode =
+          BarCodeQrCodePrefix.BULK_GENERATED_PRODUCT_AND_INVOICE +
+          new StringUtils().intToDigitString(autoIncrementNumber, 8);
+        barcodes.push(barcode);
+      }
+
+      const responseJSON = { message: 'success', data: { list: barcodes } };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=

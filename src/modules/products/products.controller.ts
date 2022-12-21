@@ -2,6 +2,7 @@ import { Body, Controller, Post, Put, Request, UploadedFiles, UseInterceptors } 
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import {
+  GetBulkProductBarcodeDto,
   ProductCreateDto,
   ProductEcommerceStatusChangeDto,
   ProductEditDto,
@@ -72,5 +73,11 @@ export class ProductsController {
   @Post('tempGetMinJobPhotographer')
   tempGetMinJobPhotographer() {
     return this.productsService.tempGetMinJobPhotographer();
+  }
+  
+  @Post('getBulkProductBarcode')
+  getBulkProductBarcode(@Body() dto: GetBulkProductBarcodeDto,
+  @Request() req,) {
+    return this.productsService.getBulkProductBarcode(dto, req['_userId_']);
   }
 }

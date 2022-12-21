@@ -433,3 +433,10 @@ export class ProductEcommerceStatusChangeDto {
   @ApiProperty({ type: [String] })
   productIds: string[];
 }
+export class GetBulkProductBarcodeDto {
+  @IsNumber()
+  @ApiProperty({})
+  count: number;
+
+  
+}
