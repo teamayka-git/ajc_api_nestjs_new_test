@@ -120,9 +120,9 @@ export class StorePromotionsService {
         //   }
         // }
         // console.log('___d3');
-        // await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
-        //   session: transactionSession,
-        // });
+        await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
+          session: transactionSession,
+        });
       }
 
       var arrayToStates = [];
@@ -247,7 +247,7 @@ export class StorePromotionsService {
         arrayAggregation.push({ $limit: dto.limit });
       }
       if (dto.screenType.includes(50)) {
-        arrayAggregation.push(
+        arrayAggregation.push( 
           {
             $lookup: {
               from: ModelNames.GLOBAL_GALLERIES,
