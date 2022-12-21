@@ -1112,6 +1112,79 @@ export class ModelWeight {
     };
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public factoryStockTransferTableLight(): Object {
+    return {
+      _id: 1,
+      _factoryId: 1,
+      _type: 1,
+    };
+  }
+  public factoryStockTransferTableMinimum(): Object {
+    return {
+     
+      _id: 1,
+      _factoryId: 1,
+      _type: 1,
+      _barcode:1,
+      _status: 1,
+    };
+  }
+  public factoryStockTransferTableMedium(): Object {
+    return {
+      
+      _id: 1,
+      _factoryId: 1,
+      _type: 1,
+      _barcode:1,
+      _createdUserId:1,
+      _createdAt:1,
+      _status: 1,
+    };
+  }
+  public factoryStockTransferTableMaximum(): Object {
+    return {
+      _id: 1,
+      _factoryId: 1,
+      _type: 1,
+      _barcode:1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
   public purchaseBookingTableLight(): Object {
     return {
@@ -1550,6 +1623,155 @@ export class ModelWeight {
       _status: 1,
     };
   }
+
+
+
+
+
+
+
+
+  public factoryTableLight(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+    };
+  }
+  public factoryTableMinimumn(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _cityId: 1,
+      _dataGuard: 1,
+
+      _status: 1,
+    };
+  }
+  public factoryTableMedium(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _cityId: 1,
+      _calculationTypeMasterId:1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _status: 1,
+    };
+  }
+  public factoryTableMaximum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _cityId: 1,
+      _calculationTypeMasterId:1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+
+
+
+
+
+
+
+
+
+  public factoryStockTransferItemTableLight(): Object {
+    return {
+      _id: 1,
+      _factoryStockTransferId: 1,
+      _grossWeight:1,
+      _netWeight:1,
+      _description:1,
+    };
+  }
+  public factoryStockTransferItemTableMinimumn(): Object {
+    return {
+      
+      _id: 1,
+      _factoryStockTransferId: 1,
+      _grossWeight:1,
+      _netWeight:1,
+      _stoneWeight:1,
+      _purity:1,
+      _weight_hundred_percentage:1,
+      _groupId:1,
+      _description:1,
+    };
+  }
+  public factoryStockTransferItemTableMedium(): Object {
+    return {
+      _id: 1,
+      _factoryStockTransferId: 1,
+      _grossWeight:1,
+      _netWeight:1,
+      _stoneWeight:1,
+      _purity:1,
+      _weight_hundred_percentage:1,
+      _groupId:1,
+      _description:1,
+      _createdUserId: 1,
+      _status: 1,
+    };
+  }
+  public factoryStockTransferItemTableMaximum(): Object {
+    return {
+      _id:1,
+      _factoryStockTransferId:1,
+      _grossWeight:1,
+      _stoneWeight:1,
+      _netWeight:1,
+      _purity:1,
+      _weight_hundred_percentage:1,
+      _description:1,
+      _groupId:1,
+      _createdUserId:1,
+      _createdAt:1,
+      _updatedUserId:1,
+      _updatedAt:1,
+      _status:1,
+    };
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   public deliveryChellanTableLight(): Object {
     return {
       _id: 1,

@@ -125,6 +125,25 @@ export class ModelWeightResponseFormat {
     }
   }
 
+  public factoryStockTransferTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: { _: 0 } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().factoryStockTransferTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().factoryStockTransferTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().factoryStockTransferTableMedium() };
+    } else {
+      return { $project: { _: 0 } };
+    }
+  }
+
   public purchaseOrderTableResponseFormat(
     startIndex: int,
     responseFormatArray: List,
@@ -422,6 +441,50 @@ export class ModelWeightResponseFormat {
       return { $project: { _: 0 } };
     }
   }
+
+
+
+
+  public factoryTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: { _: 0 } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().factoryTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().factoryTableMinimumn() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().factoryTableMedium() };
+    } else {
+      return { $project: { _: 0 } };
+    }
+  }
+
+  public factoryStockTransferItemTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: { _: 0 } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().factoryStockTransferItemTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().factoryStockTransferItemTableMinimumn() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().factoryStockTransferItemTableMedium() };
+    } else {
+      return { $project: { _: 0 } };
+    }
+  }
+
+
+
   public deliveryTableResponseFormat(
     startIndex: int,
     responseFormatArray: List,

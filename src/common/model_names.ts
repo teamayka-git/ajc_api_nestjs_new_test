@@ -84,6 +84,8 @@ export enum ModelNames {
   PURCHASE_BOOKING_ITEMS = 'purchase_booking_items',
   PURCHASE_ORDERS = 'purchase_orders',
   PURCHASE_ORDER_ITEMS = 'purchase_order_items',
+  FACTORY_STOCK_TRANSFERS = 'factory_stock_transfers',
+  FACTORY_STOCK_TRANSFER_ITEMS = 'factory_stock_transfer_items',
 
   CHAT_PERSONAL_CHAT_MESSAGES = 'chat_personal_chat_messages',
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',

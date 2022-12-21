@@ -96,6 +96,7 @@ import { OrderSaleSetProcessesSchema } from './tableModels/order_sale_set_proces
 import { StorePromotionsModule } from './modules/store-promotions/store-promotions.module';
 import { PurchaseBookingModule } from './modules/purchase-booking/purchase-booking.module';
 import { PurchaseOrderModule } from './modules/purchase-order/purchase-order.module';
+import { FactoryStockTransferModule } from './modules/factory-stock-transfer/factory-stock-transfer.module';
 
 
 @Module({
@@ -205,6 +206,7 @@ import { PurchaseOrderModule } from './modules/purchase-order/purchase-order.mod
     StorePromotionsModule,
     PurchaseBookingModule,
     PurchaseOrderModule,
+    FactoryStockTransferModule,
 
     // SalesReturnRequestStatusesModule,
   ],
