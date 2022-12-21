@@ -162,17 +162,21 @@ export class PurchaseBookingService {
       }
 
       if (dto.totalMetalWeightStart != -1 || dto.totalMetalWeightEnd != -1) {
-        var totalWeihtMatchObject = {};
+       
         if (dto.totalMetalWeightStart != -1) {
-          totalWeihtMatchObject['$gte'] = dto.totalMetalWeightStart;
+          arrayAggregation.push({
+            $match: { _totalMetalWeight: {$gte:dto.totalMetalWeightStart} },
+          });
+          
         }
         if (dto.totalMetalWeightEnd != -1) {
-          totalWeihtMatchObject['$lte'] = dto.totalMetalWeightEnd;
+          arrayAggregation.push({
+            $match: { _totalMetalWeight: {$lte:dto.totalMetalWeightEnd} },
+          });
+         
         }
 
-        arrayAggregation.push({
-          $match: { _totalMetalWeight: totalWeihtMatchObject },
-        });
+       
       }
       if (dto.confirmationStatus.length != 0) {
         arrayAggregation.push({

@@ -1725,7 +1725,34 @@ export class OrderSalesService {
           },
         });
       }
-
+      if (dto.screenType.includes(142)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ROOT_CAUSES,
+              let: { rootCauseId: '$_holdRootCause' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$rootCauseId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                  1420,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'holdRootCauseDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$holdRootCauseDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
       if (dto.screenType.includes(120)) {
         const orderSaleShopOrderHeadPipeline = () => {
           const pipeline = [];
@@ -3227,7 +3254,7 @@ export class OrderSalesService {
 
       if (
         dto.deliveryAssignedStartDate != -1 ||
-        dto.deliveryAssignedStartDate != -1 ||
+        dto.deliveryAssignedEndDate != -1 ||
         dto.logisticsPartnerIds.length != 0
       ) {
         var logisticsPartnerIdsMongo = [];
@@ -3276,15 +3303,15 @@ export class OrderSalesService {
                   if (dto.deliveryAssignedStartDate != -1) {
                     pipeline.push({
                       $match: {
-                        _createdAt: { $gte: dto.deliveryAssignedStartDate },
+                        _assignedAt: { $gte: dto.deliveryAssignedStartDate },
                       },
                     });
                   }
 
-                  if (dto.deliveryAssignedStartDate != -1) {
+                  if (dto.deliveryAssignedEndDate != -1) {
                     pipeline.push({
                       $match: {
-                        _createdAt: { $gte: dto.deliveryAssignedStartDate },
+                        _assignedAt: { $lte: dto.deliveryAssignedEndDate },
                       },
                     });
                   }

@@ -188,30 +188,32 @@ export class PurchaseOrderService {
       }
 
       if (dto.totalMetalWeightStart != -1 || dto.totalMetalWeightEnd != -1) {
-        var totalWeihtMatchObject = {};
+     
         if (dto.totalMetalWeightStart != -1) {
-          totalWeihtMatchObject['$gte'] = dto.totalMetalWeightStart;
+          arrayAggregation.push({
+            $match: { _totalMetalWeight: {$gte:dto.totalMetalWeightStart} },
+          });
         }
         if (dto.totalMetalWeightEnd != -1) {
-          totalWeihtMatchObject['$lte'] = dto.totalMetalWeightEnd;
-        }
+          arrayAggregation.push({
+            $match: { _totalMetalWeight: {$lte:dto.totalMetalWeightEnd} },
+          });
+        } 
 
-        arrayAggregation.push({
-          $match: { _totalMetalWeight: totalWeihtMatchObject },
-        });
+       
       }
       if (dto.expectedDeliveryDateStart != -1 || dto.expectedDeliveryDateEnd != -1) {
-        var totalWeihtMatchObject = {};
+       
         if (dto.expectedDeliveryDateStart != -1) {
-          totalWeihtMatchObject['$gte'] = dto.expectedDeliveryDateStart;
+          arrayAggregation.push({
+            $match: { _expectedDeliveryDate: {$gte:dto.expectedDeliveryDateStart} },
+          });
         }
         if (dto.expectedDeliveryDateEnd != -1) {
-          totalWeihtMatchObject['$lte'] = dto.expectedDeliveryDateEnd;
+          arrayAggregation.push({
+            $match: { _expectedDeliveryDate: {$lte:dto.expectedDeliveryDateEnd} },
+          });
         }
-
-        arrayAggregation.push({
-          $match: { _expectedDeliveryDate: totalWeihtMatchObject },
-        });
       }
       if (dto.deliveryStatus.length != 0) {
         arrayAggregation.push({

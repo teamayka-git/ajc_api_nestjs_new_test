@@ -758,7 +758,7 @@ export class ShopsService {
     }
   }
 
-  async list(dto: ListShopDto) {
+  async list(dto: ListShopDto) { 
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -1351,7 +1351,34 @@ export class ShopsService {
           },
         );
       }
-
+      if (dto.screenType.includes(116)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ROOT_CAUSES,
+              let: { rootCauseId: '$_freezedRootCause' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$rootCauseId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                  1160,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'freezedRootCauseDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$freezedRootCauseDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
       var result = await this.shopsModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
