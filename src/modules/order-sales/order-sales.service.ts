@@ -3303,7 +3303,7 @@ export class OrderSalesService {
                   if (dto.deliveryAssignedStartDate != -1) {
                     pipeline.push({
                       $match: {
-                        _assignedAt: { $gte: dto.deliveryAssignedStartDate },
+                        _assignedAt: { $gte: dto.deliveryAssignedStartDate,$ne:0 },
                       },
                     });
                   }
@@ -3311,7 +3311,7 @@ export class OrderSalesService {
                   if (dto.deliveryAssignedEndDate != -1) {
                     pipeline.push({
                       $match: {
-                        _assignedAt: { $lte: dto.deliveryAssignedEndDate },
+                        _assignedAt: { $lte: dto.deliveryAssignedEndDate,$ne:0 },
                       },
                     });
                   }
