@@ -936,6 +936,122 @@ export class ModelWeight {
       _status: 1,
     };
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public employeeStockInHandTableLight(): Object {
+    return {
+      _userId: 1,
+      _approveStatus: 1,
+    };
+  }
+  public employeeStockInHandTableMinimum(): Object {
+    return {
+      _id: 1,
+     
+      _userId: 1,
+      _approveStatus: 1,
+      _status: 1,
+    };
+  }
+  public employeeStockInHandTableMedium(): Object {
+    return {
+      _id: 1,
+     
+      _userId: 1,
+      _approveStatus: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _status: 1,
+    };
+  }
+  public employeeStockInHandTableMaximum(): Object {
+    return {
+      _id: 1,
+     
+      _userId: 1,
+      _approveStatus: 1,
+
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+
+
+
+
+
+
+
+
+  public employeeStockInHandItemsTableLight(): Object {
+    return {
+      _employeeStockInHandsId: 1,
+      _deliveryStatus: 1,
+      _productId:1,
+    };
+  }
+  public employeeStockInHandItemsTableMinimum(): Object {
+    return {
+      _id: 1,
+      _employeeStockInHandsId: 1,
+      _deliveryStatus: 1,
+      _productId:1,
+      _status: 1,
+    };
+  }
+  public employeeStockInHandItemsTableMedium(): Object {
+    return {
+      _id: 1,
+      _employeeStockInHandsId: 1,
+      _deliveryStatus: 1,
+      _productId:1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _status: 1,
+    };
+  }
+  public employeeStockInHandItemsTableMaximum(): Object {
+    return {
+      _id: 1,
+     
+      _employeeStockInHandsId: 1,
+      _deliveryStatus: 1,
+      _productId:1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+
+
+
+
+
+
+
+
+
+
+
   public subProcessMasterTableLight(): Object {
     return {
       _id: 1,

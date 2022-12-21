@@ -504,6 +504,65 @@ export class ModelWeightResponseFormat {
     }
   }
 
+
+  
+
+  public employeeStockInHandTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: { _: 0 } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().employeeStockInHandTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().employeeStockInHandTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().employeeStockInHandTableMedium() };
+    } else {
+      return { $project: { _: 0 } };
+    }
+  }
+
+
+
+
+
+
+
+
+  public employeeStockInHandItemsTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: { _: 0 } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().employeeStockInHandItemsTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().employeeStockInHandItemsTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().employeeStockInHandItemsTableMedium() };
+    } else {
+      return { $project: { _: 0 } };
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
   public deliveryItemsTableResponseFormat(
     startIndex: int,
     responseFormatArray: List,

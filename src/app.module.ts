@@ -97,6 +97,7 @@ import { StorePromotionsModule } from './modules/store-promotions/store-promotio
 import { PurchaseBookingModule } from './modules/purchase-booking/purchase-booking.module';
 import { PurchaseOrderModule } from './modules/purchase-order/purchase-order.module';
 import { FactoryStockTransferModule } from './modules/factory-stock-transfer/factory-stock-transfer.module';
+import { EmployeeStockHandsModule } from './modules/employee-stock-hands/employee-stock-hands.module';
 
 
 @Module({
@@ -207,6 +208,7 @@ import { FactoryStockTransferModule } from './modules/factory-stock-transfer/fac
     PurchaseBookingModule,
     PurchaseOrderModule,
     FactoryStockTransferModule,
+    EmployeeStockHandsModule,
 
     // SalesReturnRequestStatusesModule,
   ],
