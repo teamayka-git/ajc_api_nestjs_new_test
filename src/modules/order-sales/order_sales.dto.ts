@@ -663,6 +663,11 @@ export class OrderSalesWorkStatusChangeDto {
   @ApiProperty({ description: descriptionWorkStatus })
   workStatus: number;
 
+
+  @IsNumber()
+  @ApiProperty({  })
+  fromWorkStatus: number;
+
   @IsString()
   @ApiProperty({})
   rootCause: string;

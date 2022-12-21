@@ -656,7 +656,7 @@ export class OrderSalesService {
       throw error;
     }
   }
- 
+
   async edit(dto: OrderSalesEditDto, _userId_: string, file: Object) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
@@ -930,6 +930,17 @@ export class OrderSalesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+      var resultOrderStatusCheck = await this.orderSaleMainModel.find({
+        _id: { $in: dto.orderSaleIds },
+        _workStatus: dto.fromWorkStatus,
+      });
+      if (resultOrderStatusCheck.length != dto.orderSaleIds.length) {
+        throw new HttpException(
+          'Order work status mismatched',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
       var result = await this.orderSaleMainModel.updateMany(
         {
           _id: { $in: dto.orderSaleIds },
@@ -1001,8 +1012,6 @@ export class OrderSalesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-
-
       var result = await this.orderSaleMainModel.updateMany(
         {
           _id: { $in: dto.orderSaleIds },
@@ -1025,7 +1034,7 @@ export class OrderSalesService {
         arraySalesOrderHistories.push({
           _orderSaleId: mapItem,
           _userId: null,
-          _type:(dto.isHold==1)?111:112,
+          _type: dto.isHold == 1 ? 111 : 112,
           _deliveryProviderId: null,
           _deliveryCounterId: null,
           _orderSaleItemId: null,
@@ -3303,7 +3312,10 @@ export class OrderSalesService {
                   if (dto.deliveryAssignedStartDate != -1) {
                     pipeline.push({
                       $match: {
-                        _assignedAt: { $gte: dto.deliveryAssignedStartDate,$ne:0 },
+                        _assignedAt: {
+                          $gte: dto.deliveryAssignedStartDate,
+                          $ne: 0,
+                        },
                       },
                     });
                   }
@@ -3311,7 +3323,10 @@ export class OrderSalesService {
                   if (dto.deliveryAssignedEndDate != -1) {
                     pipeline.push({
                       $match: {
-                        _assignedAt: { $lte: dto.deliveryAssignedEndDate,$ne:0 },
+                        _assignedAt: {
+                          $lte: dto.deliveryAssignedEndDate,
+                          $ne: 0,
+                        },
                       },
                     });
                   }
