@@ -17,6 +17,7 @@ export const SuppliersSchema = new mongoose.Schema({
   },
   _lastLogin: { type: Number, required: true, default: -1 },
   _address: { type: String, required: true, default: 'nil' },
+  _gst: { type: String, required: false, default: '' },
   _dataGuard: { type: Object, required: true, default: [] },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -40,6 +41,7 @@ export interface Suppliers {
   _uid: String;
   _lastLogin: Number;
   _address: String;
+  _gst: String;
   _dataGuard: Object;
   _createdUserId: String;
   _createdAt: Number;
@@ -48,6 +50,7 @@ export interface Suppliers {
   _status: Number;
 }
 
+SuppliersSchema.index({ _gst: 1 });
 SuppliersSchema.index({ _status: 1 });
 SuppliersSchema.index({ _name: 1 });
 SuppliersSchema.index({ _gender: 1 });

@@ -45,6 +45,10 @@ export class SupplierCreateDto {
   @ApiProperty({})
   email: string;
 
+  @IsEmail()
+  @ApiProperty({})
+  gst: string;
+
   @IsString()
   @ApiProperty({})
   password: string;
@@ -82,6 +86,10 @@ export class SupplierEditDto {
   @IsNumber()
   @ApiProperty({ description: descriptionListGender })
   gender: number;
+
+  @IsEmail()
+  @ApiProperty({})
+  gst: string;
 
   @IsString()
   @ApiProperty({})

@@ -288,6 +288,7 @@ export class SupplierService {
         _cityId: dto.cityId,
         _address: dto.address,
         _lastLogin: 0,
+        _gst:dto.gst,
         _userId: resultUserUpdated._id,
         _dataGuard: dto.dataGuard,
         _createdUserId: _userId_,
@@ -356,6 +357,7 @@ export class SupplierService {
       var updateObject = {
         _name: dto.name,
         _gender: dto.gender,
+        _gst:dto.gst,
         _mobile: dto.mobile,
       };
 
