@@ -495,7 +495,7 @@ export class OrderSaleSetProcessService {
           },
         );
       }
-
+console.log("___d1");
       var objectUpdateOrderSaleSetProcess = {
         _userId: dto.userId == '' || dto.userId == 'nil' ? null : dto.userId,
         _orderStatus: dto.orderStatus,
@@ -506,7 +506,7 @@ export class OrderSaleSetProcessService {
             ? null
             : dto.rootCauseId,
       };
-
+      console.log("___d2");
       switch (dto.orderStatus) {
         case 1:
           objectUpdateOrderSaleSetProcess['_workAssignedTime'] = dateTime;
@@ -528,7 +528,7 @@ export class OrderSaleSetProcessService {
         },
         { new: true, session: transactionSession },
       );
-
+      console.log("___d3");
       var objDefaultProcessHistory = {
         _orderSaleId: result._orderSaleId,
         _userId: null,
@@ -540,6 +540,7 @@ export class OrderSaleSetProcessService {
         _description: dto.descriptionSetProcessHistory,
         _status: 1,
       };
+      console.log("___d4");
       switch (dto.setProcessHistoryType) {
         /*
           0 - created  process
@@ -580,13 +581,13 @@ export class OrderSaleSetProcessService {
               objDefaultProcessHistory._processId = result._processId;
               break;
       }
-
+      console.log("___d5");
       const orderSaleSetProcessHistory =
         new this.orderSaleSetProcessHistoriesModel(objDefaultProcessHistory);
       await orderSaleSetProcessHistory.save({
         session: transactionSession,
       });
-
+      console.log("___d6");
       // if (dto.orderStatus == 6) {
       // const orderSaleNewSetProcess = new this.orderSaleSetProcessModel({
       //   _orderSaleId: result._orderSaleId,
@@ -645,12 +646,13 @@ export class OrderSaleSetProcessService {
           //finished work
           objSubProcessHistory._type = 3;
         }
-
+        console.log("___d7");
         const orderSaleSubProcessHistory =
           new this.orderSaleSetSubProcessHistoriesModel(objSubProcessHistory);
         await orderSaleSubProcessHistory.save({
           session: transactionSession,
         });
+        console.log("___d8");
       }
 
       if (dto.isLastSetProcess == 0 && dto.orderStatus == 3) {
@@ -682,7 +684,7 @@ export class OrderSaleSetProcessService {
             },
           ],
         );
-
+        console.log("___d9");
         if (orderSaleSetProcess.length == 0) {
           throw new HttpException(
             'Next set process not found',
@@ -702,7 +704,7 @@ export class OrderSaleSetProcessService {
           },
           { new: true, session: transactionSession },
         );
-
+        console.log("___d10");
         if (orderSaleSetProcess[0].processDetails._isAutomatic == 1) {
           var resultEmployees = await this.employeeModel
             .aggregate([
@@ -791,7 +793,7 @@ export class OrderSaleSetProcessService {
               },
             ])
             .session(transactionSession);
-
+            console.log("___d11");
           if (resultEmployees.length != 0) {
             await this.orderSaleSetProcessModel.findOneAndUpdate(
               {
@@ -806,7 +808,7 @@ export class OrderSaleSetProcessService {
               },
               { new: true, session: transactionSession },
             );
-
+            console.log("___d12");
             const orderSaleSetProcessHistoryAutomation =
               new this.orderSaleSetProcessHistoriesModel({
                 _orderSaleId: result._orderSaleId,
@@ -818,9 +820,11 @@ export class OrderSaleSetProcessService {
                 _description: '',
                 _status: 1,
               });
+              
             await orderSaleSetProcessHistoryAutomation.save({
               session: transactionSession,
             });
+            console.log("___d13");
           }
         }
       }
@@ -838,7 +842,7 @@ export class OrderSaleSetProcessService {
           },
           { new: true, session: transactionSession },
         );
-
+        console.log("___d14");
         const orderSaleHistory = new this.orderSaleHistoriesModel({
           _orderSaleId: result._orderSaleId,
           _userId: null,
@@ -854,6 +858,7 @@ export class OrderSaleSetProcessService {
         await orderSaleHistory.save({
           session: transactionSession,
         });
+        console.log("___d15");
       }
 
       const responseJSON = { message: 'success', data: result };
