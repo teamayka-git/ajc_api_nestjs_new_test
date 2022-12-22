@@ -936,7 +936,7 @@ export class OrderSalesService {
       });
       if (resultOrderStatusCheck.length != dto.orderSaleIds.length) {
         throw new HttpException(
-          'Order work status mismatched',
+          'Data outdated, please refresh',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }

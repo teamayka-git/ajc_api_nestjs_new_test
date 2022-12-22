@@ -572,10 +572,13 @@ export class OrderSaleSetProcessService {
         case 6:
           objDefaultProcessHistory._processId = result._processId;
           break;
-        case 7:
-          objDefaultProcessHistory._userId = dto.userId;
-          objDefaultProcessHistory._processId = result._processId;
-          break;
+          case 7:
+            objDefaultProcessHistory._userId = dto.userId;
+            objDefaultProcessHistory._processId = result._processId;
+            break;
+            case 8:
+              objDefaultProcessHistory._processId = result._processId;
+              break;
       }
 
       const orderSaleSetProcessHistory =
