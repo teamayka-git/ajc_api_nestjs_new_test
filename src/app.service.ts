@@ -2250,6 +2250,26 @@ export class AppService {
         },
         { upsert: true, new: true, session: transactionSession },
       );
+      await this.generalsModel.findOneAndUpdate( 
+        { _code: 1025 },
+        {
+          $setOnInsert: {
+            _name: 'allowed litit for purchase adjustment',
+            _string: '',
+            _number: 10000,
+            _vlaueType: 0,
+            _json: { basic: 'Basic' },
+            _type: 8,
+            _dataGuard: [1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
 
       await this.purityModel.findOneAndUpdate(
         { _name: '916' },

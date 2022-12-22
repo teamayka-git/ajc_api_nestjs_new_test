@@ -20,7 +20,7 @@ const descriptionListForCodes =
 const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 
-const descriptionType = '0-tax, 1-shop, 2-currency, 3-product, 4-order, 5-invoice, 6-others';
+const descriptionType = '0-tax, 1-shop, 2-currency, 3-product, 4-order, 5-invoice, 6-others, 7 - Software settings, 8 - Purchase';
 const descriptionValueType = '0-int, 1-string, 2-json';
 
 class GeneralsCreateList {

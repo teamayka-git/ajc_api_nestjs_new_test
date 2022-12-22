@@ -101,8 +101,9 @@ _code:{
     1022 - Order maximum due date
     1023 - Invoice prefix
     1024 - order head auto assign
+    1025 - allowed litit for purchase adjustment
 
-}
+} 
 _type:{
     0 - tax
     1 - Shop
@@ -112,6 +113,7 @@ _type:{
     5 - invoice
     6 - others
     7 - Software settings
+    8 - Purchase
 }
 _vlaueType:{
   0-number
