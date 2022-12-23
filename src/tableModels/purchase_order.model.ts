@@ -4,7 +4,7 @@ import { GlobalConfig } from 'src/config/global_config';
 
 export const PurchaseOrderSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
-  _supplierId: {
+  _supplierUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.SUPPLIERS,
     default: null,
@@ -28,7 +28,7 @@ export const PurchaseOrderSchema = new mongoose.Schema({
 
 export interface PurchaseOrder {
   _id: String;
-  _supplierId: String;
+  _supplierUserId: String;
   _uid: String;
   _purchaseStatus: Number;
   _createdUserId: String;
@@ -40,7 +40,7 @@ export interface PurchaseOrder {
 
 PurchaseOrderSchema.index({ _uid: 1, _id: 1 });
 PurchaseOrderSchema.index({ _purchaseStatus: 1 });
-PurchaseOrderSchema.index({ _supplierId: 1 });
+PurchaseOrderSchema.index({ _supplierUserId: 1 });
 PurchaseOrderSchema.index({ _createdUserId: 1 });
 PurchaseOrderSchema.index({ _status: 1 });
 PurchaseOrderSchema.index(

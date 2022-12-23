@@ -52,7 +52,7 @@ export class PurchaseOrderService {
         arrayToPurchaseBooking.push({
           _id: purchaseOrderId,
           _uid: resultCounterPurchase._count - dto.array.length + (index + 1),
-          _supplierId: mapItem.supplierId == '' ? null : mapItem.supplierId,
+          _supplierUserId: mapItem.supplierUserId == '' ? null : mapItem.supplierUserId,
           _purchaseStatus: mapItem.purchaseStatus,
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -264,13 +264,13 @@ export class PurchaseOrderService {
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
-      if (dto.supplierIds.length > 0) {
+      if (dto.supplierUserIds.length > 0) {
         var newSettingsId = [];
-        dto.supplierIds.map((mapItem) => {
+        dto.supplierUserIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
         arrayAggregation.push({
-          $match: { _supplierId: { $in: newSettingsId } },
+          $match: { _supplierUserId: { $in: newSettingsId } },
         });
       }
       if (dto.uids.length > 0) {

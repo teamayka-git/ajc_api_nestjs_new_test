@@ -98,6 +98,7 @@ import { PurchaseBookingModule } from './modules/purchase-booking/purchase-booki
 import { PurchaseOrderModule } from './modules/purchase-order/purchase-order.module';
 import { FactoryStockTransferModule } from './modules/factory-stock-transfer/factory-stock-transfer.module';
 import { EmployeeStockHandsModule } from './modules/employee-stock-hands/employee-stock-hands.module';
+import { PurchaseModule } from './modules/purchase/purchase.module';
 
 
 @Module({
@@ -209,6 +210,7 @@ import { EmployeeStockHandsModule } from './modules/employee-stock-hands/employe
     PurchaseOrderModule,
     FactoryStockTransferModule,
     EmployeeStockHandsModule,
+    PurchaseModule,
 
     // SalesReturnRequestStatusesModule,
   ],

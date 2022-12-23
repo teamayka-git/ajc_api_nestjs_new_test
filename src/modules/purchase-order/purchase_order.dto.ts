@@ -29,7 +29,7 @@ const descriptionListPurchaseStatus =
   class PurchaseOrderCreateList {
     @IsString()
     @ApiProperty({})
-    supplierId: string;
+    supplierUserId: string;
   
 
     
@@ -86,7 +86,7 @@ export class PurchaseOrderListDto {
 
   @IsArray()
   @ApiProperty({ type: [String] })
-  supplierIds: string[];
+  supplierUserIds: string[];
 
   @IsArray()
   @ApiProperty({ type: [String] })

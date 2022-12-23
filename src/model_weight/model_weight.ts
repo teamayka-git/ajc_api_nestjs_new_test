@@ -1283,6 +1283,82 @@ export class ModelWeight {
     };
   }
 
+  public purchaseTableLight(): Object {
+    return {
+      _id: 1,
+      _uid: 1,
+      _supplierUserId: 1,
+    };
+  }
+  public purchaseTableMinimum(): Object {
+    return {
+      _id: 1,
+      _uid: 1,
+      _supplierUserId: 1,
+      _purchaseOrderId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _status: 1,
+    };
+  }
+  public purchaseTableMedium(): Object {
+    return {
+      _id: 1,
+      _uid: 1,
+      _supplierUserId: 1,
+      _purchaseOrderId: 1,
+      _supplierPurchaseDate: 1,
+      _manufacturePurchaseDate: 1,
+      _supplierRef: 1,
+      _otherRemark: 1,
+      _groupName: 1,
+      _estimatedQty: 1,
+      _allowedLimitPurchaseAdjustment: 1,
+      _actualQty: 1,
+      _unitPrice: 1,
+      _amount: 1,
+      _sgst: 1,
+      _igst: 1,
+      _cgst: 1,
+      _grossAmount: 1,
+      _actualAmount: 1,
+      _bookingAmount: 1,
+      _difference: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+    };
+  }
+  public purchaseTableMaximum(): Object {
+    return {
+      _id: 1,
+      _uid: 1,
+      _supplierUserId: 1,
+      _purchaseOrderId: 1,
+      _supplierPurchaseDate: 1,
+      _manufacturePurchaseDate: 1,
+      _supplierRef: 1,
+      _otherRemark: 1,
+      _groupName: 1,
+      _estimatedQty: 1,
+      _allowedLimitPurchaseAdjustment: 1,
+      _actualQty: 1,
+      _unitPrice: 1,
+      _amount: 1,
+      _sgst: 1,
+      _igst: 1,
+      _cgst: 1,
+      _grossAmount: 1,
+      _actualAmount: 1,
+      _bookingAmount: 1,
+      _difference: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId:1,
+      _updatedAt:1,
+      _status:1
+    };
+  }
+
   public orderSaleHistoryTableLight(): Object {
     return {
       _id: 1,
