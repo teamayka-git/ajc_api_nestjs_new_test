@@ -9,10 +9,8 @@ export const PurchaseOrderSchema = new mongoose.Schema({
     ref: ModelNames.SUPPLIERS,
     default: null,
   },
-  _uid: { type: String, required: true, default: "nil" },
-  _expectedDeliveryDate: { type: Number, required: true, default: -1 },
-  _totalMetalWeight: { type: Number, required: true, default: -1 },
-  _deliveryStatus: { type: Number, required: true, default: -1 },
+  _uid: { type: String, required: true, default: 'nil' },
+  _purchaseStatus: { type: Number, required: true, default: -1 },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -31,10 +29,8 @@ export const PurchaseOrderSchema = new mongoose.Schema({
 export interface PurchaseOrder {
   _id: String;
   _supplierId: String;
-  _uid:String;
-  _expectedDeliveryDate: Number;
-  _totalMetalWeight: Number;
-  _deliveryStatus: Number;
+  _uid: String;
+  _purchaseStatus: Number;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -42,17 +38,42 @@ export interface PurchaseOrder {
   _status: Number;
 }
 
-PurchaseOrderSchema.index({ _uid: 1 });
-PurchaseOrderSchema.index({ _expectedDeliveryDate: 1 });
+PurchaseOrderSchema.index({ _uid: 1, _id: 1 });
+PurchaseOrderSchema.index({ _purchaseStatus: 1 });
 PurchaseOrderSchema.index({ _supplierId: 1 });
-PurchaseOrderSchema.index({ _deliveryStatus: 1 });
 PurchaseOrderSchema.index({ _createdUserId: 1 });
 PurchaseOrderSchema.index({ _status: 1 });
-
+PurchaseOrderSchema.index(
+  { _uid: 1 },
+  { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },
+);
+PurchaseOrderSchema.post('save', async function (error, doc, next) {
+  schemaPostFunctionForDuplicate(error, doc, next);
+});
+PurchaseOrderSchema.post('insertMany', async function (error, doc, next) {
+  schemaPostFunctionForDuplicate(error, doc, next);
+});
+PurchaseOrderSchema.post('updateOne', async function (error, doc, next) {
+  schemaPostFunctionForDuplicate(error, doc, next);
+});
+PurchaseOrderSchema.post('findOneAndUpdate', async function (error, doc, next) {
+  schemaPostFunctionForDuplicate(error, doc, next);
+});
+PurchaseOrderSchema.post('updateMany', async function (error, doc, next) {
+  schemaPostFunctionForDuplicate(error, doc, next);
+});
+function schemaPostFunctionForDuplicate(error, doc, next) {
+  if (error.code == 11000) {
+    next(new Error('UID already existing'));
+  } else {
+    next();
+  }
+} 
 /*
-_deliveryStatus:{
-  0 - pending
-  1 - accepted
-  2 - rejected
+_purchaseStatus:{
+  -1-pending
+  0-rejected
+  1-accepted
+  
 }
- */  
+ */

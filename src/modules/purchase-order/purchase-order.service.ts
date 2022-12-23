@@ -8,6 +8,7 @@ import { PurchaseOrder } from 'src/tableModels/purchase_order.model';
 import {
   PurchaseOrderCreateDto,
   PurchaseOrderListDto,
+  PurchaseOrderPurchaseStatusChangeDto,
   PurchaseOrderStatusChangeDto,
 } from './purchase_order.dto';
 import { GlobalConfig } from 'src/config/global_config';
@@ -36,10 +37,6 @@ export class PurchaseOrderService {
       var arrayToPurchaseBookingItem = [];
       var arrayBookingIds = [];
 
-
-
-
-
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.PURCHASE_ORDERS },
         {
@@ -50,16 +47,13 @@ export class PurchaseOrderService {
         { new: true, session: transactionSession },
       );
 
-
-      dto.array.map((mapItem,index) => {
+      dto.array.map((mapItem, index) => {
         var purchaseOrderId = new mongoose.Types.ObjectId();
         arrayToPurchaseBooking.push({
           _id: purchaseOrderId,
           _uid: resultCounterPurchase._count - dto.array.length + (index + 1),
           _supplierId: mapItem.supplierId == '' ? null : mapItem.supplierId,
-          _expectedDeliveryDate: mapItem.expectedDeliveryDate,
-          _totalMetalWeight: mapItem.totalMetalWeight,
-          _deliveryStatus: mapItem.deliveryStatus,
+          _purchaseStatus: mapItem.purchaseStatus,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
@@ -68,7 +62,9 @@ export class PurchaseOrderService {
         });
 
         mapItem.purchaseBookingIds.forEach((eachItemItem) => {
-          arrayBookingIds.push(eachItemItem);
+          if (mapItem.purchaseStatus == 1) {
+            arrayBookingIds.push(eachItemItem);
+          }
           arrayToPurchaseBookingItem.push({
             _purchaseOrderId: purchaseOrderId,
             _purchaseBookingId: eachItemItem == '' ? null : eachItemItem,
@@ -87,20 +83,22 @@ export class PurchaseOrderService {
       await this.purchaseOrderItemModel.insertMany(arrayToPurchaseBookingItem, {
         session: transactionSession,
       });
-      await this.purchaseBookingModel.updateMany(
-        {
-          _id: { $in: arrayBookingIds },
-        },
-        {
-          $set: {
-            _updatedUserId: _userId_,
-            _updatedAt: dateTime,
-            _status: 0,
+      if (arrayBookingIds.length != 0) {
+        await this.purchaseBookingModel.updateMany(
+          //check and update if purchase status approved
+          {
+            _id: { $in: arrayBookingIds },
           },
-        },
-        { new: true, session: transactionSession },
-      );
-
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _status: 0,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
       const responseJSON = { message: 'success', data: {} };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -163,6 +161,86 @@ export class PurchaseOrderService {
       throw error;
     }
   }
+  async changePurchaseStatus(
+    dto: PurchaseOrderPurchaseStatusChangeDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var resultPurchaseOrder = await this.purchaseOrderModel
+        .find({
+          _id: { $in: dto.purchaseOrderIds },
+          _purchaseStatus: dto.purchaseFromStatus,
+        })
+        .select('_id');
+      if (resultPurchaseOrder.length != dto.purchaseOrderIds.length) {
+        throw new HttpException(
+          'Data outdated, please refresh',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      var result = await this.purchaseOrderModel.updateMany(
+        {
+          _id: { $in: dto.purchaseOrderIds },
+        },
+        {
+          $set: {
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+            _purchaseStatus: dto.purchaseStatus,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      if (dto.purchaseStatus == 0) {
+        var purchaseBookingIds = [];
+        var resultPurchaseOrderItems = await this.purchaseOrderItemModel
+          .find({ _purchaseOrderId: { $in: dto.purchaseOrderIds }, _status: 1 })
+          .select('_purchaseBookingId');
+        resultPurchaseOrderItems.forEach((element) => {
+          purchaseBookingIds.push(element._purchaseBookingId);
+        });
+
+        await this.purchaseBookingModel.updateMany(
+          {
+            _id: { $in: purchaseBookingIds },
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _status: 0,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
+
+      const responseJSON = { message: 'success', data: result };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
 
   async list(dto: PurchaseOrderListDto) {
     var dateTime = new Date().getTime();
@@ -171,14 +249,14 @@ export class PurchaseOrderService {
     try {
       var arrayAggregation = [];
 
-      //   if (dto.searchingText != '') {
-      //     //todo
-      //     arrayAggregation.push({
-      //       $match: {
-      //         $or: [{ _name: new RegExp(dto.searchingText, 'i') }],
-      //       },
-      //     });
-      //   }
+      if (dto.searchingText != '') {
+        //todo
+        arrayAggregation.push({
+          $match: {
+            $or: [{ _uid: new RegExp(dto.searchingText, 'i') }],
+          },
+        });
+      }
       if (dto.purchaseOrderIds.length > 0) {
         var newSettingsId = [];
         dto.purchaseOrderIds.map((mapItem) => {
@@ -186,38 +264,22 @@ export class PurchaseOrderService {
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
-
-      if (dto.totalMetalWeightStart != -1 || dto.totalMetalWeightEnd != -1) {
-     
-        if (dto.totalMetalWeightStart != -1) {
-          arrayAggregation.push({
-            $match: { _totalMetalWeight: {$gte:dto.totalMetalWeightStart} },
-          });
-        }
-        if (dto.totalMetalWeightEnd != -1) {
-          arrayAggregation.push({
-            $match: { _totalMetalWeight: {$lte:dto.totalMetalWeightEnd} },
-          });
-        } 
-
-       
-      }
-      if (dto.expectedDeliveryDateStart != -1 || dto.expectedDeliveryDateEnd != -1) {
-       
-        if (dto.expectedDeliveryDateStart != -1) {
-          arrayAggregation.push({
-            $match: { _expectedDeliveryDate: {$gte:dto.expectedDeliveryDateStart} },
-          });
-        }
-        if (dto.expectedDeliveryDateEnd != -1) {
-          arrayAggregation.push({
-            $match: { _expectedDeliveryDate: {$lte:dto.expectedDeliveryDateEnd} },
-          });
-        }
-      }
-      if (dto.deliveryStatus.length != 0) {
+      if (dto.supplierIds.length > 0) {
+        var newSettingsId = [];
+        dto.supplierIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
         arrayAggregation.push({
-          $match: { _deliveryStatus: { $in: dto.deliveryStatus } },
+          $match: { _supplierId: { $in: newSettingsId } },
+        });
+      }
+      if (dto.uids.length > 0) {
+        arrayAggregation.push({ $match: { _uid: { $in: dto.uids } } });
+      }
+
+      if (dto.purchaseStatus.length != 0) {
+        arrayAggregation.push({
+          $match: { _deliveryStatus: { $in: dto.purchaseStatus } },
         });
       }
 
@@ -255,231 +317,68 @@ export class PurchaseOrderService {
       );
 
       if (dto.screenType.includes(100)) {
-
         const purchaseOrdeItemsPipeline = () => {
-            const pipeline = [];
-            pipeline.push(  {
-                $match: {
-                  _status: 1,
-                  $expr: { $eq: ['$_purchaseOrderId', '$$purchaseOrderId'] },
-                },
-              },
-              new ModelWeightResponseFormat().purchaseOrderItemsTableResponseFormat(
-                1000,
-                dto.responseFormat,
-              ),);
-
-
-              if (dto.screenType.includes(101)) {
-                const purchaseOrdeItemsBookingPipeline = () => {
-                    const pipeline = [];
-                    pipeline.push(  {
-                        $match: {
-                          $expr: { $eq: ['$_id', '$$purchaseBookingId'] },
-                        },
-                      },
-                      new ModelWeightResponseFormat().purchaseBookingTableResponseFormat(
-                        1010,
-                        dto.responseFormat,
-                      ),);
-
-
-
-
-
-
-///
-                      const purchaseBookingItemsPopulate = dto.screenType.includes(102);
-                      if (purchaseBookingItemsPopulate) {
-                        const purchaseBookingItemsPipeline = () => {
-                          const pipeline = [];
-                          pipeline.push(
-                            {
-                              $match: { $expr: { $eq: ['$_id', '$$purchaseBookingId'] } },
-                            },
-                            new ModelWeightResponseFormat().purchaseBookingItemsTableResponseFormat(
-                              1020,
-                              dto.responseFormat,
-                            ),
-                          );
-                          if (dto.screenType.includes(103)) {
-                            const purchaseBookingItemsGroupPipeline = () => {
-                              const pipeline = [];
-                              pipeline.push(
-                                {
-                                  $match: { $expr: { $eq: ['$_id', '$$groupId'] } },
-                                },
-                                new ModelWeightResponseFormat().groupMasterTableResponseFormat(
-                                  1030,
-                                  dto.responseFormat,
-                                ),
-                              );
-                              if (dto.screenType.includes(104)) {
-                                const purchaseBookingItemsGroupCategoryPipeline = () => {
-                                  const pipeline = [];
-                                  pipeline.push(
-                                    {
-                                      $match: {
-                                        _status: 1,
-                                        $expr: { $eq: ['$_groupId', '$$groupId'] },
-                                      },
-                                    },
-                                    new ModelWeightResponseFormat().categoryTableResponseFormat(
-                                      1040,
-                                      dto.responseFormat,
-                                    ),
-                                  );
-                                  if (dto.screenType.includes(105)) {
-                                    const purchaseBookingItemsGroupCategorySubCategoryPipeline =
-                                      () => {
-                                        const pipeline = [];
-                                        pipeline.push(
-                                          {
-                                            $match: {
-                                              _status: 1,
-                                              $expr: { $eq: ['$_categoryId', '$$categoryId'] },
-                                            },
-                                          },
-                                          new ModelWeightResponseFormat().subCategoryTableResponseFormat(
-                                            1050,
-                                            dto.responseFormat,
-                                          ),
-                                        );
-                
-                                        return pipeline;
-                                      };
-                                    pipeline.push(
-                                      {
-                                        $lookup: {
-                                          from: ModelNames.SUB_CATEGORIES,
-                                          let: { categoryId: '$_id' },
-                                          pipeline:
-                                            purchaseBookingItemsGroupCategorySubCategoryPipeline(),
-                                          as: 'subCategoryDetails',
-                                        },
-                                      },
-                                      {
-                                        $unwind: {
-                                          path: '$subCategoryDetails',
-                                          preserveNullAndEmptyArrays: true,
-                                        },
-                                      },
-                                    );
-                                  }
-                                  return pipeline;
-                                };
-                                pipeline.push(
-                                  {
-                                    $lookup: {
-                                      from: ModelNames.CATEGORIES,
-                                      let: { groupId: '$_id' },
-                                      pipeline: purchaseBookingItemsGroupCategoryPipeline(),
-                                      as: 'categoryDetails',
-                                    },
-                                  },
-                                  {
-                                    $unwind: {
-                                      path: '$categoryDetails',
-                                      preserveNullAndEmptyArrays: true,
-                                    },
-                                  },
-                                );
-                              }
-                              return pipeline;
-                            };
-                
-                            pipeline.push(
-                              {
-                                $lookup: {
-                                  from: ModelNames.GROUP_MASTERS,
-                                  let: { groupId: '$_groupId' },
-                                  pipeline: purchaseBookingItemsGroupPipeline(),
-                                  as: 'groupDetails',
-                                },
-                              },
-                              {
-                                $unwind: {
-                                  path: '$groupDetails',
-                                  preserveNullAndEmptyArrays: true,
-                                },
-                              },
-                            );
-                          }
-                
-                          return pipeline;
-                        };
-                
-                        pipeline.push({
-                          $lookup: {
-                            from: ModelNames.PURCHASE_BOOKING_ITEMS,
-                            let: { purchaseBookingId: '$_purchaseBookingId' },
-                            pipeline: purchaseBookingItemsPipeline(),
-                            as: 'purchaseBookingItems',
-                          },
-                        });
-                      }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    return pipeline;
-                }
-
-
-                arrayAggregation.push(
-                    {
-                      $lookup: {
-                        from: ModelNames.PURCHASE_BOOKINGS,
-                        let: { purchaseBookingId: '$_purchaseBookingId' },
-                        pipeline:purchaseOrdeItemsBookingPipeline(),
-                        as: 'purchaseBookingItems',
-                      },
-                    }, {
-                        $unwind: {
-                          path: '$purchaseBookingItems',
-                          preserveNullAndEmptyArrays: true,
-                        },
-                      }
-                  );
-              }
-
-
-
-              
-
-
-
-
-
-              
-            return pipeline;
-        }
-
-
-        arrayAggregation.push(
+          const pipeline = [];
+          pipeline.push(
             {
-              $lookup: {
-                from: ModelNames.PURCHASE_ORDER_ITEMS,
-                let: { purchaseOrderId: '$_id' },
-                pipeline:purchaseOrdeItemsPipeline(),
-                as: 'purchaseOrderItems',
+              $match: {
+                _status: 1,
+                $expr: { $eq: ['$_purchaseOrderId', '$$purchaseOrderId'] },
               },
             },
+            new ModelWeightResponseFormat().purchaseOrderItemsTableResponseFormat(
+              1000,
+              dto.responseFormat,
+            ),
           );
+
+          if (dto.screenType.includes(101)) {
+            const purchaseOrdeItemsBookingPipeline = () => {
+              const pipeline = [];
+              pipeline.push(
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$purchaseBookingId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().purchaseBookingTableResponseFormat(
+                  1010,
+                  dto.responseFormat,
+                ),
+              );
+
+              return pipeline;
+            };
+
+            arrayAggregation.push(
+              {
+                $lookup: {
+                  from: ModelNames.PURCHASE_BOOKINGS,
+                  let: { purchaseBookingId: '$_purchaseBookingId' },
+                  pipeline: purchaseOrdeItemsBookingPipeline(),
+                  as: 'purchaseBookingItems',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$purchaseBookingItems',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
+          return pipeline;
+        };
+
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.PURCHASE_ORDER_ITEMS,
+            let: { purchaseOrderId: '$_id' },
+            pipeline: purchaseOrdeItemsPipeline(),
+            as: 'purchaseOrderItems',
+          },
+        });
       }
 
       var result = await this.purchaseBookingModel

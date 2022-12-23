@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Post, Request } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PurchaseOrderService } from './purchase-order.service';
-import { PurchaseOrderCreateDto, PurchaseOrderListDto, PurchaseOrderStatusChangeDto } from './purchase_order.dto';
+import { PurchaseOrderCreateDto, PurchaseOrderListDto, PurchaseOrderPurchaseStatusChangeDto, PurchaseOrderStatusChangeDto } from './purchase_order.dto';
 
 @ApiTags('Purchase Order Docs')
 @Controller('purchase-order')
@@ -16,6 +16,10 @@ export class PurchaseOrderController {
   @Delete()
   status_change(@Body() dto: PurchaseOrderStatusChangeDto, @Request() req) {
     return this.purchaseOrderService.status_change(dto, req['_userId_']);
+  }
+  @Post("changePurchaseStatus")
+  changePurchaseStatus(@Body() dto: PurchaseOrderPurchaseStatusChangeDto, @Request() req) {
+    return this.purchaseOrderService.changePurchaseStatus(dto, req['_userId_']);
   }
 
   @Post('list')

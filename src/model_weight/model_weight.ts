@@ -257,9 +257,9 @@ export class ModelWeight {
       _workStatus: 1,
       _type: 1,
 
-      _holdRootCause:1,
-      _isHold:1,
-      _holdDescription:1,
+      _holdRootCause: 1,
+      _isHold: 1,
+      _holdDescription: 1,
     };
   }
   public orderSaleTableMinimum(): Object {
@@ -273,9 +273,9 @@ export class ModelWeight {
       _referenceNumber: 1,
       _parentOrderId: 1,
       _type: 1,
-      _holdRootCause:1,
-      _isHold:1,
-      _holdDescription:1,
+      _holdRootCause: 1,
+      _isHold: 1,
+      _holdDescription: 1,
       _rootCauseId: 1,
       _createdUserId: 1,
       _orderHeadId: 1,
@@ -293,9 +293,9 @@ export class ModelWeight {
       _workStatus: 1,
       _orderSaleId: 1,
       _type: 1,
-      _holdRootCause:1,
-      _isHold:1,
-      _holdDescription:1,
+      _holdRootCause: 1,
+      _isHold: 1,
+      _holdDescription: 1,
       _rootCauseId: 1,
       _parentOrderId: 1,
       _isInvoiceGenerated: 1,
@@ -324,9 +324,9 @@ export class ModelWeight {
       _isInvoiceGenerated: 1,
       _isProductGenerated: 1,
       _type: 1,
-      _holdRootCause:1,
-      _isHold:1,
-      _holdDescription:1,
+      _holdRootCause: 1,
+      _isHold: 1,
+      _holdDescription: 1,
       _isReWork: 1,
       _referenceNumber: 1,
       _rootCause: 1,
@@ -937,19 +937,6 @@ export class ModelWeight {
     };
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
   public employeeStockInHandTableLight(): Object {
     return {
       _userId: 1,
@@ -959,7 +946,7 @@ export class ModelWeight {
   public employeeStockInHandTableMinimum(): Object {
     return {
       _id: 1,
-     
+
       _userId: 1,
       _approveStatus: 1,
       _status: 1,
@@ -968,7 +955,7 @@ export class ModelWeight {
   public employeeStockInHandTableMedium(): Object {
     return {
       _id: 1,
-     
+
       _userId: 1,
       _approveStatus: 1,
       _createdUserId: 1,
@@ -979,7 +966,7 @@ export class ModelWeight {
   public employeeStockInHandTableMaximum(): Object {
     return {
       _id: 1,
-     
+
       _userId: 1,
       _approveStatus: 1,
 
@@ -991,19 +978,11 @@ export class ModelWeight {
     };
   }
 
-
-
-
-
-
-
-
-
   public employeeStockInHandItemsTableLight(): Object {
     return {
       _employeeStockInHandsId: 1,
       _deliveryStatus: 1,
-      _productId:1,
+      _productId: 1,
     };
   }
   public employeeStockInHandItemsTableMinimum(): Object {
@@ -1011,7 +990,7 @@ export class ModelWeight {
       _id: 1,
       _employeeStockInHandsId: 1,
       _deliveryStatus: 1,
-      _productId:1,
+      _productId: 1,
       _status: 1,
     };
   }
@@ -1020,7 +999,7 @@ export class ModelWeight {
       _id: 1,
       _employeeStockInHandsId: 1,
       _deliveryStatus: 1,
-      _productId:1,
+      _productId: 1,
       _createdUserId: 1,
       _createdAt: 1,
       _status: 1,
@@ -1029,10 +1008,10 @@ export class ModelWeight {
   public employeeStockInHandItemsTableMaximum(): Object {
     return {
       _id: 1,
-     
+
       _employeeStockInHandsId: 1,
       _deliveryStatus: 1,
-      _productId:1,
+      _productId: 1,
       _createdUserId: 1,
       _createdAt: 1,
       _updatedUserId: 1,
@@ -1040,17 +1019,6 @@ export class ModelWeight {
       _status: 1,
     };
   }
-
-
-
-
-
-
-
-
-
-
-
 
   public subProcessMasterTableLight(): Object {
     return {
@@ -1100,7 +1068,6 @@ export class ModelWeight {
     };
   }
 
-  
   public purchaseBookingItemsTableLight(): Object {
     return {
       _id: 1,
@@ -1114,19 +1081,18 @@ export class ModelWeight {
       _id: 1,
       _purchaseBookingId: 1,
       _metalWeight: 1,
-      _groupId:1,
+      _groupId: 1,
       _status: 1,
     };
   }
   public purchaseBookingItemsTableMedium(): Object {
     return {
-      
       _id: 1,
       _purchaseBookingId: 1,
       _metalWeight: 1,
-      _groupId:1,
+      _groupId: 1,
       _createdUserId: 1,
-      _createdAt:1,
+      _createdAt: 1,
       _status: 1,
     };
   }
@@ -1135,7 +1101,7 @@ export class ModelWeight {
       _id: 1,
       _purchaseBookingId: 1,
       _metalWeight: 1,
-      _groupId:1,
+      _groupId: 1,
       _createdUserId: 1,
       _createdAt: 1,
       _updatedUserId: 1,
@@ -1143,38 +1109,37 @@ export class ModelWeight {
       _status: 1,
     };
   }
-  a
+  a;
   public purchaseOrderItemsTableLight(): Object {
     return {
-      _id:1,
-      _purchaseOrderId:1,
-      _purchaseBookingId:1,
+      _id: 1,
+      _purchaseOrderId: 1,
+      _purchaseBookingId: 1,
     };
   }
   public purchaseOrderItemsTableMinimum(): Object {
     return {
-      _id:1,
-      _purchaseOrderId:1,
-      _purchaseBookingId:1,
+      _id: 1,
+      _purchaseOrderId: 1,
+      _purchaseBookingId: 1,
       _status: 1,
     };
   }
   public purchaseOrderItemsTableMedium(): Object {
     return {
-      
-      _id:1,
-      _purchaseOrderId:1,
-      _purchaseBookingId:1,
+      _id: 1,
+      _purchaseOrderId: 1,
+      _purchaseBookingId: 1,
       _createdUserId: 1,
-      _createdAt:1,
+      _createdAt: 1,
       _status: 1,
     };
   }
   public purchaseOrderItemsTableMaximum(): Object {
     return {
-      _id:1,
-      _purchaseOrderId:1,
-      _purchaseBookingId:1,
+      _id: 1,
+      _purchaseOrderId: 1,
+      _purchaseBookingId: 1,
       _createdUserId: 1,
       _createdAt: 1,
       _updatedUserId: 1,
@@ -1194,21 +1159,16 @@ export class ModelWeight {
       _id: 1,
       _supplierId: 1,
       _uid: 1,
-      _expectedDeliveryDate: 1,
-      _totalMetalWeight:1,
-      _deliveryStatus:1,
+      _purchaseStatus: 1,
       _status: 1,
     };
   }
   public purchaseOrderTableMedium(): Object {
     return {
-      
       _id: 1,
       _supplierId: 1,
       _uid: 1,
-      _expectedDeliveryDate: 1,
-      _totalMetalWeight:1,
-      _deliveryStatus:1,
+      _purchaseStatus: 1,
       _status: 1,
     };
   }
@@ -1217,9 +1177,7 @@ export class ModelWeight {
       _id: 1,
       _supplierId: 1,
       _uid: 1,
-      _expectedDeliveryDate: 1,
-      _totalMetalWeight:1,
-      _deliveryStatus:1,
+      _purchaseStatus: 1,
       _createdUserId: 1,
       _createdAt: 1,
       _updatedUserId: 1,
@@ -1227,19 +1185,6 @@ export class ModelWeight {
       _status: 1,
     };
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   public factoryStockTransferTableLight(): Object {
     return {
@@ -1250,23 +1195,21 @@ export class ModelWeight {
   }
   public factoryStockTransferTableMinimum(): Object {
     return {
-     
       _id: 1,
       _factoryId: 1,
       _type: 1,
-      _barcode:1,
+      _barcode: 1,
       _status: 1,
     };
   }
   public factoryStockTransferTableMedium(): Object {
     return {
-      
       _id: 1,
       _factoryId: 1,
       _type: 1,
-      _barcode:1,
-      _createdUserId:1,
-      _createdAt:1,
+      _barcode: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
       _status: 1,
     };
   }
@@ -1275,7 +1218,7 @@ export class ModelWeight {
       _id: 1,
       _factoryId: 1,
       _type: 1,
-      _barcode:1,
+      _barcode: 1,
       _createdUserId: 1,
       _createdAt: 1,
       _updatedUserId: 1,
@@ -1284,56 +1227,54 @@ export class ModelWeight {
     };
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
   public purchaseBookingTableLight(): Object {
     return {
       _id: 1,
-      _totalMetalWeight: 1,
-      _confirmationStatus: 1,
+      _uid: 1,
+      _isPurchaseOrgerGenerated: 1,
     };
   }
   public purchaseBookingTableMinimum(): Object {
     return {
       _id: 1,
-      _totalMetalWeight: 1,
-      _confirmationStatus: 1,
-      _invoiceId:1,
-      _status: 1,
+      _invoiceId: 1,
+      _groupId: 1,
+      _uid: 1,
+      _supplierUserId: 1,
+      _shopId: 1,
+      _createdUserId: 1,
     };
   }
   public purchaseBookingTableMedium(): Object {
     return {
       _id: 1,
-      _totalMetalWeight: 1,
-      _confirmationStatus: 1,
-      _invoiceId:1,
-      _createdUserId:1,
-      _createdAt:1,
+      _invoiceId: 1,
+      _bookingWeight: 1,
+      _bookingRate: 1,
+      _bookingAmount: 1,
+      _groupId: 1,
+      _uid: 1,
+      _supplierUserId: 1,
+      _shopId: 1,
+      _bookingThrough: 1,
+      _isPurchaseOrgerGenerated: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
     };
   }
   public purchaseBookingTableMaximum(): Object {
     return {
       _id: 1,
-      _totalMetalWeight: 1,
-      _confirmationStatus: 1,
-      _invoiceId:1,
+      _invoiceId: 1,
+      _bookingWeight: 1,
+      _bookingRate: 1,
+      _bookingAmount: 1,
+      _groupId: 1,
+      _uid: 1,
+      _supplierUserId: 1,
+      _shopId: 1,
+      _bookingThrough: 1,
+      _isPurchaseOrgerGenerated: 1,
       _createdUserId: 1,
       _createdAt: 1,
       _updatedUserId: 1,
@@ -1740,13 +1681,6 @@ export class ModelWeight {
     };
   }
 
-
-
-
-
-
-
-
   public factoryTableLight(): Object {
     return {
       _id: 1,
@@ -1768,7 +1702,7 @@ export class ModelWeight {
       _id: 1,
       _name: 1,
       _cityId: 1,
-      _calculationTypeMasterId:1,
+      _calculationTypeMasterId: 1,
       _dataGuard: 1,
       _createdUserId: 1,
       _status: 1,
@@ -1779,7 +1713,7 @@ export class ModelWeight {
       _id: 1,
       _name: 1,
       _cityId: 1,
-      _calculationTypeMasterId:1,
+      _calculationTypeMasterId: 1,
       _dataGuard: 1,
       _createdUserId: 1,
       _createdAt: 1,
@@ -1789,104 +1723,61 @@ export class ModelWeight {
     };
   }
 
-
-
-
-
-
-
-
-
-
   public factoryStockTransferItemTableLight(): Object {
     return {
       _id: 1,
       _factoryStockTransferId: 1,
-      _grossWeight:1,
-      _netWeight:1,
-      _description:1,
+      _grossWeight: 1,
+      _netWeight: 1,
+      _description: 1,
     };
   }
   public factoryStockTransferItemTableMinimumn(): Object {
     return {
-      
       _id: 1,
       _factoryStockTransferId: 1,
-      _grossWeight:1,
-      _netWeight:1,
-      _stoneWeight:1,
-      _purity:1,
-      _weight_hundred_percentage:1,
-      _groupId:1,
-      _description:1,
+      _grossWeight: 1,
+      _netWeight: 1,
+      _stoneWeight: 1,
+      _purity: 1,
+      _weight_hundred_percentage: 1,
+      _groupId: 1,
+      _description: 1,
     };
   }
   public factoryStockTransferItemTableMedium(): Object {
     return {
       _id: 1,
       _factoryStockTransferId: 1,
-      _grossWeight:1,
-      _netWeight:1,
-      _stoneWeight:1,
-      _purity:1,
-      _weight_hundred_percentage:1,
-      _groupId:1,
-      _description:1,
+      _grossWeight: 1,
+      _netWeight: 1,
+      _stoneWeight: 1,
+      _purity: 1,
+      _weight_hundred_percentage: 1,
+      _groupId: 1,
+      _description: 1,
       _createdUserId: 1,
       _status: 1,
     };
   }
   public factoryStockTransferItemTableMaximum(): Object {
     return {
-      _id:1,
-      _factoryStockTransferId:1,
-      _grossWeight:1,
-      _stoneWeight:1,
-      _netWeight:1,
-      _purity:1,
-      _weight_hundred_percentage:1,
-      _description:1,
-      _groupId:1,
-      _createdUserId:1,
-      _createdAt:1,
-      _updatedUserId:1,
-      _updatedAt:1,
-      _status:1,
+      _id: 1,
+      _factoryStockTransferId: 1,
+      _grossWeight: 1,
+      _stoneWeight: 1,
+      _netWeight: 1,
+      _purity: 1,
+      _weight_hundred_percentage: 1,
+      _description: 1,
+      _groupId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
     };
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   public deliveryChellanTableLight(): Object {
     return {

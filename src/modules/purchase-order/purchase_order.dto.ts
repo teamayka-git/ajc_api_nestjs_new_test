@@ -20,8 +20,8 @@ const descriptionListSortType = '0-Created Date, 1-Status,2-Confirmation status,
 
 
 
-const descriptionListDeliveryStatus =
-  ' 0 - pending, 1 - accepted, 2 - rejected';
+const descriptionListPurchaseStatus =
+  ' -1 - pending,0 - rejected, 1 - accepted, ';
 
 
 
@@ -31,18 +31,11 @@ const descriptionListDeliveryStatus =
     @ApiProperty({})
     supplierId: string;
   
-    @IsNumber()
-    @ApiProperty({})
-    totalMetalWeight: number;
-  
-    @IsNumber()
-    @ApiProperty({})
-    expectedDeliveryDate: number;
-  
+
     
     @IsNumber()
-    @ApiProperty({description:descriptionListDeliveryStatus})
-    deliveryStatus: number;
+    @ApiProperty({description:descriptionListPurchaseStatus})
+    purchaseStatus: number;
   
 
     @IsArray()
@@ -91,30 +84,22 @@ export class PurchaseOrderListDto {
   @ApiProperty({ type: [String] })
   purchaseOrderIds: string[];
 
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  supplierIds: string[];
 
-  @IsNumber()
-  @ApiProperty({})
-  totalMetalWeightStart: number;
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  uids: string[];
 
-  @IsNumber()
-  @ApiProperty({})
-  totalMetalWeightEnd: number;
-
-  @IsNumber()
-  @ApiProperty({})
-  expectedDeliveryDateStart: number;
-
-  @IsNumber()
-  @ApiProperty({})
-  expectedDeliveryDateEnd: number;
 
 
   @IsArray()
   @ApiProperty({
     type: [Number],
-    description: descriptionListDeliveryStatus,
+    description: descriptionListPurchaseStatus,
   })
-  deliveryStatus: number[];
+  purchaseStatus: number[];
 
 
 
@@ -126,9 +111,9 @@ export class PurchaseOrderListDto {
   @ApiProperty({})
   skip: number;
 
-  // @IsString()
-  // @ApiProperty({})
-  // searchingText: string;
+  @IsString()
+  @ApiProperty({})
+  searchingText: string;
 }
 
 export class PurchaseOrderStatusChangeDto {
@@ -139,4 +124,17 @@ export class PurchaseOrderStatusChangeDto {
   @IsNumber()
   @ApiProperty({ description: descriptionStatus })
   status: number;
+}
+export class PurchaseOrderPurchaseStatusChangeDto {
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  purchaseOrderIds: string[];
+
+  @IsNumber()
+  @ApiProperty({ description: descriptionListPurchaseStatus })
+  purchaseStatus: number;
+  
+  @IsNumber()
+  @ApiProperty({ description: descriptionListPurchaseStatus })
+  purchaseFromStatus: number;
 }

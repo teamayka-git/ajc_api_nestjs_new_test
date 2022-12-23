@@ -9,8 +9,28 @@ export const PurchaseBookingSchema = new mongoose.Schema({
     ref: ModelNames.INVOICES,
     default: null,
   },
-  _totalMetalWeight: { type: Number, required: true, default: -1 },
-  _confirmationStatus: { type: Number, required: true, default: -1 },
+  _bookingWeight: { type: Number, required: true, default: -1 },
+  _bookingRate: { type: Number, required: true, default: -1 },
+  _bookingAmount: { type: Number, required: true, default: -1 },
+  _groupId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.GROUP_MASTERS,
+    default: null,
+  },
+  _uid: { type: String, required: true, default: 'nil' },
+  _supplierUserId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.USER,
+    default: null,
+  },
+  _shopId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.SHOPS,
+    default: null,
+  },
+  _bookingThrough: { type: Number, required: true, default: -1 },
+  _isPurchaseOrgerGenerated: { type: Number, required: true, default: -1 },
+
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -29,8 +49,16 @@ export const PurchaseBookingSchema = new mongoose.Schema({
 export interface PurchaseBooking {
   _id: String;
   _invoiceId: String;
-  _totalMetalWeight: Number;
-  _confirmationStatus: Number;
+  _bookingWeight: Number;
+  _bookingRate: Number;
+  _bookingAmount: Number;
+  _groupId: String;
+  _uid: String;
+  _supplierUserId: String;
+  _shopId: String;
+  _bookingThrough: Number;
+  _isPurchaseOrgerGenerated: Number;
+
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -39,14 +67,42 @@ export interface PurchaseBooking {
 }
 
 PurchaseBookingSchema.index({ _invoiceId: 1 });
-PurchaseBookingSchema.index({ _confirmationStatus: 1 });
+PurchaseBookingSchema.index({ _bookingWeight: 1 });
+PurchaseBookingSchema.index({ _bookingRate: 1 });
+PurchaseBookingSchema.index({ _bookingAmount: 1 });
+PurchaseBookingSchema.index({ _groupId: 1 });
+PurchaseBookingSchema.index({ _uid: 1 , _id: 1});
+PurchaseBookingSchema.index({ _supplierUserId: 1 });
+PurchaseBookingSchema.index({ _shopId: 1 });
+PurchaseBookingSchema.index({ _bookingThrough: 1 });
+PurchaseBookingSchema.index({ _isPurchaseOrgerGenerated: 1 });
 PurchaseBookingSchema.index({ _createdUserId: 1 });
 PurchaseBookingSchema.index({ _status: 1 });
-
-/*
-_confirmationStatus:{
-  0 - not confirmed
-  1 - confirmed
+PurchaseBookingSchema.index(
+  { _uid: 1 },
+  { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },
+);
+PurchaseBookingSchema.post('save', async function (error, doc, next) {
+  schemaPostFunctionForDuplicate(error, doc, next);
+});
+PurchaseBookingSchema.post('insertMany', async function (error, doc, next) {
+  schemaPostFunctionForDuplicate(error, doc, next);
+});
+PurchaseBookingSchema.post('updateOne', async function (error, doc, next) {
+  schemaPostFunctionForDuplicate(error, doc, next);
+});
+PurchaseBookingSchema.post('findOneAndUpdate', async function (error, doc, next) {
+  schemaPostFunctionForDuplicate(error, doc, next);
+});
+PurchaseBookingSchema.post('updateMany', async function (error, doc, next) {
+  schemaPostFunctionForDuplicate(error, doc, next);
+});
+function schemaPostFunctionForDuplicate(error, doc, next) {
+  if (error.code == 11000) {
+    next(new Error('UID already existing'));
+  } else {
+    next();
+  }
 }
+/*
  */
- 
