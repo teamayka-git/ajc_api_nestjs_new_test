@@ -52,7 +52,6 @@ export enum ModelNames {
   STONE_COLOUR_LINKINGS = 'stone_colour_linkings',
   USER_ATTENDANCES = 'user_attendaces',
   HALMARK_CENTERS = 'halmark_centers',
-  HALMARKING_REQUESTS = 'halmarking_requests',
   CUSTOMERS = 'customers',
   DELIVERY_PROVIDER = 'delivery_providers',
   PHOTOGRAPHER_REQUESTS = 'photographer_requests',
@@ -88,6 +87,9 @@ export enum ModelNames {
   FACTORY_STOCK_TRANSFER_ITEMS = 'factory_stock_transfer_items',
   EMPLOYEE_STOCK_IN_HANDS = 'employee_stock_in_hands',
   EMPLOYEE_STOCK_IN_HAND_ITEMS = 'employee_stock_in_hand_items',
+  HALMARK_BUNDLES = 'halmark_bundles',
+  HALMARK_ORDER_MAIN = 'halmark_order_mains',
+  HALMARK_ORDER_ITEMS = 'halmark_order_items',
 
   CHAT_PERSONAL_CHAT_MESSAGES = 'chat_personal_chat_messages',
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',

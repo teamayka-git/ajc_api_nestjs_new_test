@@ -66,7 +66,6 @@ import { DeliveryProviderModule } from './modules/delivery-provider/delivery-pro
 import { PhotographyRequestModule } from './modules/photography-request/photography-request.module';
 import { DeliveryChellanModule } from './modules/delivery-chellan/delivery-chellan.module';
 import { InvoicesModule } from './modules/invoices/invoices.module';
-import { HalmarkingRequestsModule } from './modules/halmarking-requests/halmarking-requests.module';
 import { FactoryCalculationTypeMasterModule } from './modules/factory-calculation-type-master/factory-calculation-type-master.module';
 import { GoldTestingRequestModule } from './modules/gold-testing-request/gold-testing-request.module';
 import { StatesSchema } from './tableModels/states.model';
@@ -190,7 +189,6 @@ import { PurchaseModule } from './modules/purchase/purchase.module';
     PhotographyRequestModule,
     DeliveryChellanModule,
     InvoicesModule,
-    HalmarkingRequestsModule,
     FactoryCalculationTypeMasterModule,
     GoldTestingRequestModule,
     DeliveryTempModule,

@@ -1355,7 +1355,7 @@ export class AppService {
         { upsert: true, new: true, session: transactionSession },
       );
       await this.countersModel.findOneAndUpdate(
-        { _tableName: ModelNames.HALMARKING_REQUESTS },
+        { _tableName: ModelNames.HALMARK_BUNDLES },
         {
           $setOnInsert: {
             _count: 0,
