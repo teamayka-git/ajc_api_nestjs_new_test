@@ -2822,12 +2822,6 @@ export class OrderSalesService {
           },
         });
 
-        pipeline.push(
-          new ModelWeightResponseFormat().shopTableResponseFormat(
-            5050,
-            dto.responseFormat,
-          ),
-        );
 
 pipeline.push({
   $lookup: {
@@ -2846,9 +2840,17 @@ pipeline.push({
   },
 });
 pipeline.push({$project:{
-  freezedRootCauseDetails:{
-    _name:1
-  }
+  _id:1,
+_cityId:1,
+_isFreezed:1,
+_uid:1,
+_displayName:1,
+_freezedRootCause:1,
+_freezedDescription:1,
+_name:1,
+_themeStore:1,
+freezedRootCause:"$freezedRootCauseDetails._name",
+  freezedRootCauseDetails:1
 }});
         resultShop = await this.shopsModel.aggregate(pipeline);
       }
