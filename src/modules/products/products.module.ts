@@ -10,7 +10,6 @@ import { CategoriesSchema } from 'src/tableModels/categories.model';
 import { SubCategoriesSchema } from 'src/tableModels/sub_categories.model';
 import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.model';
 import { PhotographerRequestsSchema } from 'src/tableModels/photographer_requests.model';
-import { HalmarkingRequestsSchema } from 'src/tableModels/halmarking_requests.model';
 import { DepartmentsSchema } from 'src/tableModels/departments.model';
 import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
 import { OrderSalesItemsSchema } from 'src/tableModels/order_sales_items.model';
@@ -25,7 +24,6 @@ import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
       { name: ModelNames.COUNTERS, schema: CountersSchema },
       { name: ModelNames.SUB_CATEGORIES, schema: SubCategoriesSchema },
       { name: ModelNames.PHOTOGRAPHER_REQUESTS, schema:PhotographerRequestsSchema },
-      { name: ModelNames.HALMARKING_REQUESTS, schema:HalmarkingRequestsSchema },
       {
         name: ModelNames.PRODUCT_STONE_LINKIGS,
         schema: ProductStoneLinkingsSchema,

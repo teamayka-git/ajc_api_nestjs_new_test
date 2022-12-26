@@ -18,7 +18,6 @@ import {
 } from './products.dto';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { PhotographerRequests } from 'src/tableModels/photographer_requests.model';
-import { HalmarkingRequests } from 'src/tableModels/halmarking_requests.model';
 import { Departments } from 'src/tableModels/departments.model';
 import { BarCodeQrCodePrefix } from 'src/common/barcode_qrcode_prefix';
 import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
@@ -55,8 +54,6 @@ export class ProductsService {
     private readonly orderSaleItemsModel: Model<OrderSalesItems>,
     @InjectModel(ModelNames.PHOTOGRAPHER_REQUESTS)
     private readonly photographerRequestModel: Model<PhotographerRequests>,
-    @InjectModel(ModelNames.HALMARKING_REQUESTS)
-    private readonly halmarkRequestModel: Model<HalmarkingRequests>,
 
     @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
     private readonly orderSaleHistoriesModel: Model<OrderSaleHistories>,
@@ -661,49 +658,49 @@ export class ProductsService {
         }
 
         if (dto.arrayItems[i].hmSealingStatus == 1 && orderId != null) {
-          var resultCounterHalmarkRequest =
-            await this.counterModel.findOneAndUpdate(
-              { _tableName: ModelNames.HALMARKING_REQUESTS },
-              {
-                $inc: {
-                  _count: 1,
-                },
-              },
-              { new: true, session: transactionSession },
-            );
+          // var resultCounterHalmarkRequest =
+          //   await this.counterModel.findOneAndUpdate(
+          //     { _tableName: ModelNames.HALMARKING_REQUESTS },
+          //     {
+          //       $inc: {
+          //         _count: 1,
+          //       },
+          //     },
+          //     { new: true, session: transactionSession },
+          //   );
 
-          const halmarkRequestModel = new this.halmarkRequestModel({
-            _uid: resultCounterHalmarkRequest._count,
-            _orderSaleItemId: orderItemId,
-            _productId: productId,
-            _halmarkCenterId: null,
-            _halmarkCenterUserId: null,
-            _verifyUserId: null,
-            _requestStatus: 5,
-            _rootCauseId: null,
-            _description: '',
-            _createdUserId: _userId_,
-            _createdAt: dateTime,
-            _updatedUserId: null,
-            _updatedAt: 0,
-            _status: 1,
-          });
-          await halmarkRequestModel.save({
-            session: transactionSession,
-          });
-          arrayOrderSaleHistory.push({
-            _orderSaleId: dto.orderId,
-            _userId: null,
-            _type: 8,
-            _orderSaleItemId: null,
-            _deliveryCounterId: null,
-            _deliveryProviderId: null,
-            _shopId: null,
-            _description: '',
-            _createdUserId: _userId_,
-            _createdAt: dateTime,
-            _status: 1,
-          });
+          // const halmarkRequestModel = new this.halmarkRequestModel({
+          //   _uid: resultCounterHalmarkRequest._count,
+          //   _orderSaleItemId: orderItemId,
+          //   _productId: productId,
+          //   _halmarkCenterId: null,
+          //   _halmarkCenterUserId: null,
+          //   _verifyUserId: null,
+          //   _requestStatus: 5,
+          //   _rootCauseId: null,
+          //   _description: '',
+          //   _createdUserId: _userId_,
+          //   _createdAt: dateTime,
+          //   _updatedUserId: null,
+          //   _updatedAt: 0,
+          //   _status: 1,
+          // });
+          // await halmarkRequestModel.save({
+          //   session: transactionSession,
+          // });
+          // arrayOrderSaleHistory.push({
+          //   _orderSaleId: dto.orderId,
+          //   _userId: null,
+          //   _type: 8,
+          //   _orderSaleItemId: null,
+          //   _deliveryCounterId: null,
+          //   _deliveryProviderId: null,
+          //   _shopId: null,
+          //   _description: '',
+          //   _createdUserId: _userId_,
+          //   _createdAt: dateTime,
+          //   _status: 1,
+          // });
         }
       }
 
