@@ -198,6 +198,7 @@ export class ModelWeight {
       _id: 1,
       _name: 1,
       _code: 1,
+      _type:1,
     };
   }
   public subCategoryTableMinimum(): Object {
@@ -205,6 +206,7 @@ export class ModelWeight {
       _id: 1,
       _name: 1,
       _code: 1,
+      _type:1,
       _description: 1,
       _categoryId: 1,
       _globalGalleryId: 1,
@@ -218,6 +220,7 @@ export class ModelWeight {
       _id: 1,
       _name: 1,
       _code: 1,
+      _type:1,
       _description: 1,
       _categoryId: 1,
       _hmSealing: 1,
@@ -234,6 +237,7 @@ export class ModelWeight {
       _name: 1,
       _code: 1,
       _description: 1,
+      _type:1,
       _categoryId: 1,
       _hmSealing: 1,
       _defaultValueAdditionPercentage: 1,
