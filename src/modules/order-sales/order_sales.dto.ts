@@ -725,6 +725,12 @@ export class OrderSalesReworkSetprocessDto {
   @IsString()
   @ApiProperty({})
   ordersaleId: string;
+
+  
+  @IsNumber()
+  @ApiProperty({})
+  fromStatus: number;
+
 }
 
 export class GetWorkCountDto {
@@ -935,4 +941,54 @@ export class EditOrderSaleGeneralRemarkDto {
   @IsString()
   @ApiProperty({})
   generalRemark: string;
+}
+
+class orderSaleSplitItemArrayList {
+ 
+  @IsString()
+  @ApiProperty({})
+  orderSaleItemId: string;
+
+
+}
+class orderSaleSplitArrayList {
+ 
+ 
+
+  
+  @IsArray()
+  @ApiProperty({ type: [orderSaleSplitItemArrayList] })
+  @ValidateNested({ each: true })
+  @Type(() => orderSaleSplitItemArrayList)
+  items: orderSaleSplitItemArrayList[];
+
+
+
+}
+
+export class OrderSaleSplitDto {
+
+  
+  @IsString()
+  @ApiProperty({})
+  ordersaleId: string;
+
+  
+  @IsString()
+  @ApiProperty({})
+  ordersaleUid: string;
+
+  
+  @IsNumber()
+  @ApiProperty({})
+  fromStatus: number;
+
+
+  
+  @IsArray()
+  @ApiProperty({ type: [orderSaleSplitArrayList] })
+  @ValidateNested({ each: true })
+  @Type(() => orderSaleSplitArrayList)
+  splitArray: orderSaleSplitArrayList[];
+
 }

@@ -36,7 +36,7 @@ export const OrderSalesItemsSchema = new mongoose.Schema({
   _isDeliveryRejected: { type: Number, required: true, default: -1 },
   _productData: { type: Object, required: true, default: {} },
   _uid: { type: String, required: true, default: 'nil' },
-  _createdUserId: {
+  _createdUserId: { 
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
     default: null,

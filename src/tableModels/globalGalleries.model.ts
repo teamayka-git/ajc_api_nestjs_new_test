@@ -31,7 +31,7 @@ export const GlobalGalleriesSchema = new mongoose.Schema({
 
 export interface GlobalGalleries {
   _id: String;
-  _name: String;
+  _name: String; 
   _globalGalleryCategoryId: String;
   _docType: Number;
   _type: Number;

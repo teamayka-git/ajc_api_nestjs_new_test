@@ -27,6 +27,7 @@ import {
   OrderSalesGetOrderDetailsFromQrBarcodeDto,
   OrderSalesGetOrderIdFromQrBarcodeDto,
   OrderSalesHoldDto,
+  OrderSaleSplitDto,
   OrderSalesReworkSetprocessDto,
   OrderSalesWorkStatusChangeDto,
   SetProcessAssignedOrderSaleListDto,
@@ -192,6 +193,14 @@ export class OrderSalesController {
     @Request() req,
   ) {
     return this.orderSalesService.reworkSetprocess(dto, req['_userId_']);
+  }
+
+  @Post('orderSplit')
+  orderSplit(
+    @Body() dto: OrderSaleSplitDto,
+    @Request() req,
+  ) {
+    return this.orderSalesService.orderSplit(dto, req['_userId_']);
   }
 
 

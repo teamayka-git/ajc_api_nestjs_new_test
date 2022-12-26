@@ -21,7 +21,7 @@ export interface OrderSaleItemsDocuments {
     _createdUserId:String;
     _createdAt:  Number;
     _updatedUserId: String;
-    _updatedAt:  Number;
+    _updatedAt:  Number; 
     _status: Number;
 }
 

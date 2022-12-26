@@ -17,6 +17,7 @@ import {
   OrderSalesGetOrderDetailsFromQrBarcodeDto,
   OrderSalesGetOrderIdFromQrBarcodeDto,
   OrderSalesHoldDto,
+  OrderSaleSplitDto,
   OrderSalesReworkSetprocessDto,
   OrderSalesWorkStatusChangeDto,
   SetProcessAssignedOrderSaleListDto,
@@ -7985,6 +7986,17 @@ export class OrderSalesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+      var checkFromStatus = await this.orderSaleMainModel.find({
+        _id: dto.ordersaleId,
+        _workStatus: dto.fromStatus,
+      });
+      if (checkFromStatus.length == 0) {
+        throw new HttpException(
+          'Data outdated, please refresh',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
       await this.orderSaleMainModel.findOneAndUpdate(
         {
           _id: dto.ordersaleId,
@@ -8030,6 +8042,105 @@ export class OrderSalesService {
       const responseJSON = {
         message: 'success',
         data: {},
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async orderSplit(dto: OrderSaleSplitDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var orderDetails = await this.orderSaleMainModel.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(dto.ordersaleId),
+            _workStatus: dto.fromStatus,
+          },
+        },
+        {
+          $lookup: {
+            from: ModelNames.ORDER_SALES_ITEMS,
+            let: { orderId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_orderSaleId', '$$orderId'] },
+                },
+              },
+            ],
+            as: 'orderSaleItem',
+          },
+        },
+      ]);
+      if (orderDetails.length == 0) {
+        throw new HttpException(
+          'Data outdated, please refresh',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+
+      var totalItemsCountFromDtop;
+      dto.splitArray.forEach((elementMain,index) => {
+        elementMain["uid"]=(index==0)?dto.ordersaleUid:"";
+        elementMain.items.forEach(elementSub => {
+
+
+
+          totalItemsCountFromDtop++;
+        });
+      });
+if(totalItemsCountFromDtop != orderDetails["orderSaleItem"].length){
+  throw new HttpException(
+    'Order full items not found',
+    HttpStatus.INTERNAL_SERVER_ERROR,
+  );
+}
+
+
+
+
+      var arrayToOrderHistories = [];
+
+      /*
+      arrayToOrderHistories.push({
+        _orderSaleId: dto.ordersaleId,
+        _userId: null,
+        _type: 110,
+        _deliveryProviderId: null,
+        _deliveryCounterId: null,
+        _shopId: null,
+        _orderSaleItemId: null,
+        _description: '',
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _status: 1,
+      });
+      await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
+        session: transactionSession,
+      });*/
+      const responseJSON = {
+        message: 'success',
+        data: {input:dto},
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&

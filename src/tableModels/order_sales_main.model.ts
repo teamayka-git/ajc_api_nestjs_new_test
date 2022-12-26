@@ -87,7 +87,7 @@ export interface OrderSalesMain {
   _description: string;//
   _generalRemark: string;//
   _createdUserId: String;
-  _createdAt: Number;
+  _createdAt: Number; 
   _updatedUserId: String;
   _updatedAt: Number;
   _status: Number;
