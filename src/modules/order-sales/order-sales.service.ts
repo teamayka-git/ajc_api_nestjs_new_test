@@ -2828,6 +2828,7 @@ export class OrderSalesService {
             dto.responseFormat,
           ),
         );
+
 pipeline.push({
   $lookup: {
     from: ModelNames.ROOT_CAUSES,
@@ -2844,6 +2845,11 @@ pipeline.push({
     preserveNullAndEmptyArrays: true,
   },
 });
+pipeline.push({$project:{
+  freezedRootCauseDetails:{
+    _name:1
+  }
+}});
         resultShop = await this.shopsModel.aggregate(pipeline);
       }
       var generalSetting = [];
