@@ -98,6 +98,7 @@ import { PurchaseOrderModule } from './modules/purchase-order/purchase-order.mod
 import { FactoryStockTransferModule } from './modules/factory-stock-transfer/factory-stock-transfer.module';
 import { EmployeeStockHandsModule } from './modules/employee-stock-hands/employee-stock-hands.module';
 import { PurchaseModule } from './modules/purchase/purchase.module';
+import { OrderSaleChangeRequestModule } from './modules/order-sale-change-request/order-sale-change-request.module';
 
 
 @Module({
@@ -209,6 +210,7 @@ import { PurchaseModule } from './modules/purchase/purchase.module';
     FactoryStockTransferModule,
     EmployeeStockHandsModule,
     PurchaseModule,
+    OrderSaleChangeRequestModule,
 
     // SalesReturnRequestStatusesModule,
   ],

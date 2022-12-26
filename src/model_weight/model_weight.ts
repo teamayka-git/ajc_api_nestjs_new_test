@@ -1288,6 +1288,62 @@ export class ModelWeight {
     };
   }
 
+  public orderSaleChangeRequestTableLight(): Object {
+    return {
+      _id: 1,
+      _uid: 1,
+      _isPurchaseOrgerGenerated: 1,
+    };
+  }
+  public orderSaleChangeRequestTableMinimum(): Object {
+    return {
+      _id: 1,
+      _invoiceId: 1,
+      _groupId: 1,
+      _uid: 1,
+      _supplierUserId: 1,
+      _shopId: 1,
+      _createdUserId: 1,
+    };
+  }
+  public orderSaleChangeRequestTableMedium(): Object {
+    return {
+      _id: 1,
+      _invoiceId: 1,
+      _bookingWeight: 1,
+      _bookingRate: 1,
+      _bookingAmount: 1,
+      _groupId: 1,
+      _uid: 1,
+      _supplierUserId: 1,
+      _shopId: 1,
+      _bookingThrough: 1,
+      _isPurchaseOrgerGenerated: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+    };
+  }
+  public orderSaleChangeRequestTableMaximum(): Object {
+    return {
+      _id: 1,
+      _invoiceId: 1,
+      _bookingWeight: 1,
+      _bookingRate: 1,
+      _bookingAmount: 1,
+      _groupId: 1,
+      _uid: 1,
+      _supplierUserId: 1,
+      _shopId: 1,
+      _bookingThrough: 1,
+      _isPurchaseOrgerGenerated: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
   public purchaseTableLight(): Object {
     return {
       _id: 1,
