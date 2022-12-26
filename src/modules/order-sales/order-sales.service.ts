@@ -6008,7 +6008,10 @@ export class OrderSalesService {
                 as: 'setProcessDocumentsList',
               },
             });
-            pipeline.push({ $match: { setProcessDocumentsList: { $ne: [] } } });
+            pipeline.push({ $match: { $or: [
+              {setProcessDocumentsList: { $ne: [] }}, 
+              { _processNote: {$ne:""} },
+            ] } });
           }
 
           return pipeline;
