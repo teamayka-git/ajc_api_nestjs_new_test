@@ -116,6 +116,7 @@ export class OrderSaleSetProcessService {
             _workAssignedTime: -1,
             _workStartedTime: -1,
             _workCompletedTime: -1,
+            _processNote: "",
             _rootCause: '',
             _dueDate: mapItem1.dueDate,
             _description: mapItem1.description,

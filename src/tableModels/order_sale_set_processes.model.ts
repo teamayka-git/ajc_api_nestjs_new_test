@@ -33,6 +33,7 @@ export const OrderSaleSetProcessesSchema = new mongoose.Schema({
     default: null,
   },
 
+  _processNote: { type: String, default: '' },
   _rootCause: { type: String, default: '' },
   _description: { type: String, default: '' },
 
@@ -55,6 +56,7 @@ export interface OrderSaleSetProcesses {
   _workCompletedTime: number; 
   _dueDate: number;//
   _index:number;
+  _processNote: String;
   _rootCauseId: String;
   _rootCause: String;
   _description: string;
@@ -65,6 +67,7 @@ export interface OrderSaleSetProcesses {
   _status: Number;
 }
 
+OrderSaleSetProcessesSchema.index({ _processNote: 1 });
 OrderSaleSetProcessesSchema.index({ _dueDate: 1 });
 OrderSaleSetProcessesSchema.index({ _rootCauseId: 1 });
 OrderSaleSetProcessesSchema.index({ _rootCause: 1 });

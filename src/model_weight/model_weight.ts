@@ -2667,6 +2667,7 @@ export class ModelWeight {
       _orderStatus: 1,
       _index: 1,
       _description: 1,
+      _processNote: 1,
       _processId: 1,
       _isLastItem: 1,
     };
@@ -2681,6 +2682,7 @@ export class ModelWeight {
       _description: 1,
       _rootCauseId: 1,
       _rootCause: 1,
+      _processNote: 1,
       _processId: 1,
       _isLastItem: 1,
     };
@@ -2695,6 +2697,7 @@ export class ModelWeight {
       _description: 1,
       _rootCauseId: 1,
       _rootCause: 1,
+      _processNote: 1,
       _processId: 1,
       _isLastItem: 1,
       _workAssignedTime: 1,
@@ -2710,6 +2713,7 @@ export class ModelWeight {
       _orderStatus: 1,
       _workAssignedTime: 1,
       _workStartedTime: 1,
+      _processNote: 1,
       _workCompletedTime: 1,
       _index: 1,
       _dueDate: 1,
