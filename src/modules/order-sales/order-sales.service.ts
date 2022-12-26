@@ -8098,7 +8098,8 @@ export class OrderSalesService {
         );
       }
       orderDetails=JSON.parse(JSON.stringify(orderDetails));
-console.log("orderDetails   "+JSON.stringify(orderDetails));
+      console.log("orderDetails   "+JSON.stringify(orderDetails));
+      console.log("orderDetailsaaaa   "+JSON.stringify(orderDetails["orderSaleItem"]));
 
       var totalItemsCountFromDtop;
       dto.splitArray.forEach((elementMain,index) => {
