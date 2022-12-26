@@ -430,6 +430,7 @@ export class DeliveryReturnService {
               _isProductGenerated: 0,
               _type: resultOrderSaleOld[indexCount]._type,
               _reWorkCount:( resultOrderSaleOld[indexCount]._reWorkCount + 1),
+              _internalReWorkCount:resultOrderSaleOld[indexCount]._internalReWorkCount,
               _rootCause: '',
               _orderHeadId: resultOrderSaleOld[indexCount]._orderHeadId,
               _description: resultOrderSaleOld[indexCount]._description,

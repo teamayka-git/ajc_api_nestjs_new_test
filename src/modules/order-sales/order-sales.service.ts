@@ -512,6 +512,7 @@ export class OrderSalesService {
         _holdRootCause: null,
         _parentOrderId: null,
         _reWorkCount: 0,
+        _internalReWorkCount: 0,
         _rootCause: '',
         _orderHeadId: orderHeadId,
         _description: dto.description,
@@ -7991,6 +7992,9 @@ export class OrderSalesService {
         {
           $set: {
             _workStatus: 1,
+          },
+          $inc: {
+            _internalReWorkCount: 1,
           },
         },
         { new: true, session: transactionSession },
