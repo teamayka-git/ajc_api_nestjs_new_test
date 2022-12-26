@@ -502,7 +502,6 @@ console.log("___d1");
         _orderStatus: dto.orderStatus,
         _description: dto.description,
         _rootCause: dto.rootCause,
-        _processNote: dto.processNote,
         _rootCauseId:
           dto.rootCauseId == '' || dto.rootCauseId == 'nil'
             ? null
@@ -518,6 +517,10 @@ console.log("___d1");
           break;
         case 3:
           objectUpdateOrderSaleSetProcess['_workCompletedTime'] = dateTime;
+          if(dto.processNote != null ){
+            
+          objectUpdateOrderSaleSetProcess['_processNote'] = dto.processNote;
+          }
           break;
       }
 

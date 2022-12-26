@@ -86,6 +86,7 @@ export class ChangeProcessOrderStatusDto {
   @ApiProperty({})
   description: string;
 
+  @IsOptional()
   @IsString()
   @ApiProperty({})
   processNote: string;
