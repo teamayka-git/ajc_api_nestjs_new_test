@@ -8099,7 +8099,6 @@ export class OrderSalesService {
       }
       orderDetails=JSON.parse(JSON.stringify(orderDetails));
       console.log("orderDetails   "+JSON.stringify(orderDetails));
-      console.log("orderDetailsaaaa   "+JSON.stringify(orderDetails["orderSaleItem"]));
 
       var totalItemsCountFromDtop;
       dto.splitArray.forEach((elementMain,index) => {
@@ -8111,7 +8110,7 @@ export class OrderSalesService {
           totalItemsCountFromDtop++;
         });
       });
-if(totalItemsCountFromDtop != orderDetails["orderSaleItem"].length){
+if(totalItemsCountFromDtop != orderDetails[0].orderSaleItem.length){
   throw new HttpException(
     'Order full items not found',
     HttpStatus.INTERNAL_SERVER_ERROR,
