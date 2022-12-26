@@ -8100,10 +8100,13 @@ export class OrderSalesService {
       }
       orderDetails = JSON.parse(JSON.stringify(orderDetails));
 
+      var orderNewUids="";
       var totalItemsCountFromDtop = 0;
       dto.splitArray.forEach((elementMain, index) => {
-        elementMain['uid'] = this.generateOrderUid(index, dto.ordersaleUid);
+        var orderNewUid=this.generateOrderUid(index, dto.ordersaleUid);
+        elementMain['uid'] =orderNewUid ;
         elementMain['id'] = (index==0)?dto.ordersaleId:new mongoose.Types.ObjectId();
+        orderNewUids +=(orderNewUid+(((dto.splitArray.length-1)==index)?"":", "));
         elementMain.items.forEach((elementSub) => {
           totalItemsCountFromDtop++;
         });
@@ -8117,24 +8120,132 @@ export class OrderSalesService {
       }
 
       var arrayToOrderHistories = [];
+      var arrayToOrderMain = [];
 
-      /*
+      
       arrayToOrderHistories.push({
         _orderSaleId: dto.ordersaleId,
         _userId: null,
-        _type: 110,
+        _type: 113,
         _deliveryProviderId: null,
         _deliveryCounterId: null,
         _shopId: null,
         _orderSaleItemId: null,
-        _description: '',
+        _description: 'Order splitted to '+orderNewUids,
         _createdUserId: _userId_,
         _createdAt: dateTime,
         _status: 1,
       });
+
+
+
+      await this.orderSaleMainModel.findOneAndUpdate(
+        {
+          _id: dto.ordersaleId,
+        },
+        {
+          $set: {
+            _uid: dto.splitArray[0]['uid']
+          },
+        },
+        { new: true, session: transactionSession },
+      )
+
+      for(var i=1;i<dto.splitArray.length;i++){
+        arrayToOrderMain.push(
+          {
+            _id:  dto.splitArray[i]['id'],
+            _shopId:orderDetails[0]._shopId,
+            _uid: dto.splitArray[i]['uid'],
+            _referenceNumber: orderDetails[0]._referenceNumber,
+            _dueDate: orderDetails[0]._dueDate,
+            _workStatus: orderDetails[0]._workStatus,
+            _rootCauseId: orderDetails[0]._rootCauseId,
+            _deliveryType: orderDetails[0]._deliveryType,
+            _isInvoiceGenerated: orderDetails[0]._isInvoiceGenerated,
+            _isProductGenerated: orderDetails[0]._isProductGenerated,
+            _type: orderDetails[0]._type,
+    
+            _isHold: orderDetails[0]._isHold,
+            _holdDescription: orderDetails[0]._holdDescription,
+            _holdRootCause: orderDetails[0]._holdRootCause,
+            _parentOrderId: orderDetails[0]._parentOrderId,
+            _reWorkCount: orderDetails[0]._reWorkCount,
+            _internalReWorkCount: orderDetails[0]._internalReWorkCount,
+            _rootCause: orderDetails[0]._rootCause,
+            _orderHeadId: orderDetails[0]._orderHeadId,
+            _description: orderDetails[0]._description,
+            _generalRemark: orderDetails[0]._generalRemark,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          }
+        );
+        arrayToOrderHistories.push({
+          _orderSaleId: dto.splitArray[i]['id'],
+          _userId: null,
+          _type: 114,
+          _deliveryProviderId: null,
+          _deliveryCounterId: null,
+          _shopId: null,
+          _orderSaleItemId: null,
+          _description: 'Order splitted from '+orderNewUids,
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _status: 1,
+        });
+      }
+
+
+
+      for(var i=0;i<dto.splitArray.length;i++){
+        for(var j=0;j<dto.splitArray[i].items.length;j++){
+
+
+          await this.orderSaleItemsModel.findOneAndUpdate(
+            {
+              _id: dto.splitArray[i].items[j].orderSaleItemId,
+            },
+            {
+              $set: {
+                _orderSaleId:dto.splitArray[i]['id']
+              },
+            },
+            { new: true, session: transactionSession },
+          )
+
+
+
+        }
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
         session: transactionSession,
-      });*/
+      });
+
+      await this.orderSaleMainModel.insertMany(arrayToOrderMain, {
+        session: transactionSession,
+      });
       const responseJSON = {
         message: 'success',
         data: { input: dto },
