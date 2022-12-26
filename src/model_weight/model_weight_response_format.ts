@@ -313,6 +313,24 @@ export class ModelWeightResponseFormat {
       return { $project: { _: 0 } };
     }
   }
+  public orderSaleChangeRequestDocumentsTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: { _: 0 } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().orderSaleChangeRequestDocumentsTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().orderSaleChangeRequestDocumentsTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().orderSaleChangeRequestDocumentsTableMedium() };
+    } else {
+      return { $project: { _: 0 } };
+    }
+  }
 
   public shopTableResponseFormat(
     startIndex: int,

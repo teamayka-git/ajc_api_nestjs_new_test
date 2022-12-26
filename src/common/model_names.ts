@@ -91,6 +91,7 @@ export enum ModelNames {
   HALMARK_ORDER_MAIN = 'halmark_order_mains',
   HALMARK_ORDER_ITEMS = 'halmark_order_items',
   ORDER_SALE_CHANGE_REQUESTS = 'order_sale_change_requests',
+  ORDER_SALE_CHANGE_REQUEST_DOCUMENTS = 'order_sale_change_request_documents',
 
   CHAT_PERSONAL_CHAT_MESSAGES = 'chat_personal_chat_messages',
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',

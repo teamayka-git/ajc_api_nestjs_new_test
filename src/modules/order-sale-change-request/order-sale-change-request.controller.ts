@@ -6,10 +6,13 @@ import {
   Post,
   Put,
   Request,
+  UseInterceptors,
+  UploadedFiles,
   UseGuards,
 } from '@nestjs/common';
 import { OrderSaleChangeRequestCreateDto, OrderSaleChangeRequestListDto, OrderSaleChangeRequestStatusChangeDto } from './order_sale_change_request.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Order Sale Change Request Docs')
 @Controller('order-sale-change-request')
@@ -18,8 +21,28 @@ export class OrderSaleChangeRequestController {
 
 
   @Post()
-  create(@Body() dto: OrderSaleChangeRequestCreateDto, @Request() req) {
-    return this.orderSaleChangeRequestService.create(dto, req['_userId_']);
+  @ApiCreatedResponse({
+    description: 'files upload on these input feilds => [documents]',
+  })
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        {
+          name: 'documents',
+        },
+      ],
+      /*{
+        storage: diskStorage({
+          destination: FileMulterHelper.filePathTempShop,
+          filename: FileMulterHelper.customFileName,
+        }),
+      },*/
+    ),
+  )
+  create(@Body() dto: OrderSaleChangeRequestCreateDto, @Request() req,
+  @UploadedFiles() file,) {
+    return this.orderSaleChangeRequestService.create(dto, req['_userId_'],
+    file == null ? {} : JSON.parse(JSON.stringify(file)),);
   }
 
   @Delete()

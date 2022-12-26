@@ -24,8 +24,6 @@ export const OrderSaleChangeRequestsSchema = new mongoose.Schema({
   _type: { type: Number, required: true, default: -1 },
   _proceedStatus: { type: Number, required: true, default: -1 },
   _workStatus: { type: Number, required: true, default: -1 },
-  _newImages: { type: Object, required: true, default: [] },
-  _deleteImages: { type: Object, required: true, default: [] },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -48,8 +46,6 @@ export interface OrderSaleChangeRequests {
   _rootCause: String;
   _uid: String;
   _description: String;
-  _newImages: Object;
-  _deleteImages: Object;
   _type: Number;
   _proceedStatus: Number;
   _workStatus: Number;

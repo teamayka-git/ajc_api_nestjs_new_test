@@ -14,27 +14,144 @@ import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_respons
 import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
 import { RootCausesModel } from 'src/tableModels/rootCause.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
+import { OrderSaleChangeRequestDocuments } from 'src/tableModels/order_sale_change_request_documents.model';
+import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
+import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
+import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 
 @Injectable()
 export class OrderSaleChangeRequestService {
   constructor(
+    @InjectModel(ModelNames.ORDER_SALE_CHANGE_REQUEST_DOCUMENTS)
+    private readonly orderSaleChangeRequestDocumentsModel: mongoose.Model<OrderSaleChangeRequestDocuments>,
     @InjectModel(ModelNames.ORDER_SALE_CHANGE_REQUESTS)
     private readonly orderSaleChangeRequestModel: mongoose.Model<OrderSaleChangeRequests>,
     @InjectModel(ModelNames.ORDER_SALES_MAIN)
     private readonly orderSaleMainModel: mongoose.Model<OrderSalesMain>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
+    @InjectModel(ModelNames.GLOBAL_GALLERIES)
+    private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
     @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
     private readonly orderSaleHistoriesModel: mongoose.Model<OrderSaleHistories>,
     @InjectModel(ModelNames.ROOT_CAUSES)
     private readonly rootCauseModel: mongoose.Model<RootCausesModel>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
-  async create(dto: OrderSaleChangeRequestCreateDto, _userId_: string) {
+  async create(dto: OrderSaleChangeRequestCreateDto, _userId_: string, file: Object) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+
+        var orderSaleIdChangeRequestDocumentsTable = [];
+        var arrayGlobalGalleries=[];
+        var changeRequestId = new mongoose.Types.ObjectId();
+
+      if (file.hasOwnProperty('documents')) {
+        console.log('___d1.1');
+        var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
+          { _tableName: ModelNames.GLOBAL_GALLERIES },
+          {
+            $inc: {
+              _count: dto.arrayDocuments.length,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+        // for (var i = 0; i < dto.arrayDocuments.length; i++) {
+        //   var count = file['documents'].findIndex(
+        //     (it) => dto.arrayDocuments[i].fileOriginalName == it.originalname,
+        //   );
+
+        //   if (count != -1) {
+        //     if (dto.arrayDocuments[i].docType == 0) {
+        //       var filePath =
+        //         __dirname +
+        //         `/../../../public${
+        //           file['documents'][count]['path'].split('public')[1]
+        //         }`;
+
+        //       new ThumbnailUtils().generateThumbnail(
+        //         filePath,
+        //         UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP +
+        //           new StringUtils().makeThumbImageFileName(
+        //             file['documents'][count]['filename'],
+        //           ),
+        //       );
+        //     }
+        //   }
+        // }
+        for (var i = 0; i < file['documents'].length; i++) {
+          var resultUpload = await new S3BucketUtils().uploadMyFile(
+            file['documents'][i],
+            UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP,
+          );
+
+          if (resultUpload['status'] == 0) {
+            throw new HttpException(
+              'File upload error',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
+
+          var count = dto.arrayDocuments.findIndex(
+            (it) => it.fileOriginalName == file['documents'][i]['originalname'],
+          );
+          if (count != -1) {
+            dto.arrayDocuments[count]['url'] = resultUpload['url'];
+          } else {
+            dto.arrayDocuments[count]['url'] = 'nil';
+          }
+        }
+        console.log('___d2');
+        for (var i = 0; i < dto.arrayDocuments.length; i++) {
+          var count = file['documents'].findIndex(
+            (it) => it.originalname == dto.arrayDocuments[i].fileOriginalName,
+          );
+          if (count != -1) {
+            var globalGalleryId = new mongoose.Types.ObjectId();
+            arrayGlobalGalleries.push({
+              _id: globalGalleryId,
+              _name: dto.arrayDocuments[i].fileOriginalName,
+              _globalGalleryCategoryId: null,
+              _docType: dto.arrayDocuments[i].docType,
+              _type: 7,
+              _uid:
+                resultCounterPurchase._count -
+                dto.arrayDocuments.length +
+                (i + 1),
+              _url: dto.arrayDocuments[i]['url'],
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _updatedUserId: null,
+              _updatedAt: -1,
+              _status: 1,
+            });
+            orderSaleIdChangeRequestDocumentsTable.push({
+                _orderSaleChangeRequestId: changeRequestId,
+                _type:1,
+              _globalGalleryId: globalGalleryId,
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _updatedUserId: null,
+              _updatedAt: -1,
+              _status: 1,
+            });
+          }
+        }
+        console.log('___d3');
+        await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
+          session: transactionSession,
+        });
+      
+        
+      }
+
+
+
       var arrayToPurchaseBooking = [];
       var arrayToPurchaseBookingItem = [];
 
@@ -43,7 +160,7 @@ export class OrderSaleChangeRequestService {
           { _tableName: ModelNames.ORDER_SALE_CHANGE_REQUESTS },
           {
             $inc: {
-              _count: dto.array.length,
+              _count:1,
             },
           },
           { new: true, session: transactionSession },
@@ -52,37 +169,44 @@ export class OrderSaleChangeRequestService {
       var orderSaleIdCancelRequest = [];
       var orderSaleIdAmndmentRequest = [];
 
-      dto.array.map((mapItem, index) => {
-        if (mapItem.type == 0) {
+        if (dto.type == 0) {
           //cancel
-          orderSaleIdCancelRequest.push(mapItem.orderSaleId);
-        } else if (mapItem.type == 1) {
+          orderSaleIdCancelRequest.push(dto.orderSaleId);
+        } else if (dto.type == 1) {
           //amnnt
 
-          orderSaleIdAmndmentRequest.push(mapItem.orderSaleId);
+          orderSaleIdAmndmentRequest.push(dto.orderSaleId);
         }
         arrayToPurchaseBooking.push({
-          _orderSaleId: mapItem.orderSaleId,
-          _orderSaleItemId: mapItem.orderSaleItemId,
-          _rootCause: mapItem.rootCauseId == '' ? null : mapItem.rootCauseId,
+          _id: changeRequestId,
+          _orderSaleId: dto.orderSaleId,
+          _orderSaleItemId: dto.orderSaleItemId,
+          _rootCause: dto.rootCauseId == '' ? null : dto.rootCauseId,
           _uid:
-            resultCounterPurchaseBooking._count -
-            dto.array.length +
-            (index + 1),
-          _description: mapItem.description,
-          _type: mapItem.type,
-          _proceedStatus: mapItem.proceedStatus,
+            resultCounterPurchaseBooking._count,
+          _description: dto.description,
+          _type: dto.type,
+          _proceedStatus: dto.proceedStatus,
           _workStatus: 0,
-          _newImages:[],
-          _deleteImages:mapItem.deleteImageGlobalGalleryIds,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
           _updatedAt: -1,
           _status: 1,
         });
-      });
 
+        dto.deleteImageGlobalGalleryIds.forEach((elementChangeRequest) => {
+          orderSaleIdChangeRequestDocumentsTable.push({
+            _orderSaleChangeRequestId: changeRequestId,
+            _globalGalleryId: elementChangeRequest,
+            _type: 0,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+        });
       await this.orderSaleChangeRequestModel.insertMany(
         arrayToPurchaseBooking,
         {
@@ -132,15 +256,6 @@ export class OrderSaleChangeRequestService {
         });
       }
 
-
-
-
-
-
-
-
-
-
       if (orderSaleIdAmndmentRequest.length != 0) {
         var cancelRootCause = await this.rootCauseModel.find({ _uid: 4 });
         if (cancelRootCause.length == 0) {
@@ -184,7 +299,14 @@ export class OrderSaleChangeRequestService {
       await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
         session: transactionSession,
       });
-
+      if (orderSaleIdChangeRequestDocumentsTable.length != 0) {
+        await this.orderSaleChangeRequestDocumentsModel.insertMany(
+          orderSaleIdChangeRequestDocumentsTable,
+          {
+            session: transactionSession,
+          },
+        );
+      }
       const responseJSON = { message: 'success', data: {} };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -355,6 +477,113 @@ export class OrderSaleChangeRequestService {
 
       // and do images 2 array
       //order hold
+
+      if (dto.screenType.includes(100)) {
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.ORDER_SALE_CHANGE_REQUEST_DOCUMENTS,
+            let: { changeRequestId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  _type: 1,
+                  $expr: {
+                    $eq: ['$_setProcessId', '$$changeRequestId'],
+                  },
+                },
+              },
+
+              new ModelWeightResponseFormat().orderSaleChangeRequestDocumentsTableResponseFormat(
+                1000,
+                dto.responseFormat,
+              ),
+
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $eq: ['$_id', '$$globalGalleryId'],
+                        },
+                      },
+                    },
+
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1010,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            ],
+            as: 'changeRequestNewDocuments',
+          },
+        });
+      }
+      if (dto.screenType.includes(102)) {
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.ORDER_SALE_CHANGE_REQUEST_DOCUMENTS,
+            let: { changeRequestId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  _type: 0,
+                  $expr: {
+                    $eq: ['$_setProcessId', '$$changeRequestId'],
+                  },
+                },
+              },
+
+              new ModelWeightResponseFormat().orderSaleChangeRequestDocumentsTableResponseFormat(
+                1020,
+                dto.responseFormat,
+              ),
+
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $eq: ['$_id', '$$globalGalleryId'],
+                        },
+                      },
+                    },
+
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1030,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            ],
+            as: 'changeRequestDeleteDocuments',
+          },
+        });
+      }
 
       var result = await this.orderSaleChangeRequestModel
         .aggregate(arrayAggregation)

@@ -8,6 +8,8 @@ import { CountersSchema } from 'src/tableModels/counters.model';
 import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
 import { RootCausesSchema } from 'src/tableModels/rootCause.model';
 import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.model';
+import { OrderSaleChangeRequestDocumentsSchema } from 'src/tableModels/order_sale_change_request_documents.model';
+import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.m
       { name: ModelNames.ORDER_SALE_CHANGE_REQUESTS, schema: OrderSaleChangeRequestsSchema },
       { name: ModelNames.COUNTERS, schema: CountersSchema },
       { name: ModelNames.ORDER_SALES_MAIN, schema:OrderSalesMainSchema },
+      { name: ModelNames.GLOBAL_GALLERIES, schema: GlobalGalleriesSchema },
+      { name: ModelNames.ORDER_SALE_CHANGE_REQUEST_DOCUMENTS, schema:OrderSaleChangeRequestDocumentsSchema },
       { name: ModelNames.ROOT_CAUSES, schema: RootCausesSchema },  {
         name: ModelNames.ORDER_SALE_HISTORIES,
         schema: OrderSaleHistoriesSchema,
