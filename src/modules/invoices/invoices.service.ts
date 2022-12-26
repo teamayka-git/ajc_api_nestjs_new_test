@@ -45,7 +45,7 @@ export class InvoicesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var arrayToDeliveryChallan = []; 
+      var arrayToDeliveryChallan = [];  
       var arrayToDeliveryChallanItems = [];
       var orderIds = [];
       var invoiceLocalIds = [];

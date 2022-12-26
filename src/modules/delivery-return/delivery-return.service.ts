@@ -429,7 +429,7 @@ export class DeliveryReturnService {
               _isInvoiceGenerated: 0,
               _isProductGenerated: 0,
               _type: resultOrderSaleOld[indexCount]._type,
-              _isReWork: 1,
+              _reWorkCount:( resultOrderSaleOld[indexCount]._reWorkCount + 1),
               _rootCause: '',
               _orderHeadId: resultOrderSaleOld[indexCount]._orderHeadId,
               _description: resultOrderSaleOld[indexCount]._description,
@@ -586,7 +586,7 @@ export class DeliveryReturnService {
             },
             {
               $set: {
-                _isReWork:1,
+                _reWorkCount:1,
                 _updatedUserId: _userId_,
                 _updatedAt: dateTime,
                 _workStatus: 0,

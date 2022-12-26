@@ -41,7 +41,7 @@ export const OrderSalesMainSchema = new mongoose.Schema({
   _isProductGenerated: { type: Number, required: true, default: -1 },
   _description: { type: String, default: '' },
   _generalRemark: { type: String, default: '' },
-  _isReWork: { type: Number, required: true, default: -1 },
+  _reWorkCount: { type: Number, required: true, default: -1 },
   _type: { type: Number, required: true, default: -1 },
   _workStatus: { type: Number, required: true, default: -1 },
   _uid: { type: String, required: true, default: '' },
@@ -77,7 +77,7 @@ export interface OrderSalesMain {
 
 
   _type: number;//
-  _isReWork:number;//
+  _reWorkCount:number;//
   _isInvoiceGenerated:number;
   _isProductGenerated:number;
   _rootCause: String;// 
@@ -99,7 +99,7 @@ OrderSalesMainSchema.index({ _parentOrderId: 1 });
 OrderSalesMainSchema.index({ _isProductGenerated: 1 });
 OrderSalesMainSchema.index({ _isInvoiceGenerated: 1 });
 OrderSalesMainSchema.index({ _referenceNumber: 1 });
-OrderSalesMainSchema.index({ _isReWork: 1 });
+OrderSalesMainSchema.index({ _reWorkCount: 1 });
 OrderSalesMainSchema.index({ _type: 1 });
 OrderSalesMainSchema.index({ _workStatus: 1 });
 OrderSalesMainSchema.index({ _rootCause: 1 });

@@ -327,7 +327,7 @@ export class ModelWeight {
       _holdRootCause: 1,
       _isHold: 1,
       _holdDescription: 1,
-      _isReWork: 1,
+      _reWorkCount: 1,
       _referenceNumber: 1,
       _rootCause: 1,
       _orderHeadId: 1,
