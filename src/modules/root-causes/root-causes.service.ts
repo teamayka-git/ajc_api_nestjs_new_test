@@ -4,6 +4,7 @@ import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 
 import { GlobalConfig } from 'src/config/global_config';
+import { Counters } from 'src/tableModels/counters.model';
 import { RootCausesModel } from 'src/tableModels/rootCause.model';
 import {
   OrderSaleRootCauseCreateDto,
@@ -18,6 +19,8 @@ export class RootCausesService {
   constructor(
     @InjectModel(ModelNames.ROOT_CAUSES)
     private readonly rootCauseModel: mongoose.Model<RootCausesModel>,
+    @InjectModel(ModelNames.COUNTERS)
+    private readonly counterModel: mongoose.Model<Counters>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async create(dto: OrderSaleRootCauseCreateDto, _userId_: string) {
@@ -27,10 +30,21 @@ export class RootCausesService {
     try {
       var arrayToStates = [];
 
-      dto.array.map((mapItem) => {
+      var resultCounterRootCause = await this.counterModel.findOneAndUpdate(
+        { _tableName: ModelNames.ROOT_CAUSES },
+        {
+          $inc: {
+            _count: dto.array.length,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      dto.array.map((mapItem, index) => {
         arrayToStates.push({
           _name: mapItem.name,
           _type: mapItem.type,
+          _uid: resultCounterRootCause._count - dto.array.length + (index + 1),
           _dataGuard: mapItem.dataGuard,
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -185,10 +199,14 @@ export class RootCausesService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _name: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _name: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
       }
 
@@ -202,7 +220,7 @@ export class RootCausesService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.includes( 0)) {
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,

@@ -7,6 +7,7 @@ export const RootCausesSchema = new mongoose.Schema({
   _name: { type: String, required: true, default: 'nil' },
   _type: { type: Object, required: true, default: [] },
   _dataGuard: { type: Object, required: true, default: [] },
+  _uid: { type: Number, required: true, default: -1 },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -25,6 +26,7 @@ export const RootCausesSchema = new mongoose.Schema({
 export interface RootCausesModel {
   _id: String;
   _name: String;
+  _uid: Number;
   _type: Object;
   _dataGuard: Object;
   _createdUserId: String;
@@ -37,8 +39,12 @@ export interface RootCausesModel {
 RootCausesSchema.index({ _type: 1 });
 RootCausesSchema.index({ _status: 1 });
 RootCausesSchema.index({ _name: 1, _id: 1 });
+RootCausesSchema.index({ _uid: 1, _id: 1 });
 RootCausesSchema.index(
   { _name: 1 },
+  { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },
+);RootCausesSchema.index(
+  { _uid: 1 },
   { unique: true, partialFilterExpression: { _status: { $lt: 2 } } },
 );
 RootCausesSchema.post('save', async function (error, doc, next) {
@@ -74,5 +80,7 @@ _type:{
     5 - delivery proof reject
     6 - shop freez
     7 - order hold
+    8 - Cancel order request initiated
+    9 - Amendment order request initiated
 }
  */

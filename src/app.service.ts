@@ -1468,6 +1468,20 @@ export class AppService {
         },
         { upsert: true, new: true, session: transactionSession },
       );
+      await this.countersModel.findOneAndUpdate(
+        { _tableName: ModelNames.ROOT_CAUSES },
+        {
+          $setOnInsert: {
+            _count: 4,
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
 
       var encryptedPassword = await crypto
         .pbkdf2Sync(
@@ -1611,7 +1625,9 @@ export class AppService {
         {
           $setOnInsert: {
             _type: [0, 1, 2, 3, 4, 5,7],
+
             _dataGuard: [1, 2],
+            _uid:1,
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1627,6 +1643,39 @@ export class AppService {
         {
           $setOnInsert: {
             _type: [6],
+            _uid:2,
+            _dataGuard: [1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+      await this.rootCauseModel.findOneAndUpdate(
+        { _name: 'Cancel order request initiated' },
+        {
+          $setOnInsert: {
+            _type: [8],
+            _uid:3,
+            _dataGuard: [1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+      await this.rootCauseModel.findOneAndUpdate(
+        { _name: 'Amendment order request initiated' },
+        {
+          $setOnInsert: {
+            _type: [9],
+            _uid:4,
             _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
