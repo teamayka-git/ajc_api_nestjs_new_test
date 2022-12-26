@@ -945,9 +945,9 @@ export class EditOrderSaleGeneralRemarkDto {
 
 class orderSaleSplitItemArrayList {
  
-  @IsArray()
-  @ApiProperty({ type: [String] })
-  orderSaleIds: string[];
+  @IsString()
+  @ApiProperty({})
+  orderSaleItemId: string;
 
 
 }
