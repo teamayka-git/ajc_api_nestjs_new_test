@@ -661,6 +661,8 @@ export class ModelWeight {
       _isFreezed: 1,
       _uid: 1,
       _displayName: 1,
+      _freezedRootCause:1,
+      _freezedDescription:1,
       _name: 1,
       _themeStore: 1,
     };
