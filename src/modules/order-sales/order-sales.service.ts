@@ -8097,6 +8097,7 @@ export class OrderSalesService {
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
+      orderDetails=JSON.parse(JSON.stringify(orderDetails));
 console.log("orderDetails   "+JSON.stringify(orderDetails));
 
       var totalItemsCountFromDtop;
