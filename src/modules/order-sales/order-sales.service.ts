@@ -8098,30 +8098,23 @@ export class OrderSalesService {
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-      orderDetails=JSON.parse(JSON.stringify(orderDetails));
+      orderDetails = JSON.parse(JSON.stringify(orderDetails));
 
-      var totalItemsCountFromDtop=0;
-      dto.splitArray.forEach((elementMain,index) => {
-        elementMain["uid"]=this.generateOrderUid(index,dto.ordersaleUid);
-        elementMain.items.forEach(elementSub => {
-
-
-
+      var totalItemsCountFromDtop = 0;
+      dto.splitArray.forEach((elementMain, index) => {
+        elementMain['uid'] = this.generateOrderUid(index, dto.ordersaleUid);
+        elementMain['id'] = (index==0)?dto.ordersaleId:new mongoose.Types.ObjectId();
+        elementMain.items.forEach((elementSub) => {
           totalItemsCountFromDtop++;
         });
       });
 
-
-
-if(totalItemsCountFromDtop != orderDetails[0].orderSaleItem.length){
-  throw new HttpException(
-    'Order full items not found',
-    HttpStatus.INTERNAL_SERVER_ERROR,
-  );
-}
-
-
-
+      if (totalItemsCountFromDtop != orderDetails[0].orderSaleItem.length) {
+        throw new HttpException(
+          'Order full items not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
 
       var arrayToOrderHistories = [];
 
@@ -8144,7 +8137,7 @@ if(totalItemsCountFromDtop != orderDetails[0].orderSaleItem.length){
       });*/
       const responseJSON = {
         message: 'success',
-        data: {input:dto},
+        data: { input: dto },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -8167,10 +8160,7 @@ if(totalItemsCountFromDtop != orderDetails[0].orderSaleItem.length){
     }
   }
 
-  public generateOrderUid(index: Integer, uid: string) : String {
-    
-   return uid+ (index + 10).toString(36).toUpperCase();
-    
-
+  public generateOrderUid(index: Integer, uid: string): String {
+    return uid + (index + 10).toString(36).toUpperCase();
   }
 }
