@@ -48,6 +48,7 @@ import { InvoiceItems } from 'src/tableModels/invoice_items.model';
 import { Products } from 'src/tableModels/products.model';
 import { Invoices } from 'src/tableModels/invoices.model';
 import { OrderSaleItemsDocuments } from 'src/tableModels/order_sale_items_documents.model';
+import { Integer } from 'aws-sdk/clients/apigateway';
 
 @Injectable()
 export class OrderSalesService {
@@ -8098,11 +8099,10 @@ export class OrderSalesService {
         );
       }
       orderDetails=JSON.parse(JSON.stringify(orderDetails));
-      console.log("orderDetails   "+JSON.stringify(orderDetails));
 
       var totalItemsCountFromDtop=0;
       dto.splitArray.forEach((elementMain,index) => {
-        elementMain["uid"]=(index==0)?dto.ordersaleUid:"";
+        elementMain["uid"]=this.generateOrderUid(index,dto.ordersaleUid);
         elementMain.items.forEach(elementSub => {
 
 
@@ -8112,7 +8112,6 @@ export class OrderSalesService {
       });
 
 
-      console.log("totalItemsCountFromDtop   "+totalItemsCountFromDtop);
 
 if(totalItemsCountFromDtop != orderDetails[0].orderSaleItem.length){
   throw new HttpException(
@@ -8166,5 +8165,12 @@ if(totalItemsCountFromDtop != orderDetails[0].orderSaleItem.length){
       await transactionSession.endSession();
       throw error;
     }
+  }
+
+  public generateOrderUid(index: Integer, uid: string) : String {
+    
+   return uid+ (index + 10).toString(36).toUpperCase();
+    
+
   }
 }
