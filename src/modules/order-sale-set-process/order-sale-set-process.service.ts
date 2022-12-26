@@ -502,6 +502,7 @@ console.log("___d1");
         _orderStatus: dto.orderStatus,
         _description: dto.description,
         _rootCause: dto.rootCause,
+        _processNote: dto.processNote,
         _rootCauseId:
           dto.rootCauseId == '' || dto.rootCauseId == 'nil'
             ? null
