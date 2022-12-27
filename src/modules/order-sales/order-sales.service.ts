@@ -5499,12 +5499,12 @@ export class OrderSalesService {
                     dto.responseFormat,
                   ),
                 ],
-                as: 'holdRootcauseDetails',
+                as: 'holdRootCauseDetails',
               },
             },
             {
               $unwind: {
-                path: '$holdRootcauseDetails',
+                path: '$holdRootCauseDetails',
                 preserveNullAndEmptyArrays: true,
               },
             },
