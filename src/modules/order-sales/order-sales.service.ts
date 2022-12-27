@@ -5479,6 +5479,42 @@ export class OrderSalesService {
             ),
           );
 
+          const isorderSaleMainHoldRootCausePopulate =
+          dto.screenType.includes(122);
+        if (isorderSaleMainHoldRootCausePopulate) {
+          pipeline.push(
+            {
+              $lookup: {
+                from: ModelNames.ROOT_CAUSES,
+                let: { holdRootCauseId: '$_holdRootCause' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$_id', '$$holdRootCauseId'] },
+                    },
+                  },
+
+                  new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                    1220,
+                    dto.responseFormat,
+                  ),
+                ],
+                as: 'holdRootcauseDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$holdRootcauseDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          );
+        }
+
+
+
+
+
           const isorderSaleMainShopPopulate = dto.screenType.includes(104);
           if (isorderSaleMainShopPopulate) {
             const orderSaleMainShopPipeline = () => {
