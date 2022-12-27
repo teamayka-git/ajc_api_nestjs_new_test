@@ -61,10 +61,7 @@ const descriptionType =
     @ApiProperty({})
     factoryId: string;
   
-    @IsString()
-    @ApiProperty({})
-    barcode: string;
-  
+    
     
     @IsNumber()
     @ApiProperty({description:descriptionType})

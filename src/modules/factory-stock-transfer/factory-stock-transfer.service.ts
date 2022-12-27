@@ -11,6 +11,9 @@ import {
 } from './factory_stock_transfer.dto';
 import { GlobalConfig } from 'src/config/global_config';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
+import { Counters } from 'src/tableModels/counters.model';
+import { BarCodeQrCodePrefix } from 'src/common/barcode_qrcode_prefix';
+import { StringUtils } from 'src/utils/string_utils';
 
 @Injectable()
 export class FactoryStockTransferService {
@@ -19,6 +22,8 @@ export class FactoryStockTransferService {
     private readonly factoryStockModel: mongoose.Model<FactoryStockTransfers>,
     @InjectModel(ModelNames.FACTORY_STOCK_TRANSFER_ITEMS)
     private readonly factoryStockItemModel: mongoose.Model<FactoryStockTransferItem>,
+    @InjectModel(ModelNames.COUNTERS)
+    private readonly counterModel: mongoose.Model<Counters>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async create(dto: FactoryStockTransferCreateDto, _userId_: string) {
@@ -28,13 +33,31 @@ export class FactoryStockTransferService {
     try {
       var arrayToPurchaseBooking = [];
       var arrayToPurchaseBookingItem = [];
-
-      dto.array.map((mapItem) => {
+      var resultCounterFactoryStockTransfer =
+        await this.counterModel.findOneAndUpdate(
+          { _tableName: ModelNames.FACTORY_STOCK_TRANSFERS },
+          {
+            $inc: {
+              _count: dto.array.length,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      dto.array.map((mapItem, index) => {
         var bookingId = new mongoose.Types.ObjectId();
+
+        var uid =
+          resultCounterFactoryStockTransfer._count -
+          dto.array.length +
+          (index + 1);
+
         arrayToPurchaseBooking.push({
           _id: bookingId,
           _factoryId: mapItem.factoryId == '' ? null : mapItem.factoryId,
-          _barcode: mapItem.barcode,
+          _barcode:
+            BarCodeQrCodePrefix.FACTORYTRANSFER +
+            new StringUtils().intToDigitString(uid, 8),
+          _uid: uid,
           _type: mapItem.type,
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -147,7 +170,10 @@ export class FactoryStockTransferService {
         //todo
         arrayAggregation.push({
           $match: {
-            $or: [{ _barcode: new RegExp(dto.searchingText, 'i') }],
+            $or: [
+              { _barcode: new RegExp(dto.searchingText, 'i') },
+              { _uid: dto.searchingText },
+            ],
           },
         });
       }
