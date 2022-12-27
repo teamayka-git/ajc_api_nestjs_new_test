@@ -99,6 +99,7 @@ import { FactoryStockTransferModule } from './modules/factory-stock-transfer/fac
 import { EmployeeStockHandsModule } from './modules/employee-stock-hands/employee-stock-hands.module';
 import { PurchaseModule } from './modules/purchase/purchase.module';
 import { OrderSaleChangeRequestModule } from './modules/order-sale-change-request/order-sale-change-request.module';
+import { ProductTempModule } from './modules/product-temp/product-temp.module';
 
 
 @Module({
@@ -211,6 +212,7 @@ import { OrderSaleChangeRequestModule } from './modules/order-sale-change-reques
     EmployeeStockHandsModule,
     PurchaseModule,
     OrderSaleChangeRequestModule,
+    ProductTempModule,
 
     // SalesReturnRequestStatusesModule,
   ],

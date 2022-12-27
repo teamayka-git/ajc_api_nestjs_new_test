@@ -92,6 +92,8 @@ export enum ModelNames {
   HALMARK_ORDER_ITEMS = 'halmark_order_items',
   ORDER_SALE_CHANGE_REQUESTS = 'order_sale_change_requests',
   ORDER_SALE_CHANGE_REQUEST_DOCUMENTS = 'order_sale_change_request_documents',
+  PRODUCT_TEMPS = 'product_temps',
+  PRODUCT_STONE_LINKING_TEMPS = 'product_stone_linking_temps',
 
   CHAT_PERSONAL_CHAT_MESSAGES = 'chat_personal_chat_messages',
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',

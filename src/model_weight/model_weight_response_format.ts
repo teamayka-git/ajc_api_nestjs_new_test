@@ -422,6 +422,36 @@ export class ModelWeightResponseFormat {
     }
   }
 
+
+
+  
+  public productTempTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: { _: 0 } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().productTempTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().productTempTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().productTempTableMedium() };
+    }else if (responseFormatArray.includes(startIndex + 3)) {
+      return { $project: { _: 0 } };
+    } else if (responseFormatArray.includes(startIndex + 4)) {
+      return { $project: new ModelWeight().productTempTableCustom1() };
+    } else if (responseFormatArray.includes(startIndex + 5)) {
+      return { $project: new ModelWeight().productTempTableCustom2() };
+    } else if (responseFormatArray.includes(startIndex + 6)) {
+      return { $project: new ModelWeight().productTempTableCustom3() };
+    } else {
+      return { $project: { _: 0 } };
+    }
+  }
+
   public subCategoryTableResponseFormat(
     startIndex: int,
     responseFormatArray: List,
@@ -942,6 +972,28 @@ export class ModelWeightResponseFormat {
       return { $project: { _: 0 } };
     } else if (responseFormatArray.includes(startIndex + 4)) {
       return { $project: new ModelWeight().productStonelinkingTableCustom1() };
+    } else {
+      return { $project: { _: 0 } };
+    }
+  }
+  public productTempStoneLinkingTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: { _: 0 } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().productTempStonelinkingTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().productTempStonelinkingTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().productTempStonelinkingTableMedium() };
+    } else if (responseFormatArray.includes(startIndex + 3)) {
+      return { $project: { _: 0 } };
+    } else if (responseFormatArray.includes(startIndex + 4)) {
+      return { $project: new ModelWeight().productTempStonelinkingTableCustom1() };
     } else {
       return { $project: { _: 0 } };
     }

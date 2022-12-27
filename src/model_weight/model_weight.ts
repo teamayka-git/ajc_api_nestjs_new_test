@@ -198,7 +198,7 @@ export class ModelWeight {
       _id: 1,
       _name: 1,
       _code: 1,
-      _type:1,
+      _type: 1,
     };
   }
   public subCategoryTableMinimum(): Object {
@@ -206,7 +206,7 @@ export class ModelWeight {
       _id: 1,
       _name: 1,
       _code: 1,
-      _type:1,
+      _type: 1,
       _description: 1,
       _categoryId: 1,
       _globalGalleryId: 1,
@@ -220,7 +220,7 @@ export class ModelWeight {
       _id: 1,
       _name: 1,
       _code: 1,
-      _type:1,
+      _type: 1,
       _description: 1,
       _categoryId: 1,
       _hmSealing: 1,
@@ -237,7 +237,7 @@ export class ModelWeight {
       _name: 1,
       _code: 1,
       _description: 1,
-      _type:1,
+      _type: 1,
       _categoryId: 1,
       _hmSealing: 1,
       _defaultValueAdditionPercentage: 1,
@@ -661,8 +661,8 @@ export class ModelWeight {
       _isFreezed: 1,
       _uid: 1,
       _displayName: 1,
-      _freezedRootCause:1,
-      _freezedDescription:1,
+      _freezedRootCause: 1,
+      _freezedDescription: 1,
       _name: 1,
       _themeStore: 1,
     };
@@ -1420,9 +1420,9 @@ export class ModelWeight {
       _difference: 1,
       _createdUserId: 1,
       _createdAt: 1,
-      _updatedUserId:1,
-      _updatedAt:1,
-      _status:1
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
     };
   }
 
@@ -1529,9 +1529,6 @@ export class ModelWeight {
     };
   }
 
-
-
-  
   public orderSaleChangeRequestDocumentsTableLight(): Object {
     return {
       _orderSaleChangeRequestId: 1,
@@ -1777,6 +1774,139 @@ export class ModelWeight {
     return {
       _id: 1,
       _designUid: 1,
+      _moldNumber: 1,
+    };
+  }
+
+  public productTempTableLight(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _barcode: 1,
+      _type: 1,
+      _purity: 1,
+      _factoryTransferItemId: 1,
+      _hmSealingStatus: 1,
+      _huId: 1,
+      _eCommerceStatus: 1,
+      _status: 1,
+    };
+  }
+
+  public productTempTableMinimum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _barcode: 1,
+      _type: 1,
+      _purity: 1,
+      _hmSealingStatus: 1,
+      _designUid: 1,
+      _huId: 1,
+      _productType: 1,
+      _factoryTransferItemId: 1,
+      _eCommerceStatus: 1,
+      _designerId: 1,
+      _status: 1,
+      _shopId: 1,
+      _orderItemId: 1,
+      _categoryId: 1,
+      _subCategoryId: 1,
+      _groupId: 1,
+    };
+  }
+
+  public productTempTableMedium(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _designerId: 1,
+      _shopId: 1,
+      _orderItemId: 1,
+      _grossWeight: 1,
+      _barcode: 1,
+      _categoryId: 1,
+      _factoryTransferItemId: 1,
+      _subCategoryId: 1,
+      _productType: 1,
+      _designUid: 1,
+      _groupId: 1,
+      _type: 1,
+      _purity: 1,
+      _hmSealingStatus: 1,
+      _totalStoneWeight: 1,
+      _totalStoneAmount: 1,
+      _netWeight: 1,
+      _huId: 1,
+      _eCommerceStatus: 1,
+      _status: 1,
+    };
+  }
+
+  public productTempTableMaximum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _designerId: 1,
+      _shopId: 1,
+      _orderItemId: 1,
+      _grossWeight: 1,
+      _factoryTransferItemId: 1,
+      _barcode: 1,
+      _categoryId: 1,
+      _subCategoryId: 1,
+      _productType: 1,
+      _designUid: 1,
+      _groupId: 1,
+      _type: 1,
+      _purity: 1,
+      _hmSealingStatus: 1,
+      _totalStoneWeight: 1,
+      _totalStoneAmount: 1,
+      _netWeight: 1,
+      _huId: 1,
+      _eCommerceStatus: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+  public productTempTableCustom1(): Object {
+    return {
+      _id: 1,
+
+      _grossWeight: 1,
+      _createdAt: 1,
+      _factoryTransferItemId: 1,
+      _barcode: 1,
+      _totalStoneWeight: 1,
+      _totalStoneAmount: 1,
+      _netWeight: 1,
+    };
+  }
+
+  public productTempTableCustom2(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+
+      _subCategoryId: 1,
+      _factoryTransferItemId: 1,
+      _type: 1,
+      _totalStoneWeight: 1,
+      _totalStoneAmount: 1,
+      _netWeight: 1,
+      _grossWeight: 1,
+    };
+  }
+
+  public productTempTableCustom3(): Object {
+    return {
+      _id: 1,
+      _designUid: 1,
+      _factoryTransferItemId: 1,
       _moldNumber: 1,
     };
   }
@@ -2579,6 +2709,64 @@ export class ModelWeight {
       _stoneColourId: 1,
     };
   }
+
+  public productTempStonelinkingTableLight(): Object {
+    return {
+      _id: 1,
+      _stoneWeight: 1,
+      _stoneAmount: 1,
+      _quantity: 1,
+      _status: 1,
+    };
+  }
+  public productTempStonelinkingTableMinimum(): Object {
+    return {
+      _id: 1,
+      _productTempId: 1,
+      _stoneId: 1,
+      _stoneColourId: 1,
+      _stoneWeight: 1,
+      _stoneAmount: 1,
+      _quantity: 1,
+      _status: 1,
+    };
+  }
+  public productTempStonelinkingTableMedium(): Object {
+    return {
+      _id: 1,
+      _productTempId: 1,
+      _stoneId: 1,
+      _stoneColourId: 1,
+      _stoneWeight: 1,
+      _stoneAmount: 1,
+      _quantity: 1,
+      _status: 1,
+    };
+  }
+  public productTempStonelinkingTableMaximum(): Object {
+    return {
+      _id: 1,
+      _productTempId: 1,
+      _stoneId: 1,
+      _stoneColourId: 1,
+      _stoneWeight: 1,
+      _stoneAmount: 1,
+      _quantity: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+  public productTempStonelinkingTableCustom1(): Object {
+    return {
+      _id: 1,
+      _stoneColourId: 1,
+    };
+  }
+
   public stoneMasterTableLight(): Object {
     return {
       _id: 1,
