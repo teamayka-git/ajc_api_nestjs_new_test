@@ -10,6 +10,7 @@ export const FactoryStockTransferItemSchema = new mongoose.Schema({
     default: null,
   },
   _description: { type: String, required: false, default: '' },
+  _reminingGrossWeight: { type: Number, required: true, default: -1 },
   _grossWeight: { type: Number, required: true, default: -1 },
   _stoneWeight: { type: Number, required: true, default: -1 },
   _netWeight: { type: Number, required: true, default: -1 },
@@ -42,6 +43,7 @@ export interface FactoryStockTransferItem {
   _stoneWeight: Number;
   _netWeight: Number;
   _purity: Number;
+  _reminingGrossWeight:Number;
   _weight_hundred_percentage: Number;
   _description: String;
   _groupId: String;
@@ -52,6 +54,7 @@ export interface FactoryStockTransferItem {
   _status: Number;
 }
 
+FactoryStockTransferItemSchema.index({ _reminingGrossWeight: 1 });
 FactoryStockTransferItemSchema.index({ _factoryStockTransferId: 1 });
 FactoryStockTransferItemSchema.index({ _grossWeight: 1 });
 FactoryStockTransferItemSchema.index({ _stoneWeight: 1 });

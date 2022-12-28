@@ -48,6 +48,10 @@ const descriptionType =
   
     @IsNumber()
     @ApiProperty({})
+    reminingGrossWeight: number;
+  
+    @IsNumber()
+    @ApiProperty({})
     weight_hundred_percentage: number;
   
     @IsString()

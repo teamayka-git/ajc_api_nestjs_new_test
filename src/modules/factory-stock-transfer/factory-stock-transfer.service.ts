@@ -78,7 +78,7 @@ export class FactoryStockTransferService {
             _weight_hundred_percentage: eachItemItem.weight_hundred_percentage,
             _description: eachItemItem.description,
             _groupId: eachItemItem.groupId,
-
+            _reminingGrossWeight:eachItemItem.reminingGrossWeight,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _updatedUserId: null,

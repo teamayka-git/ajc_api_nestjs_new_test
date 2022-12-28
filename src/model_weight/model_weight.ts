@@ -2051,6 +2051,7 @@ export class ModelWeight {
       _grossWeight: 1,
       _netWeight: 1,
       _description: 1,
+      _reminingGrossWeight:1,
     };
   }
   public factoryStockTransferItemTableMinimumn(): Object {
@@ -2064,6 +2065,7 @@ export class ModelWeight {
       _weight_hundred_percentage: 1,
       _groupId: 1,
       _description: 1,
+      _reminingGrossWeight:1,
     };
   }
   public factoryStockTransferItemTableMedium(): Object {
@@ -2075,6 +2077,7 @@ export class ModelWeight {
       _stoneWeight: 1,
       _purity: 1,
       _weight_hundred_percentage: 1,
+      _reminingGrossWeight:1,
       _groupId: 1,
       _description: 1,
       _createdUserId: 1,
@@ -2091,6 +2094,7 @@ export class ModelWeight {
       _purity: 1,
       _weight_hundred_percentage: 1,
       _description: 1,
+      _reminingGrossWeight:1,
       _groupId: 1,
       _createdUserId: 1,
       _createdAt: 1,
