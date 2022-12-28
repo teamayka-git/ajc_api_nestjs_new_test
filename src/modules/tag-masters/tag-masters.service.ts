@@ -502,6 +502,50 @@ export class TagMastersService {
 
       if (dto.screenType.includes(103)) {//tag
 
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.TAG_MASTERS,
+              let: { mainTagId: '$_id' },
+              pipeline: [
+                {
+                  $match: {_status:1, $expr: { $eq: ['$_tagId', '$$mainTagId'] } },
+                },
+               {$project:{
+                _id:1
+               }},
+
+               {
+                $lookup: {
+                  from: ModelNames.PRODUCT_TAG_LINKINGS,
+                  let: { tagId: '$_id' },
+                  pipeline: [
+                    {
+                      $match: {_status:1, $expr: { $eq: ['$_tagId', '$$tagId'] } },
+                    },
+                  {$project:{_id:1}},{ "$count": "count" },
+                  ],
+                  as: 'tagProductLinking',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$tagProductLinking',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+
+
+
+              ],
+              as: 'subTagCount',
+            },
+          }
+        );
+
+
+
+
       }
       if (dto.screenType.includes(104)) {//subtag
         arrayAggregation.push(
