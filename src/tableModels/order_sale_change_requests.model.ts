@@ -24,6 +24,7 @@ export const OrderSaleChangeRequestsSchema = new mongoose.Schema({
   _type: { type: Number, required: true, default: -1 },
   _proceedStatus: { type: Number, required: true, default: -1 },
   _workStatus: { type: Number, required: true, default: -1 },
+  _isMistakeWithManufactor: { type: Number, required: true, default: -1 },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -48,6 +49,7 @@ export interface OrderSaleChangeRequests {
   _description: String;
   _type: Number;
   _proceedStatus: Number;
+  _isMistakeWithManufactor: Number;
   _workStatus: Number;
   _createdUserId: String;
   _createdAt: Number;
@@ -56,6 +58,7 @@ export interface OrderSaleChangeRequests {
   _status: Number;
 }
 
+OrderSaleChangeRequestsSchema.index({ _isMistakeWithManufactor: 1 });
 OrderSaleChangeRequestsSchema.index({ _orderSaleId: 1 });
 OrderSaleChangeRequestsSchema.index({ _orderSaleItemId: 1 });
 OrderSaleChangeRequestsSchema.index({ _rootCause: 1 });
@@ -119,4 +122,5 @@ _proceedStatus:{
   0 - cancel order if not possible
   1 - cancel order if not possible
 }
+
  */

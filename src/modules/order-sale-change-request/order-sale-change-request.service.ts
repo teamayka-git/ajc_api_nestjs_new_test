@@ -185,6 +185,7 @@ export class OrderSaleChangeRequestService {
           _uid:
             resultCounterPurchaseBooking._count,
           _description: dto.description,
+          _isMistakeWithManufactor:dto.isMistakeWithManufactor,
           _type: dto.type,
           _proceedStatus: dto.proceedStatus,
           _workStatus: 0,
@@ -439,6 +440,17 @@ export class OrderSaleChangeRequestService {
         arrayAggregation.push({
           $match: {
             _proceedStatus: { $in: dto.proceedStatus },
+          },
+        });
+      }
+      
+      
+      
+      
+      if (dto.isMistakeWithManufactor.length != 0) {
+        arrayAggregation.push({
+          $match: {
+            _isMistakeWithManufactor: { $in: dto.isMistakeWithManufactor },
           },
         });
       }

@@ -62,6 +62,11 @@ export class OrderSaleChangeRequestCreateDto {
   
     @Transform(({ value }) => Number(value))
     @IsNumber()
+    @ApiProperty({})
+    isMistakeWithManufactor: number;
+  
+    @Transform(({ value }) => Number(value))
+    @IsNumber()
     @ApiProperty({description:descriptionListProceedStatus})
     proceedStatus: number;
   
@@ -142,6 +147,10 @@ export class OrderSaleChangeRequestListDto {
   @IsArray()
   @ApiProperty({ type: [Number],description:descriptionListProceedStatus })
   proceedStatus: number[];
+  
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  isMistakeWithManufactor: number[];
   
   
   @IsNumber()
