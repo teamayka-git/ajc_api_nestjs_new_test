@@ -9,7 +9,7 @@ export const FactoryStockTransferItemSchema = new mongoose.Schema({
     ref: ModelNames.FACTORY_STOCK_TRANSFERS,
     default: null,
   },
-  _description: { type: String, required: true, default: 'nil' },
+  _description: { type: String, required: false, default: '' },
   _grossWeight: { type: Number, required: true, default: -1 },
   _stoneWeight: { type: Number, required: true, default: -1 },
   _netWeight: { type: Number, required: true, default: -1 },

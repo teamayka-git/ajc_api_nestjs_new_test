@@ -180,7 +180,6 @@ export class OrderSaleChangeRequestService {
         arrayToPurchaseBooking.push({
           _id: changeRequestId,
           _orderSaleId: dto.orderSaleId,
-          _orderSaleItemId: dto.orderSaleItemId,
           _rootCause: dto.rootCauseId == '' ? null : dto.rootCauseId,
           _uid:
             resultCounterPurchaseBooking._count,
@@ -406,15 +405,7 @@ export class OrderSaleChangeRequestService {
           $match: { _orderSaleId: { $in: newSettingsId } },
         });
       }
-      if (dto.orderSaleItemIds.length > 0) {
-        var newSettingsId = [];
-        dto.orderSaleItemIds.map((mapItem) => {
-          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
-        });
-        arrayAggregation.push({
-          $match: { _orderSaleItemId: { $in: newSettingsId } },
-        });
-      }
+     
 
       if (dto.uids.length > 0) {
         arrayAggregation.push({ $match: { _uid: { $in: dto.uids } } });

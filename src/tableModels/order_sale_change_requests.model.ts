@@ -9,11 +9,6 @@ export const OrderSaleChangeRequestsSchema = new mongoose.Schema({
     ref: ModelNames.ORDER_SALES_MAIN,
     default: null,
   },
-  _orderSaleItemId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.ORDER_SALES_MAIN,
-    default: null,
-  },
   _rootCause: { 
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.ROOT_CAUSES,
@@ -43,7 +38,6 @@ export const OrderSaleChangeRequestsSchema = new mongoose.Schema({
 export interface OrderSaleChangeRequests {
   _id: String;
   _orderSaleId: String;
-  _orderSaleItemId: String;
   _rootCause: String;
   _uid: String;
   _description: String;
@@ -60,7 +54,6 @@ export interface OrderSaleChangeRequests {
 
 OrderSaleChangeRequestsSchema.index({ _isMistakeWithManufactor: 1 });
 OrderSaleChangeRequestsSchema.index({ _orderSaleId: 1 });
-OrderSaleChangeRequestsSchema.index({ _orderSaleItemId: 1 });
 OrderSaleChangeRequestsSchema.index({ _rootCause: 1 });
 OrderSaleChangeRequestsSchema.index({ _description: 1 });
 OrderSaleChangeRequestsSchema.index({ _type: 1 });

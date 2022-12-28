@@ -45,10 +45,6 @@ export class OrderSaleChangeRequestCreateDto {
 
     @IsString()
     @ApiProperty({})
-    orderSaleItemId: string;
-  
-    @IsString()
-    @ApiProperty({})
     rootCauseId: string;
   
     @IsString()
@@ -123,11 +119,6 @@ export class OrderSaleChangeRequestListDto {
   orderSaleIds: string[];
 
   
-  @IsArray()
-  @ApiProperty({ type: [String] })
-  orderSaleItemIds: string[];
-
-
   @IsArray()
   @ApiProperty({ type: [String] })
   uids: string[];
