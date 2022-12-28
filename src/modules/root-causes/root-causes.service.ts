@@ -4,6 +4,7 @@ import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 
 import { GlobalConfig } from 'src/config/global_config';
+import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 import { Counters } from 'src/tableModels/counters.model';
 import { RootCausesModel } from 'src/tableModels/rootCause.model';
 import {
@@ -214,7 +215,12 @@ export class RootCausesService {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
-
+      arrayAggregation.push(
+        new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+          0,
+          dto.responseFormat,
+        ),
+      );
       var result = await this.rootCauseModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
