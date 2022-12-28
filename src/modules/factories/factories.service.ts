@@ -164,7 +164,7 @@ export class FactoriesService {
         arrayAggregation.push({
           $match: {
             $or: [{ _name: new RegExp(dto.searchingText, 'i') }],
-          },
+          }, 
         });
       }
       if (dto.factoryIds.length > 0) {

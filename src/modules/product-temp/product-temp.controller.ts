@@ -10,7 +10,7 @@ import { ProductTempService } from './product-temp.service';import {
 } from '@nestjs/common';
 import { ProductTempCreateDto, ProductTempEditDto, ProductTempListDto, ProductTempStatusChangeDto } from './product_temp.dto';
 
-@ApiTags('Product Docs')
+@ApiTags('Product Temp Docs')
 @Controller('product-temp')
 export class ProductTempController {
   constructor(private readonly productTempService: ProductTempService) {}
