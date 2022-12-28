@@ -80,7 +80,9 @@ _type:{
     5 - delivery proof reject
     6 - shop freez
     7 - order hold
-    8 - Cancel order request initiated
-    9 - Amendment order request initiated
-}
+    8 - Cancel order request initiated // for cancel order hold root cause
+    9 - Amendment order request initiated// for amendment order hold root cause
+    10 - Cancel order
+    11 - Amendment order
+  }
  */
