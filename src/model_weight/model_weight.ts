@@ -1199,6 +1199,7 @@ export class ModelWeight {
       _factoryId: 1,
       _type: 1,
       _uid: 1,
+      _reminingGrossWeight:1,
     };
   }
   public factoryStockTransferTableMinimum(): Object {
@@ -1206,6 +1207,7 @@ export class ModelWeight {
       _id: 1,
       _factoryId: 1,
       _type: 1,
+      _reminingGrossWeight:1,
       _barcode: 1,
       _status: 1,
       _uid: 1,
@@ -1217,6 +1219,7 @@ export class ModelWeight {
       _factoryId: 1,
       _type: 1,
       _uid: 1,
+      _reminingGrossWeight:1,
       _barcode: 1,
       _createdUserId: 1,
       _createdAt: 1,
@@ -1227,6 +1230,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _factoryId: 1,
+      _reminingGrossWeight:1,
       _type: 1,
       _uid: 1,
       _barcode: 1,

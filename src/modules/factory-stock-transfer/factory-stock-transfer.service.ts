@@ -59,6 +59,8 @@ export class FactoryStockTransferService {
             new StringUtils().intToDigitString(uid, 8),
           _uid: uid,
           _type: mapItem.type,
+          
+      _reminingGrossWeight:mapItem.reminingGrossWeight,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
@@ -200,6 +202,20 @@ export class FactoryStockTransferService {
           $match: { _type: { $in: dto.type } },
         });
       }
+
+
+if(dto.reminingGrossWeightStart!=-1 || dto.reminingGrossWeightEnd!=-1){
+  if(dto.reminingGrossWeightStart!=-1){
+    arrayAggregation.push({
+      $match: { _reminingGrossWeight: { $gte: dto.reminingGrossWeightStart } },
+    });
+  } if(dto.reminingGrossWeightEnd!=-1){
+    arrayAggregation.push({
+      $match: { _reminingGrossWeight: { $lte: dto.reminingGrossWeightEnd } },
+    });
+  }
+}
+
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {

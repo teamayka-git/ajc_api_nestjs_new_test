@@ -67,6 +67,10 @@ const descriptionType =
     @ApiProperty({description:descriptionType})
     type: number;
   
+    @IsNumber()
+    @ApiProperty({})
+    reminingGrossWeight: number;
+  
     @IsArray()
     @ApiProperty({ type: [FactoryStockTransferCreateListItem] })
     @ValidateNested({ each: true })
@@ -127,6 +131,13 @@ export class FactoryStockTransferListDto {
   type: number[];
 
 
+  @IsNumber()
+  @ApiProperty({})
+  reminingGrossWeightStart: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  reminingGrossWeightEnd: number;
 
   @IsNumber()
   @ApiProperty({})

@@ -12,6 +12,7 @@ export const FactoryStockTransfersSchema = new mongoose.Schema({
   _uid: { type: String, required: true, default: 'nil' },
   _barcode: { type: String, required: true, default: 'nil' },
   _type: { type: Number, required: true, default: -1 },
+  _reminingGrossWeight: { type: Number, required: true, default: -1 },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -33,6 +34,7 @@ export interface FactoryStockTransfers {
   _barcode: String;
   _uid: String;
   _type: Number;
+  _reminingGrossWeight: Number;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -41,6 +43,7 @@ export interface FactoryStockTransfers {
 }
 
 FactoryStockTransfersSchema.index({ _uid: 1, _id: 1 });
+FactoryStockTransfersSchema.index({ _reminingGrossWeight: 1 });
 FactoryStockTransfersSchema.index({ _factoryId: 1 });
 FactoryStockTransfersSchema.index({ _barcode: 1 });
 FactoryStockTransfersSchema.index({ _type: 1 });

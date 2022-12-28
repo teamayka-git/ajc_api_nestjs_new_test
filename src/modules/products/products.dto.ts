@@ -17,7 +17,7 @@ const descriptionListScreenTypeForList =
 const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType =
   '0-Created Date, 1-Status,2-Name, 3-designerId, 4-grossWeight, 5-type, 6-purity, 7-hmSealing, 8-huid, 9-eCommerceStatus';
-const descriptionType = '0-order sale, 1-Stock sale';
+const descriptionType = '0 - from order sale, 1 - from stock order, 2 - stock sale, 3 - design';
 
 const descriptionListDocType = '0-image, 1-video, 2-pdf, 3-audio, 4-document';
 
