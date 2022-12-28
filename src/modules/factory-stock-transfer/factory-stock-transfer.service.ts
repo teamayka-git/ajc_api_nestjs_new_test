@@ -33,6 +33,7 @@ export class FactoryStockTransferService {
     try {
       var arrayToPurchaseBooking = [];
       var arrayToPurchaseBookingItem = [];
+      var arrayGeneratedBarcodes=[];
       var resultCounterFactoryStockTransfer =
         await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.FACTORY_STOCK_TRANSFERS },
@@ -50,13 +51,14 @@ export class FactoryStockTransferService {
           resultCounterFactoryStockTransfer._count -
           dto.array.length +
           (index + 1);
-
+var barcode=BarCodeQrCodePrefix.FACTORYTRANSFER +
+new StringUtils().intToDigitString(uid, 8);
+arrayGeneratedBarcodes.push(barcode);
         arrayToPurchaseBooking.push({
           _id: bookingId,
           _factoryId: mapItem.factoryId == '' ? null : mapItem.factoryId,
-          _barcode:
-            BarCodeQrCodePrefix.FACTORYTRANSFER +
-            new StringUtils().intToDigitString(uid, 8),
+          _barcode:barcode
+            ,
           _uid: uid,
           _type: mapItem.type,
           
@@ -95,7 +97,7 @@ export class FactoryStockTransferService {
         session: transactionSession,
       });
 
-      const responseJSON = { message: 'success', data: {} };
+      const responseJSON = { message: 'success', data: {barcodes:arrayGeneratedBarcodes} };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
