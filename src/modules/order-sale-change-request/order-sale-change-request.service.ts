@@ -44,7 +44,7 @@ export class OrderSaleChangeRequestService {
     transactionSession.startTransaction();
     try {
 
-
+console.log("order change request dto     "+JSON.stringify(dto))
         var orderSaleIdChangeRequestDocumentsTable = [];
         var arrayGlobalGalleries=[];
         var changeRequestId = new mongoose.Types.ObjectId();

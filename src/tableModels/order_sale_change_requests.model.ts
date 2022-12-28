@@ -113,7 +113,7 @@ _workStatus:{
 _proceedStatus:{
   -1 - nothing
   0 - cancel order if not possible
-  1 - cancel order if not possible
+  1 - do existing order order if not possible
 }
 
  */
