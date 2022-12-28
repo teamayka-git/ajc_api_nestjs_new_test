@@ -498,6 +498,38 @@ export class TagMastersService {
           dto.responseFormat,
         ),
       );
+
+
+      if (dto.screenType.includes(103)) {//tag
+
+      }
+      if (dto.screenType.includes(104)) {//subtag
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.PRODUCT_TAG_LINKINGS,
+              let: { tagId: '$_id' },
+              pipeline: [
+                {
+                  $match: {_status:1, $expr: { $eq: ['$_tagId', '$$tagId'] } },
+                },
+              {$project:{_id:1}},{ "$count": "count" },
+              ],
+              as: 'tagProductLinking',
+            },
+          },
+          {
+            $unwind: {
+              path: '$tagProductLinking',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+
+
+
       if (dto.screenType.includes(100)) {
         const tagDocumentsPipeline = () => {
           const pipeline = [];

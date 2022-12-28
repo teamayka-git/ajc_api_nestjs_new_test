@@ -18,7 +18,7 @@ import { Transform, Type, Type as ValidateTypes } from 'class-transformer';
 import { Optional } from '@nestjs/common';
 
 const descriptionListScreenType =
-  '0-total documents count,100-tag documets, 101 - tag documents under[100] global gallery details, 102 - tag population ';
+  '0-total documents count,100-tag documets, 101 - tag documents under[100] global gallery details, 102 - tag population, 103-tag count, 104 - sub tag count ';
   const descriptionListScreenTypeForBranchList =
     '0-total documents count,100-product details, 101 - product details under[100] document linkung list, 102 - product details under[100] document linkung list under[101] global gallery detils, 103 - product details under[100] sub category details, 104 - product details under[100] stone linking, 105 - product details under[100] stone linking under[104] color details';
 const descriptionListDataGuard =
