@@ -387,6 +387,56 @@ export class SubCategoriesService {
         });
       }
 
+      if (dto.groupIds != null && dto.groupIds.length != 0) {
+        var newSettingsId = [];
+        dto.groupIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.CATEGORIES,
+              let: { categoryId: '$_categoryId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$categoryId'] } } },
+                { $project: { _groupId: 1 } },
+
+ {
+            $lookup: {
+              from: ModelNames.GROUP_MASTERS,
+              let: { groupId: '$_groupId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$groupId'] } } },
+                { $project: { _id: 1 } },
+                {$match:{
+                  _id:{$in:newSettingsId}
+                }}
+
+
+
+              ],
+              as: 'groupDetailsMongo',
+            },
+          },
+          {
+            $unwind: {
+              path: '$groupDetailsMongo',
+            },
+          }
+
+
+              ],
+              as: 'categoryDetailsMongo',
+            },
+          },
+          {
+            $unwind: {
+              path: '$categoryDetailsMongo',
+            },
+          },
+        );
+      }
+
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
 
       switch (dto.sortType) {
@@ -394,13 +444,19 @@ export class SubCategoriesService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _name: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _name: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _code: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _code: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
       }
 
@@ -414,20 +470,52 @@ export class SubCategoriesService {
           dto.responseFormat,
         ),
       );
-       
+
       if (dto.screenType.includes(100)) {
+        const categoryPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            { $match: { $expr: { $eq: ['$_id', '$$categoryId'] } } },
+            new ModelWeightResponseFormat().categoryTableResponseFormat(
+              1000,
+              dto.responseFormat,
+            ),
+          );
+
+          if (dto.screenType.includes(101)) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GROUP_MASTERS,
+                  let: { groupId: '$_groupId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$groupId'] } } },
+                    new ModelWeightResponseFormat().groupMasterTableResponseFormat(
+                      1010,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'groupDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$groupDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
+          return pipeline;
+        };
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.CATEGORIES,
               let: { categoryId: '$_categoryId' },
-              pipeline: [
-                { $match: { $expr: { $eq: ['$_id', '$$categoryId'] } } },
-                new ModelWeightResponseFormat().categoryTableResponseFormat(
-                  1000,
-                  dto.responseFormat,
-                )
-              ],
+              pipeline: categoryPipeline(),
               as: 'categoryDetails',
             },
           },
@@ -451,7 +539,7 @@ export class SubCategoriesService {
                 new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
                   500,
                   dto.responseFormat,
-                )
+                ),
               ],
               as: 'globalGalleryDetails',
             },
@@ -511,7 +599,7 @@ export class SubCategoriesService {
         message: 'success',
         data: {
           list: result,
-          totalCount: totalCount, 
+          totalCount: totalCount,
           generalSetting: generalSetting,
         },
       };
