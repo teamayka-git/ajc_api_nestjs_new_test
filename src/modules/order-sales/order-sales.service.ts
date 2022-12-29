@@ -49,7 +49,7 @@ import { Products } from 'src/tableModels/products.model';
 import { Invoices } from 'src/tableModels/invoices.model';
 import { OrderSaleItemsDocuments } from 'src/tableModels/order_sale_items_documents.model';
 import { Integer } from 'aws-sdk/clients/apigateway';
-import { getMonth, startOfMonth } from 'date-fns';
+import { getMonth, getYear, setYear, startOfMonth } from 'date-fns';
 
 @Injectable()
 export class OrderSalesService {
@@ -2925,7 +2925,25 @@ export class OrderSalesService {
 
 
 
-        console.log("___month is   "+getMonth(dateTime));;
+        var currentTime=dateTime;
+        console.log("___month is   "+getMonth(currentTime));
+if(getMonth(currentTime)>2){//current year morethan april 
+ 
+  
+}else{//current year before april
+  
+  setYear(currentTime, getYear(currentTime)-1);
+}
+
+
+console.log("___ oneyearbefore   "+setYear(currentTime, getYear(currentTime)-1));
+
+
+
+
+
+
+
 
 
         var deliveredOrderCounts=await this.orderSaleMainModel.count({ _shopId:{$in:dto.shopIds}, _workStatus:{$in:[35,36,37,38,39]}, _status:1 });
