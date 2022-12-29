@@ -2934,7 +2934,6 @@ export class OrderSalesService {
   startTime= setSeconds(setMinutes(setHours(setDate(setMonth(startTime, 3), 1), 0), 0),0).getTime()  
   
 }
-console.log("startTime    "+startTime);
 
 
 
@@ -2942,13 +2941,40 @@ console.log("startTime    "+startTime);
 
 
 
+var newSettingsIdShop = [];
+dto.shopIds.map((mapItem) => {
+  newSettingsIdShop.push(new mongoose.Types.ObjectId(mapItem));
+});
 
 
 
+        var deliveredOrderCounts=await this.orderSaleMainModel.aggregate([
 
-        var deliveredOrderCounts=await this.orderSaleMainModel.count({ _shopId:{$in:dto.shopIds}, _workStatus:{$in:[35,36,37,38,39]}, _status:1 });
+          {$match:{ _shopId:{$in:newSettingsIdShop}, _workStatus:{$in:[35,36,37,38,39]},_createdAt:{$gte:startTime}, _status:1 }},
+{$project:{_id:1}},
+{
+  $lookup: {
+    from: ModelNames.ORDER_SALE_HISTORIES,
+    let: { ordersaleId: '$_id' },
+    pipeline: [
+      {
+        $match: {_type:36,
+          $expr: { $eq: ['$_orderSaleId', '$$ordersaleId'] },
+        },
+      },
+    {$project:{_id:1}}
+    ],
+    as: 'ordersaleHistories',
+  },
+},
+{
+  $match: { ordersaleHistories: { $ne: [] } },
+},
 
- 
+
+        ]);
+
+ console.log("deliveredOrderCounts    "+JSON.stringify(deliveredOrderCounts));
 
 
       }
