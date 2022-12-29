@@ -49,6 +49,7 @@ import { Products } from 'src/tableModels/products.model';
 import { Invoices } from 'src/tableModels/invoices.model';
 import { OrderSaleItemsDocuments } from 'src/tableModels/order_sale_items_documents.model';
 import { Integer } from 'aws-sdk/clients/apigateway';
+import { getMonth, startOfMonth } from 'date-fns';
 
 @Injectable()
 export class OrderSalesService {
@@ -2923,6 +2924,13 @@ export class OrderSalesService {
         var inTransitOrderCounts=await this.orderSaleMainModel.count({ _shopId:{$in:dto.shopIds}, _workStatus:{$in:[20, 21, 24, 25, 26, 28, 29, 30, 31, 34, 18]}, _status:1 });
 
 
+
+        console.log("___month is   "+getMonth(dateTime));;
+
+
+        var deliveredOrderCounts=await this.orderSaleMainModel.count({ _shopId:{$in:dto.shopIds}, _workStatus:{$in:[35,36,37,38,39]}, _status:1 });
+
+ 
 
 
       }
