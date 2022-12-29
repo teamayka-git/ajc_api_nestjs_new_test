@@ -2958,7 +2958,7 @@ dto.shopIds.map((mapItem) => {
     let: { ordersaleId: '$_id' },
     pipeline: [
       {
-        $match: {_type:360,
+        $match: {_type:36,
           $expr: { $eq: ['$_orderSaleId', '$$ordersaleId'] },
         },
       },
@@ -2974,7 +2974,7 @@ dto.shopIds.map((mapItem) => {
 
         ]);
 
- console.log("deliveredOrderCounts    "+JSON.stringify(deliveredOrderCounts));
+        
 
 
       }
@@ -2995,7 +2995,7 @@ dto.shopIds.map((mapItem) => {
           cusDashInProcess:inprocessOrderCounts,
           cusDashFinished:finishedOrderCounts,
           cusDashIntransit:inTransitOrderCounts,
-
+          cusDashDelivered:(deliveredOrderCounts.length==0)?0:deliveredOrderCounts[0].count
         },
       };
       if (
