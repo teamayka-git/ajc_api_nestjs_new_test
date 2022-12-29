@@ -2958,7 +2958,7 @@ dto.shopIds.map((mapItem) => {
     let: { ordersaleId: '$_id' },
     pipeline: [
       {
-        $match: {_type:36,
+        $match: {_type:360,
           $expr: { $eq: ['$_orderSaleId', '$$ordersaleId'] },
         },
       },
