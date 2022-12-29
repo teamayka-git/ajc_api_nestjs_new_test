@@ -33,7 +33,7 @@ export class FactoryStockTransferService {
     try {
       var arrayToPurchaseBooking = [];
       var arrayToPurchaseBookingItem = [];
-      var arrayGeneratedBarcodes=[];
+      var arrayGeneratedBarcodes = [];
       var resultCounterFactoryStockTransfer =
         await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.FACTORY_STOCK_TRANSFERS },
@@ -51,18 +51,19 @@ export class FactoryStockTransferService {
           resultCounterFactoryStockTransfer._count -
           dto.array.length +
           (index + 1);
-var barcode=BarCodeQrCodePrefix.FACTORYTRANSFER +
-new StringUtils().intToDigitString(uid, 8);
-arrayGeneratedBarcodes.push(barcode);
+        var barcode =
+          BarCodeQrCodePrefix.FACTORYTRANSFER +
+          new StringUtils().intToDigitString(uid, 8);
+        arrayGeneratedBarcodes.push(barcode);
         arrayToPurchaseBooking.push({
           _id: bookingId,
           _factoryId: mapItem.factoryId == '' ? null : mapItem.factoryId,
-          _barcode:barcode
-            ,
+          _barcode: barcode,
           _uid: uid,
           _type: mapItem.type,
-          
-      _reminingGrossWeight:mapItem.reminingGrossWeight,
+          _groupType: mapItem.groupType,
+
+          _reminingGrossWeight: mapItem.reminingGrossWeight,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
@@ -80,7 +81,7 @@ arrayGeneratedBarcodes.push(barcode);
             _weight_hundred_percentage: eachItemItem.weight_hundred_percentage,
             _description: eachItemItem.description,
             _groupId: eachItemItem.groupId,
-            _reminingGrossWeight:eachItemItem.reminingGrossWeight,
+            _reminingGrossWeight: eachItemItem.reminingGrossWeight,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -97,7 +98,10 @@ arrayGeneratedBarcodes.push(barcode);
         session: transactionSession,
       });
 
-      const responseJSON = { message: 'success', data: {barcodes:arrayGeneratedBarcodes} };
+      const responseJSON = {
+        message: 'success',
+        data: { barcodes: arrayGeneratedBarcodes },
+      };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
@@ -205,19 +209,31 @@ arrayGeneratedBarcodes.push(barcode);
         });
       }
 
+      if (dto.groupType.length != 0) {
+        arrayAggregation.push({
+          $match: { _groupType: { $in: dto.groupType } },
+        });
+      }
 
-if(dto.reminingGrossWeightStart!=-1 || dto.reminingGrossWeightEnd!=-1){
-  if(dto.reminingGrossWeightStart!=-1){
-    arrayAggregation.push({
-      $match: { _reminingGrossWeight: { $gte: dto.reminingGrossWeightStart } },
-    });
-  } if(dto.reminingGrossWeightEnd!=-1){
-    arrayAggregation.push({
-      $match: { _reminingGrossWeight: { $lte: dto.reminingGrossWeightEnd } },
-    });
-  }
-}
-
+      if (
+        dto.reminingGrossWeightStart != -1 ||
+        dto.reminingGrossWeightEnd != -1
+      ) {
+        if (dto.reminingGrossWeightStart != -1) {
+          arrayAggregation.push({
+            $match: {
+              _reminingGrossWeight: { $gte: dto.reminingGrossWeightStart },
+            },
+          });
+        }
+        if (dto.reminingGrossWeightEnd != -1) {
+          arrayAggregation.push({
+            $match: {
+              _reminingGrossWeight: { $lte: dto.reminingGrossWeightEnd },
+            },
+          });
+        }
+      }
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {

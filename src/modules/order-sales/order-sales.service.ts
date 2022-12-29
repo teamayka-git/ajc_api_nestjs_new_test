@@ -49,7 +49,17 @@ import { Products } from 'src/tableModels/products.model';
 import { Invoices } from 'src/tableModels/invoices.model';
 import { OrderSaleItemsDocuments } from 'src/tableModels/order_sale_items_documents.model';
 import { Integer } from 'aws-sdk/clients/apigateway';
-import { getMonth, getYear, setDate, setHours, setMinutes, setMonth, setSeconds, setYear, startOfMonth } from 'date-fns';
+import {
+  getMonth,
+  getYear,
+  setDate,
+  setHours,
+  setMinutes,
+  setMonth,
+  setSeconds,
+  setYear,
+  startOfMonth,
+} from 'date-fns';
 
 @Injectable()
 export class OrderSalesService {
@@ -2916,72 +2926,99 @@ export class OrderSalesService {
           pipeline,
         );
       }
-      
+
       if (dto.screenType.includes(506)) {
+        var inprocessOrderCounts = await this.orderSaleMainModel.count({
+          _shopId: { $in: dto.shopIds },
+          _workStatus: { $in: [0, 1, 3] },
+          _status: 1,
+        });
+        var finishedOrderCounts = await this.orderSaleMainModel.count({
+          _shopId: { $in: dto.shopIds },
+          _workStatus: { $in: [6, 7, 15, 16, 17, 29, 41] },
+          _status: 1,
+        });
+        var inTransitOrderCounts = await this.orderSaleMainModel.count({
+          _shopId: { $in: dto.shopIds },
+          _workStatus: { $in: [20, 21, 24, 25, 26, 28, 29, 30, 31, 34, 18] },
+          _status: 1,
+        });
 
-        var inprocessOrderCounts=await this.orderSaleMainModel.count({_shopId:{$in:dto.shopIds},  _workStatus:{$in:[0,1,3,]}, _status:1 });
-        var finishedOrderCounts=await this.orderSaleMainModel.count({_shopId:{$in:dto.shopIds},  _workStatus:{$in:[6, 7, 15, 16, 17, 29, 41]}, _status:1 });
-        var inTransitOrderCounts=await this.orderSaleMainModel.count({ _shopId:{$in:dto.shopIds}, _workStatus:{$in:[20, 21, 24, 25, 26, 28, 29, 30, 31, 34, 18]}, _status:1 });
+        var startTime = dateTime;
+        if (getMonth(startTime) <= 2) {
+          //current year morethan april
 
+          startTime = setSeconds(
+            setMinutes(
+              setHours(
+                setDate(
+                  setMonth(setYear(startTime, getYear(startTime) - 1), 3),
+                  1,
+                ),
+                0,
+              ),
+              0,
+            ),
+            0,
+          ).getTime();
+        } else {
+          //current year before april
+          startTime = setSeconds(
+            setMinutes(setHours(setDate(setMonth(startTime, 3), 1), 0), 0),
+            0,
+          ).getTime();
+        }
 
+        var newSettingsIdShop = [];
+        dto.shopIds.map((mapItem) => {
+          newSettingsIdShop.push(new mongoose.Types.ObjectId(mapItem));
+        });
 
-        var startTime=dateTime;
-        if(getMonth(startTime)<=2){//current year morethan april 
- 
-          startTime=  setSeconds(setMinutes(setHours(setDate(setMonth(setYear(startTime, getYear(startTime)-1), 3), 1), 0), 0),0).getTime()  
-  
-}else{//current year before april
-  startTime= setSeconds(setMinutes(setHours(setDate(setMonth(startTime, 3), 1), 0), 0),0).getTime()  
-  
-}
-
-
-
-
-
-
-
-var newSettingsIdShop = [];
-dto.shopIds.map((mapItem) => {
-  newSettingsIdShop.push(new mongoose.Types.ObjectId(mapItem));
-});
-
-
-
-        var deliveredOrderCounts=await this.orderSaleMainModel.aggregate([
-
-          {$match:{ _shopId:{$in:newSettingsIdShop}, _workStatus:{$in:[35,36,37,38,39]},_createdAt:{$gte:startTime}, _status:1 }},
-{$project:{_id:1}},
-{
-  $lookup: {
-    from: ModelNames.ORDER_SALE_HISTORIES,
-    let: { ordersaleId: '$_id' },
-    pipeline: [
-      {
-        $match: {_type:36,_createdAt:{$gte:startTime},
-          $expr: { $eq: ['$_orderSaleId', '$$ordersaleId'] },
-        },
-      },
-    {$project:{_id:1}}
-    ],
-    as: 'ordersaleHistories',
-  },
-},
-{
-  $match: { ordersaleHistories: { $ne: [] } },
-},{ "$count": "count" }
-
-
+        var deliveredOrderCounts = await this.orderSaleMainModel.aggregate([
+          {
+            $match: {
+              _shopId: { $in: newSettingsIdShop },
+              _workStatus: { $in: [35, 36, 37, 38, 39] },
+              _createdAt: { $gte: startTime },
+              _status: 1,
+            },
+          },
+          { $project: { _id: 1 } },
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALE_HISTORIES,
+              let: { ordersaleId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    _type: 36,
+                    _createdAt: { $gte: startTime },
+                    $expr: { $eq: ['$_orderSaleId', '$$ordersaleId'] },
+                  },
+                },
+                { $project: { _id: 1 } },
+              ],
+              as: 'ordersaleHistories',
+            },
+          },
+          {
+            $match: { ordersaleHistories: { $ne: [] } },
+          },
+          { $count: 'count' },
         ]);
 
-         var invoicedNW=await this.invoiceModel.aggregate([
-          {$match:{ _shopId:{$in:newSettingsIdShop},_createdAt:{$gte:startTime}, _status:1 }},
+        var invoicedNW = await this.invoiceModel.aggregate([
           {
-            $group: { _id: null, totalCount: { $sum: "$_netTotal" } },
-          }
-         ]);
-
-
+            $match: {
+              _shopId: { $in: newSettingsIdShop },
+              _createdAt: { $gte: startTime },
+              _status: 1,
+            },
+          },
+          {
+            $group: { _id: null, totalCount: { $sum: '$_netTotal' } },
+          },
+        ]);
       }
 
       const responseJSON = {
@@ -2997,11 +3034,14 @@ dto.shopIds.map((mapItem) => {
           appUpdates: resultGeneralsAppUpdate,
           delRejectRootCause: resultDeliveryRejectRootCause,
           currentTime: dateTime,
-          cusDashInProcess:inprocessOrderCounts,
-          cusDashFinished:finishedOrderCounts,
-          cusDashIntransit:inTransitOrderCounts,
-          cusDashDelivered:(deliveredOrderCounts.length==0)?0:deliveredOrderCounts[0].count,
-          cusDashInvNw:(invoicedNW.length==0)?0:invoicedNW[0].totalCount
+          cusDashInProcess: inprocessOrderCounts,
+          cusDashFinished: finishedOrderCounts,
+          cusDashIntransit: inTransitOrderCounts,
+          cusDashDelivered:
+            deliveredOrderCounts.length == 0
+              ? 0
+              : deliveredOrderCounts[0].count,
+          cusDashInvNw: invoicedNW.length == 0 ? 0 : invoicedNW[0].totalCount,
         },
       };
       if (
@@ -5553,40 +5593,36 @@ dto.shopIds.map((mapItem) => {
           );
 
           const isorderSaleMainHoldRootCausePopulate =
-          dto.screenType.includes(122);
-        if (isorderSaleMainHoldRootCausePopulate) {
-          pipeline.push(
-            {
-              $lookup: {
-                from: ModelNames.ROOT_CAUSES,
-                let: { holdRootCauseId: '$_holdRootCause' },
-                pipeline: [
-                  {
-                    $match: {
-                      $expr: { $eq: ['$_id', '$$holdRootCauseId'] },
+            dto.screenType.includes(122);
+          if (isorderSaleMainHoldRootCausePopulate) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.ROOT_CAUSES,
+                  let: { holdRootCauseId: '$_holdRootCause' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$holdRootCauseId'] },
+                      },
                     },
-                  },
 
-                  new ModelWeightResponseFormat().rootcauseTableResponseFormat(
-                    1220,
-                    dto.responseFormat,
-                  ),
-                ],
-                as: 'holdRootCauseDetails',
+                    new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                      1220,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'holdRootCauseDetails',
+                },
               },
-            },
-            {
-              $unwind: {
-                path: '$holdRootCauseDetails',
-                preserveNullAndEmptyArrays: true,
+              {
+                $unwind: {
+                  path: '$holdRootCauseDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
               },
-            },
-          );
-        }
-
-
-
-
+            );
+          }
 
           const isorderSaleMainShopPopulate = dto.screenType.includes(104);
           if (isorderSaleMainShopPopulate) {

@@ -11,6 +11,7 @@ export const FactoryStockTransfersSchema = new mongoose.Schema({
   }, 
   _uid: { type: String, required: true, default: 'nil' },
   _barcode: { type: String, required: true, default: 'nil' },
+  _groupType: { type: Number, required: true, default: -1 },
   _type: { type: Number, required: true, default: -1 },
   _reminingGrossWeight: { type: Number, required: true, default: -1 },
   _createdUserId: {
@@ -34,6 +35,7 @@ export interface FactoryStockTransfers {
   _barcode: String;
   _uid: String;
   _type: Number;
+  _groupType: Number;
   _reminingGrossWeight: Number;
   _createdUserId: String;
   _createdAt: Number;
@@ -47,6 +49,7 @@ FactoryStockTransfersSchema.index({ _reminingGrossWeight: 1 });
 FactoryStockTransfersSchema.index({ _factoryId: 1 });
 FactoryStockTransfersSchema.index({ _barcode: 1 });
 FactoryStockTransfersSchema.index({ _type: 1 });
+FactoryStockTransfersSchema.index({ _groupType: 1 });
 FactoryStockTransfersSchema.index({ _createdUserId: 1 });
 FactoryStockTransfersSchema.index({ _status: 1 });
 FactoryStockTransfersSchema.index(
@@ -79,6 +82,10 @@ function schemaPostFunctionForDuplicate(error, doc, next) {
 _type:{
   0 - out wards
   1 - in wards
+}
+_groupType:{
+  0 - non raw material
+  1 - raw material
 }
  */
  

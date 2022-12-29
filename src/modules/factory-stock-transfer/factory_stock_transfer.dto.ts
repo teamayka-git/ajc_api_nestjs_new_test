@@ -17,7 +17,7 @@ const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType = '0-Created Date, 1-Status,2-type';
-
+const descriptionGroupType="  0 - non raw material, 1 - raw material";
 
 
 const descriptionType =
@@ -70,6 +70,10 @@ const descriptionType =
     @IsNumber()
     @ApiProperty({description:descriptionType})
     type: number;
+  
+    @IsNumber()
+    @ApiProperty({description:descriptionGroupType})
+    groupType: number;
   
     @IsNumber()
     @ApiProperty({})
@@ -133,6 +137,14 @@ export class FactoryStockTransferListDto {
     description: descriptionType,
   })
   type: number[];
+
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionGroupType,
+  })
+  groupType: number[];
 
 
   @IsNumber()
