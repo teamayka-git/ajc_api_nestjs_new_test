@@ -15,6 +15,7 @@ import {
   ProductEcommerceStatusChangeDto,
   ProductEditDto,
   ProductListDto,
+  StockFromProductTempDto,
 } from './products.dto';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { PhotographerRequests } from 'src/tableModels/photographer_requests.model';
@@ -28,6 +29,7 @@ import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { ProductsDocuments } from 'src/tableModels/products_documents.model';
+import { ProductTemps } from 'src/tableModels/product_temps.model';
 
 @Injectable()
 export class ProductsService {
@@ -55,6 +57,8 @@ export class ProductsService {
     @InjectModel(ModelNames.PHOTOGRAPHER_REQUESTS)
     private readonly photographerRequestModel: Model<PhotographerRequests>,
 
+    @InjectModel(ModelNames.PRODUCT_TEMPS)
+    private readonly productTempModel: mongoose.Model<ProductTemps>,
     @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
     private readonly orderSaleHistoriesModel: Model<OrderSaleHistories>,
     @InjectConnection() private readonly connection: mongoose.Connection,
@@ -465,7 +469,7 @@ export class ProductsService {
               : designId,
           _shopId: shopId,
           _orderItemId: orderItemId,
-          _stockStatus:0,
+          _stockStatus: 0,
           _designUid: designUid,
           _productType: dto.arrayItems[i].type != 3 ? 0 : 1,
           _netWeight: dto.arrayItems[i].netWeight,
@@ -534,7 +538,7 @@ export class ProductsService {
             _groupId:
               resultSubcategory[subCategoryIndex].categoryDetails._groupId,
             _type: 3,
-            _stockStatus:0,
+            _stockStatus: 0,
             _purity:
               resultSubcategory[subCategoryIndex].categoryDetails.groupDetails
                 ._purity,
@@ -670,7 +674,6 @@ export class ProductsService {
           //     },
           //     { new: true, session: transactionSession },
           //   );
-
           // const halmarkRequestModel = new this.halmarkRequestModel({
           //   _uid: resultCounterHalmarkRequest._count,
           //   _orderSaleItemId: orderItemId,
@@ -2296,6 +2299,144 @@ export class ProductsService {
       }
 
       const responseJSON = { message: 'success', data: { list: barcodes } };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async createStockFromProductTemp(
+    dto: StockFromProductTempDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var resultCheckStatus = await this.productTempModel.find({
+        _id: { $in: dto.productTempIds },
+        _status: 1,
+      });
+      if (resultCheckStatus.length != dto.productTempIds.length) {
+        throw new HttpException(
+          'Already created stock',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      var productTempIdsMongo = [];
+      dto.productTempIds.map((mapItem) => {
+        productTempIdsMongo.push(new mongoose.Types.ObjectId(mapItem));
+      });
+      var resultProductTempGet = await this.productTempModel.aggregate([
+        { $match: { _id: { $in: productTempIdsMongo }, _status: 1 } },
+        {
+          $lookup: {
+            from: ModelNames.PRODUCT_STONE_LINKING_TEMPS,
+            let: { productTempId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_productTempId', '$$productTempId'] },
+                },
+              },
+            ],
+            as: 'stoneLinking',
+          },
+        },
+      ]);
+
+      await this.productTempModel.updateMany(
+        {
+          _id: { $in: dto.productTempIds },
+        },
+        {
+          $set: {
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+            _status: 0,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      var arrayToProducts = [];
+      var arrayStonesLinkings = [];
+
+      resultProductTempGet.forEach((elementProduct) => {
+        var productId = new mongoose.Types.ObjectId();
+        arrayToProducts.push({
+          _id: productId,
+          _name: elementProduct._name,
+          _designUid: elementProduct._designUid,
+          _designerId: elementProduct._designerId,
+          _shopId: elementProduct._shopId,
+          _orderItemId: elementProduct._orderItemId,
+          _grossWeight: elementProduct._grossWeight,
+          _barcode: elementProduct._barcode,
+          _categoryId: elementProduct._categoryId,
+          _subCategoryId: elementProduct._subCategoryId,
+          _groupId: elementProduct._groupId,
+          _type: elementProduct._type,
+          _productType: elementProduct._productType,
+          _stockStatus: 1,
+          _purity: elementProduct._purity,
+          _hmSealingStatus: elementProduct._hmSealingStatus,
+          _totalStoneWeight: elementProduct._totalStoneWeight,
+          _totalStoneAmount: elementProduct._totalStoneAmount,
+          _netWeight: elementProduct._netWeight,
+          _huId: elementProduct._huId,
+          _eCommerceStatus: elementProduct._eCommerceStatus,
+          _moldNumber: elementProduct._moldNumber,
+          _isStone: elementProduct._isStone,
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
+        });
+
+        elementProduct.stoneLinking.forEach((elementStone) => {
+          arrayStonesLinkings.push({
+            _productId: productId,
+            _stoneId: elementStone._stoneId,
+            _stoneColourId: elementStone._stoneColourId,
+            _stoneWeight: elementStone._stoneWeight,
+            _stoneAmount: elementStone._stoneAmount,
+            _quantity: elementStone._quantity,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+        });
+      });
+
+      await this.productModel.insertMany(arrayToProducts, {
+        session: transactionSession,
+      });
+
+      await this.productStoneLinkingsModel.insertMany(arrayStonesLinkings, {
+        session: transactionSession,
+      });
+
+      const responseJSON = { message: 'success', data: {} };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=

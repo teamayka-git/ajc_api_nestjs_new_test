@@ -440,3 +440,10 @@ export class GetBulkProductBarcodeDto {
 
   
 }
+export class StockFromProductTempDto {
+ 
+@IsArray()
+@ApiProperty({ type: [String] })
+productTempIds: string[];
+
+}

@@ -7,6 +7,7 @@ import {
   ProductEcommerceStatusChangeDto,
   ProductEditDto,
   ProductListDto,
+  StockFromProductTempDto,
 } from './products.dto';
 import { ProductsService } from './products.service';
 
@@ -79,5 +80,11 @@ export class ProductsController {
   getBulkProductBarcode(@Body() dto: GetBulkProductBarcodeDto,
   @Request() req,) {
     return this.productsService.getBulkProductBarcode(dto, req['_userId_']);
+  }
+  
+  @Post('createStockFromProductTemp')
+  createStockFromProductTemp(@Body() dto: StockFromProductTempDto,
+  @Request() req,) {
+    return this.productsService.createStockFromProductTemp(dto, req['_userId_']);
   }
 }

@@ -16,6 +16,7 @@ import { OrderSalesItemsSchema } from 'src/tableModels/order_sales_items.model';
 import { ProductTagLinkingsSchema } from 'src/tableModels/product_tag_linkings.model';
 import { ProductsDocumentsSchema } from 'src/tableModels/products_documents.model';
 import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
+import { ProductTempsSchema } from 'src/tableModels/product_temps.model';
 
 @Module({
   imports: [
@@ -37,6 +38,14 @@ import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
         name: ModelNames.ORDER_SALE_HISTORIES,
         schema: OrderSaleHistoriesSchema,
       },
+
+      { name: ModelNames.PRODUCT_TEMPS, schema: ProductTempsSchema },
+
+
+
+
+
+
     ]),
   ],
   controllers: [ProductsController],
