@@ -2976,7 +2976,9 @@ dto.shopIds.map((mapItem) => {
 
          var invoicedNW=await this.invoiceModel.aggregate([
           {$match:{ _shopId:{$in:newSettingsIdShop},_createdAt:{$gte:startTime}, _status:1 }},
-{$project:{sumNw:{$sum:"$_netTotal"}}}
+          {
+            $group: { _id: null, totalCount: { $sum: "$_netTotal" } },
+          }
          ]);
 
 
