@@ -3001,7 +3001,7 @@ dto.shopIds.map((mapItem) => {
           cusDashFinished:finishedOrderCounts,
           cusDashIntransit:inTransitOrderCounts,
           cusDashDelivered:(deliveredOrderCounts.length==0)?0:deliveredOrderCounts[0].count,
-          cusDashInvNw:invoicedNW
+          cusDashInvNw:(invoicedNW.length==0)?0:invoicedNW[0].totalCount
         },
       };
       if (
