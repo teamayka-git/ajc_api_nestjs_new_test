@@ -11,6 +11,7 @@ import { ProductStoneLinkings } from 'src/tableModels/productStoneLinkings.model
 import { SubCategories } from 'src/tableModels/sub_categories.model';
 import {
   GetBulkProductBarcodeDto,
+  GetProductWithBarcodeDto,
   ProductCreateDto,
   ProductEcommerceStatusChangeDto,
   ProductEditDto,
@@ -1276,6 +1277,12 @@ export class ProductsService {
       if (dto.type.length > 0) {
         arrayAggregation.push({
           $match: { _type: { $in: dto.type } },
+        });
+      }
+
+      if (dto.stockStatus != null && dto.stockStatus.length > 0) {
+        arrayAggregation.push({
+          $match: { _stockStatus: { $in: dto.stockStatus } },
         });
       }
       if (dto.eCommerceStatuses.length > 0) {

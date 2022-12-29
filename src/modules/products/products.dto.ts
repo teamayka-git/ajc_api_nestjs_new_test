@@ -4,6 +4,7 @@ import {
   IsEmail,
   IsNumber,
   isNumber,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -17,7 +18,8 @@ const descriptionListScreenTypeForList =
 const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType =
   '0-Created Date, 1-Status,2-Name, 3-designerId, 4-grossWeight, 5-type, 6-purity, 7-hmSealing, 8-huid, 9-eCommerceStatus';
-const descriptionType = '0 - from order sale, 1 - from stock order, 2 - stock sale, 3 - design';
+  const descriptionType = ' 0 - from order sale, 1 - from stock order(from e store select design then), 2 - stock product(variant in estore), 3 - design';
+  const descriptionStockStatus = '0 - out stock,  1 - in stock,  2 - hold';
 
 const descriptionListDocType = '0-image, 1-video, 2-pdf, 3-audio, 4-document';
 
@@ -394,6 +396,15 @@ export class ProductListDto {
   })
   type: number[];
 
+  
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionStockStatus,
+  })
+  stockStatus: number[];
+
   @IsArray()
   @ApiProperty({
     type: [Number],
@@ -437,6 +448,28 @@ export class GetBulkProductBarcodeDto {
   @IsNumber()
   @ApiProperty({})
   count: number;
+
+  
+}
+export class GetProductWithBarcodeDto {
+
+  @IsString()
+  @ApiProperty({})
+  barcode: string;
+
+  
+  @IsArray()
+  @ApiProperty({
+    type: [Number],description:descriptionStockStatus
+  })
+  stockStatus: number[];
+
+  
+  @IsArray()
+  @ApiProperty({
+    type: [Number],description:descriptionType
+  })
+  type: number[];
 
   
 }

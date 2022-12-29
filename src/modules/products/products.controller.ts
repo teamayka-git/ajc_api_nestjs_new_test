@@ -3,6 +3,7 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import {
   GetBulkProductBarcodeDto,
+  GetProductWithBarcodeDto,
   ProductCreateDto,
   ProductEcommerceStatusChangeDto,
   ProductEditDto,
