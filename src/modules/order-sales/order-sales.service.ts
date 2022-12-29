@@ -49,7 +49,7 @@ import { Products } from 'src/tableModels/products.model';
 import { Invoices } from 'src/tableModels/invoices.model';
 import { OrderSaleItemsDocuments } from 'src/tableModels/order_sale_items_documents.model';
 import { Integer } from 'aws-sdk/clients/apigateway';
-import { getMonth, getYear, setMonth, setYear, startOfMonth } from 'date-fns';
+import { getMonth, getYear, setDate, setHours, setMinutes, setMonth, setSeconds, setYear, startOfMonth } from 'date-fns';
 
 @Injectable()
 export class OrderSalesService {
@@ -2936,7 +2936,7 @@ if(getMonth(currentTime)>2){//current year morethan april
 }
 
 
-console.log("___ oneyearbefore   "+setMonth(setYear(currentTime, getYear(currentTime)-1), 3).getTime());
+console.log("___ oneyearbefore   "+setSeconds(setMinutes(setHours(setDate(setMonth(setYear(currentTime, getYear(currentTime)-1), 3), 1), 0), 0),0).getTime());
 
 
 
