@@ -2969,7 +2969,7 @@ dto.shopIds.map((mapItem) => {
 },
 {
   $match: { ordersaleHistories: { $ne: [] } },
-},
+},{ "$count": "count" }
 
 
         ]);
