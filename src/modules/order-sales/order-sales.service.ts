@@ -2936,7 +2936,7 @@ if(getMonth(currentTime)>2){//current year morethan april
 }
 
 
-console.log("___ oneyearbefore   "+setYear(currentTime, getYear(currentTime)-1));
+console.log("___ oneyearbefore   "+setYear(currentTime, getYear(currentTime)-1).getTime());
 
 
 
