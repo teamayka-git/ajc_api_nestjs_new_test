@@ -162,7 +162,7 @@ _workStatus:{
   15 - send to reissuence 
   16 - invoice pending
   17 - invoice generated
-  18 - outof delivery pending
+  18 - outof delivery pending 
   20 - delivery job assigned
   21 - delivery in transit        
   24 - order declined collection pending || descrption, erorr type*(Int) ,rework status(Int)
