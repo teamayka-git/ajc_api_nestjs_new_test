@@ -54,7 +54,11 @@ export class FactoryStockTransferService {
         var barcode =
           BarCodeQrCodePrefix.FACTORYTRANSFER +
           new StringUtils().intToDigitString(uid, 8);
-        arrayGeneratedBarcodes.push(barcode);
+        arrayGeneratedBarcodes.push({
+          barcode:barcode,
+          uid:uid,
+          reminingGrossWeight:mapItem.reminingGrossWeight
+        });
         arrayToPurchaseBooking.push({
           _id: bookingId,
           _factoryId: mapItem.factoryId == '' ? null : mapItem.factoryId,

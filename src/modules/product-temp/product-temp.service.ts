@@ -34,7 +34,7 @@ export class ProductTempService {
     try {
       var arrayToProductTemp = [];
       var arrayToProductTempStoneLinking = [];
-
+var responseArray=[];
       var resultCounterProduct = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.PRODUCTS },
         {
@@ -49,7 +49,7 @@ export class ProductTempService {
         var productTempId = new mongoose.Types.ObjectId();
 
         var autoIncrementNumber = resultCounterProduct._count - index;
-
+       
         arrayToProductTemp.push({
           _id: productTempId,
           _name: mapItem.name,
@@ -108,7 +108,8 @@ export class ProductTempService {
         });
       });
 
-      await this.productTempModel.insertMany(arrayToProductTemp, {
+   
+         await this.productTempModel.insertMany(arrayToProductTemp, {
         session: transactionSession,
       });
 
@@ -119,7 +120,9 @@ export class ProductTempService {
         },
       );
 
-      const responseJSON = { message: 'success', data: {} };
+      const responseJSON = { message: 'success', data: {
+list:responseArray
+      } };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=

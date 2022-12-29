@@ -1199,6 +1199,7 @@ export class ModelWeight {
       _factoryId: 1,
       _type: 1,
       _uid: 1,
+      _groupType:1,
       _reminingGrossWeight:1,
     };
   }
@@ -1207,6 +1208,7 @@ export class ModelWeight {
       _id: 1,
       _factoryId: 1,
       _type: 1,
+      _groupType:1,
       _reminingGrossWeight:1,
       _barcode: 1,
       _status: 1,
@@ -1219,6 +1221,7 @@ export class ModelWeight {
       _factoryId: 1,
       _type: 1,
       _uid: 1,
+      _groupType:1,
       _reminingGrossWeight:1,
       _barcode: 1,
       _createdUserId: 1,
@@ -1235,6 +1238,7 @@ export class ModelWeight {
       _uid: 1,
       _barcode: 1,
       _createdUserId: 1,
+      _groupType:1,
       _createdAt: 1,
       _updatedUserId: 1,
       _updatedAt: 1,
