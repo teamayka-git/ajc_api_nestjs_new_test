@@ -2925,18 +2925,18 @@ export class OrderSalesService {
 
 
 
-        var currentTime=dateTime;
-        console.log("___month is   "+getMonth(currentTime));
-if(getMonth(currentTime)>2){//current year morethan april 
+        var startTime=dateTime;
+        if(getMonth(startTime)>2){//current year morethan april 
  
+          startTime=  setSeconds(setMinutes(setHours(setDate(setMonth(setYear(startTime, getYear(startTime)-1), 3), 1), 0), 0),0).getTime()  
   
 }else{//current year before april
+  startTime= setSeconds(setMinutes(setHours(setDate(setMonth(startTime, 3), 1), 0), 0),0).getTime()  
   
-  setYear(currentTime, getYear(currentTime)-1);
 }
+console.log("startTime    "+startTime);
 
 
-console.log("___ oneyearbefore   "+setSeconds(setMinutes(setHours(setDate(setMonth(setYear(currentTime, getYear(currentTime)-1), 3), 1), 0), 0),0).getTime());
 
 
 
