@@ -465,6 +465,7 @@ export class ProductsService {
               : designId,
           _shopId: shopId,
           _orderItemId: orderItemId,
+          _stockStatus:0,
           _designUid: designUid,
           _productType: dto.arrayItems[i].type != 3 ? 0 : 1,
           _netWeight: dto.arrayItems[i].netWeight,
@@ -533,6 +534,7 @@ export class ProductsService {
             _groupId:
               resultSubcategory[subCategoryIndex].categoryDetails._groupId,
             _type: 3,
+            _stockStatus:0,
             _purity:
               resultSubcategory[subCategoryIndex].categoryDetails.groupDetails
                 ._purity,
