@@ -2926,7 +2926,7 @@ export class OrderSalesService {
 
 
         var startTime=dateTime;
-        if(getMonth(startTime)>2){//current year morethan april 
+        if(getMonth(startTime)<=2){//current year morethan april 
  
           startTime=  setSeconds(setMinutes(setHours(setDate(setMonth(setYear(startTime, getYear(startTime)-1), 3), 1), 0), 0),0).getTime()  
   
