@@ -73,7 +73,7 @@ export interface OrderSalesMain {
   _referenceNumber: String;//
 
   _holdRootCause:String;
-  _isHold:number;
+  _isHold:number; 
   _holdDescription:String;
 
 

@@ -2958,7 +2958,7 @@ dto.shopIds.map((mapItem) => {
     let: { ordersaleId: '$_id' },
     pipeline: [
       {
-        $match: {_type:36,
+        $match: {_type:36,_createdAt:{$gte:startTime},
           $expr: { $eq: ['$_orderSaleId', '$$ordersaleId'] },
         },
       },
@@ -2974,7 +2974,10 @@ dto.shopIds.map((mapItem) => {
 
         ]);
 
-        
+         var invoicedNW=await this.invoiceModel.aggregate([
+          {$match:{ _shopId:{$in:newSettingsIdShop},_createdAt:{$gte:startTime}, _status:1 }},
+{$project:{sumNw:{$sum:"$_netTotal"}}}
+         ]);
 
 
       }
@@ -2995,7 +2998,8 @@ dto.shopIds.map((mapItem) => {
           cusDashInProcess:inprocessOrderCounts,
           cusDashFinished:finishedOrderCounts,
           cusDashIntransit:inTransitOrderCounts,
-          cusDashDelivered:(deliveredOrderCounts.length==0)?0:deliveredOrderCounts[0].count
+          cusDashDelivered:(deliveredOrderCounts.length==0)?0:deliveredOrderCounts[0].count,
+          cusDashInvNw:invoicedNW
         },
       };
       if (
