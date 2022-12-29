@@ -1659,6 +1659,7 @@ export class ModelWeight {
       _id: 1,
       _name: 1,
       _barcode: 1,
+      _stockStatus:1,
       _type: 1,
       _purity: 1,
       _hmSealingStatus: 1,
@@ -1678,6 +1679,7 @@ export class ModelWeight {
       _hmSealingStatus: 1,
       _designUid: 1,
       _huId: 1,
+      _stockStatus:1,
       _productType: 1,
       _eCommerceStatus: 1,
       _designerId: 1,
@@ -1699,6 +1701,7 @@ export class ModelWeight {
       _orderItemId: 1,
       _grossWeight: 1,
       _barcode: 1,
+      _stockStatus:1,
       _categoryId: 1,
       _subCategoryId: 1,
       _productType: 1,
@@ -1725,6 +1728,7 @@ export class ModelWeight {
       _orderItemId: 1,
       _grossWeight: 1,
       _barcode: 1,
+      _stockStatus:1,
       _categoryId: 1,
       _subCategoryId: 1,
       _productType: 1,
@@ -1749,6 +1753,7 @@ export class ModelWeight {
     return {
       _id: 1,
 
+      _stockStatus:1,
       _grossWeight: 1,
       _createdAt: 1,
       _barcode: 1,
@@ -1763,6 +1768,7 @@ export class ModelWeight {
       _id: 1,
       _name: 1,
 
+      _stockStatus:1,
       _subCategoryId: 1,
       _type: 1,
       _totalStoneWeight: 1,
@@ -1775,6 +1781,7 @@ export class ModelWeight {
   public productTableCustom3(): Object {
     return {
       _id: 1,
+      _stockStatus:1,
       _designUid: 1,
       _moldNumber: 1,
     };

@@ -187,8 +187,10 @@ _workStatus:{
   
 }
 _type:{
-  0 - order sale
-  1 - stock sale
+  0 - order sale(custom order)
+  1 - stock sale(from e store)
+  2 - sales on approval(from delivery boy)
+  3 - counter sale(bill from manufactor)
 }
 
 _deliveryType:{

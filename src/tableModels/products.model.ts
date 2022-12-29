@@ -40,6 +40,7 @@ export const ProductsSchema = new mongoose.Schema({
     default: null,
   },
   _type: { type: Number, required: true, default: -1 },
+  _stockStatus: { type: Number, required: true, default: -1 },
   _productType: { type: Number, required: true, default: -1 },
   _purity: { type: Number, required: true, default: -1 },
   _totalStoneWeight: { type: Number, required: true, default: -1 },
@@ -80,6 +81,7 @@ export interface Products {
   _groupId: String;
   _type: Number;
   _productType: Number;
+  _stockStatus: Number;
   _purity: Number;
   _hmSealingStatus: Number;
   _totalStoneWeight: Number;
@@ -96,6 +98,7 @@ export interface Products {
   _status: Number;
 }
 
+ProductsSchema.index({ _stockStatus: 1 });
 ProductsSchema.index({ _totalStoneAmount: 1 });
 ProductsSchema.index({ _designUid: 1 });
 ProductsSchema.index({ _productType: 1 });
@@ -157,8 +160,13 @@ function schemaPostFunctionForDuplicate(error, doc, next) {
 /*
 _type:{
     0 - from order sale
-    1 - from stock order
-    2 - stock sale
+    1 - from stock order(from e store select design then)
+    2 - stock product(variant in estore)
     3 - design
+}
+_stockStatus:{
+  0 - out stock
+  1 - in stock
+  2 - hold
 }
  */
