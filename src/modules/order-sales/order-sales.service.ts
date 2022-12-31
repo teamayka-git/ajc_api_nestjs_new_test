@@ -2929,19 +2929,25 @@ console.log("____f1");
           pipeline,
         );
       }
+      var inprocessOrderCounts =0;
+      var finishedOrderCounts =0;
+      var inTransitOrderCounts=0;
+      var deliveredOrderCounts=[];
+      var invoicedNW=[];
+
       console.log("____f11");
       if (dto.screenType.includes(506)) {
-        var inprocessOrderCounts = await this.orderSaleMainModel.count({
+        inprocessOrderCounts = await this.orderSaleMainModel.count({
           _shopId: { $in: dto.shopIds },
           _workStatus: { $in: [0, 1, 3] },
           _status: 1,
         });
-        var finishedOrderCounts = await this.orderSaleMainModel.count({
+         finishedOrderCounts = await this.orderSaleMainModel.count({
           _shopId: { $in: dto.shopIds },
           _workStatus: { $in: [6, 7, 15, 16, 17, 29, 41] },
           _status: 1,
         });
-        var inTransitOrderCounts = await this.orderSaleMainModel.count({
+         inTransitOrderCounts = await this.orderSaleMainModel.count({
           _shopId: { $in: dto.shopIds },
           _workStatus: { $in: [20, 21, 24, 25, 26, 28, 29, 30, 31, 34, 18] },
           _status: 1,
@@ -2977,7 +2983,7 @@ console.log("____f1");
           newSettingsIdShop.push(new mongoose.Types.ObjectId(mapItem));
         });
 
-        var deliveredOrderCounts = await this.orderSaleMainModel.aggregate([
+         deliveredOrderCounts = await this.orderSaleMainModel.aggregate([
           {
             $match: {
               _shopId: { $in: newSettingsIdShop },
@@ -3010,7 +3016,7 @@ console.log("____f1");
           { $count: 'count' },
         ]);
 
-        var invoicedNW = await this.invoiceModel.aggregate([
+         invoicedNW = await this.invoiceModel.aggregate([
           {
             $match: {
               _shopId: { $in: newSettingsIdShop },
