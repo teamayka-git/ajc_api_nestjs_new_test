@@ -336,10 +336,14 @@ export class AppService {
 
 
 
-
+      var wCountPendingOrder=0;
 
       if (dto.screenType.includes(5)) {//dashboard
-console.log("resultUserDetails dpt     "+JSON.stringify(resultUserDetails[0].employeeDetails.departmentDetails));
+        if(resultUserDetails[0].employeeDetails.departmentDetails._code==1003){//worker
+          wCountPendingOrder=await  this.osSetPrcosessModel.count({_userId:_userId_,_orderStatus:{$nin:[3,5,6,7]},_status:1});
+        }else{//not worker
+
+        }
 
 
 
@@ -363,6 +367,9 @@ console.log("resultUserDetails dpt     "+JSON.stringify(resultUserDetails[0].emp
           listAttendance: resultUserAttendance,
           userDetails: resultUserDetails[0],
           appUpdates: resultGeneralsAppUpdate,
+
+EDashWPendingOrder:wCountPendingOrder
+
         },
       };
       if (

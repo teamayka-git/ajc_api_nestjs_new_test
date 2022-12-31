@@ -51,7 +51,7 @@ import { OrderSaleItemsDocumentsSchema } from 'src/tableModels/order_sale_items_
         schema: OrderSalesDocumentsSchema,
       },
 
-      {
+      { 
         name: ModelNames.ORDER_SALE_SET_PROCESSES,
         schema: OrderSaleSetProcessesSchema,
       },
