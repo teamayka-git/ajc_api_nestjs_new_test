@@ -1104,7 +1104,7 @@ export class OrderSalesService {
           },
         });
       }
-
+console.log("____f1");
       if (dto.uids != null && dto.uids.length > 0) {
         var arrayTemp = [];
         dto.uids.forEach((eachElement) => {
@@ -1426,7 +1426,7 @@ export class OrderSalesService {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
-
+      console.log("____f2");
       arrayAggregation.push(
         new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
           0,
@@ -1737,7 +1737,7 @@ export class OrderSalesService {
 
         return pipeline;
       };
-
+      console.log("____f2");
       if (isorderSaleSetProcess) {
         arrayAggregation.push({
           $lookup: {
@@ -1839,7 +1839,7 @@ export class OrderSalesService {
           },
         );
       }
-
+      console.log("____f5");
       if (dto.screenType.includes(103)) {
         arrayAggregation.push(
           {
@@ -2056,7 +2056,7 @@ export class OrderSalesService {
           },
         });
       }
-
+      console.log("____f6");
       const isorderSaledocuments = dto.screenType.includes(101);
 
       if (isorderSaledocuments) {
@@ -2117,6 +2117,7 @@ export class OrderSalesService {
           },
         });
       }
+      console.log("____f7");
 
       const isorderSaleshop = dto.screenType.includes(102);
 
@@ -2684,6 +2685,7 @@ export class OrderSalesService {
           },
         });
       }
+      console.log("____f8");
       var resultWorkets = [];
       var resultProcessMasters = [];
       var resultSubCategory = [];
@@ -2766,7 +2768,7 @@ export class OrderSalesService {
           _status: 1,
         });
       }
-
+      console.log("____f9");
       var result = await this.orderSaleMainModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
@@ -2866,6 +2868,7 @@ export class OrderSalesService {
         });
         resultShop = await this.shopsModel.aggregate(pipeline);
       }
+      console.log("____f10");
       var generalSetting = [];
       if (dto.screenType.includes(501)) {
         generalSetting = await this.generalsModel.aggregate([
@@ -2926,7 +2929,7 @@ export class OrderSalesService {
           pipeline,
         );
       }
-
+      console.log("____f11");
       if (dto.screenType.includes(506)) {
         var inprocessOrderCounts = await this.orderSaleMainModel.count({
           _shopId: { $in: dto.shopIds },
@@ -3020,7 +3023,7 @@ export class OrderSalesService {
           },
         ]);
       }
-
+      console.log("____f12");
       const responseJSON = {
         message: 'success',
         data: {
