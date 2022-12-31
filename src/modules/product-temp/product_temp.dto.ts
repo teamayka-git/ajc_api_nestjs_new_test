@@ -89,10 +89,6 @@ class ProductTempCreateList {
   type: number;
 
   @IsNumber()
-  @ApiProperty({ description: descriptionType })
-  productType: number;
-
-  @IsNumber()
   @ApiProperty({})
   purity: number;
 
@@ -187,10 +183,6 @@ export class ProductTempEditDto {
   @IsNumber()
   @ApiProperty({ description: descriptionType })
   type: number;
-
-  @IsNumber()
-  @ApiProperty({ description: descriptionType })
-  productType: number;
 
   @IsNumber()
   @ApiProperty({})

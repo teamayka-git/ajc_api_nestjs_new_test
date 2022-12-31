@@ -45,7 +45,6 @@ export const ProductTempsSchema = new mongoose.Schema({
     default: null,
   },
   _type: { type: Number, required: true, default: -1 },
-  _productType: { type: Number, required: true, default: -1 },
   _purity: { type: Number, required: true, default: -1 },
   _totalStoneWeight: { type: Number, required: true, default: -1 },
   _totalStoneAmount: { type: Number, required: true, default: -1 },
@@ -85,7 +84,6 @@ export interface ProductTemps {
   _subCategoryId: String;
   _groupId: String;
   _type: Number;
-  _productType: Number;
   _purity: Number;
   _hmSealingStatus: Number;
   _totalStoneWeight: Number;
@@ -105,7 +103,6 @@ export interface ProductTemps {
 ProductTempsSchema.index({ _factoryTransferItemId: 1 });
 ProductTempsSchema.index({ _totalStoneAmount: 1 });
 ProductTempsSchema.index({ _designUid: 1 });
-ProductTempsSchema.index({ _productType: 1 });
 ProductTempsSchema.index({ _isStone: 1 });
 ProductTempsSchema.index({ _moldNumber: 1 });
 ProductTempsSchema.index({ _name: 1 });

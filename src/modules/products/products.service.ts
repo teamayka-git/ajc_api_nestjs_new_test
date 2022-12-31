@@ -472,7 +472,6 @@ export class ProductsService {
           _orderItemId: orderItemId,
           _stockStatus: 0,
           _designUid: designUid,
-          _productType: dto.arrayItems[i].type != 3 ? 0 : 1,
           _netWeight: dto.arrayItems[i].netWeight,
           _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
           _totalStoneAmount: dto.arrayItems[i].totalStoneAmount,
@@ -528,7 +527,6 @@ export class ProductsService {
             _orderItemId: null,
             _designUid: designUidSecondary,
 
-            _productType: 1,
             _netWeight: dto.arrayItems[i].netWeight,
             _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
             _totalStoneAmount: dto.arrayItems[i].totalStoneAmount,
@@ -2400,7 +2398,6 @@ export class ProductsService {
           _subCategoryId: elementProduct._subCategoryId,
           _groupId: elementProduct._groupId,
           _type: elementProduct._type,
-          _productType: elementProduct._productType,
           _stockStatus: 1,
           _purity: elementProduct._purity,
           _hmSealingStatus: elementProduct._hmSealingStatus,
