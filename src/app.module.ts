@@ -100,6 +100,9 @@ import { EmployeeStockHandsModule } from './modules/employee-stock-hands/employe
 import { PurchaseModule } from './modules/purchase/purchase.module';
 import { OrderSaleChangeRequestModule } from './modules/order-sale-change-request/order-sale-change-request.module';
 import { ProductTempModule } from './modules/product-temp/product-temp.module';
+import { OrderSaleHistoriesSchema } from './tableModels/order_sale_histories.model';
+import { InvoicesSchema } from './tableModels/invoices.model';
+import { DeliverySchema } from './tableModels/delivery.model';
 
 
 @Module({
@@ -132,11 +135,17 @@ import { ProductTempModule } from './modules/product-temp/product-temp.module';
       { name: ModelNames.DEPARTMENT, schema: DepartmentsSchema },
       { name: ModelNames.PURITY, schema: PuritySchema },
       { name: ModelNames.PROCESS_MASTER, schema: ProcessMasterSchema },
+      { name: ModelNames.DELIVERY, schema: DeliverySchema },
+      
+      { name: ModelNames.INVOICES, schema: InvoicesSchema },
       {
         name: ModelNames.GLOBAL_GALLERY_CATEGORIES,
         schema: GlobalGalleryCategoriesSchema,
       },
-
+      {
+        name: ModelNames.ORDER_SALE_HISTORIES,
+        schema: OrderSaleHistoriesSchema,
+      },
       { name: ModelNames.DELIVERY_COUNTER_USER_LINKINGS, schema: DeliveryCounterUserLinkingsSchema },
       {
         name: ModelNames.CHAT_PENDING_MESSAGES,

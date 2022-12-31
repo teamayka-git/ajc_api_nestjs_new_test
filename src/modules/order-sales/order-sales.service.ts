@@ -3000,7 +3000,7 @@ console.log("____f1");
               pipeline: [
                 {
                   $match: {
-                    _type: 36,
+                    _type: {$in:[36,37]},
                     _createdAt: { $gte: startTime },
                     $expr: { $eq: ['$_orderSaleId', '$$ordersaleId'] },
                   },

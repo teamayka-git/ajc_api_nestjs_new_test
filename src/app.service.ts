@@ -40,6 +40,9 @@ import { UserAttendance } from './tableModels/user_attendances.model';
 import { IndexUtils } from './utils/IndexUtils';
 import { SmsUtils } from './utils/smsUtils';
 import { endOfMonth, endOfToday, startOfMonth } from 'date-fns';
+import { OrderSaleHistories } from './tableModels/order_sale_histories.model';
+import { Invoices } from './tableModels/invoices.model';
+import { Delivery } from './tableModels/delivery.model';
 
 const twilioClient = require('twilio')(
   'AC9bf34a6b64db1480be17402f908aded8',
@@ -69,12 +72,19 @@ export class AppService {
     private readonly categoryModel: mongoose.Model<Categories>,
     @InjectModel(ModelNames.SUB_CATEGORIES)
     private readonly subCategoryModel: mongoose.Model<SubCategories>,
+
+    @InjectModel(ModelNames.DELIVERY)
+    private readonly deliveryModel: mongoose.Model<Delivery>,
+    @InjectModel(ModelNames.INVOICES)
+    private readonly invoiceModel: mongoose.Model<Invoices>,
     @InjectModel(ModelNames.DISTRICTS)
     private readonly districtModel: mongoose.Model<Districts>,
     @InjectModel(ModelNames.CITIES)
     private readonly cityModel: mongoose.Model<Cities>,
     @InjectModel(ModelNames.USER)
     private readonly userModel: mongoose.Model<User>,
+    @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
+    private readonly orderSaleHistoriesModel: mongoose.Model<OrderSaleHistories>,
     @InjectModel(ModelNames.GENERALS)
     private readonly generalsModel: mongoose.Model<Generals>,
     @InjectModel(ModelNames.DEPARTMENT)
@@ -332,25 +342,24 @@ export class AppService {
           },
         ]);
       }
-//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
+      //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
       var wCountPendingOrder = 0;
       var wCountFinishedOrder = 0;
       var wCriticalWorkOrders = [];
       var wBacklogWorkOrders = [];
       var wHighRiskWorkOrders = [];
 
-
-
-      var ECountOhPendingOrder=0;
-      var ECountOhCustomOrder=0;
-      var ECountOhStockOrder=0;
-      var ECountOhInProcessOrder=0;
-      var ECountOhFinishedOrder=0;
-      var ECountOhInTransitOrder=0;
-      var ECountOhProofPendingOrder=0;
-      var ECountOhTotalDeliveredOrder=0;
-
-
+      var ECountOhPendingOrder = 0;
+      var ECountOhCustomOrder = 0;
+      var ECountOhStockOrder = 0;
+      var ECountOhInProcessOrder = 0;
+      var ECountOhFinishedOrder = 0;
+      var ECountOhInTransitOrder = 0;
+      var ECountOhProofPendingOrder = 0;
+      var ECountOhTotalDeliveredOrder = 0;
+      var ECountOhTotalDeliveredMe = 0;
+      var ECountOhInvoicedNW = [];
+      var ECountOhDeliveredNW = [];
 
       if (dto.screenType.includes(5)) {
         //dashboard
@@ -456,10 +465,10 @@ export class AppService {
                 _workAssignedTime: {
                   $gte:
                     dateTime +
-                    (listGeneralsForDashboard[indexBacklog]._number *
+                    listGeneralsForDashboard[indexBacklog]._number *
                       60 *
                       60 *
-                      1000),
+                      1000,
                 },
                 _status: 1,
               },
@@ -478,27 +487,28 @@ export class AppService {
             );
           }
 
-
           // (dateTime+ (listGeneralsForDashboard[indexHighrisk]._number *
           //   60 *
           //   60 *
           //   1000))
-          var dueDateEndTimeHighRisk=(endOfToday().getTime()+(listGeneralsForDashboard[indexHighrisk]._number *24*
+          var dueDateEndTimeHighRisk =
+            endOfToday().getTime() +
+            listGeneralsForDashboard[indexHighrisk]._number *
+              24 *
               60 *
               60 *
-              1000));
-
+              1000;
 
           wHighRiskWorkOrders = await this.osSetPrcosessModel.aggregate([
             {
               $match: {
                 _userId: new mongoose.Types.ObjectId(_userId_),
                 _orderStatus: { $nin: [3, 5, 6, 7] },
-               
+
                 _status: 1,
               },
             },
-            { $project: { _id: 1 ,_orderSaleId:1} },
+            { $project: { _id: 1, _orderSaleId: 1 } },
             {
               $lookup: {
                 from: ModelNames.ORDER_SALES_MAIN,
@@ -506,8 +516,7 @@ export class AppService {
                 pipeline: [
                   {
                     $match: {
-
-                      _dueDate:{$lte:dueDateEndTimeHighRisk},
+                      _dueDate: { $lte: dueDateEndTimeHighRisk },
                       $expr: { $eq: ['$_id', '$$orderId'] },
                     },
                   },
@@ -523,63 +532,160 @@ export class AppService {
             },
             { $count: 'count' },
           ]);
-
-
         } else {
           //not worker
 
           ECountOhPendingOrder = await this.ordersaleMainModel.count({
-            _workStatus: { $nin: [2,24,25,26,27,28,34,35,36,37,38,39,] },
-            _status: 1,
-          });
-          
-          ECountOhCustomOrder = await this.ordersaleMainModel.count({
-            _type:{$in:[0,1]},
-            _workStatus: { $nin: [2,24,25,26,27,28,34,35,36,37,38,39,] },
-            _status: 1,
-          });
-          
-          ECountOhStockOrder = await this.ordersaleMainModel.count({
-            _type:{$in:[2,3]},
-            _workStatus: { $nin: [2,24,25,26,27,28,34,35,36,37,38,39,] },
+            _workStatus: {
+              $nin: [2, 24, 25, 26, 27, 28, 34, 35, 36, 37, 38, 39],
+            },
             _status: 1,
           });
 
+          ECountOhCustomOrder = await this.ordersaleMainModel.count({
+            _type: { $in: [0, 1] },
+            _workStatus: {
+              $nin: [2, 24, 25, 26, 27, 28, 34, 35, 36, 37, 38, 39],
+            },
+            _status: 1,
+          });
+
+          ECountOhStockOrder = await this.ordersaleMainModel.count({
+            _type: { $in: [2, 3] },
+            _workStatus: {
+              $nin: [2, 24, 25, 26, 27, 28, 34, 35, 36, 37, 38, 39],
+            },
+            _status: 1,
+          });
 
           ECountOhInProcessOrder = await this.ordersaleMainModel.count({
-            _workStatus: { $nin: [2,24,25,26,27,28,34,35,36,37,38,39,] },
+            _workStatus: {
+              $nin: [2, 24, 25, 26, 27, 28, 34, 35, 36, 37, 38, 39],
+            },
             _isProductGenerated: 0,
             _status: 1,
           });
           ECountOhFinishedOrder = await this.ordersaleMainModel.count({
-            _workStatus: { $nin: [2,24,25,26,27,28,34,35,36,37,38,39,] },
+            _workStatus: {
+              $nin: [2, 24, 25, 26, 27, 28, 34, 35, 36, 37, 38, 39],
+            },
             _isProductGenerated: 1,
-            _isInvoiceGenerated:0,
+            _isInvoiceGenerated: 0,
             _status: 1,
           });
           ECountOhInTransitOrder = await this.ordersaleMainModel.count({
-            _workStatus: { $in: [18,20,21,29,30,31,32,33,34,41] },
+            _workStatus: { $in: [18, 20, 21, 29, 30, 31, 32, 33, 34, 41] },
             _isProductGenerated: 1,
-            _isInvoiceGenerated:1,
+            _isInvoiceGenerated: 1,
             _status: 1,
           });
           ECountOhProofPendingOrder = await this.ordersaleMainModel.count({
-            _workStatus: { $in: [36,37,38,] },
+            _workStatus: { $in: [36, 37, 38] },
             _status: 1,
           });
-          ECountOhTotalDeliveredOrder = await this.ordersaleMainModel.count({
-            _workStatus: { $in: [36,37,38,] },
+          ECountOhTotalDeliveredOrder =
+            await this.orderSaleHistoriesModel.count({
+              _createdAt: {
+                $gte: startOfMonth(dateTime),
+                $lte: endOfMonth(dateTime),
+              },
+              _type: { $in: [36, 37] },
+              _status: 1,
+            });
+
+          ECountOhTotalDeliveredMe = await this.orderSaleHistoriesModel.count({
+            _createdUserId: _userId_,
+            _createdAt: {
+              $gte: startOfMonth(dateTime),
+              $lte: endOfMonth(dateTime),
+            },
+            _type: { $in: [36, 37] },
             _status: 1,
           });
 
+          ECountOhInvoicedNW = await this.invoiceModel.aggregate([
+            {
+              $match: {
+                _createdAt: {
+                  $gte: startOfMonth(dateTime),
+                  $lte: endOfMonth(dateTime),
+                },
+                _status: 1,
+              },
+            },
+            {
+              $group: { _id: null, totalCount: { $sum: '$_netTotal' } },
+            },
+          ]);
 
+          ECountOhDeliveredNW = await this.deliveryModel.aggregate([
+            { $match: { _workStatus: { $in: [1, 2, 3, 4] } } },
+            { $project: { _id: 1 } },
 
+            {
+              $lookup: {
+                from: ModelNames.DELIVERY_ITEMS,
+                let: { deliveryId: '$_id' },
+                pipeline: [
+                  {
+                    $match: {
+                      _status: 1,
+                      $expr: { $eq: ['$_deliveryId', '$$deliveryId'] },
+                    },
+                  },
+                  { $project: { _invoiceId: 1 } },
 
+                  {
+                    $lookup: {
+                      from: ModelNames.INVOICES,
+                      let: { invoiceId: '$_invoiceId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$invoiceId'] },
+                          },
+                        },
+                        {
+                          $project: {
+                            _netTotal: 1,
+                          },
+                        },
+                      ],
+                      as: 'invoiceDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$invoiceDetails',
+                    },
+                  },
+                  {
+                    $group: {
+                      _id: null,
+                      total: {
+                        $sum: '$invoiceDetails._netTotal',
+                      },
+                    },
+                  },
+                ],
+                as: 'deliveryItems',
+              },
+            },
+            {
+              $unwind: {
+                path: '$deliveryItems',
+              },
+            },
 
-
-
-
-
+            {
+              $group: {
+                _id: null,
+                total: {
+                  $sum: '$deliveryItems.total',
+                },
+              },
+            },
+          ]);
         }
       }
 
@@ -594,20 +700,27 @@ export class AppService {
           EDashFinishedOrder: wCountFinishedOrder,
           EDashCriticalOrder:
             wCriticalWorkOrders.length == 0 ? 0 : wCriticalWorkOrders[0].count,
-            EDashBacklogOrder:
+          EDashBacklogOrder:
             wBacklogWorkOrders.length == 0 ? 0 : wBacklogWorkOrders[0].count,
-            EDashHighRiskOrder:wHighRiskWorkOrders.length == 0 ? 0 : wHighRiskWorkOrders[0].count,
+          EDashHighRiskOrder:
+            wHighRiskWorkOrders.length == 0 ? 0 : wHighRiskWorkOrders[0].count,
 
-
-            EDashOHPendingOrder:ECountOhPendingOrder,
-            EDashOHCustomOrder:ECountOhCustomOrder,
-            EDashOHStockOrder:ECountOhStockOrder,
-            EDashOHInProcessOrder:ECountOhInProcessOrder,
-            EDashOHFinishedOrder:ECountOhFinishedOrder,
-            EDashOHInTransitOrder:ECountOhInTransitOrder,
-            EDashOHProofPendingOrder:ECountOhProofPendingOrder,
-            EDashOHTotalDelivered:ECountOhTotalDeliveredOrder,
-          },
+          EDashOHPendingOrder: ECountOhPendingOrder,
+          EDashOHCustomOrder: ECountOhCustomOrder,
+          EDashOHStockOrder: ECountOhStockOrder,
+          EDashOHInProcessOrder: ECountOhInProcessOrder,
+          EDashOHFinishedOrder: ECountOhFinishedOrder,
+          EDashOHInTransitOrder: ECountOhInTransitOrder,
+          EDashOHProofPendingOrder: ECountOhProofPendingOrder,
+          EDashOHTotalDelivered: ECountOhTotalDeliveredOrder,
+          EDashOHTotalDeliveredMe: ECountOhTotalDeliveredMe,
+          EDashOHInvoicedNW:
+            ECountOhInvoicedNW.length == 0
+              ? 0
+              : ECountOhInvoicedNW[0].totalCount,
+          EDashOHDeliveredNW:
+            ECountOhDeliveredNW.length == 0 ? 0 : ECountOhDeliveredNW[0].total,
+        },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&

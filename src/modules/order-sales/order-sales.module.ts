@@ -46,7 +46,7 @@ import { OrderSaleItemsDocumentsSchema } from 'src/tableModels/order_sale_items_
         name: ModelNames.ORDER_SALE_HISTORIES,
         schema: OrderSaleHistoriesSchema,
       },
-      {
+      { 
         name: ModelNames.ORDER_SALES_DOCUMENTS,
         schema: OrderSalesDocumentsSchema,
       },
