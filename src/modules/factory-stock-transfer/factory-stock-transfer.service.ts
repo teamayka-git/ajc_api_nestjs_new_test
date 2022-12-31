@@ -342,6 +342,34 @@ export class FactoryStockTransferService {
               },
             );
           }
+
+
+
+
+          
+          if (dto.screenType.includes(103)) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.PRODUCT_TEMPS,
+                  let: { factoryTransferItemId: '$_id' },
+                  pipeline: [
+                    {
+                      $match: {_status:1,
+                        $expr: { $eq: ['$_factoryTransferItemId', '$$factoryTransferItemId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().productTempTableResponseFormat(
+                      1030,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'productTempList',
+                },
+              },
+              
+            );
+          }
           return pipeline;
         };
 

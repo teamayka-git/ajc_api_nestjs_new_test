@@ -109,7 +109,7 @@ var responseArray=[];
       });
 
    
-         await this.productTempModel.insertMany(arrayToProductTemp, {
+       var productTemp=  await this.productTempModel.insertMany(arrayToProductTemp, {
         session: transactionSession,
       });
 
@@ -121,7 +121,7 @@ var responseArray=[];
       );
 
       const responseJSON = { message: 'success', data: {
-list:responseArray
+list:productTemp
       } };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&

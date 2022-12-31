@@ -332,12 +332,25 @@ export class AppService {
           },
         ]);
       }
-
+//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
       var wCountPendingOrder = 0;
       var wCountFinishedOrder = 0;
       var wCriticalWorkOrders = [];
       var wBacklogWorkOrders = [];
       var wHighRiskWorkOrders = [];
+
+
+
+      var ECountOhPendingOrder=0;
+      var ECountOhCustomOrder=0;
+      var ECountOhStockOrder=0;
+      var ECountOhInProcessOrder=0;
+      var ECountOhFinishedOrder=0;
+      var ECountOhInTransitOrder=0;
+      var ECountOhProofPendingOrder=0;
+      var ECountOhTotalDeliveredOrder=0;
+
+
 
       if (dto.screenType.includes(5)) {
         //dashboard
@@ -514,6 +527,59 @@ export class AppService {
 
         } else {
           //not worker
+
+          ECountOhPendingOrder = await this.ordersaleMainModel.count({
+            _workStatus: { $nin: [2,24,25,26,27,28,34,35,36,37,38,39,] },
+            _status: 1,
+          });
+          
+          ECountOhCustomOrder = await this.ordersaleMainModel.count({
+            _type:{$in:[0,1]},
+            _workStatus: { $nin: [2,24,25,26,27,28,34,35,36,37,38,39,] },
+            _status: 1,
+          });
+          
+          ECountOhStockOrder = await this.ordersaleMainModel.count({
+            _type:{$in:[2,3]},
+            _workStatus: { $nin: [2,24,25,26,27,28,34,35,36,37,38,39,] },
+            _status: 1,
+          });
+
+
+          ECountOhInProcessOrder = await this.ordersaleMainModel.count({
+            _workStatus: { $nin: [2,24,25,26,27,28,34,35,36,37,38,39,] },
+            _isProductGenerated: 0,
+            _status: 1,
+          });
+          ECountOhFinishedOrder = await this.ordersaleMainModel.count({
+            _workStatus: { $nin: [2,24,25,26,27,28,34,35,36,37,38,39,] },
+            _isProductGenerated: 1,
+            _isInvoiceGenerated:0,
+            _status: 1,
+          });
+          ECountOhInTransitOrder = await this.ordersaleMainModel.count({
+            _workStatus: { $in: [18,20,21,29,30,31,32,33,34,41] },
+            _isProductGenerated: 1,
+            _isInvoiceGenerated:1,
+            _status: 1,
+          });
+          ECountOhProofPendingOrder = await this.ordersaleMainModel.count({
+            _workStatus: { $in: [36,37,38,] },
+            _status: 1,
+          });
+          ECountOhTotalDeliveredOrder = await this.ordersaleMainModel.count({
+            _workStatus: { $in: [36,37,38,] },
+            _status: 1,
+          });
+
+
+
+
+
+
+
+
+
         }
       }
 
@@ -530,8 +596,18 @@ export class AppService {
             wCriticalWorkOrders.length == 0 ? 0 : wCriticalWorkOrders[0].count,
             EDashBacklogOrder:
             wBacklogWorkOrders.length == 0 ? 0 : wBacklogWorkOrders[0].count,
-            EDashHighRiskOrder:wHighRiskWorkOrders.length == 0 ? 0 : wHighRiskWorkOrders[0].count
-        },
+            EDashHighRiskOrder:wHighRiskWorkOrders.length == 0 ? 0 : wHighRiskWorkOrders[0].count,
+
+
+            EDashOHPendingOrder:ECountOhPendingOrder,
+            EDashOHCustomOrder:ECountOhCustomOrder,
+            EDashOHStockOrder:ECountOhStockOrder,
+            EDashOHInProcessOrder:ECountOhInProcessOrder,
+            EDashOHFinishedOrder:ECountOhFinishedOrder,
+            EDashOHInTransitOrder:ECountOhInTransitOrder,
+            EDashOHProofPendingOrder:ECountOhProofPendingOrder,
+            EDashOHTotalDelivered:ECountOhTotalDeliveredOrder,
+          },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
