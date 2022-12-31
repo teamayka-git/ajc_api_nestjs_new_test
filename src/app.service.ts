@@ -339,7 +339,7 @@ export class AppService {
 
 
       if (dto.screenType.includes(5)) {//dashboard
-console.log("resultUserDetails     "+JSON.stringify(resultUserDetails));
+console.log("resultUserDetails dpt     "+JSON.stringify(resultUserDetails[0].employeeDetails.departmentDetails));
 
 
 
