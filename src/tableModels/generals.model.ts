@@ -102,6 +102,8 @@ _code:{
     1023 - Invoice prefix
     1024 - order head auto assign
     1025 - allowed litit for purchase adjustment
+    1026 - Worker dashboard backlog in hours
+    1027 - Worker dashboard high risk due date in days
 
 } 
 _type:{
@@ -114,6 +116,7 @@ _type:{
     6 - others
     7 - Software settings
     8 - Purchase
+    9 - Dashboard
 }
 _vlaueType:{
   0-number

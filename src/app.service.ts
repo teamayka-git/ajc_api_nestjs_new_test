@@ -39,6 +39,7 @@ import { User } from './tableModels/user.model';
 import { UserAttendance } from './tableModels/user_attendances.model';
 import { IndexUtils } from './utils/IndexUtils';
 import { SmsUtils } from './utils/smsUtils';
+import { endOfMonth, endOfToday, startOfMonth } from 'date-fns';
 
 const twilioClient = require('twilio')(
   'AC9bf34a6b64db1480be17402f908aded8',
@@ -157,7 +158,10 @@ export class AppService {
             let: { ordersaleId: '$_id' },
             pipeline: [
               {
-                $match: {_status:1, $expr: { $eq: ['$_orderSaleId', '$$ordersaleId'] } },
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_orderSaleId', '$$ordersaleId'] },
+                },
               },
               { $sort: { _index: 1 } },
             ],
@@ -235,72 +239,69 @@ export class AppService {
         ]);
       }
 
-        var aggregationArrayChild = [];
-        aggregationArrayChild.push(
-          {
-            $match: {
-              _id: new mongoose.Types.ObjectId(_userId_),
-            },
+      var aggregationArrayChild = [];
+      aggregationArrayChild.push(
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(_userId_),
           },
-          {
-            $project: {
-              _permissions: 1,
-              _email: 1,
-              _employeeId: 1,
-              _mobile: 1,
-              _name: 1,
-            },
+        },
+        {
+          $project: {
+            _permissions: 1,
+            _email: 1,
+            _employeeId: 1,
+            _mobile: 1,
+            _name: 1,
           },
-        );
+        },
+      );
 
-          aggregationArrayChild.push(
-            {
-              $lookup: {
-                from: ModelNames.EMPLOYEES,
-                let: { employeeId: '$_employeeId' },
-                pipeline: [
-                  {
-                    $match: { $expr: { $eq: ['$_id', '$$employeeId'] } },
-                  },
-                  { $project: new ModelWeight().employeeTableMinimum() },
-                  {
-                    $lookup: {
-                      from: ModelNames.DEPARTMENT,
-                      let: { departmentId: '$_departmentId' },
-                      pipeline: [
-                        {
-                          $match: {
-                            $expr: { $eq: ['$_id', '$$departmentId'] },
-                          },
-                        },
+      aggregationArrayChild.push(
+        {
+          $lookup: {
+            from: ModelNames.EMPLOYEES,
+            let: { employeeId: '$_employeeId' },
+            pipeline: [
+              {
+                $match: { $expr: { $eq: ['$_id', '$$employeeId'] } },
+              },
+              { $project: new ModelWeight().employeeTableMinimum() },
+              {
+                $lookup: {
+                  from: ModelNames.DEPARTMENT,
+                  let: { departmentId: '$_departmentId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$departmentId'] },
+                      },
+                    },
 
-                        { $project: new ModelWeight().departmentTableLight() },
-                      ],
-                      as: 'departmentDetails',
-                    },
-                  },
-                  {
-                    $unwind: {
-                      path: '$departmentDetails',
-                      preserveNullAndEmptyArrays: true,
-                    },
-                  },
-                ],
-                as: 'employeeDetails',
+                    { $project: new ModelWeight().departmentTableLight() },
+                  ],
+                  as: 'departmentDetails',
+                },
               },
-            },
-            {
-              $unwind: {
-                path: '$employeeDetails',
-                preserveNullAndEmptyArrays: true,
+              {
+                $unwind: {
+                  path: '$departmentDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
               },
-            },
-          );
-        
-        resultUserDetails = await this.userModel.aggregate(
-          aggregationArrayChild,
-        );
-      
+            ],
+            as: 'employeeDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$employeeDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      );
+
+      resultUserDetails = await this.userModel.aggregate(aggregationArrayChild);
 
       var resultGeneralsAppUpdate = [];
       var codeGeneralsAppUpdate = [];
@@ -332,34 +333,189 @@ export class AppService {
         ]);
       }
 
+      var wCountPendingOrder = 0;
+      var wCountFinishedOrder = 0;
+      var wCriticalWorkOrders = [];
+      var wBacklogWorkOrders = [];
+      var wHighRiskWorkOrders = [];
+
+      if (dto.screenType.includes(5)) {
+        //dashboard
+
+        var listGeneralsForDashboard = await this.generalsModel.aggregate([
+          {
+            $match: {
+              _code: { $in: [1026, 1027] },
+              _status: 1,
+            },
+          },
+          {
+            $project: {
+              _code: 1,
+              _number: 1,
+            },
+          },
+        ]);
+
+        if (
+          resultUserDetails[0].employeeDetails.departmentDetails._code == 1003
+        ) {
+          //worker
+          wCountPendingOrder = await this.osSetPrcosessModel.count({
+            _userId: _userId_,
+            _orderStatus: { $nin: [3, 5, 6, 7] },
+            _status: 1,
+          });
+          wCountFinishedOrder = await this.osSetPrcosessModel.count({
+            _userId: _userId_,
+            _orderStatus: 3,
+            _workCompletedTime: {
+              $gte: startOfMonth(dateTime).getTime(),
+              $lte: endOfMonth(dateTime).getTime(),
+            },
+            _status: 1,
+          });
+          wCriticalWorkOrders = await this.osSetPrcosessModel.aggregate([
+            {
+              $match: {
+                _userId: new mongoose.Types.ObjectId(_userId_),
+                _orderStatus: { $nin: [3, 5, 6, 7] },
+                _status: 1,
+              },
+            },
+            { $project: { _workAssignedTime: 1, _processId: 1 } },
+            {
+              $lookup: {
+                from: ModelNames.PROCESS_MASTER,
+                let: { processId: '$_processId' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$_id', '$$processId'] },
+                    },
+                  },
+                  { $project: { _maxHours: 1 } },
+                ],
+                as: 'processDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$processDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $project: {
+                _workAssignedTime: 1,
+                maxTime: {
+                  $add: [
+                    { $multiply: ['$processDetails._maxHours', 60, 60, 1000] },
+                    dateTime,
+                  ],
+                },
+              },
+            },
+            {
+              $match: {
+                $expr: {
+                  $gte: ['$_workAssignedTime', '$maxTime'],
+                },
+              },
+            },
+            { $count: 'count' },
+          ]);
+
+          var indexBacklog = listGeneralsForDashboard.findIndex(
+            (it) => it._code == 1026,
+          );
+          if (indexBacklog == -1) {
+            throw new HttpException(
+              'general item backlog not found',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
+          wBacklogWorkOrders = await this.osSetPrcosessModel.aggregate([
+            {
+              $match: {
+                _userId: new mongoose.Types.ObjectId(_userId_),
+                _orderStatus: { $nin: [3, 5, 6, 7] },
+                _workAssignedTime: {
+                  $gte:
+                    dateTime +
+                    (listGeneralsForDashboard[indexBacklog]._number *
+                      60 *
+                      60 *
+                      1000),
+                },
+                _status: 1,
+              },
+            },
+            { $project: { _id: 1 } },
+
+            { $count: 'count' },
+          ]);
+          var indexHighrisk = listGeneralsForDashboard.findIndex(
+            (it) => it._code == 1027,
+          );
+          if (indexBacklog == -1) {
+            throw new HttpException(
+              'general item High risk not found',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
 
 
+          // (dateTime+ (listGeneralsForDashboard[indexHighrisk]._number *
+          //   60 *
+          //   60 *
+          //   1000))
+          var dueDateEndTimeHighRisk=(endOfToday().getTime()+(listGeneralsForDashboard[indexHighrisk]._number *24*
+              60 *
+              60 *
+              1000));
 
 
-      var wCountPendingOrder=0;
+          wHighRiskWorkOrders = await this.osSetPrcosessModel.aggregate([
+            {
+              $match: {
+                _userId: new mongoose.Types.ObjectId(_userId_),
+                _orderStatus: { $nin: [3, 5, 6, 7] },
+               
+                _status: 1,
+              },
+            },
+            { $project: { _id: 1 ,_orderSaleId:1} },
+            {
+              $lookup: {
+                from: ModelNames.ORDER_SALES_MAIN,
+                let: { orderId: '$_orderSaleId' },
+                pipeline: [
+                  {
+                    $match: {
 
-      if (dto.screenType.includes(5)) {//dashboard
-        if(resultUserDetails[0].employeeDetails.departmentDetails._code==1003){//worker
-          wCountPendingOrder=await  this.osSetPrcosessModel.count({_userId:_userId_,_orderStatus:{$nin:[3,5,6,7]},_status:1});
-        }else{//not worker
+                      _dueDate:{$lte:dueDateEndTimeHighRisk},
+                      $expr: { $eq: ['$_id', '$$orderId'] },
+                    },
+                  },
+                  { $project: { _id: 1 } },
+                ],
+                as: 'orderDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$orderDetails',
+              },
+            },
+            { $count: 'count' },
+          ]);
 
+
+        } else {
+          //not worker
         }
-
-
-
-
-        
       }
-
-
-
-
-
-
-
-
-
-
 
       const responseJSON = {
         message: 'success',
@@ -368,8 +524,13 @@ export class AppService {
           userDetails: resultUserDetails[0],
           appUpdates: resultGeneralsAppUpdate,
 
-EDashWPendingOrder:wCountPendingOrder
-
+          EDashWPendingOrder: wCountPendingOrder,
+          EDashFinishedOrder: wCountFinishedOrder,
+          EDashCriticalOrder:
+            wCriticalWorkOrders.length == 0 ? 0 : wCriticalWorkOrders[0].count,
+            EDashBacklogOrder:
+            wBacklogWorkOrders.length == 0 ? 0 : wBacklogWorkOrders[0].count,
+            EDashHighRiskOrder:wHighRiskWorkOrders.length == 0 ? 0 : wHighRiskWorkOrders[0].count
         },
       };
       if (
@@ -1668,10 +1829,10 @@ EDashWPendingOrder:wCountPendingOrder
         { _name: 'Not as per requirement' },
         {
           $setOnInsert: {
-            _type: [0, 1, 2, 3, 4, 5,7,10,11],
+            _type: [0, 1, 2, 3, 4, 5, 7, 10, 11],
 
             _dataGuard: [1, 2],
-            _uid:1,
+            _uid: 1,
             _createdUserId: null,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -1687,7 +1848,7 @@ EDashWPendingOrder:wCountPendingOrder
         {
           $setOnInsert: {
             _type: [6],
-            _uid:2,
+            _uid: 2,
             _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
@@ -1703,7 +1864,7 @@ EDashWPendingOrder:wCountPendingOrder
         {
           $setOnInsert: {
             _type: [8],
-            _uid:3,
+            _uid: 3,
             _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
@@ -1719,7 +1880,7 @@ EDashWPendingOrder:wCountPendingOrder
         {
           $setOnInsert: {
             _type: [9],
-            _uid:4,
+            _uid: 4,
             _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
@@ -2331,7 +2492,7 @@ EDashWPendingOrder:wCountPendingOrder
         },
         { upsert: true, new: true, session: transactionSession },
       );
-      await this.generalsModel.findOneAndUpdate( 
+      await this.generalsModel.findOneAndUpdate(
         { _code: 1023 },
         {
           $setOnInsert: {
@@ -2351,7 +2512,7 @@ EDashWPendingOrder:wCountPendingOrder
         },
         { upsert: true, new: true, session: transactionSession },
       );
-      await this.generalsModel.findOneAndUpdate( 
+      await this.generalsModel.findOneAndUpdate(
         { _code: 1024 },
         {
           $setOnInsert: {
@@ -2371,7 +2532,7 @@ EDashWPendingOrder:wCountPendingOrder
         },
         { upsert: true, new: true, session: transactionSession },
       );
-      await this.generalsModel.findOneAndUpdate( 
+      await this.generalsModel.findOneAndUpdate(
         { _code: 1025 },
         {
           $setOnInsert: {
@@ -2381,6 +2542,46 @@ EDashWPendingOrder:wCountPendingOrder
             _vlaueType: 0,
             _json: { basic: 'Basic' },
             _type: 8,
+            _dataGuard: [1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+      await this.generalsModel.findOneAndUpdate(
+        { _code: 1026 },
+        {
+          $setOnInsert: {
+            _name: 'Worker dashboard backlog in hours',
+            _string: '',
+            _number: 72,
+            _vlaueType: 0,
+            _json: { basic: 'Basic' },
+            _type: 9,
+            _dataGuard: [1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+      await this.generalsModel.findOneAndUpdate(
+        { _code: 1027 },
+        {
+          $setOnInsert: {
+            _name: 'Worker dashboard high risk due date in days',
+            _string: '',
+            _number: 2,
+            _vlaueType: 0,
+            _json: { basic: 'Basic' },
+            _type: 9,
             _dataGuard: [1, 2],
             _createdUserId: null,
             _createdAt: dateTime,
