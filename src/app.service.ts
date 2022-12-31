@@ -235,7 +235,6 @@ export class AppService {
         ]);
       }
 
-      if (dto.screenType.includes(1)) {
         var aggregationArrayChild = [];
         aggregationArrayChild.push(
           {
@@ -254,7 +253,6 @@ export class AppService {
           },
         );
 
-        if (dto.screenType.includes(1)) {
           aggregationArrayChild.push(
             {
               $lookup: {
@@ -298,11 +296,11 @@ export class AppService {
               },
             },
           );
-        }
+        
         resultUserDetails = await this.userModel.aggregate(
           aggregationArrayChild,
         );
-      }
+      
 
       var resultGeneralsAppUpdate = [];
       var codeGeneralsAppUpdate = [];
@@ -333,6 +331,31 @@ export class AppService {
           },
         ]);
       }
+
+
+
+
+
+
+
+      if (dto.screenType.includes(5)) {//dashboard
+console.log("resultUserDetails     "+JSON.stringify(resultUserDetails));
+
+
+
+
+        
+      }
+
+
+
+
+
+
+
+
+
+
 
       const responseJSON = {
         message: 'success',
