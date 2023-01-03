@@ -2085,6 +2085,38 @@ export class ProductsService {
           },
         });
       }
+
+
+      if (dto.screenType.includes(117)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.PRODUCTS,
+              let: { designerId: '$_designerId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$designerId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().productTableResponseFormat(
+                  1180,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'designerDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$designerDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+
       var result = await this.productModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
