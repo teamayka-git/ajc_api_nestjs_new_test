@@ -948,6 +948,7 @@ export class ModelWeight {
     return {
       _userId: 1,
       _approveStatus: 1,
+      _uid:1,
     };
   }
   public employeeStockInHandTableMinimum(): Object {
@@ -955,6 +956,7 @@ export class ModelWeight {
       _id: 1,
 
       _userId: 1,
+      _uid:1,
       _approveStatus: 1,
       _status: 1,
     };
@@ -965,6 +967,7 @@ export class ModelWeight {
 
       _userId: 1,
       _approveStatus: 1,
+      _uid:1,
       _createdUserId: 1,
       _createdAt: 1,
       _status: 1,
@@ -976,6 +979,7 @@ export class ModelWeight {
 
       _userId: 1,
       _approveStatus: 1,
+      _uid:1,
 
       _createdUserId: 1,
       _createdAt: 1,
