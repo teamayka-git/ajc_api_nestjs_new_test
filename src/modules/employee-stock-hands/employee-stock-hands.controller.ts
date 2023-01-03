@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { EmployeeStockHandsService } from './employee-stock-hands.service';
-import { EmployeeStockInHandApproveStatusChangeDto, EmployeeStockInHandCreateDto, EmployeeStockInHandItemDeliveryStatusChangeDto, EmployeeStockInHandListDto, EmployeeStockInHandStatusChangeDto } from './employee_stock_in_hands.dto';
+import { EmployeeStockInHandApproveStatusChangeDto, EmployeeStockInHandCreateDto, EmployeeStockInHandItemDeliveryStatusChangeDto, EmployeeStockInHandListDto, EmployeeStockInHandStatusChangeDto, ListInHandDto } from './employee_stock_in_hands.dto';
 
 @ApiTags('Employee stock in hand Docs')
 @Controller('employee-stock-hands')
@@ -40,5 +40,10 @@ export class EmployeeStockHandsController {
   @Post('list')
   list(@Body() dto: EmployeeStockInHandListDto) {
     return this.employeeStockHandsService.list(dto);
+  }
+  
+  @Post('listStockInHand')
+  listStockInHand(@Body() dto: ListInHandDto) {
+    return this.employeeStockHandsService.listStockInHand(dto);
   }
 }

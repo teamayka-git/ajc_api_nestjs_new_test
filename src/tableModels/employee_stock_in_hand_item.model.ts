@@ -52,6 +52,6 @@ EmployeeStockInHandsItemSchema.index({ _status: 1 });
 _deliveryStatus:{
   -1 - pending
   1 - accept
-  2 - reject
+  2 - return to ajc
 }
  */

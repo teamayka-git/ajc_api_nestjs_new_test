@@ -10,6 +10,7 @@ import {
   EmployeeStockInHandItemDeliveryStatusChangeDto,
   EmployeeStockInHandListDto,
   EmployeeStockInHandStatusChangeDto,
+  ListInHandDto,
 } from './employee_stock_in_hands.dto';
 import { GlobalConfig } from 'src/config/global_config';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
@@ -91,8 +92,11 @@ export class EmployeeStockHandsService {
         _stockStatus: 1,
         _status: 1,
       });
-      if(resultProducts.length != arrayProductIds.length){
-        throw new HttpException('Product is not in stock', HttpStatus.INTERNAL_SERVER_ERROR);
+      if (resultProducts.length != arrayProductIds.length) {
+        throw new HttpException(
+          'Product is not in stock',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
 
       var result = await this.employeeStockInHandModel.insertMany(
@@ -269,14 +273,14 @@ export class EmployeeStockHandsService {
     try {
       var arrayAggregation = [];
 
-        if (dto.searchingText != '') {
-          //todo
-          arrayAggregation.push({
-            $match: {
-              $or: [{ _uid: dto.searchingText}],
-            },
-          });
-        }
+      if (dto.searchingText != '') {
+        //todo
+        arrayAggregation.push({
+          $match: {
+            $or: [{ _uid: dto.searchingText }],
+          },
+        });
+      }
       if (dto.employeeStockInHandIds.length > 0) {
         var newSettingsId = [];
         dto.employeeStockInHandIds.map((mapItem) => {
@@ -300,14 +304,16 @@ export class EmployeeStockHandsService {
           $match: { _approvedStatus: { $in: dto.approvedStatus } },
         });
       }
-      if(dto.createdDateEnd !=-1 || dto.createdDateStart!=-1){
-        if(dto.createdDateEnd!=-1){
-          arrayAggregation.push({ $match: { _createdAt:{$lte:dto.createdDateEnd}  } });
-
+      if (dto.createdDateEnd != -1 || dto.createdDateStart != -1) {
+        if (dto.createdDateEnd != -1) {
+          arrayAggregation.push({
+            $match: { _createdAt: { $lte: dto.createdDateEnd } },
+          });
         }
-        if(dto.createdDateStart!=-1){
-          arrayAggregation.push({ $match: { _createdAt:{$gte:dto.createdDateStart}  } });
-
+        if (dto.createdDateStart != -1) {
+          arrayAggregation.push({
+            $match: { _createdAt: { $gte: dto.createdDateStart } },
+          });
         }
       }
 
@@ -367,7 +373,7 @@ export class EmployeeStockHandsService {
           },
         );
       }
- 
+
       if (dto.screenType.includes(101)) {
         const employeeStockInHandItemsPipeline = () => {
           const pipeline = [];
@@ -387,42 +393,35 @@ export class EmployeeStockHandsService {
           );
 
           if (dto.screenType.includes(102)) {
-
-
-
-
             const productPipeline = () => {
               const pipeline = [];
-              pipeline.push( {
-                $match: {
-                  $expr: { $eq: ['$_id', '$$productId'] },
+              pipeline.push(
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$productId'] },
+                  },
                 },
-              },
-              new ModelWeightResponseFormat().productTableResponseFormat(
-                1020,
-                dto.responseFormat,
-              ),);
-
-
-
-
-
-
+                new ModelWeightResponseFormat().productTableResponseFormat(
+                  1020,
+                  dto.responseFormat,
+                ),
+              );
 
               if (dto.screenType.includes(103)) {
-
                 const designDocumentsLinkingPipeline = () => {
                   const pipeline = [];
-                  pipeline.push(    {
-                    $match: {
-                      $expr: { $eq: ['$_id', '$$designerId'] },
+                  pipeline.push(
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$designerId'] },
+                      },
                     },
-                  },
-                  new ModelWeightResponseFormat().productTableResponseFormat(
-                    1030,
-                    dto.responseFormat,
-                  ),);
-        
+                    new ModelWeightResponseFormat().productTableResponseFormat(
+                      1030,
+                      dto.responseFormat,
+                    ),
+                  );
+
                   if (dto.screenType.includes(104)) {
                     const productDocumentsLinkingPipeline = () => {
                       const pipeline = [];
@@ -440,8 +439,9 @@ export class EmployeeStockHandsService {
                           dto.responseFormat,
                         ),
                       );
-            
-                      const productsDocumentsGlobalGallery = dto.screenType.includes(105);
+
+                      const productsDocumentsGlobalGallery =
+                        dto.screenType.includes(105);
                       if (productsDocumentsGlobalGallery) {
                         pipeline.push(
                           {
@@ -451,7 +451,9 @@ export class EmployeeStockHandsService {
                               pipeline: [
                                 {
                                   $match: {
-                                    $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                                    $expr: {
+                                      $eq: ['$_id', '$$globalGalleryId'],
+                                    },
                                   },
                                 },
                                 new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
@@ -472,7 +474,7 @@ export class EmployeeStockHandsService {
                       }
                       return pipeline;
                     };
-            
+
                     pipeline.push({
                       $lookup: {
                         from: ModelNames.PRODUCT_DOCUMENTS_LINKIGS,
@@ -483,12 +485,8 @@ export class EmployeeStockHandsService {
                     });
                   }
                   return pipeline;
-                }
-        
-               
-        
-        
-        
+                };
+
                 pipeline.push(
                   {
                     $lookup: {
@@ -507,31 +505,15 @@ export class EmployeeStockHandsService {
                 );
               }
 
-
-
-
-
-
-
-
-
-
               return pipeline;
-            }
-
-
-
-
-
-
-
+            };
 
             pipeline.push(
               {
                 $lookup: {
                   from: ModelNames.PRODUCTS,
                   let: { productId: '$_productId' },
-                  pipeline:productPipeline(),
+                  pipeline: productPipeline(),
                   as: 'productDetails',
                 },
               },
@@ -580,6 +562,259 @@ export class EmployeeStockHandsService {
         });
 
         var resultTotalCount = await this.employeeStockInHandModel
+          .aggregate(arrayAggregation)
+          .session(transactionSession);
+        if (resultTotalCount.length > 0) {
+          totalCount = resultTotalCount[0].totalCount;
+        }
+      }
+
+      const responseJSON = {
+        message: 'success',
+        data: { list: result, totalCount: totalCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async listStockInHand(dto: ListInHandDto) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var arrayAggregation = [];
+
+      arrayAggregation.push({ $match: { _deliveryStatus: { $in: [1] } } });
+
+      const employeeStockInHandPipeline = () => {
+        const pipeline = [];
+        pipeline.push({
+          $match: {
+            _approvedStatus: 1,
+            $expr: { $eq: ['$_id', '$$employeeStockInHandItemId'] },
+          },
+        });
+
+        if (dto.userIds.length > 0) {
+          var newSettingsId = [];
+          dto.userIds.map((mapItem) => {
+            newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+          });
+          pipeline.push({
+            $match: { _userId: { $in: newSettingsId } },
+          });
+        }
+
+        pipeline.push({
+          $project: {
+            _id: 1,
+          },
+        });
+        return pipeline;
+      };
+
+      arrayAggregation.push(
+        {
+          $lookup: {
+            from: ModelNames.EMPLOYEE_STOCK_IN_HANDS,
+            let: { employeeStockInHandItemId: '$_employeeStockInHandsId' },
+            pipeline: employeeStockInHandPipeline(),
+            as: 'globalGalleryDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$globalGalleryDetails',
+          },
+        },
+      );
+
+      arrayAggregation.push({ $match: { _status: { $in: [1] } } });
+      arrayAggregation.push({ $sort: { _id: -1 } });
+
+      if (dto.skip != -1) {
+        arrayAggregation.push({ $skip: dto.skip });
+        arrayAggregation.push({ $limit: dto.limit });
+      }
+      arrayAggregation.push(
+        new ModelWeightResponseFormat().employeeStockInHandItemsTableResponseFormat(
+          0,
+          dto.responseFormat,
+        ),
+      );
+
+      if (dto.screenType.includes(102)) {
+        const productPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$productId'] },
+              },
+            },
+            new ModelWeightResponseFormat().productTableResponseFormat(
+              1020,
+              dto.responseFormat,
+            ),
+          );
+
+          if (dto.screenType.includes(103)) {
+            const designDocumentsLinkingPipeline = () => {
+              const pipeline = [];
+              pipeline.push(
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$designerId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().productTableResponseFormat(
+                  1030,
+                  dto.responseFormat,
+                ),
+              );
+
+              if (dto.screenType.includes(104)) {
+                const productDocumentsLinkingPipeline = () => {
+                  const pipeline = [];
+                  pipeline.push(
+                    {
+                      $match: {
+                        _status: 1,
+                        $expr: {
+                          $and: [{ $eq: ['$_productId', '$$productId'] }],
+                        },
+                      },
+                    },
+                    new ModelWeightResponseFormat().productDocumentLinkingTableResponseFormat(
+                      1040,
+                      dto.responseFormat,
+                    ),
+                  );
+
+                  const productsDocumentsGlobalGallery =
+                    dto.screenType.includes(105);
+                  if (productsDocumentsGlobalGallery) {
+                    pipeline.push(
+                      {
+                        $lookup: {
+                          from: ModelNames.GLOBAL_GALLERIES,
+                          let: { globalGalleryId: '$_globalGalleryId' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                              },
+                            },
+                            new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                              1050,
+                              dto.responseFormat,
+                            ),
+                          ],
+                          as: 'globalGalleryDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$globalGalleryDetails',
+                          preserveNullAndEmptyArrays: true,
+                        },
+                      },
+                    );
+                  }
+                  return pipeline;
+                };
+
+                pipeline.push({
+                  $lookup: {
+                    from: ModelNames.PRODUCT_DOCUMENTS_LINKIGS,
+                    let: { productId: '$_id' },
+                    pipeline: productDocumentsLinkingPipeline(),
+                    as: 'documentList',
+                  },
+                });
+              }
+              return pipeline;
+            };
+
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.PRODUCTS,
+                  let: { designerId: '$_designerId' },
+                  pipeline: designDocumentsLinkingPipeline(),
+                  as: 'designerDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$designerDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+
+          return pipeline;
+        };
+
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.PRODUCTS,
+              let: { productId: '$_productId' },
+              pipeline: productPipeline(),
+              as: 'productDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$productDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      var result = await this.employeeStockInHandItemModel
+        .aggregate(arrayAggregation)
+        .session(transactionSession);
+
+      var totalCount = 0;
+      if (dto.screenType.includes(0)) {
+        //Get total count
+        var limitIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$limit') === true,
+        );
+        if (limitIndexCount != -1) {
+          arrayAggregation.splice(limitIndexCount, 1);
+        }
+        var skipIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$skip') === true,
+        );
+        if (skipIndexCount != -1) {
+          arrayAggregation.splice(skipIndexCount, 1);
+        }
+        arrayAggregation.push({
+          $group: { _id: null, totalCount: { $sum: 1 } },
+        });
+
+        var resultTotalCount = await this.employeeStockInHandItemModel
           .aggregate(arrayAggregation)
           .session(transactionSession);
         if (resultTotalCount.length > 0) {
