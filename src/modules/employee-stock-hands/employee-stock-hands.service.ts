@@ -635,12 +635,12 @@ export class EmployeeStockHandsService {
             from: ModelNames.EMPLOYEE_STOCK_IN_HANDS,
             let: { employeeStockInHandItemId: '$_employeeStockInHandsId' },
             pipeline: employeeStockInHandPipeline(),
-            as: 'globalGalleryDetails',
+            as: 'employeeStockInHandMongo',
           },
         },
         {
           $unwind: {
-            path: '$globalGalleryDetails',
+            path: '$employeeStockInHandMongo',
           },
         },
       );
