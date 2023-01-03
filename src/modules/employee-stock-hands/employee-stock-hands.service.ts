@@ -40,7 +40,7 @@ export class EmployeeStockHandsService {
 
       var resultCounterFactoryStockTransfer =
         await this.counterModel.findOneAndUpdate(
-          { _tableName: ModelNames.FACTORY_STOCK_TRANSFERS },
+          { _tableName: ModelNames.EMPLOYEE_STOCK_IN_HANDS },
           {
             $inc: {
               _count: dto.array.length,
