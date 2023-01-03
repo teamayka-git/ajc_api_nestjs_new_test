@@ -2088,22 +2088,91 @@ export class ProductsService {
 
 
       if (dto.screenType.includes(118)) {
+
+        const designDocumentsLinkingPipeline = () => {
+          const pipeline = [];
+          pipeline.push(    {
+            $match: {
+              $expr: { $eq: ['$_id', '$$designerId'] },
+            },
+          },
+          new ModelWeightResponseFormat().productTableResponseFormat(
+            1180,
+            dto.responseFormat,
+          ),);
+
+          if (dto.screenType.includes(119)) {
+            const productDocumentsLinkingPipeline = () => {
+              const pipeline = [];
+              pipeline.push(
+                {
+                  $match: {
+                    _status: 1,
+                    $expr: {
+                      $and: [{ $eq: ['$_productId', '$$productId'] }],
+                    },
+                  },
+                },
+                new ModelWeightResponseFormat().productDocumentLinkingTableResponseFormat(
+                  1190,
+                  dto.responseFormat,
+                ),
+              );
+    
+              const productsDocumentsGlobalGallery = dto.screenType.includes(120);
+              if (productsDocumentsGlobalGallery) {
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.GLOBAL_GALLERIES,
+                      let: { globalGalleryId: '$_globalGalleryId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                          },
+                        },
+                        new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                          1200,
+                          dto.responseFormat,
+                        ),
+                      ],
+                      as: 'globalGalleryDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$globalGalleryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                );
+              }
+              return pipeline;
+            };
+    
+            pipeline.push({
+              $lookup: {
+                from: ModelNames.PRODUCT_DOCUMENTS_LINKIGS,
+                let: { productId: '$_id' },
+                pipeline: productDocumentsLinkingPipeline(),
+                as: 'documentList',
+              },
+            });
+          }
+          return pipeline;
+        }
+
+       
+
+
+
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.PRODUCTS,
               let: { designerId: '$_designerId' },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: { $eq: ['$_id', '$$designerId'] },
-                  },
-                },
-                new ModelWeightResponseFormat().productTableResponseFormat(
-                  1180,
-                  dto.responseFormat,
-                ),
-              ],
+              pipeline: designDocumentsLinkingPipeline(),
               as: 'designerDetails',
             },
           },
