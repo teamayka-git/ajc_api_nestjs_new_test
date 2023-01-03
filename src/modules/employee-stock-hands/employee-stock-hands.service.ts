@@ -54,13 +54,15 @@ export class EmployeeStockHandsService {
             });
           });
     
-          await this.employeeStockInHandModel.insertMany(arrayToPurchaseBooking, {
+         var result= await this.employeeStockInHandModel.insertMany(arrayToPurchaseBooking, {
             session: transactionSession,
           });
           await this.employeeStockInHandItemModel.insertMany(arrayToPurchaseBookingItem, {
             session: transactionSession,
           });
     
+
+          console.log("__result   stockinhand    "+JSON.stringify(result));
           const responseJSON = { message: 'success', data: {} };
           if (
             process.env.RESPONSE_RESTRICT == 'true' &&
