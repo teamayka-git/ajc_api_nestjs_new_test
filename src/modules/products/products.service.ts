@@ -2087,7 +2087,7 @@ export class ProductsService {
       }
 
 
-      if (dto.screenType.includes(117)) {
+      if (dto.screenType.includes(118)) {
         arrayAggregation.push(
           {
             $lookup: {
