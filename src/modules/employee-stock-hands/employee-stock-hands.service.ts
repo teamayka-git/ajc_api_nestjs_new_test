@@ -600,50 +600,50 @@ export class EmployeeStockHandsService {
     try {
       var arrayAggregation = [];
 
-      arrayAggregation.push({ $match: { _deliveryStatus: { $in: [1] } } });
+      // arrayAggregation.push({ $match: { _deliveryStatus: { $in: [1] } } });
 
-      const employeeStockInHandPipeline = () => {
-        const pipeline = [];
-        pipeline.push({
-          $match: {
-            _approvedStatus: 1,
-            $expr: { $eq: ['$_id', '$$employeeStockInHandItemId'] },
-          },
-        });
+      // const employeeStockInHandPipeline = () => {
+      //   const pipeline = [];
+      //   pipeline.push({
+      //     $match: {
+      //       _approvedStatus: 1,
+      //       $expr: { $eq: ['$_id', '$$employeeStockInHandItemId'] },
+      //     },
+      //   });
 
-        if (dto.userIds.length > 0) {
-          var newSettingsId = [];
-          dto.userIds.map((mapItem) => {
-            newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
-          });
-          pipeline.push({
-            $match: { _userId: { $in: newSettingsId } },
-          });
-        }
+      //   if (dto.userIds.length > 0) {
+      //     var newSettingsId = [];
+      //     dto.userIds.map((mapItem) => {
+      //       newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+      //     });
+      //     pipeline.push({
+      //       $match: { _userId: { $in: newSettingsId } },
+      //     });
+      //   }
 
-        pipeline.push({
-          $project: {
-            _id: 1,
-          },
-        });
-        return pipeline;
-      };
+      //   pipeline.push({
+      //     $project: {
+      //       _id: 1,
+      //     },
+      //   });
+      //   return pipeline;
+      // };
 
-      arrayAggregation.push(
-        {
-          $lookup: {
-            from: ModelNames.EMPLOYEE_STOCK_IN_HANDS,
-            let: { employeeStockInHandItemId: '$_employeeStockInHandsId' },
-            pipeline: employeeStockInHandPipeline(),
-            as: 'globalGalleryDetails',
-          },
-        },
-        {
-          $unwind: {
-            path: '$globalGalleryDetails',
-          },
-        },
-      );
+      // arrayAggregation.push(
+      //   {
+      //     $lookup: {
+      //       from: ModelNames.EMPLOYEE_STOCK_IN_HANDS,
+      //       let: { employeeStockInHandItemId: '$_employeeStockInHandsId' },
+      //       pipeline: employeeStockInHandPipeline(),
+      //       as: 'globalGalleryDetails',
+      //     },
+      //   },
+      //   {
+      //     $unwind: {
+      //       path: '$globalGalleryDetails',
+      //     },
+      //   },
+      // );
 
       arrayAggregation.push({ $match: { _status: { $in: [1] } } });
       arrayAggregation.push({ $sort: { _id: -1 } });
