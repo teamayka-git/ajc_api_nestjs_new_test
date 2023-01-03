@@ -521,7 +521,7 @@ export class EmployeeStockHandsService {
                 $lookup: {
                   from: ModelNames.PRODUCTS,
                   let: { productId: '$_productId' },
-                  pipeline:productPipeline,
+                  pipeline:productPipeline(),
                   as: 'productDetails',
                 },
               },
