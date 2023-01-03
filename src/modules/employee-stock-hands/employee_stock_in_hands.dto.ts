@@ -23,7 +23,7 @@ const descriptionListSortType = '0-Created Date, 1-Status,2-Approved status';
 const descriptionApprovedStatus =
   '  -1 - pending, 0 - rejected, 1 - approved';
   const descriptionDeliveryStatus =
-    '   -1 - pending, 1 - accept,  2 - reject';
+    '   -1 - pending, 1 - delivered,  2 - returned to ajc';
 
 
   class EmployeeStockInHandCreateListItem {
