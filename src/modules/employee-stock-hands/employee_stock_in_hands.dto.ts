@@ -118,9 +118,9 @@ export class EmployeeStockInHandListDto {
   @ApiProperty({})
   skip: number;
 
-  // @IsString()
-  // @ApiProperty({})
-  // searchingText: string;
+  @IsString()
+  @ApiProperty({})
+  searchingText: string;
 }
 
 export class EmployeeStockInHandStatusChangeDto {

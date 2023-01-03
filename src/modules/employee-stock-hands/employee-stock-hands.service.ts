@@ -269,14 +269,14 @@ export class EmployeeStockHandsService {
     try {
       var arrayAggregation = [];
 
-      //   if (dto.searchingText != '') {
-      //     //todo
-      //     arrayAggregation.push({
-      //       $match: {
-      //         $or: [{ _barcode: new RegExp(dto.searchingText, 'i') }],
-      //       },
-      //     });
-      //   }
+        if (dto.searchingText != '') {
+          //todo
+          arrayAggregation.push({
+            $match: {
+              $or: [{ _uid: dto.searchingText}],
+            },
+          });
+        }
       if (dto.employeeStockInHandIds.length > 0) {
         var newSettingsId = [];
         dto.employeeStockInHandIds.map((mapItem) => {
