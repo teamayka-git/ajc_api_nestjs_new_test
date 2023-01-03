@@ -109,6 +109,14 @@ export class EmployeeStockInHandListDto {
   approvedStatus: number[];
 
 
+  @IsNumber()
+  @ApiProperty({})
+  createdDateStart: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  createdDateEnd: number;
+
 
   @IsNumber()
   @ApiProperty({})

@@ -300,6 +300,16 @@ export class EmployeeStockHandsService {
           $match: { _approvedStatus: { $in: dto.approvedStatus } },
         });
       }
+      if(dto.createdDateEnd !=-1 || dto.createdDateStart!=-1){
+        if(dto.createdDateEnd!=-1){
+          arrayAggregation.push({ $match: { _createdAt:{$lte:dto.createdDateEnd}  } });
+
+        }
+        if(dto.createdDateStart!=-1){
+          arrayAggregation.push({ $match: { _createdAt:{$gte:dto.createdDateStart}  } });
+
+        }
+      }
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {
