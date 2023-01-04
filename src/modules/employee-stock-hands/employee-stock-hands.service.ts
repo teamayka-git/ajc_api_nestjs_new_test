@@ -215,7 +215,7 @@ export class EmployeeStockHandsService {
         });
 
         var checkHoldStatus = await this.productModel.find({
-          _productId: { $in: arrayProductIds },
+          _id: { $in: arrayProductIds },
           _stockStatus: 1,
           _status: 1,
         });
@@ -230,7 +230,7 @@ export class EmployeeStockHandsService {
 
         await this.productModel.updateMany(
           {
-            _productId: { $in: arrayProductIds },
+            _id: { $in: arrayProductIds },
           },
           {
             $set: {
