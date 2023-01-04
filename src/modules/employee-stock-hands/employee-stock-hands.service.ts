@@ -10,6 +10,7 @@ import {
   EmployeeStockInHandItemDeliveryStatusChangeDto,
   EmployeeStockInHandListDto,
   EmployeeStockInHandStatusChangeDto,
+  InHandReturnToManufactureDto,
   ListInHandDto,
 } from './employee_stock_in_hands.dto';
 import { GlobalConfig } from 'src/config/global_config';
@@ -199,6 +200,34 @@ export class EmployeeStockHandsService {
         },
         { new: true, session: transactionSession },
       );
+
+      if (dto.approvedStatus == 1) {
+        //approved
+
+        var resultStockInHandItems =
+          await this.employeeStockInHandItemModel.find({
+            _status: 1,
+            _employeeStockInHandsId: { $in: dto.employeeStockInHandIds },
+          });
+        var arrayProductIds = [];
+        resultStockInHandItems.forEach((element) => {
+          arrayProductIds.push(element._productId);
+        });
+
+        await this.productModel.updateMany(
+          {
+            _productId: { $in: arrayProductIds },
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _stockStatus: 2,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
 
       const responseJSON = { message: 'success', data: result };
       if (
@@ -825,6 +854,66 @@ export class EmployeeStockHandsService {
       const responseJSON = {
         message: 'success',
         data: { list: result, totalCount: totalCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async returnToManufacture(
+    dto: InHandReturnToManufactureDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      await this.employeeStockInHandItemModel.updateMany(
+        {
+          _productId: { $in: dto.productIds },
+          _deliveryStatus: -1,
+        },
+        {
+          $set: {
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+            _deliveryStatus: 2,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+      await this.productModel.updateMany(
+        {
+          _productId: { $in: dto.productIds },
+        },
+        {
+          $set: {
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+            _stockStatus: 1,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+      const responseJSON = {
+        message: 'success',
+        data: {},
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&

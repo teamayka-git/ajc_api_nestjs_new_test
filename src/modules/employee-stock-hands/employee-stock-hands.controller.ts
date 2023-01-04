@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { EmployeeStockHandsService } from './employee-stock-hands.service';
-import { EmployeeStockInHandApproveStatusChangeDto, EmployeeStockInHandCreateDto, EmployeeStockInHandItemDeliveryStatusChangeDto, EmployeeStockInHandListDto, EmployeeStockInHandStatusChangeDto, ListInHandDto } from './employee_stock_in_hands.dto';
+import { EmployeeStockInHandApproveStatusChangeDto, EmployeeStockInHandCreateDto, EmployeeStockInHandItemDeliveryStatusChangeDto, EmployeeStockInHandListDto, EmployeeStockInHandStatusChangeDto, InHandReturnToManufactureDto, ListInHandDto } from './employee_stock_in_hands.dto';
 
 @ApiTags('Employee stock in hand Docs')
 @Controller('employee-stock-hands')
@@ -45,5 +45,9 @@ export class EmployeeStockHandsController {
   @Post('listStockInHand')
   listStockInHand(@Body() dto: ListInHandDto) {
     return this.employeeStockHandsService.listStockInHand(dto);
+  }
+  @Post('returnToManufacture')
+  returnToManufacture(@Body() dto: InHandReturnToManufactureDto, @Request() req) {
+    return this.employeeStockHandsService.returnToManufacture(dto, req['_userId_']);
   }
 }

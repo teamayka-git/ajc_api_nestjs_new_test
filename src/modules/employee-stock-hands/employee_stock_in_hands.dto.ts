@@ -159,7 +159,15 @@ export class ListInHandDto {
   @ApiProperty({})
   skip: number;
 }
+export class InHandReturnToManufactureDto {
+  
 
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  productIds: string[];
+
+  
+}
 export class EmployeeStockInHandStatusChangeDto {
   @IsArray()
   @ApiProperty({ type: [String] })
