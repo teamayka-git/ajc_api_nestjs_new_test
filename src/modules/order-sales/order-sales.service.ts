@@ -61,6 +61,7 @@ import {
   startOfMonth,
 } from 'date-fns';
 import { EmployeeStockInHandsItem } from 'src/tableModels/employee_stock_in_hand_item.model';
+import { Otp } from 'src/tableModels/otp.model';
 
 @Injectable()
 export class OrderSalesService {
@@ -83,6 +84,9 @@ export class OrderSalesService {
     private readonly orderSaleDocumentsModel: Model<OrderSalesDocuments>,
     @InjectModel(ModelNames.SHOPS)
     private readonly shopsModel: Model<Shops>,
+    
+    @InjectModel(ModelNames.OTP)
+    private readonly otpModel: mongoose.Model<Otp>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: Model<Counters>,
     @InjectModel(ModelNames.SUB_CATEGORIES)
@@ -225,7 +229,26 @@ export class OrderSalesService {
           },
         );
       }
-
+      if (dto.otpId != null && dto.otpId != '') {
+        var resultOtp = await this.otpModel.findOneAndUpdate(
+          {
+            _id: dto.otpId,
+            _otp: dto.otpValue,
+          },
+          {
+            $set: {
+              _status: 0,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+        if (resultOtp == null) {
+          throw new HttpException(
+            'OTP mismatched',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
       console.log('___d3.1');
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.ORDER_SALES_MAIN },

@@ -172,6 +172,16 @@ export class OrderSalesCreateDto {
 
 
 
+  @IsOptional()
+  @IsString()
+  @ApiProperty({})
+  otpId: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({})
+  otpValue: string;
+
 
   @IsOptional()
   @Transform(({ value }) =>

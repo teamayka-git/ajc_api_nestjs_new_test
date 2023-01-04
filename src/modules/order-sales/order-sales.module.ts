@@ -23,6 +23,7 @@ import { ProductsSchema } from 'src/tableModels/products.model';
 import { InvoicesSchema } from 'src/tableModels/invoices.model';
 import { OrderSaleItemsDocumentsSchema } from 'src/tableModels/order_sale_items_documents.model';
 import { EmployeeStockInHandsItemSchema } from 'src/tableModels/employee_stock_in_hand_item.model';
+import { OtpSchema } from 'src/tableModels/otp.model';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { EmployeeStockInHandsItemSchema } from 'src/tableModels/employee_stock_i
         schema: OrderSaleSetProcessesSchema,
       },
       
+      { name: ModelNames.OTP, schema: OtpSchema },
       { name: ModelNames.EMPLOYEE_STOCK_IN_HAND_ITEMS, schema: EmployeeStockInHandsItemSchema },
     ]),
   ],
