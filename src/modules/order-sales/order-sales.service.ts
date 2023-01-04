@@ -661,6 +661,56 @@ export class OrderSalesService {
       await orderSaleHistoryModel.save({
         session: transactionSession,
       });
+
+      //check product
+
+      if (dto.type == 1 || dto.type == 2 || dto.type == 3) {
+        var productIds = [];
+        dto.arrayItems.forEach((eachItem, index) => {
+          if (eachItem.productId != null && eachItem.productId != '') {
+            productIds.push(eachItem.productId);
+          }
+        });
+
+        var stockStatuses = [];
+        if (dto.type == 1 || dto.type == 2) {
+          stockStatuses.push(1, 2);
+        } else if (dto.type == 3) {
+          stockStatuses.push(1);
+        }
+        var resultProductCheck = await this.productModel.find({
+          _id: productIds,
+          _stockStatus: { $in: stockStatuses },
+          _status: 1,
+        });
+
+        if (resultProductCheck.length != productIds.length) {
+          throw new HttpException(
+            `${
+              productIds.length - resultProductCheck.length
+            } Items stock mismatch`,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+        var stockStatus = 0;
+        if (dto.type == 1) {
+          stockStatus = 2;
+        } else if (dto.type == 2 || dto.type == 3) {
+          stockStatus = 0;
+        }
+        await this.productModel.updateMany(
+          {
+            _id: { $in: productIds },
+          },
+          {
+            $set: {
+              _stockStatus: stockStatus,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
+
       console.log('___d6');
       const responseJSON = { message: 'success', data: result1 };
       if (
