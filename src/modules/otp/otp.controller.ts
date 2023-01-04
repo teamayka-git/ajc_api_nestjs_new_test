@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Request } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CreateOtp } from './otp.dto';
+import { CreateGeneralOtp, CreateOtp } from './otp.dto';
 import { OtpService } from './otp.service';
 
 @ApiTags("OTP Docs") 
@@ -12,6 +12,11 @@ export class OtpController {
   @Post("createOtp")
   create(@Body() dto: CreateOtp) {
     return this.otpService.create(dto);
+  }
+
+  @Post("createOtpGeneral")
+  createOtpGeneral(@Body() dto: CreateGeneralOtp) {
+    return this.otpService.createOtpGeneral(dto);
   }
 
 
