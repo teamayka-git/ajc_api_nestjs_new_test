@@ -11,7 +11,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type, Type as ValidateTypes } from 'class-transformer';
 import { Optional } from '@nestjs/common';
 
-const descriptionListDocType = '  0 - user password, 1 - order delivery bypass';
+const descriptionListDocType = '  0 - user password, 1 - order delivery bypass, 2 - sales on approval order create';
 
 export class CreateOtp {
   @IsString()

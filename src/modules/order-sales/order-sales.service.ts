@@ -507,13 +507,19 @@ export class OrderSalesService {
       //shopDetails[0].orderHeadDetails.employeeDetails._prefix
       let uidSalesOrder = ohPrefix + resultCounterPurchase._count;
 
+      var orderWorkStatus = 0;
+      if (dto.type == 2) {
+        //sales on approval
+        orderWorkStatus = 16;
+      }
+
       const newsettingsModel = new this.orderSaleMainModel({
         _id: orderSaleId,
         _shopId: dto.shopId,
         _uid: uidSalesOrder,
         _referenceNumber: dto.referenceNumber,
         _dueDate: dto.dueDate,
-        _workStatus: 0,
+        _workStatus: orderWorkStatus,
         _rootCauseId: null,
         _deliveryType: dto.deliveryType,
         _isInvoiceGenerated: 0,
@@ -632,13 +638,20 @@ export class OrderSalesService {
           session: transactionSession,
         },
       );
+
+      var orderHistoryType = 0;
+      if (dto.type == 2) {
+        //sales on approval
+        orderHistoryType = 16;
+      }
+
       const orderSaleHistoryModel = new this.orderSaleHistoriesModel({
         _orderSaleId: result1._id,
         _userId: null,
         _orderSaleItemId: null,
         _deliveryCounterId: null,
         _shopId: dto.shopId,
-        _type: 0,
+        _type: orderHistoryType,
         _deliveryProviderId: null,
         _description: '',
         _createdUserId: _userId_,
@@ -1104,7 +1117,7 @@ export class OrderSalesService {
           },
         });
       }
-console.log("____f1");
+      console.log('____f1');
       if (dto.uids != null && dto.uids.length > 0) {
         var arrayTemp = [];
         dto.uids.forEach((eachElement) => {
@@ -1426,7 +1439,7 @@ console.log("____f1");
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
-      console.log("____f2");
+      console.log('____f2');
       arrayAggregation.push(
         new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
           0,
@@ -1737,7 +1750,7 @@ console.log("____f1");
 
         return pipeline;
       };
-      console.log("____f2");
+      console.log('____f2');
       if (isorderSaleSetProcess) {
         arrayAggregation.push({
           $lookup: {
@@ -1839,7 +1852,7 @@ console.log("____f1");
           },
         );
       }
-      console.log("____f5");
+      console.log('____f5');
       if (dto.screenType.includes(103)) {
         arrayAggregation.push(
           {
@@ -2056,7 +2069,7 @@ console.log("____f1");
           },
         });
       }
-      console.log("____f6");
+      console.log('____f6');
       const isorderSaledocuments = dto.screenType.includes(101);
 
       if (isorderSaledocuments) {
@@ -2117,7 +2130,7 @@ console.log("____f1");
           },
         });
       }
-      console.log("____f7");
+      console.log('____f7');
 
       const isorderSaleshop = dto.screenType.includes(102);
 
@@ -2685,7 +2698,7 @@ console.log("____f1");
           },
         });
       }
-      console.log("____f8");
+      console.log('____f8');
       var resultWorkets = [];
       var resultProcessMasters = [];
       var resultSubCategory = [];
@@ -2768,7 +2781,7 @@ console.log("____f1");
           _status: 1,
         });
       }
-      console.log("____f9");
+      console.log('____f9');
       var result = await this.orderSaleMainModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
@@ -2868,7 +2881,7 @@ console.log("____f1");
         });
         resultShop = await this.shopsModel.aggregate(pipeline);
       }
-      console.log("____f10");
+      console.log('____f10');
       var generalSetting = [];
       if (dto.screenType.includes(501)) {
         generalSetting = await this.generalsModel.aggregate([
@@ -2929,25 +2942,25 @@ console.log("____f1");
           pipeline,
         );
       }
-      var inprocessOrderCounts =0;
-      var finishedOrderCounts =0;
-      var inTransitOrderCounts=0;
-      var deliveredOrderCounts=[];
-      var invoicedNW=[];
+      var inprocessOrderCounts = 0;
+      var finishedOrderCounts = 0;
+      var inTransitOrderCounts = 0;
+      var deliveredOrderCounts = [];
+      var invoicedNW = [];
 
-      console.log("____f11");
+      console.log('____f11');
       if (dto.screenType.includes(506)) {
         inprocessOrderCounts = await this.orderSaleMainModel.count({
           _shopId: { $in: dto.shopIds },
           _workStatus: { $in: [0, 1, 3] },
           _status: 1,
         });
-         finishedOrderCounts = await this.orderSaleMainModel.count({
+        finishedOrderCounts = await this.orderSaleMainModel.count({
           _shopId: { $in: dto.shopIds },
           _workStatus: { $in: [6, 7, 15, 16, 17, 29, 41] },
           _status: 1,
         });
-         inTransitOrderCounts = await this.orderSaleMainModel.count({
+        inTransitOrderCounts = await this.orderSaleMainModel.count({
           _shopId: { $in: dto.shopIds },
           _workStatus: { $in: [20, 21, 24, 25, 26, 28, 29, 30, 31, 34, 18] },
           _status: 1,
@@ -2983,7 +2996,7 @@ console.log("____f1");
           newSettingsIdShop.push(new mongoose.Types.ObjectId(mapItem));
         });
 
-         deliveredOrderCounts = await this.orderSaleMainModel.aggregate([
+        deliveredOrderCounts = await this.orderSaleMainModel.aggregate([
           {
             $match: {
               _shopId: { $in: newSettingsIdShop },
@@ -3000,7 +3013,7 @@ console.log("____f1");
               pipeline: [
                 {
                   $match: {
-                    _type: {$in:[36,37]},
+                    _type: { $in: [36, 37] },
                     _createdAt: { $gte: startTime },
                     $expr: { $eq: ['$_orderSaleId', '$$ordersaleId'] },
                   },
@@ -3016,7 +3029,7 @@ console.log("____f1");
           { $count: 'count' },
         ]);
 
-         invoicedNW = await this.invoiceModel.aggregate([
+        invoicedNW = await this.invoiceModel.aggregate([
           {
             $match: {
               _shopId: { $in: newSettingsIdShop },
@@ -3029,7 +3042,7 @@ console.log("____f1");
           },
         ]);
       }
-      console.log("____f12");
+      console.log('____f12');
       const responseJSON = {
         message: 'success',
         data: {

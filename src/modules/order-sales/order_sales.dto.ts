@@ -54,7 +54,7 @@ const DescriptionOrderSaleProcessOrderStatus =
   '0-Pending, 1-Assigned, 2-On Working, 3-Completed, 4-Hold, Request To Assign';
 const DescriptionOrderSalesHistoriesType =
   '  0 - order pending  1 - order accept  2 - order reject  3 - set process done  4 - finished goods  5 - product generate request  6 - product generated   7 - deliverychalan generated//need to discuss  8 - halmark issuence requested  9 - halmark issuence bypassed  10 - send to halmark issuence  11 - halmarking issued  12 - halmark request cancelled  13 - halmark request rejected  14 - halmark error occured  15 - send to reissuence   16 - invoice pending  17 - invoice generated  18 - outof delivery pending  19 - hub transfer pending  20 - delivery job assigned  21 - delivery in transit  22 - delivered to customer            23 - delivey accepted  24 - order declined collection pending   25 - order declined collected  26 - order declined inscan  27 - order cancelled  28 - delivery reshedule requested  29 - hub tranfer pending  30 - hub assigned  31 - hub tranfer intransit  32 - hub transfer delivered  33 - hub transfer accepted    100 - order editted  101- sales order actived  102- sales order disabled  103- sales order deleted  104- sales order general remark editted';
-const descriptionType = '0 - order sale, 1 - stock sale';
+const descriptionType = ' 0 - order sale(custom order), 1 - stock sale(from e store), 2 - sales on approval(from delivery boy), 3 - counter sale(bill from manufactor) ';
 const descriptionDeliveryType =
   ' 0 - bundle delivery,1 - get me the ready item first';
 const descriptionStockStatus = '0 - out of stock, 1 - in stock';
