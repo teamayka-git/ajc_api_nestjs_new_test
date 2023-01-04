@@ -22,6 +22,7 @@ import { InvoiceItemsSchema } from 'src/tableModels/invoice_items.model';
 import { ProductsSchema } from 'src/tableModels/products.model';
 import { InvoicesSchema } from 'src/tableModels/invoices.model';
 import { OrderSaleItemsDocumentsSchema } from 'src/tableModels/order_sale_items_documents.model';
+import { EmployeeStockInHandsItemSchema } from 'src/tableModels/employee_stock_in_hand_item.model';
 
 @Module({
   imports: [
@@ -55,6 +56,8 @@ import { OrderSaleItemsDocumentsSchema } from 'src/tableModels/order_sale_items_
         name: ModelNames.ORDER_SALE_SET_PROCESSES,
         schema: OrderSaleSetProcessesSchema,
       },
+      
+      { name: ModelNames.EMPLOYEE_STOCK_IN_HAND_ITEMS, schema: EmployeeStockInHandsItemSchema },
     ]),
   ],
   controllers: [OrderSalesController],

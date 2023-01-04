@@ -169,6 +169,19 @@ export class OrderSalesCreateDto {
   @ApiProperty({})
   generalRemark: string;
 
+
+
+
+
+  @IsOptional()
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  employeeStockInHandItemIds: string[];
+
+
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
   )

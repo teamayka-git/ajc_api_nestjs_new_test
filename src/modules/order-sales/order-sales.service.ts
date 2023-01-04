@@ -60,6 +60,7 @@ import {
   setYear,
   startOfMonth,
 } from 'date-fns';
+import { EmployeeStockInHandsItem } from 'src/tableModels/employee_stock_in_hand_item.model';
 
 @Injectable()
 export class OrderSalesService {
@@ -102,6 +103,9 @@ export class OrderSalesService {
     private readonly processMasterModel: mongoose.Model<ProcessMaster>,
     @InjectModel(ModelNames.ORDER_SALE_SET_PROCESSES)
     private readonly orderSaleSetProcessModel: mongoose.Model<OrderSaleSetProcesses>,
+    
+    @InjectModel(ModelNames.EMPLOYEE_STOCK_IN_HAND_ITEMS)
+    private readonly employeeStockInHandItemModel: mongoose.Model<EmployeeStockInHandsItem>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
@@ -714,6 +718,27 @@ export class OrderSalesService {
           },
           { new: true, session: transactionSession },
         );
+      }
+
+      if(dto.employeeStockInHandItemIds!=null && dto.employeeStockInHandItemIds.length!=0){
+
+
+        await this.employeeStockInHandItemModel.updateMany(
+          {
+            _productId: { $in: dto.employeeStockInHandItemIds },
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _deliveryStatus: 1,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+
+
       }
 
       console.log('___d6');
