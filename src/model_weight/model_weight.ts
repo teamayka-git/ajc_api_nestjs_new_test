@@ -638,6 +638,7 @@ export class ModelWeight {
       _displayName: 1,
       _name: 1,
       _isFreezed: 1,
+      _shopType: 1,
       _branchId: 1,
       _orderHeadId: 1,
       _globalGalleryId: 1,

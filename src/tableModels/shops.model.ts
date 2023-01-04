@@ -235,8 +235,8 @@ _stockSaleRate:{
     1 - fix
 }
 _shopType:{
-    0-buisiness
-    1-Shop
+    0-buisiness(B2B)
+    1-Shop(B2C)
 }
 _billingModeSale:{
     0-pure weight 
