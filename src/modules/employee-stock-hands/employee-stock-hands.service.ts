@@ -214,6 +214,20 @@ export class EmployeeStockHandsService {
           arrayProductIds.push(element._productId);
         });
 
+        var checkHoldStatus = await this.productModel.find({
+          _productId: { $in: arrayProductIds },
+          _stockStatus: 1,
+          _status: 1,
+        });
+        if (checkHoldStatus.length != arrayProductIds.length) {
+          throw new HttpException(
+            `${
+              arrayProductIds.length - checkHoldStatus.length
+            } Items not in stock`,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+
         await this.productModel.updateMany(
           {
             _productId: { $in: arrayProductIds },
