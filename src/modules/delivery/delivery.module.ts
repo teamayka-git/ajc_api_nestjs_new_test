@@ -12,6 +12,7 @@ import { DeliveryRejectedPendingsSchema } from 'src/tableModels/delivery_rejecte
 import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
 import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.model';
 import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
+import { OtpSchema } from 'src/tableModels/otp.model';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
       { name: ModelNames.DELIVERY_REJECTED_PENDINGS, schema: DeliveryRejectedPendingsSchema },
       { name: ModelNames.ORDER_SALES_MAIN, schema: OrderSalesMainSchema },
       { name: ModelNames.ORDER_SALE_HISTORIES, schema: OrderSaleHistoriesSchema },
+      { name: ModelNames.OTP, schema: OtpSchema },
     ]),
   ],
   controllers: [DeliveryController],

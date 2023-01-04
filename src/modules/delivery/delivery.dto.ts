@@ -299,5 +299,14 @@ export class DeliveryEmployeeAssignDto {
   isBypass: number;
 
 
+  @IsOptional()
+  @IsString()
+  @ApiProperty({})
+  otpId: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({})
+  otpValue: string;
 
 }

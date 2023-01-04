@@ -23,6 +23,7 @@ import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
+import { Otp } from 'src/tableModels/otp.model';
 
 @Injectable()
 export class DeliveryService {
@@ -37,6 +38,8 @@ export class DeliveryService {
     private readonly counterModel: Model<Counters>,
     @InjectModel(ModelNames.DELIVERY_ITEMS)
     private readonly deliveryItemsModel: Model<DeliveryItems>,
+    @InjectModel(ModelNames.OTP)
+    private readonly otpModel: mongoose.Model<Otp>,
     @InjectModel(ModelNames.DELIVERY_REJECTED_PENDINGS)
     private readonly deliveryRejectPendingModel: Model<DeliveryRejectedPendings>,
     @InjectModel(ModelNames.ROOT_CAUSES)
@@ -200,7 +203,7 @@ export class DeliveryService {
           _userId: null,
           _type: 21,
           _shopId: null,
-          _deliveryCounterId:null,
+          _deliveryCounterId: null,
           _orderSaleItemId: null,
           _deliveryProviderId: null,
           _description: '',
@@ -248,6 +251,27 @@ export class DeliveryService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+      if (dto.otpId != null && dto.otpId != '') {
+        var resultOtp = await this.otpModel.findOneAndUpdate(
+          {
+            _id: dto.otpId,
+            _otp: dto.otpValue,
+          },
+          {
+            $set: {
+              _status: 0,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+        if (resultOtp == null) {
+          throw new HttpException(
+            'OTP mismatched',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
+
       var deliveryIdsMongo = [];
       dto.deliveryIds.forEach((eachItem) => {
         deliveryIdsMongo.push(new mongoose.Types.ObjectId(eachItem));
@@ -426,7 +450,7 @@ export class DeliveryService {
             _userId: dto.shopAcceptUserId,
             _type: workStatusOrderAndTimeline,
             _shopId: null,
-            _deliveryCounterId:null,
+            _deliveryCounterId: null,
             _orderSaleItemId: null,
             _deliveryProviderId: null,
             _description: '',
@@ -526,7 +550,7 @@ export class DeliveryService {
             _orderSaleId: eachItem,
             _userId: null,
             _type: 38,
-            _deliveryCounterId:null,
+            _deliveryCounterId: null,
             _shopId: null,
             _orderSaleItemId: null,
             _deliveryProviderId: null,
@@ -575,7 +599,7 @@ export class DeliveryService {
             _orderSaleId: eachItem,
             _userId: dto.proofAcceptUserId,
             _type: 39,
-            _deliveryCounterId:null,
+            _deliveryCounterId: null,
             _shopId: null,
             _orderSaleItemId: null,
             _deliveryProviderId: null,
@@ -623,7 +647,7 @@ export class DeliveryService {
             _shopId: null,
             _orderSaleItemId: null,
             _deliveryProviderId: null,
-            _deliveryCounterId:null,
+            _deliveryCounterId: null,
             _description: '',
             _createdUserId: _userId_,
             _createdAt: dateTime,
@@ -1065,16 +1089,24 @@ export class DeliveryService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { type: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { type: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _uid: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _uid: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 4:
-          arrayAggregation.push({ $sort: { _workStatus: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _workStatus: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
       }
       if (dto.skip != -1) {
