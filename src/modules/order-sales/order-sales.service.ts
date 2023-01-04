@@ -314,193 +314,198 @@ export class OrderSalesService {
       var orderHeadId = null;
       var ohPrefix = '';
 
-      var resultCheckOh = await this.userModel.aggregate([
-        {
-          $match: {
-            _id: new mongoose.Types.ObjectId(_userId_),
+      if (dto.type == 0 || dto.type == 1) {
+        var resultCheckOh = await this.userModel.aggregate([
+          {
+            $match: {
+              _id: new mongoose.Types.ObjectId(_userId_),
+            },
           },
-        },
-        {
-          $project: {
-            _id: 1,
+          {
+            $project: {
+              _id: 1,
+            },
           },
-        },
-        {
-          $lookup: {
-            from: ModelNames.EMPLOYEES,
-            let: { userId: '$_id' },
-            pipeline: [
-              {
-                $match: {
-                  _status: 1,
-                  $expr: { $eq: ['$_userId', '$$userId'] },
+          {
+            $lookup: {
+              from: ModelNames.EMPLOYEES,
+              let: { userId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    _status: 1,
+                    $expr: { $eq: ['$_userId', '$$userId'] },
+                  },
                 },
-              },
-              {
-                $project: {
-                  _id: 1,
-                  _prefix: 1,
-                  _departmentId: 1,
+                {
+                  $project: {
+                    _id: 1,
+                    _prefix: 1,
+                    _departmentId: 1,
+                  },
                 },
-              },
-              {
-                $lookup: {
-                  from: ModelNames.DEPARTMENT,
-                  let: { departmentId: '$_departmentId' },
-                  pipeline: [
-                    {
-                      $match: {
-                        _code: 1000,
-                        $expr: { $eq: ['$_id', '$$departmentId'] },
+                {
+                  $lookup: {
+                    from: ModelNames.DEPARTMENT,
+                    let: { departmentId: '$_departmentId' },
+                    pipeline: [
+                      {
+                        $match: {
+                          _code: 1000,
+                          $expr: { $eq: ['$_id', '$$departmentId'] },
+                        },
                       },
-                    },
-                    {
-                      $project: {
-                        _id: 1,
+                      {
+                        $project: {
+                          _id: 1,
+                        },
                       },
-                    },
-                  ],
-                  as: 'orderHeadDepartmentDetails',
+                    ],
+                    as: 'orderHeadDepartmentDetails',
+                  },
                 },
-              },
-              {
-                $unwind: { path: '$orderHeadDepartmentDetails' },
-              },
-            ],
-            as: 'employeeDetails',
+                {
+                  $unwind: { path: '$orderHeadDepartmentDetails' },
+                },
+              ],
+              as: 'employeeDetails',
+            },
           },
-        },
-        {
-          $unwind: { path: '$employeeDetails' },
-        },
-      ]);
-      console.log('___a  ' + JSON.stringify(resultCheckOh));
-      if (resultCheckOh.length != 0) {
-        orderHeadId = _userId_;
-        ohPrefix = resultCheckOh[0].employeeDetails._prefix;
-      } else {
-        if (resultGeneralOhAutoAssign[0]._number == 0) {
-          orderHeadId = shopDetails[0]._orderHeadId;
-          ohPrefix = shopDetails[0].orderHeadDetails.employeeDetails._prefix;
+          {
+            $unwind: { path: '$employeeDetails' },
+          },
+        ]);
+        console.log('___a  ' + JSON.stringify(resultCheckOh));
+        if (resultCheckOh.length != 0) {
+          orderHeadId = _userId_;
+          ohPrefix = resultCheckOh[0].employeeDetails._prefix;
         } else {
-          var resultOh = await this.departmentModel
-            .aggregate([
-              { $match: { _code: 1000 } },
-              {
-                $project: {
-                  _id: 1,
-                },
-              },
-              {
-                $lookup: {
-                  from: ModelNames.EMPLOYEES,
-                  let: { departmentId: '$_id' },
-                  pipeline: [
-                    {
-                      $match: {
-                        $expr: { $eq: ['$_departmentId', '$$departmentId'] },
-                      },
-                    },
-                    {
-                      $project: {
-                        _id: 1,
-                        _prefix: 1,
-                      },
-                    },
-                    {
-                      $lookup: {
-                        from: ModelNames.USER,
-                        let: { employeeId: '$_id' },
-                        pipeline: [
-                          {
-                            $match: {
-                              $expr: { $eq: ['$_employeeId', '$$employeeId'] },
-                            },
-                          },
-                          {
-                            $project: {
-                              _id: 1,
-                            },
-                          },
-                          {
-                            $lookup: {
-                              from: ModelNames.USER_ATTENDANCES,
-                              let: { userId: '$_id' },
-                              pipeline: [
-                                {
-                                  $match: {
-                                    _stopTime: 0,
-                                    _status: 1,
-                                    $expr: { $eq: ['$_userId', '$$userId'] },
-                                  },
-                                },
-                                { $project: { _id: 1 } },
-                              ],
-                              as: 'userAttendance',
-                            },
-                          },
-                          {
-                            $match: { userAttendance: { $ne: [] } },
-                          },
-                          {
-                            $lookup: {
-                              from: ModelNames.ORDER_SALES_MAIN,
-                              let: { userId: '$_id' },
-                              pipeline: [
-                                {
-                                  $match: {
-                                    $expr: {
-                                      $eq: ['$_orderHeadId', '$$userId'],
-                                    },
-                                    _isProductGenerated: 0,
-                                    _workStatus: { $nin: [2, 27] },
-                                  },
-                                },
-                                { $project: { _id: 1 } },
-                              ],
-                              as: 'orderCount',
-                            },
-                          },
-
-                          {
-                            $project: {
-                              orderCount: { $size: '$orderCount' },
-                            },
-                          },
-                        ],
-                        as: 'userDetails',
-                      },
-                    },
-                    {
-                      $unwind: {
-                        path: '$userDetails',
-                      },
-                    },
-                    {
-                      $project: {
-                        userId: '$userDetails._id',
-                        _prefix: 1,
-                        currentOrderCount: '$userDetails.orderCount',
-                      },
-                    },
-                    {
-                      $sort: {
-                        currentOrderCount: 1,
-                      },
-                    },
-                  ],
-                  as: 'employees',
-                },
-              },
-            ])
-            .session(transactionSession);
-          console.log('resultOh   ' + JSON.stringify(resultOh));
-          if (resultOh.length == 0 || resultOh[0].employees == 0) {
+          if (resultGeneralOhAutoAssign[0]._number == 0) {
             orderHeadId = shopDetails[0]._orderHeadId;
             ohPrefix = shopDetails[0].orderHeadDetails.employeeDetails._prefix;
           } else {
-            orderHeadId = resultOh[0].employees[0].userId;
-            ohPrefix = resultOh[0].employees[0]._prefix;
+            var resultOh = await this.departmentModel
+              .aggregate([
+                { $match: { _code: 1000 } },
+                {
+                  $project: {
+                    _id: 1,
+                  },
+                },
+                {
+                  $lookup: {
+                    from: ModelNames.EMPLOYEES,
+                    let: { departmentId: '$_id' },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: { $eq: ['$_departmentId', '$$departmentId'] },
+                        },
+                      },
+                      {
+                        $project: {
+                          _id: 1,
+                          _prefix: 1,
+                        },
+                      },
+                      {
+                        $lookup: {
+                          from: ModelNames.USER,
+                          let: { employeeId: '$_id' },
+                          pipeline: [
+                            {
+                              $match: {
+                                $expr: {
+                                  $eq: ['$_employeeId', '$$employeeId'],
+                                },
+                              },
+                            },
+                            {
+                              $project: {
+                                _id: 1,
+                              },
+                            },
+                            {
+                              $lookup: {
+                                from: ModelNames.USER_ATTENDANCES,
+                                let: { userId: '$_id' },
+                                pipeline: [
+                                  {
+                                    $match: {
+                                      _stopTime: 0,
+                                      _status: 1,
+                                      $expr: { $eq: ['$_userId', '$$userId'] },
+                                    },
+                                  },
+                                  { $project: { _id: 1 } },
+                                ],
+                                as: 'userAttendance',
+                              },
+                            },
+                            {
+                              $match: { userAttendance: { $ne: [] } },
+                            },
+                            {
+                              $lookup: {
+                                from: ModelNames.ORDER_SALES_MAIN,
+                                let: { userId: '$_id' },
+                                pipeline: [
+                                  {
+                                    $match: {
+                                      $expr: {
+                                        $eq: ['$_orderHeadId', '$$userId'],
+                                      },
+                                      _isProductGenerated: 0,
+                                      _workStatus: { $nin: [2, 27] },
+                                    },
+                                  },
+                                  { $project: { _id: 1 } },
+                                ],
+                                as: 'orderCount',
+                              },
+                            },
+
+                            {
+                              $project: {
+                                orderCount: { $size: '$orderCount' },
+                              },
+                            },
+                          ],
+                          as: 'userDetails',
+                        },
+                      },
+                      {
+                        $unwind: {
+                          path: '$userDetails',
+                        },
+                      },
+                      {
+                        $project: {
+                          userId: '$userDetails._id',
+                          _prefix: 1,
+                          currentOrderCount: '$userDetails.orderCount',
+                        },
+                      },
+                      {
+                        $sort: {
+                          currentOrderCount: 1,
+                        },
+                      },
+                    ],
+                    as: 'employees',
+                  },
+                },
+              ])
+              .session(transactionSession);
+            console.log('resultOh   ' + JSON.stringify(resultOh));
+            if (resultOh.length == 0 || resultOh[0].employees == 0) {
+              orderHeadId = shopDetails[0]._orderHeadId;
+              ohPrefix =
+                shopDetails[0].orderHeadDetails.employeeDetails._prefix;
+            } else {
+              orderHeadId = resultOh[0].employees[0].userId;
+              ohPrefix = resultOh[0].employees[0]._prefix;
+            }
           }
         }
       }
