@@ -725,7 +725,7 @@ export class OrderSalesService {
 
         await this.employeeStockInHandItemModel.updateMany(
           {
-            _productId: { $in: dto.employeeStockInHandItemIds },
+            _id: { $in: dto.employeeStockInHandItemIds },
           },
           {
             $set: {
