@@ -14,7 +14,7 @@ export const ProductsSchema = new mongoose.Schema({
   _shopId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.SHOPS,
-    default: null,
+    default: null, 
   }, 
   _orderItemId: {
     type: mongoose.Schema.Types.ObjectId,

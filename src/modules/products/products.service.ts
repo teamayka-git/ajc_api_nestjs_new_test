@@ -31,6 +31,7 @@ import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_pa
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { ProductsDocuments } from 'src/tableModels/products_documents.model';
 import { ProductTemps } from 'src/tableModels/product_temps.model';
+import { ModelWeight } from 'src/model_weight/model_weight';
 
 @Injectable()
 export class ProductsService {
@@ -2086,20 +2087,20 @@ export class ProductsService {
         });
       }
 
-
       if (dto.screenType.includes(118)) {
-
         const designDocumentsLinkingPipeline = () => {
           const pipeline = [];
-          pipeline.push(    {
-            $match: {
-              $expr: { $eq: ['$_id', '$$designerId'] },
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$designerId'] },
+              },
             },
-          },
-          new ModelWeightResponseFormat().productTableResponseFormat(
-            1180,
-            dto.responseFormat,
-          ),);
+            new ModelWeightResponseFormat().productTableResponseFormat(
+              1180,
+              dto.responseFormat,
+            ),
+          );
 
           if (dto.screenType.includes(119)) {
             const productDocumentsLinkingPipeline = () => {
@@ -2118,8 +2119,9 @@ export class ProductsService {
                   dto.responseFormat,
                 ),
               );
-    
-              const productsDocumentsGlobalGallery = dto.screenType.includes(120);
+
+              const productsDocumentsGlobalGallery =
+                dto.screenType.includes(120);
               if (productsDocumentsGlobalGallery) {
                 pipeline.push(
                   {
@@ -2150,7 +2152,7 @@ export class ProductsService {
               }
               return pipeline;
             };
-    
+
             pipeline.push({
               $lookup: {
                 from: ModelNames.PRODUCT_DOCUMENTS_LINKIGS,
@@ -2161,11 +2163,7 @@ export class ProductsService {
             });
           }
           return pipeline;
-        }
-
-       
-
-
+        };
 
         arrayAggregation.push(
           {
@@ -2185,6 +2183,26 @@ export class ProductsService {
         );
       }
 
+      if (dto.screenType.includes(121)) {
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.PRODUCTS,
+            let: { variantId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  _stockStatus: 1,
+                  _type: 2,
+                  $expr: { $eq: ['$_designerId', '$$variantId'] },
+                },
+              },
+              { $project: new ModelWeight().productTableCustom1() },
+            ],
+            as: 'variantLists',
+          },
+        });
+      }
 
       var result = await this.productModel
         .aggregate(arrayAggregation)
