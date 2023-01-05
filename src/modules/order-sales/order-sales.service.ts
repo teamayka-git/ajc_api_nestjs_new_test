@@ -2990,8 +2990,8 @@ export class OrderSalesService {
 
           resultShop[0]['_themeStore']['deskMainImageUrl'] = '';
           resultShop[0]['_themeStore']['deskMainImageRatio'] = 5;
-          resultShop[0]['_themeStore']['deskSliderImageRatio'] = [];
-          resultShop[0]['_themeStore']['deskSliderImages'] = 6;
+          resultShop[0]['_themeStore']['deskSliderImageRatio'] = 5;
+          resultShop[0]['_themeStore']['deskSliderImages'] = [];
           resultShop[0]['_themeStore']['dueDateMaximumDaysCount'] = 10;
         }
       }
