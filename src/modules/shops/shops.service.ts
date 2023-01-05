@@ -1413,7 +1413,7 @@ console.log("____ result shop   "+JSON.stringify(result));
 
       if (dto.screenType.includes(251)) {
         result.forEach((element) => {
-          if (element['_themeStore'] !== undefined) {
+          if (element['_themeStore'] !== undefined && element['_themeStore']!= null) {
             element['_themeStore']['mobileMainImageUrl'] = '';
             element['_themeStore']['mobileMainImageRatio'] = 3.5;
             element['_themeStore']['mobileSliderImages'] = [];
