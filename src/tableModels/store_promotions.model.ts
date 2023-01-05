@@ -7,7 +7,12 @@ export const StorePromotionsSchema = new mongoose.Schema({
   _type: { type: Number, required: true, default: -1 },
   _priority: { type: Number, required: true, default: -1 },
   _group: { type: Number, required: true, default: -1 },
-  _globalGalleryId: {
+  _globalGalleryMobileId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.GLOBAL_GALLERIES,
+    default: null,
+  },
+  _globalGalleryDeskId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.GLOBAL_GALLERIES,
     default: null,
@@ -26,12 +31,15 @@ export interface StorePromotions {
   _type: Number;
   _priority: Number;
   _group: Number;
-  _globalGalleryId: String;
+  _globalGalleryMobileId: String;
+  _globalGalleryDeskId: String;
   _createdAt: Number;
   _createdUserId: String;
   _status: Number;
 }
 
+StorePromotionsSchema.index({ _globalGalleryMobileId: 1 });
+StorePromotionsSchema.index({ _globalGalleryDeskId: 1 });
 StorePromotionsSchema.index({ _createdUserId: 1 });
 StorePromotionsSchema.index({ _type: 1 });
 StorePromotionsSchema.index({ _priority: 1 });

@@ -87,9 +87,103 @@ export class StorePromotionsService {
             (it) => it.fileOriginalName == file['documents'][i]['originalname'],
           );
           if (count != -1) {
-            dto.array[count]['globalGalleryId'] = globalGalleryId;
+            dto.array[count]['globalGalleryMobileId'] = globalGalleryId;
           } else {
-            dto.array[count]['globalGalleryId'] = 'nil';
+            dto.array[count]['globalGalleryMobileId'] = 'nil';
+          }
+        }
+        // console.log('___d2');
+        // for (var i = 0; i < dto.array.length; i++) {
+        //   var count = file['documents'].findIndex(
+        //     (it) => it.originalname == dto.array[i].fileOriginalName,
+        //   );
+        //   if (count != -1) {
+        //     var globalGalleryId = new mongoose.Types.ObjectId();
+        //     arrayGlobalGalleries.push({
+        //       _id: globalGalleryId,
+        //       _name: dto.array[i].fileOriginalName,
+        //       _globalGalleryCategoryId: null,
+        //       _docType: 0,
+        //       _type: 7,
+        //       _uid:
+        //         resultCounterPurchase._count -
+        //         dto.array.length +
+        //         (i + 1),
+        //       _url: dto.array[i]['url'],
+        //       _createdUserId: _userId_,
+        //       _createdAt: dateTime,
+        //       _updatedUserId: null,
+        //       _updatedAt: -1,
+        //       _status: 1,
+        //     });
+
+        //   }
+        // }
+        // console.log('___d3');
+        await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
+          session: transactionSession,
+        });
+      }
+      if (file.hasOwnProperty('documentsDesk')) {
+        console.log('___d1.1');
+        var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
+          { _tableName: ModelNames.GLOBAL_GALLERIES },
+          {
+            $inc: {
+              _count: dto.array.length,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+        for (var i = 0; i < file['documentsDesk'].length; i++) {
+          var resultUpload = await new S3BucketUtils().uploadMyFile(
+            file['documentsDesk'][i],
+            UploadedFileDirectoryPath.GLOBAL_GALLERY_STORE_PROMOTIONS,
+          );
+
+          if (resultUpload['status'] == 0) {
+            throw new HttpException(
+              'File upload error',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
+
+          //   var count = dto.array.findIndex(
+          //     (it) => it.fileOriginalName == file['documentsDesk'][i]['originalname'],
+          //   );
+          //   if (count != -1) {
+          //     dto.array[count]['url'] = resultUpload['url'];
+          //   } else {
+          //     dto.array[count]['url'] = 'nil';
+          //   }
+
+          var globalGalleryId = new mongoose.Types.ObjectId();
+          arrayGlobalGalleries.push({
+            _id: globalGalleryId,
+            _name: file['documentsDesk'][i]['originalname'],
+            _globalGalleryCategoryId: null,
+            _docType: 0,
+            _type: 0,
+            _uid:
+              resultCounterPurchase._count -
+              file['documentsDesk'].length +
+              (i + 1),
+            _url: resultUpload['url'],
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+          var count = dto.array.findIndex(
+            (it) =>
+              it.fileOriginalName == file['documentsDesk'][i]['originalname'],
+          );
+          if (count != -1) {
+            dto.array[count]['globalGalleryDeskId'] = globalGalleryId;
+          } else {
+            dto.array[count]['globalGalleryDeskId'] = 'nil';
           }
         }
         // console.log('___d2');
@@ -132,10 +226,14 @@ export class StorePromotionsService {
           _type: mapItem.type,
           _priority: mapItem.priority,
           _group: mapItem.group,
-          _globalGalleryId:
-            mapItem['globalGalleryId'] == 'nil'
+          _globalGalleryMobileId:
+            mapItem['globalGalleryMobileId'] == 'nil'
               ? null
-              : mapItem['globalGalleryId'],
+              : mapItem['globalGalleryMobileId'],
+          _globalGalleryDeskId:
+            mapItem['globalGalleryDeskId'] == 'nil'
+              ? null
+              : mapItem['globalGalleryDeskId'],
           _createdAt: dateTime,
           _createdUserId: _userId_,
           _status: 1,
@@ -229,16 +327,24 @@ export class StorePromotionsService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _type: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _type: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _priority: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _priority: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 4:
-          arrayAggregation.push({ $sort: { _group: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _group: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
       }
 
@@ -247,20 +353,41 @@ export class StorePromotionsService {
         arrayAggregation.push({ $limit: dto.limit });
       }
       if (dto.screenType.includes(50)) {
-        arrayAggregation.push( 
+        arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.GLOBAL_GALLERIES,
-              let: { globalGalleryId: '$_globalGalleryId' },
+              let: { globalGalleryId: '$_globalGalleryMobileId' },
               pipeline: [
                 { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
               ],
-              as: 'globalGalleryDetails',
+              as: 'globalGalleryMobileDetails',
             },
           },
           {
             $unwind: {
-              path: '$globalGalleryDetails',
+              path: '$globalGalleryMobileDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.includes(51)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.GLOBAL_GALLERIES,
+              let: { globalGalleryId: '$_globalGalleryDeskId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+              ],
+              as: 'globalGalleryDeskDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$globalGalleryDeskDetails',
               preserveNullAndEmptyArrays: true,
             },
           },

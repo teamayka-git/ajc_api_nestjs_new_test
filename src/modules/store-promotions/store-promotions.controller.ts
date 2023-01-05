@@ -33,6 +33,9 @@ export class StorePromotionsController {
         {
           name: 'documents',
         },
+        {
+          name: 'documentsDesk',
+        },
       ],
       /*{
         storage: diskStorage({

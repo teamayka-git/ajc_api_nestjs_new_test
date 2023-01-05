@@ -24,6 +24,7 @@ import { InvoicesSchema } from 'src/tableModels/invoices.model';
 import { OrderSaleItemsDocumentsSchema } from 'src/tableModels/order_sale_items_documents.model';
 import { EmployeeStockInHandsItemSchema } from 'src/tableModels/employee_stock_in_hand_item.model';
 import { OtpSchema } from 'src/tableModels/otp.model';
+import { StorePromotionsSchema } from 'src/tableModels/store_promotions.model';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { OtpSchema } from 'src/tableModels/otp.model';
       { name: ModelNames.ROOT_CAUSES, schema: RootCausesSchema },
       { name: ModelNames.INVOICE_ITEMS, schema: InvoiceItemsSchema },
       { name: ModelNames.ORDER_SALE_ITEM_DOCUMENTS, schema: OrderSaleItemsDocumentsSchema },
+      { name: ModelNames.STORE_PROMOTIONS, schema: StorePromotionsSchema },
       { name: ModelNames.PRODUCTS, schema: ProductsSchema },
       {
         name: ModelNames.ORDER_SALE_HISTORIES,

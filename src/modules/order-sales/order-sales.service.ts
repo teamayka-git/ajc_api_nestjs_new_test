@@ -62,6 +62,7 @@ import {
 } from 'date-fns';
 import { EmployeeStockInHandsItem } from 'src/tableModels/employee_stock_in_hand_item.model';
 import { Otp } from 'src/tableModels/otp.model';
+import { StorePromotions } from 'src/tableModels/store_promotions.model';
 
 @Injectable()
 export class OrderSalesService {
@@ -85,6 +86,8 @@ export class OrderSalesService {
     @InjectModel(ModelNames.SHOPS)
     private readonly shopsModel: Model<Shops>,
 
+    @InjectModel(ModelNames.STORE_PROMOTIONS)
+    private readonly storePromotionModel: mongoose.Model<StorePromotions>,
     @InjectModel(ModelNames.OTP)
     private readonly otpModel: mongoose.Model<Otp>,
     @InjectModel(ModelNames.COUNTERS)
@@ -2982,17 +2985,144 @@ export class OrderSalesService {
         });
         resultShop = await this.shopsModel.aggregate(pipeline);
 
-        if (resultShop[0]['_themeStore'] !== undefined) {
-          resultShop[0]['_themeStore']['mobileMainImageUrl'] = '';
+        if (resultShop[0]['_themeStore'] !== undefined && resultShop[0]['_themeStore'] != null) {
+
+
+
+          var resultMainImage=await this.storePromotionModel.aggregate([{$match:{_type:0,_status:1}},
+            { $sort: { _priority:1 } },{ $limit: 1 },
+            {
+              $lookup: {
+                from: ModelNames.GLOBAL_GALLERIES,
+                let: { ggMobileId: '$_globalGalleryMobileId' },
+                pipeline: [
+                  {
+                    $match: { $expr: { $eq: ['$_id', '$$ggMobileId'] } },
+                  },{$project:{
+                    _url:1
+                  }}
+                ],
+                as: 'ggMobileDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$ggMobileDetails',
+              },
+            },
+            {
+              $lookup: {
+                from: ModelNames.GLOBAL_GALLERIES,
+                let: { ggDeskId: '$_globalGalleryDeskId' },
+                pipeline: [
+                  {
+                    $match: { $expr: { $eq: ['$_id', '$$ggDeskId'] } },
+                  },{$project:{
+                    _url:1
+                  }}
+                ],
+                as: 'ggDeskDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$ggDeskDetails',
+              },
+            },
+          
+          
+          ]);
+
+
+
+          
+var resultSlideImage=await this.storePromotionModel.aggregate([{$match:{_type:1,_status:1}},
+  { $sort: { _priority:1 } },
+  {
+    $lookup: {
+      from: ModelNames.GLOBAL_GALLERIES,
+      let: { ggMobileId: '$_globalGalleryMobileId' },
+      pipeline: [
+        {
+          $match: { $expr: { $eq: ['$_id', '$$ggMobileId'] } },
+        },{$project:{
+          _url:1
+        }}
+      ],
+      as: 'ggMobileDetails',
+    },
+  },
+  {
+    $unwind: {
+      path: '$ggMobileDetails',
+    },
+  },
+  {
+    $lookup: {
+      from: ModelNames.GLOBAL_GALLERIES,
+      let: { ggDeskId: '$_globalGalleryDeskId' },
+      pipeline: [
+        {
+          $match: { $expr: { $eq: ['$_id', '$$ggDeskId'] } },
+        },{$project:{
+          _url:1
+        }}
+      ],
+      as: 'ggDeskDetails',
+    },
+  },
+  {
+    $unwind: {
+      path: '$ggDeskDetails',
+    },
+  },
+
+
+]);
+
+
+var mobileMainImage="";
+var deskMainImage="";
+var mobileSlideImage=[];
+var deskSlideImage=[];
+
+if(resultMainImage.length !=0){
+  mobileMainImage=resultMainImage[0].ggMobileDetails._url;
+  deskMainImage=resultMainImage[0].ggDeskDetails._url;
+}
+
+if(resultSlideImage.length !=0){
+  resultSlideImage.forEach(elementSlideImageItem => {
+    mobileSlideImage.push(elementSlideImageItem.ggMobileDetails._url);
+    deskSlideImage.push(elementSlideImageItem.ggDeskDetails._url);
+  });
+  // mobileMainImage=resultSlideImage[0].ggMobileDetails._url;
+  // deskMainImage=resultSlideImage[0].ggDeskDetails._url;
+}
+
+
+
+
+
+var dueDateGenerals=await this.generalsModel.find({_code:1022,_status:1});
+if(dueDateGenerals.length==0){
+  throw new HttpException('General settings due date not found', HttpStatus.INTERNAL_SERVER_ERROR);
+}
+
+
+
+
+
+          resultShop[0]['_themeStore']['mobileMainImageUrl'] = mobileMainImage;
           resultShop[0]['_themeStore']['mobileMainImageRatio'] = 3.5;
-          resultShop[0]['_themeStore']['mobileSliderImages'] = [];
+          resultShop[0]['_themeStore']['mobileSliderImages'] = mobileSlideImage;
           resultShop[0]['_themeStore']['mobileSliderImageRatio'] = 3.6;
 
-          resultShop[0]['_themeStore']['deskMainImageUrl'] = '';
+          resultShop[0]['_themeStore']['deskMainImageUrl'] = deskMainImage;
           resultShop[0]['_themeStore']['deskMainImageRatio'] = 5;
           resultShop[0]['_themeStore']['deskSliderImageRatio'] = 5;
-          resultShop[0]['_themeStore']['deskSliderImages'] = [];
-          resultShop[0]['_themeStore']['dueDateMaximumDaysCount'] = 10;
+          resultShop[0]['_themeStore']['deskSliderImages'] =deskSlideImage;
+          resultShop[0]['_themeStore']['dueDateMaximumDaysCount'] = dueDateGenerals[0]._number;
         }
       }
       console.log('____f10');

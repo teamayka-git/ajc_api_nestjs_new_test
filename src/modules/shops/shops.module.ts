@@ -13,6 +13,7 @@ import { ShopsService } from './shops.service';
 import { CustomersSchema } from 'src/tableModels/customers.model';
 import { GeneralsSchema } from 'src/tableModels/generals.model';
 import { CompanySchema } from 'src/tableModels/companies.model';
+import { StorePromotionsSchema } from 'src/tableModels/store_promotions.model';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { CompanySchema } from 'src/tableModels/companies.model';
       },
 
       { name: ModelNames.GLOBAL_GALLERIES, schema: GlobalGalleriesSchema },
+      { name: ModelNames.STORE_PROMOTIONS, schema: StorePromotionsSchema },
     ]),
   ],
   controllers: [ShopsController],
