@@ -1407,6 +1407,23 @@ export class ShopsService {
         .aggregate(arrayAggregation)
         .session(transactionSession);
 
+      if (dto.screenType.includes(251)) {
+        result.forEach((element) => {
+          if (element['_themeStore'] !== undefined) {
+            element['_themeStore']['mobileMainImageUrl'] = '';
+            element['_themeStore']['mobileMainImageRatio'] = 3.5;
+            element['_themeStore']['mobileSliderImages'] = [];
+            element['_themeStore']['mobileSliderImageRatio'] = 3.6;
+
+            element['_themeStore']['deskMainImageUrl'] = '';
+            element['_themeStore']['deskMainImageRatio'] = 5;
+            element['_themeStore']['deskSliderImageRatio'] = 5;
+            element['_themeStore']['deskSliderImages'] = [];
+            element['_themeStore']['dueDateMaximumDaysCount'] = 10;
+          }
+        });
+      }
+
       var totalCount = 0;
       if (dto.screenType.includes(0)) {
         //Get total count
