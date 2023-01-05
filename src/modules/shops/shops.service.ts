@@ -1403,7 +1403,8 @@ export class ShopsService {
           },
         );
       }
-      var result = await this.shopsModel
+      var result =[];
+      result = await this.shopsModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
 
