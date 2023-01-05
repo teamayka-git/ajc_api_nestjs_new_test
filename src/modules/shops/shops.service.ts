@@ -2487,7 +2487,7 @@ export class ShopsService {
       }
 
 
-      
+      /*
       if (file.hasOwnProperty('iconImage')) {
         console.log("resultUploadSplash___2");
         // var filePath =
@@ -2547,7 +2547,7 @@ export class ShopsService {
       }
   
 
-
+*/
 
 
 

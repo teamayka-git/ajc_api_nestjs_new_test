@@ -183,9 +183,9 @@ export class ShopsController {
         {
           name: 'splashImage',
         },
-        {
-          name: 'iconImage',
-        },
+        // {
+        //   name: 'iconImage',
+        // },
       ], 
       /*{
         storage: diskStorage({
