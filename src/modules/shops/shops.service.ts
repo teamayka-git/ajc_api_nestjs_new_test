@@ -1407,6 +1407,9 @@ export class ShopsService {
         .aggregate(arrayAggregation)
         .session(transactionSession);
 
+
+console.log("____ result shop   "+JSON.stringify(result));
+
       if (dto.screenType.includes(251)) {
         result.forEach((element) => {
           if (element['_themeStore'] !== undefined) {
