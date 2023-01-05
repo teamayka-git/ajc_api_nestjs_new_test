@@ -84,7 +84,7 @@ export class OrderSalesService {
     private readonly orderSaleDocumentsModel: Model<OrderSalesDocuments>,
     @InjectModel(ModelNames.SHOPS)
     private readonly shopsModel: Model<Shops>,
-    
+
     @InjectModel(ModelNames.OTP)
     private readonly otpModel: mongoose.Model<Otp>,
     @InjectModel(ModelNames.COUNTERS)
@@ -107,7 +107,7 @@ export class OrderSalesService {
     private readonly processMasterModel: mongoose.Model<ProcessMaster>,
     @InjectModel(ModelNames.ORDER_SALE_SET_PROCESSES)
     private readonly orderSaleSetProcessModel: mongoose.Model<OrderSaleSetProcesses>,
-    
+
     @InjectModel(ModelNames.EMPLOYEE_STOCK_IN_HAND_ITEMS)
     private readonly employeeStockInHandItemModel: mongoose.Model<EmployeeStockInHandsItem>,
     @InjectConnection() private readonly connection: mongoose.Connection,
@@ -743,9 +743,10 @@ export class OrderSalesService {
         );
       }
 
-      if(dto.employeeStockInHandItemIds!=null && dto.employeeStockInHandItemIds.length!=0){
-
-
+      if (
+        dto.employeeStockInHandItemIds != null &&
+        dto.employeeStockInHandItemIds.length != 0
+      ) {
         await this.employeeStockInHandItemModel.updateMany(
           {
             _id: { $in: dto.employeeStockInHandItemIds },
@@ -759,9 +760,6 @@ export class OrderSalesService {
           },
           { new: true, session: transactionSession },
         );
-
-
-
       }
 
       console.log('___d6');
@@ -2983,6 +2981,19 @@ export class OrderSalesService {
           },
         });
         resultShop = await this.shopsModel.aggregate(pipeline);
+
+        if (resultShop[0]['_themeStore'] !== undefined) {
+          resultShop[0]['_themeStore']['mobileMainImageUrl'] = '';
+          resultShop[0]['_themeStore']['mobileMainImageRatio'] = 3.5;
+          resultShop[0]['_themeStore']['mobileSliderImages'] = [];
+          resultShop[0]['_themeStore']['mobileSliderImageRatio'] = 3.6;
+
+          resultShop[0]['_themeStore']['deskMainImageUrl'] = '';
+          resultShop[0]['_themeStore']['deskMainImageRatio'] = 5;
+          resultShop[0]['_themeStore']['deskSliderImageRatio'] = [];
+          resultShop[0]['_themeStore']['deskSliderImages'] = 6;
+          resultShop[0]['_themeStore']['dueDateMaximumDaysCount'] = 10;
+        }
       }
       console.log('____f10');
       var generalSetting = [];
