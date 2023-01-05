@@ -34,6 +34,7 @@ import {
   ShopEditeDto,
   ShopFreezStatusChangeDto,
   ShopLoginDto,
+  ShopThemeEditDto,
 } from './shops.dto';
 
 @UseGuards(RolesGuard)
@@ -171,6 +172,9 @@ export class ShopsController {
   freezedStatusChange(@Body() dto: ShopFreezStatusChangeDto, @Request() req) {
     return this.shopService.freezedStatusChange(dto, req['_userId_']);
   }
-
+  @Post("themeEdit")
+  themeEdit(@Body() dto: ShopThemeEditDto, @Request() req) {
+    return this.shopService.themeEdit(dto, req['_userId_']);
+  }
 
 }

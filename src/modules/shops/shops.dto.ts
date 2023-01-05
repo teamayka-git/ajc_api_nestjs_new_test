@@ -761,3 +761,79 @@ export class ShopFreezStatusChangeDto {
   @ApiProperty({})
   freezedRootCause: string;
 }
+
+export class ShopThemeEditDto {
+
+  
+  @IsString()
+  @ApiProperty({})
+  shopId: string;
+
+
+
+
+
+  @IsString()
+  @ApiProperty({})
+  splashText: string;
+
+  @IsString()
+  @ApiProperty({})
+  splashBgColor: string;
+
+  @IsNumber()
+  @ApiProperty({})
+  splashDuration: number;
+
+  @IsString()
+  @ApiProperty({})
+  splashTextColor: string;
+
+  @IsString()
+  @ApiProperty({})
+  actionbarBgColor: string;
+
+  @IsString()
+  @ApiProperty({})
+  actionbarIconColor: string;
+
+  @IsString()
+  @ApiProperty({})
+  actionbarTextColor: string;
+
+  @IsString()
+  @ApiProperty({})
+  actionbarText: string;
+
+  @IsString()
+  @ApiProperty({})
+  actionbarSearchBgColor: string;
+
+  @IsString()
+  @ApiProperty({})
+  actionbarSearchHint: string;
+
+  @IsString()
+  @ApiProperty({})
+  actionbarSearchHintColor: string;
+
+  @IsString()
+  @ApiProperty({})
+  actionbarSearchIconColor: string;
+
+  @IsString()
+  @ApiProperty({})
+  actionbarSearchTextColor: string;
+
+  @IsString()
+  @ApiProperty({})
+  linearPbColor: string;
+
+  @IsString()
+  @ApiProperty({})
+  roundedPbColor: string;
+
+
+
+
+}

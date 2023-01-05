@@ -27,6 +27,7 @@ import {
   ShopEditeDto,
   ShopFreezStatusChangeDto,
   ShopLoginDto,
+  ShopThemeEditDto,
 } from './shops.dto';
 import { Customers } from 'src/tableModels/customers.model';
 import { Generals } from 'src/tableModels/generals.model';
@@ -758,7 +759,7 @@ export class ShopsService {
     }
   }
 
-  async list(dto: ListShopDto) { 
+  async list(dto: ListShopDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -885,46 +886,69 @@ export class ShopsService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
 
         case 2:
-          arrayAggregation.push({ $sort: { _uid: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _uid: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
 
         case 3:
-          arrayAggregation.push({ $sort: { _orderSaleRate: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _orderSaleRate: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 4:
-          arrayAggregation.push({ $sort: { _stockSaleRate: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _stockSaleRate: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 5:
-          arrayAggregation.push({ $sort: { _shopType: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _shopType: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 6:
-          arrayAggregation.push({ $sort: { _billingModeSale: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _billingModeSale: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 7:
           arrayAggregation.push({
-            $sort: { _billingModePurchase: dto.sortOrder ,_id: dto.sortOrder },
+            $sort: { _billingModePurchase: dto.sortOrder, _id: dto.sortOrder },
           });
           break;
         case 8:
           arrayAggregation.push({
-            $sort: { _hallmarkingMandatoryStatus: dto.sortOrder  ,_id: dto.sortOrder},
+            $sort: {
+              _hallmarkingMandatoryStatus: dto.sortOrder,
+              _id: dto.sortOrder,
+            },
           });
           break;
         case 9:
-          arrayAggregation.push({ $sort: { _creditAmount: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _creditAmount: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 10:
-          arrayAggregation.push({ $sort: { _creditDays: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _creditDays: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 11:
-          arrayAggregation.push({ $sort: { _stonePricing: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _stonePricing: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 12:
-          arrayAggregation.push({ $sort: { _agentCommision: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _agentCommision: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
       }
 
@@ -2032,21 +2056,31 @@ export class ShopsService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
 
         case 2:
-          arrayAggregation.push({ $sort: { _name: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _name: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
 
         case 3:
-          arrayAggregation.push({ $sort: { _gender: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _gender: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 4:
-          arrayAggregation.push({ $sort: { _email: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _email: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 5:
-          arrayAggregation.push({ $sort: { _mobile: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _mobile: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
       }
 
@@ -2208,6 +2242,67 @@ export class ShopsService {
             _freezedDescription: dto.freezedDescription,
             _freezedRootCause:
               dto.freezedRootCause == '' ? null : dto.freezedRootCause,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+      const responseJSON = { message: 'success', data: result };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async themeEdit(dto: ShopThemeEditDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var result = await this.shopsModel.findOneAndUpdate(
+        {
+          _id: dto.shopId,
+        },
+        {
+          $set: {
+            _themeStore: {
+              splashImageUrl:
+                'https://vismayacart.s3.ap-south-1.amazonaws.com/splash-removebg-preview.png',
+              splashText: dto.splashText,
+              splashBgColor: dto.splashBgColor,
+              splashTextColor: dto.splashTextColor,
+              splashDuration: dto.splashDuration,
+              actionbarBgColor: dto.actionbarBgColor,
+              actionbarIconColor: dto.actionbarIconColor,
+              actionbarTextColor: dto.actionbarTextColor,
+              actionbarText: dto.actionbarText,
+              actionbarLogo:
+                'https://vismayacart.s3.ap-south-1.amazonaws.com/splash-removebg-preview.png',
+              actionbarSearchBgColor: dto.actionbarSearchBgColor,
+              actionbarSearchHint: dto.actionbarSearchHint,
+              actionbarSearchHintColor: dto.actionbarSearchHintColor,
+              actionbarSearchIconColor: dto.actionbarSearchIconColor,
+              actionbarSearchTextColor: dto.actionbarSearchTextColor,
+              linearProgressbarColor: dto.linearPbColor,
+              roundedProgressbarColor: dto.roundedPbColor,
+            },
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
           },
         },
         { new: true, session: transactionSession },
