@@ -2417,11 +2417,163 @@ export class ShopsService {
     }
   }
 
-  async themeEdit(dto: ShopThemeEditDto, _userId_: string) {
+  async themeEdit(dto: ShopThemeEditDto, _userId_: string, file: Object) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+
+
+      var resultUploadSplash = {};
+      var resultUploadIcon = {};
+      if (file.hasOwnProperty('splashImage')) {
+        // var filePath =
+        //   __dirname +
+        //   `/../../../public${file['image'][0]['path'].split('public')[1]}`;
+
+        //   new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP +
+        //     new StringUtils().makeThumbImageFileName(
+        //       file['image'][0]['filename'],
+        //     ));
+
+        resultUploadSplash = await new S3BucketUtils().uploadMyFile(
+          file['splashImage'][0],
+          UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP,
+        );
+
+        if (resultUploadSplash['status'] == 0) {
+          throw new HttpException(
+            'File upload error',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
+          { _tableName: ModelNames.GLOBAL_GALLERIES },
+          {
+            $inc: {
+              _count: 1,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+        const globalGallery = new this.globalGalleryModel({
+          _name: file['splashImage'][0]['originalname'],
+          _globalGalleryCategoryId: null,
+          _docType: 0,
+          _type: 7,
+          _uid: resultCounterPurchase._count,
+          _url: resultUploadSplash['url'],
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
+        });
+        var resultGlobalGallery = await globalGallery.save({
+          session: transactionSession,
+        });
+
+
+
+
+
+
+      }
+
+
+      
+      if (file.hasOwnProperty('iconImage')) {
+        // var filePath =
+        //   __dirname +
+        //   `/../../../public${file['image'][0]['path'].split('public')[1]}`;
+
+        //   new ThumbnailUtils().generateThumbnail(filePath,  UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP +
+        //     new StringUtils().makeThumbImageFileName(
+        //       file['image'][0]['filename'],
+        //     ));
+
+        resultUploadIcon = await new S3BucketUtils().uploadMyFile(
+          file['iconImage'][0],
+          UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP,
+        );
+
+        if (resultUploadIcon['status'] == 0) {
+          throw new HttpException(
+            'File upload error',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
+          { _tableName: ModelNames.GLOBAL_GALLERIES },
+          {
+            $inc: {
+              _count: 1,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+        const globalGallery = new this.globalGalleryModel({
+          _name: file['iconImage'][0]['originalname'],
+          _globalGalleryCategoryId: null,
+          _docType: 0,
+          _type: 7,
+          _uid: resultCounterPurchase._count,
+          _url: resultUploadIcon['url'],
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
+        });
+        var resultGlobalGallery = await globalGallery.save({
+          session: transactionSession,
+        });
+
+
+
+
+
+
+      }
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       var result = await this.shopsModel.findOneAndUpdate(
         {
           _id: dto.shopId,
@@ -2429,7 +2581,7 @@ export class ShopsService {
         {
           $set: {
             _themeStore: {
-              splashImageUrl:
+              splashImageUrl:(file.hasOwnProperty('splashImage'))?resultUploadSplash['url']:
                 'https://vismayacart.s3.ap-south-1.amazonaws.com/splash-removebg-preview.png',
               splashText: dto.splashText,
               splashBgColor: dto.splashBgColor,
@@ -2439,7 +2591,7 @@ export class ShopsService {
               actionbarIconColor: dto.actionbarIconColor,
               actionbarTextColor: dto.actionbarTextColor,
               actionbarText: dto.actionbarText,
-              actionbarLogo:
+              actionbarLogo:(file.hasOwnProperty('iconImage'))?resultUploadIcon['url']:
                 'https://vismayacart.s3.ap-south-1.amazonaws.com/splash-removebg-preview.png',
               actionbarSearchBgColor: dto.actionbarSearchBgColor,
               actionbarSearchHint: dto.actionbarSearchHint,

@@ -173,8 +173,31 @@ export class ShopsController {
     return this.shopService.freezedStatusChange(dto, req['_userId_']);
   }
   @Post("themeEdit")
-  themeEdit(@Body() dto: ShopThemeEditDto, @Request() req) {
-    return this.shopService.themeEdit(dto, req['_userId_']);
+  
+  @ApiCreatedResponse({
+    description: 'files upload on these input feilds => [splashImage,iconImage]',
+  })
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        {
+          name: 'splashImage',
+        },
+        {
+          name: 'iconImage',
+        },
+      ],
+      /*{
+        storage: diskStorage({
+          destination: FileMulterHelper.filePathTempShop,
+          filename: FileMulterHelper.customFileName,
+        }),
+      },*/
+    ),
+  )
+  themeEdit(@Body() dto: ShopThemeEditDto, @Request() req, @UploadedFiles() file) {
+    return this.shopService.themeEdit(dto, req['_userId_'],
+    file == null ? {} : JSON.parse(JSON.stringify(file)));
   }
 
 }

@@ -40,7 +40,7 @@ const descriptionChatPermissions =
 const descriptionCustomType = 'refer default module getUser api';
 const descriptionCustomTypes = 'refer default module getUser api';
 const descriptionCommisionType = '  0 - amount, 1 - percentage';
-const descriptionTdsTcsStatus="0-tds, 1-tcs";
+const descriptionTdsTcsStatus = '0-tds, 1-tcs';
 
 export class ShopLoginDto {
   @IsString()
@@ -114,24 +114,15 @@ class ShopNewUsersCreateList {
   dataGuard: number[];
 }
 
-
-
 class ShopExistingUsersList {
   @IsString()
   @ApiProperty({})
   userId: string;
 
-
-
   @IsNumber()
   @ApiProperty({ description: descriptionCustomType })
   customType: number;
-
-
 }
-
-
-
 
 export class ShopCreateDto {
   @Transform(({ value }) =>
@@ -169,7 +160,7 @@ export class ShopCreateDto {
 
   @Transform(({ value }) => Number(value))
   @IsNumber()
-  @ApiProperty({  })
+  @ApiProperty({})
   isTaxIgstEnabled: number;
 
   @IsString()
@@ -179,7 +170,6 @@ export class ShopCreateDto {
   @ApiProperty({})
   name: string;
 
-  
   @IsString()
   @ApiProperty({})
   displayName: string;
@@ -289,16 +279,13 @@ export class ShopCreateDto {
   mobile: string;
 
   @Transform(({ value }) =>
-  typeof value == 'string' ? JSON.parse(value) : value,
-)
-@IsArray()
-@ApiProperty({ type: [ShopExistingUsersList] })
-@ValidateNested({ each: true })
-@Type(() => ShopExistingUsersList)
-arrayUserIdsEsixting: ShopExistingUsersList[];
-
-
-  
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
+  @IsArray()
+  @ApiProperty({ type: [ShopExistingUsersList] })
+  @ValidateNested({ each: true })
+  @Type(() => ShopExistingUsersList)
+  arrayUserIdsEsixting: ShopExistingUsersList[];
 
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
@@ -356,17 +343,15 @@ export class ShopEditeDto {
   @IsString()
   @ApiProperty({})
   address: string;
-  
+
   @IsString()
   @ApiProperty({})
   displayName: string;
-
 
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({ description: descriptionTdsTcsStatus })
   tdsTcsStatus: number;
-
 
   @IsString()
   @ApiProperty({})
@@ -392,7 +377,7 @@ export class ShopEditeDto {
   @IsNumber()
   @ApiProperty({ description: descriptionBillingModeSale })
   isTaxIgstEnabled: number;
-  
+
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({ description: descriptionBillingModePurchase })
@@ -519,11 +504,10 @@ export class ListShopDto {
   })
   screenType: number[];
 
-
   @IsArray()
-  @ApiProperty({ type: [Number], })
+  @ApiProperty({ type: [Number] })
   responseFormat: number[];
-  
+
   @IsArray()
   @ApiProperty({
     type: [Number],
@@ -643,13 +627,11 @@ export class ShopAddRemoveUsersDto {
   @ApiProperty({})
   shopUserId: string;
 
-
-@IsArray()
-@ApiProperty({ type: [ShopExistingUsersList] })
-@ValidateNested({ each: true })
-@Type(() => ShopExistingUsersList)
-arrayUserIdsEsixting: ShopExistingUsersList[];
-
+  @IsArray()
+  @ApiProperty({ type: [ShopExistingUsersList] })
+  @ValidateNested({ each: true })
+  @Type(() => ShopExistingUsersList)
+  arrayUserIdsEsixting: ShopExistingUsersList[];
 
   @IsArray()
   @ApiProperty({ type: [String] })
@@ -667,13 +649,11 @@ export class ShopAddRemoveCustomerDto {
   @ApiProperty({})
   shopUserId: string;
 
-
-@IsArray()
-@ApiProperty({ type: [ShopExistingUsersList] })
-@ValidateNested({ each: true })
-@Type(() => ShopExistingUsersList)
-arrayUserIdsEsixting: ShopExistingUsersList[];
-
+  @IsArray()
+  @ApiProperty({ type: [ShopExistingUsersList] })
+  @ValidateNested({ each: true })
+  @Type(() => ShopExistingUsersList)
+  arrayUserIdsEsixting: ShopExistingUsersList[];
 
   @IsArray()
   @ApiProperty({ type: [String] })
@@ -706,11 +686,10 @@ export class ShopAcrossEmployeesAndCustomersDto {
   })
   screenType: number[];
 
-
   @IsArray()
-  @ApiProperty({ type: [Number], })
+  @ApiProperty({ type: [Number] })
   responseFormat: number[];
-  
+
   @IsNumber()
   @ApiProperty({})
   limit: number;
@@ -746,12 +725,9 @@ export class ShopFreezStatusChangeDto {
   @ApiProperty({ type: [String] })
   shopIds: string[];
 
-
-
   @IsNumber()
-  @ApiProperty({  })
+  @ApiProperty({})
   isFreezed: number;
-
 
   @IsString()
   @ApiProperty({})
@@ -763,15 +739,9 @@ export class ShopFreezStatusChangeDto {
 }
 
 export class ShopThemeEditDto {
-
-  
   @IsString()
   @ApiProperty({})
   shopId: string;
-
-
-
-
 
   @IsString()
   @ApiProperty({})
@@ -781,6 +751,7 @@ export class ShopThemeEditDto {
   @ApiProperty({})
   splashBgColor: string;
 
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
   splashDuration: number;
@@ -832,8 +803,4 @@ export class ShopThemeEditDto {
   @IsString()
   @ApiProperty({})
   roundedPbColor: string;
-
-
-
-
 }
