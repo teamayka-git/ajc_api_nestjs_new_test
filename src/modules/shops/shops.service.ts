@@ -2428,6 +2428,8 @@ export class ShopsService {
       var resultUploadSplash = {};
       var resultUploadIcon = {};
       if (file.hasOwnProperty('splashImage')) {
+        console.log("resultUploadSplash___1");
+
         // var filePath =
         //   __dirname +
         //   `/../../../public${file['image'][0]['path'].split('public')[1]}`;
@@ -2486,6 +2488,7 @@ export class ShopsService {
 
       
       if (file.hasOwnProperty('iconImage')) {
+        console.log("resultUploadSplash___2");
         // var filePath =
         //   __dirname +
         //   `/../../../public${file['image'][0]['path'].split('public')[1]}`;
