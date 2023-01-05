@@ -186,7 +186,7 @@ export class ShopsController {
         {
           name: 'iconImage',
         },
-      ],
+      ], 
       /*{
         storage: diskStorage({
           destination: FileMulterHelper.filePathTempShop,

@@ -2425,6 +2425,7 @@ export class ShopsService {
 
 
 
+      console.log("resultUploadSplash___0");
       var resultUploadSplash = {};
       var resultUploadIcon = {};
       if (file.hasOwnProperty('splashImage')) {
