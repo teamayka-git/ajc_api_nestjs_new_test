@@ -2478,7 +2478,7 @@ export class ShopsService {
 
 
 
-
+        console.log("resultUploadSplash['url']   "+resultUploadSplash['url']);
 
 
       }
@@ -2537,6 +2537,7 @@ export class ShopsService {
 
 
 
+        console.log("resultUploadIcon['url']   "+resultUploadIcon['url']);
 
 
       }
