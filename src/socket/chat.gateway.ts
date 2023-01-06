@@ -201,7 +201,14 @@ export class ChatGateway
             });
 
             var resultSender = await this.userModel.aggregate([
-              { $match: { _id: new mongoose.Types.ObjectId(userId) } },
+              { $match: { _id: new mongoose.Types.ObjectId(userId) } }
+              ,{$project:{
+                _id:1,
+                _name:1,
+                _email:1,
+                _uid: 1,
+                _mobile:1
+              }},
               {
                 $lookup: {
                   from: ModelNames.GLOBAL_GALLERIES,
@@ -214,10 +221,6 @@ export class ChatGateway
                     },
                     {
                       $project: {
-                        _name: 1,
-                        _docType: 1,
-                        _type: 1,
-                        _uid: 1,
                         _url: 1,
                       },
                     },
@@ -230,7 +233,7 @@ export class ChatGateway
                   path: '$globalGalleryDetails',
                   preserveNullAndEmptyArrays: true,
                 },
-              },
+              }
             ]);
             console.log("___personal msg 3");
             var jsonString = {
@@ -534,6 +537,13 @@ console.log("jsonString   "+JSON.stringify(jsonString));
 
       var resultSender = await this.userModel.aggregate([
         { $match: { _id: new mongoose.Types.ObjectId(_userId_) } },
+        {$project:{
+          _id:1,
+          _name:1,
+          _uid: 1,
+          _email:1,
+          _mobile:1
+        }},
         {
           $lookup: {
             from: ModelNames.GLOBAL_GALLERIES,
@@ -546,10 +556,6 @@ console.log("jsonString   "+JSON.stringify(jsonString));
               },
               {
                 $project: {
-                  _name: 1,
-                  _docType: 1,
-                  _type: 1,
-                  _uid: 1,
                   _url: 1,
                 },
               },
@@ -655,10 +661,6 @@ console.log("jsonString   "+JSON.stringify(jsonString));
                     },
                     {
                       $project: {
-                        _name: 1,
-                        _docType: 1,
-                        _type: 1,
-                        _uid: 1,
                         _url: 1,
                       },
                     },
@@ -679,10 +681,6 @@ console.log("jsonString   "+JSON.stringify(jsonString));
                   _mobile: 1,
                   _uid: 1,
                   globalGalleryDetails: {
-                    _name: 1,
-                    _docType: 1,
-                    _type: 1,
-                    _uid: 1,
                     _url: 1,
                   },
                 },
@@ -722,10 +720,6 @@ console.log("jsonString   "+JSON.stringify(jsonString));
                     },
                     {
                       $project: {
-                        _name: 1,
-                        _docType: 1,
-                        _type: 1,
-                        _uid: 1,
                         _url: 1,
                       },
                     },
@@ -746,10 +740,6 @@ console.log("jsonString   "+JSON.stringify(jsonString));
                   _mobile: 1,
                   _uid: 1,
                   globalGalleryDetails: {
-                    _name: 1,
-                    _docType: 1,
-                    _type: 1,
-                    _uid: 1,
                     _url: 1,
                   },
                 },
