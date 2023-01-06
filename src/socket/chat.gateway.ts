@@ -244,6 +244,9 @@ export class ChatGateway
               sender: resultSender[0],
               time: time,
             };
+
+console.log("jsonString   "+JSON.stringify(jsonString));
+
             var onlineUsers = new IndexUtils().multipleIndexChat(
               this.connectedUsers,
               recipientId,
