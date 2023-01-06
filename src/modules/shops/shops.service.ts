@@ -2557,14 +2557,19 @@ export class ShopsService {
       };
 
       if (file.hasOwnProperty('splashImage')) {
+        console.log("___ssss1");
         objThemeStore['splashImageUrl'] = resultUploadSplash['url'];
-      } else {
+      } else {console.log("___ssss2");
         if (dto.isSplashImageRemoved == 1) {
+          console.log("___ssss3");
           objThemeStore['splashImageUrl'] = '';
         }else{
+          console.log("___ssss4");
           if(resultShop[0]._themeStore==null){
+            console.log("___ssss5");
             objThemeStore['splashImageUrl'] = '';
           }else{
+            console.log("___ssss6");
             objThemeStore['splashImageUrl'] = resultShop[0]._themeStore["splashImageUrl"];
           }
         }
@@ -2583,7 +2588,7 @@ export class ShopsService {
           }
         }
       }
-
+console.log("objThemeStore        "+JSON.stringify(objThemeStore));
       var result = await this.shopsModel.findOneAndUpdate(
         {
           _id: dto.shopId,
