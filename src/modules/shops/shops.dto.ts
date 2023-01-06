@@ -756,6 +756,20 @@ export class ShopThemeEditDto {
   @ApiProperty({})
   splashDuration: number;
 
+
+  
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  isSplashImageRemoved: number;
+
+
+  
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  isActionbarLogoImageRemoved: number;
+
   @IsString()
   @ApiProperty({})
   splashTextColor: string;

@@ -2422,14 +2422,11 @@ export class ShopsService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-
-
-
-      console.log("resultUploadSplash___0");
+      console.log('resultUploadSplash___0');
       var resultUploadSplash = {};
       var resultUploadIcon = {};
       if (file.hasOwnProperty('splashImage')) {
-        console.log("resultUploadSplash___1");
+        console.log('resultUploadSplash___1');
 
         // var filePath =
         //   __dirname +
@@ -2479,17 +2476,11 @@ export class ShopsService {
           session: transactionSession,
         });
 
-
-
-        console.log("resultUploadSplash['url']   "+resultUploadSplash['url']);
-
-
+        console.log("resultUploadSplash['url']   " + resultUploadSplash['url']);
       }
 
-
-      
       if (file.hasOwnProperty('iconImage')) {
-        console.log("resultUploadSplash___2");
+        console.log('resultUploadSplash___2');
         // var filePath =
         //   __dirname +
         //   `/../../../public${file['image'][0]['path'].split('public')[1]}`;
@@ -2538,46 +2529,42 @@ export class ShopsService {
           session: transactionSession,
         });
 
-
-
-
-        console.log("resultUploadIcon['url']   "+resultUploadIcon['url']);
-
-
+        console.log("resultUploadIcon['url']   " + resultUploadIcon['url']);
       }
-  
 
+      var objThemeStore = {
+        splashText: dto.splashText,
+        splashBgColor: dto.splashBgColor,
+        splashTextColor: dto.splashTextColor,
+        splashDuration: dto.splashDuration,
+        actionbarBgColor: dto.actionbarBgColor,
+        actionbarIconColor: dto.actionbarIconColor,
+        actionbarTextColor: dto.actionbarTextColor,
+        actionbarText: dto.actionbarText,
+        actionbarSearchBgColor: dto.actionbarSearchBgColor,
+        actionbarSearchHint: dto.actionbarSearchHint,
+        actionbarSearchHintColor: dto.actionbarSearchHintColor,
+        actionbarSearchIconColor: dto.actionbarSearchIconColor,
+        actionbarSearchTextColor: dto.actionbarSearchTextColor,
+        linearProgressbarColor: dto.linearPbColor,
+        roundedProgressbarColor: dto.roundedPbColor,
+      };
 
+      if (file.hasOwnProperty('splashImage')) {
+        objThemeStore['splashImageUrl'] = resultUploadSplash['url'];
+      } else {
+        if (dto.isSplashImageRemoved == 1) {
+          objThemeStore['splashImageUrl'] = '';
+        }
+      }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      if (file.hasOwnProperty('iconImage')) {
+        objThemeStore['actionbarLogo'] = resultUploadIcon['url'];
+      } else {
+        if (dto.isActionbarLogoImageRemoved == 1) {
+          objThemeStore['actionbarLogo'] = '';
+        }
+      }
 
       var result = await this.shopsModel.findOneAndUpdate(
         {
@@ -2585,27 +2572,7 @@ export class ShopsService {
         },
         {
           $set: {
-            _themeStore: {
-              splashImageUrl:(file.hasOwnProperty('splashImage'))?resultUploadSplash['url']:
-                'https://vismayacart.s3.ap-south-1.amazonaws.com/splash-removebg-preview.png',
-              splashText: dto.splashText,
-              splashBgColor: dto.splashBgColor,
-              splashTextColor: dto.splashTextColor,
-              splashDuration: dto.splashDuration,
-              actionbarBgColor: dto.actionbarBgColor,
-              actionbarIconColor: dto.actionbarIconColor,
-              actionbarTextColor: dto.actionbarTextColor,
-              actionbarText: dto.actionbarText,
-              actionbarLogo:(file.hasOwnProperty('iconImage'))?resultUploadIcon['url']:
-                'https://vismayacart.s3.ap-south-1.amazonaws.com/splash-removebg-preview.png',
-              actionbarSearchBgColor: dto.actionbarSearchBgColor,
-              actionbarSearchHint: dto.actionbarSearchHint,
-              actionbarSearchHintColor: dto.actionbarSearchHintColor,
-              actionbarSearchIconColor: dto.actionbarSearchIconColor,
-              actionbarSearchTextColor: dto.actionbarSearchTextColor,
-              linearProgressbarColor: dto.linearPbColor,
-              roundedProgressbarColor: dto.roundedPbColor,
-            },
+            _themeStore: objThemeStore,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
           },
