@@ -2532,6 +2532,12 @@ export class ShopsService {
         console.log("resultUploadIcon['url']   " + resultUploadIcon['url']);
       }
 
+
+      var resultShop=await this.shopsModel.find({_id:dto.shopId});
+      if(resultShop.length==0){
+        throw new HttpException('Shop not found', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+
       var objThemeStore = {
         splashText: dto.splashText,
         splashBgColor: dto.splashBgColor,
@@ -2555,6 +2561,12 @@ export class ShopsService {
       } else {
         if (dto.isSplashImageRemoved == 1) {
           objThemeStore['splashImageUrl'] = '';
+        }else{
+          if(resultShop[0]._themeStore==null){
+            objThemeStore['splashImageUrl'] = '';
+          }else{
+            objThemeStore['splashImageUrl'] = resultShop[0]._themeStore["splashImageUrl"];
+          }
         }
       }
 
@@ -2563,6 +2575,12 @@ export class ShopsService {
       } else {
         if (dto.isActionbarLogoImageRemoved == 1) {
           objThemeStore['actionbarLogo'] = '';
+        }else{
+          if(resultShop[0]._themeStore==null){
+            objThemeStore['actionbarLogo'] = '';
+          }else{
+            objThemeStore['actionbarLogo'] = resultShop[0]._themeStore["actionbarLogo"];
+          }
         }
       }
 
