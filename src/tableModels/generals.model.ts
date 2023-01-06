@@ -125,30 +125,3 @@ _vlaueType:{
 }
 */
 
-
-
-/*
-_code -> 1019, json value {"item":[full of below]}
-1 -  sn	
-2 -  orderId	
-3 -  cat_name	
-4 -  sub_cat	
-5 -  product_name	
-6 -  purity(group_master)	
-7 -  HSN(group_master)	
-8 -  HUID	
-9 -  Gross weight	
-10-  Stone weight	
-11-  net weight	
-12-  touch	
-13-  pure_weight(100%)	
-14-  pure_weight(rate_base from customer table)	
-15-  unit_rate	
-16-  Amount	
-17-  stone_amount	
-18-  total value	"
-19-  CGST"	
-20-  SGST	
-21-  IGST		
-22-  Gross Amount
-*/

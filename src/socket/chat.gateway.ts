@@ -105,7 +105,7 @@ export class ChatGateway
   @SubscribeMessage(SocketChatEvents.EVENT_PERSONAL_MESSAGE_SEND)
   async handleMessagePersonalMessageSend(client: Socket, payload: Object) {
     var dateTime = new Date().getTime();
-
+    console.log("___personal msg 1");
     const dataJson = payload;
 
     var indexClient = this.connectedUsers.findIndex((i) => i.socket === client);
@@ -138,7 +138,7 @@ export class ChatGateway
       return;
     }
     var personalChatId = '';
-
+    console.log("___personal msg 2");
     //finding personal chat id
 
     var resultGroupUid = await this.chatPersonalChatsModel.find({
@@ -232,7 +232,7 @@ export class ChatGateway
                 },
               },
             ]);
-
+            console.log("___personal msg 3");
             var jsonString = {
               _personalChatId: personalChatId,
               messageId: resultChatpersonalMessage._id,
@@ -251,7 +251,7 @@ export class ChatGateway
 
             for (var i = 0; i < onlineUsers.length; i++) {
               var onlineSocket = this.connectedUsers[onlineUsers[i]].socket;
-
+              console.log("___personal msg 4");
               onlineSocket.emit(
                 SocketChatEvents.EVENT_PERSONAL_MESSAGE_RECEIVED,
                 resultChatPendingMessage._id,
@@ -261,7 +261,7 @@ export class ChatGateway
                     isWantToShowNotification: true,
                   },
                 },
-                (ack) => {
+                (ack) => {console.log("___personal msg 5");
                   this.chatPendingMessagesModel
                     .updateOne({ _id: ack }, { $set: { _deliveredSeen: 1 } })
                     .then((result) => {})
