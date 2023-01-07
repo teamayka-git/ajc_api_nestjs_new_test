@@ -84,6 +84,10 @@ class ProductTempCreateList {
   @ApiProperty({})
   groupId: string;
 
+  @IsString()
+  @ApiProperty({})
+  groupName: string;
+
   @IsNumber()
   @ApiProperty({ description: descriptionType })
   type: number;
