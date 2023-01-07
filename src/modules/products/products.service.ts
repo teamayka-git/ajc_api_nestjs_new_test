@@ -571,7 +571,7 @@ export class ProductsService {
         if (orderId != null) {
           var result = await this.orderSaleMainModel.findOneAndUpdate(
             {
-              _id: dto.orderId,
+              _id: dto.orderId,_workStatus:4
             },
             {
               $set: {
@@ -588,6 +588,9 @@ export class ProductsService {
             },
             { new: true, session: transactionSession },
           );
+
+console.log("____os foau   "+result);
+
           arrayOrderSaleHistory.push({
             _orderSaleId: dto.orderId,
             _userId: null,
