@@ -589,7 +589,9 @@ export class ProductsService {
             { new: true, session: transactionSession },
           );
 
-console.log("____os foau   "+result);
+          if(result==null){
+            throw new HttpException('Product already generated', HttpStatus.INTERNAL_SERVER_ERROR);
+          }
 
           arrayOrderSaleHistory.push({
             _orderSaleId: dto.orderId,
