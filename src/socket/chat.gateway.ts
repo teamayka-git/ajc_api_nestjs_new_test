@@ -248,7 +248,12 @@ export class ChatGateway
               time: time,
             };
 
-console.log("jsonString   "+JSON.stringify(jsonString));
+console.log("jsonString   "+JSON.stringify( {
+  data: {
+    list: [jsonString],
+    isWantToShowNotification: true,
+  },
+}));
 
             var onlineUsers = new IndexUtils().multipleIndexChat(
               this.connectedUsers,
