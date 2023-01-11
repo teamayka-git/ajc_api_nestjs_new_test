@@ -16,6 +16,11 @@ export const ProductTempsSchema = new mongoose.Schema({
     ref: ModelNames.PRODUCTS,
     default: null,
   },
+  _generatedProductId: { 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.PRODUCTS,
+    default: null,
+  },
   _shopId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.SHOPS,
@@ -78,6 +83,7 @@ export interface ProductTemps {
   _shopId: String;
   _orderItemId: String;
   _factoryTransferItemId:String;
+  _generatedProductId:String;
   _grossWeight: number;
   _barcode: String;
   _categoryId: String;
@@ -100,6 +106,7 @@ export interface ProductTemps {
   _status: Number;
 }
 
+ProductTempsSchema.index({ _generatedProductId: 1 });
 ProductTempsSchema.index({ _factoryTransferItemId: 1 });
 ProductTempsSchema.index({ _totalStoneAmount: 1 });
 ProductTempsSchema.index({ _designUid: 1 });

@@ -2490,48 +2490,48 @@ export class ProductsService {
         },
       ]);
 
-      await this.productTempModel.updateMany(
-        {
-          _id: { $in: dto.productTempIds },
-        },
-        {
-          $set: {
-            _updatedUserId: _userId_,
-            _updatedAt: dateTime,
-            _status: 0,
-          },
-        },
-        { new: true, session: transactionSession },
-      );
+      // await this.productTempModel.updateMany(
+      //   {
+      //     _id: { $in: dto.productTempIds },
+      //   },
+      //   {
+      //     $set: {
+      //       _updatedUserId: _userId_,
+      //       _updatedAt: dateTime,
+      //       _status: 0,
+      //     },
+      //   },
+      //   { new: true, session: transactionSession },
+      // );
 
       var arrayToProducts = [];
       var arrayStonesLinkings = [];
 
-      resultProductTempGet.forEach((elementProduct) => {
+      for(var i=0;i<resultProductTempGet.length;i++) {
         var productId = new mongoose.Types.ObjectId();
         arrayToProducts.push({
           _id: productId,
-          _name: elementProduct._name,
-          _designUid: elementProduct._designUid,
-          _designerId: elementProduct._designerId,
-          _shopId: elementProduct._shopId,
-          _orderItemId: elementProduct._orderItemId,
-          _grossWeight: elementProduct._grossWeight,
-          _barcode: elementProduct._barcode,
-          _categoryId: elementProduct._categoryId,
-          _subCategoryId: elementProduct._subCategoryId,
-          _groupId: elementProduct._groupId,
-          _type: elementProduct._type,
+          _name: resultProductTempGet[i]._name,
+          _designUid: resultProductTempGet[i]._designUid,
+          _designerId: resultProductTempGet[i]._designerId,
+          _shopId: resultProductTempGet[i]._shopId,
+          _orderItemId: resultProductTempGet[i]._orderItemId,
+          _grossWeight: resultProductTempGet[i]._grossWeight,
+          _barcode: resultProductTempGet[i]._barcode,
+          _categoryId: resultProductTempGet[i]._categoryId,
+          _subCategoryId: resultProductTempGet[i]._subCategoryId,
+          _groupId: resultProductTempGet[i]._groupId,
+          _type: resultProductTempGet[i]._type,
           _stockStatus: 1,
-          _purity: elementProduct._purity,
-          _hmSealingStatus: elementProduct._hmSealingStatus,
-          _totalStoneWeight: elementProduct._totalStoneWeight,
-          _totalStoneAmount: elementProduct._totalStoneAmount,
-          _netWeight: elementProduct._netWeight,
-          _huId: elementProduct._huId,
-          _eCommerceStatus: elementProduct._eCommerceStatus,
-          _moldNumber: elementProduct._moldNumber,
-          _isStone: elementProduct._isStone,
+          _purity: resultProductTempGet[i]._purity,
+          _hmSealingStatus: resultProductTempGet[i]._hmSealingStatus,
+          _totalStoneWeight: resultProductTempGet[i]._totalStoneWeight,
+          _totalStoneAmount: resultProductTempGet[i]._totalStoneAmount,
+          _netWeight: resultProductTempGet[i]._netWeight,
+          _huId: resultProductTempGet[i]._huId,
+          _eCommerceStatus: resultProductTempGet[i]._eCommerceStatus,
+          _moldNumber: resultProductTempGet[i]._moldNumber,
+          _isStone: resultProductTempGet[i]._isStone,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
@@ -2539,7 +2539,7 @@ export class ProductsService {
           _status: 1,
         });
 
-        elementProduct.stoneLinking.forEach((elementStone) => {
+        resultProductTempGet[i].stoneLinking.forEach((elementStone) => {
           arrayStonesLinkings.push({
             _productId: productId,
             _stoneId: elementStone._stoneId,
@@ -2554,7 +2554,28 @@ export class ProductsService {
             _status: 1,
           });
         });
-      });
+
+
+
+
+
+      await this.productTempModel.findOneAndUpdate(
+        {
+          _id: resultProductTempGet[i]._id,
+        },
+        {
+          $set: {
+            _generatedProductId:productId
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+
+
+
+
+      };
 
       await this.productModel.insertMany(arrayToProducts, {
         session: transactionSession,

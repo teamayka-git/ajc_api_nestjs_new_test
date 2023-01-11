@@ -49,11 +49,13 @@ export class ProductTempService {
         var productTempId = new mongoose.Types.ObjectId();
 
         var autoIncrementNumber = resultCounterProduct._count - index;
-mapItem["productTempId"]=productTempId.toString();
+        mapItem['productTempId'] = productTempId.toString();
         arrayToProductTemp.push({
           _id: productTempId,
           _name: mapItem.name,
           _designUid: mapItem.designUid,
+
+          _generatedProductId: null,
           _designerId: mapItem.designId == '' ? null : mapItem.designId,
           _shopId: mapItem.shopId == '' ? null : mapItem.shopId,
           _orderItemId: mapItem.orderItemId == '' ? null : mapItem.orderItemId,
@@ -123,9 +125,7 @@ mapItem["productTempId"]=productTempId.toString();
 
       const responseJSON = {
         message: 'success',
-        data: {
-          list: dto,
-        },
+        data: dto,
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
