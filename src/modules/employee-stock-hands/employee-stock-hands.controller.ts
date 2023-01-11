@@ -50,4 +50,9 @@ export class EmployeeStockHandsController {
   returnToManufacture(@Body() dto: InHandReturnToManufactureDto, @Request() req) {
     return this.employeeStockHandsService.returnToManufacture(dto, req['_userId_']);
   }
+  @Post('returnToManufactureCompleted')
+  returnToManufactureCompleted(@Body() dto: InHandReturnToManufactureDto, @Request() req) {
+    return this.employeeStockHandsService.returnToManufactureCompleted(dto, req['_userId_']);
+  }
+  
 }
