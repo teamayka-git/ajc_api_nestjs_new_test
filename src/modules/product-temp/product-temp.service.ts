@@ -124,7 +124,7 @@ mapItem["productTempId"]=productTempId.toString();
       const responseJSON = {
         message: 'success',
         data: {
-          list: productTemp,
+          list: dto,
         },
       };
       if (
