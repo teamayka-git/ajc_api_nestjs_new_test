@@ -43,7 +43,7 @@
     "fastify-static": "^4.7.0",
     "fastify-swagger": "^5.2.0",
     "image-size": "^1.0.1",
-    "mongoose": "^6.1.6",
+    "mongoose": "^6.2.2",
     "mongoose-double": "0.0.1",
     "nodemailer": "^6.7.2",
     "reflect-metadata": "^0.1.13",

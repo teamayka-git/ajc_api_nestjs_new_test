@@ -19,7 +19,7 @@ export const ChatPersonalChatsSchema = new mongoose.Schema({
 });
 
 export interface ChatPersonalChats {
-  _id: String;
+  _id: string;
   _personalIdOne: String;
   _personalIdTwo: Number;
   _groupUid: String;
