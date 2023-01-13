@@ -63,6 +63,7 @@ import {
 import { EmployeeStockInHandsItem } from 'src/tableModels/employee_stock_in_hand_item.model';
 import { Otp } from 'src/tableModels/otp.model';
 import { StorePromotions } from 'src/tableModels/store_promotions.model';
+import { OrderSaleChangeRequests } from 'src/tableModels/order_sale_change_requests.model';
 
 @Injectable()
 export class OrderSalesService {
@@ -86,6 +87,8 @@ export class OrderSalesService {
     @InjectModel(ModelNames.SHOPS)
     private readonly shopsModel: Model<Shops>,
 
+    @InjectModel(ModelNames.ORDER_SALE_CHANGE_REQUESTS)
+    private readonly orderSaleChangeRequestModel: mongoose.Model<OrderSaleChangeRequests>,
     @InjectModel(ModelNames.STORE_PROMOTIONS)
     private readonly storePromotionModel: mongoose.Model<StorePromotions>,
     @InjectModel(ModelNames.OTP)
@@ -890,6 +893,155 @@ export class OrderSalesService {
             session: transactionSession,
           },
         );
+      }
+
+      if (dto.amendmentRequestId != null && dto.amendmentRequestId != '') {
+        await this.orderSaleChangeRequestModel.findOneAndUpdate(
+          {
+            _id: dto.amendmentRequestId,
+          },
+          {
+            $set: {
+              _amendmentJson: dto.amendmentObject,
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _workStatus: 1,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+        if (dto.globalgalleryIdsNewAmendment.length != 0) {
+          var arrayToOrderDocuments = [];
+          dto.globalgalleryIdsNewAmendment.forEach(
+            (elementAmendmentGlobalgallery) => {
+              arrayToOrderDocuments.push({
+                _orderSaleId: dto.orderSaleId,
+                _globalGalleryId: elementAmendmentGlobalgallery,
+                _createdUserId: _userId_,
+                _createdAt: dateTime,
+                _updatedUserId: null,
+                _updatedAt: 0,
+                _status: 1,
+              });
+            },
+          );
+
+          await this.orderSaleDocumentsModel.insertMany(arrayToOrderDocuments, {
+            session: transactionSession,
+          });
+        }
+
+        if (dto.globalgalleryIdsDeleteAmendment.length != 0) {
+          await this.orderSaleDocumentsModel.updateMany(
+            {
+              _orderSaleId: dto.orderSaleId,
+              _globalGalleryId: { $in: dto.globalgalleryIdsDeleteAmendment },
+            },
+            {
+              $set: {
+                _updatedUserId: _userId_,
+                _updatedAt: dateTime,
+                _status: 0,
+              },
+            },
+            { new: true, session: transactionSession },
+          );
+        }
+
+        if (dto.doReworkAmendment == 0) {
+          await this.orderSaleMainModel.findOneAndUpdate(
+            {
+              _id: dto.orderSaleId,
+            },
+            {
+              $set: {
+                _updatedUserId: _userId_,
+                _updatedAt: dateTime,
+                _isHold: 0,
+              },
+            },
+            { new: true, session: transactionSession },
+          );
+
+          var arrayToOrderHistories = [];
+
+          arrayToOrderHistories.push({
+            _orderSaleId: dto.orderSaleId,
+            _userId: null,
+            _type: 112,
+            _deliveryProviderId: null,
+            _deliveryCounterId: null,
+            _shopId: null,
+            _orderSaleItemId: null,
+            _description: 'Amendment request accepted',
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _status: 1,
+          });
+
+          await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
+            session: transactionSession,
+          });
+        } else {
+          await this.orderSaleMainModel.findOneAndUpdate(
+            {
+              _id: dto.orderSaleId,
+            },
+            {
+              $set: {
+                _updatedUserId: _userId_,
+                _updatedAt: dateTime,
+                _isHold: 0,
+                _workStatus: 1,
+              },
+              $inc: {
+                _internalReWorkCount: 1,
+              },
+            },
+            { new: true, session: transactionSession },
+          );
+          await this.orderSaleSetProcessModel.updateMany(
+            {
+              _orderSaleId: dto.orderSaleId,
+            },
+            {
+              $set: { _status: 0 },
+            },
+            { new: true, session: transactionSession },
+          );
+          var arrayToOrderHistories = [];
+
+          arrayToOrderHistories.push({
+            _orderSaleId: dto.orderSaleId,
+            _userId: null,
+            _type: 112,
+            _deliveryProviderId: null,
+            _deliveryCounterId: null,
+            _shopId: null,
+            _orderSaleItemId: null,
+            _description: 'Amendment request accepted with rework',
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _status: 1,
+          });
+          arrayToOrderHistories.push({
+            _orderSaleId: dto.orderSaleId,
+            _userId: null,
+            _type: 110,
+            _deliveryProviderId: null,
+            _deliveryCounterId: null,
+            _shopId: null,
+            _orderSaleItemId: null,
+            _description: '',
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _status: 1,
+          });
+          await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
+            session: transactionSession,
+          });
+        }
       }
 
       var updateObject = {
@@ -1982,22 +2134,26 @@ export class OrderSalesService {
         );
       }
       if (dto.screenType.includes(143)) {
-        arrayAggregation.push(
-          {
-            $lookup: {
-              from: ModelNames.ORDER_SALE_CHANGE_REQUESTS,
-              let: { orderSaleId: '$_id' },
-              pipeline: [
-                { $match: {_type:1,_status:1, $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] } } },
-                new ModelWeightResponseFormat().orderSaleChangeRequestTableResponseFormat(
-                  1430,
-                  dto.responseFormat,
-                ),
-              ],
-              as: 'amendmentRequests',
-            },
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.ORDER_SALE_CHANGE_REQUESTS,
+            let: { orderSaleId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _type: 1,
+                  _status: 1,
+                  $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+                },
+              },
+              new ModelWeightResponseFormat().orderSaleChangeRequestTableResponseFormat(
+                1430,
+                dto.responseFormat,
+              ),
+            ],
+            as: 'amendmentRequests',
           },
-        );
+        });
       }
       const isorderSaleHistories = dto.screenType.includes(104);
 
@@ -3002,8 +3158,6 @@ export class OrderSalesService {
           },
         });
         resultShop = await this.shopsModel.aggregate(pipeline);
-
-        
       }
       console.log('____f10');
       var generalSetting = [];
@@ -3191,162 +3345,148 @@ export class OrderSalesService {
         },
       };
 
-
-
-
-
-
       if (dto.screenType.includes(507)) {
-
-
-
-
-          var resultMainImage=await this.storePromotionModel.aggregate([{$match:{_type:0,_status:1}},
-            { $sort: { _priority:1 } },{ $limit: 1 },
-            {
-              $lookup: {
-                from: ModelNames.GLOBAL_GALLERIES,
-                let: { ggMobileId: '$_globalGalleryMobileId' },
-                pipeline: [
-                  {
-                    $match: { $expr: { $eq: ['$_id', '$$ggMobileId'] } },
-                  },{$project:{
-                    _url:1
-                  }}
-                ],
-                as: 'ggMobileDetails',
-              },
+        var resultMainImage = await this.storePromotionModel.aggregate([
+          { $match: { _type: 0, _status: 1 } },
+          { $sort: { _priority: 1 } },
+          { $limit: 1 },
+          {
+            $lookup: {
+              from: ModelNames.GLOBAL_GALLERIES,
+              let: { ggMobileId: '$_globalGalleryMobileId' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$ggMobileId'] } },
+                },
+                {
+                  $project: {
+                    _url: 1,
+                  },
+                },
+              ],
+              as: 'ggMobileDetails',
             },
-            {
-              $unwind: {
-                path: '$ggMobileDetails',
-              },
+          },
+          {
+            $unwind: {
+              path: '$ggMobileDetails',
             },
-            {
-              $lookup: {
-                from: ModelNames.GLOBAL_GALLERIES,
-                let: { ggDeskId: '$_globalGalleryDeskId' },
-                pipeline: [
-                  {
-                    $match: { $expr: { $eq: ['$_id', '$$ggDeskId'] } },
-                  },{$project:{
-                    _url:1
-                  }}
-                ],
-                as: 'ggDeskDetails',
-              },
+          },
+          {
+            $lookup: {
+              from: ModelNames.GLOBAL_GALLERIES,
+              let: { ggDeskId: '$_globalGalleryDeskId' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$ggDeskId'] } },
+                },
+                {
+                  $project: {
+                    _url: 1,
+                  },
+                },
+              ],
+              as: 'ggDeskDetails',
             },
-            {
-              $unwind: {
-                path: '$ggDeskDetails',
-              },
+          },
+          {
+            $unwind: {
+              path: '$ggDeskDetails',
             },
-          
-          
-          ]);
+          },
+        ]);
 
+        var resultSlideImage = await this.storePromotionModel.aggregate([
+          { $match: { _type: 1, _status: 1 } },
+          { $sort: { _priority: 1 } },
+          {
+            $lookup: {
+              from: ModelNames.GLOBAL_GALLERIES,
+              let: { ggMobileId: '$_globalGalleryMobileId' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$ggMobileId'] } },
+                },
+                {
+                  $project: {
+                    _url: 1,
+                  },
+                },
+              ],
+              as: 'ggMobileDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$ggMobileDetails',
+            },
+          },
+          {
+            $lookup: {
+              from: ModelNames.GLOBAL_GALLERIES,
+              let: { ggDeskId: '$_globalGalleryDeskId' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$ggDeskId'] } },
+                },
+                {
+                  $project: {
+                    _url: 1,
+                  },
+                },
+              ],
+              as: 'ggDeskDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$ggDeskDetails',
+            },
+          },
+        ]);
 
+        var mobileMainImage = '';
+        var deskMainImage = '';
+        var mobileSlideImage = [];
+        var deskSlideImage = [];
 
-          
-var resultSlideImage=await this.storePromotionModel.aggregate([{$match:{_type:1,_status:1}},
-  { $sort: { _priority:1 } },
-  {
-    $lookup: {
-      from: ModelNames.GLOBAL_GALLERIES,
-      let: { ggMobileId: '$_globalGalleryMobileId' },
-      pipeline: [
-        {
-          $match: { $expr: { $eq: ['$_id', '$$ggMobileId'] } },
-        },{$project:{
-          _url:1
-        }}
-      ],
-      as: 'ggMobileDetails',
-    },
-  },
-  {
-    $unwind: {
-      path: '$ggMobileDetails',
-    },
-  },
-  {
-    $lookup: {
-      from: ModelNames.GLOBAL_GALLERIES,
-      let: { ggDeskId: '$_globalGalleryDeskId' },
-      pipeline: [
-        {
-          $match: { $expr: { $eq: ['$_id', '$$ggDeskId'] } },
-        },{$project:{
-          _url:1
-        }}
-      ],
-      as: 'ggDeskDetails',
-    },
-  },
-  {
-    $unwind: {
-      path: '$ggDeskDetails',
-    },
-  },
+        if (resultMainImage.length != 0) {
+          mobileMainImage = resultMainImage[0].ggMobileDetails._url;
+          deskMainImage = resultMainImage[0].ggDeskDetails._url;
+        }
 
+        if (resultSlideImage.length != 0) {
+          resultSlideImage.forEach((elementSlideImageItem) => {
+            mobileSlideImage.push(elementSlideImageItem.ggMobileDetails._url);
+            deskSlideImage.push(elementSlideImageItem.ggDeskDetails._url);
+          });
+          // mobileMainImage=resultSlideImage[0].ggMobileDetails._url;
+          // deskMainImage=resultSlideImage[0].ggDeskDetails._url;
+        }
 
-]);
+        var dueDateGenerals = await this.generalsModel.find({
+          _code: 1022,
+          _status: 1,
+        });
+        if (dueDateGenerals.length == 0) {
+          throw new HttpException(
+            'General settings due date not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
 
-
-var mobileMainImage="";
-var deskMainImage="";
-var mobileSlideImage=[];
-var deskSlideImage=[];
-
-if(resultMainImage.length !=0){
-  mobileMainImage=resultMainImage[0].ggMobileDetails._url;
-  deskMainImage=resultMainImage[0].ggDeskDetails._url;
-}
-
-if(resultSlideImage.length !=0){
-  resultSlideImage.forEach(elementSlideImageItem => {
-    mobileSlideImage.push(elementSlideImageItem.ggMobileDetails._url);
-    deskSlideImage.push(elementSlideImageItem.ggDeskDetails._url);
-  });
-  // mobileMainImage=resultSlideImage[0].ggMobileDetails._url;
-  // deskMainImage=resultSlideImage[0].ggDeskDetails._url;
-}
-
-
-
-
-
-var dueDateGenerals=await this.generalsModel.find({_code:1022,_status:1});
-if(dueDateGenerals.length==0){
-  throw new HttpException('General settings due date not found', HttpStatus.INTERNAL_SERVER_ERROR);
-}
-
-
-responseJSON.data['themeManufactureData'] = {
-  mobileMainImageUrl: mobileMainImage,
-  mobileMainImageRatio: 3.5,
-  mobileSliderImages: mobileSlideImage,
-  mobileSliderImageRatio: 3.6,
-  deskMainImageUrl: deskMainImage,
-  deskMainImageRatio: 5,
-  deskSliderImageRatio: 5,
-  deskSliderImages: deskSlideImage,
-  dueDateMaximumDaysCount: dueDateGenerals[0]._number,
-};
-        
-
+        responseJSON.data['themeManufactureData'] = {
+          mobileMainImageUrl: mobileMainImage,
+          mobileMainImageRatio: 3.5,
+          mobileSliderImages: mobileSlideImage,
+          mobileSliderImageRatio: 3.6,
+          deskMainImageUrl: deskMainImage,
+          deskMainImageRatio: 5,
+          deskSliderImageRatio: 5,
+          deskSliderImages: deskSlideImage,
+          dueDateMaximumDaysCount: dueDateGenerals[0]._number,
+        };
       }
-
-
-
-
-
-
-
-
-
-
-
 
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&

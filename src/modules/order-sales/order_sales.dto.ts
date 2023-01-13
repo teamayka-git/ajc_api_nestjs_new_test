@@ -289,6 +289,45 @@ export class OrderSalesEditDto {
   @ApiProperty({ description: descriptionType })
   type: number;
 
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({})
+  amendmentRequestId: string;
+
+
+
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
+  @IsObject()
+  @ApiProperty({})
+  amendmentObject: Object;
+
+
+  @IsOptional()
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  globalgalleryIdsDeleteAmendment: string[];
+  
+  
+  @IsOptional()
+  @Transform(({ value }) =>
+    typeof value == 'string' ? JSON.parse(value) : value,
+  )
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  globalgalleryIdsNewAmendment: string[];
+  
+@IsOptional()
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  doReworkAmendment: number;
+
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
