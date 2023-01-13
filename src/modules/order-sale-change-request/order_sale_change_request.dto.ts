@@ -195,7 +195,4 @@ export class AmendmentRequestRejectDto {
   @ApiProperty({  })
   proceedOrder: number;
   
-  @IsNumber()
-  @ApiProperty({  })
-  doRework: number;
 }

@@ -410,8 +410,7 @@ export class OrderSaleChangeRequestService {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-    try { 
-
+    try {
       await this.orderSaleChangeRequestModel.findOneAndUpdate(
         {
           _id: dto.cancelRequestId,
@@ -435,29 +434,29 @@ export class OrderSaleChangeRequestService {
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
             _workStatus: 27,
-            _isHold:0
+            _isHold: 0,
           },
         },
         { new: true, session: transactionSession },
       );
 
       var arrayToOrderHistories = [];
-	  
-	       arrayToOrderHistories.push({
-            _orderSaleId: dto.orderSaleId,
-            _userId: null,
-            _type: 27,
-            _deliveryProviderId: null,
-            _deliveryCounterId: null,
-            _shopId: null,
-            _orderSaleItemId: null,
-            _description: '',
-            _createdUserId: _userId_,
-            _createdAt: dateTime,
-            _status: 1,
-          });
-		  
-		  await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
+
+      arrayToOrderHistories.push({
+        _orderSaleId: dto.orderSaleId,
+        _userId: null,
+        _type: 27,
+        _deliveryProviderId: null,
+        _deliveryCounterId: null,
+        _shopId: null,
+        _orderSaleItemId: null,
+        _description: '',
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _status: 1,
+      });
+
+      await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
         session: transactionSession,
       });
       const responseJSON = { message: 'success', data: {} };
@@ -485,8 +484,7 @@ export class OrderSaleChangeRequestService {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
-    try { 
-
+    try {
       await this.orderSaleChangeRequestModel.findOneAndUpdate(
         {
           _id: dto.cancelRequestId,
@@ -500,7 +498,7 @@ export class OrderSaleChangeRequestService {
         },
         { new: true, session: transactionSession },
       );
-      if(dto.proceedOrder==0){
+      if (dto.proceedOrder == 0) {
         await this.orderSaleMainModel.findOneAndUpdate(
           {
             _id: dto.orderSaleId,
@@ -510,138 +508,66 @@ export class OrderSaleChangeRequestService {
               _updatedUserId: _userId_,
               _updatedAt: dateTime,
               _workStatus: 27,
-              _isHold:0
+              _isHold: 0,
             },
           },
           { new: true, session: transactionSession },
         );
-  
+
         var arrayToOrderHistories = [];
-      
-           arrayToOrderHistories.push({
-              _orderSaleId: dto.orderSaleId,
-              _userId: null,
-              _type: 27,
-              _deliveryProviderId: null,
-              _deliveryCounterId: null,
-              _shopId: null,
-              _orderSaleItemId: null,
-              _description: '',
-              _createdUserId: _userId_,
-              _createdAt: dateTime,
-              _status: 1,
-            });
-        
+
+        arrayToOrderHistories.push({
+          _orderSaleId: dto.orderSaleId,
+          _userId: null,
+          _type: 27,
+          _deliveryProviderId: null,
+          _deliveryCounterId: null,
+          _shopId: null,
+          _orderSaleItemId: null,
+          _description: '',
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _status: 1,
+        });
+
         await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
           session: transactionSession,
         });
-      }else{
+      } else {
+        await this.orderSaleMainModel.findOneAndUpdate(
+          {
+            _id: dto.orderSaleId,
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _isHold: 0,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
 
+        var arrayToOrderHistories = [];
 
-if(dto.doRework==0){
-  await this.orderSaleMainModel.findOneAndUpdate(
-    {
-      _id: dto.orderSaleId,
-    },
-    {
-      $set: {
-        _updatedUserId: _userId_,
-        _updatedAt: dateTime,
-        _isHold:0
-      },
-    },
-    { new: true, session: transactionSession },
-  );
+        arrayToOrderHistories.push({
+          _orderSaleId: dto.orderSaleId,
+          _userId: null,
+          _type: 112,
+          _deliveryProviderId: null,
+          _deliveryCounterId: null,
+          _shopId: null,
+          _orderSaleItemId: null,
+          _description: 'deny amendment',
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _status: 1,
+        });
 
-  var arrayToOrderHistories = [];
-
-     arrayToOrderHistories.push({
-        _orderSaleId: dto.orderSaleId,
-        _userId: null,
-        _type: 112,
-        _deliveryProviderId: null,
-        _deliveryCounterId: null,
-        _shopId: null,
-        _orderSaleItemId: null,
-        _description: 'deny amendment',
-        _createdUserId: _userId_,
-        _createdAt: dateTime,
-        _status: 1,
-      });
-  
-  await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
-    session: transactionSession,
-  });
-}else{
-  await this.orderSaleMainModel.findOneAndUpdate(
-    {
-      _id: dto.orderSaleId,
-    },
-    {
-      $set: {
-        _updatedUserId: _userId_,
-        _updatedAt: dateTime,
-        _isHold:0,
-        _workStatus: 1,
-      },
-      $inc: {
-        _internalReWorkCount: 1,
-      },
-    },
-    { new: true, session: transactionSession },
-  );
-  await this.orderSaleSetProcessModel.updateMany(
-    {
-      _orderSaleId: dto.orderSaleId,
-    },
-    {
-      $set: { _status: 0 },
-    },
-    { new: true, session: transactionSession },
-  );
-  var arrayToOrderHistories = [];
-
-     arrayToOrderHistories.push({
-        _orderSaleId: dto.orderSaleId,
-        _userId: null,
-        _type: 112,
-        _deliveryProviderId: null,
-        _deliveryCounterId: null,
-        _shopId: null,
-        _orderSaleItemId: null,
-        _description: 'deny amendment',
-        _createdUserId: _userId_,
-        _createdAt: dateTime,
-        _status: 1,
-      });
-      arrayToOrderHistories.push({
-        _orderSaleId: dto.orderSaleId,
-        _userId: null,
-        _type: 110,
-        _deliveryProviderId: null,
-        _deliveryCounterId: null,
-        _shopId: null,
-        _orderSaleItemId: null,
-        _description: '',
-        _createdUserId: _userId_,
-        _createdAt: dateTime,
-        _status: 1,
-      });
-  await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
-    session: transactionSession,
-  });
-}
-
-
-
+        await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
+          session: transactionSession,
+        });
       }
-
-     
-
-
-
-
-
 
       const responseJSON = { message: 'success', data: {} };
       if (
