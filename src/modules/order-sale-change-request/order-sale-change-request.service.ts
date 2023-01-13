@@ -588,6 +588,70 @@ console.log("order change request dto     "+JSON.stringify(dto))
         });
       }
 
+
+      
+      if (dto.screenType.includes(104)) {
+        arrayAggregation.push( {
+          $lookup: {
+            from: ModelNames.ORDER_SALES_MAIN,
+            let: { orderId: '$_orderSaleId' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ['$_id', '$$orderId'],
+                  },
+                },
+              },
+
+              new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+                1040,
+                dto.responseFormat,
+              ),
+            ],
+            as: 'ordersaleDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$ordersaleDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },);
+      }
+
+
+      
+      if (dto.screenType.includes(105)) {
+        arrayAggregation.push( {
+          $lookup: {
+            from: ModelNames.ROOT_CAUSES,
+            let: { rootcauseId: '$_rootCause' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ['$_id', '$$rootcauseId'],
+                  },
+                },
+              },
+
+              new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                1050,
+                dto.responseFormat,
+              ),
+            ],
+            as: 'rootcauseDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$rootcauseDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },);
+      }
+
       var result = await this.orderSaleChangeRequestModel
         .aggregate(arrayAggregation)
         .session(transactionSession);

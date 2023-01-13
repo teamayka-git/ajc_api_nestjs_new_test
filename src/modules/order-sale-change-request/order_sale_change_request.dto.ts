@@ -12,7 +12,7 @@ import { Transform, Type, Type as ValidateTypes } from 'class-transformer';
 import { Optional } from '@nestjs/common';
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
-const descriptionListScreenTypeForList = '0-total documents count, 100- change request new images documents,101- change request new images documents under[100] global gallery, 102- change request delete images documents,103- change request delete images documents under[102] global gallery,';
+const descriptionListScreenTypeForList = '0-total documents count, 100- change request new images documents,101- change request new images documents under[100] global gallery, 102- change request delete images documents,103- change request delete images documents under[102] global gallery, 104 - order sale details, 105 - root cause details';
 const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 const descriptionListSortOrder = '1-ascending, -1-descending';
