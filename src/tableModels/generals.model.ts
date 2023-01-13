@@ -104,6 +104,7 @@ _code:{
     1025 - allowed litit for purchase adjustment
     1026 - Worker dashboard backlog in hours
     1027 - Worker dashboard high risk due date in days
+    1028 - maximum amendment count
 
 } 
 _type:{

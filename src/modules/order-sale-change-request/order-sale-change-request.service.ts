@@ -18,6 +18,7 @@ import { OrderSaleChangeRequestDocuments } from 'src/tableModels/order_sale_chan
 import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
+import { Generals } from 'src/tableModels/generals.model';
 
 @Injectable()
 export class OrderSaleChangeRequestService {
@@ -30,6 +31,9 @@ export class OrderSaleChangeRequestService {
     private readonly orderSaleMainModel: mongoose.Model<OrderSalesMain>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
+
+    @InjectModel(ModelNames.GENERALS)
+    private readonly generalsModel: mongoose.Model<Generals>,
     @InjectModel(ModelNames.GLOBAL_GALLERIES)
     private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
     @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
@@ -38,16 +42,18 @@ export class OrderSaleChangeRequestService {
     private readonly rootCauseModel: mongoose.Model<RootCausesModel>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
-  async create(dto: OrderSaleChangeRequestCreateDto, _userId_: string, file: Object) {
+  async create(
+    dto: OrderSaleChangeRequestCreateDto,
+    _userId_: string,
+    file: Object,
+  ) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-
-console.log("order change request dto     "+JSON.stringify(dto))
-        var orderSaleIdChangeRequestDocumentsTable = [];
-        var arrayGlobalGalleries=[];
-        var changeRequestId = new mongoose.Types.ObjectId();
+      var orderSaleIdChangeRequestDocumentsTable = [];
+      var arrayGlobalGalleries = [];
+      var changeRequestId = new mongoose.Types.ObjectId();
 
       if (file.hasOwnProperty('documents')) {
         console.log('___d1.1');
@@ -131,8 +137,8 @@ console.log("order change request dto     "+JSON.stringify(dto))
               _status: 1,
             });
             orderSaleIdChangeRequestDocumentsTable.push({
-                _orderSaleChangeRequestId: changeRequestId,
-                _type:1,
+              _orderSaleChangeRequestId: changeRequestId,
+              _type: 1,
               _globalGalleryId: globalGalleryId,
               _createdUserId: _userId_,
               _createdAt: dateTime,
@@ -146,11 +152,34 @@ console.log("order change request dto     "+JSON.stringify(dto))
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
         });
-      
-        
       }
+      if (dto.type == 1) {
+        var resultGenerals = await this.generalsModel.find({
+          _code: 1028,
+          _status: 1,
+        });
+        if (resultGenerals.length == 0) {
+          throw new HttpException(
+            'Max amendment count in general not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
 
+        var resultOrderAmendmentCount =
+          await this.orderSaleChangeRequestModel.count({
+            _orderSaleId: dto.orderSaleId,
+            _workStatus: { $in: [0, 1] },
+            _type: 1,
+            _status: 1,
+          });
 
+        if (resultOrderAmendmentCount == resultGenerals[0]._number) {
+          throw new HttpException(
+            'Order amendment count exceeded',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
 
       var arrayToPurchaseBooking = [];
       var arrayToPurchaseBookingItem = [];
@@ -160,7 +189,7 @@ console.log("order change request dto     "+JSON.stringify(dto))
           { _tableName: ModelNames.ORDER_SALE_CHANGE_REQUESTS },
           {
             $inc: {
-              _count:1,
+              _count: 1,
             },
           },
           { new: true, session: transactionSession },
@@ -169,44 +198,43 @@ console.log("order change request dto     "+JSON.stringify(dto))
       var orderSaleIdCancelRequest = [];
       var orderSaleIdAmndmentRequest = [];
 
-        if (dto.type == 0) {
-          //cancel
-          orderSaleIdCancelRequest.push(dto.orderSaleId);
-        } else if (dto.type == 1) {
-          //amnnt
+      if (dto.type == 0) {
+        //cancel
+        orderSaleIdCancelRequest.push(dto.orderSaleId);
+      } else if (dto.type == 1) {
+        //amnnt
 
-          orderSaleIdAmndmentRequest.push(dto.orderSaleId);
-        }
-        arrayToPurchaseBooking.push({
-          _id: changeRequestId,
-          _orderSaleId: dto.orderSaleId,
-          _rootCause: dto.rootCauseId == '' ? null : dto.rootCauseId,
-          _uid:
-            resultCounterPurchaseBooking._count,
-          _description: dto.description,
-          _isMistakeWithManufactor:dto.isMistakeWithManufactor,
-          _type: dto.type,
-          _proceedStatus: dto.proceedStatus,
-          _workStatus: 0,
+        orderSaleIdAmndmentRequest.push(dto.orderSaleId);
+      }
+      arrayToPurchaseBooking.push({
+        _id: changeRequestId,
+        _orderSaleId: dto.orderSaleId,
+        _rootCause: dto.rootCauseId == '' ? null : dto.rootCauseId,
+        _uid: resultCounterPurchaseBooking._count,
+        _description: dto.description,
+        _isMistakeWithManufactor: dto.isMistakeWithManufactor,
+        _type: dto.type,
+        _proceedStatus: dto.proceedStatus,
+        _workStatus: 0,
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _updatedUserId: null,
+        _updatedAt: -1,
+        _status: 1,
+      });
+
+      dto.deleteImageGlobalGalleryIds.forEach((elementChangeRequest) => {
+        orderSaleIdChangeRequestDocumentsTable.push({
+          _orderSaleChangeRequestId: changeRequestId,
+          _globalGalleryId: elementChangeRequest,
+          _type: 0,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
           _updatedAt: -1,
           _status: 1,
         });
-
-        dto.deleteImageGlobalGalleryIds.forEach((elementChangeRequest) => {
-          orderSaleIdChangeRequestDocumentsTable.push({
-            _orderSaleChangeRequestId: changeRequestId,
-            _globalGalleryId: elementChangeRequest,
-            _type: 0,
-            _createdUserId: _userId_,
-            _createdAt: dateTime,
-            _updatedUserId: null,
-            _updatedAt: -1,
-            _status: 1,
-          });
-        });
+      });
       await this.orderSaleChangeRequestModel.insertMany(
         arrayToPurchaseBooking,
         {
@@ -405,7 +433,6 @@ console.log("order change request dto     "+JSON.stringify(dto))
           $match: { _orderSaleId: { $in: newSettingsId } },
         });
       }
-     
 
       if (dto.uids.length > 0) {
         arrayAggregation.push({ $match: { _uid: { $in: dto.uids } } });
@@ -434,10 +461,7 @@ console.log("order change request dto     "+JSON.stringify(dto))
           },
         });
       }
-      
-      
-      
-      
+
       if (dto.isMistakeWithManufactor.length != 0) {
         arrayAggregation.push({
           $match: {
@@ -588,68 +612,68 @@ console.log("order change request dto     "+JSON.stringify(dto))
         });
       }
 
-
-      
       if (dto.screenType.includes(104)) {
-        arrayAggregation.push( {
-          $lookup: {
-            from: ModelNames.ORDER_SALES_MAIN,
-            let: { orderId: '$_orderSaleId' },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $eq: ['$_id', '$$orderId'],
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_MAIN,
+              let: { orderId: '$_orderSaleId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $eq: ['$_id', '$$orderId'],
+                    },
                   },
                 },
-              },
 
-              new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
-                1040,
-                dto.responseFormat,
-              ),
-            ],
-            as: 'ordersaleDetails',
+                new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+                  1040,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'ordersaleDetails',
+            },
           },
-        },
-        {
-          $unwind: {
-            path: '$ordersaleDetails',
-            preserveNullAndEmptyArrays: true,
+          {
+            $unwind: {
+              path: '$ordersaleDetails',
+              preserveNullAndEmptyArrays: true,
+            },
           },
-        },);
+        );
       }
 
-
-      
       if (dto.screenType.includes(105)) {
-        arrayAggregation.push( {
-          $lookup: {
-            from: ModelNames.ROOT_CAUSES,
-            let: { rootcauseId: '$_rootCause' },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $eq: ['$_id', '$$rootcauseId'],
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ROOT_CAUSES,
+              let: { rootcauseId: '$_rootCause' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $eq: ['$_id', '$$rootcauseId'],
+                    },
                   },
                 },
-              },
 
-              new ModelWeightResponseFormat().rootcauseTableResponseFormat(
-                1050,
-                dto.responseFormat,
-              ),
-            ],
-            as: 'rootcauseDetails',
+                new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                  1050,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'rootcauseDetails',
+            },
           },
-        },
-        {
-          $unwind: {
-            path: '$rootcauseDetails',
-            preserveNullAndEmptyArrays: true,
+          {
+            $unwind: {
+              path: '$rootcauseDetails',
+              preserveNullAndEmptyArrays: true,
+            },
           },
-        },);
+        );
       }
 
       var result = await this.orderSaleChangeRequestModel
