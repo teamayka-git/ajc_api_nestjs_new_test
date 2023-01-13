@@ -492,7 +492,7 @@ console.log("order change request dto     "+JSON.stringify(dto))
                   _status: 1,
                   _type: 1,
                   $expr: {
-                    $eq: ['$_setProcessId', '$$changeRequestId'],
+                    $eq: ['$_orderSaleChangeRequestId', '$$changeRequestId'],
                   },
                 },
               },
@@ -545,7 +545,7 @@ console.log("order change request dto     "+JSON.stringify(dto))
                   _status: 1,
                   _type: 0,
                   $expr: {
-                    $eq: ['$_setProcessId', '$$changeRequestId'],
+                    $eq: ['$_orderSaleChangeRequestId', '$$changeRequestId'],
                   },
                 },
               },
