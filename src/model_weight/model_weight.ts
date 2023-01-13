@@ -1311,7 +1311,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _uid: 1,
-      _orderSaleId: 1,
+      _orderSaleId: 1, 
     };
   }
   public orderSaleChangeRequestTableMinimum(): Object {
@@ -1320,6 +1320,7 @@ export class ModelWeight {
       _orderSaleId:1,
       _rootCause:1,
       _uid:1,
+      _amendmentJson:1,
       _description:1,
       _type:1,
       _proceedStatus:1,
@@ -1334,6 +1335,7 @@ export class ModelWeight {
       _rootCause:1,
       _uid:1,
       _description:1,
+      _amendmentJson:1,
       _type:1,
       _proceedStatus:1,
       _isMistakeWithManufactor:1,
@@ -1350,6 +1352,7 @@ export class ModelWeight {
       _uid:1,
       _description:1,
       _type:1,
+      _amendmentJson:1,
       _proceedStatus:1,
       _isMistakeWithManufactor:1,
       _workStatus:1,

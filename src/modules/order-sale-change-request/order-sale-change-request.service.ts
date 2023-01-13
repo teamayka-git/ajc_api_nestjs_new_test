@@ -214,6 +214,7 @@ export class OrderSaleChangeRequestService {
         _description: dto.description,
         _isMistakeWithManufactor: dto.isMistakeWithManufactor,
         _type: dto.type,
+        _amendmentJson:{},
         _proceedStatus: dto.proceedStatus,
         _workStatus: 0,
         _createdUserId: _userId_,

@@ -16,6 +16,7 @@ export const OrderSaleChangeRequestsSchema = new mongoose.Schema({
   },
   _uid: { type: String, required: true, default: 'nil' },
   _description: { type: String, required: false, default: '' },
+  _amendmentJson: { type:Object, required: true, default:{} },
   _type: { type: Number, required: true, default: -1 },
   _proceedStatus: { type: Number, required: true, default: -1 },
   _workStatus: { type: Number, required: true, default: -1 },
@@ -42,6 +43,7 @@ export interface OrderSaleChangeRequests {
   _uid: String;
   _description: String;
   _type: Number;
+  _amendmentJson:Object;
   _proceedStatus: Number;
   _isMistakeWithManufactor: Number;
   _workStatus: Number;
