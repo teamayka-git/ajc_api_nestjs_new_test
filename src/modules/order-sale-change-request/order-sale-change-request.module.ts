@@ -21,7 +21,8 @@ import { GeneralsSchema } from 'src/tableModels/generals.model';
       {name:ModelNames.GENERALS,schema:GeneralsSchema},
       { name: ModelNames.GLOBAL_GALLERIES, schema: GlobalGalleriesSchema },
       { name: ModelNames.ORDER_SALE_CHANGE_REQUEST_DOCUMENTS, schema:OrderSaleChangeRequestDocumentsSchema },
-      { name: ModelNames.ROOT_CAUSES, schema: RootCausesSchema },  {
+      { name: ModelNames.ROOT_CAUSES, schema: RootCausesSchema },
+        {
         name: ModelNames.ORDER_SALE_HISTORIES,
         schema: OrderSaleHistoriesSchema,
       },

@@ -166,3 +166,15 @@ export class OrderSaleChangeRequestStatusChangeDto {
   @ApiProperty({ description: descriptionStatus })
   status: number;
 }
+export class CancelRequestAcceptDto {
+
+  @IsString()
+  @ApiProperty({})
+  cancelRequestId: string;
+
+  
+  @IsString()
+  @ApiProperty({})
+  orderSaleId: string;
+  
+}
