@@ -21,7 +21,7 @@ const descriptionListSortType = '0-Created Date, 1-Status,2-Is Puchase Generated
 
 const descriptionListType = ' 0 - cancel request, 1 - amendment request';
 const descriptionListWorkStatus = ' 0 - pending, 1 - accept, 2 - reject';
-const descriptionListProceedStatus = ' -1 - nothing, 0 - cancel order if not possible, 1 - cancel order if not possible';
+const descriptionListProceedStatus = ' -1 - nothing,  0 - cancel order if not possible, 1 - do existing order order if not possible';
 const descriptionFileOriginalName =
   "file name givent while uploading, if there is no image then give 'nil; here";
   const descriptionListDocType = '0-image, 1-video, 2-pdf, 3-audio, 4-document';
