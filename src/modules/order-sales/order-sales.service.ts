@@ -1981,6 +1981,24 @@ export class OrderSalesService {
           },
         );
       }
+      if (dto.screenType.includes(143)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALE_CHANGE_REQUESTS,
+              let: { orderSaleId: '$_id' },
+              pipeline: [
+                { $match: {_type:1,_status:1, $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] } } },
+                new ModelWeightResponseFormat().orderSaleChangeRequestTableResponseFormat(
+                  1430,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'amendmentRequests',
+            },
+          },
+        );
+      }
       const isorderSaleHistories = dto.screenType.includes(104);
 
       if (isorderSaleHistories) {
