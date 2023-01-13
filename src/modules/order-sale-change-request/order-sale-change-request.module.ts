@@ -11,6 +11,7 @@ import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.m
 import { OrderSaleChangeRequestDocumentsSchema } from 'src/tableModels/order_sale_change_request_documents.model';
 import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
 import { GeneralsSchema } from 'src/tableModels/generals.model';
+import { OrderSaleSetProcessesSchema } from 'src/tableModels/order_sale_set_processes.model';
 
 @Module({
   imports: [
@@ -21,6 +22,12 @@ import { GeneralsSchema } from 'src/tableModels/generals.model';
       {name:ModelNames.GENERALS,schema:GeneralsSchema},
       { name: ModelNames.GLOBAL_GALLERIES, schema: GlobalGalleriesSchema },
       { name: ModelNames.ORDER_SALE_CHANGE_REQUEST_DOCUMENTS, schema:OrderSaleChangeRequestDocumentsSchema },
+      
+
+      { 
+        name: ModelNames.ORDER_SALE_SET_PROCESSES,
+        schema: OrderSaleSetProcessesSchema,
+      },
       { name: ModelNames.ROOT_CAUSES, schema: RootCausesSchema },
         {
         name: ModelNames.ORDER_SALE_HISTORIES,

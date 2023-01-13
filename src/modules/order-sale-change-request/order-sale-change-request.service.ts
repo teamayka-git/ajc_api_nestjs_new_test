@@ -6,6 +6,7 @@ import { OrderSaleChangeRequests } from 'src/tableModels/order_sale_change_reque
 import { Counters } from 'src/tableModels/counters.model';
 import { GlobalConfig } from 'src/config/global_config';
 import {
+  AmendmentRequestRejectDto,
   CancelRequestAcceptDto,
   OrderSaleChangeRequestCreateDto,
   OrderSaleChangeRequestListDto,
@@ -20,6 +21,7 @@ import { S3BucketUtils } from 'src/utils/s3_bucket_utils';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { Generals } from 'src/tableModels/generals.model';
+import { OrderSaleSetProcesses } from 'src/tableModels/order_sale_set_processes.model';
 
 @Injectable()
 export class OrderSaleChangeRequestService {
@@ -33,6 +35,8 @@ export class OrderSaleChangeRequestService {
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
 
+    @InjectModel(ModelNames.ORDER_SALE_SET_PROCESSES)
+    private readonly orderSaleSetProcessModel: mongoose.Model<OrderSaleSetProcesses>,
     @InjectModel(ModelNames.GENERALS)
     private readonly generalsModel: mongoose.Model<Generals>,
     @InjectModel(ModelNames.GLOBAL_GALLERIES)
@@ -456,6 +460,189 @@ export class OrderSaleChangeRequestService {
 		  await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
         session: transactionSession,
       });
+      const responseJSON = { message: 'success', data: {} };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async amendmentReject(dto: AmendmentRequestRejectDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try { 
+
+      await this.orderSaleChangeRequestModel.findOneAndUpdate(
+        {
+          _id: dto.cancelRequestId,
+        },
+        {
+          $set: {
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+            _workStatus: 2,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+      if(dto.proceedOrder==0){
+        await this.orderSaleMainModel.findOneAndUpdate(
+          {
+            _id: dto.orderSaleId,
+          },
+          {
+            $set: {
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+              _workStatus: 27,
+              _isHold:0
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+  
+        var arrayToOrderHistories = [];
+      
+           arrayToOrderHistories.push({
+              _orderSaleId: dto.orderSaleId,
+              _userId: null,
+              _type: 27,
+              _deliveryProviderId: null,
+              _deliveryCounterId: null,
+              _shopId: null,
+              _orderSaleItemId: null,
+              _description: '',
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _status: 1,
+            });
+        
+        await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
+          session: transactionSession,
+        });
+      }else{
+
+
+if(dto.doRework==0){
+  await this.orderSaleMainModel.findOneAndUpdate(
+    {
+      _id: dto.orderSaleId,
+    },
+    {
+      $set: {
+        _updatedUserId: _userId_,
+        _updatedAt: dateTime,
+        _isHold:0
+      },
+    },
+    { new: true, session: transactionSession },
+  );
+
+  var arrayToOrderHistories = [];
+
+     arrayToOrderHistories.push({
+        _orderSaleId: dto.orderSaleId,
+        _userId: null,
+        _type: 112,
+        _deliveryProviderId: null,
+        _deliveryCounterId: null,
+        _shopId: null,
+        _orderSaleItemId: null,
+        _description: 'deny amendment',
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _status: 1,
+      });
+  
+  await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
+    session: transactionSession,
+  });
+}else{
+  await this.orderSaleMainModel.findOneAndUpdate(
+    {
+      _id: dto.orderSaleId,
+    },
+    {
+      $set: {
+        _updatedUserId: _userId_,
+        _updatedAt: dateTime,
+        _isHold:0,
+        _workStatus: 1,
+      },
+      $inc: {
+        _internalReWorkCount: 1,
+      },
+    },
+    { new: true, session: transactionSession },
+  );
+  await this.orderSaleSetProcessModel.updateMany(
+    {
+      _orderSaleId: dto.orderSaleId,
+    },
+    {
+      $set: { _status: 0 },
+    },
+    { new: true, session: transactionSession },
+  );
+  var arrayToOrderHistories = [];
+
+     arrayToOrderHistories.push({
+        _orderSaleId: dto.orderSaleId,
+        _userId: null,
+        _type: 112,
+        _deliveryProviderId: null,
+        _deliveryCounterId: null,
+        _shopId: null,
+        _orderSaleItemId: null,
+        _description: 'deny amendment',
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _status: 1,
+      });
+      arrayToOrderHistories.push({
+        _orderSaleId: dto.orderSaleId,
+        _userId: null,
+        _type: 110,
+        _deliveryProviderId: null,
+        _deliveryCounterId: null,
+        _shopId: null,
+        _orderSaleItemId: null,
+        _description: '',
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _status: 1,
+      });
+  await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
+    session: transactionSession,
+  });
+}
+
+
+
+      }
+
+     
+
+
+
+
+
+
       const responseJSON = { message: 'success', data: {} };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&

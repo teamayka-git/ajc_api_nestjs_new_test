@@ -10,7 +10,7 @@ import {
   UploadedFiles,
   UseGuards,
 } from '@nestjs/common';
-import { CancelRequestAcceptDto, OrderSaleChangeRequestCreateDto, OrderSaleChangeRequestListDto, OrderSaleChangeRequestStatusChangeDto } from './order_sale_change_request.dto';
+import { AmendmentRequestRejectDto, CancelRequestAcceptDto, OrderSaleChangeRequestCreateDto, OrderSaleChangeRequestListDto, OrderSaleChangeRequestStatusChangeDto } from './order_sale_change_request.dto';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
@@ -53,6 +53,10 @@ export class OrderSaleChangeRequestController {
   @Post("cancelRequestAccept")
   cancelRequestAccept(@Body() dto: CancelRequestAcceptDto, @Request() req) {
     return this.orderSaleChangeRequestService.cancelRequestAccept(dto, req['_userId_']);
+  }
+  @Post("amendmentReject")
+  amendmentReject(@Body() dto: AmendmentRequestRejectDto, @Request() req) {
+    return this.orderSaleChangeRequestService.amendmentReject(dto, req['_userId_']);
   }
 
   @Post('list')

@@ -178,3 +178,24 @@ export class CancelRequestAcceptDto {
   orderSaleId: string;
   
 }
+
+export class AmendmentRequestRejectDto {
+
+  @IsString()
+  @ApiProperty({})
+  cancelRequestId: string;
+
+  
+  @IsString()
+  @ApiProperty({})
+  orderSaleId: string;
+  
+  
+  @IsNumber()
+  @ApiProperty({  })
+  proceedOrder: number;
+  
+  @IsNumber()
+  @ApiProperty({  })
+  doRework: number;
+}
