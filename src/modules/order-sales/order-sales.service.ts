@@ -899,7 +899,7 @@ export class OrderSalesService {
       }
 
       if (dto.amendmentRequestId != null && dto.amendmentRequestId != '') {
-        console.log("___1");
+        console.log('___1');
         await this.orderSaleChangeRequestModel.findOneAndUpdate(
           {
             _id: dto.amendmentRequestId,
@@ -914,19 +914,27 @@ export class OrderSalesService {
           },
           { new: true, session: transactionSession },
         );
-        console.log("___2");
-        var globalgalleryIdsNewAmendment=[];
-        var globalgalleryIdsDeleteAmendment=[];
-var resultOsChangeRequestDocuments= await this.orderSaleChangeRequestDocumentsModel.find({_orderSaleChangeRequestId:dto.amendmentRequestId,_status:1});
-resultOsChangeRequestDocuments.forEach(elementAmendmentDocument => {
-  if(elementAmendmentDocument._type==0){//delete
-    globalgalleryIdsDeleteAmendment.push(elementAmendmentDocument._globalGalleryId);
-  }else if(elementAmendmentDocument._type==1){//new document
-    globalgalleryIdsNewAmendment.push(elementAmendmentDocument._globalGalleryId);
-
-  }
-});
-
+        console.log('___2');
+        var globalgalleryIdsNewAmendment = [];
+        var globalgalleryIdsDeleteAmendment = [];
+        var resultOsChangeRequestDocuments =
+          await this.orderSaleChangeRequestDocumentsModel.find({
+            _orderSaleChangeRequestId: dto.amendmentRequestId,
+            _status: 1,
+          });
+        resultOsChangeRequestDocuments.forEach((elementAmendmentDocument) => {
+          if (elementAmendmentDocument._type == 0) {
+            //delete
+            globalgalleryIdsDeleteAmendment.push(
+              elementAmendmentDocument._globalGalleryId,
+            );
+          } else if (elementAmendmentDocument._type == 1) {
+            //new document
+            globalgalleryIdsNewAmendment.push(
+              elementAmendmentDocument._globalGalleryId,
+            );
+          }
+        });
 
         if (globalgalleryIdsNewAmendment.length != 0) {
           var arrayToOrderDocuments = [];
@@ -948,7 +956,7 @@ resultOsChangeRequestDocuments.forEach(elementAmendmentDocument => {
             session: transactionSession,
           });
         }
-        console.log("___3");
+        console.log('___3');
 
         if (globalgalleryIdsDeleteAmendment.length != 0) {
           await this.orderSaleDocumentsModel.updateMany(
@@ -966,7 +974,7 @@ resultOsChangeRequestDocuments.forEach(elementAmendmentDocument => {
             { new: true, session: transactionSession },
           );
         }
-        console.log("___4");
+        console.log('___4');
 
         if (dto.doReworkAmendment == 0) {
           await this.orderSaleMainModel.findOneAndUpdate(
@@ -982,7 +990,7 @@ resultOsChangeRequestDocuments.forEach(elementAmendmentDocument => {
             },
             { new: true, session: transactionSession },
           );
-          console.log("___5");
+          console.log('___5');
           var arrayToOrderHistories = [];
 
           arrayToOrderHistories.push({
@@ -997,7 +1005,8 @@ resultOsChangeRequestDocuments.forEach(elementAmendmentDocument => {
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _status: 1,
-          });console.log("___6");
+          });
+          console.log('___6');
           await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
             session: transactionSession,
           });
@@ -1019,7 +1028,7 @@ resultOsChangeRequestDocuments.forEach(elementAmendmentDocument => {
             },
             { new: true, session: transactionSession },
           );
-          console.log("___7");
+          console.log('___7');
           await this.orderSaleSetProcessModel.updateMany(
             {
               _orderSaleId: dto.orderSaleId,
@@ -1060,7 +1069,8 @@ resultOsChangeRequestDocuments.forEach(elementAmendmentDocument => {
           await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
             session: transactionSession,
           });
-        }console.log("___8");
+        }
+        console.log('___8');
       }
 
       var updateObject = {
@@ -1084,7 +1094,7 @@ resultOsChangeRequestDocuments.forEach(elementAmendmentDocument => {
         },
         { new: true, session: transactionSession },
       );
-      console.log("___9");
+      console.log('___9');
       for (var i = 0; i < dto.arrayItems.length; i++) {
         await this.orderSaleItemsModel.findOneAndUpdate(
           {
@@ -1131,7 +1141,7 @@ resultOsChangeRequestDocuments.forEach(elementAmendmentDocument => {
           { new: true, session: transactionSession },
         );
       }
-      console.log("___10");
+      console.log('___10');
       const responseJSON = { message: 'success', data: result };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -1448,6 +1458,12 @@ resultOsChangeRequestDocuments.forEach(elementAmendmentDocument => {
         });
         arrayAggregation.push({
           $match: { _orderHeadId: { $in: newSettingsId } },
+        });
+      }
+
+      if (dto.type != null && dto.type.length > 0) {
+        arrayAggregation.push({
+          $match: { _type: { $in: dto.type } },
         });
       }
 

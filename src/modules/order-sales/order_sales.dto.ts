@@ -390,6 +390,11 @@ export class OrderSaleListDto {
   @ApiProperty({ type: [Number] })
   isInvoiceGenerated: number[];
 
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ type: [Number] })
+  type: number[];
+
   @IsArray()
   @ApiProperty({ type: [String] })
   orderSaleIdsIds: string[];
