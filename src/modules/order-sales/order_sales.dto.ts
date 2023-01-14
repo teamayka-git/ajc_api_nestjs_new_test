@@ -297,6 +297,7 @@ export class OrderSalesEditDto {
 
 
 
+  @IsOptional()
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
   )
