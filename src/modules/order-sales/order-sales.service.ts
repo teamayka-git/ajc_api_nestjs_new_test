@@ -549,9 +549,11 @@ export class OrderSalesService {
       let uidSalesOrder = ohPrefix + resultCounterPurchase._count;
 
       var orderWorkStatus = 0;
+      var isProductGenerated = 0;
       if (dto.type == 2 ||dto.type == 3 ) {
         //sales on approval
         orderWorkStatus = 16;
+        isProductGenerated=1;
       }
 
       const newsettingsModel = new this.orderSaleMainModel({
@@ -564,7 +566,7 @@ export class OrderSalesService {
         _rootCauseId: null,
         _deliveryType: dto.deliveryType,
         _isInvoiceGenerated: 0,
-        _isProductGenerated: 0,
+        _isProductGenerated: isProductGenerated,
         _type: dto.type,
 
         _isHold: 0,
