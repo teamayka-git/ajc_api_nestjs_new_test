@@ -1190,6 +1190,10 @@ export class ProductsService {
     try {
       var arrayAggregation = [];
 
+
+      console.log("____q1");
+
+
       if (dto.searchingText != '') {
         //todo
         arrayAggregation.push({
@@ -1232,6 +1236,8 @@ export class ProductsService {
           $match: { _orderId: { $in: newSettingsId } },
         });
       }
+      
+console.log("____q2");
       if (dto.subCategoryIds.length > 0) {
         var newSettingsId = [];
         dto.subCategoryIds.map((mapItem) => {
@@ -1272,6 +1278,7 @@ export class ProductsService {
         });
       }
 
+      console.log("____q3");
       if (dto.isStone.length > 0) {
         arrayAggregation.push({
           $match: { _isStone: { $in: dto.isStone } },
@@ -1300,6 +1307,7 @@ export class ProductsService {
         });
       }
 
+      console.log("____q4");
       if (
         dto.cityIds.length != 0 ||
         dto.relationshipManagerIds.length != 0 ||
@@ -1366,6 +1374,8 @@ export class ProductsService {
           },
         );
       }
+      
+console.log("____q5");
       if (dto.orderSaleUids.length != 0) {
         arrayAggregation.push(
           {
@@ -1421,6 +1431,7 @@ export class ProductsService {
         );
       }
 
+      console.log("____q6");
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {
         case 0:
@@ -1477,6 +1488,7 @@ export class ProductsService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
+      console.log("____q7");
       arrayAggregation.push(
         new ModelWeightResponseFormat().productTableResponseFormat(
           0,
@@ -1551,6 +1563,7 @@ export class ProductsService {
         );
       }
 
+      console.log("____q8");
       if (dto.screenType.includes(101)) {
         const orderSaleItemPipeline = () => {
           const pipeline = [];
@@ -1690,6 +1703,7 @@ export class ProductsService {
         );
       }
 
+      console.log("____q9");
       if (dto.screenType.includes(102)) {
         arrayAggregation.push(
           {
@@ -1782,6 +1796,7 @@ export class ProductsService {
         );
       }
 
+      console.log("____q10");
       if (dto.screenType.includes(105)) {
         const productStoneLinkingPipeline = () => {
           const pipeline = [];
@@ -1910,6 +1925,7 @@ export class ProductsService {
         });
       }
 
+      console.log("____q11");
       if (dto.screenType.includes(106)) {
         const productDocumentsLinkingPipeline = () => {
           const pipeline = [];
@@ -1969,6 +1985,8 @@ export class ProductsService {
           },
         });
       }
+      
+console.log("____q12");
       if (dto.screenType.includes(115)) {
         const productTagsLinkingPipeline = () => {
           const pipeline = [];
@@ -2092,6 +2110,7 @@ export class ProductsService {
         });
       }
 
+      console.log("____q13");
       if (dto.screenType.includes(118)) {
         const designDocumentsLinkingPipeline = () => {
           const pipeline = [];
@@ -2209,13 +2228,14 @@ export class ProductsService {
         });
       }
 
+      console.log("____q14");
       var result = await this.productModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
-      console.log(
-        'arrayAggregation product __  ' + JSON.stringify(arrayAggregation),
-      );
-      var totalCount = 0;
+        
+console.log("____q15");
+
+var totalCount = 0;
       if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
@@ -2242,6 +2262,8 @@ export class ProductsService {
         }
       }
 
+      console.log("____q16");
+      console.log("____q17 _-------------------- sending start");
       const responseJSON = {
         message: 'success',
         data: { list: result, totalCount: totalCount },
