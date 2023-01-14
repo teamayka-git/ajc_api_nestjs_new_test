@@ -64,6 +64,7 @@ import { EmployeeStockInHandsItem } from 'src/tableModels/employee_stock_in_hand
 import { Otp } from 'src/tableModels/otp.model';
 import { StorePromotions } from 'src/tableModels/store_promotions.model';
 import { OrderSaleChangeRequests } from 'src/tableModels/order_sale_change_requests.model';
+import { OrderSaleChangeRequestDocuments } from 'src/tableModels/order_sale_change_request_documents.model';
 
 @Injectable()
 export class OrderSalesService {
@@ -87,6 +88,8 @@ export class OrderSalesService {
     @InjectModel(ModelNames.SHOPS)
     private readonly shopsModel: Model<Shops>,
 
+    @InjectModel(ModelNames.ORDER_SALE_CHANGE_REQUEST_DOCUMENTS)
+    private readonly orderSaleChangeRequestDocumentsModel: mongoose.Model<OrderSaleChangeRequestDocuments>,
     @InjectModel(ModelNames.ORDER_SALE_CHANGE_REQUESTS)
     private readonly orderSaleChangeRequestModel: mongoose.Model<OrderSaleChangeRequests>,
     @InjectModel(ModelNames.STORE_PROMOTIONS)
@@ -912,9 +915,22 @@ export class OrderSalesService {
           { new: true, session: transactionSession },
         );
         console.log("___2");
-        if (dto.globalgalleryIdsNewAmendment.length != 0) {
+        var globalgalleryIdsNewAmendment=[];
+        var globalgalleryIdsDeleteAmendment=[];
+var resultOsChangeRequestDocuments= await this.orderSaleChangeRequestDocumentsModel.find({_orderSaleChangeRequestId:dto.amendmentRequestId,_status:1});
+resultOsChangeRequestDocuments.forEach(elementAmendmentDocument => {
+  if(elementAmendmentDocument._type==0){//delete
+    globalgalleryIdsDeleteAmendment.push(elementAmendmentDocument._globalGalleryId);
+  }else if(elementAmendmentDocument._type==1){//new document
+    globalgalleryIdsNewAmendment.push(elementAmendmentDocument._globalGalleryId);
+
+  }
+});
+
+
+        if (globalgalleryIdsNewAmendment.length != 0) {
           var arrayToOrderDocuments = [];
-          dto.globalgalleryIdsNewAmendment.forEach(
+          globalgalleryIdsNewAmendment.forEach(
             (elementAmendmentGlobalgallery) => {
               arrayToOrderDocuments.push({
                 _orderSaleId: dto.orderSaleId,
@@ -934,11 +950,11 @@ export class OrderSalesService {
         }
         console.log("___3");
 
-        if (dto.globalgalleryIdsDeleteAmendment.length != 0) {
+        if (globalgalleryIdsDeleteAmendment.length != 0) {
           await this.orderSaleDocumentsModel.updateMany(
             {
               _orderSaleId: dto.orderSaleId,
-              _globalGalleryId: { $in: dto.globalgalleryIdsDeleteAmendment },
+              _globalGalleryId: { $in: globalgalleryIdsDeleteAmendment },
             },
             {
               $set: {

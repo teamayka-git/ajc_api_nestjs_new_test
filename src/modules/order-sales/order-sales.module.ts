@@ -26,6 +26,7 @@ import { EmployeeStockInHandsItemSchema } from 'src/tableModels/employee_stock_i
 import { OtpSchema } from 'src/tableModels/otp.model';
 import { StorePromotionsSchema } from 'src/tableModels/store_promotions.model';
 import { OrderSaleChangeRequestsSchema } from 'src/tableModels/order_sale_change_requests.model';
+import { OrderSaleChangeRequestDocumentsSchema } from 'src/tableModels/order_sale_change_request_documents.model';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { OrderSaleChangeRequestsSchema } from 'src/tableModels/order_sale_change
         schema: OrderSalesDocumentsSchema,
       },
 
+      { name: ModelNames.ORDER_SALE_CHANGE_REQUEST_DOCUMENTS, schema:OrderSaleChangeRequestDocumentsSchema },
       { name: ModelNames.ORDER_SALE_CHANGE_REQUESTS, schema: OrderSaleChangeRequestsSchema },
       { 
         name: ModelNames.ORDER_SALE_SET_PROCESSES,

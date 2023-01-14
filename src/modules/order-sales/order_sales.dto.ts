@@ -305,24 +305,6 @@ export class OrderSalesEditDto {
   @ApiProperty({})
   amendmentObject: Object;
 
-
-  @IsOptional()
-  @Transform(({ value }) =>
-    typeof value == 'string' ? JSON.parse(value) : value,
-  )
-  @IsArray()
-  @ApiProperty({ type: [String] })
-  globalgalleryIdsDeleteAmendment: string[];
-  
-  
-  @IsOptional()
-  @Transform(({ value }) =>
-    typeof value == 'string' ? JSON.parse(value) : value,
-  )
-  @IsArray()
-  @ApiProperty({ type: [String] })
-  globalgalleryIdsNewAmendment: string[];
-  
 @IsOptional()
   @Transform(({ value }) => Number(value))
   @IsNumber()
