@@ -896,6 +896,7 @@ export class OrderSalesService {
       }
 
       if (dto.amendmentRequestId != null && dto.amendmentRequestId != '') {
+        console.log("___1");
         await this.orderSaleChangeRequestModel.findOneAndUpdate(
           {
             _id: dto.amendmentRequestId,
@@ -910,7 +911,7 @@ export class OrderSalesService {
           },
           { new: true, session: transactionSession },
         );
-
+        console.log("___2");
         if (dto.globalgalleryIdsNewAmendment.length != 0) {
           var arrayToOrderDocuments = [];
           dto.globalgalleryIdsNewAmendment.forEach(
@@ -931,6 +932,7 @@ export class OrderSalesService {
             session: transactionSession,
           });
         }
+        console.log("___3");
 
         if (dto.globalgalleryIdsDeleteAmendment.length != 0) {
           await this.orderSaleDocumentsModel.updateMany(
@@ -948,6 +950,7 @@ export class OrderSalesService {
             { new: true, session: transactionSession },
           );
         }
+        console.log("___4");
 
         if (dto.doReworkAmendment == 0) {
           await this.orderSaleMainModel.findOneAndUpdate(
@@ -963,7 +966,7 @@ export class OrderSalesService {
             },
             { new: true, session: transactionSession },
           );
-
+          console.log("___5");
           var arrayToOrderHistories = [];
 
           arrayToOrderHistories.push({
@@ -978,8 +981,7 @@ export class OrderSalesService {
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _status: 1,
-          });
-
+          });console.log("___6");
           await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
             session: transactionSession,
           });
@@ -1001,6 +1003,7 @@ export class OrderSalesService {
             },
             { new: true, session: transactionSession },
           );
+          console.log("___7");
           await this.orderSaleSetProcessModel.updateMany(
             {
               _orderSaleId: dto.orderSaleId,
@@ -1041,7 +1044,7 @@ export class OrderSalesService {
           await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
             session: transactionSession,
           });
-        }
+        }console.log("___8");
       }
 
       var updateObject = {
@@ -1065,7 +1068,7 @@ export class OrderSalesService {
         },
         { new: true, session: transactionSession },
       );
-
+      console.log("___9");
       for (var i = 0; i < dto.arrayItems.length; i++) {
         await this.orderSaleItemsModel.findOneAndUpdate(
           {
@@ -1112,7 +1115,7 @@ export class OrderSalesService {
           { new: true, session: transactionSession },
         );
       }
-
+      console.log("___10");
       const responseJSON = { message: 'success', data: result };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
