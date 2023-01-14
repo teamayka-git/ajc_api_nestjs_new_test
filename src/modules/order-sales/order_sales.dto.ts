@@ -392,7 +392,7 @@ export class OrderSaleListDto {
 
   @IsOptional()
   @IsArray()
-  @ApiProperty({ type: [Number] })
+  @ApiProperty({ type: [Number],description:descriptionType })
   type: number[];
 
   @IsArray()

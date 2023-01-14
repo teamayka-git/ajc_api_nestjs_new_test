@@ -549,7 +549,7 @@ export class OrderSalesService {
       let uidSalesOrder = ohPrefix + resultCounterPurchase._count;
 
       var orderWorkStatus = 0;
-      if (dto.type == 2) {
+      if (dto.type == 2 ||dto.type == 3 ) {
         //sales on approval
         orderWorkStatus = 16;
       }
