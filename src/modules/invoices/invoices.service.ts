@@ -45,7 +45,7 @@ export class InvoicesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var arrayToDeliveryChallan = [];  
+      var arrayToDeliveryChallan = [];
       var arrayToDeliveryChallanItems = [];
       var orderIds = [];
       var invoiceLocalIds = [];
@@ -203,19 +203,36 @@ export class InvoicesService {
             _createdAt: dateTime,
             _status: 1,
           });
-          arraySalesOrderHistories.push({
-            _orderSaleId: mapItem1.orderId,
-            _userId: null,
-            _type: 106,
-            _deliveryCounterId: null,
-            _shopId: null,
-            _orderSaleItemId: null,
-            _deliveryProviderId: null,
-            _description: '',
-            _createdUserId: _userId_,
-            _createdAt: dateTime,
-            _status: 1,
-          });
+
+          if (dto.isOrderComplete == 0) {
+            arraySalesOrderHistories.push({
+              _orderSaleId: mapItem1.orderId,
+              _userId: null,
+              _type: 106,
+              _deliveryCounterId: null,
+              _shopId: null,
+              _orderSaleItemId: null,
+              _deliveryProviderId: null,
+              _description: '',
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _status: 1,
+            });
+          } else {
+            arraySalesOrderHistories.push({
+              _orderSaleId: mapItem1.orderId,
+              _userId: null,
+              _type: 35,
+              _deliveryCounterId: null,
+              _shopId: null,
+              _orderSaleItemId: null,
+              _deliveryProviderId: null,
+              _description: '',
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _status: 1,
+            });
+          }
         });
 
         arrayToDeliveryTemp.push({
@@ -238,9 +255,14 @@ export class InvoicesService {
         });
       });
 
+      var orderNewStatus = 18;
+      if (dto.isOrderComplete == 1) {
+        orderNewStatus = 35;
+      }
+
       await this.orderSaleMainModel.updateMany(
         { _id: { $in: orderIds } },
-        { $set: { _isInvoiceGenerated: 1, _workStatus: 18 } },
+        { $set: { _isInvoiceGenerated: 1, _workStatus: orderNewStatus } },
         { new: true, session: transactionSession },
       );
 

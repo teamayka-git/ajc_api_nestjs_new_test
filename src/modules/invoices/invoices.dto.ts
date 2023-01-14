@@ -224,6 +224,14 @@ class InvoiceCreateList {
 }
 
 export class InvoiceCreateDto {
+
+
+  @IsNumber()
+  @ApiProperty({})
+  isOrderComplete: number;
+
+
+
   @IsArray()
   @ApiProperty({ type: [InvoiceCreateList] })
   @ValidateNested({ each: true })
