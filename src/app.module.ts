@@ -103,6 +103,7 @@ import { ProductTempModule } from './modules/product-temp/product-temp.module';
 import { OrderSaleHistoriesSchema } from './tableModels/order_sale_histories.model';
 import { InvoicesSchema } from './tableModels/invoices.model';
 import { DeliverySchema } from './tableModels/delivery.model';
+import { AccountHeadModule } from './modules/account-head/account-head.module';
 
 
 @Module({
@@ -222,6 +223,7 @@ import { DeliverySchema } from './tableModels/delivery.model';
     PurchaseModule,
     OrderSaleChangeRequestModule,
     ProductTempModule,
+    AccountHeadModule,
 
     // SalesReturnRequestStatusesModule,
   ],

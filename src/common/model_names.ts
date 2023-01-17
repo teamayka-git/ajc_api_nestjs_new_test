@@ -99,6 +99,7 @@ export enum ModelNames {
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',
   CHAT_PENDING_MESSAGES = 'chat_pending_messages',
 
+  ACCOUNT_HEAD = 'account_heads',
 
 
 
