@@ -709,6 +709,11 @@ export class OrderSalesWorkStatusChangeDto {
   @ApiProperty({ type: [String] })
   orderSaleIds: string[];
 
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  productIdsForStockRemove: string[];
+
   @IsNumber()
   @ApiProperty({ description: descriptionWorkStatus })
   workStatus: number;
@@ -717,6 +722,11 @@ export class OrderSalesWorkStatusChangeDto {
   @IsNumber()
   @ApiProperty({  })
   fromWorkStatus: number;
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty({  })
+  isProductGenerated: number;
 
   @IsString()
   @ApiProperty({})

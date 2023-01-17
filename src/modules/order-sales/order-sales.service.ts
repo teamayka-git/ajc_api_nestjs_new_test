@@ -1255,19 +1255,42 @@ export class OrderSalesService {
         );
       }
 
+if(dto.productIdsForStockRemove != null && dto.productIdsForStockRemove.length!=0){
+  await this.productModel.updateMany(
+    {
+      _id: { $in: dto.productIdsForStockRemove },
+    },
+    {
+      $set: {
+        _stockStatus:1
+      },
+    },
+    { new: true, session: transactionSession },
+  );
+}
+
+   
+
+var objOsMain={
+  
+  _rootCauseId:
+  dto.rootCauseId == '' || dto.rootCauseId == 'nil'
+    ? null
+    : dto.rootCauseId,
+_workStatus: dto.workStatus,
+_rootCause: dto.rootCause,
+
+};
+if(dto.isProductGenerated != null){
+  objOsMain["_isProductGenerated"]=dto.isProductGenerated;
+}
+
       var result = await this.orderSaleMainModel.updateMany(
         {
           _id: { $in: dto.orderSaleIds },
         },
         {
-          $set: {
-            _rootCauseId:
-              dto.rootCauseId == '' || dto.rootCauseId == 'nil'
-                ? null
-                : dto.rootCauseId,
-            _workStatus: dto.workStatus,
-            _rootCause: dto.rootCause,
-          },
+          $set: objOsMain,
         },
         { new: true, session: transactionSession },
       );
