@@ -17,6 +17,11 @@ const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType = '0-Created Date,1-Status  2-UID';
 const descriptionListScreenTypeForList =
   '0-total documents count, ,50-populate image global gallery only if user details exist, 100-user details, 101-department populate, 102-process master populate';
+  const descriptionListScreenTypeForUserList =
+    '0-total documents count, ,50-populate image global gallery ';
+
+
+const descriptionUserCustomType="0 - nil, 1 - Shop admin, 2 - Shop sales man, 3 - Shop casher, 4 - halmark staff, 5 - shop user, 6 - delivery hub, 7 - halmark center, 8 - Shop Customer, 9 - Test center user, 10 - logistics partner";
 
 export class EmployeeLoginDto {
   @IsString()
@@ -167,6 +172,59 @@ export class EmployeeListDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   processMasterIds: string[];
+
+  @IsNumber()
+  @ApiProperty({})
+  limit: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  skip: number;
+
+  @IsString()
+  @ApiProperty({})
+  searchingText: string;
+}
+
+
+
+
+
+
+
+
+export class UserListDto {
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortType })
+  sortType: number;
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortOrder })
+  sortOrder: number;
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @ApiProperty({ type: [Number], description: descriptionStatus })
+  statusArray: number[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionListScreenTypeForUserList,
+  })
+  screenType: number[];
+
+  @IsArray()
+  @ApiProperty({ type: [Number] })
+  responseFormat: number[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  userIds: string[];
+
+  
+  @IsArray()
+  @ApiProperty({ type: [Number] ,description:descriptionUserCustomType})
+  customTypes: number[];
 
   @IsNumber()
   @ApiProperty({})

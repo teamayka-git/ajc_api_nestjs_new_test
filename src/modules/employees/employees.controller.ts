@@ -24,6 +24,7 @@ import {
   EmployeeListDto,
   EmployeeLoginDto,
   EmployeeStatusChangeDto,
+  UserListDto,
 } from './employees.dto';
 import { Response } from 'express'; //jwt response store in cookie
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
@@ -158,5 +159,9 @@ export class EmployeesController {
   @Post('checkPrefixExisting')
   checkPrefixExisting(@Body() dto: CheckPrefixExistDto) {
     return this.employeesService.checkPrefixExisting(dto);
+  }
+  @Post('usersList')
+  usersList(@Body() dto: UserListDto) {
+    return this.employeesService.usersList(dto);
   }
 }

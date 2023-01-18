@@ -8,6 +8,7 @@ import {
   EmployeeListDto,
   EmployeeLoginDto,
   EmployeeStatusChangeDto,
+  UserListDto,
 } from './employees.dto';
 import * as mongoose from 'mongoose';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
@@ -953,6 +954,136 @@ resultCounterLinkingUsers.forEach((element)=>{
       const responseJSON = {
         message: 'success',
         data: { count: resultCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  } async usersList(dto: UserListDto) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var arrayAggregation = [];
+
+      if (dto.searchingText != '') {
+        //todo
+
+        arrayAggregation.push({
+          $match: {
+            $or: [
+              { _name: new RegExp(dto.searchingText, 'i') },
+              { _email: new RegExp(`^${dto.searchingText}$`, 'i') },
+              { _mobile: new RegExp(`^${dto.searchingText}$`, 'i') },
+            ],
+          },
+        });
+      }
+      if (dto.userIds.length > 0) {
+        var newSettingsId = [];
+        dto.userIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
+      }
+
+      if (dto.customTypes.length > 0) {
+     
+        arrayAggregation.push({
+          $match: { _customType: { $in: dto.customTypes } },
+        });
+      }
+
+      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+      switch (dto.sortType) {
+        case 0:
+          arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
+          break;
+        case 1:
+          arrayAggregation.push({ $sort: { _status: dto.sortOrder  ,_id: dto.sortOrder} });
+          break;
+
+        case 2:
+          arrayAggregation.push({ $sort: { _uid: dto.sortOrder ,_id: dto.sortOrder } });
+          break;
+      }
+
+      if (dto.skip != -1) {
+        arrayAggregation.push({ $skip: dto.skip });
+        arrayAggregation.push({ $limit: dto.limit });
+      }
+
+    
+      if (dto.screenType.includes(50)) {
+        arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
+          {
+            $lookup: {
+              from: ModelNames.GLOBAL_GALLERIES,
+              let: { globalGalleryId: '$_globalGalleryId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$globalGalleryId'] } } },
+              ],
+              as: 'globalGalleryDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$globalGalleryDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      var result = await this.userModel
+        .aggregate(arrayAggregation)
+        .session(transactionSession);
+
+      var totalCount = 0;
+      if (dto.screenType.includes(0)) {
+        //Get total count
+        var limitIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$limit') === true,
+        );
+        if (limitIndexCount != -1) {
+          arrayAggregation.splice(limitIndexCount, 1);
+        }
+        var skipIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$skip') === true,
+        );
+        if (skipIndexCount != -1) {
+          arrayAggregation.splice(skipIndexCount, 1);
+        }
+        arrayAggregation.push({
+          $group: { _id: null, totalCount: { $sum: 1 } },
+        });
+
+        var resultTotalCount = await this.userModel
+          .aggregate(arrayAggregation)
+          .session(transactionSession);
+        if (resultTotalCount.length > 0) {
+          totalCount = resultTotalCount[0].totalCount;
+        }
+      }
+
+      const responseJSON = {
+        message: 'success',
+        data: { list: result, totalCount: totalCount },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&

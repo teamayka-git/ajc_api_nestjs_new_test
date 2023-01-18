@@ -158,7 +158,7 @@ _userType:{
     0 - super_admin
     1 - agent
     2 - supplier
-    3 - employee
+    3 - employee 
     4 - Shop
 }
 
