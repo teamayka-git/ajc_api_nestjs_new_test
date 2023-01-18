@@ -1030,7 +1030,7 @@ resultCounterLinkingUsers.forEach((element)=>{
 
     
       if (dto.screenType.includes(50)) {
-        arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
+        arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.GLOBAL_GALLERIES,
