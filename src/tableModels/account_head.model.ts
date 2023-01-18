@@ -5,9 +5,9 @@ import { GlobalConfig } from 'src/config/global_config';
 
 export const AccountHeadSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
+    _code: { type: String, required: true, default: "nil" },
     _name: { type: String, required: true, default: "nil" },
-    _purity:  { type: Number, required: true, default: -1 },
-    _dataGuard: { type:Object, required: true, default: [] },
+    _crdr: { type: Number, required: true, default: 1 },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
     _updatedUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
@@ -17,9 +17,9 @@ export const AccountHeadSchema = new mongoose.Schema({
  
 export interface AccountHead {
     _id: String;
+    _code: String;
     _name: String;
-    _purity: Number;
-    _dataGuard:Object;
+    _crdr: Number;
     _createdUserId:String;
     _createdAt:  Number;
     _updatedUserId: String;
@@ -28,8 +28,8 @@ export interface AccountHead {
 }
 
 AccountHeadSchema.index({_status: 1});
+AccountHeadSchema.index({_code: 1});
 AccountHeadSchema.index({_name: 1,_id:1});
-AccountHeadSchema.index({_purity: 1});
 AccountHeadSchema.index({_name: 1}, {unique: true,partialFilterExpression: { _status: { $lt: 2 } }});
 AccountHeadSchema.post('save', async function(error, doc, next) {
     schemaPostFunctionForDuplicate(error, doc, next);

@@ -1,6 +1,6 @@
-import { Body, Controller, Post, Request } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Put, Request } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AccountHeadCreateDto } from './account-head.dto';
+import { AccountHeadCreateDto, AccountHeadEditDto, AccountHeadListDto, AccountHeadStatusChangeDto, CheckNameExistDto } from './account-head.dto';
 import { AccountHeadService } from './account-head.service';
 
 @ApiTags('Accounts Head Docs')
@@ -15,5 +15,24 @@ export class AccountHeadController {
     return this.accountHeadService.create(dto, req['_userId_']);
   }
 
+  @Put()
+  edit(@Body() dto: AccountHeadEditDto, @Request() req) {
+    return this.accountHeadService.edit(dto, req['_userId_']);
+  }
+
+  @Delete()
+  status_change(@Body() dto: AccountHeadStatusChangeDto, @Request() req) {
+    return this.accountHeadService.status_change(dto, req['_userId_']);
+  }
+ 
+  @Post('list')
+  list(@Body() dto: AccountHeadListDto) {
+    return this.accountHeadService.list(dto);
+  }
+
+  @Post('checkNameExisting')
+  checkNameExisting(@Body() dto: CheckNameExistDto) {
+    return this.accountHeadService.checkNameExisting(dto);
+  }
 
 }
