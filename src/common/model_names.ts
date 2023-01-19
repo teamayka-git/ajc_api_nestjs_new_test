@@ -100,6 +100,7 @@ export enum ModelNames {
   CHAT_PENDING_MESSAGES = 'chat_pending_messages',
 
   ACCOUNT_HEAD = 'account_heads',
+  ACCOUNT_GROUP = 'account_groups',
 
 
 

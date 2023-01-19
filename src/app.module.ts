@@ -104,6 +104,7 @@ import { OrderSaleHistoriesSchema } from './tableModels/order_sale_histories.mod
 import { InvoicesSchema } from './tableModels/invoices.model';
 import { DeliverySchema } from './tableModels/delivery.model';
 import { AccountHeadModule } from './modules/account-head/account-head.module';
+import { AccountGroupModule } from './modules/account-group/account-group.module';
 
 
 @Module({
@@ -224,6 +225,7 @@ import { AccountHeadModule } from './modules/account-head/account-head.module';
     OrderSaleChangeRequestModule,
     ProductTempModule,
     AccountHeadModule,
+    AccountGroupModule,
 
     // SalesReturnRequestStatusesModule,
   ],
