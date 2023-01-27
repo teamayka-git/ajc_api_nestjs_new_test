@@ -101,6 +101,8 @@ export enum ModelNames {
 
   ACCOUNT_HEAD = 'account_heads',
   ACCOUNT_GROUP = 'account_groups',
+  ACCOUNT_SUBGROUP = 'account_subgroups',
+  ACCOUNT_LEDGER = 'account_ledger',
 
 
 

@@ -14,11 +14,10 @@ import { Optional } from '@nestjs/common';
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList = '0-total documents count';
 const descriptionListSortOrder = '1-ascending, -1-descending';
-const descriptionUnder = 'Under Account Header';
-const descriptionReportGroup = 'Under Report Group';
+const descriptionUnder = 'Under Account Sub Group';
 const descriptionListSortType = '0-Created Date, 1-Status, 2-Name, 3-Code';
 
-class AccountGroupCreateList {
+class AccountLedgerCreateList {
   @IsString()
   @ApiProperty({})
   code: string;
@@ -29,26 +28,54 @@ class AccountGroupCreateList {
 
   @IsString()
   @ApiProperty({type: String, description: descriptionUnder })
-  underId: Number;
+  underId: String;
 
-  @IsNumber()
-  @ApiProperty({type: Number, description: descriptionReportGroup })
-  reportGroup: Number;
-
-}
-
-export class AccountGroupCreateDto {
-  @IsArray()
-  @ApiProperty({ type: [AccountGroupCreateList] })
-  @ValidateNested({ each: true })
-  @Type(() => AccountGroupCreateList)
-  array: AccountGroupCreateList[];
-}
-
-export class AccountGroupEditDto {
   @IsString()
   @ApiProperty({})
-  accountgroupId: string;
+  address: String;
+
+  @IsString()
+  @ApiProperty({})
+  phone: String;
+
+  @IsString()
+  @ApiProperty({})
+  email: String;
+
+  @IsString()
+  @ApiProperty({})
+  city: String;
+
+  @IsString()
+  @ApiProperty({})
+  state: String;
+
+  @IsString()
+  @ApiProperty({})
+  country: String;
+
+  @IsString()
+  @ApiProperty({})
+  pin: String;
+
+  @IsString()
+  @ApiProperty({})
+  remarks: String;
+
+}
+
+export class AccountLedgerCreateDto {
+  @IsArray()
+  @ApiProperty({ type: [AccountLedgerCreateList] })
+  @ValidateNested({ each: true })
+  @Type(() => AccountLedgerCreateList)
+  array: AccountLedgerCreateList[];
+}
+
+export class AccountLedgerEditDto {
+  @IsString()
+  @ApiProperty({})
+  AccountLedgerId: string;
 
   @IsString()
   @ApiProperty({})
@@ -62,24 +89,51 @@ export class AccountGroupEditDto {
   @ApiProperty({type: String, description: descriptionUnder })
   underId: string;
 
-  @IsNumber()
-  @ApiProperty({type: Number, description: descriptionReportGroup })
-  reportGroup: Number;
+  @IsString()
+  @ApiProperty({})
+  address: String;
 
+  @IsString()
+  @ApiProperty({})
+  phone: String;
+
+  @IsString()
+  @ApiProperty({})
+  email: String;
+
+  @IsString()
+  @ApiProperty({})
+  city: String;
+
+  @IsString()
+  @ApiProperty({})
+  state: String;
+
+  @IsString()
+  @ApiProperty({})
+  country: String;
+
+  @IsString()
+  @ApiProperty({})
+  pin: String;
+
+  @IsString()
+  @ApiProperty({})
+  remarks: String;
 
 }
 
-export class AccountGroupStatusChangeDto {
+export class AccountLedgerStatusChangeDto {
   @IsArray()
   @ApiProperty({ type: [String] })
-  accountgroupIds: string[];
+  AccountLedgerIds: string[];
 
   @IsNumber()
   @ApiProperty({ description: descriptionStatus })
   status: number;
 }
 
-export class AccountGroupListDto {
+export class AccountLedgerListDto {
   @IsNumber()
   @ApiProperty({ description: descriptionListSortType })
   sortType: number;
@@ -106,7 +160,7 @@ export class AccountGroupListDto {
   
   @IsArray()
   @ApiProperty({ type: [String] })
-  accountgroupIds: string[];
+  AccountLedgerIds: string[];
 
   @IsNumber()
   @ApiProperty({})

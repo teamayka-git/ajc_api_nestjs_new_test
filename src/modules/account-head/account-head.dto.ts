@@ -26,7 +26,7 @@ class AccountHeadCreateList {
   @ApiProperty({})
   name: string;
 
-  @IsString()
+  @IsNumber()
   @ApiProperty({type: Number, description: descriptionListCrDr })
   crdr: Number;
 }
