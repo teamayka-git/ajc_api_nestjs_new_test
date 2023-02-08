@@ -1489,7 +1489,7 @@ if(dto.isProductGenerated != null){
       if (dto.type != null && dto.type.length > 0) {
         arrayAggregation.push({
           $match: { _type: { $in: dto.type } },
-        });
+        }); 
       }
 
       if (dto.workStatus.length > 0) {
@@ -2212,6 +2212,28 @@ if(dto.isProductGenerated != null){
               ),
             ],
             as: 'amendmentRequests',
+          },
+        });
+      }
+      if (dto.screenType.includes(144)) {
+        arrayAggregation.push({
+          $lookup: {
+            from: ModelNames.ORDER_SALE_CHANGE_REQUESTS,
+            let: { orderSaleId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _workStatus: 0,
+                  _status: 1,
+                  $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+                },
+              },
+              new ModelWeightResponseFormat().orderSaleChangeRequestTableResponseFormat(
+                1430,
+                dto.responseFormat,
+              ),
+            ],
+            as: 'changeRequestsPendingList',
           },
         });
       }
