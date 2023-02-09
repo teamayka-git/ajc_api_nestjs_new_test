@@ -3,7 +3,7 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { AccountSubgroup } from 'src/tableModels/account_Subgroup.model';
-import { AccountSubgroupCreateDto, AccountSubgroupEditDto, AccountSubgroupListDto, AccountSubgroupStatusChangeDto, CheckNameExistDto } from './account-Subgroup.dto';
+import { AccountSubgroupCreateDto, AccountSubgroupEditDto, AccountSubgroupListDto, AccountSubgroupStatusChangeDto, CheckNameExistDto } from './accountSubgroup.dto';
 
 @Injectable()
 export class AccountSubgroupService {

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AccountSubgroupService } from './account-Subgroup.service';
-import { AccountSubgroupController } from './account-Subgroup.controller';
+import { AccountSubgroupService } from './accountSubgroup.service';
+import { AccountSubgroupController } from './accountSubgroup.controller';
 import { ModelNames } from 'src/common/model_names';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AccountSubgroupSchema } from 'src/tableModels/account_Subgroup.model';
