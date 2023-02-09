@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as mongoose from 'mongoose';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { ModelNames } from 'src/common/model_names';
-import { AccountHead } from 'src/tableModels/account_head.model';
+import { AccountHead } from 'src/tableModels/accountHead.model';
 import { AccountHeadCreateDto, AccountHeadEditDto, AccountHeadListDto, AccountHeadStatusChangeDto, CheckNameExistDto } from './account-head.dto';
 import { GlobalConfig } from 'rxjs';
 

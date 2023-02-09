@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
-import { AccountLedger } from 'src/tableModels/account_ledger.model';
+import { AccountLedger } from 'src/tableModels/accountLedger.model';
 import { AccountLedgerCreateDto, AccountLedgerEditDto, AccountLedgerListDto, AccountLedgerStatusChangeDto, CheckNameExistDto } from './account-ledger.dto';
 
 @Injectable()
