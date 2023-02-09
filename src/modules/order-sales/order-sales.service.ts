@@ -6150,6 +6150,97 @@ if(dto.isProductGenerated != null){
             );
           }
 
+
+
+
+
+
+
+          
+          
+        if (dto.screenType.includes(123)) {
+          const isorderSaleMainOHPipeline = () => {
+            const pipeline = [];
+            pipeline.push(
+              {
+                $match: {
+                  $expr: { $eq: ['$_id', '$$osOhId'] },
+                },
+              },
+
+              new ModelWeightResponseFormat().userTableResponseFormat(
+                1230,
+                dto.responseFormat,
+              ),
+            );
+
+            const isorderSaleMainShopOHPopulate =
+              dto.screenType.includes(124);
+            if (isorderSaleMainShopOHPopulate) {
+              pipeline.push(
+                {
+                  $lookup: {
+                    from: ModelNames.GLOBAL_GALLERIES,
+                    let: { globalGalleryId: '$_globalGalleryId' },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: {
+                            $eq: ['$_id', '$$globalGalleryId'],
+                          },
+                        },
+                      },
+
+                      new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                        1240,
+                        dto.responseFormat,
+                      ),
+                    ],
+                    as: 'globalGalleryDetails',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$globalGalleryDetails',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              );
+            }
+
+            return pipeline;
+          };
+
+          pipeline.push(
+            {
+              $lookup: {
+                from: ModelNames.USER,
+                let: { osOhId: '$_orderHeadId' },
+                pipeline: isorderSaleMainOHPipeline(),
+                as: 'orderHeadDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$orderHeadDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          );
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
           const isorderSaleMainShopPopulate = dto.screenType.includes(104);
           if (isorderSaleMainShopPopulate) {
             const orderSaleMainShopPipeline = () => {
