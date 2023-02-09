@@ -103,6 +103,10 @@ import { ProductTempModule } from './modules/product-temp/product-temp.module';
 import { OrderSaleHistoriesSchema } from './tableModels/order_sale_histories.model';
 import { InvoicesSchema } from './tableModels/invoices.model';
 import { DeliverySchema } from './tableModels/delivery.model';
+import { AccountHeadModule } from './modules/account-head/account-head.module';
+import { AccountGroupModule } from './modules/account-group/account-group.module';
+import { AccountSubgroupModule } from './modules/account-subgroup/account-subgroup.module';
+import { AccountLedgerModule } from './modules/account-ledger/account-ledger.module';
 
 
 @Module({
@@ -222,6 +226,10 @@ import { DeliverySchema } from './tableModels/delivery.model';
     PurchaseModule,
     OrderSaleChangeRequestModule,
     ProductTempModule,
+    AccountHeadModule,
+    AccountGroupModule,
+    AccountSubgroupModule,
+    AccountLedgerModule,
 
     // SalesReturnRequestStatusesModule,
   ],

@@ -19,7 +19,7 @@ export const ProcessMasterSchema = new mongoose.Schema({
 });
  
 export interface ProcessMaster {
-    _id: String;
+    _id: string;
     _name: String;
     _code: Number;
     _isAutomatic: Number;

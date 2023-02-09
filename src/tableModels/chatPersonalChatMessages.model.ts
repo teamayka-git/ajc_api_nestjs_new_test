@@ -22,7 +22,7 @@ export const ChatPersonalChatMessagesSchema = new mongoose.Schema({
 });
 
 export interface ChatPersonalChatMessages {
-  _id: String;
+  _id: string;
   _personalChatId: String;
   _senderId: String;
   _createdTime: Number;

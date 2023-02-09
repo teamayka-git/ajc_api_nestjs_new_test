@@ -30,7 +30,7 @@ export const ChatPendingMessagesSchema = new mongoose.Schema({
 });
 
 export interface ChatPendingMessages {
-  _id: String;
+  _id: string;
   _userId: String;
   _createdUserId: String;
   _type: Number;

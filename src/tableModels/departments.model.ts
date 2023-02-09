@@ -26,7 +26,7 @@ export const DepartmentsSchema = new mongoose.Schema({
 });
 
 export interface Departments {
-  _id: String;
+  _id: string;
   _name: String;
   _prefix: String;
   _processMasterStatus: Number;
