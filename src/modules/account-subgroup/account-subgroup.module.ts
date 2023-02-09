@@ -10,4 +10,4 @@ import { AccountSubgroupSchema } from 'src/tableModels/account_Subgroup.model';
   controllers: [AccountSubgroupController],
   providers: [AccountSubgroupService]
 })
-export class AccountSubgroupModule {}
+export class AccountSubgroupModule {}//
