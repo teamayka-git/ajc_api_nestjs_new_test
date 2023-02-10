@@ -83,6 +83,16 @@ export class StorePromotionsService {
             _updatedAt: -1,
             _status: 1,
           });
+
+          console.log(
+            '____as  ' +
+              (
+                resultCounterPurchase._count -
+                file['documents'].length +
+                (i + 1)
+              ).toString(),
+          );
+
           var count = dto.array.findIndex(
             (it) => it.fileOriginalName == file['documents'][i]['originalname'],
           );
@@ -177,6 +187,15 @@ export class StorePromotionsService {
             _updatedAt: -1,
             _status: 1,
           });
+          console.log(
+            '____as  ' +
+              (
+                resultCounterPurchase._count -
+                file['documentsDesk'].length +
+                (i + 1)
+              ).toString(),
+          );
+
           var count = dto.array.findIndex(
             (it) =>
               it.fileOriginalName == file['documentsDesk'][i]['originalname'],
