@@ -119,6 +119,7 @@ console.log("dto2    "+JSON.stringify(dto));
         });
       });
 
+      console.log("dto3    "+JSON.stringify(dto));
       var productTemp = await this.productTempModel.insertMany(
         arrayToProductTemp,
         {
@@ -126,6 +127,7 @@ console.log("dto2    "+JSON.stringify(dto));
         },
       );
 
+      console.log("dto4    "+JSON.stringify(dto));
       await this.productTempStoneLinkingModel.insertMany(
         arrayToProductTempStoneLinking,
         {
@@ -133,6 +135,7 @@ console.log("dto2    "+JSON.stringify(dto));
         },
       );
 
+      console.log("dto5    "+JSON.stringify(dto));
       const responseJSON = {
         message: 'success',
         data: dto,
