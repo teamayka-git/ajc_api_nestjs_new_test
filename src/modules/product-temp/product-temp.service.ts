@@ -49,7 +49,11 @@ export class ProductTempService {
         var productTempId = new mongoose.Types.ObjectId();
 
         var autoIncrementNumber = resultCounterProduct._count - index;
+        var barcode =
+          BarCodeQrCodePrefix.BULK_GENERATED_PRODUCT_AND_INVOICE +
+          new StringUtils().intToDigitString(autoIncrementNumber, 8);
         mapItem['productTempId'] = productTempId.toString();
+        mapItem['barcode'] = barcode;
         arrayToProductTemp.push({
           _id: productTempId,
           _name: mapItem.name,
@@ -64,9 +68,7 @@ export class ProductTempService {
               ? null
               : mapItem.factoryTransferItemId,
           _grossWeight: mapItem.grossWeight,
-          _barcode:
-            BarCodeQrCodePrefix.BULK_GENERATED_PRODUCT_AND_INVOICE +
-            new StringUtils().intToDigitString(autoIncrementNumber, 8),
+          _barcode: barcode,
           _categoryId: mapItem.categoryId == '' ? null : mapItem.categoryId,
           _subCategoryId:
             mapItem.subCategoryId == '' ? null : mapItem.subCategoryId,
