@@ -44,6 +44,7 @@ export class ProductTempService {
         },
         { new: true, session: transactionSession },
       );
+      
 
       dto.array.map((mapItem, index) => {
         var productTempId = new mongoose.Types.ObjectId();
@@ -52,8 +53,8 @@ export class ProductTempService {
         var barcode =
           BarCodeQrCodePrefix.BULK_GENERATED_PRODUCT_AND_INVOICE +
           new StringUtils().intToDigitString(autoIncrementNumber, 8);
-        mapItem['productTempId'] = productTempId.toString();
-        mapItem['barcode'] = barcode;
+          dto.array[index]['productTempId'] = productTempId.toString();
+          dto.array[index]['barcode'] = barcode;
         arrayToProductTemp.push({
           _id: productTempId,
           _name: mapItem.name,
