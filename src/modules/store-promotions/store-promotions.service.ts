@@ -39,7 +39,7 @@ export class StorePromotionsService {
           { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
             $inc: {
-              _count: dto.array.length,
+              _count: file['documents'].length,
             },
           },
           { new: true, session: transactionSession },
@@ -138,7 +138,7 @@ export class StorePromotionsService {
           { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
             $inc: {
-              _count: dto.array.length,
+              _count:file['documentsDesk'].length,
             },
           },
           { new: true, session: transactionSession },
