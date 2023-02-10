@@ -53,9 +53,16 @@ console.log("___hhh1 ");
         var barcode =
           BarCodeQrCodePrefix.BULK_GENERATED_PRODUCT_AND_INVOICE +
           new StringUtils().intToDigitString(autoIncrementNumber, 8);
+
+          console.log("index    "+index);
+          
+console.log("dto1    "+JSON.stringify(dto));
+
           dto.array[index]['productTempId'] = productTempId.toString();
           dto.array[index]['barcode'] = barcode;
-        arrayToProductTemp.push({
+        
+console.log("dto2    "+JSON.stringify(dto));
+          arrayToProductTemp.push({
           _id: productTempId,
           _name: mapItem.name,
           _designUid: mapItem.designUid,
