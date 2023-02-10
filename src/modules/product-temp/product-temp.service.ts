@@ -44,8 +44,8 @@ export class ProductTempService {
         },
         { new: true, session: transactionSession },
       );
-      
 
+console.log("___hhh1 ");
       dto.array.map((mapItem, index) => {
         var productTempId = new mongoose.Types.ObjectId();
 
