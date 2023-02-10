@@ -45,7 +45,7 @@ export class ProductTempService {
         { new: true, session: transactionSession },
       );
 
-console.log("___hhh1 ");
+      console.log('___hhh1 ');
       dto.array.map((mapItem, index) => {
         var productTempId = new mongoose.Types.ObjectId();
 
@@ -54,15 +54,15 @@ console.log("___hhh1 ");
           BarCodeQrCodePrefix.BULK_GENERATED_PRODUCT_AND_INVOICE +
           new StringUtils().intToDigitString(autoIncrementNumber, 8);
 
-          console.log("index    "+index);
-          
-console.log("dto1    "+JSON.stringify(dto));
+        console.log('index    ' + index);
 
-          dto.array[index]['productTempId'] = productTempId.toString();
-          dto.array[index]['barcode'] = barcode;
-        
-console.log("dto2    "+JSON.stringify(dto));
-          arrayToProductTemp.push({
+        console.log('dto1    ' + JSON.stringify(dto));
+
+        mapItem['productTempId'] = productTempId.toString();
+        mapItem['barcode'] = barcode;
+
+        console.log('dto2    ' + JSON.stringify(dto));
+        arrayToProductTemp.push({
           _id: productTempId,
           _name: mapItem.name,
           _designUid: mapItem.designUid,
@@ -119,7 +119,7 @@ console.log("dto2    "+JSON.stringify(dto));
         });
       });
 
-      console.log("dto3    "+JSON.stringify(dto));
+      console.log('dto3    ' + JSON.stringify(dto));
       var productTemp = await this.productTempModel.insertMany(
         arrayToProductTemp,
         {
@@ -127,7 +127,7 @@ console.log("dto2    "+JSON.stringify(dto));
         },
       );
 
-      console.log("dto4    "+JSON.stringify(dto));
+      console.log('dto4    ' + JSON.stringify(dto));
       await this.productTempStoneLinkingModel.insertMany(
         arrayToProductTempStoneLinking,
         {
@@ -135,7 +135,7 @@ console.log("dto2    "+JSON.stringify(dto));
         },
       );
 
-      console.log("dto5    "+JSON.stringify(dto));
+      console.log('dto5    ' + JSON.stringify(dto));
       const responseJSON = {
         message: 'success',
         data: dto,
