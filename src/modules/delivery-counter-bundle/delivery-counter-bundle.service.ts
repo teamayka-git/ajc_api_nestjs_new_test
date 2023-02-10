@@ -130,7 +130,7 @@ export class DeliveryCounterBundleService {
           _deliveryCounterId: null,
           _orderSaleItemId: null,
           _deliveryProviderId: null,
-          _description: '',
+          _description:dto.osHistoryDescription,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _status: 1,
