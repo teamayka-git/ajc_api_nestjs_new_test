@@ -75,7 +75,7 @@ export class StorePromotionsService {
             _docType: 0,
             _type: 0,
             _uid:
-              resultCounterPurchase._count - file['documents'].length + (i + 1),
+              resultCounterPurchase._count,// - file['documents'].length + (i + 1),
             _url: resultUpload['url'],
             _createdUserId: _userId_,
             _createdAt: dateTime,
@@ -84,12 +84,18 @@ export class StorePromotionsService {
             _status: 1,
           });
 
+          // console.log(
+          //   '____as  ' +
+          //     (
+          //       resultCounterPurchase._count -
+          //       file['documents'].length +
+          //       (i + 1)
+          //     ).toString(),
+          // );
           console.log(
-            '____as  ' +
+            '____asd  ' +
               (
-                resultCounterPurchase._count -
-                file['documents'].length +
-                (i + 1)
+                resultCounterPurchase._count 
               ).toString(),
           );
 
@@ -177,9 +183,7 @@ export class StorePromotionsService {
             _docType: 0,
             _type: 0,
             _uid:
-              resultCounterPurchase._count -
-              file['documentsDesk'].length +
-              (i + 1),
+              resultCounterPurchase._count ,//-   file['documentsDesk'].length + (i + 1),
             _url: resultUpload['url'],
             _createdUserId: _userId_,
             _createdAt: dateTime,
@@ -187,12 +191,18 @@ export class StorePromotionsService {
             _updatedAt: -1,
             _status: 1,
           });
+          // console.log(
+          //   '____as  ' +
+          //     (
+          //       resultCounterPurchase._count -
+          //       file['documentsDesk'].length +
+          //       (i + 1)
+          //     ).toString(),
+          // );
           console.log(
-            '____as  ' +
+            '____asd  ' +
               (
-                resultCounterPurchase._count -
-                file['documentsDesk'].length +
-                (i + 1)
+                resultCounterPurchase._count 
               ).toString(),
           );
 
