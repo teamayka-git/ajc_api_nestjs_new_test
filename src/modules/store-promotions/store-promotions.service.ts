@@ -244,7 +244,7 @@ export class StorePromotionsService {
 
         //   }
         // }
-        // console.log('___d3');
+        console.log('___arrayGlobalGalleries    '+JSON.stringify(arrayGlobalGalleries));
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
         });
