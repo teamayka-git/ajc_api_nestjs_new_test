@@ -38,7 +38,12 @@ class StorePromotionsCreateList {
 
   @IsString()
   @ApiProperty({})
-  fileOriginalName: string;
+  fileDeskOriginalName: string;
+
+  
+  @IsString()
+  @ApiProperty({})
+  fileMobOriginalName: string;
 
   
 }

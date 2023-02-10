@@ -94,7 +94,7 @@ export class StorePromotionsService {
           );
 
           var count = dto.array.findIndex(
-            (it) => it.fileOriginalName == file['documents'][i]['originalname'],
+            (it) => it.fileMobOriginalName == file['documents'][i]['originalname'],
           );
           if (count != -1) {
             dto.array[count]['globalGalleryMobileId'] = globalGalleryId;
@@ -195,7 +195,7 @@ export class StorePromotionsService {
 
           var count = dto.array.findIndex(
             (it) =>
-              it.fileOriginalName == file['documentsDesk'][i]['originalname'],
+              it.fileDeskOriginalName == file['documentsDesk'][i]['originalname'],
           );
           if (count != -1) {
             dto.array[count]['globalGalleryDeskId'] = globalGalleryId;
