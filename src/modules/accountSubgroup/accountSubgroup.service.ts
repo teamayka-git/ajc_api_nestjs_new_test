@@ -24,7 +24,7 @@ export class AccountSubgroupService {
             arrayToStates.push({
               _code: mapItem.code,
               _name: mapItem.name,
-              _underId: mapItem.underId,              
+              _underId: (mapItem.underId=="")?null:mapItem.underId,              
               _underSubgroup: mapItem.underSubgroup,
               _createdUserId: _userId_,
               _createdAt: dateTime,
@@ -131,6 +131,7 @@ export class AccountSubgroupService {
           },
         });
       }
+
       if (dto.AccountSubgroupIds.length > 0) {
         var newSettingsId = [];
         dto.AccountSubgroupIds.map((mapItem) => {
@@ -138,6 +139,15 @@ export class AccountSubgroupService {
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
+
+      if (dto.underSubgroupIds.length > 0) {
+        var newUnderSubId = [];
+        dto.underSubgroupIds.map((mapItem) => {
+          newUnderSubId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _underSubgroupId: { $in: newUnderSubId } } });
+      }
+
 
       if (dto.underIds.length > 0) {
         var newUnderId = [];

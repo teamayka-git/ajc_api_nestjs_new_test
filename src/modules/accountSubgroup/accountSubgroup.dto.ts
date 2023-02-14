@@ -110,6 +110,10 @@ export class AccountSubgroupListDto {
   
   @IsArray()
   @ApiProperty({ type: [String] })
+  underSubgroupIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
   AccountSubgroupIds: string[];
 
   @IsNumber()

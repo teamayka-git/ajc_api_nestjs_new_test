@@ -137,7 +137,7 @@ export class AccountGroupService {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
-      }
+      }     
 
       if (dto.underIds.length > 0) {
         var newUnderId = [];
