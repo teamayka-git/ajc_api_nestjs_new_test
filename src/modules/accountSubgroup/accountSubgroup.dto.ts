@@ -103,6 +103,10 @@ export class AccountSubgroupListDto {
   @IsArray()
   @ApiProperty({ type: [Number], })
   responseFormat: number[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  underIds: string[];
   
   @IsArray()
   @ApiProperty({ type: [String] })

@@ -138,6 +138,15 @@ export class AccountSubgroupService {
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
+
+      if (dto.underIds.length > 0) {
+        var newUnderId = [];
+        dto.underIds.map((mapItem) => {
+          newUnderId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _underId: { $in: newUnderId } } });
+      }
+
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {
         case 0:
@@ -150,7 +159,7 @@ export class AccountSubgroupService {
           arrayAggregation.push({ $sort: { _name: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _purity: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _underId: dto.sortOrder ,_id: dto.sortOrder } });
           break;
       }
 
