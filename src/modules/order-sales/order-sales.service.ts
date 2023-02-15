@@ -2107,6 +2107,38 @@ if(dto.isProductGenerated != null){
           },
         );
       }
+
+
+      if (dto.screenType.includes(145)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ROOT_CAUSES,
+              let: { reworkRootCauseId: '$_reworkRootCauseId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$reworkRootCauseId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                  1450,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'internalReworkRootCauseDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$internalReworkRootCauseDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+
       if (dto.screenType.includes(120)) {
         const orderSaleShopOrderHeadPipeline = () => {
           const pipeline = [];
