@@ -787,6 +787,19 @@ export class OrderSalesReworkSetprocessDto {
   ordersaleId: string;
 
   
+  @IsString()
+  @ApiProperty({})
+  reworkRootcauseId: string;
+
+  @IsString()
+  @ApiProperty({})
+  reworkRootcauseName: string;
+
+  @IsString()
+  @ApiProperty({})
+  reworkRootcauseDescription: string;
+
+  
   @IsNumber()
   @ApiProperty({})
   fromStatus: number;

@@ -569,6 +569,8 @@ export class OrderSalesService {
         _isProductGenerated: isProductGenerated,
         _type: dto.type,
 
+        _reworkRootCause:null,
+        _reworkDescription:"",
         _isHold: 0,
         _holdDescription: '',
         _holdRootCause: null,
@@ -8790,7 +8792,7 @@ if(dto.isProductGenerated != null){
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-
+ 
       await this.orderSaleMainModel.findOneAndUpdate(
         {
           _id: dto.ordersaleId,
@@ -8798,6 +8800,8 @@ if(dto.isProductGenerated != null){
         {
           $set: {
             _workStatus: 1,
+            _reworkRootCause:dto.reworkRootcauseId,
+            _reworkDescription:dto.reworkRootcauseDescription,
           },
           $inc: {
             _internalReWorkCount: 1,
@@ -8825,7 +8829,7 @@ if(dto.isProductGenerated != null){
         _deliveryCounterId: null,
         _shopId: null,
         _orderSaleItemId: null,
-        _description: '',
+        _description: `${dto.reworkRootcauseName} - ${dto.reworkRootcauseDescription}`,
         _createdUserId: _userId_,
         _createdAt: dateTime,
         _status: 1,
@@ -8957,6 +8961,8 @@ if(dto.isProductGenerated != null){
           _isProductGenerated: orderDetails[0]._isProductGenerated,
           _type: orderDetails[0]._type,
 
+          _reworkRootCause:orderDetails[0]._reworkRootCause,
+          _reworkDescription:orderDetails[0]._reworkDescription,
           _isHold: orderDetails[0]._isHold,
           _holdDescription: orderDetails[0]._holdDescription,
           _holdRootCause: orderDetails[0]._holdRootCause,
