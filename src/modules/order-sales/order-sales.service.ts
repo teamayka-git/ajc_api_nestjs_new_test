@@ -569,7 +569,7 @@ export class OrderSalesService {
         _isProductGenerated: isProductGenerated,
         _type: dto.type,
 
-        _reworkRootCause:null,
+        _reworkRootCauseId:null,
         _reworkDescription:"",
         _isHold: 0,
         _holdDescription: '',
@@ -8800,7 +8800,7 @@ if(dto.isProductGenerated != null){
         {
           $set: {
             _workStatus: 1,
-            _reworkRootCause:dto.reworkRootcauseId,
+            _reworkRootCauseId:dto.reworkRootcauseId,
             _reworkDescription:dto.reworkRootcauseDescription,
           },
           $inc: {
@@ -8961,7 +8961,7 @@ if(dto.isProductGenerated != null){
           _isProductGenerated: orderDetails[0]._isProductGenerated,
           _type: orderDetails[0]._type,
 
-          _reworkRootCause:orderDetails[0]._reworkRootCause,
+          _reworkRootCauseId:orderDetails[0]._reworkRootCauseId,
           _reworkDescription:orderDetails[0]._reworkDescription,
           _isHold: orderDetails[0]._isHold,
           _holdDescription: orderDetails[0]._holdDescription,

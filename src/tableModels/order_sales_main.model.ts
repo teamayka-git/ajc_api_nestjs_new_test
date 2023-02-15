@@ -43,7 +43,7 @@ export const OrderSalesMainSchema = new mongoose.Schema({
   _generalRemark: { type: String, default: '' },
   _reWorkCount: { type: Number, required: true, default: -1 },
   _internalReWorkCount: { type: Number, required: true, default: -1 },
-  _reworkRootCause: {
+  _reworkRootCauseId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.ROOT_CAUSES,
     default: null,
@@ -82,7 +82,7 @@ export interface OrderSalesMain {
   _isHold:number; 
   _holdDescription:String;
 
-  _reworkRootCause:String;
+  _reworkRootCauseId:String;
   _reworkDescription:String;
   _type: number;//
   _reWorkCount:number;//
@@ -100,7 +100,7 @@ export interface OrderSalesMain {
   _status: Number;
 }
 
-OrderSalesMainSchema.index({ _reworkRootCause: 1 });
+OrderSalesMainSchema.index({ _reworkRootCauseId: 1 });
 OrderSalesMainSchema.index({ _reworkDescription: 1 });
 OrderSalesMainSchema.index({ _holdRootCause: 1 });
 OrderSalesMainSchema.index({ _isHold: 1 });
