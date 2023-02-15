@@ -14,6 +14,11 @@ export const ShopsSchema = new mongoose.Schema({
     ref: ModelNames.ROOT_CAUSES,
     default: null,
   },
+  _freezedUserId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.USER,
+    default: null,
+  },
   _isFreezed: { type: Number, required: true, default: -1 },
   _stockSaleRate: { type: Number, required: true, default: -1 },
   _shopType: { type: Number, required: true, default: -1 },
@@ -129,6 +134,7 @@ export interface Shops {
   _isFreezed: number;
   _freezedDescription: String;
   _freezedRootCause: String;
+  _freezedUserId: String;
   _globalGalleryId: String;
   _panCardNumber: String;
   _billingModeSale: Number;
@@ -167,6 +173,7 @@ ShopsSchema.index({ _isTaxIgstEnabled: 1 });
 ShopsSchema.index({ _isFreezed: 1 });
 ShopsSchema.index({ _freezedDescription: 1 });
 ShopsSchema.index({ _freezedRootCause: 1 });
+ShopsSchema.index({ _freezedUserId: 1 });
 
 ShopsSchema.index({ _commisionType: 1 });
 ShopsSchema.index({ _rateCardId: 1 });
