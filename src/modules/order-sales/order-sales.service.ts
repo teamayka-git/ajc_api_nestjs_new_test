@@ -6184,7 +6184,34 @@ if(dto.isProductGenerated != null){
             );
           }
 
-
+          if (dto.screenType.includes(125)) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.ROOT_CAUSES,
+                  let: { reworkRootCauseId: '$_reworkRootCauseId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$reworkRootCauseId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                      1250,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'internalReworkRootCauseDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$internalReworkRootCauseDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
 
 
 
