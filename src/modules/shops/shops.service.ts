@@ -249,6 +249,8 @@ export class ShopsService {
         _orderSaleRate: dto.orderSaleRate,
         _stockSaleRate: dto.stockSaleRate,
         _address: dto.address,
+
+        _freezedUserId: null,
         _shopType: dto.shopType,
         _isTaxIgstEnabled: dto.isTaxIgstEnabled,
         _commisionType: dto.commisionType,
@@ -993,6 +995,7 @@ export class ShopsService {
           },
         );
       }
+      
       if (dto.screenType.includes(50)) {
         arrayAggregation.push(
           {
@@ -1251,6 +1254,95 @@ export class ShopsService {
           },
         );
       }
+
+
+
+
+
+
+
+
+
+
+      if (dto.screenType.includes(117)) {
+        const freezedUserPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$userId'] },
+              },
+            },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1170,
+              dto.responseFormat,
+            ),
+          );
+
+          const orderHeadGlobalGallery = dto.screenType.includes(118);
+          if (orderHeadGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1180,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { userId: '$_freezedUserId' },
+              pipeline: freezedUserPipeline(),
+              as: 'freezedUserDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$freezedUserDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       if (dto.screenType.includes(102)) {
         const relationshipManagerPipeline = () => {
           const pipeline = [];
@@ -2386,6 +2478,7 @@ export class ShopsService {
         },
         {
           $set: {
+            _freezedUserId: _userId_,
             _isFreezed: dto.isFreezed,
             _freezedDescription: dto.freezedDescription,
             _freezedRootCause:
@@ -2532,10 +2625,12 @@ export class ShopsService {
         console.log("resultUploadIcon['url']   " + resultUploadIcon['url']);
       }
 
-
-      var resultShop=await this.shopsModel.find({_id:dto.shopId});
-      if(resultShop.length==0){
-        throw new HttpException('Shop not found', HttpStatus.INTERNAL_SERVER_ERROR);
+      var resultShop = await this.shopsModel.find({ _id: dto.shopId });
+      if (resultShop.length == 0) {
+        throw new HttpException(
+          'Shop not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
 
       var objThemeStore = {
@@ -2557,20 +2652,22 @@ export class ShopsService {
       };
 
       if (file.hasOwnProperty('splashImage')) {
-        console.log("___ssss1");
+        console.log('___ssss1');
         objThemeStore['splashImageUrl'] = resultUploadSplash['url'];
-      } else {console.log("___ssss2");
+      } else {
+        console.log('___ssss2');
         if (dto.isSplashImageRemoved == 1) {
-          console.log("___ssss3");
+          console.log('___ssss3');
           objThemeStore['splashImageUrl'] = '';
-        }else{
-          console.log("___ssss4");
-          if(resultShop[0]._themeStore==null){
-            console.log("___ssss5");
+        } else {
+          console.log('___ssss4');
+          if (resultShop[0]._themeStore == null) {
+            console.log('___ssss5');
             objThemeStore['splashImageUrl'] = '';
-          }else{
-            console.log("___ssss6");
-            objThemeStore['splashImageUrl'] = resultShop[0]._themeStore["splashImageUrl"];
+          } else {
+            console.log('___ssss6');
+            objThemeStore['splashImageUrl'] =
+              resultShop[0]._themeStore['splashImageUrl'];
           }
         }
       }
@@ -2580,15 +2677,16 @@ export class ShopsService {
       } else {
         if (dto.isActionbarLogoImageRemoved == 1) {
           objThemeStore['actionbarLogo'] = '';
-        }else{
-          if(resultShop[0]._themeStore==null){
+        } else {
+          if (resultShop[0]._themeStore == null) {
             objThemeStore['actionbarLogo'] = '';
-          }else{
-            objThemeStore['actionbarLogo'] = resultShop[0]._themeStore["actionbarLogo"];
+          } else {
+            objThemeStore['actionbarLogo'] =
+              resultShop[0]._themeStore['actionbarLogo'];
           }
         }
       }
-console.log("objThemeStore        "+JSON.stringify(objThemeStore));
+      console.log('objThemeStore        ' + JSON.stringify(objThemeStore));
       var result = await this.shopsModel.findOneAndUpdate(
         {
           _id: dto.shopId,

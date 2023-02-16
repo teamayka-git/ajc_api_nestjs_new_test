@@ -424,6 +424,8 @@ export class DeliveryReturnService {
               _isHold:0,
               _holdDescription:"",
               _holdRootCause:null,
+              _reworkRootCauseId:null,
+              _reworkDescription:"",
               _parentOrderId: resultOrderSaleOld[indexCount]._id,
               _deliveryType: resultOrderSaleOld[indexCount]._deliveryType,
               _isInvoiceGenerated: 0,

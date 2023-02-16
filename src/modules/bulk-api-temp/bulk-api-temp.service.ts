@@ -1396,6 +1396,7 @@ if(resultCompany[0].cityDetails.districtDetails.stateDetails._name!=resultCity[c
           _stockSaleRate: stockSaleRate,
           _address: element.Address,
           _shopType: shopType,
+          _freezedUserId:null,
           _isTaxIgstEnabled: isIgstTaxEnabled,
           _commisionType: commisionType,
           _branchId: resultBranch[countIndexBranch]._id,

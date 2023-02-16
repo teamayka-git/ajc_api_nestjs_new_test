@@ -569,6 +569,8 @@ export class OrderSalesService {
         _isProductGenerated: isProductGenerated,
         _type: dto.type,
 
+        _reworkRootCauseId:null,
+        _reworkDescription:"",
         _isHold: 0,
         _holdDescription: '',
         _holdRootCause: null,
@@ -2105,6 +2107,38 @@ if(dto.isProductGenerated != null){
           },
         );
       }
+
+
+      if (dto.screenType.includes(145)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ROOT_CAUSES,
+              let: { reworkRootCauseId: '$_reworkRootCauseId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$reworkRootCauseId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                  1450,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'internalReworkRootCauseDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$internalReworkRootCauseDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+
       if (dto.screenType.includes(120)) {
         const orderSaleShopOrderHeadPipeline = () => {
           const pipeline = [];
@@ -6150,7 +6184,34 @@ if(dto.isProductGenerated != null){
             );
           }
 
-
+          if (dto.screenType.includes(125)) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.ROOT_CAUSES,
+                  let: { reworkRootCauseId: '$_reworkRootCauseId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$reworkRootCauseId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                      1250,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'internalReworkRootCauseDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$internalReworkRootCauseDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
 
 
 
@@ -8790,7 +8851,7 @@ if(dto.isProductGenerated != null){
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-
+ 
       await this.orderSaleMainModel.findOneAndUpdate(
         {
           _id: dto.ordersaleId,
@@ -8798,6 +8859,8 @@ if(dto.isProductGenerated != null){
         {
           $set: {
             _workStatus: 1,
+            _reworkRootCauseId:dto.reworkRootcauseId,
+            _reworkDescription:dto.reworkRootcauseDescription,
           },
           $inc: {
             _internalReWorkCount: 1,
@@ -8825,7 +8888,7 @@ if(dto.isProductGenerated != null){
         _deliveryCounterId: null,
         _shopId: null,
         _orderSaleItemId: null,
-        _description: '',
+        _description: `${dto.reworkRootcauseName} - ${dto.reworkRootcauseDescription}`,
         _createdUserId: _userId_,
         _createdAt: dateTime,
         _status: 1,
@@ -8957,6 +9020,8 @@ if(dto.isProductGenerated != null){
           _isProductGenerated: orderDetails[0]._isProductGenerated,
           _type: orderDetails[0]._type,
 
+          _reworkRootCauseId:orderDetails[0]._reworkRootCauseId,
+          _reworkDescription:orderDetails[0]._reworkDescription,
           _isHold: orderDetails[0]._isHold,
           _holdDescription: orderDetails[0]._holdDescription,
           _holdRootCause: orderDetails[0]._holdRootCause,
