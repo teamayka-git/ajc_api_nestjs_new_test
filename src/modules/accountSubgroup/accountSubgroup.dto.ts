@@ -29,11 +29,11 @@ class AccountSubgroupCreateList {
 
   @IsString()
   @ApiProperty({type: String, description: descriptionUnder })
-  underId: String;
+  groupId: String;
 
   @IsString()
   @ApiProperty({type: String, description: descriptionUnderSubgroup })
-  underSubgroup: String;
+  subGroup: String;
 
 }
 
@@ -60,11 +60,11 @@ export class AccountSubgroupEditDto {
 
   @IsString()
   @ApiProperty({type: String, description: descriptionUnder })
-  underId: string;
+  groupId: string;
 
   @IsString()
-  @ApiProperty({type: String, description: descriptionUnder })
-  underSubgroupId: string;
+  @ApiProperty({type: String, description: descriptionUnderSubgroup })
+  subGroupId: string;
 
 
 }
@@ -106,11 +106,11 @@ export class AccountSubgroupListDto {
 
   @IsArray()
   @ApiProperty({ type: [String] })
-  underIds: string[];
+  groupIds: string[];
   
   @IsArray()
   @ApiProperty({ type: [String] })
-  underSubgroupIds: string[];
+  subGroupIds: string[];
 
   @IsArray()
   @ApiProperty({ type: [String] })

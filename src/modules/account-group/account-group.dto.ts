@@ -14,7 +14,7 @@ import { Optional } from '@nestjs/common';
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList = '0-total documents count';
 const descriptionListSortOrder = '1-ascending, -1-descending';
-const descriptionUnder = 'Under Account Header';
+const descriptionhead = 'Under Account Header';
 const descriptionReportGroup = 'Under Report Group';
 const descriptionListSortType = '0-Created Date, 1-Status, 2-Name, 3-Code';
 
@@ -28,8 +28,8 @@ class AccountGroupCreateList {
   name: string;
 
   @IsString()
-  @ApiProperty({type: String, description: descriptionUnder })
-  underId: Number;
+  @ApiProperty({type: String, description: descriptionhead })
+  headId: Number;
 
   @IsNumber()
   @ApiProperty({type: Number, description: descriptionReportGroup })
@@ -59,8 +59,8 @@ export class AccountGroupEditDto {
   name: string;
 
   @IsString()
-  @ApiProperty({type: String, description: descriptionUnder })
-  underId: string;
+  @ApiProperty({type: String, description: descriptionhead })
+  headId: string;
 
   @IsNumber()
   @ApiProperty({type: Number, description: descriptionReportGroup })
@@ -106,7 +106,7 @@ export class AccountGroupListDto {
 
   @IsArray()
   @ApiProperty({ type: [String] })
-  underIds: string[];
+  headIds: string[];
   
   @IsArray()
   @ApiProperty({ type: [String] })
