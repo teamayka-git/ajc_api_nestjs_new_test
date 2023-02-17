@@ -24,7 +24,7 @@ export class AccountGroupService {
             arrayToStates.push({
               _code: mapItem.code,
               _name: mapItem.name,
-              _underId: mapItem.underId,              
+              _headId: mapItem.headId,              
               _reportGroup: mapItem.reportGroup,
               _createdUserId: _userId_,
               _createdAt: dateTime,
@@ -63,7 +63,7 @@ export class AccountGroupService {
               $set: {
                 _code: dto.code,
                 _name: dto.name,
-                _underId: dto.underId,                
+                _headId: dto.headId,                
                 _reportGroup: dto.reportGroup,
                 _updatedUserId: _userId_,
                 _updatedAt: dateTime,
@@ -139,12 +139,12 @@ export class AccountGroupService {
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }     
 
-      if (dto.underIds.length > 0) {
-        var newUnderId = [];
-        dto.underIds.map((mapItem) => {
-          newUnderId.push(new mongoose.Types.ObjectId(mapItem));
+      if (dto.headIds.length > 0) {
+        var newheadId = [];
+        dto.headIds.map((mapItem) => {
+          newheadId.push(new mongoose.Types.ObjectId(mapItem));
         });
-        arrayAggregation.push({ $match: { _underId: { $in: newUnderId } } });
+        arrayAggregation.push({ $match: { _headId: { $in: newheadId } } });
       }
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
@@ -159,7 +159,7 @@ export class AccountGroupService {
           arrayAggregation.push({ $sort: { _name: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _underId: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _headId: dto.sortOrder ,_id: dto.sortOrder } });
           break;
       }
 

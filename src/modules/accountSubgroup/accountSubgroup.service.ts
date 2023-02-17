@@ -24,8 +24,8 @@ export class AccountSubgroupService {
             arrayToStates.push({
               _code: mapItem.code,
               _name: mapItem.name,
-              _underId: (mapItem.underId=="")?null:mapItem.underId,              
-              _underSubgroup: mapItem.underSubgroup,
+              _groupId: (mapItem.groupId=="")?null:mapItem.groupId,              
+              _subGroupId: mapItem.subGroup,
               _createdUserId: _userId_,
               _createdAt: dateTime,
               _updatedUserId: null,
@@ -63,8 +63,8 @@ export class AccountSubgroupService {
               $set: {
                 _code: dto.code,
                 _name: dto.name,
-                _underId: dto.underId,                
-                _underSubgroupId: dto.underSubgroupId,
+                _groupId: dto.groupId,                
+                _subGroupId: dto.subGroupId,
                 _updatedUserId: _userId_,
                 _updatedAt: dateTime,
               },
@@ -140,21 +140,21 @@ export class AccountSubgroupService {
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
 
-      if (dto.underSubgroupIds.length > 0) {
+      if (dto.subGroupIds.length > 0) {
         var newUnderSubId = [];
-        dto.underSubgroupIds.map((mapItem) => {
+        dto.subGroupIds.map((mapItem) => {
           newUnderSubId.push(new mongoose.Types.ObjectId(mapItem));
         });
-        arrayAggregation.push({ $match: { _underSubgroupId: { $in: newUnderSubId } } });
+        arrayAggregation.push({ $match: { _subGroupId: { $in: newUnderSubId } } });
       }
 
 
-      if (dto.underIds.length > 0) {
-        var newUnderId = [];
-        dto.underIds.map((mapItem) => {
-          newUnderId.push(new mongoose.Types.ObjectId(mapItem));
+      if (dto.groupIds.length > 0) {
+        var newgroupId = [];
+        dto.groupIds.map((mapItem) => {
+          newgroupId.push(new mongoose.Types.ObjectId(mapItem));
         });
-        arrayAggregation.push({ $match: { _underId: { $in: newUnderId } } });
+        arrayAggregation.push({ $match: { _groupId: { $in: newgroupId } } });
       }
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
@@ -169,7 +169,7 @@ export class AccountSubgroupService {
           arrayAggregation.push({ $sort: { _name: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _underId: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _groupId: dto.sortOrder ,_id: dto.sortOrder } });
           break;
       }
 

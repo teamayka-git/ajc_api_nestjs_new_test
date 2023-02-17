@@ -7,8 +7,8 @@ export const AccountSubgroupSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
     _code: { type: String, required: true, default: "nil" },
     _name: { type: String, required: true, default: "nil" },
-    _underId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.ACCOUNT_GROUP, default: null },
-    _underSubgroupId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.ACCOUNT_SUBGROUP, default: null },
+    _groupId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.ACCOUNT_GROUP, default: null },
+    _subGroupId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.ACCOUNT_SUBGROUP, default: null },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
     _updatedUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
@@ -20,8 +20,8 @@ export interface AccountSubgroup {
     _id: String;
     _code: String;
     _name: String;
-    _underId: String;
-    _underSubgroupId: String;
+    _groupId: String;
+    _subGroupId: String;
     _createdUserId:String;
     _createdAt:  Number;
     _updatedUserId: String;

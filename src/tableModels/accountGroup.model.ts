@@ -7,7 +7,7 @@ export const AccountGroupSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
     _code: { type: String, required: true, default: "nil" },
     _name: { type: String, required: true, default: "nil" },
-    _underId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.ACCOUNT_HEAD, default: null },
+    _headId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.ACCOUNT_HEAD, default: null },
     _reportGroup: { type: Number, required: true, default: 0 },
     _createdUserId: { type: mongoose.Schema.Types.ObjectId, ref: ModelNames.USER, default: null },
     _createdAt: { type: Number, required: true, default: -1 },
@@ -20,7 +20,7 @@ export interface AccountGroup {
     _id: String;
     _code: String;
     _name: String;
-    _underId: String;
+    _headId: String;
     _reportGroup: Number;
     _createdUserId:String;
     _createdAt:  Number;
