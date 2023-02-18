@@ -173,6 +173,10 @@ export class AccountLedgerListDto {
   @IsString()
   @ApiProperty({})
   searchingText: string;
+
+  @IsString()
+  @ApiProperty({})
+  searchingCode: string;
 }
 
 export class CheckNameExistDto {
