@@ -1,19 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { ModelNames } from 'src/common/model_names';
-import { AccountSubgroup } from 'src/tableModels/accountSubgroup.model';
-import { AccountSubgroupCreateDto, AccountSubgroupEditDto, AccountSubgroupListDto, AccountSubgroupStatusChangeDto, CheckNameExistDto } from './accountSubgroup.dto';
+import { AccountBranch } from 'src/tableModels/AccountBranch.model';
+import { AccountBranchCreateDto, AccountBranchEditDto, AccountBranchListDto, AccountBranchStatusChangeDto, CheckNameExistDto } from './account-branch.dto';
+import { GlobalConfig } from 'rxjs';
 
 @Injectable()
-export class AccountSubgroupService {
+export class AccountBranchService {
     constructor(
-        @InjectModel(ModelNames.ACCOUNT_SUBGROUP)
-        private readonly accountSubgroupModel: mongoose.Model<AccountSubgroup>,
+        @InjectModel(ModelNames.ACCOUNT_BRANCH)
+        private readonly AccountBranchModel: mongoose.Model<AccountBranch>,
         @InjectConnection() private readonly connection: mongoose.Connection,
       ) {}
 
-    async create(dto: AccountSubgroupCreateDto, _userId_: string) {
+    async create(dto: AccountBranchCreateDto, _userId_: string) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
@@ -24,8 +25,6 @@ export class AccountSubgroupService {
             arrayToStates.push({
               _code: mapItem.code,
               _name: mapItem.name,
-              _groupId: (mapItem.groupId=="")?null:mapItem.groupId,              
-              _subGroupId: mapItem.subGroup,
               _createdUserId: _userId_,
               _createdAt: dateTime,
               _updatedUserId: null,
@@ -34,7 +33,7 @@ export class AccountSubgroupService {
           });
           });
     
-          var result1 = await this.accountSubgroupModel.insertMany(arrayToStates, {
+          var result1 = await this.AccountBranchModel.insertMany(arrayToStates, {
             session: transactionSession,
           });
     
@@ -50,21 +49,19 @@ export class AccountSubgroupService {
         }
       }
 
-      async edit(dto: AccountSubgroupEditDto, _userId_: string) {
+      async edit(dto: AccountBranchEditDto, _userId_: string) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
         try {
-          var result = await this.accountSubgroupModel.findOneAndUpdate(
+          var result = await this.AccountBranchModel.findOneAndUpdate(
             {
-              _id: dto.AccountSubgroupId,
+              _id: dto.AccountBranchId,
             },
             {
               $set: {
                 _code: dto.code,
                 _name: dto.name,
-                _groupId: dto.groupId,                
-                _subGroupId: dto.subGroupId,
                 _updatedUserId: _userId_,
                 _updatedAt: dateTime,
               },
@@ -85,14 +82,14 @@ export class AccountSubgroupService {
       }
 
       
-  async status_change(dto: AccountSubgroupStatusChangeDto, _userId_: string) {
+  async status_change(dto: AccountBranchStatusChangeDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var result = await this.accountSubgroupModel.updateMany(
+      var result = await this.AccountBranchModel.updateMany(
         {
-          _id: { $in: dto.AccountSubgroupIds },
+          _id: { $in: dto.AccountBranchIds },
         },
         {
           $set: {
@@ -116,7 +113,7 @@ export class AccountSubgroupService {
     }
   }
 
-  async list(dto: AccountSubgroupListDto) {
+  async list(dto: AccountBranchListDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -131,32 +128,13 @@ export class AccountSubgroupService {
           },
         });
       }
-
-      if (dto.AccountSubgroupIds.length > 0) {
+      if (dto.AccountBranchIds.length > 0) {
         var newSettingsId = [];
-        dto.AccountSubgroupIds.map((mapItem) => {
+        dto.AccountBranchIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
-
-      if (dto.subGroupIds.length > 0) {
-        var newUnderSubId = [];
-        dto.subGroupIds.map((mapItem) => {
-          newUnderSubId.push(new mongoose.Types.ObjectId(mapItem));
-        });
-        arrayAggregation.push({ $match: { _subGroupId: { $in: newUnderSubId } } });
-      }
-
-
-      if (dto.groupIds.length > 0) {
-        var newgroupId = [];
-        dto.groupIds.map((mapItem) => {
-          newgroupId.push(new mongoose.Types.ObjectId(mapItem));
-        });
-        arrayAggregation.push({ $match: { _groupId: { $in: newgroupId } } });
-      }
-
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {
         case 0:
@@ -168,9 +146,7 @@ export class AccountSubgroupService {
         case 2:
           arrayAggregation.push({ $sort: { _name: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
-        case 3:
-          arrayAggregation.push({ $sort: { _groupId: dto.sortOrder ,_id: dto.sortOrder } });
-          break;
+
       }
 
       if (dto.skip != -1) {
@@ -178,7 +154,7 @@ export class AccountSubgroupService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      var result = await this.accountSubgroupModel
+      var result = await this.AccountBranchModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
 
@@ -201,7 +177,7 @@ export class AccountSubgroupService {
           $group: { _id: null, totalCount: { $sum: 1 } },
         });
 
-        var resultTotalCount = await this.accountSubgroupModel
+        var resultTotalCount = await this.AccountBranchModel
           .aggregate(arrayAggregation)
           .session(transactionSession);
         if (resultTotalCount.length > 0) {
@@ -229,7 +205,7 @@ export class AccountSubgroupService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var resultCount = await this.accountSubgroupModel
+      var resultCount = await this.AccountBranchModel
         .count({
           _name: dto.value,
           _id: { $nin: dto.existingIds },

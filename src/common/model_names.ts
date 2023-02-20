@@ -102,8 +102,12 @@ export enum ModelNames {
   ACCOUNT_HEAD = 'account_heads',
   ACCOUNT_GROUP = 'account_groups',
   ACCOUNT_SUBGROUP = 'account_subgroups',
-  ACCOUNT_LEDGER = 'account_ledger',
-
+  ACCOUNT_LEDGER = 'account_ledgers',
+  ACCOUNT_JOURNAL = 'account_journals',
+  ACCOUNT_JOURNAL_ITEMS = 'account_journal_items',
+  ACCOUNT_BRANCH = 'account_branchs',
+  ACCOUNT_CURRENCY = 'account_currencies'
+  
 
 
 

@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Post, Put, Request } from '@nestjs/common';
-import { AccountSubgroupService } from './accountSubgroup.service';
-import { AccountSubgroupCreateDto, AccountSubgroupEditDto, AccountSubgroupListDto, AccountSubgroupStatusChangeDto,CheckNameExistDto } from './accountSubgroup.dto';
+import { AccountSubgroupService } from './account-subgroup.service';
+import { AccountSubgroupCreateDto, AccountSubgroupEditDto, AccountSubgroupListDto, AccountSubgroupStatusChangeDto,CheckNameExistDto } from './account-subgroup.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 
