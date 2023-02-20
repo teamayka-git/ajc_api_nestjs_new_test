@@ -25,20 +25,23 @@ export class AccountJournalService {
         transactionSession.startTransaction();
         try {
     
-          var arrayToDeliveryChallan = [];
-          var arrayToDeliveryChallanItems = [];
+          var arrayJV = [];
+          var arrayJVItems = [];
     
+          const voucherCount = await this.AccountJournalModel.countDocuments().exec();
+          const voucherNumber = `JV-${(voucherCount + 1).toString().padStart(6, '0')}`;
     
-          dto.AccountJournals.map((mapItem, index) => {
+          dto.accountJournals.map((mapItem, index) => {
             var AccountJournalId = new mongoose.Types.ObjectId();
     
-    
-            arrayToDeliveryChallan.push({
+            arrayJV.push({
               _id: AccountJournalId,
               _branchId: mapItem.branchId,
               _remarks: mapItem.remarks,
-              _voucherNo: mapItem.voucherNo,
-              _voucherDate: mapItem.voucherDate,
+              //_voucherNo: mapItem.voucherNo,
+              _voucherNo: voucherNumber,
+              //_voucherDate: mapItem.voucherDate,
+              _voucherDate: dateTime,
               _postingDate:mapItem.postingDate,
               _createdUserId: _userId_,
               _createdAt: dateTime,
@@ -51,7 +54,7 @@ export class AccountJournalService {
               
               var AccountJournalDetailId = new mongoose.Types.ObjectId();
     
-              arrayToDeliveryChallanItems.push({
+              arrayJVItems.push({
                 _id: AccountJournalDetailId,
                 _journalId: AccountJournalId,
                 _ledgerId: mapItem1.ledgerId,
@@ -72,14 +75,14 @@ export class AccountJournalService {
         });
     
     
-console.log("___arrayToDeliveryChallan     "+JSON.stringify(arrayToDeliveryChallan));
-console.log("___arrayToDeliveryChallanItems    "+JSON.stringify(arrayToDeliveryChallanItems));
+console.log("___arrayJV     "+JSON.stringify(arrayJV));
+console.log("___arrayJVItems    "+JSON.stringify(arrayJVItems));
 
 
-          var result1 = await this.AccountJournalModel.insertMany(arrayToDeliveryChallan, {
+          var result1 = await this.AccountJournalModel.insertMany(arrayJV, {
             session: transactionSession,
           });
-          await this.AccountJournalItemsModel.insertMany(arrayToDeliveryChallanItems, {
+          await this.AccountJournalItemsModel.insertMany(arrayJVItems, {
             session: transactionSession,
           });
     

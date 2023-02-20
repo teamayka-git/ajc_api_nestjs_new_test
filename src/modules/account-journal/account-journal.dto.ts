@@ -60,9 +60,9 @@ class AccountJournalCreateList {
   @ApiProperty({})
   remarks: string;
 
-  @IsString()
-  @ApiProperty({}) 
-  voucherNo: string;
+  // @IsString()
+  // @ApiProperty({}) 
+  // voucherNo: string;
 
   @IsNumber()
   @ApiProperty({})
@@ -85,7 +85,7 @@ export class AccountJournalCreateDto {
   @ApiProperty({ type: [AccountJournalCreateList] })
   @ValidateNested({ each: true })
   @Type(() => AccountJournalCreateList)
-  AccountJournals: AccountJournalCreateList[];
+  accountJournals: AccountJournalCreateList[];
 }
 
 export class AccountJournalListDto {
@@ -96,15 +96,15 @@ export class AccountJournalListDto {
 
   @IsArray()
   @ApiProperty({ type: [String] })
-  AccountJournalIds: string[];
+  accountJournalIds: string[];
 
   @IsNumber()
   @ApiProperty({})
-  AccountJournalDateStartDate: number;
+  accountJournalDateStartDate: number;
 
   @IsNumber()
   @ApiProperty({})
-  AccountJournalDateEndDate: number;
+  accountJournalDateEndDate: number;
 
   @IsArray()
   @ApiProperty({ type: [String] })
@@ -142,7 +142,7 @@ export class AccountJournalListDto {
 export class AccountJournalStatusChangeDto {
   @IsArray()
   @ApiProperty({ type: [String] })
-  AccountJournalIds: string[];
+  accountJournalIds: string[];
 
   @IsString()
   @ApiProperty({})
