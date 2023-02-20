@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { GlobalConfig } from 'src/config/global_config';
 
-
+//safeer
 export const AccountCurrencySchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
     _code: { type: String, required: true, default: "nil" },
