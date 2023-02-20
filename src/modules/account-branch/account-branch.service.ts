@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import * as mongoose from 'mongoose';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { ModelNames } from 'src/common/model_names';
-
+import { AccountBranch } from 'src/tableModels/accountBranch.model';
 import { AccountBranchCreateDto, AccountBranchEditDto, AccountBranchListDto, AccountBranchStatusChangeDto, CheckNameExistDto } from './account-branch.dto';
 import { GlobalConfig } from 'rxjs';
-import { AccountBranch } from 'src/tableModels/accountBranch.model';
+
+//Safeer Update
 
 @Injectable()
 export class AccountBranchService {

@@ -7,6 +7,8 @@ import { AccountJournalCreateDto, AccountJournalListDto, AccountJournalStatusCha
 import { JournalTransactions } from 'src/tableModels/accountJournalTransactions.model';
 import { GlobalConfig } from 'src/config/global_config';
 
+//Safeer Update
+
 @Injectable()
 export class AccountJournalService {
     constructor(

@@ -6,6 +6,8 @@ import { AccountCurrency } from 'src/tableModels/accountCurrency.model';
 import { AccountCurrencyCreateDto, AccountCurrencyEditDto, AccountCurrencyListDto, AccountCurrencyStatusChangeDto, CheckNameExistDto } from './account-currency.dto';
 import { GlobalConfig } from 'rxjs';
 
+//Safeer Update
+
 @Injectable()
 export class AccountCurrencyService {
     constructor(
