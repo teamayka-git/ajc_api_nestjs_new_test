@@ -2,6 +2,7 @@ import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { GlobalConfig } from 'src/config/global_config';
 
+//safeer
 export const AccountJournalSchema = new mongoose.Schema({
 
   _branchId: {
