@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as mongoose from 'mongoose';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { ModelNames } from 'src/common/model_names';
-import { AccountCurrency } from 'src/tableModels/AccountCurrency.model';
+import { AccountCurrency } from 'src/tableModels/accountCurrency.model';
 import { AccountCurrencyCreateDto, AccountCurrencyEditDto, AccountCurrencyListDto, AccountCurrencyStatusChangeDto, CheckNameExistDto } from './account-currency.dto';
 import { GlobalConfig } from 'rxjs';
 

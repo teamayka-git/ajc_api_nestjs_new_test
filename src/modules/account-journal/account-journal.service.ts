@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as mongoose from 'mongoose';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { ModelNames } from 'src/common/model_names';
-import { AccountJournal } from 'src/tableModels/AccountJournal.model';
+import { AccountJournal } from 'src/tableModels/accountJournal.model';
 import { AccountJournalCreateDto, AccountJournalListDto, AccountJournalStatusChangeDto } from './account-journal.dto';
 import { JournalTransactions } from 'src/tableModels/accountJournalTransactions.model';
 import { GlobalConfig } from 'src/config/global_config';
