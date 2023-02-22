@@ -6010,6 +6010,42 @@ if(dto.isProductGenerated != null){
           },
         );
       }
+
+
+      arrayAggregation.push(
+        {
+          $lookup: {
+            from: ModelNames.ORDER_SALES_MAIN,
+            let: { orderId: '$_orderSaleId' },
+            pipeline:[
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_id', '$$orderId'] },
+                },
+              },
+              {
+                $match: {
+                  _workStatus: {$nin:[2,27]},
+                },
+              },
+              {
+                $project: {
+                  _id: 1,
+                },
+              },
+            ],
+            as: 'mongoCheckOrderSaleStatus',
+          },
+        },
+        {
+          $match: { mongoCheckOrderSaleStatus: { $ne: [] } },
+        },
+      );
+
+
+
+
       arrayAggregation.push({
         $match: {
           _status: 1,
