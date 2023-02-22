@@ -2,18 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
-import { AccountGroup } from 'src/tableModels/accountGroup.model';
-import { AccountGroupCreateDto, AccountGroupEditDto, AccountGroupListDto, AccountGroupStatusChangeDto, CheckNameExistDto } from './account-group.dto';
+import { AccountSubgroup } from 'src/tableModels/accountSubgroup.model';
+import { AccountSubgroupCreateDto, AccountSubgroupEditDto, AccountSubgroupListDto, AccountSubgroupStatusChangeDto, CheckNameExistDto } from './account-subgroup.dto';
 
 @Injectable()
-export class AccountGroupService {
+export class AccountSubgroupService {
     constructor(
-        @InjectModel(ModelNames.ACCOUNT_GROUP)
-        private readonly accountGroupModel: mongoose.Model<AccountGroup>,
+        @InjectModel(ModelNames.ACCOUNT_SUBGROUP)
+        private readonly accountSubgroupModel: mongoose.Model<AccountSubgroup>,
         @InjectConnection() private readonly connection: mongoose.Connection,
       ) {}
 
-    async create(dto: AccountGroupCreateDto, _userId_: string) {
+    async create(dto: AccountSubgroupCreateDto, _userId_: string) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
@@ -24,8 +24,8 @@ export class AccountGroupService {
             arrayToStates.push({
               _code: mapItem.code,
               _name: mapItem.name,
-              _headId: mapItem.headId,              
-              _reportGroup: mapItem.reportGroup,
+              _groupId: (mapItem.groupId=="")?null:mapItem.groupId,              
+              _subGroupId: mapItem.subGroup,
               _createdUserId: _userId_,
               _createdAt: dateTime,
               _updatedUserId: null,
@@ -34,7 +34,7 @@ export class AccountGroupService {
           });
           });
     
-          var result1 = await this.accountGroupModel.insertMany(arrayToStates, {
+          var result1 = await this.accountSubgroupModel.insertMany(arrayToStates, {
             session: transactionSession,
           });
     
@@ -50,21 +50,21 @@ export class AccountGroupService {
         }
       }
 
-      async edit(dto: AccountGroupEditDto, _userId_: string) {
+      async edit(dto: AccountSubgroupEditDto, _userId_: string) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
         try {
-          var result = await this.accountGroupModel.findOneAndUpdate(
+          var result = await this.accountSubgroupModel.findOneAndUpdate(
             {
-              _id: dto.accountgroupId,
+              _id: dto.AccountSubgroupId,
             },
             {
               $set: {
                 _code: dto.code,
                 _name: dto.name,
-                _headId: dto.headId,                
-                _reportGroup: dto.reportGroup,
+                _groupId: dto.groupId,                
+                _subGroupId: dto.subGroupId,
                 _updatedUserId: _userId_,
                 _updatedAt: dateTime,
               },
@@ -85,14 +85,14 @@ export class AccountGroupService {
       }
 
       
-  async status_change(dto: AccountGroupStatusChangeDto, _userId_: string) {
+  async status_change(dto: AccountSubgroupStatusChangeDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var result = await this.accountGroupModel.updateMany(
+      var result = await this.accountSubgroupModel.updateMany(
         {
-          _id: { $in: dto.accountgroupIds },
+          _id: { $in: dto.AccountSubgroupIds },
         },
         {
           $set: {
@@ -116,7 +116,7 @@ export class AccountGroupService {
     }
   }
 
-  async list(dto: AccountGroupListDto) {
+  async list(dto: AccountSubgroupListDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -131,20 +131,30 @@ export class AccountGroupService {
           },
         });
       }
-      if (dto.accountgroupIds.length > 0) {
+
+      if (dto.AccountSubgroupIds.length > 0) {
         var newSettingsId = [];
-        dto.accountgroupIds.map((mapItem) => {
+        dto.AccountSubgroupIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
-      }     
+      }
 
-      if (dto.headIds.length > 0) {
-        var newheadId = [];
-        dto.headIds.map((mapItem) => {
-          newheadId.push(new mongoose.Types.ObjectId(mapItem));
+      if (dto.subGroupIds.length > 0) {
+        var newUnderSubId = [];
+        dto.subGroupIds.map((mapItem) => {
+          newUnderSubId.push(new mongoose.Types.ObjectId(mapItem));
         });
-        arrayAggregation.push({ $match: { _headId: { $in: newheadId } } });
+        arrayAggregation.push({ $match: { _subGroupId: { $in: newUnderSubId } } });
+      }
+
+
+      if (dto.groupIds.length > 0) {
+        var newgroupId = [];
+        dto.groupIds.map((mapItem) => {
+          newgroupId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _groupId: { $in: newgroupId } } });
       }
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
@@ -159,7 +169,7 @@ export class AccountGroupService {
           arrayAggregation.push({ $sort: { _name: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _headId: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _groupId: dto.sortOrder ,_id: dto.sortOrder } });
           break;
       }
 
@@ -168,7 +178,7 @@ export class AccountGroupService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      var result = await this.accountGroupModel
+      var result = await this.accountSubgroupModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
 
@@ -191,7 +201,7 @@ export class AccountGroupService {
           $group: { _id: null, totalCount: { $sum: 1 } },
         });
 
-        var resultTotalCount = await this.accountGroupModel
+        var resultTotalCount = await this.accountSubgroupModel
           .aggregate(arrayAggregation)
           .session(transactionSession);
         if (resultTotalCount.length > 0) {
@@ -219,7 +229,7 @@ export class AccountGroupService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var resultCount = await this.accountGroupModel
+      var resultCount = await this.accountSubgroupModel
         .count({
           _name: dto.value,
           _id: { $nin: dto.existingIds },

@@ -1,19 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { ModelNames } from 'src/common/model_names';
-import { AccountSubgroup } from 'src/tableModels/accountSubgroup.model';
-import { AccountSubgroupCreateDto, AccountSubgroupEditDto, AccountSubgroupListDto, AccountSubgroupStatusChangeDto, CheckNameExistDto } from './accountSubgroup.dto';
+import { AccountCurrency } from 'src/tableModels/accountCurrency.model';
+import { AccountCurrencyCreateDto, AccountCurrencyEditDto, AccountCurrencyListDto, AccountCurrencyStatusChangeDto, CheckNameExistDto } from './account-currency.dto';
+import { GlobalConfig } from 'rxjs';
+
+//Safeer Update
 
 @Injectable()
-export class AccountSubgroupService {
+export class AccountCurrencyService {
     constructor(
-        @InjectModel(ModelNames.ACCOUNT_SUBGROUP)
-        private readonly accountSubgroupModel: mongoose.Model<AccountSubgroup>,
+        @InjectModel(ModelNames.ACCOUNT_CURRENCY)
+        private readonly AccountCurrencyModel: mongoose.Model<AccountCurrency>,
         @InjectConnection() private readonly connection: mongoose.Connection,
       ) {}
 
-    async create(dto: AccountSubgroupCreateDto, _userId_: string) {
+    async create(dto: AccountCurrencyCreateDto, _userId_: string) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
@@ -24,8 +27,10 @@ export class AccountSubgroupService {
             arrayToStates.push({
               _code: mapItem.code,
               _name: mapItem.name,
-              _underId: mapItem.underId,              
-              _underSubgroup: mapItem.underSubgroup,
+              _exchangeRate: mapItem.exchangeRate,
+              _symbol: mapItem.symbol,
+              _subUnit: mapItem.subUnit,
+              _decLength: mapItem.decimalLength,
               _createdUserId: _userId_,
               _createdAt: dateTime,
               _updatedUserId: null,
@@ -34,7 +39,7 @@ export class AccountSubgroupService {
           });
           });
     
-          var result1 = await this.accountSubgroupModel.insertMany(arrayToStates, {
+          var result1 = await this.AccountCurrencyModel.insertMany(arrayToStates, {
             session: transactionSession,
           });
     
@@ -50,21 +55,23 @@ export class AccountSubgroupService {
         }
       }
 
-      async edit(dto: AccountSubgroupEditDto, _userId_: string) {
+      async edit(dto: AccountCurrencyEditDto, _userId_: string) {
         var dateTime = new Date().getTime();
         const transactionSession = await this.connection.startSession();
         transactionSession.startTransaction();
         try {
-          var result = await this.accountSubgroupModel.findOneAndUpdate(
+          var result = await this.AccountCurrencyModel.findOneAndUpdate(
             {
-              _id: dto.AccountSubgroupId,
+              _id: dto.AccountCurrencyId,
             },
             {
               $set: {
                 _code: dto.code,
                 _name: dto.name,
-                _underId: dto.underId,                
-                _underSubgroupId: dto.underSubgroupId,
+                _exchangeRate: dto.exchangeRate,
+                _symbol: dto.symbol,
+                _subUnit: dto.subUnit,
+                _decLength: dto.decimalLength,
                 _updatedUserId: _userId_,
                 _updatedAt: dateTime,
               },
@@ -85,14 +92,14 @@ export class AccountSubgroupService {
       }
 
       
-  async status_change(dto: AccountSubgroupStatusChangeDto, _userId_: string) {
+  async status_change(dto: AccountCurrencyStatusChangeDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var result = await this.accountSubgroupModel.updateMany(
+      var result = await this.AccountCurrencyModel.updateMany(
         {
-          _id: { $in: dto.AccountSubgroupIds },
+          _id: { $in: dto.AccountCurrencyIds },
         },
         {
           $set: {
@@ -116,7 +123,7 @@ export class AccountSubgroupService {
     }
   }
 
-  async list(dto: AccountSubgroupListDto) {
+  async list(dto: AccountCurrencyListDto) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -131,9 +138,9 @@ export class AccountSubgroupService {
           },
         });
       }
-      if (dto.AccountSubgroupIds.length > 0) {
+      if (dto.AccountCurrencyIds.length > 0) {
         var newSettingsId = [];
-        dto.AccountSubgroupIds.map((mapItem) => {
+        dto.AccountCurrencyIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
@@ -159,7 +166,7 @@ export class AccountSubgroupService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      var result = await this.accountSubgroupModel
+      var result = await this.AccountCurrencyModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
 
@@ -182,7 +189,7 @@ export class AccountSubgroupService {
           $group: { _id: null, totalCount: { $sum: 1 } },
         });
 
-        var resultTotalCount = await this.accountSubgroupModel
+        var resultTotalCount = await this.AccountCurrencyModel
           .aggregate(arrayAggregation)
           .session(transactionSession);
         if (resultTotalCount.length > 0) {
@@ -210,7 +217,7 @@ export class AccountSubgroupService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var resultCount = await this.accountSubgroupModel
+      var resultCount = await this.AccountCurrencyModel
         .count({
           _name: dto.value,
           _id: { $nin: dto.existingIds },

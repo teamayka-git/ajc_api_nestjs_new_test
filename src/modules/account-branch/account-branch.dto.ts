@@ -14,11 +14,9 @@ import { Optional } from '@nestjs/common';
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList = '0-total documents count';
 const descriptionListSortOrder = '1-ascending, -1-descending';
-const descriptionUnder = 'Under Account Group';
-const descriptionUnderSubgroup = 'Under Sub Group';
 const descriptionListSortType = '0-Created Date, 1-Status, 2-Name, 3-Code';
 
-class AccountSubgroupCreateList {
+class AccountBranchCreateList {
   @IsString()
   @ApiProperty({})
   code: string;
@@ -27,28 +25,20 @@ class AccountSubgroupCreateList {
   @ApiProperty({})
   name: string;
 
-  @IsString()
-  @ApiProperty({type: String, description: descriptionUnder })
-  underId: String;
-
-  @IsString()
-  @ApiProperty({type: String, description: descriptionUnderSubgroup })
-  underSubgroup: String;
-
 }
 
-export class AccountSubgroupCreateDto {
+export class AccountBranchCreateDto {
   @IsArray()
-  @ApiProperty({ type: [AccountSubgroupCreateList] })
+  @ApiProperty({ type: [AccountBranchCreateList] })
   @ValidateNested({ each: true })
-  @Type(() => AccountSubgroupCreateList)
-  array: AccountSubgroupCreateList[];
+  @Type(() => AccountBranchCreateList)
+  array: AccountBranchCreateList[];
 }
 
-export class AccountSubgroupEditDto {
+export class AccountBranchEditDto {
   @IsString()
   @ApiProperty({})
-  AccountSubgroupId: string;
+  AccountBranchId: string;
 
   @IsString()
   @ApiProperty({})
@@ -58,28 +48,19 @@ export class AccountSubgroupEditDto {
   @ApiProperty({})
   name: string;
 
-  @IsString()
-  @ApiProperty({type: String, description: descriptionUnder })
-  underId: string;
-
-  @IsString()
-  @ApiProperty({type: String, description: descriptionUnder })
-  underSubgroupId: string;
-
-
 }
 
-export class AccountSubgroupStatusChangeDto {
+export class AccountBranchStatusChangeDto {
   @IsArray()
   @ApiProperty({ type: [String] })
-  AccountSubgroupIds: string[];
+  AccountBranchIds: string[];
 
   @IsNumber()
   @ApiProperty({ description: descriptionStatus })
   status: number;
 }
 
-export class AccountSubgroupListDto {
+export class AccountBranchListDto {
   @IsNumber()
   @ApiProperty({ description: descriptionListSortType })
   sortType: number;
@@ -106,7 +87,7 @@ export class AccountSubgroupListDto {
   
   @IsArray()
   @ApiProperty({ type: [String] })
-  AccountSubgroupIds: string[];
+  AccountBranchIds: string[];
 
   @IsNumber()
   @ApiProperty({})

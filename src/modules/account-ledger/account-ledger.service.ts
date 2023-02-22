@@ -145,6 +145,17 @@ export class AccountLedgerService {
           },
         });
       }
+
+      if (dto.searchingCode != '') {
+        //todo
+        arrayAggregation.push({
+          $match: {
+            $or: [{ _code: new RegExp(dto.searchingCode, 'i') }],
+          },
+        });
+      }
+
+      
       if (dto.AccountLedgerIds.length > 0) {
         var newSettingsId = [];
         dto.AccountLedgerIds.map((mapItem) => {
@@ -164,7 +175,7 @@ export class AccountLedgerService {
           arrayAggregation.push({ $sort: { _name: dto.sortOrder  ,_id: dto.sortOrder} });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _purity: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({ $sort: { _under: dto.sortOrder ,_id: dto.sortOrder } });
           break;
       }
 

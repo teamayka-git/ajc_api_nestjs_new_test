@@ -34,7 +34,7 @@ export class StorePromotionsService {
     try {
       var arrayGlobalGalleries = [];
       if (file.hasOwnProperty('documents')) {
-        console.log('___dd1');
+        console.log('___dd 1');
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
@@ -44,7 +44,7 @@ export class StorePromotionsService {
           },
           { new: true, session: transactionSession },
         );
-        console.log('___dd2');
+        console.log('___dd 2');
         for (var i = 0; i < file['documents'].length; i++) {
           var resultUpload = await new S3BucketUtils().uploadMyFile(
             file['documents'][i],
@@ -133,7 +133,7 @@ export class StorePromotionsService {
       }
       console.log('___dd3');
       if (file.hasOwnProperty('documentsDesk')) {
-        console.log('___dd4');
+        console.log('___dd 3');
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
@@ -143,7 +143,7 @@ export class StorePromotionsService {
           },
           { new: true, session: transactionSession },
         );
-        console.log('___dd5');
+        console.log('___dd 4');
         for (var i = 0; i < file['documentsDesk'].length; i++) {
           var resultUpload = await new S3BucketUtils().uploadMyFile(
             file['documentsDesk'][i],
@@ -203,7 +203,7 @@ export class StorePromotionsService {
             dto.array[count]['globalGalleryDeskId'] = 'nil';
           }
         }
-        console.log('___dd6');
+        console.log('___dd 5');
         // console.log('___d2');
         // for (var i = 0; i < dto.array.length; i++) {
         //   var count = file['documents'].findIndex(

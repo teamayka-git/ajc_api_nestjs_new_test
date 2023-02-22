@@ -14,11 +14,11 @@ import { Optional } from '@nestjs/common';
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList = '0-total documents count';
 const descriptionListSortOrder = '1-ascending, -1-descending';
-const descriptionhead = 'Under Account Header';
-const descriptionReportGroup = 'Under Report Group';
+const descriptionListExRate = 'Currency Exchange Rate against Base Currency';
+const descriptionDecimalLength = 'Number of Dedimal Places required in currency valueon transactions';
 const descriptionListSortType = '0-Created Date, 1-Status, 2-Name, 3-Code';
 
-class AccountGroupCreateList {
+class AccountCurrencyCreateList {
   @IsString()
   @ApiProperty({})
   code: string;
@@ -27,28 +27,36 @@ class AccountGroupCreateList {
   @ApiProperty({})
   name: string;
 
+  @IsNumber()
+  @ApiProperty({type: Number, description: descriptionListExRate })
+  exchangeRate: Number;
+
   @IsString()
-  @ApiProperty({type: String, description: descriptionhead })
-  headId: Number;
+  @ApiProperty({})
+  symbol: string;
+
+  @IsString()
+  @ApiProperty({})
+  subUnit: string;
 
   @IsNumber()
-  @ApiProperty({type: Number, description: descriptionReportGroup })
-  reportGroup: Number;
+  @ApiProperty({type: Number, description: descriptionDecimalLength })
+  decimalLength: Number;
 
 }
 
-export class AccountGroupCreateDto {
+export class AccountCurrencyCreateDto {
   @IsArray()
-  @ApiProperty({ type: [AccountGroupCreateList] })
+  @ApiProperty({ type: [AccountCurrencyCreateList] })
   @ValidateNested({ each: true })
-  @Type(() => AccountGroupCreateList)
-  array: AccountGroupCreateList[];
+  @Type(() => AccountCurrencyCreateList)
+  array: AccountCurrencyCreateList[];
 }
 
-export class AccountGroupEditDto {
+export class AccountCurrencyEditDto {
   @IsString()
   @ApiProperty({})
-  accountgroupId: string;
+  AccountCurrencyId: string;
 
   @IsString()
   @ApiProperty({})
@@ -58,28 +66,35 @@ export class AccountGroupEditDto {
   @ApiProperty({})
   name: string;
 
+  @IsNumber()
+  @ApiProperty({type: Number, description: descriptionListExRate })
+  exchangeRate: Number;
+
   @IsString()
-  @ApiProperty({type: String, description: descriptionhead })
-  headId: string;
+  @ApiProperty({})
+  symbol: string;
+
+  @IsString()
+  @ApiProperty({})
+  subUnit: string;
 
   @IsNumber()
-  @ApiProperty({type: Number, description: descriptionReportGroup })
-  reportGroup: Number;
-
+  @ApiProperty({type: Number, description: descriptionDecimalLength })
+  decimalLength: Number;
 
 }
 
-export class AccountGroupStatusChangeDto {
+export class AccountCurrencyStatusChangeDto {
   @IsArray()
   @ApiProperty({ type: [String] })
-  accountgroupIds: string[];
+  AccountCurrencyIds: string[];
 
   @IsNumber()
   @ApiProperty({ description: descriptionStatus })
   status: number;
 }
 
-export class AccountGroupListDto {
+export class AccountCurrencyListDto {
   @IsNumber()
   @ApiProperty({ description: descriptionListSortType })
   sortType: number;
@@ -103,14 +118,10 @@ export class AccountGroupListDto {
   @IsArray()
   @ApiProperty({ type: [Number], })
   responseFormat: number[];
-
-  @IsArray()
-  @ApiProperty({ type: [String] })
-  headIds: string[];
   
   @IsArray()
   @ApiProperty({ type: [String] })
-  accountgroupIds: string[];
+  AccountCurrencyIds: string[];
 
   @IsNumber()
   @ApiProperty({})

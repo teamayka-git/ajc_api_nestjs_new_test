@@ -105,8 +105,11 @@ import { InvoicesSchema } from './tableModels/invoices.model';
 import { DeliverySchema } from './tableModels/delivery.model';
 import { AccountHeadModule } from './modules/account-head/account-head.module';
 import { AccountGroupModule } from './modules/account-group/account-group.module';
-import { AccountSubgroupModule } from './modules/accountSubgroup/accountSubgroup.module';
+import { AccountSubgroupModule } from './modules/account-subgroup/account-subgroup.module';
 import { AccountLedgerModule } from './modules/account-ledger/account-ledger.module';
+import { AccountJournalModule } from './modules/account-journal/account-journal.module';
+import { AccountBranchModule } from './modules/account-branch/account-branch.module';
+import { AccountCurrencyModule } from './modules/account-currency/account-currency.module';
 
 
 @Module({
@@ -230,6 +233,9 @@ import { AccountLedgerModule } from './modules/account-ledger/account-ledger.mod
     AccountGroupModule,
     AccountSubgroupModule,
     AccountLedgerModule,
+    AccountJournalModule,
+    AccountBranchModule,
+    AccountCurrencyModule,
 
     // SalesReturnRequestStatusesModule,
   ],
