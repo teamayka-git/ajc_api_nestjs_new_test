@@ -193,6 +193,7 @@ export class GeneralsService {
         .session(transactionSession);
 
 
+        console.log("____arrayAggregation   "+JSON.stringify(arrayAggregation));
         console.log("____dto   "+JSON.stringify(dto));
         console.log("____resp   "+JSON.stringify(result));
 
