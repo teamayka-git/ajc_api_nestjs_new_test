@@ -9,6 +9,8 @@ import { SuppliersSchema } from 'src/tableModels/suppliers.model';
 import { UserSchema } from 'src/tableModels/user.model';
 import { CountersSchema } from 'src/tableModels/counters.model';
 import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
+import { AccountLedgerSchema } from 'src/tableModels/accountLedger.model';
+import { AccountSubgroupSchema } from 'src/tableModels/accountSubgroup.model';
 
 @Module({ imports: [
   JwtModule.register({
@@ -20,6 +22,8 @@ import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
     { name: ModelNames.SUPPLIERS, schema: SuppliersSchema },
     { name: ModelNames.COUNTERS, schema: CountersSchema },
     {name:ModelNames.GLOBAL_GALLERIES,schema:GlobalGalleriesSchema},
+    {name:ModelNames.ACCOUNT_LEDGER,schema:AccountLedgerSchema},
+    {name:ModelNames.ACCOUNT_SUBGROUP,schema:AccountSubgroupSchema},
   ]),
 ],
   controllers: [SupplierController],

@@ -128,9 +128,11 @@ export class ModelWeight {
       _userId: 1,
       _uid: 1,
       _shopId: 1,
+      _isAccountPosted:1,
       _rootCauseId: 1,
       _description: 1,
       _createdUserId: 1,
+
       _status: 1,
     };
   }
@@ -147,6 +149,7 @@ export class ModelWeight {
       _shopId: 1,
       _netTotal: 1,
       _tdsReceivable: 1,
+      _isAccountPosted:1,
       _tdsPayable: 1,
       _netReceivableAmount: 1,
       _isDelivered: 1,
@@ -174,6 +177,7 @@ export class ModelWeight {
       _otherCharge: 1,
       _roundOff: 1,
       _netTotal: 1,
+      _isAccountPosted:1,
       _tdsReceivable: 1,
       _tdsPayable: 1,
       _netReceivableAmount: 1,

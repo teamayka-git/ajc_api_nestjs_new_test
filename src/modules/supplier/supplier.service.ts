@@ -4,6 +4,8 @@ import * as mongoose from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_path';
 import { GlobalConfig } from 'src/config/global_config';
+import { AccountLedger } from 'src/tableModels/accountLedger.model';
+import { AccountSubgroup } from 'src/tableModels/accountSubgroup.model';
 import { Counters } from 'src/tableModels/counters.model';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { Suppliers } from 'src/tableModels/suppliers.model';
@@ -32,6 +34,11 @@ export class SupplierService {
     private readonly suppliersModel: mongoose.Model<Suppliers>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
+
+    @InjectModel(ModelNames.ACCOUNT_LEDGER)
+    private readonly accountLedgerModel: mongoose.Model<AccountLedger>,
+    @InjectModel(ModelNames.ACCOUNT_SUBGROUP)
+    private readonly accountSubGroupModel: mongoose.Model<AccountSubgroup>,
 
     @InjectModel(ModelNames.GLOBAL_GALLERIES)
     private readonly globalGalleryModel: mongoose.Model<GlobalGalleries>,
@@ -229,8 +236,8 @@ export class SupplierService {
 
       var password = '';
       if (dto.password == '') {
-          // password = new StringUtils().makeid(6);
-          password ="123456";
+        // password = new StringUtils().makeid(6);
+        password = '123456';
       } else {
         password = dto.password;
       }
@@ -245,6 +252,40 @@ export class SupplierService {
         )
         .toString(`hex`);
 
+      var tradePayable = await this.accountSubGroupModel.find({
+        _code: '202001',
+      });
+      if (tradePayable.length == 0) {
+        throw new HttpException(
+          'Trade payable not found in acount sub group',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      var supplierUid = resultCounterPurchase._count;
+
+      const accountLedgerModel = new this.accountLedgerModel({
+        _code: tradePayable[0]._code + '000' + supplierUid,
+        _name: dto.name,
+        _underId: tradePayable[0]._id,
+        _address: dto.name,
+        _phone: dto.mobile,
+        _email: dto.email,
+        _city: '',
+        _state: '',
+        _country: '',
+        _pin: '',
+        _remarks: '',
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _updatedUserId: null,
+        _updatedAt: -1,
+        _status: 1,
+      });
+      var resultAccountLedger = await accountLedgerModel.save({
+        session: transactionSession,
+      });
+
       var supplierId = new mongoose.Types.ObjectId();
       var resultUserUpdated = await this.userModel.findOneAndUpdate(
         { _email: dto.email },
@@ -254,9 +295,9 @@ export class SupplierService {
             _customType: [],
             _halmarkId: null,
             _customerId: null,
-            _testCenterId:null,
+            _testCenterId: null,
 
-            _logisticPartnerId:null,
+            _logisticPartnerId: null,
             _employeeId: null,
             _deliveryHubId: null,
             _agentId: null,
@@ -284,11 +325,12 @@ export class SupplierService {
 
       const newsettingsModel = new this.suppliersModel({
         _id: supplierId,
-        _uid: resultCounterPurchase._count,
+        _uid: supplierUid,
         _cityId: dto.cityId,
         _address: dto.address,
         _lastLogin: 0,
-        _gst:dto.gst,
+        _accountId: resultAccountLedger._id,
+        _gst: dto.gst,
         _userId: resultUserUpdated._id,
         _dataGuard: dto.dataGuard,
         _createdUserId: _userId_,
@@ -357,7 +399,7 @@ export class SupplierService {
       var updateObject = {
         _name: dto.name,
         _gender: dto.gender,
-        _gst:dto.gst,
+        _gst: dto.gst,
         _mobile: dto.mobile,
       };
 
@@ -479,7 +521,7 @@ export class SupplierService {
           $match: {
             $or: [
               { _userId: { $in: userIdsSearch } },
-              { _address:new RegExp(`^${dto.searchingText}$`, 'i') },
+              { _address: new RegExp(`^${dto.searchingText}$`, 'i') },
             ],
           },
         });
@@ -506,11 +548,15 @@ export class SupplierService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
 
         case 2:
-          arrayAggregation.push({ $sort: { _uid: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _uid: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
       }
 
@@ -519,7 +565,7 @@ export class SupplierService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      if (dto.screenType.includes( 100)) {
+      if (dto.screenType.includes(100)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -534,7 +580,7 @@ export class SupplierService {
           },
         );
       }
-      if (dto.screenType.includes( 101)) {
+      if (dto.screenType.includes(101)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -552,7 +598,7 @@ export class SupplierService {
         );
       }
 
-      if (dto.screenType.includes( 50)) {
+      if (dto.screenType.includes(50)) {
         arrayAggregation[arrayAggregation.length - 2].$lookup.pipeline.push(
           {
             $lookup: {
@@ -577,7 +623,7 @@ export class SupplierService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.includes( 0)) {
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
@@ -664,7 +710,7 @@ export class SupplierService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.includes( 0)) {
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,
