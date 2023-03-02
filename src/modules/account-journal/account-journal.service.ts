@@ -75,8 +75,8 @@ export class AccountJournalService {
         });
     
     
-console.log("___arrayJV     "+JSON.stringify(arrayJV));
-console.log("___arrayJVItems    "+JSON.stringify(arrayJVItems));
+//console.log("___arrayJV     "+JSON.stringify(arrayJV));
+//console.log("___arrayJVItems    "+JSON.stringify(arrayJVItems));
 
 
           var result1 = await this.AccountJournalModel.insertMany(arrayJV, {

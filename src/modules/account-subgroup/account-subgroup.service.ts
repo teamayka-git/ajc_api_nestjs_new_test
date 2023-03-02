@@ -25,7 +25,7 @@ export class AccountSubgroupService {
               _code: mapItem.code,
               _name: mapItem.name,
               _groupId: (mapItem.groupId=="")?null:mapItem.groupId,              
-              _subGroupId: mapItem.subGroup,
+              _subGroupId: (mapItem.subGroup=="")?null:mapItem.subGroup,
               _createdUserId: _userId_,
               _createdAt: dateTime,
               _updatedUserId: null,
