@@ -86,6 +86,12 @@ export const ShopsSchema = new mongoose.Schema({
     ref: ModelNames.USER,
     default: null,
   },
+  
+  _accountId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.ACCOUNT_LEDGER,
+    default: null,
+  },
   _agentCommision: { type: Number, required: true, default: -1 },
   _commisionType: { type: Number, required: true, default: -1 },
   _location: {
@@ -129,6 +135,7 @@ export interface Shops {
   _orderHeadId: String;
   _themeStore:Object;
   _address: String;
+  _accountId: String;
   _relationshipManagerId: String;
   _isSupplier: number;
   _isFreezed: number;
@@ -170,6 +177,7 @@ ShopsSchema.index({ _tdsTcsStatus: 1 });
 ShopsSchema.index({ _address: 1 });
 ShopsSchema.index({ _themeStore: 1 });
 ShopsSchema.index({ _isTaxIgstEnabled: 1 });
+ShopsSchema.index({ _accountId: 1 });
 ShopsSchema.index({ _isFreezed: 1 });
 ShopsSchema.index({ _freezedDescription: 1 });
 ShopsSchema.index({ _freezedRootCause: 1 });

@@ -35,6 +35,8 @@ import { Company } from 'src/tableModels/companies.model';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 import { SmsUtils } from 'src/utils/smsUtils';
 import { StorePromotions } from 'src/tableModels/store_promotions.model';
+import { AccountLedger } from 'src/tableModels/accountLedger.model';
+import { AccountSubgroup } from 'src/tableModels/accountSubgroup.model';
 @Injectable()
 export class ShopsService {
   constructor(
@@ -50,6 +52,11 @@ export class ShopsService {
     private readonly customersModel: mongoose.Model<Customers>,
     @InjectModel(ModelNames.STORE_PROMOTIONS)
     private readonly storePromotionModel: mongoose.Model<StorePromotions>,
+
+    @InjectModel(ModelNames.ACCOUNT_LEDGER)
+    private readonly accountLedgerModel: mongoose.Model<AccountLedger>,
+    @InjectModel(ModelNames.ACCOUNT_SUBGROUP)
+    private readonly accountSubGroupModel: mongoose.Model<AccountSubgroup>,
 
     @InjectModel(ModelNames.COMPANIES)
     private readonly companyModel: mongoose.Model<Company>,
@@ -237,6 +244,49 @@ export class ShopsService {
         { new: true, session: transactionSession },
       );
 
+
+var shopUid=resultCounterPurchase._count;
+
+
+
+
+
+var tradeReceivable = await this.accountSubGroupModel.find({
+  _code: '102003',
+});
+if (tradeReceivable.length == 0) {
+  throw new HttpException(
+    'Trade receivable not found in acount sub group',
+    HttpStatus.INTERNAL_SERVER_ERROR,
+  );
+}
+
+const accountLedgerModel = new this.accountLedgerModel({
+  _code: tradeReceivable[0]._code + '000' + shopUid,
+  _name: dto.name,
+  _underId: tradeReceivable[0]._id,
+  _address: dto.address,
+  _phone: dto.mobile,
+  _email: dto.email,
+  _city: '',
+  _state: '',
+  _country: '',
+  _pin: '',
+  _remarks: '',
+  _createdUserId: _userId_,
+  _createdAt: dateTime,
+  _updatedUserId: null,
+  _updatedAt: -1,
+  _status: 1,
+});
+var resultAccountLedger = await accountLedgerModel.save({
+  session: transactionSession,
+});
+
+
+
+
+
       var shopId = new mongoose.Types.ObjectId();
 
       const newsettingsModel = new this.shopsModel({
@@ -244,11 +294,12 @@ export class ShopsService {
         _name: dto.name,
 
         _displayName: dto.displayName,
-        _uid: resultCounterPurchase._count,
+        _uid: shopUid,
         _globalGalleryId: globalGalleryId,
         _orderSaleRate: dto.orderSaleRate,
         _stockSaleRate: dto.stockSaleRate,
         _address: dto.address,
+        _accountId: resultAccountLedger._id,
 
         _freezedUserId: null,
         _shopType: dto.shopType,

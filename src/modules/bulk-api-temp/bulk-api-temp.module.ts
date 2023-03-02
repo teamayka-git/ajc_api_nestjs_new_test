@@ -19,6 +19,8 @@ import { SubCategoriesSchema } from 'src/tableModels/sub_categories.model';
 import { EmployeeSchema } from 'src/tableModels/employee.model';
 import { ShopsSchema } from 'src/tableModels/shops.model';
 import { CompanySchema } from 'src/tableModels/companies.model';
+import { AccountLedgerSchema } from 'src/tableModels/accountLedger.model';
+import { AccountSubgroupSchema } from 'src/tableModels/accountSubgroup.model';
 
 @Module({
   imports: [
@@ -40,6 +42,9 @@ import { CompanySchema } from 'src/tableModels/companies.model';
       { name: ModelNames.EMPLOYEES, schema:EmployeeSchema },
       { name: ModelNames.SHOPS, schema:ShopsSchema },
       { name: ModelNames.COMPANIES, schema:CompanySchema },
+      
+      {name:ModelNames.ACCOUNT_LEDGER,schema:AccountLedgerSchema},
+      {name:ModelNames.ACCOUNT_SUBGROUP,schema:AccountSubgroupSchema},
     
     ]),
   ],
