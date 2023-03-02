@@ -116,7 +116,7 @@ export class OtpService {
           'Mobile not found',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
-      }
+      } 
 
       var otpValue = '';
 
