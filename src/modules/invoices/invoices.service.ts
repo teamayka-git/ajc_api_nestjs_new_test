@@ -126,6 +126,7 @@ export class InvoicesService {
           _shopId: mapItem.customerId,
           _localId: mapItem.localId,
           _isDelivered: 0,
+          _isAccountPosted:0,
           _tdsReceivable: mapItem.tdsReceivable,
           _tdsPayable: mapItem.tdsPayable,
           _netReceivableAmount: mapItem.netReceivableAmount,
