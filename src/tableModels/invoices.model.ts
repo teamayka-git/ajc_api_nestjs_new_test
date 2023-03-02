@@ -26,10 +26,11 @@ export const InvoicesSchema = new mongoose.Schema({
   _cgstHalmarkCharge: { type: Number, required: true, default: -1 },
   _cgstOtherCharge: { type: Number, required: true, default: -1 },
   _sgstHalmarkCharge: { type: Number, required: true, default: -1 },
-  _sgstOtherCharge: { type: Number, required: true, default: -1 },
+  _sgstOtherCharge: { type: Number, required: true, default: -1 }, 
   _igstHalmarkCharge: { type: Number, required: true, default: -1 },
   _igstOtherCharge: { type: Number, required: true, default: -1 },
   _isDelivered: { type: Number, required: true, default: -1 },
+  _isAccountPosted: { type: Number, required: true, default: -1 },
 
   _rootCauseId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -67,6 +68,7 @@ export interface Invoices {
   _tdsPayable: number;
   _netReceivableAmount: number;
   _isDelivered:number;
+  _isAccountPosted:number;
   _cgstHalmarkCharge: number;
   _cgstOtherCharge: number;
   _sgstHalmarkCharge: number;
@@ -83,6 +85,7 @@ export interface Invoices {
   _status: Number;
 }
 
+InvoicesSchema.index({ _isAccountPosted: 1 });
 InvoicesSchema.index({ _localId: 1 });
 InvoicesSchema.index({ _isDelivered: 1 });
 InvoicesSchema.index({ _halmarkingCharge: 1 });

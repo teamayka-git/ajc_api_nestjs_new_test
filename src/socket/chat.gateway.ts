@@ -148,6 +148,8 @@ export class ChatGateway
     if (resultGroupUid.length != 0) {
       personalChatId = resultGroupUid[0]._id;
     } else {
+      
+    console.log("___uploaded 1");
       const personalChat = new this.chatPersonalChatsModel({
         _personalIdOne: userId,
         _personalIdTwo: recipientId,
@@ -157,6 +159,8 @@ export class ChatGateway
       var resultChat = await personalChat.save();
       personalChatId = resultChat._id;
     }
+    
+    console.log("___uploaded 2");
     client.emit(
       SocketChatEvents.EVENT_PERSONAL_MESSAGE_UPLOADED,
       'OK',
@@ -170,7 +174,10 @@ export class ChatGateway
         },
       },
       async (ack1) => {
+        console.log("___uploaded 3");
         if (ack1 == 'OK') {
+          
+    console.log("___uploaded 4");
           const transactionSession = await this.connection.startSession();
           transactionSession.startTransaction();
           try {
