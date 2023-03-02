@@ -45,7 +45,7 @@ export class SupplierCreateDto {
   @ApiProperty({})
   email: string;
 
-  @IsEmail()
+  @IsString()
   @ApiProperty({})
   gst: string;
 
