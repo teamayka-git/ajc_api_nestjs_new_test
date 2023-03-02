@@ -666,6 +666,21 @@ export class ShopAddRemoveCustomerDto {
   arrayUsersNew: CustomerNewUsersCreateList[];
 }
 
+
+export class MigrateCurrentShopToAcountLedgersDto {
+
+  @IsNumber()
+  @ApiProperty({})
+  limit: number;
+
+  
+  @IsNumber()
+  @ApiProperty({})
+  skip: number;
+  
+  
+}
+
 export class ShopAcrossEmployeesAndCustomersDto {
   @IsArray()
   @ApiProperty({ type: [String] })

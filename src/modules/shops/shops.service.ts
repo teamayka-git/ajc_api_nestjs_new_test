@@ -20,6 +20,7 @@ import {
   CheckEmailExistDto,
   CheckMobileExistDto,
   ListShopDto,
+  MigrateCurrentShopToAcountLedgersDto,
   ShopAcrossEmployeesAndCustomersDto,
   ShopAddRemoveCustomerDto,
   ShopAddRemoveUsersDto,
@@ -244,48 +245,39 @@ export class ShopsService {
         { new: true, session: transactionSession },
       );
 
+      var shopUid = resultCounterPurchase._count;
 
-var shopUid=resultCounterPurchase._count;
+      var tradeReceivable = await this.accountSubGroupModel.find({
+        _code: '102003',
+      });
+      if (tradeReceivable.length == 0) {
+        throw new HttpException(
+          'Trade receivable not found in acount sub group',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
 
-
-
-
-
-var tradeReceivable = await this.accountSubGroupModel.find({
-  _code: '102003',
-});
-if (tradeReceivable.length == 0) {
-  throw new HttpException(
-    'Trade receivable not found in acount sub group',
-    HttpStatus.INTERNAL_SERVER_ERROR,
-  );
-}
-
-const accountLedgerModel = new this.accountLedgerModel({
-  _code: tradeReceivable[0]._code + '000' + shopUid,
-  _name: dto.name,
-  _underId: tradeReceivable[0]._id,
-  _address: dto.address,
-  _phone: dto.mobile,
-  _email: dto.email,
-  _city: '',
-  _state: '',
-  _country: '',
-  _pin: '',
-  _remarks: '',
-  _createdUserId: _userId_,
-  _createdAt: dateTime,
-  _updatedUserId: null,
-  _updatedAt: -1,
-  _status: 1,
-});
-var resultAccountLedger = await accountLedgerModel.save({
-  session: transactionSession,
-});
-
-
-
-
+      const accountLedgerModel = new this.accountLedgerModel({
+        _code: tradeReceivable[0]._code + '000' + shopUid,
+        _name: dto.name,
+        _underId: tradeReceivable[0]._id,
+        _address: dto.address,
+        _phone: dto.mobile,
+        _email: dto.email,
+        _city: '',
+        _state: '',
+        _country: '',
+        _pin: '',
+        _remarks: '',
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _updatedUserId: null,
+        _updatedAt: -1,
+        _status: 1,
+      });
+      var resultAccountLedger = await accountLedgerModel.save({
+        session: transactionSession,
+      });
 
       var shopId = new mongoose.Types.ObjectId();
 
@@ -1046,7 +1038,7 @@ var resultAccountLedger = await accountLedgerModel.save({
           },
         );
       }
-      
+
       if (dto.screenType.includes(50)) {
         arrayAggregation.push(
           {
@@ -1306,15 +1298,6 @@ var resultAccountLedger = await accountLedgerModel.save({
         );
       }
 
-
-
-
-
-
-
-
-
-
       if (dto.screenType.includes(117)) {
         const freezedUserPipeline = () => {
           const pipeline = [];
@@ -1379,20 +1362,6 @@ var resultAccountLedger = await accountLedgerModel.save({
           },
         );
       }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       if (dto.screenType.includes(102)) {
         const relationshipManagerPipeline = () => {
@@ -2262,6 +2231,94 @@ var resultAccountLedger = await accountLedgerModel.save({
       throw error;
     }
   }
+
+  async temp_migrateCurrentShopToAccountLedgers(
+    dto: MigrateCurrentShopToAcountLedgersDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var currentShops = await this.shopsModel.aggregate([
+        { $skip: dto.skip },
+        { $limit: dto.limit },
+      ]);
+
+      var tradeReceivable = await this.accountSubGroupModel.find({
+        _code: '102003',
+      });
+      if (tradeReceivable.length == 0) {
+        throw new HttpException(
+          'Trade receivable not found in acount sub group',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      var arrayAccountLedger = [];
+      for (var i = 0; i < currentShops.length; i++) {
+        var shopAccountId = new mongoose.Types.ObjectId();
+        arrayAccountLedger.push({
+          _id: shopAccountId,
+          _code: tradeReceivable[0]._code + '000' + currentShops[i]._uid,
+          _name: currentShops[i]._name,
+          _underId: tradeReceivable[0]._id,
+          _address: currentShops[i]._address,
+          _phone: "",
+          _email: "",
+          _city: '',
+          _state: '',
+          _country: '',
+          _pin: '',
+          _remarks: '',
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
+        });
+
+        await this.shopsModel.findOneAndUpdate(
+          {
+            _id: currentShops[i]._id,
+          },
+          {
+            $set: {
+              _accountId: shopAccountId,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+        console.log("done 1");
+      }
+
+      await this.accountLedgerModel.insertMany(arrayAccountLedger, {
+        session: transactionSession,
+      });
+
+      const responseJSON = { message: 'success', data: {} };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
   async listCustomersAndEmployeeShopAcross(
     dto: ShopAcrossEmployeesAndCustomersDto,
     _userId_: string,
