@@ -31,6 +31,8 @@ export const InvoicesSchema = new mongoose.Schema({
   _igstOtherCharge: { type: Number, required: true, default: -1 },
   _isDelivered: { type: Number, required: true, default: -1 },
   _isAccountPosted: { type: Number, required: true, default: -1 },
+  _saleType: { type: Number, required: true, default: -1 },
+  _isFix: { type: Number, required: true, default: -1 },
 
   _rootCauseId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -60,6 +62,8 @@ export interface Invoices {
   _shopId: String;
   _uid: String;
   _billMode: number;
+  _saleType: number;
+  _isFix: number;
   _halmarkingCharge: number;
   _otherCharge: number;
   _roundOff: number;
@@ -85,6 +89,8 @@ export interface Invoices {
   _status: Number;
 }
 
+InvoicesSchema.index({ _saleType: 1 });
+InvoicesSchema.index({ _isFix: 1 });
 InvoicesSchema.index({ _isAccountPosted: 1 });
 InvoicesSchema.index({ _localId: 1 });
 InvoicesSchema.index({ _isDelivered: 1 });

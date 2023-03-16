@@ -168,6 +168,18 @@ class InvoiceCreateList {
   @ApiProperty({})
   halmarkingCharge: number;
 
+
+
+  @IsNumber()
+  @ApiProperty({})
+  saleType: number;
+
+  
+  @IsNumber()
+  @ApiProperty({})
+  isFix: number;
+
+
   @IsNumber()
   @ApiProperty({})
   otherCharge: number;

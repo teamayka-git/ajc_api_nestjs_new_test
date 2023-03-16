@@ -117,6 +117,8 @@ export class InvoicesService {
           (resultCounterPurchase._count - dto.invoices.length + (index + 1));
         arrayToDeliveryChallan.push({
           _id: invoiceId,
+          _saleType:mapItem.saleType,
+          _isFix:mapItem.isFix,
           _userId: _userId_,
           _uid: inventoryUid,
           _halmarkingCharge: mapItem.halmarkingCharge,
