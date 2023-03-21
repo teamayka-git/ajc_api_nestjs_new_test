@@ -589,11 +589,11 @@ export class ProductsService {
                 // _updatedAt: dateTime,
                 // _isProductGenerated: 1,
                 // _orderItemId: orderItemId,
-                // _workStatus:
-                //   dto.arrayItems.findIndex((it) => it.hmSealingStatus == 1) !=
-                //   -1
-                //     ? 8
-                //     : 6,
+                _workStatus:
+                  dto.arrayItems.findIndex((it) => it.hmSealingStatus == 1) !=
+                  -1
+                    ? 8
+                    : 6,
               },
             },
             { new: true, session: transactionSession },
