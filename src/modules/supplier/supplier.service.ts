@@ -331,6 +331,7 @@ export class SupplierService {
         _lastLogin: 0,
         _accountId: resultAccountLedger._id,
         _gst: dto.gst,
+        _rateBaseMasterId: dto.rateCardId,
         _userId: resultUserUpdated._id,
         _dataGuard: dto.dataGuard,
         _createdUserId: _userId_,
@@ -446,6 +447,8 @@ export class SupplierService {
           $set: {
             _cityId: dto.cityId,
             _address: dto.address,
+
+            _rateBaseMasterId: dto.rateCardId,
             _dataGuard: dto.dataGuard,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
