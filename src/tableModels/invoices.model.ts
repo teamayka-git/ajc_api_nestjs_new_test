@@ -26,13 +26,24 @@ export const InvoicesSchema = new mongoose.Schema({
   _cgstHalmarkCharge: { type: Number, required: true, default: -1 },
   _cgstOtherCharge: { type: Number, required: true, default: -1 },
   _sgstHalmarkCharge: { type: Number, required: true, default: -1 },
-  _sgstOtherCharge: { type: Number, required: true, default: -1 }, 
+  _sgstOtherCharge: { type: Number, required: true, default: -1 },
   _igstHalmarkCharge: { type: Number, required: true, default: -1 },
   _igstOtherCharge: { type: Number, required: true, default: -1 },
   _isDelivered: { type: Number, required: true, default: -1 },
   _isAccountPosted: { type: Number, required: true, default: -1 },
   _saleType: { type: Number, required: true, default: -1 },
   _isFix: { type: Number, required: true, default: -1 },
+
+  _price1: { type: Number, required: true, default: -1 },
+  _price2: { type: Number, required: true, default: -1 },
+  _metalAmountGst: { type: Number, required: true, default: -1 },
+  _stoneAmount: { type: Number, required: true, default: -1 },
+  _stoneAmountGst: { type: Number, required: true, default: -1 },
+  _pureWeightHundredPercentage: { type: Number, required: true, default: -1 },
+  _pureWeight: { type: Number, required: true, default: -1 },
+  _cgst: { type: Number, required: true, default: -1 },
+  _sgst: { type: Number, required: true, default: -1 },
+  _igst: { type: Number, required: true, default: -1 },
 
   _rootCauseId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -71,8 +82,8 @@ export interface Invoices {
   _tdsReceivable: number;
   _tdsPayable: number;
   _netReceivableAmount: number;
-  _isDelivered:number;
-  _isAccountPosted:number;
+  _isDelivered: number;
+  _isAccountPosted: number;
   _cgstHalmarkCharge: number;
   _cgstOtherCharge: number;
   _sgstHalmarkCharge: number;
@@ -82,12 +93,35 @@ export interface Invoices {
   _rootCauseId: string;
   _description: string;
   _localId: String;
+
+  _price1: Number;
+  _price2: Number;
+  _metalAmountGst: Number;
+  _stoneAmount: Number;
+  _stoneAmountGst: Number;
+  _pureWeightHundredPercentage: Number;
+  _pureWeight: Number;
+  _cgst: Number;
+  _sgst: Number;
+  _igst: Number;
+
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
   _updatedAt: Number;
   _status: Number;
 }
+
+InvoicesSchema.index({ _price1: 1 });
+InvoicesSchema.index({ _price2: 1 });
+InvoicesSchema.index({ _metalAmountGst: 1 });
+InvoicesSchema.index({ _stoneAmount: 1 });
+InvoicesSchema.index({ _stoneAmountGst: 1 });
+InvoicesSchema.index({ _pureWeightHundredPercentage: 1 });
+InvoicesSchema.index({ _pureWeight: 1 });
+InvoicesSchema.index({ _cgst: 1 });
+InvoicesSchema.index({ _sgst: 1 });
+InvoicesSchema.index({ _igst: 1 });
 
 InvoicesSchema.index({ _saleType: 1 });
 InvoicesSchema.index({ _isFix: 1 });

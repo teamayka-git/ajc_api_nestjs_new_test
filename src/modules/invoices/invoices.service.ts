@@ -117,8 +117,8 @@ export class InvoicesService {
           (resultCounterPurchase._count - dto.invoices.length + (index + 1));
         arrayToDeliveryChallan.push({
           _id: invoiceId,
-          _saleType:mapItem.saleType,
-          _isFix:mapItem.isFix,
+          _saleType: mapItem.saleType,
+          _isFix: mapItem.isFix,
           _userId: _userId_,
           _uid: inventoryUid,
           _halmarkingCharge: mapItem.halmarkingCharge,
@@ -127,8 +127,20 @@ export class InvoicesService {
           _netTotal: mapItem.netTotal,
           _shopId: mapItem.customerId,
           _localId: mapItem.localId,
+
+          _price1: mapItem.price1,
+          _price2: mapItem.price2,
+          _metalAmountGst: mapItem.metalAmountGst,
+          _stoneAmount: mapItem.stoneAmount,
+          _stoneAmountGst: mapItem.stoneAmountGst,
+          _pureWeightHundredPercentage: mapItem.pureWeightHundredPercentage,
+          _pureWeight: mapItem.pureWeight,
+          _cgst: mapItem.cgst,
+          _sgst: mapItem.sgst,
+          _igst: mapItem.igst,
+
           _isDelivered: 0,
-          _isAccountPosted:0,
+          _isAccountPosted: 0,
           _tdsReceivable: mapItem.tdsReceivable,
           _tdsPayable: mapItem.tdsPayable,
           _netReceivableAmount: mapItem.netReceivableAmount,

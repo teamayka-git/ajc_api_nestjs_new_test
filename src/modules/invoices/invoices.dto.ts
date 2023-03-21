@@ -41,11 +41,9 @@ class InvoiceCreateListItems {
   @ApiProperty({})
   subCategoryName: string;
 
-  
   @IsNumber()
   @ApiProperty({})
   grossAmount: number;
-
 
   @IsString()
   @ApiProperty({})
@@ -66,7 +64,6 @@ class InvoiceCreateListItems {
   @IsArray()
   @ApiProperty({ type: [String] })
   huid: string[];
-  
 
   @IsNumber()
   @ApiProperty({})
@@ -128,7 +125,6 @@ class InvoiceCreateListItems {
   @ApiProperty({})
   stoneAmountGst: number;
 
-
   @IsNumber()
   @ApiProperty({})
   makingChargeWithHundredPercentage: number;
@@ -156,29 +152,64 @@ class InvoiceCreateList {
   customerId: string;
 
   @IsString()
-  @ApiProperty({}) 
+  @ApiProperty({})
   description: string;
 
   @IsNumber()
   @ApiProperty({ description: descriptionBillMode })
   billMode: number;
 
-  
   @IsNumber()
   @ApiProperty({})
   halmarkingCharge: number;
-
-
 
   @IsNumber()
   @ApiProperty({})
   saleType: number;
 
-  
   @IsNumber()
   @ApiProperty({})
   isFix: number;
 
+  @IsNumber()
+  @ApiProperty({})
+  metalAmountGst: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  stoneAmount: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  stoneAmountGst: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  pureWeightHundredPercentage: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  pureWeight: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  cgst: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  sgst: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  igst: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  price1: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  price2: number;
 
   @IsNumber()
   @ApiProperty({})
@@ -236,13 +267,9 @@ class InvoiceCreateList {
 }
 
 export class InvoiceCreateDto {
-
-
   @IsNumber()
   @ApiProperty({})
   isOrderComplete: number;
-
-
 
   @IsArray()
   @ApiProperty({ type: [InvoiceCreateList] })
@@ -272,7 +299,6 @@ export class InvoiceListDto {
   @IsNumber()
   @ApiProperty({})
   invoiceDateEndDate: number;
-
 
   @IsArray()
   @ApiProperty({ type: [String] })
@@ -309,11 +335,10 @@ export class InvoiceListDto {
   })
   screenType: number[];
 
-
   @IsArray()
-  @ApiProperty({ type: [Number], })
+  @ApiProperty({ type: [Number] })
   responseFormat: number[];
-  
+
   @IsNumber()
   @ApiProperty({})
   limit: number;
