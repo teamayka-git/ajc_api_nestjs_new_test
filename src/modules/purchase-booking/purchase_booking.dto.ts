@@ -161,18 +161,13 @@ export class PurchaseBookingListDto {
   @ApiProperty({})
   bookingAmountEnd: number;
 
-  @IsNumber()
-  @ApiProperty({})
-  bookingThroughStart: number;
-
-  @IsNumber()
-  @ApiProperty({})
-  bookingThroughEnd: number;
-
-
   @IsArray()
   @ApiProperty({ type: [Number], })
   isPurchaseOrgerGenerated: number[];
+  
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  bookingThrough: number[];
   
 
   @IsNumber()

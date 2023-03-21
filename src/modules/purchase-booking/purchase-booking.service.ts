@@ -222,17 +222,10 @@ export class PurchaseBookingService {
           });
         }
       }
-      if (dto.bookingThroughStart != -1 || dto.bookingThroughEnd != -1) {
-        if (dto.bookingThroughStart != -1) {
-          arrayAggregation.push({
-            $match: { _bookingThrough: { $gte: dto.bookingThroughStart } },
-          });
-        }
-        if (dto.bookingThroughEnd != -1) {
-          arrayAggregation.push({
-            $match: { _bookingThrough: { $lte: dto.bookingThroughEnd } },
-          });
-        }
+      if (dto.bookingThrough.length != 0) {
+        arrayAggregation.push({
+          $match: { _bookingThrough: { $in: dto.bookingThrough } },
+        });
       }
       if (dto.isPurchaseOrgerGenerated.length != 0) {
         arrayAggregation.push({
@@ -378,16 +371,13 @@ export class PurchaseBookingService {
         );
       }
 
-
-
-
       if (dto.screenType.includes(103)) {
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.INVOICES,
               let: { invoiceId: '$_invoiceId' },
-              pipeline:[
+              pipeline: [
                 {
                   $match: {
                     $expr: { $eq: ['$_id', '$$invoiceId'] },
@@ -416,7 +406,7 @@ export class PurchaseBookingService {
             $lookup: {
               from: ModelNames.USER,
               let: { userId: '$_supplierUserId' },
-              pipeline:[
+              pipeline: [
                 {
                   $match: {
                     $expr: { $eq: ['$_id', '$$userId'] },
@@ -444,7 +434,7 @@ export class PurchaseBookingService {
             $lookup: {
               from: ModelNames.SHOPS,
               let: { shopId: '$_shopId' },
-              pipeline:[
+              pipeline: [
                 {
                   $match: {
                     $expr: { $eq: ['$_id', '$$shopId'] },
@@ -466,13 +456,6 @@ export class PurchaseBookingService {
           },
         );
       }
-
-
-
-
-
-
-
 
       var result = await this.purchaseBookingModel
         .aggregate(arrayAggregation)
