@@ -726,12 +726,13 @@ export class BulkApiTempService {
       //   { Name: 'SPL9', Percentage: '4' },
       // ];
       var uniqueArray = [];
+      var uniqueTypeArray = [];
       dto.items.filter((element) => {
         const isDuplicate = uniqueArray.includes(element.Name);
 
         if (!isDuplicate) {
           uniqueArray.push(element.Name);
-
+          uniqueTypeArray.push(element.type);
           return true;
         }
 
@@ -741,11 +742,12 @@ export class BulkApiTempService {
       var rateCard = [];
       var rateCardPercentages = [];
 
-      uniqueArray.map((element) => {
+      uniqueArray.map((element,index) => {
         var rateCardId = new mongoose.Types.ObjectId();
         rateCard.push({
           _id: rateCardId,
           _name: element,
+          _type:uniqueTypeArray[index],
           _createdUserId: null,
           _createdAt: 0,
           _updatedUserId: null,

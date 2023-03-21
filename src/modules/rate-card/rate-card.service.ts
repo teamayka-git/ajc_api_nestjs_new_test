@@ -31,6 +31,7 @@ export class RateCardService {
 
       const rateCardModel = new this.rateCardsModel({
         _name: dto.rateCardName,
+        _type: dto.type,
         _createdUserId: _userId_,
         _createdAt: dateTime,
         _updatedUserId: null,
@@ -93,6 +94,7 @@ export class RateCardService {
         {
           $set: {
             _name: dto.rateCardName,
+            _type: dto.type,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
           },
@@ -115,9 +117,12 @@ export class RateCardService {
         });
       });
 
-      var result11 = await this.rateCardPercentagessModel.insertMany(arrayToStates, {
-        session: transactionSession,
-      });
+      var result11 = await this.rateCardPercentagessModel.insertMany(
+        arrayToStates,
+        {
+          session: transactionSession,
+        },
+      );
 
       for (var i = 0; i < dto.arrayUpdate.length; i++) {
         await this.rateCardPercentagessModel.findOneAndUpdate(
@@ -252,6 +257,9 @@ export class RateCardService {
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
+      if (dto.type.length > 0) {
+        arrayAggregation.push({ $match: { _type: { $in: dto.type } } });
+      }
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {
@@ -259,10 +267,14 @@ export class RateCardService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _name: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _name: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
       }
 

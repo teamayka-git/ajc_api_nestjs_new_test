@@ -2393,12 +2393,14 @@ export class ModelWeight {
     return {
       _id: 1,
       _name: 1,
+      _type: 1,
     };
   }
   public ratecardTableMinimum(): Object {
     return {
       _id: 1,
       _name: 1,
+      _type: 1,
 
       _status: 1,
     };
@@ -2407,6 +2409,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _name: 1,
+      _type: 1,
       _createdUserId: 1,
       _status: 1,
     };
@@ -2415,6 +2418,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _name: 1,
+      _type: 1,
       _createdUserId: 1,
       _createdAt: 1,
       _updatedUserId: 1,

@@ -19,6 +19,7 @@ const descriptionListSortOrder="1-ascending, -1-descending";
 const descriptionListSortType="0-Created Date, 1-Status,2-name";
 
 
+const descriptionListType="0-Sale, 1-Purchase";
 
 
 
@@ -71,6 +72,10 @@ export class RateCardCreateDto {
   @ApiProperty({})
   rateCardName:string;
 
+  @IsNumber()
+  @ApiProperty({description:descriptionListType})
+  type: number;
+  
   
 }
 export class RemovePercentagesDto {
@@ -106,6 +111,10 @@ export class RateCardEditDto {
   @Type(() => RateCardPercentageEditList)
   arrayUpdate: RateCardPercentageEditList[];
   
+  @IsNumber()
+  @ApiProperty({description:descriptionListType})
+  type: number;
+  
   
 }
 
@@ -128,6 +137,10 @@ export class RateCardListDto {
   @ApiProperty({ type: [Number],description:descriptionListScreenTypeForList })
   screenType:number[];
   
+  
+  @IsArray()
+  @ApiProperty({ type: [Number],description:descriptionListType })
+  type:number[];
   
 
   @IsArray()

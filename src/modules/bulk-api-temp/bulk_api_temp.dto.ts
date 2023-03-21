@@ -178,10 +178,17 @@ class DistrictBulkDataList {
   @IsString()
   @ApiProperty({})
   Name: string;
- 
+
+  @IsString()
+  @ApiProperty({})
+  type: string;
+
+
+
   @IsString()
   @ApiProperty({})
   Percentage: string;
+ 
  
   
  
