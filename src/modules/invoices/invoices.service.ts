@@ -8,6 +8,7 @@ import { Counters } from 'src/tableModels/counters.model';
 import {
   InvoiceCreateDto,
   InvoiceListDto,
+  InvoiceMigrationDto,
   InvoiceStatusChangeDto,
 } from './invoices.dto';
 import { GlobalConfig } from 'src/config/global_config';
@@ -349,6 +350,155 @@ export class InvoicesService {
       );
 
       const responseJSON = { message: 'success', data: result };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async temp_migrateCurrentInvoiceToNewFeild(
+    dto: InvoiceMigrationDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var resultGeneral = await this.generalsModel.find({ _code: 1021 });
+      if (resultGeneral.length == 0) {
+        throw new HttpException(
+          'General tax',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      var resultInvoice = await this.invoiceModel.aggregate([
+        { $skip: dto.skip },
+        { $limit: dto.limit },
+        {
+          $lookup: {
+            from: ModelNames.INVOICE_ITEMS,
+            let: { invId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$_invoiceId', '$$invId'] },
+                },
+              },
+            ],
+            as: 'invItems',
+          },
+        },
+      ]);
+
+      for (var i = 0; i < resultInvoice.length; i++) {
+        if (resultInvoice[i].invItems.length == 0) {
+          throw new HttpException(
+            'inv items empty ' + i,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        var invId = resultInvoice[i]._id;
+
+        var metalAmountGst = 0.0;
+        var stoneAmount = 0.0;
+        var stoneAmountGst = 0.0;
+        var pureWeightHundredPercentage = 0.0;
+        var pureWeight = 0.0;
+        var cgst = 0.0;
+        var sgst = 0.0;
+        var igst = 0.0;
+        var price1 = ((resultInvoice[i].invItems[0]._unitRate)/(resultGeneral[0]._number+100)*100);
+        var price2 =resultInvoice[i].invItems[0]._unitRate;
+
+        resultInvoice[i].invItems.forEach(elementChild => {
+          igst+=elementChild._igst
+          sgst+=elementChild._sgst
+          cgst+=elementChild._cgst
+          pureWeight+=elementChild._pureWeight
+          pureWeightHundredPercentage+=elementChild._pureWeightHundredPercentage
+          stoneAmountGst+=elementChild._stoneAmountGst
+          stoneAmount+=elementChild._stoneAmount
+          metalAmountGst+=elementChild._metalAmountGst
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        await this.invoiceModel.updateMany(
+          {
+            _id: invId,
+          },
+          {
+            $set: {
+              _metalAmountGst: metalAmountGst,
+              _stoneAmount: stoneAmount,
+              _stoneAmountGst: stoneAmountGst,
+              _pureWeightHundredPercentage: pureWeightHundredPercentage,
+              _pureWeight: pureWeight,
+              _cgst: cgst,
+              _sgst: sgst,
+              _igst: igst,
+              _price1: price1,
+              _price2: price2,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+        console.log('_____doing ' + i);
+      }
+
+      /*
+      var result = await this.invoiceModel.updateMany(
+        {
+          _id: { $in: dto.invoiceIds },
+        },
+        {
+          $set: {
+            _rootCauseId:
+              dto.rootCauseId == '' || dto.rootCauseId == 'nil'
+                ? null
+                : dto.rootCauseId,
+            _description:
+              dto.description == '' || dto.description == 'nil'
+                ? null
+                : dto.description,
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+            _status: dto.status,
+          },
+        },
+        { new: true, session: transactionSession },
+      );*/
+
+      const responseJSON = { message: 'success', data: {} };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=

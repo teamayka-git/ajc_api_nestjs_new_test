@@ -369,3 +369,13 @@ export class InvoiceStatusChangeDto {
   @ApiProperty({ description: descriptionStatus })
   status: number;
 }
+
+export class InvoiceMigrationDto {
+  @IsNumber()
+  @ApiProperty({})
+  skip: number;
+  
+  @IsNumber()
+  @ApiProperty({})
+  limit: number;
+}
