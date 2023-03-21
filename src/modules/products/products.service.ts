@@ -589,7 +589,7 @@ export class ProductsService {
                 _updatedAt: dateTime,
                 _isProductGenerated: 1,
                 _orderItemId: orderItemId,
-                _workStatus:8
+                // _workStatus:8
                 // _workStatus:
                 //   dto.arrayItems.findIndex((it) => it.hmSealingStatus == 1) !=
                 //   -1
