@@ -585,15 +585,15 @@ export class ProductsService {
             },
             {
               $set: {
-                _updatedUserId: _userId_,
-                _updatedAt: dateTime,
-                _isProductGenerated: 1,
-                _orderItemId: orderItemId,
-                _workStatus:
-                  dto.arrayItems.findIndex((it) => it.hmSealingStatus == 1) !=
-                  -1
-                    ? 8
-                    : 6,
+                // _updatedUserId: _userId_,
+                // _updatedAt: dateTime,
+                // _isProductGenerated: 1,
+                // _orderItemId: orderItemId,
+                // _workStatus:
+                //   dto.arrayItems.findIndex((it) => it.hmSealingStatus == 1) !=
+                //   -1
+                //     ? 8
+                //     : 6,
               },
             },
             { new: true, session: transactionSession },
@@ -741,6 +741,12 @@ export class ProductsService {
           session: transactionSession,
         });
       }
+
+
+
+
+
+
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -753,6 +759,9 @@ export class ProductsService {
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
+
+
+      throw new HttpException('Success', HttpStatus.INTERNAL_SERVER_ERROR);
       // await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return responseJSON;
