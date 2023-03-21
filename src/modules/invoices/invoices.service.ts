@@ -472,7 +472,7 @@ export class InvoicesService {
           { new: true, session: transactionSession },
         );
 
-        console.log('_____doing ' + i);
+        console.log('_____doing ' + i+"   items "+resultInvoice[i].invItems.length);
       }
 
       /*
