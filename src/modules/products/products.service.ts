@@ -582,7 +582,7 @@ console.log("____f5   "+JSON.stringify(aaaaaaa));
 
 
         if (orderId != null) {
-          var result = await this.orderSaleMainModel.findOneAndUpdate(
+          var result = await this.orderSaleMainModel.updateMany(
             {
               _id: dto.orderId,_workStatus:4
             },
