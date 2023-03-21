@@ -569,18 +569,10 @@ export class ProductsService {
         }
 
 
-        console.log("____f1   "+dto.orderId);
-        console.log("____f2   "+orderItemId);
-        console.log("____f3   "+(dto.arrayItems.findIndex((it) => it.hmSealingStatus == 1) !=
-        -1
-          ? 8
-          : 6));
-
-var aaaaaaa=await this.orderSaleMainModel.find({ _id: dto.orderId,_workStatus:4 });
-console.log("____f5   "+JSON.stringify(aaaaaaa));
 
 
 
+        
         if (orderId != null) {
           var result = await this.orderSaleMainModel.updateMany(
             {
@@ -601,7 +593,6 @@ console.log("____f5   "+JSON.stringify(aaaaaaa));
             },
             { new: true, session: transactionSession },
           );
-          console.log("____f10   "+result);
 
           if(result==null){
             throw new HttpException('Product already generated', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -744,12 +735,8 @@ console.log("____f5   "+JSON.stringify(aaaaaaa));
           session: transactionSession,
         });
       }
-
-
-
-
-
-
+      
+      throw new HttpException('success', HttpStatus.INTERNAL_SERVER_ERROR);
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -762,10 +749,7 @@ console.log("____f5   "+JSON.stringify(aaaaaaa));
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-
-
-      throw new HttpException('Success', HttpStatus.INTERNAL_SERVER_ERROR);
-      // await transactionSession.commitTransaction();
+      await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return responseJSON;
     } catch (error) {
