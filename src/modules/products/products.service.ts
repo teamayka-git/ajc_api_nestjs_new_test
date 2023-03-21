@@ -576,6 +576,9 @@ export class ProductsService {
           ? 8
           : 6));
 
+var aaaaaaa=await this.orderSaleMainModel.find({ _id: dto.orderId,_workStatus:4 });
+console.log("____f5   "+JSON.stringify(aaaaaaa));
+
 
 
         if (orderId != null) {
@@ -589,7 +592,6 @@ export class ProductsService {
                 _updatedAt: dateTime,
                 _isProductGenerated: 1,
                 _orderItemId: orderItemId,
-                // _workStatus:8
                 // _workStatus:
                 //   dto.arrayItems.findIndex((it) => it.hmSealingStatus == 1) !=
                 //   -1
