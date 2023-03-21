@@ -417,7 +417,7 @@ export class RateCardService {
         arrayRatecard.push({
           _id: ratecardId,
           _name: resultRatecard[i]._name,
-          _type: resultRatecard[i]._type,
+          _type: 1,
           _createdUserId: resultRatecard[i]._createdUserId,
           _createdAt: resultRatecard[i]._createdAt,
           _updatedUserId: resultRatecard[i]._updatedUserId,
