@@ -105,4 +105,8 @@ function schemaPostFunctionForDuplicate(error, doc, next) {
   }
 }
 /*
+_bookingThrough:{
+  0 - automatimatic booking through inv generated
+  1 - manual booking
+}
  */

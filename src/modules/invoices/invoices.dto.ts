@@ -264,6 +264,41 @@ class InvoiceCreateList {
   @ValidateNested({ each: true })
   @Type(() => InvoiceCreateListItems)
   arrayInvoiceItems: InvoiceCreateListItems[];
+
+
+
+
+
+
+  @IsNumber()
+  @ApiProperty({})
+  isCreatePurchaseBooking: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  bookingWeight: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  bookingRate: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  bookingAmount: number;
+
+
+  @IsString()
+  @ApiProperty({})
+  groupId: string;
+
+
+  @IsString()
+  @ApiProperty({})
+  supplierUserId: string;
+
+
+
+
 }
 
 export class InvoiceCreateDto {

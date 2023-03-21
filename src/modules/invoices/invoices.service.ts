@@ -18,6 +18,7 @@ import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 import { Generals } from 'src/tableModels/generals.model';
 import { Shops } from 'src/tableModels/shops.model';
+import { PurchaseBooking } from 'src/tableModels/purchase_booking.model';
 
 @Injectable()
 export class InvoicesService {
@@ -34,6 +35,8 @@ export class InvoicesService {
     private readonly generalsModel: mongoose.Model<Generals>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
+    @InjectModel(ModelNames.PURCHASE_BOOKINGS)
+    private readonly purchaseBookingModel: mongoose.Model<PurchaseBooking>,
 
     @InjectModel(ModelNames.SHOPS)
     private readonly shopsModel: mongoose.Model<Shops>,
@@ -53,11 +56,25 @@ export class InvoicesService {
       var shopMongoIds = [];
       var arrayToDeliveryTemp = [];
       var arraySalesOrderHistories = [];
+      var arrayPurchaseBooking = [];
 
       dto.invoices.map((mapItem) => {
         invoiceLocalIds.push(mapItem.localId);
         shopMongoIds.push(new mongoose.Types.ObjectId(mapItem.customerId));
       });
+
+      var resultCounterPurchaseBooking =
+        await this.counterModel.findOneAndUpdate(
+          { _tableName: ModelNames.PURCHASE_BOOKINGS },
+          {
+            $inc: {
+              _count: dto.invoices.filter(
+                (element) => element.isCreatePurchaseBooking == 1,
+              ).length,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
 
       var shopDetails = await this.shopsModel.aggregate([
         {
@@ -109,7 +126,7 @@ export class InvoicesService {
         },
         { new: true, session: transactionSession },
       );
-
+      var indexPurchaseBooking = 0;
       dto.invoices.map((mapItem, index) => {
         var invoiceId = new mongoose.Types.ObjectId();
 
@@ -160,6 +177,33 @@ export class InvoicesService {
           _updatedAt: -1,
           _status: 1,
         });
+
+        if (mapItem.isCreatePurchaseBooking == 1) {
+          arrayPurchaseBooking.push({
+            _invoiceId: invoiceId,
+            _bookingWeight: mapItem.bookingWeight,
+            _bookingRate: mapItem.bookingRate,
+            _bookingAmount: mapItem.bookingAmount,
+            _groupId: mapItem.groupId == '' ? null : mapItem.groupId,
+            _uid:
+              resultCounterPurchaseBooking._count -
+              dto.invoices.filter(
+                (element) => element.isCreatePurchaseBooking == 1,
+              ).length +
+              (indexPurchaseBooking + 1),
+            _supplierUserId:
+              mapItem.supplierUserId == '' ? null : mapItem.supplierUserId,
+            _shopId: mapItem.customerId == '' ? null : mapItem.customerId,
+            _bookingThrough: 0,
+            _isPurchaseOrgerGenerated: false,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+          indexPurchaseBooking++;
+        }
 
         mapItem.arrayInvoiceItems.map((mapItem1) => {
           orderIds.push(mapItem1.orderId);
@@ -289,6 +333,11 @@ export class InvoicesService {
       await this.deliveryTempModel.insertMany(arrayToDeliveryTemp, {
         session: transactionSession,
       });
+      if (arrayPurchaseBooking.length != 0) {
+        await this.purchaseBookingModel.insertMany(arrayPurchaseBooking, {
+          session: transactionSession,
+        });
+      }
 
       var result1 = await this.invoiceModel.insertMany(arrayToDeliveryChallan, {
         session: transactionSession,
@@ -424,32 +473,23 @@ export class InvoicesService {
         var cgst = 0.0;
         var sgst = 0.0;
         var igst = 0.0;
-        var price2 = ((resultInvoice[i].invItems[0]._unitRate)/(resultGeneral[0]._number+100)*100);
-        var price1 =resultInvoice[i].invItems[0]._unitRate;
+        var price2 =
+          (resultInvoice[i].invItems[0]._unitRate /
+            (resultGeneral[0]._number + 100)) *
+          100;
+        var price1 = resultInvoice[i].invItems[0]._unitRate;
 
-        resultInvoice[i].invItems.forEach(elementChild => {
-          igst+=elementChild._igst
-          sgst+=elementChild._sgst
-          cgst+=elementChild._cgst
-          pureWeight+=elementChild._pureWeight
-          pureWeightHundredPercentage+=elementChild._pureWeightHundredPercentage
-          stoneAmountGst+=elementChild._stoneAmountGst
-          stoneAmount+=elementChild._stoneAmount
-          metalAmountGst+=elementChild._metalAmountGst
+        resultInvoice[i].invItems.forEach((elementChild) => {
+          igst += elementChild._igst;
+          sgst += elementChild._sgst;
+          cgst += elementChild._cgst;
+          pureWeight += elementChild._pureWeight;
+          pureWeightHundredPercentage +=
+            elementChild._pureWeightHundredPercentage;
+          stoneAmountGst += elementChild._stoneAmountGst;
+          stoneAmount += elementChild._stoneAmount;
+          metalAmountGst += elementChild._metalAmountGst;
         });
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         await this.invoiceModel.updateMany(
           {
@@ -472,7 +512,9 @@ export class InvoicesService {
           { new: true, session: transactionSession },
         );
 
-        console.log('_____doing ' + i+"   items "+resultInvoice[i].invItems.length);
+        console.log(
+          '_____doing ' + i + '   items ' + resultInvoice[i].invItems.length,
+        );
       }
 
       /*
