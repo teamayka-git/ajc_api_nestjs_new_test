@@ -568,6 +568,12 @@ export class ProductsService {
           );
         }
 
+
+        console.log("____f1   "+dto.orderId);
+        console.log("____f2   "+orderItemId);
+
+
+
         if (orderId != null) {
           var result = await this.orderSaleMainModel.findOneAndUpdate(
             {
@@ -588,6 +594,7 @@ export class ProductsService {
             },
             { new: true, session: transactionSession },
           );
+          console.log("____f3   "+result);
 
           if(result==null){
             throw new HttpException('Product already generated', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -742,7 +749,7 @@ export class ProductsService {
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-      await transactionSession.commitTransaction();
+      // await transactionSession.commitTransaction();
       await transactionSession.endSession();
       return responseJSON;
     } catch (error) {
