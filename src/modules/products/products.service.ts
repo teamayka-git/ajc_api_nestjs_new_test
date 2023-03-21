@@ -735,8 +735,6 @@ export class ProductsService {
           session: transactionSession,
         });
       }
-      
-      throw new HttpException('success', HttpStatus.INTERNAL_SERVER_ERROR);
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
