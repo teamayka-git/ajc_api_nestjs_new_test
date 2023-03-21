@@ -571,6 +571,10 @@ export class ProductsService {
 
         console.log("____f1   "+dto.orderId);
         console.log("____f2   "+orderItemId);
+        console.log("____f3   "+(dto.arrayItems.findIndex((it) => it.hmSealingStatus == 1) !=
+        -1
+          ? 8
+          : 6));
 
 
 
@@ -594,7 +598,7 @@ export class ProductsService {
             },
             { new: true, session: transactionSession },
           );
-          console.log("____f3   "+result);
+          console.log("____f10   "+result);
 
           if(result==null){
             throw new HttpException('Product already generated', HttpStatus.INTERNAL_SERVER_ERROR);
