@@ -424,8 +424,8 @@ export class InvoicesService {
         var cgst = 0.0;
         var sgst = 0.0;
         var igst = 0.0;
-        var price1 = ((resultInvoice[i].invItems[0]._unitRate)/(resultGeneral[0]._number+100)*100);
-        var price2 =resultInvoice[i].invItems[0]._unitRate;
+        var price2 = ((resultInvoice[i].invItems[0]._unitRate)/(resultGeneral[0]._number+100)*100);
+        var price1 =resultInvoice[i].invItems[0]._unitRate;
 
         resultInvoice[i].invItems.forEach(elementChild => {
           igst+=elementChild._igst
