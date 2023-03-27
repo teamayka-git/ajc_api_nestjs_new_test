@@ -193,11 +193,14 @@ export class ProductsService {
           },
         );
       }
+
       console.log('___a2');
       var arrayToProducts = [];
 
       var arrayStonesLinkings = [];
       var arrayTagLinkings = [];
+      var arrayPhotographyRequestIds = [];
+
       var arrayOrderSaleHistory = [];
       var arraySubCategoryidsMDB = [];
 
@@ -436,6 +439,12 @@ export class ProductsService {
           });
         });
 
+        if (dto.arrayItems[i].photographyRequestId != '') {
+          arrayPhotographyRequestIds.push(
+            dto.arrayItems[i].photographyRequestId,
+          );
+        }
+
         dto.arrayItems[i].tagIds.map((mapItem1) => {
           arrayTagLinkings.push({
             _tagId: mapItem1,
@@ -568,15 +577,11 @@ export class ProductsService {
           );
         }
 
-
-
-
-
-        
         if (orderId != null) {
           var result = await this.orderSaleMainModel.updateMany(
             {
-              _id: dto.orderId,_workStatus:4
+              _id: dto.orderId,
+              _workStatus: 4,
             },
             {
               $set: {
@@ -594,8 +599,11 @@ export class ProductsService {
             { new: true, session: transactionSession },
           );
 
-          if(result==null){
-            throw new HttpException('Product already generated', HttpStatus.INTERNAL_SERVER_ERROR);
+          if (result == null) {
+            throw new HttpException(
+              'Product already generated',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
           }
 
           arrayOrderSaleHistory.push({
@@ -717,6 +725,23 @@ export class ProductsService {
           //   _status: 1,
           // });
         }
+      }
+
+      if (arrayPhotographyRequestIds.length != 0) {
+        await this.photographerRequestModel.findOneAndUpdate(
+          {
+            _id: { $in: arrayPhotographyRequestIds },
+          },
+          {
+            $set: {
+              _requestStatus: 3,
+              _finishedAt: dateTime,
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
       }
 
       var result1 = await this.productModel.insertMany(arrayToProducts, {
@@ -1195,9 +1220,7 @@ export class ProductsService {
     try {
       var arrayAggregation = [];
 
-
-      console.log("____q1");
-
+      console.log('____q1');
 
       if (dto.searchingText != '') {
         //todo
@@ -1241,8 +1264,8 @@ export class ProductsService {
           $match: { _orderId: { $in: newSettingsId } },
         });
       }
-      
-console.log("____q2");
+
+      console.log('____q2');
       if (dto.subCategoryIds.length > 0) {
         var newSettingsId = [];
         dto.subCategoryIds.map((mapItem) => {
@@ -1283,7 +1306,7 @@ console.log("____q2");
         });
       }
 
-      console.log("____q3");
+      console.log('____q3');
       if (dto.isStone.length > 0) {
         arrayAggregation.push({
           $match: { _isStone: { $in: dto.isStone } },
@@ -1312,7 +1335,7 @@ console.log("____q2");
         });
       }
 
-      console.log("____q4");
+      console.log('____q4');
       if (
         dto.cityIds.length != 0 ||
         dto.relationshipManagerIds.length != 0 ||
@@ -1379,8 +1402,8 @@ console.log("____q2");
           },
         );
       }
-      
-console.log("____q5");
+
+      console.log('____q5');
       if (dto.orderSaleUids.length != 0) {
         arrayAggregation.push(
           {
@@ -1436,7 +1459,7 @@ console.log("____q5");
         );
       }
 
-      console.log("____q6");
+      console.log('____q6');
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {
         case 0:
@@ -1493,7 +1516,7 @@ console.log("____q5");
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      console.log("____q7");
+      console.log('____q7');
       arrayAggregation.push(
         new ModelWeightResponseFormat().productTableResponseFormat(
           0,
@@ -1568,7 +1591,7 @@ console.log("____q5");
         );
       }
 
-      console.log("____q8");
+      console.log('____q8');
       if (dto.screenType.includes(101)) {
         const orderSaleItemPipeline = () => {
           const pipeline = [];
@@ -1708,7 +1731,7 @@ console.log("____q5");
         );
       }
 
-      console.log("____q9");
+      console.log('____q9');
       if (dto.screenType.includes(102)) {
         arrayAggregation.push(
           {
@@ -1801,7 +1824,7 @@ console.log("____q5");
         );
       }
 
-      console.log("____q10");
+      console.log('____q10');
       if (dto.screenType.includes(105)) {
         const productStoneLinkingPipeline = () => {
           const pipeline = [];
@@ -1930,7 +1953,7 @@ console.log("____q5");
         });
       }
 
-      console.log("____q11");
+      console.log('____q11');
       if (dto.screenType.includes(106)) {
         const productDocumentsLinkingPipeline = () => {
           const pipeline = [];
@@ -1990,8 +2013,8 @@ console.log("____q5");
           },
         });
       }
-      
-console.log("____q12");
+
+      console.log('____q12');
       if (dto.screenType.includes(115)) {
         const productTagsLinkingPipeline = () => {
           const pipeline = [];
@@ -2115,7 +2138,7 @@ console.log("____q12");
         });
       }
 
-      console.log("____q13");
+      console.log('____q13');
       if (dto.screenType.includes(118)) {
         const designDocumentsLinkingPipeline = () => {
           const pipeline = [];
@@ -2233,14 +2256,14 @@ console.log("____q12");
         });
       }
 
-      console.log("____q14");
+      console.log('____q14');
       var result = await this.productModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
-        
-console.log("____q15");
 
-var totalCount = 0;
+      console.log('____q15');
+
+      var totalCount = 0;
       if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
@@ -2267,8 +2290,8 @@ var totalCount = 0;
         }
       }
 
-      console.log("____q16");
-      console.log("____q17 _-------------------- sending start");
+      console.log('____q16');
+      console.log('____q17 _-------------------- sending start');
       const responseJSON = {
         message: 'success',
         data: { list: result, totalCount: totalCount },
@@ -2534,7 +2557,7 @@ var totalCount = 0;
       var arrayToProducts = [];
       var arrayStonesLinkings = [];
 
-      for(var i=0;i<resultProductTempGet.length;i++) {
+      for (var i = 0; i < resultProductTempGet.length; i++) {
         var productId = new mongoose.Types.ObjectId();
         arrayToProducts.push({
           _id: productId,
@@ -2582,27 +2605,18 @@ var totalCount = 0;
           });
         });
 
-
-
-
-
-      await this.productTempModel.findOneAndUpdate(
-        {
-          _id: resultProductTempGet[i]._id,
-        },
-        {
-          $set: {
-            _generatedProductId:productId
+        await this.productTempModel.findOneAndUpdate(
+          {
+            _id: resultProductTempGet[i]._id,
           },
-        },
-        { new: true, session: transactionSession },
-      );
-
-
-
-
-
-      };
+          {
+            $set: {
+              _generatedProductId: productId,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
 
       await this.productModel.insertMany(arrayToProducts, {
         session: transactionSession,

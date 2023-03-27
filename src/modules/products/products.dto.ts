@@ -65,6 +65,15 @@ class productDocumentCreateList {
 }
 class ProductCreateList {
 
+
+  @IsString()
+  @ApiProperty({})
+  photographyRequestId: string;
+
+
+
+
+
   @IsString()
   @ApiProperty({})
   name: string;
