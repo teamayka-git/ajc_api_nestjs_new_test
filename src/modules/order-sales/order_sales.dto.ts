@@ -54,12 +54,18 @@ const DescriptionOrderSaleProcessOrderStatus =
   '0-Pending, 1-Assigned, 2-On Working, 3-Completed, 4-Hold, Request To Assign';
 const DescriptionOrderSalesHistoriesType =
   '  0 - order pending  1 - order accept  2 - order reject  3 - set process done  4 - finished goods  5 - product generate request  6 - product generated   7 - deliverychalan generated//need to discuss  8 - halmark issuence requested  9 - halmark issuence bypassed  10 - send to halmark issuence  11 - halmarking issued  12 - halmark request cancelled  13 - halmark request rejected  14 - halmark error occured  15 - send to reissuence   16 - invoice pending  17 - invoice generated  18 - outof delivery pending  19 - hub transfer pending  20 - delivery job assigned  21 - delivery in transit  22 - delivered to customer            23 - delivey accepted  24 - order declined collection pending   25 - order declined collected  26 - order declined inscan  27 - order cancelled  28 - delivery reshedule requested  29 - hub tranfer pending  30 - hub assigned  31 - hub tranfer intransit  32 - hub transfer delivered  33 - hub transfer accepted    100 - order editted  101- sales order actived  102- sales order disabled  103- sales order deleted  104- sales order general remark editted';
-const descriptionType = ' 0 - order sale(custom order), 1 - stock sale(from e store), 2 - sales on approval(from delivery boy), 3 - counter sale(bill from manufactor) ';
+const descriptionType =
+  ' 0 - order sale(custom order), 1 - stock sale(from e store), 2 - sales on approval(from delivery boy), 3 - counter sale(bill from manufactor) ';
 const descriptionDeliveryType =
   ' 0 - bundle delivery,1 - get me the ready item first';
 const descriptionStockStatus = '0 - out of stock, 1 - in stock';
 const descriptionSetProcessOrderStatus =
   'inside ordersale list set process filter with this array if this arrayu not empty';
+const descriptionListSortTypeReworkReport =
+  '0-id, 1-status, 2-type, 3-arisonSetprocessStatus, 4-order created date, 5-order due date, 6-order uid';
+const descriptionListTypeForReworkReport =
+  ' 0 - internal rework, 1 - customer rework';
+const descriptionListScreenTypeForReworkReport = '0- total count,   100-order details, 101-shop details, 102-oh details , 103-root cause details, 104 - arison user details, 105-process master, 106-created user details';
 
 class orderSaleCreateList {
   @IsString()
@@ -169,9 +175,6 @@ export class OrderSalesCreateDto {
   @ApiProperty({})
   generalRemark: string;
 
-
-
-
   @IsOptional()
   @IsString()
   @ApiProperty({})
@@ -182,7 +185,6 @@ export class OrderSalesCreateDto {
   @ApiProperty({})
   otpValue: string;
 
-
   @IsOptional()
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
@@ -190,7 +192,6 @@ export class OrderSalesCreateDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   employeeStockInHandItemIds: string[];
-
 
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
@@ -289,13 +290,10 @@ export class OrderSalesEditDto {
   @ApiProperty({ description: descriptionType })
   type: number;
 
-
   @IsOptional()
   @IsString()
   @ApiProperty({})
   amendmentRequestId: string;
-
-
 
   @IsOptional()
   @Transform(({ value }) =>
@@ -305,7 +303,7 @@ export class OrderSalesEditDto {
   @ApiProperty({})
   amendmentObject: Object;
 
-@IsOptional()
+  @IsOptional()
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
@@ -392,7 +390,7 @@ export class OrderSaleListDto {
 
   @IsOptional()
   @IsArray()
-  @ApiProperty({ type: [Number],description:descriptionType })
+  @ApiProperty({ type: [Number], description: descriptionType })
   type: number[];
 
   @IsArray()
@@ -718,14 +716,13 @@ export class OrderSalesWorkStatusChangeDto {
   @ApiProperty({ description: descriptionWorkStatus })
   workStatus: number;
 
-
   @IsNumber()
-  @ApiProperty({  })
+  @ApiProperty({})
   fromWorkStatus: number;
 
   @IsOptional()
   @IsNumber()
-  @ApiProperty({  })
+  @ApiProperty({})
   isProductGenerated: number;
 
   @IsString()
@@ -741,7 +738,7 @@ export class OrderSalesHoldDto {
   orderSaleIds: string[];
 
   @IsNumber()
-  @ApiProperty({  })
+  @ApiProperty({})
   isHold: number;
 
   @IsString()
@@ -780,13 +777,14 @@ export class OrderSalesGetOrderDetailsFromQrBarcodeDto {
   value: string;
 }
 export class OrderSalesReworkSetprocessDto {
-
-  
   @IsString()
   @ApiProperty({})
   ordersaleId: string;
 
-  
+  @IsString()
+  @ApiProperty({})
+  currentSetprocessId: string;
+
   @IsString()
   @ApiProperty({})
   reworkRootcauseId: string;
@@ -799,11 +797,9 @@ export class OrderSalesReworkSetprocessDto {
   @ApiProperty({})
   reworkRootcauseDescription: string;
 
-  
   @IsNumber()
   @ApiProperty({})
   fromStatus: number;
-
 }
 
 export class GetWorkCountDto {
@@ -1017,51 +1013,124 @@ export class EditOrderSaleGeneralRemarkDto {
 }
 
 class orderSaleSplitItemArrayList {
- 
   @IsString()
   @ApiProperty({})
   orderSaleItemId: string;
-
-
 }
 class orderSaleSplitArrayList {
- 
- 
-
-  
   @IsArray()
   @ApiProperty({ type: [orderSaleSplitItemArrayList] })
   @ValidateNested({ each: true })
   @Type(() => orderSaleSplitItemArrayList)
   items: orderSaleSplitItemArrayList[];
-
-
-
 }
 
 export class OrderSaleSplitDto {
-
-  
   @IsString()
   @ApiProperty({})
   ordersaleId: string;
 
-  
   @IsString()
   @ApiProperty({})
   ordersaleUid: string;
 
-  
   @IsNumber()
   @ApiProperty({})
   fromStatus: number;
 
-
-  
   @IsArray()
   @ApiProperty({ type: [orderSaleSplitArrayList] })
   @ValidateNested({ each: true })
   @Type(() => orderSaleSplitArrayList)
   splitArray: orderSaleSplitArrayList[];
+}
+export class RworkReportDto {
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortTypeReworkReport })
+  sortType: number;
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortOrder })
+  sortOrder: number;
 
+  @IsArray()
+  @ArrayMinSize(1)
+  @ApiProperty({ type: [Number], description: descriptionStatus })
+  statusArray: number[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionListScreenTypeForReworkReport,
+  })
+  screenType: number[];
+
+  
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+  })
+  responseFormat: number[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleUids: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  shopIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  ohIds: string[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionListTypeForReworkReport,
+  })
+  type: number[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  rootCauseIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  reworkArisonDepartmentIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  reworkArisonUserIds: string[];
+
+  @IsNumber()
+  @ApiProperty({})
+  orderCreatedDateStart: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  orderCreatedDateEnd: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  orderDueDateStart: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  orderDueDateEnd: number;
+
+  @IsString()
+  @ApiProperty({})
+  searchingText: string;
+
+  @IsNumber()
+  @ApiProperty({})
+  limit: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  skip: number;
 }

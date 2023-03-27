@@ -30,6 +30,7 @@ import {
   OrderSaleSplitDto,
   OrderSalesReworkSetprocessDto,
   OrderSalesWorkStatusChangeDto,
+  RworkReportDto,
   SetProcessAssignedOrderSaleListDto,
 } from './order_sales.dto';
 
@@ -201,6 +202,14 @@ export class OrderSalesController {
     @Request() req,
   ) {
     return this.orderSalesService.orderSplit(dto, req['_userId_']);
+  }
+
+  @Post('reworkReport')
+  reworkReport(
+    @Body() dto: RworkReportDto,
+    @Request() req,
+  ) {
+    return this.orderSalesService.reworkReport(dto, req['_userId_']);
   }
 
 
