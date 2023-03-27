@@ -398,6 +398,49 @@ export class ProductListDto {
   @ApiProperty({ type: [String] })
   huId: string[];
 
+
+
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  subTagIds: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  tagIds: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  moldNumbers: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  designUids: string[];
+
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty({})
+  createdDateStart: number;
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty({})
+  createdDateEnd: number;
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty({})
+  netWeightStart: number;
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty({})
+  netWeightEnd: number;
+
   @IsArray()
   @ApiProperty({
     type: [Number],

@@ -1295,6 +1295,160 @@ export class ProductsService {
         });
       }
 
+
+      if (dto.subTagIds.length > 0) {
+        var newSettingsId = [];
+        dto.subTagIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.PRODUCT_TAG_LINKINGS,
+              let: { productId: '$_id' },
+              pipeline: [
+                {
+                  $match: {_status:1, $expr: { $eq: ['$_productId', '$$productId'] } },
+                },
+                {
+                  $match: {
+                    _tagId: { $in: newSettingsId },
+                  },
+                },
+                {
+                  $project: {
+                    _id: 1,
+                  },
+                },
+              ],
+              as: 'subTagLinkingsMongoCheck',
+            },
+          },
+          {
+            $match: { subTagLinkingsMongoCheck: { $ne: [] } },
+          },
+        );
+      
+      
+      
+      
+      
+      
+      
+      }
+      if (dto.tagIds.length > 0) {
+        var newSettingsId = [];
+        dto.tagIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.PRODUCT_TAG_LINKINGS,
+              let: { productId: '$_id' },
+              pipeline: [
+                {
+                  $match: {_status:1, $expr: { $eq: ['$_productId', '$$productId'] } },
+                },
+                {
+                  $lookup: {
+                    from: ModelNames.TAG_MASTERS,
+                    let: { tagId: '$_tagId' },
+                    pipeline: [
+                      {
+                        $match: {_status:1, $expr: { $eq: ['$_tagId', '$$tagId'] } },
+                      },
+                      {
+                        $match: {
+                          _id: { $in: newSettingsId },
+                        },
+                      },
+                      {
+                        $project: {
+                          _id: 1,
+                        },
+                      },
+                    ],
+                    as: 'tagLinkingsMongoCheckSecond',
+                  },
+                },
+                
+                {
+                  $match: { tagLinkingsMongoCheckSecond: { $ne: [] } },
+                },
+                {
+                  $project: {
+                    _id: 1,
+                  },
+                },
+              ],
+              as: 'subTagLinkingsMongoCheckSecond',
+            },
+          },
+          {
+            $match: { subTagLinkingsMongoCheckSecond: { $ne: [] } },
+          },
+        );
+      
+      
+      
+      
+      
+      
+      
+      }
+      
+
+      if (dto.moldNumbers.length > 0) {
+        arrayAggregation.push({
+          $match: { _moldNumber: { $in: dto.moldNumbers } },
+        });
+      }
+
+      if (dto.designUids.length > 0) {
+        arrayAggregation.push({
+          $match: { _designUid: { $in: dto.designUids } },
+        });
+      }
+
+
+      if (dto.createdDateStart != -1) {
+        arrayAggregation.push({
+          $match: {
+            _createdAt: { $gte: dto.createdDateStart },
+          },
+        });
+      }
+
+      if (dto.createdDateEnd != -1) {
+        arrayAggregation.push({
+          $match: {
+            _createdAt: { $lte: dto.createdDateEnd },
+          },
+        });
+      }
+
+
+      
+      if (dto.netWeightStart != -1) {
+        arrayAggregation.push({
+          $match: {
+            _netWeight: { $gte: dto.netWeightStart },
+          },
+        });
+      }
+
+      if (dto.netWeightEnd != -1) {
+        arrayAggregation.push({
+          $match: {
+            _netWeight: { $lte: dto.netWeightEnd },
+          },
+        });
+      }
+
+
+
+
       if (dto.barcodes.length > 0) {
         arrayAggregation.push({
           $match: { _barcode: { $in: dto.barcodes } },
@@ -1481,36 +1635,41 @@ export class ProductsService {
             $sort: { _designerId: dto.sortOrder, _id: dto.sortOrder },
           });
           break;
-        case 3:
+        case 4:
           arrayAggregation.push({
             $sort: { _grossWeight: dto.sortOrder, _id: dto.sortOrder },
           });
           break;
-        case 3:
+        case 5:
           arrayAggregation.push({
             $sort: { _type: dto.sortOrder, _id: dto.sortOrder },
           });
           break;
-        case 3:
+        case 6:
           arrayAggregation.push({
             $sort: { _purity: dto.sortOrder, _id: dto.sortOrder },
           });
           break;
-        case 3:
+        case 7:
           arrayAggregation.push({
             $sort: { _hmSealingStatus: dto.sortOrder, _id: dto.sortOrder },
           });
           break;
-        case 3:
+        case 8:
           arrayAggregation.push({
             $sort: { _huId: dto.sortOrder, _id: dto.sortOrder },
           });
           break;
-        case 3:
-          arrayAggregation.push({
-            $sort: { _eCommerceStatus: dto.sortOrder, _id: dto.sortOrder },
-          });
-          break;
+          case 9:
+            arrayAggregation.push({
+              $sort: { _eCommerceStatus: dto.sortOrder, _id: dto.sortOrder },
+            });
+            break;
+            case 10:
+              arrayAggregation.push({
+                $sort: { _soldCount: dto.sortOrder, _id: dto.sortOrder },
+              });
+              break;
       }
       if (dto.skip != -1) {
         arrayAggregation.push({ $skip: dto.skip });
