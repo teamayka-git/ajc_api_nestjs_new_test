@@ -18,6 +18,7 @@ import {
   EditOrderSaleGeneralRemarkDto,
   GetWorkCountDto,
   GlobalSearchDto,
+  OrderRejectCancelReportDto,
   OrderSaleHistoryListDto,
   OrderSaleListDto,
   OrderSaleReportListDto,
@@ -210,6 +211,13 @@ export class OrderSalesController {
     @Request() req,
   ) {
     return this.orderSalesService.reworkReport(dto, req['_userId_']);
+  }
+  @Post('orderRejectCancelReport')
+  orderRejectCancelReport(
+    @Body() dto: OrderRejectCancelReportDto,
+    @Request() req,
+  ) {
+    return this.orderSalesService.orderRejectCancelReport(dto, req['_userId_']);
   }
 
 

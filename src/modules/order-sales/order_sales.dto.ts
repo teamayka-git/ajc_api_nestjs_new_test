@@ -66,6 +66,12 @@ const descriptionListSortTypeReworkReport =
 const descriptionListTypeForReworkReport =
   ' 0 - internal rework, 1 - customer rework';
 const descriptionListScreenTypeForReworkReport = '0- total count,   100-order details, 101-shop details, 102-oh details , 103-root cause details, 104 - arison user details, 105-process master, 106-created user details';
+const descriptionListSortTypeRejectCancelReport="0-id, 1-status, 2-type , 3-order created date, 4-order due date, 5-order uid";
+const descriptionListScreenTypeForRejectCancelReport="0- total count,   100-order details, 101-shop details, 102-oh details , 103-root cause details, 105-process master, 106-created user details";
+const descriptionListTypeForRejectCancelReport=" 0 - rejected, 1 - cancel";
+
+
+
 
 class orderSaleCreateList {
   @IsString()
@@ -1105,6 +1111,90 @@ export class RworkReportDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   reworkArisonUserIds: string[];
+
+  @IsNumber()
+  @ApiProperty({})
+  orderCreatedDateStart: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  orderCreatedDateEnd: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  orderDueDateStart: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  orderDueDateEnd: number;
+
+  @IsString()
+  @ApiProperty({})
+  searchingText: string;
+
+  @IsNumber()
+  @ApiProperty({})
+  limit: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  skip: number;
+}
+
+
+export class OrderRejectCancelReportDto {
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortTypeRejectCancelReport })
+  sortType: number;
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortOrder })
+  sortOrder: number;
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @ApiProperty({ type: [Number], description: descriptionStatus })
+  statusArray: number[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionListScreenTypeForRejectCancelReport,
+  })
+  screenType: number[];
+
+  
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+  })
+  responseFormat: number[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleUids: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  shopIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  ohIds: string[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionListTypeForRejectCancelReport,
+  })
+  type: number[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  rootCauseIds: string[];
 
   @IsNumber()
   @ApiProperty({})
