@@ -22,6 +22,7 @@ import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_pa
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { Generals } from 'src/tableModels/generals.model';
 import { OrderSaleSetProcesses } from 'src/tableModels/order_sale_set_processes.model';
+import { OrderCancelRejectReports } from 'src/tableModels/order_cancel_reject_reports.model';
 
 @Injectable()
 export class OrderSaleChangeRequestService {
@@ -35,6 +36,8 @@ export class OrderSaleChangeRequestService {
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
 
+    @InjectModel(ModelNames.ORDER_REJECTED_CANCEL_REPORTS)
+    private readonly orderRejectedCancelReportModel: mongoose.Model<OrderCancelRejectReports>,
     @InjectModel(ModelNames.ORDER_SALE_SET_PROCESSES)
     private readonly orderSaleSetProcessModel: mongoose.Model<OrderSaleSetProcesses>,
     @InjectModel(ModelNames.GENERALS)
@@ -459,6 +462,56 @@ export class OrderSaleChangeRequestService {
       await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
         session: transactionSession,
       });
+
+      var resultOrderStatusCheck = await this.orderSaleMainModel.find({
+        _id: dto.orderSaleId,
+      });
+
+      if (resultOrderStatusCheck.length == 0) {
+        throw new HttpException(
+          'Orer not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      var resultCancelRequest = await this.orderSaleChangeRequestModel.find({
+        _id: dto.cancelRequestId,
+      });
+
+      if (resultCancelRequest.length == 0) {
+        throw new HttpException(
+          'order cancel request not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      var arrayToRejectedCancelReport = [];
+
+      arrayToRejectedCancelReport.push({
+        _orderId: dto.orderSaleId,
+        _shop: resultOrderStatusCheck[0]._shopId,
+        _oh: resultOrderStatusCheck[0]._orderHeadId,
+        _rootcause: resultCancelRequest[0]._rootCause,
+        _type: 1,
+        _description: resultCancelRequest[0]._description,
+        _orderCreatedDate: resultOrderStatusCheck[0]._createdAt,
+        _orderDueDate: resultOrderStatusCheck[0]._dueDate,
+        _orderUid: resultOrderStatusCheck[0]._uid,
+
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _updatedUserId: null,
+        _updatedAt: -1,
+        _status: 1,
+      });
+
+      await this.orderRejectedCancelReportModel.insertMany(
+        arrayToRejectedCancelReport,
+        {
+          session: transactionSession,
+        },
+      );
+
       const responseJSON = { message: 'success', data: {} };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&

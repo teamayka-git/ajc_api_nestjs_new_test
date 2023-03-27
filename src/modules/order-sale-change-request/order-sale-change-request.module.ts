@@ -12,6 +12,7 @@ import { OrderSaleChangeRequestDocumentsSchema } from 'src/tableModels/order_sal
 import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
 import { GeneralsSchema } from 'src/tableModels/generals.model';
 import { OrderSaleSetProcessesSchema } from 'src/tableModels/order_sale_set_processes.model';
+import { OrderCancelRejectReportsSchema } from 'src/tableModels/order_cancel_reject_reports.model';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { OrderSaleSetProcessesSchema } from 'src/tableModels/order_sale_set_proc
       {name:ModelNames.GENERALS,schema:GeneralsSchema},
       { name: ModelNames.GLOBAL_GALLERIES, schema: GlobalGalleriesSchema },
       { name: ModelNames.ORDER_SALE_CHANGE_REQUEST_DOCUMENTS, schema:OrderSaleChangeRequestDocumentsSchema },
+      { name: ModelNames.ORDER_REJECTED_CANCEL_REPORTS, schema: OrderCancelRejectReportsSchema },
       
 
       { 

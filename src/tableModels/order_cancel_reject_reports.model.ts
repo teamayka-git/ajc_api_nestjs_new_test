@@ -78,7 +78,8 @@ OrderCancelRejectReportsSchema.index({ _status: 1 });
 
 /*
 _type:{
-  0 - rejected
-  1 - cancel
+  0 - customer rejected
+  1 - customer cancel
+  2 - admin rejected
 }
 */

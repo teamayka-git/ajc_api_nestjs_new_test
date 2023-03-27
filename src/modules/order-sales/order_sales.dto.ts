@@ -68,7 +68,7 @@ const descriptionListTypeForReworkReport =
 const descriptionListScreenTypeForReworkReport = '0- total count,   100-order details, 101-shop details, 102-oh details , 103-root cause details, 104 - arison user details, 105-process master, 106-created user details';
 const descriptionListSortTypeRejectCancelReport="0-id, 1-status, 2-type , 3-order created date, 4-order due date, 5-order uid";
 const descriptionListScreenTypeForRejectCancelReport="0- total count,   100-order details, 101-shop details, 102-oh details , 103-root cause details, 105-process master, 106-created user details";
-const descriptionListTypeForRejectCancelReport=" 0 - rejected, 1 - cancel";
+const descriptionListTypeForRejectCancelReport=" 0 - customer rejected, 1 - customer cancel, 2 - admin rejected";
 
 
 

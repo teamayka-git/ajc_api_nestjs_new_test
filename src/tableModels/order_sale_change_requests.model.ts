@@ -36,7 +36,7 @@ export const OrderSaleChangeRequestsSchema = new mongoose.Schema({
   _status: { type: Number, required: true, default: -1 },
 });
 
-export interface OrderSaleChangeRequests {
+export interface OrderSaleChangeRequests { 
   _id: String;
   _orderSaleId: String;
   _rootCause: String;

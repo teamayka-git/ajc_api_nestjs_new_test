@@ -1295,37 +1295,38 @@ export class OrderSalesService {
             );
           }
         }
-      } else if (dto.workStatus == 2) {
-        var arrayToRejectedCancelReport = [];
-        var resultOrderStatusCheck = await this.orderSaleMainModel.find({
-          _id: { $in: dto.orderSaleIds },
-        });
-        resultOrderStatusCheck.forEach((elementRejected) => {
-          arrayToRejectedCancelReport.push({
-            _orderId: elementRejected._id,
-            _shop: elementRejected._shopId,
-            _oh: elementRejected._orderHeadId,
-            _rootcause: dto.rootCauseId,
-            _type: 0,
-            _description: dto.rootCause,
-            _orderCreatedDate: elementRejected._createdAt,
-            _orderDueDate: elementRejected._dueDate,
-            _orderUid: elementRejected._uid,
-
-            _createdUserId: _userId_,
-            _createdAt: dateTime,
-            _updatedUserId: null,
-            _updatedAt: -1,
-            _status: 1,
+      }else if(dto.workStatus==2){
+var arrayToRejectedCancelReport=[];
+var resultOrderStatusCheck = await this.orderSaleMainModel.find({
+  _id: { $in: dto.orderSaleIds },
+});
+resultOrderStatusCheck.forEach(elementRejected => {
+  arrayToRejectedCancelReport.push({
+    _orderId:elementRejected._id,
+    _shop:elementRejected._shopId,
+    _oh:elementRejected._orderHeadId,
+    _rootcause:dto.rootCauseId,
+    _type:2,
+    _description:dto.rootCause,
+    _orderCreatedDate:elementRejected._createdAt,
+    _orderDueDate:elementRejected._dueDate,
+    _orderUid:elementRejected._uid,
+   
+    _createdUserId: _userId_,
+    _createdAt: dateTime,
+    _updatedUserId: null,
+    _updatedAt: -1,
+    _status: 1,
+  
           });
+  
+});
+
+        await this.orderRejectedCancelReportModel.insertMany(arrayToRejectedCancelReport, {
+          session: transactionSession,
         });
 
-        await this.orderRejectedCancelReportModel.insertMany(
-          arrayToRejectedCancelReport,
-          {
-            session: transactionSession,
-          },
-        );
+
       }
 
       if (
@@ -9631,10 +9632,7 @@ export class OrderSalesService {
       throw error;
     }
   }
-  async orderRejectCancelReport(
-    dto: OrderRejectCancelReportDto,
-    _userId_: string,
-  ) {
+  async orderRejectCancelReport(dto: OrderRejectCancelReportDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -9696,6 +9694,8 @@ export class OrderSalesService {
           $match: { _rootcause: { $in: newSettingsId } },
         });
       }
+
+   
 
       if (dto.orderCreatedDateStart != -1) {
         arrayAggregation.push({
@@ -9882,7 +9882,8 @@ export class OrderSalesService {
           },
         );
       }
-
+  
+      
       if (dto.screenType.includes(105)) {
         arrayAggregation.push(
           {
