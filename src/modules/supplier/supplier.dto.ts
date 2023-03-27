@@ -59,6 +59,10 @@ export class SupplierCreateDto {
 
   @IsString()
   @ApiProperty({})
+  rateBaseId: string;
+
+  @IsString()
+  @ApiProperty({})
   address: string;
 
   @IsString()
@@ -102,6 +106,10 @@ export class SupplierEditDto {
   @IsString()
   @ApiProperty({})
   rateCardId: string;
+
+  @IsString()
+  @ApiProperty({})
+  rateBaseId: string;
 
   @IsString()
   @ApiProperty({})
