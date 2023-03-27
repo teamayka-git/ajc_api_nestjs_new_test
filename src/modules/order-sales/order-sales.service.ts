@@ -550,10 +550,10 @@ export class OrderSalesService {
 
       var orderWorkStatus = 0;
       var isProductGenerated = 0;
-      if (dto.type == 2 ||dto.type == 3 ) {
+      if (dto.type == 2 || dto.type == 3) {
         //sales on approval
         orderWorkStatus = 16;
-        isProductGenerated=1;
+        isProductGenerated = 1;
       }
 
       const newsettingsModel = new this.orderSaleMainModel({
@@ -569,8 +569,8 @@ export class OrderSalesService {
         _isProductGenerated: isProductGenerated,
         _type: dto.type,
 
-        _reworkRootCauseId:null,
-        _reworkDescription:"",
+        _reworkRootCauseId: null,
+        _reworkDescription: '',
         _isHold: 0,
         _holdDescription: '',
         _holdRootCause: null,
@@ -1257,35 +1257,66 @@ export class OrderSalesService {
         );
       }
 
-if(dto.productIdsForStockRemove != null && dto.productIdsForStockRemove.length!=0){
-  await this.productModel.updateMany(
-    {
-      _id: { $in: dto.productIdsForStockRemove },
-    },
-    {
-      $set: {
-        _stockStatus:1
-      },
-    },
-    { new: true, session: transactionSession },
-  );
-}
+      if (dto.workStatus == 1) {
+        var arrayDesignWithQty = [];
+        var resultOrderSaleItems = await this.orderSaleItemsModel.find({
+          _status: 1,
+          _orderSaleId: { $in: dto.orderSaleIds },
+        });
+        resultOrderSaleItems.forEach((elementOrderItem) => {
+          if (elementOrderItem._designId != null) {
+            arrayDesignWithQty.push({
+              designId: elementOrderItem._designId,
+              qty: elementOrderItem._quantity,
+            });
+          }
+        });
 
-   
+        if (arrayDesignWithQty.length != 0) {
+          for (var i = 0; i < arrayDesignWithQty.length; i++) {
+            await this.productModel.findOneAndUpdate(
+              {
+                _id: arrayDesignWithQty[i].designId,
+              },
+              {
+                $inc: {
+                  _soldCount: arrayDesignWithQty[i].qty,
+                },
+              },
+              { new: true, session: transactionSession },
+            );
+          }
+        }
+      }
 
-var objOsMain={
-  
-  _rootCauseId:
-  dto.rootCauseId == '' || dto.rootCauseId == 'nil'
-    ? null
-    : dto.rootCauseId,
-_workStatus: dto.workStatus,
-_rootCause: dto.rootCause,
+      if (
+        dto.productIdsForStockRemove != null &&
+        dto.productIdsForStockRemove.length != 0
+      ) {
+        await this.productModel.updateMany(
+          {
+            _id: { $in: dto.productIdsForStockRemove },
+          },
+          {
+            $set: {
+              _stockStatus: 1,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
 
-};
-if(dto.isProductGenerated != null){
-  objOsMain["_isProductGenerated"]=dto.isProductGenerated;
-}
+      var objOsMain = {
+        _rootCauseId:
+          dto.rootCauseId == '' || dto.rootCauseId == 'nil'
+            ? null
+            : dto.rootCauseId,
+        _workStatus: dto.workStatus,
+        _rootCause: dto.rootCause,
+      };
+      if (dto.isProductGenerated != null) {
+        objOsMain['_isProductGenerated'] = dto.isProductGenerated;
+      }
 
       var result = await this.orderSaleMainModel.updateMany(
         {
@@ -1491,7 +1522,7 @@ if(dto.isProductGenerated != null){
       if (dto.type != null && dto.type.length > 0) {
         arrayAggregation.push({
           $match: { _type: { $in: dto.type } },
-        }); 
+        });
       }
 
       if (dto.workStatus.length > 0) {
@@ -2108,7 +2139,6 @@ if(dto.isProductGenerated != null){
         );
       }
 
-
       if (dto.screenType.includes(145)) {
         arrayAggregation.push(
           {
@@ -2137,7 +2167,6 @@ if(dto.isProductGenerated != null){
           },
         );
       }
-
 
       if (dto.screenType.includes(120)) {
         const orderSaleShopOrderHeadPipeline = () => {
@@ -6011,13 +6040,12 @@ if(dto.isProductGenerated != null){
         );
       }
 
-
       arrayAggregation.push(
         {
           $lookup: {
             from: ModelNames.ORDER_SALES_MAIN,
             let: { orderId: '$_orderSaleId' },
-            pipeline:[
+            pipeline: [
               {
                 $match: {
                   _status: 1,
@@ -6026,7 +6054,7 @@ if(dto.isProductGenerated != null){
               },
               {
                 $match: {
-                  _workStatus: {$nin:[2,27]},
+                  _workStatus: { $nin: [2, 27] },
                 },
               },
               {
@@ -6042,9 +6070,6 @@ if(dto.isProductGenerated != null){
           $match: { mongoCheckOrderSaleStatus: { $ne: [] } },
         },
       );
-
-
-
 
       arrayAggregation.push({
         $match: {
@@ -6249,94 +6274,76 @@ if(dto.isProductGenerated != null){
             );
           }
 
-
-
-
-
-          
-          
-        if (dto.screenType.includes(123)) {
-          const isorderSaleMainOHPipeline = () => {
-            const pipeline = [];
-            pipeline.push(
-              {
-                $match: {
-                  $expr: { $eq: ['$_id', '$$osOhId'] },
-                },
-              },
-
-              new ModelWeightResponseFormat().userTableResponseFormat(
-                1230,
-                dto.responseFormat,
-              ),
-            );
-
-            const isorderSaleMainShopOHPopulate =
-              dto.screenType.includes(124);
-            if (isorderSaleMainShopOHPopulate) {
+          if (dto.screenType.includes(123)) {
+            const isorderSaleMainOHPipeline = () => {
+              const pipeline = [];
               pipeline.push(
                 {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: {
-                            $eq: ['$_id', '$$globalGalleryId'],
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$osOhId'] },
+                  },
+                },
+
+                new ModelWeightResponseFormat().userTableResponseFormat(
+                  1230,
+                  dto.responseFormat,
+                ),
+              );
+
+              const isorderSaleMainShopOHPopulate =
+                dto.screenType.includes(124);
+              if (isorderSaleMainShopOHPopulate) {
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.GLOBAL_GALLERIES,
+                      let: { globalGalleryId: '$_globalGalleryId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: {
+                              $eq: ['$_id', '$$globalGalleryId'],
+                            },
                           },
                         },
-                      },
 
-                      new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
-                        1240,
-                        dto.responseFormat,
-                      ),
-                    ],
-                    as: 'globalGalleryDetails',
+                        new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                          1240,
+                          dto.responseFormat,
+                        ),
+                      ],
+                      as: 'globalGalleryDetails',
+                    },
                   },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
+                  {
+                    $unwind: {
+                      path: '$globalGalleryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
                   },
+                );
+              }
+
+              return pipeline;
+            };
+
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.USER,
+                  let: { osOhId: '$_orderHeadId' },
+                  pipeline: isorderSaleMainOHPipeline(),
+                  as: 'orderHeadDetails',
                 },
-              );
-            }
-
-            return pipeline;
-          };
-
-          pipeline.push(
-            {
-              $lookup: {
-                from: ModelNames.USER,
-                let: { osOhId: '$_orderHeadId' },
-                pipeline: isorderSaleMainOHPipeline(),
-                as: 'orderHeadDetails',
               },
-            },
-            {
-              $unwind: {
-                path: '$orderHeadDetails',
-                preserveNullAndEmptyArrays: true,
+              {
+                $unwind: {
+                  path: '$orderHeadDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
               },
-            },
-          );
-        }
-
-
-
-
-
-
-
-
-
-
-
-
+            );
+          }
 
           const isorderSaleMainShopPopulate = dto.screenType.includes(104);
           if (isorderSaleMainShopPopulate) {
@@ -8887,7 +8894,7 @@ if(dto.isProductGenerated != null){
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
- 
+
       await this.orderSaleMainModel.findOneAndUpdate(
         {
           _id: dto.ordersaleId,
@@ -8895,8 +8902,8 @@ if(dto.isProductGenerated != null){
         {
           $set: {
             _workStatus: 1,
-            _reworkRootCauseId:dto.reworkRootcauseId,
-            _reworkDescription:dto.reworkRootcauseDescription,
+            _reworkRootCauseId: dto.reworkRootcauseId,
+            _reworkDescription: dto.reworkRootcauseDescription,
           },
           $inc: {
             _internalReWorkCount: 1,
@@ -9056,8 +9063,8 @@ if(dto.isProductGenerated != null){
           _isProductGenerated: orderDetails[0]._isProductGenerated,
           _type: orderDetails[0]._type,
 
-          _reworkRootCauseId:orderDetails[0]._reworkRootCauseId,
-          _reworkDescription:orderDetails[0]._reworkDescription,
+          _reworkRootCauseId: orderDetails[0]._reworkRootCauseId,
+          _reworkDescription: orderDetails[0]._reworkDescription,
           _isHold: orderDetails[0]._isHold,
           _holdDescription: orderDetails[0]._holdDescription,
           _holdRootCause: orderDetails[0]._holdRootCause,
