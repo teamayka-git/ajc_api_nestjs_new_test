@@ -39,7 +39,7 @@ export const ReworkReportsSchema = new mongoose.Schema({
     ref: ModelNames.PROCESS_MASTER,
     default: null,
   },
-  _arisonSetProcessStatus:{ type: Number, required: true, default: -1 },
+  _arisonSetProcessStatus: { type: Number, required: true, default: -1 },
 
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -67,9 +67,9 @@ export interface ReworkReports {
   _arisonUser: String;
   _arisonProcessMaster: String;
   _arisonSetProcessStatus: Number;
-  _orderCreatedDate:Number;
-_orderDueDate:Number;
-_orderUid:String;
+  _orderCreatedDate: Number;
+  _orderDueDate: Number;
+  _orderUid: String;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;

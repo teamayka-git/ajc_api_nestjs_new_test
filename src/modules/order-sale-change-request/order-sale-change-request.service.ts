@@ -552,6 +552,43 @@ export class OrderSaleChangeRequestService {
         { new: true, session: transactionSession },
       );
       if (dto.proceedOrder == 0) {
+        var arrayToRejectedCancelReport = [];
+        var resultOrderStatusCheck = await this.orderSaleMainModel.find({
+          _id: dto.orderSaleId,
+        });
+
+        if (resultOrderStatusCheck.length == 0) {
+          throw new HttpException(
+            'Order not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        arrayToRejectedCancelReport.push({
+          _orderId: resultOrderStatusCheck[0]._id,
+          _shop: resultOrderStatusCheck[0]._shopId,
+          _oh: resultOrderStatusCheck[0]._orderHeadId,
+          _rootcause: null,
+          _type: 2,
+          _description: 'Admin rejected amendment',
+          _orderCreatedDate: resultOrderStatusCheck[0]._createdAt,
+          _orderDueDate: resultOrderStatusCheck[0]._dueDate,
+          _orderUid: resultOrderStatusCheck[0]._uid,
+
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
+        });
+
+        await this.orderRejectedCancelReportModel.insertMany(
+          arrayToRejectedCancelReport,
+          {
+            session: transactionSession,
+          },
+        );
+
         await this.orderSaleMainModel.findOneAndUpdate(
           {
             _id: dto.orderSaleId,
