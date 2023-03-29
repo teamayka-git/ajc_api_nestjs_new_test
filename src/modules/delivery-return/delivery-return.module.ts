@@ -12,6 +12,8 @@ import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.m
 import { OrderSaleSetProcessesSchema } from 'src/tableModels/order_sale_set_processes.model';
 import { OrderSalesItemsSchema } from 'src/tableModels/order_sales_items.model';
 import { OrderSalesDocumentsSchema } from 'src/tableModels/order_sales_documents.model';
+import { OrderCancelRejectReportsSchema } from 'src/tableModels/order_cancel_reject_reports.model';
+import { ReworkReportsSchema } from 'src/tableModels/order_rework_reports.model';
 
 @Module({
   imports: [
@@ -25,6 +27,9 @@ import { OrderSalesDocumentsSchema } from 'src/tableModels/order_sales_documents
       { name: ModelNames.ORDER_SALES_DOCUMENTS, schema:OrderSalesDocumentsSchema },
       { name: ModelNames.ORDER_SALE_HISTORIES, schema:OrderSaleHistoriesSchema },
       { name: ModelNames.ORDER_SALE_SET_PROCESSES, schema:OrderSaleSetProcessesSchema },
+      
+      { name: ModelNames.REWORK_REPORTS, schema: ReworkReportsSchema },
+      { name: ModelNames.ORDER_REJECTED_CANCEL_REPORTS, schema: OrderCancelRejectReportsSchema },
     ]),
   ],
   controllers: [DeliveryReturnController],
