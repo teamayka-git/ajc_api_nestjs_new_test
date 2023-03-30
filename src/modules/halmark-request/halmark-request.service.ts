@@ -36,7 +36,7 @@ export class HalmarkRequestService {
 
     @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
     private readonly orderSaleHistoriesModel: mongoose.Model<OrderSaleHistories>,
-    @InjectModel(ModelNames.BRANCHES)
+    @InjectModel(ModelNames.COUNTERS)
     private readonly countersModel: mongoose.Model<Counters>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
