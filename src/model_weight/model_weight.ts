@@ -455,6 +455,226 @@ export class ModelWeight {
       _status: 1,
     };
   }
+
+  public hmBundleTableLight(): Object {
+    return {
+      _id: 1,
+      _hmCenter: 1,
+      _uid: 1,
+      _workStatus: 1,
+      _status: 1,
+    };
+  }
+  public hmBundleTableMinimum(): Object {
+    return {
+      _id: 1,
+      _hmCenter: 1,
+      _uid: 1,
+      _workStatus: 1,
+      _acceptedAt: 1,
+      _finishedAt: 1,
+      _rootCause: 1,
+      _rootCauseId: 1,
+    };
+  }
+  public hmBundleTableMedium(): Object {
+    return {
+      _id: 1,
+      _hmCenter: 1,
+      _uid: 1,
+      _workStatus: 1,
+      _acceptedAt: 1,
+      _finishedAt: 1,
+      _rootCause: 1,
+      _rootCauseId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+    };
+  }
+  public hmBundleTableMaximum(): Object {
+    return {
+      _id: 1,
+      _hmCenter: 1,
+      _uid: 1,
+      _workStatus: 1,
+      _acceptedAt: 1,
+      _finishedAt: 1,
+      _rootCause: 1,
+      _rootCauseId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+  public hmMainTableLight(): Object {
+    return {
+      _id: 1,
+      _hmBundleId: 1,
+      _orderUid: 1,
+      _orderSaleMainId: 1,
+      _status: 1,
+    };
+  }
+  public hmMainTableMinimum(): Object {
+    return {
+      _id: 1,
+      _hmBundleId: 1,
+      _orderUid: 1,
+      _orderSaleMainId: 1,
+      _workStatus: 1,
+      _type: 1,
+      _createdUserId: 1,
+      _updatedUserId: 1,
+    };
+  }
+  public hmMainTableMedium(): Object {
+    return {
+      _id: 1,
+      _hmBundleId: 1,
+      _orderUid: 1,
+      _orderSaleMainId: 1,
+      _workStatus: 1,
+      _type: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedAt: 1,
+      _updatedUserId: 1,
+      _status: 1,
+    };
+  }
+  public hmMainTableMaximum(): Object {
+    return {
+      _id: 1,
+      _hmBundleId: 1,
+      _orderUid: 1,
+      _orderSaleMainId: 1,
+      _workStatus: 1,
+      _type: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedAt: 1,
+      _updatedUserId: 1,
+      _status: 1,
+    };
+  }
+
+  public hmMainItemsTableLight(): Object {
+    return {
+      _id: 1,
+      _orderSaleId: 1,
+      _hmMainId: 1,
+      _orderSaleItemId: 1,
+      _status: 1,
+    };
+  }
+  public hmMainItemsTableMinimum(): Object {
+    return {
+      _id: 1,
+      _orderSaleId: 1,
+      _hmMainId: 1,
+      _orderSaleItemId: 1,
+      _status: 1,
+      _subCategoryId: 1,
+      _huid: 1,
+      _weight: 1,
+      _type: 1,
+      _createdUserId: 1,
+      _updatedUserId: 1,
+    };
+  }
+  public hmMainItemsTableMedium(): Object {
+    return {
+      _id: 1,
+      _orderSaleId: 1,
+      _hmMainId: 1,
+      _orderSaleItemId: 1,
+      _subCategoryId: 1,
+      _huid: 1,
+      _weight: 1,
+      _type: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+  public hmMainItemsTableMaximum(): Object {
+    return {
+      _id: 1,
+      _orderSaleId: 1,
+      _hmMainId: 1,
+      _orderSaleItemId: 1,
+      _subCategoryId: 1,
+      _huid: 1,
+      _weight: 1,
+      _type: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+  public hmCenterTableLight(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _uid: 1,
+      _cityId: 1,
+      _status: 1,
+    };
+  }
+  public hmCenterTableMinimum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _uid: 1,
+      _cityId: 1,
+      _address: 1,
+      _mobile: 1,
+      _status: 1,
+    };
+  }
+  public hmCenterTableMedium(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _uid: 1,
+      _cityId: 1,
+      _address: 1,
+      _mobile: 1,
+      _ahcNo: 1,
+      _location: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+
+      _status: 1,
+    };
+  }
+  public hmCenterTableMaximum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _uid: 1,
+      _cityId: 1,
+      _address: 1,
+      _mobile: 1,
+      _ahcNo: 1,
+      _location: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
   public processMasterTableLight(): Object {
     return {
       _id: 1,
@@ -1732,7 +1952,7 @@ export class ModelWeight {
       _hmSealingStatus: 1,
       _designUid: 1,
       _huId: 1,
-      _soldCount:1,
+      _soldCount: 1,
       _stockStatus: 1,
       _eCommerceStatus: 1,
       _designerId: 1,
@@ -1755,7 +1975,7 @@ export class ModelWeight {
       _grossWeight: 1,
       _barcode: 1,
       _stockStatus: 1,
-      _soldCount:1,
+      _soldCount: 1,
       _categoryId: 1,
       _subCategoryId: 1,
       _designUid: 1,
@@ -1782,7 +2002,7 @@ export class ModelWeight {
       _grossWeight: 1,
       _barcode: 1,
       _stockStatus: 1,
-      _soldCount:1,
+      _soldCount: 1,
       _categoryId: 1,
       _subCategoryId: 1,
       _designUid: 1,

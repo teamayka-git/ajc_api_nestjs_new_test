@@ -110,6 +110,7 @@ import { AccountLedgerModule } from './modules/account-ledger/account-ledger.mod
 import { AccountJournalModule } from './modules/account-journal/account-journal.module';
 import { AccountBranchModule } from './modules/account-branch/account-branch.module';
 import { AccountCurrencyModule } from './modules/account-currency/account-currency.module';
+import { HalmarkRequestModule } from './modules/halmark-request/halmark-request.module';
 
 
 @Module({
@@ -236,6 +237,7 @@ import { AccountCurrencyModule } from './modules/account-currency/account-curren
     AccountJournalModule,
     AccountBranchModule,
     AccountCurrencyModule,
+    HalmarkRequestModule,
 
     // SalesReturnRequestStatusesModule,
   ],

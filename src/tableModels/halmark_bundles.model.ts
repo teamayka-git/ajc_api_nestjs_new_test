@@ -91,8 +91,10 @@ function schemaPostFunctionForDuplicate(error, doc, next) {
 }
 /*
 _workStatus:{
-  -1 - pending
-  0 - reject
+  0 - pending
   1 - accept
+  2 - reject
+  3 - completed
+  4 - bypassed
 }
  */

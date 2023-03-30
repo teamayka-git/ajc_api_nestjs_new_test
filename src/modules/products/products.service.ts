@@ -32,6 +32,8 @@ import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { ProductsDocuments } from 'src/tableModels/products_documents.model';
 import { ProductTemps } from 'src/tableModels/product_temps.model';
 import { ModelWeight } from 'src/model_weight/model_weight';
+import { HalmarkOrderItems } from 'src/tableModels/halmark_order_items.model';
+import { HalmarkOrderMain } from 'src/tableModels/halmark_order_mains.model';
 
 @Injectable()
 export class ProductsService {
@@ -59,6 +61,10 @@ export class ProductsService {
     @InjectModel(ModelNames.PHOTOGRAPHER_REQUESTS)
     private readonly photographerRequestModel: Model<PhotographerRequests>,
 
+    @InjectModel(ModelNames.HALMARK_ORDER_MAIN)
+    private readonly halmarkBundlesMainModel: Model<HalmarkOrderMain>,
+    @InjectModel(ModelNames.HALMARK_ORDER_ITEMS)
+    private readonly halmarkBundlesItemsModel: Model<HalmarkOrderItems>,
     @InjectModel(ModelNames.PRODUCT_TEMPS)
     private readonly productTempModel: mongoose.Model<ProductTemps>,
     @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
@@ -196,7 +202,8 @@ export class ProductsService {
 
       console.log('___a2');
       var arrayToProducts = [];
-
+      var arrayToHamarkMains = [];
+      var arrayToHamarkItems = [];
       var arrayStonesLinkings = [];
       var arrayTagLinkings = [];
       var arrayPhotographyRequestIds = [];
@@ -481,7 +488,7 @@ export class ProductsService {
           _shopId: shopId,
           _orderItemId: orderItemId,
           _stockStatus: 0,
-          _soldCount:0,
+          _soldCount: 0,
           _designUid: designUid,
           _netWeight: dto.arrayItems[i].netWeight,
           _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
@@ -537,7 +544,7 @@ export class ProductsService {
             _shopId: null,
             _orderItemId: null,
             _designUid: designUidSecondary,
-            _soldCount:0,
+            _soldCount: 0,
             _netWeight: dto.arrayItems[i].netWeight,
             _totalStoneWeight: dto.arrayItems[i].totalStoneWeight,
             _totalStoneAmount: dto.arrayItems[i].totalStoneAmount,
@@ -683,48 +690,108 @@ export class ProductsService {
         }
 
         if (dto.arrayItems[i].hmSealingStatus == 1 && orderId != null) {
-          // var resultCounterHalmarkRequest =
-          //   await this.counterModel.findOneAndUpdate(
-          //     { _tableName: ModelNames.HALMARKING_REQUESTS },
-          //     {
-          //       $inc: {
-          //         _count: 1,
-          //       },
-          //     },
-          //     { new: true, session: transactionSession },
-          //   );
-          // const halmarkRequestModel = new this.halmarkRequestModel({
-          //   _uid: resultCounterHalmarkRequest._count,
-          //   _orderSaleItemId: orderItemId,
-          //   _productId: productId,
-          //   _halmarkCenterId: null,
-          //   _halmarkCenterUserId: null,
-          //   _verifyUserId: null,
-          //   _requestStatus: 5,
-          //   _rootCauseId: null,
-          //   _description: '',
-          //   _createdUserId: _userId_,
-          //   _createdAt: dateTime,
-          //   _updatedUserId: null,
-          //   _updatedAt: 0,
-          //   _status: 1,
-          // });
-          // await halmarkRequestModel.save({
-          //   session: transactionSession,
-          // });
-          // arrayOrderSaleHistory.push({
-          //   _orderSaleId: dto.orderId,
-          //   _userId: null,
-          //   _type: 8,
-          //   _orderSaleItemId: null,
-          //   _deliveryCounterId: null,
-          //   _deliveryProviderId: null,
-          //   _shopId: null,
-          //   _description: '',
-          //   _createdUserId: _userId_,
-          //   _createdAt: dateTime,
-          //   _status: 1,
-          // });
+          var halmarkMainTableId;
+          var resultOrderHalmarkMain = await this.halmarkBundlesMainModel
+            .find({
+              _orderSaleMainId: orderId,
+              _hmBundleId: null,
+              _workStatus: {$ne:1},
+              _type: 0,
+              _status: 1,
+            })
+            .session(transactionSession);
+          if (resultOrderHalmarkMain.length == 0) {
+            var resultOrder = await this.orderSaleMainModel.find({
+              _id: orderId,
+            });
+            if (resultOrder.length == 0) {
+              throw new HttpException(
+                'Order not found',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+              );
+            }
+
+            halmarkMainTableId = new mongoose.Types.ObjectId();
+            arrayToHamarkMains.push({
+              _id: halmarkMainTableId,
+              _hmBundleId: null,
+              _orderUid: resultOrder[0]._uid,
+              _orderSaleMainId: orderId,
+              _workStatus: 0,
+              _type: 0,
+              _createdUserId: _userId_,
+              _createdAt: dateTime,
+              _updatedUserId: null,
+              _updatedAt: 0,
+              _status: 1,
+            });
+          } else {
+            halmarkMainTableId = resultOrderHalmarkMain[0]._id;
+          }
+
+          arrayToHamarkItems.push({
+            _orderSaleId: orderId,
+            _hmMainId: halmarkMainTableId,
+            _orderSaleItemId: dto.arrayItems[i].orderItemId,
+            _subCategoryId: dto.arrayItems[i].subCategoryId,
+            _huid: '',
+            _weight: dto.arrayItems[i].netWeight,
+            _type: 0,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: 0,
+            _status: 1,
+          });
+
+          var resultOrderItem = await this.orderSaleItemsModel.aggregate([
+            {
+              $match: {
+                _id: new mongoose.Types.ObjectId(dto.arrayItems[i].orderItemId),
+              },
+            },
+
+            {
+              $lookup: {
+                from: ModelNames.SUB_CATEGORIES,
+                let: { subCategoryId: '$_subCategoryId' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$_id', '$$subCategoryId'] },
+                    },
+                  },
+                ],
+                as: 'subCategoryDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$subCategoryDetails',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          ]);
+          if (resultOrderItem.length == 0) {
+            throw new HttpException(
+              'Order item not found',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
+
+          arrayOrderSaleHistory.push({
+            _orderSaleId: dto.orderId,
+            _userId: null,
+            _type: 8,
+            _orderSaleItemId: null,
+            _deliveryCounterId: null,
+            _deliveryProviderId: null,
+            _shopId: null,
+            _description: `UID: ${resultOrderItem[0]._uid}, qty:${resultOrderItem[0]._quantity}, wt:${resultOrderItem[0]._weight}, SubCategory:${resultOrderItem[0].subCategoryDetails._name} `,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _status: 1,
+          });
         }
       }
 
@@ -744,7 +811,16 @@ export class ProductsService {
           { new: true, session: transactionSession },
         );
       }
-
+      if (arrayToHamarkMains.length != 0) {
+        await this.halmarkBundlesMainModel.insertMany(arrayToHamarkMains, {
+          session: transactionSession,
+        });
+      }
+      if (arrayToHamarkItems.length != 0) {
+        await this.halmarkBundlesItemsModel.insertMany(arrayToHamarkItems, {
+          session: transactionSession,
+        });
+      }
       var result1 = await this.productModel.insertMany(arrayToProducts, {
         session: transactionSession,
       });
@@ -1295,7 +1371,6 @@ export class ProductsService {
         });
       }
 
-
       if (dto.subTagIds.length > 0) {
         var newSettingsId = [];
         dto.subTagIds.map((mapItem) => {
@@ -1308,7 +1383,10 @@ export class ProductsService {
               let: { productId: '$_id' },
               pipeline: [
                 {
-                  $match: {_status:1, $expr: { $eq: ['$_productId', '$$productId'] } },
+                  $match: {
+                    _status: 1,
+                    $expr: { $eq: ['$_productId', '$$productId'] },
+                  },
                 },
                 {
                   $match: {
@@ -1328,13 +1406,6 @@ export class ProductsService {
             $match: { subTagLinkingsMongoCheck: { $ne: [] } },
           },
         );
-      
-      
-      
-      
-      
-      
-      
       }
       if (dto.tagIds.length > 0) {
         var newSettingsId = [];
@@ -1348,7 +1419,10 @@ export class ProductsService {
               let: { productId: '$_id' },
               pipeline: [
                 {
-                  $match: {_status:1, $expr: { $eq: ['$_productId', '$$productId'] } },
+                  $match: {
+                    _status: 1,
+                    $expr: { $eq: ['$_productId', '$$productId'] },
+                  },
                 },
                 {
                   $lookup: {
@@ -1356,7 +1430,10 @@ export class ProductsService {
                     let: { tagId: '$_tagId' },
                     pipeline: [
                       {
-                        $match: {_status:1, $expr: { $eq: ['$_tagId', '$$tagId'] } },
+                        $match: {
+                          _status: 1,
+                          $expr: { $eq: ['$_tagId', '$$tagId'] },
+                        },
                       },
                       {
                         $match: {
@@ -1372,7 +1449,7 @@ export class ProductsService {
                     as: 'tagLinkingsMongoCheckSecond',
                   },
                 },
-                
+
                 {
                   $match: { tagLinkingsMongoCheckSecond: { $ne: [] } },
                 },
@@ -1389,15 +1466,7 @@ export class ProductsService {
             $match: { subTagLinkingsMongoCheckSecond: { $ne: [] } },
           },
         );
-      
-      
-      
-      
-      
-      
-      
       }
-      
 
       if (dto.moldNumbers.length > 0) {
         arrayAggregation.push({
@@ -1410,7 +1479,6 @@ export class ProductsService {
           $match: { _designUid: { $in: dto.designUids } },
         });
       }
-
 
       if (dto.createdDateStart != -1) {
         arrayAggregation.push({
@@ -1428,8 +1496,6 @@ export class ProductsService {
         });
       }
 
-
-      
       if (dto.netWeightStart != -1) {
         arrayAggregation.push({
           $match: {
@@ -1445,9 +1511,6 @@ export class ProductsService {
           },
         });
       }
-
-
-
 
       if (dto.barcodes.length > 0) {
         arrayAggregation.push({
@@ -1660,16 +1723,16 @@ export class ProductsService {
             $sort: { _huId: dto.sortOrder, _id: dto.sortOrder },
           });
           break;
-          case 9:
-            arrayAggregation.push({
-              $sort: { _eCommerceStatus: dto.sortOrder, _id: dto.sortOrder },
-            });
-            break;
-            case 10:
-              arrayAggregation.push({
-                $sort: { _soldCount: dto.sortOrder, _id: dto.sortOrder },
-              });
-              break;
+        case 9:
+          arrayAggregation.push({
+            $sort: { _eCommerceStatus: dto.sortOrder, _id: dto.sortOrder },
+          });
+          break;
+        case 10:
+          arrayAggregation.push({
+            $sort: { _soldCount: dto.sortOrder, _id: dto.sortOrder },
+          });
+          break;
       }
       if (dto.skip != -1) {
         arrayAggregation.push({ $skip: dto.skip });
@@ -2733,7 +2796,7 @@ export class ProductsService {
           _groupId: resultProductTempGet[i]._groupId,
           _type: resultProductTempGet[i]._type,
           _stockStatus: 1,
-          _soldCount:0,
+          _soldCount: 0,
           _purity: resultProductTempGet[i]._purity,
           _hmSealingStatus: resultProductTempGet[i]._hmSealingStatus,
           _totalStoneWeight: resultProductTempGet[i]._totalStoneWeight,
