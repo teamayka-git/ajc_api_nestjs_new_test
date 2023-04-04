@@ -236,6 +236,56 @@ export class PurchaseBookingService {
         });
       }
 
+
+
+
+
+      if (dto.invoiceUids.length > 0) {
+      
+        
+
+
+
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.INVOICES,
+              let: { invoiceId: '$_invoiceId' },
+              pipeline: [
+                {
+                  $match: {
+                    _uid: { $in: dto.invoiceUids },
+                    $expr: { $eq: ['$_id', '$$invoiceId'] },
+                  },
+                },
+                {
+                  $project: {
+                    _id: 1,
+                  },
+                },
+              ],
+              as: 'mongoCheckInvUid',
+            },
+          },
+          {
+            $match: { mongoCheckInvUid: { $ne: [] } },
+          },
+        );
+
+
+
+
+      }
+
+
+
+
+
+
+
+
+
+
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {
         case 0:

@@ -136,6 +136,11 @@ export class PurchaseBookingListDto {
 
   @IsArray()
   @ApiProperty({ type: [String] })
+  invoiceUids: string[];
+
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
   shopIds: string[];
 
 
