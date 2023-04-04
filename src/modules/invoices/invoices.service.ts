@@ -184,6 +184,7 @@ export class InvoicesService {
             _bookingWeight: mapItem.bookingWeight,
             _bookingRate: mapItem.bookingRate,
             _bookingAmount: mapItem.bookingAmount,
+            _ref:"",
             _groupId: mapItem.groupId == '' ? null : mapItem.groupId,
             _uid:
               resultCounterPurchaseBooking._count -

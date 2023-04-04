@@ -1517,6 +1517,7 @@ export class ModelWeight {
       _id: 1,
       _uid: 1,
       _isPurchaseOrgerGenerated: 1,
+      _ref:1,
     };
   }
   public purchaseBookingTableMinimum(): Object {
@@ -1525,6 +1526,7 @@ export class ModelWeight {
       _invoiceId: 1,
       _groupId: 1,
       _uid: 1,
+      _ref:1,
       _supplierUserId: 1,
       _shopId: 1,
       _createdUserId: 1,
@@ -1539,6 +1541,7 @@ export class ModelWeight {
       _bookingAmount: 1,
       _groupId: 1,
       _uid: 1,
+      _ref:1,
       _supplierUserId: 1,
       _shopId: 1,
       _bookingThrough: 1,
@@ -1558,6 +1561,7 @@ export class ModelWeight {
       _uid: 1,
       _supplierUserId: 1,
       _shopId: 1,
+      _ref:1,
       _bookingThrough: 1,
       _isPurchaseOrgerGenerated: 1,
       _createdUserId: 1,

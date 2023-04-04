@@ -49,6 +49,7 @@ export class PurchaseBookingService {
           _bookingRate: mapItem.bookingRate,
           _bookingAmount: mapItem.bookingAmount,
           _groupId: mapItem.groupId == '' ? null : mapItem.groupId,
+          _ref: mapItem.referenceNumber,
           _uid:
             resultCounterPurchaseBooking._count -
             dto.array.length +

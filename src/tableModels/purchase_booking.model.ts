@@ -18,6 +18,7 @@ export const PurchaseBookingSchema = new mongoose.Schema({
     default: null,
   },
   _uid: { type: String, required: true, default: 'nil' },
+  _ref: { type: String, required: false, default: '' },
   _supplierUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.USER,
@@ -58,6 +59,7 @@ export interface PurchaseBooking {
   _shopId: String;
   _bookingThrough: Number;
   _isPurchaseOrgerGenerated: Number;
+  _ref:String;
 
   _createdUserId: String;
   _createdAt: Number;
@@ -66,6 +68,7 @@ export interface PurchaseBooking {
   _status: Number;
 }
 
+PurchaseBookingSchema.index({ _ref: 1 });
 PurchaseBookingSchema.index({ _invoiceId: 1 });
 PurchaseBookingSchema.index({ _bookingWeight: 1 });
 PurchaseBookingSchema.index({ _bookingRate: 1 });

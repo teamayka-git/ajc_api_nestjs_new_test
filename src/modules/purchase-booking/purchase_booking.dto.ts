@@ -43,10 +43,15 @@ const descriptionListSortType = '0-Created Date, 1-Status,2-Is Puchase Generated
     bookingAmount: number;
   
     
-  @IsString()
-  @ApiProperty({})
-  groupId: string;
+    @IsString()
+    @ApiProperty({})
+    groupId: string;
 
+    
+    @IsString()
+    @ApiProperty({})
+    referenceNumber: string;
+    
   @IsString()
   @ApiProperty({})
   supplierUserId: string;
