@@ -58,7 +58,7 @@ export class PurchaseBookingService {
             mapItem.supplierUserId == '' ? null : mapItem.supplierUserId,
           _shopId: mapItem.shopId == '' ? null : mapItem.shopId,
           _bookingThrough: mapItem.bookingThrough,
-          _isPurchaseOrgerGenerated: mapItem.isPurchaseGenerated,
+          _isPurchaseOrderGenerated: mapItem.isPurchaseGenerated,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
@@ -231,7 +231,7 @@ export class PurchaseBookingService {
       if (dto.isPurchaseOrgerGenerated.length != 0) {
         arrayAggregation.push({
           $match: {
-            _isPurchaseOrgerGenerated: { $in: dto.isPurchaseOrgerGenerated },
+            _isPurchaseOrderGenerated: { $in: dto.isPurchaseOrgerGenerated },
           },
         });
       }
@@ -299,7 +299,7 @@ export class PurchaseBookingService {
         case 2:
           arrayAggregation.push({
             $sort: {
-              _isPurchaseOrgerGenerated: dto.sortOrder,
+              _isPurchaseOrderGenerated: dto.sortOrder,
               _id: dto.sortOrder,
             },
           });

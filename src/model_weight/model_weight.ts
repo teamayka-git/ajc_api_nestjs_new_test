@@ -1516,7 +1516,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _uid: 1,
-      _isPurchaseOrgerGenerated: 1,
+      _isPurchaseOrderGenerated: 1,
       _ref:1,
     };
   }
@@ -1545,7 +1545,7 @@ export class ModelWeight {
       _supplierUserId: 1,
       _shopId: 1,
       _bookingThrough: 1,
-      _isPurchaseOrgerGenerated: 1,
+      _isPurchaseOrderGenerated: 1,
       _createdUserId: 1,
       _createdAt: 1,
     };
@@ -1563,7 +1563,7 @@ export class ModelWeight {
       _shopId: 1,
       _ref:1,
       _bookingThrough: 1,
-      _isPurchaseOrgerGenerated: 1,
+      _isPurchaseOrderGenerated: 1,
       _createdUserId: 1,
       _createdAt: 1,
       _updatedUserId: 1,

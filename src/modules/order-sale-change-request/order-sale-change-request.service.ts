@@ -763,7 +763,7 @@ export class OrderSaleChangeRequestService {
         case 2:
           arrayAggregation.push({
             $sort: {
-              _isPurchaseOrgerGenerated: dto.sortOrder,
+              _isPurchaseOrderGenerated: dto.sortOrder,
               _id: dto.sortOrder,
             },
           });

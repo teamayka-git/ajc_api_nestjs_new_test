@@ -196,7 +196,7 @@ export class InvoicesService {
               mapItem.supplierUserId == '' ? null : mapItem.supplierUserId,
             _shopId: mapItem.customerId == '' ? null : mapItem.customerId,
             _bookingThrough: 0,
-            _isPurchaseOrgerGenerated: false,
+            _isPurchaseOrderGenerated: false,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _updatedUserId: null,
