@@ -111,6 +111,7 @@ import { AccountJournalModule } from './modules/account-journal/account-journal.
 import { AccountBranchModule } from './modules/account-branch/account-branch.module';
 import { AccountCurrencyModule } from './modules/account-currency/account-currency.module';
 import { HalmarkRequestModule } from './modules/halmark-request/halmark-request.module';
+import { UsersModule } from './modules/users/users.module';
 
 
 @Module({
@@ -238,6 +239,7 @@ import { HalmarkRequestModule } from './modules/halmark-request/halmark-request.
     AccountBranchModule,
     AccountCurrencyModule,
     HalmarkRequestModule,
+    UsersModule,
 
     // SalesReturnRequestStatusesModule,
   ],
