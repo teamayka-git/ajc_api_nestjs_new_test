@@ -236,16 +236,7 @@ export class PurchaseBookingService {
         });
       }
 
-
-
-
-
       if (dto.invoiceUids.length > 0) {
-      
-        
-
-
-
         arrayAggregation.push(
           {
             $lookup: {
@@ -271,20 +262,7 @@ export class PurchaseBookingService {
             $match: { mongoCheckInvUid: { $ne: [] } },
           },
         );
-
-
-
-
       }
-
-
-
-
-
-
-
-
-
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {
@@ -445,6 +423,34 @@ export class PurchaseBookingService {
           {
             $unwind: {
               path: '$invoiceDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.includes(105)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { userId: '$_createdUserId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$userId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().userTableResponseFormat(
+                  1050,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'createdUserDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$createdUserDetails',
               preserveNullAndEmptyArrays: true,
             },
           },
