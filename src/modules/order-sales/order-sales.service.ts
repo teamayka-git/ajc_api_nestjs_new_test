@@ -9022,16 +9022,19 @@ export class OrderSalesService {
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
+      var resultSetProcess=[];
+if(dto.currentSetprocessId!=""){
+  resultSetProcess = await this.orderSaleSetProcessModel.find({
+    _id: dto.currentSetprocessId,
+  });
+  if (resultSetProcess.length == 0) {
+    throw new HttpException(
+      'Set process not found',
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
+  }
 
-      var resultSetProcess = await this.orderSaleSetProcessModel.find({
-        _id: dto.currentSetprocessId,
-      });
-      if (resultSetProcess.length == 0) {
-        throw new HttpException(
-          'Set process not found',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+}
 
       const reworkReportModelObject = new this.reworkReportModel({
         _orderId: dto.ordersaleId,
@@ -9045,9 +9048,10 @@ export class OrderSalesService {
 
         _type: 0,
         _description: dto.reworkRootcauseDescription,
-        _arisonUser: resultSetProcess[0]._userId,
-        _arisonProcessMaster: resultSetProcess[0]._processId,
-        _arisonSetProcessStatus: resultSetProcess[0]._orderStatus,
+        // _arisonUser:(dto.currentSetprocessId!="")? resultSetProcess[0]._userId:_userId_ ,
+        _arisonUser: resultSetProcess[0]?._userId || _userId_ ,
+        _arisonProcessMaster: resultSetProcess[0]?._processId || null,
+        _arisonSetProcessStatus: resultSetProcess[0]?._orderStatus || -1,
         _createdUserId: _userId_,
         _createdAt: dateTime,
         _updatedUserId: null,
