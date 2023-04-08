@@ -1212,6 +1212,18 @@ export class OrderRejectCancelReportDto {
   @ApiProperty({})
   orderDueDateEnd: number;
 
+
+
+  @IsNumber()
+  @ApiProperty({})
+  rejectedDateStart: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  rejectedDateEnd: number;
+
+
+
   @IsString()
   @ApiProperty({})
   searchingText: string;

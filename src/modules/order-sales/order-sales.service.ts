@@ -9747,6 +9747,24 @@ export class OrderSalesService {
         });
       }
 
+
+      
+      if (dto.rejectedDateStart != -1) {
+        arrayAggregation.push({
+          $match: {
+            _createdAt: { $gte: dto.rejectedDateStart },
+          },
+        });
+      }
+
+      if (dto.rejectedDateEnd != -1) {
+        arrayAggregation.push({
+          $match: {
+            _createdAt: { $lte: dto.rejectedDateEnd },
+          },
+        });
+      }
+
       if (dto.orderDueDateStart != -1) {
         arrayAggregation.push({
           $match: {
