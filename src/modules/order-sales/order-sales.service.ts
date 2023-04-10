@@ -9350,6 +9350,22 @@ if(dto.currentSetprocessId!=""){
         });
       }
 
+      if (dto.createdDateStart != -1) {
+        arrayAggregation.push({
+          $match: {
+            _createdAt: { $gte: dto.createdDateStart },
+          },
+        });
+      }
+
+      if (dto.createdDateEnd != -1) {
+        arrayAggregation.push({
+          $match: {
+            _createdAt: { $lte: dto.createdDateEnd },
+          },
+        });
+      }
+
       if (dto.orderCreatedDateStart != -1) {
         arrayAggregation.push({
           $match: {

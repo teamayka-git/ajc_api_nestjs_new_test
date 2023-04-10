@@ -1128,6 +1128,14 @@ export class RworkReportDto {
   @ApiProperty({})
   orderDueDateEnd: number;
 
+  @IsNumber()
+  @ApiProperty({})
+  createdDateStart: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  createdDateEnd: number;
+
   @IsString()
   @ApiProperty({})
   searchingText: string;
