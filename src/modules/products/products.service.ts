@@ -1371,7 +1371,7 @@ export class ProductsService {
         });
       }
 
-      if (dto.subTagIds.length > 0) {
+      if (dto.subTagIds!=null&& dto.subTagIds.length > 0) {
         var newSettingsId = [];
         dto.subTagIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
@@ -1407,7 +1407,7 @@ export class ProductsService {
           },
         );
       }
-      if (dto.tagIds.length > 0) {
+      if (dto.tagIds!=null&&dto.tagIds.length > 0) {
         var newSettingsId = [];
         dto.tagIds.map((mapItem) => {
           newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
@@ -1468,13 +1468,13 @@ export class ProductsService {
         );
       }
       console.log("____product list 1");
-      if (dto.moldNumbers.length > 0) {
+      if (dto.moldNumbers!=null&&dto.moldNumbers.length > 0) {
         arrayAggregation.push({
           $match: { _moldNumber: { $in: dto.moldNumbers } },
         });
       }
 
-      if (dto.designUids.length > 0) {
+      if (dto.designUids!=null&&dto.designUids.length > 0) {
         arrayAggregation.push({
           $match: { _designUid: { $in: dto.designUids } },
         });
