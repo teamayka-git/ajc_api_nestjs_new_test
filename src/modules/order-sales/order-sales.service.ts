@@ -9049,7 +9049,7 @@ if(dto.currentSetprocessId!=""){
         _type: 0,
         _description: dto.reworkRootcauseDescription,
         // _arisonUser:(dto.currentSetprocessId!="")? resultSetProcess[0]._userId:_userId_ ,
-        _arisonUser: resultSetProcess[0]?._userId || _userId_ ,
+        _arisonUser: resultSetProcess[0]?._userId || null ,
         _arisonProcessMaster: resultSetProcess[0]?._processId || null,
         _arisonSetProcessStatus: resultSetProcess[0]?._orderStatus || -1,
         _createdUserId: _userId_,
