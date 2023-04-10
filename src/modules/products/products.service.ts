@@ -1467,7 +1467,7 @@ export class ProductsService {
           },
         );
       }
-
+      console.log("____product list 1");
       if (dto.moldNumbers.length > 0) {
         arrayAggregation.push({
           $match: { _moldNumber: { $in: dto.moldNumbers } },
@@ -1487,7 +1487,7 @@ export class ProductsService {
           },
         });
       }
-
+      console.log("____product list 2");
       if (dto.createdDateEnd != -1) {
         arrayAggregation.push({
           $match: {
@@ -1503,7 +1503,7 @@ export class ProductsService {
           },
         });
       }
-
+      console.log("____product list 3");
       if (dto.netWeightEnd != -1) {
         arrayAggregation.push({
           $match: {
@@ -1530,7 +1530,7 @@ export class ProductsService {
           $match: { _isStone: { $in: dto.isStone } },
         });
       }
-
+      console.log("____product list 4");
       if (dto.type.length > 0) {
         arrayAggregation.push({
           $match: { _type: { $in: dto.type } },
@@ -1552,8 +1552,7 @@ export class ProductsService {
           $match: { _hmSealingStatus: { $in: dto.hmStealingStatus } },
         });
       }
-
-      console.log('____q4');
+      console.log("____product list 5");
       if (
         dto.cityIds.length != 0 ||
         dto.relationshipManagerIds.length != 0 ||
@@ -1621,7 +1620,7 @@ export class ProductsService {
         );
       }
 
-      console.log('____q5');
+      console.log("____product list 6");
       if (dto.orderSaleUids.length != 0) {
         arrayAggregation.push(
           {
@@ -1677,7 +1676,7 @@ export class ProductsService {
         );
       }
 
-      console.log('____q6');
+      console.log("____product list 7");
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {
         case 0:
@@ -1738,8 +1737,7 @@ export class ProductsService {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
-
-      console.log('____q7');
+      console.log("____product list 8");
       arrayAggregation.push(
         new ModelWeightResponseFormat().productTableResponseFormat(
           0,
@@ -1813,8 +1811,7 @@ export class ProductsService {
           },
         );
       }
-
-      console.log('____q8');
+      console.log("____product list 8");
       if (dto.screenType.includes(101)) {
         const orderSaleItemPipeline = () => {
           const pipeline = [];
@@ -1954,7 +1951,7 @@ export class ProductsService {
         );
       }
 
-      console.log('____q9');
+      console.log("____product list 9");
       if (dto.screenType.includes(102)) {
         arrayAggregation.push(
           {
@@ -1985,6 +1982,7 @@ export class ProductsService {
           },
         );
       }
+      console.log("____product list 10");
       if (dto.screenType.includes(103)) {
         arrayAggregation.push(
           {
@@ -2015,7 +2013,7 @@ export class ProductsService {
           },
         );
       }
-
+      console.log("____product list 11");
       if (dto.screenType.includes(104)) {
         arrayAggregation.push(
           {
@@ -2046,8 +2044,7 @@ export class ProductsService {
           },
         );
       }
-
-      console.log('____q10');
+      console.log("____product list 11");
       if (dto.screenType.includes(105)) {
         const productStoneLinkingPipeline = () => {
           const pipeline = [];
@@ -2175,8 +2172,7 @@ export class ProductsService {
           },
         });
       }
-
-      console.log('____q11');
+      console.log("____product list 12");
       if (dto.screenType.includes(106)) {
         const productDocumentsLinkingPipeline = () => {
           const pipeline = [];
@@ -2236,8 +2232,7 @@ export class ProductsService {
           },
         });
       }
-
-      console.log('____q12');
+      console.log("____product list 12");
       if (dto.screenType.includes(115)) {
         const productTagsLinkingPipeline = () => {
           const pipeline = [];
@@ -2360,8 +2355,7 @@ export class ProductsService {
           },
         });
       }
-
-      console.log('____q13');
+      console.log("____product list 13");
       if (dto.screenType.includes(118)) {
         const designDocumentsLinkingPipeline = () => {
           const pipeline = [];
@@ -2457,7 +2451,7 @@ export class ProductsService {
           },
         );
       }
-
+      console.log("____product list 14");
       if (dto.screenType.includes(121)) {
         arrayAggregation.push({
           $lookup: {
@@ -2478,13 +2472,11 @@ export class ProductsService {
           },
         });
       }
-
-      console.log('____q14');
+      console.log("____product list 15");
       var result = await this.productModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
-
-      console.log('____q15');
+        console.log("____product list 16");
 
       var totalCount = 0;
       if (dto.screenType.includes(0)) {
@@ -2512,9 +2504,7 @@ export class ProductsService {
           totalCount = resultTotalCount[0].totalCount;
         }
       }
-
-      console.log('____q16');
-      console.log('____q17 _-------------------- sending start');
+      console.log("____product list 17");
       const responseJSON = {
         message: 'success',
         data: { list: result, totalCount: totalCount },
