@@ -2472,7 +2472,7 @@ export class ProductsService {
           },
         });
       }
-      console.log("____product list 15");
+      console.log("____product list 15    "+JSON.stringify(arrayAggregation));
       var result = await this.productModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
