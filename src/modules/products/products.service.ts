@@ -1480,7 +1480,7 @@ export class ProductsService {
         });
       }
 
-      if (dto.createdDateStart != -1) {
+      if (dto.createdDateStart !=null &&dto.createdDateStart != -1) {
         arrayAggregation.push({
           $match: {
             _createdAt: { $gte: dto.createdDateStart },
@@ -1488,7 +1488,7 @@ export class ProductsService {
         });
       }
       console.log("____product list 2");
-      if (dto.createdDateEnd != -1) {
+      if (dto.createdDateEnd !=null&&dto.createdDateEnd != -1) {
         arrayAggregation.push({
           $match: {
             _createdAt: { $lte: dto.createdDateEnd },
@@ -1496,7 +1496,7 @@ export class ProductsService {
         });
       }
 
-      if (dto.netWeightStart != -1) {
+      if (dto.netWeightStart                            !=null && dto.netWeightStart != -1) {
         arrayAggregation.push({
           $match: {
             _netWeight: { $gte: dto.netWeightStart },
@@ -1504,7 +1504,7 @@ export class ProductsService {
         });
       }
       console.log("____product list 3");
-      if (dto.netWeightEnd != -1) {
+      if (dto.netWeightEnd!=null && dto.netWeightEnd != -1) {
         arrayAggregation.push({
           $match: {
             _netWeight: { $lte: dto.netWeightEnd },
