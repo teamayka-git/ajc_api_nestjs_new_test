@@ -707,12 +707,10 @@ export class InvoicesService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      arrayAggregation.push({
-        $project: new ModelWeightResponseFormat().invoiceTableResponseFormat(
-          0,
-          dto.responseFormat,
-        ),
-      });
+      arrayAggregation.push(new ModelWeightResponseFormat().invoiceTableResponseFormat(
+        0,
+        dto.responseFormat,
+      ));
 
       if (dto.screenType.includes(100)) {
         const userPipeline = () => {
