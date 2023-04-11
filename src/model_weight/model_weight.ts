@@ -114,6 +114,13 @@ export class ModelWeight {
       _status: 1,
     };
   }
+  public invoiceItemsTableCustom1(): Object {
+    return {
+      _id: 1,
+      _invoiceId: 1,
+      
+    };
+  }
   public invoiceTableLight(): Object {
     return {
       _id: 1,

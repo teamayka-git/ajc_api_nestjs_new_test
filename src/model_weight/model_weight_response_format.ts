@@ -804,6 +804,8 @@ export class ModelWeightResponseFormat {
       return { $project: new ModelWeight().invoiceItemsTableMinimum() };
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().invoiceItemsTableMedium() };
+    } else if (responseFormatArray.includes(startIndex + 4)) {
+      return { $project: new ModelWeight().invoiceItemsTableCustom1() };
     } else {
       return { $project: { _: 0 } };
     }
