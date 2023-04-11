@@ -184,7 +184,7 @@ export class InvoicesService {
             _bookingWeight: mapItem.bookingWeight,
             _bookingRate: mapItem.bookingRate,
             _bookingAmount: mapItem.bookingAmount,
-            _ref:"",
+            _ref: '',
             _groupId: mapItem.groupId == '' ? null : mapItem.groupId,
             _uid:
               resultCounterPurchaseBooking._count -
@@ -707,15 +707,12 @@ export class InvoicesService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-
-
-      new ModelWeightResponseFormat().invoiceTableResponseFormat(
-        0,
-        dto.responseFormat,
-      );
-
-
-
+      arrayAggregation.push({
+        $project: new ModelWeightResponseFormat().invoiceTableResponseFormat(
+          0,
+          dto.responseFormat,
+        ),
+      });
 
       if (dto.screenType.includes(100)) {
         const userPipeline = () => {
