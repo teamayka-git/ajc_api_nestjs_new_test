@@ -706,6 +706,17 @@ export class InvoicesService {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
+
+
+
+      new ModelWeightResponseFormat().invoiceTableResponseFormat(
+        0,
+        dto.responseFormat,
+      );
+
+
+
+
       if (dto.screenType.includes(100)) {
         const userPipeline = () => {
           const pipeline = [];

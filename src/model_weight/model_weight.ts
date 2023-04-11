@@ -120,6 +120,7 @@ export class ModelWeight {
       _userId: 1,
       _uid: 1,
       _createdAt: 1,
+      _netTotal: 1,
     };
   }
   public invoiceTableMinimum(): Object {
