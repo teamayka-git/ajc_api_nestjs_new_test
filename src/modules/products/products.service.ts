@@ -1432,7 +1432,7 @@ export class ProductsService {
                       {
                         $match: {
                           _status: 1,
-                          $expr: { $eq: ['$_tagId', '$$tagId'] },
+                          $expr: { $eq: ['$_id', '$$tagId'] },
                         },
                       },
                       {
