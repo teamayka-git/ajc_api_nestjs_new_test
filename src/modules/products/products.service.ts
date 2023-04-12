@@ -1436,8 +1436,8 @@ export class ProductsService {
                         },
                       },
                       {
-                        $match: {
-                          _id: { $in: newSettingsId },
+                        $match: { 
+                          _tagId: { $in: newSettingsId },
                         },
                       },
                       {
