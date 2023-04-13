@@ -1593,7 +1593,7 @@ export class HalmarkRequestService {
         );
       }
 
-      var result = await this.halmarkBundlesMainModel
+      var result = await this.halmarkBundlesModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
 
@@ -1616,7 +1616,7 @@ export class HalmarkRequestService {
           $group: { _id: null, totalCount: { $sum: 1 } },
         });
 
-        var resultTotalCount = await this.halmarkBundlesMainModel
+        var resultTotalCount = await this.halmarkBundlesModel
           .aggregate(arrayAggregation)
           .session(transactionSession);
         if (resultTotalCount.length > 0) {
