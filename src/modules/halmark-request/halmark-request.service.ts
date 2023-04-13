@@ -115,7 +115,7 @@ export class HalmarkRequestService {
         },
         {
           $set: {
-            _workStatus: 0,
+            _workStatus: 1,
             _updatedAt: dateTime,
             _updatedUserId: _userId_,
             _hmBundleId: halmarkBundlesModelMongoFinal._id,
