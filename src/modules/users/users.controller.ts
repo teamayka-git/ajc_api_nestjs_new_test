@@ -39,7 +39,7 @@ export class UsersController {
   }
   
   @Post('listUserNotifications')
-  listUserNotifications(@Body() dto: UserNotificationListDto) {
-    return this.usersService.listUserNotifications(dto);
+  listUserNotifications(@Body() dto: UserNotificationListDto, @Request() req) {
+    return this.usersService.listUserNotifications(dto, req['_userId_']);
   }
 }

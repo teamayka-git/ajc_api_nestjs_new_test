@@ -144,7 +144,7 @@ export class UsersService {
       throw error;
     }
   }
-  async listUserNotifications(dto: UserNotificationListDto) {
+  async listUserNotifications(dto: UserNotificationListDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -162,6 +162,11 @@ export class UsersService {
           },
         });
       }
+
+      if (dto.screenType.includes(201)) {
+        arrayAggregation.push({ $match: { _userId: _userId_ } });
+      }
+
       if (dto.notificationIds.length > 0) {
         var newSettingsId = [];
         dto.notificationIds.map((mapItem) => {
