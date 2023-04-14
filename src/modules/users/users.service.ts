@@ -242,7 +242,7 @@ export class UsersService {
           notificationIds.push(element._id);
         });
         await this.userNotificationModel.updateMany(
-          { _id: { $in: notificationIds } },
+          { _id: { $in: notificationIds } , _viewStatus:0,},
           {
             $set: {
               _viewStatus: 1,
