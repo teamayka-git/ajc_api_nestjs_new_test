@@ -8,17 +8,18 @@ import { ModelNames } from 'src/common/model_names';
 import { UserSchema } from 'src/tableModels/user.model';
 import { UserNotificationsSchema } from 'src/tableModels/user_notifications.model';
 
-@Module({ imports: [
-  JwtModule.register({
-    secret: GlobalConfig().JWT_SECRET_KEY,
-    signOptions: {},
-  }), //jwt implement
-  MongooseModule.forFeature([
-    { name: ModelNames.USER, schema: UserSchema },
-    { name: ModelNames.USER_NOTIFICATIONS, schema: UserNotificationsSchema },
+@Module({
+  imports: [
+    JwtModule.register({
+      secret: GlobalConfig().JWT_SECRET_KEY,
+      signOptions: {},
+    }), //jwt implement
+    MongooseModule.forFeature([
+      { name: ModelNames.USER, schema: UserSchema },
+      { name: ModelNames.USER_NOTIFICATIONS, schema: UserNotificationsSchema },
     ]),
-],
+  ],
   controllers: [UsersController],
-  providers: [UsersService]
+  providers: [UsersService],
 })
 export class UsersModule {}

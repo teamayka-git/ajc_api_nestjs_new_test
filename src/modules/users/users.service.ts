@@ -11,6 +11,8 @@ import {
 import { GlobalConfig } from 'src/config/global_config';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserNotifications } from 'src/tableModels/user_notifications.model';
+import { FcmUtils } from 'src/utils/FcmUtils';
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -123,6 +125,18 @@ export class UsersService {
         },
       );
 
+      new FcmUtils().sendFcm(
+        'API',
+        'Success',
+        [
+          'fRlg1H0NQ_SQswwV64KX-M:APA91bFKy7OnhMmV-DdEWl4DvkqY5u5cgUEhwVnuN_2nqChAHbBMGWT9vx4nEW4KGG3AQe1ThnXQUue0ohPmXN_nm-tkVq1g5LAIsabrnngvgRhj4uMCmousNMfMTRWtPmyMuFXd02Mk',
+        ],
+        {
+          aa: 'aaa',
+          type: 'fayiz',
+        },
+      );
+
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -162,9 +176,11 @@ export class UsersService {
           },
         });
       }
-console.log("_userId_   list notification  "+_userId_);
+      console.log('_userId_   list notification  ' + _userId_);
       if (dto.screenType.includes(201)) {
-        arrayAggregation.push({ $match: { _userId: new mongoose.Types.ObjectId(_userId_) } });
+        arrayAggregation.push({
+          $match: { _userId: new mongoose.Types.ObjectId(_userId_) },
+        });
       }
 
       if (dto.notificationIds.length > 0) {
@@ -191,7 +207,10 @@ console.log("_userId_   list notification  "+_userId_);
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      console.log("arrayAggregation   list notification  "+JSON.stringify(arrayAggregation));
+      console.log(
+        'arrayAggregation   list notification  ' +
+          JSON.stringify(arrayAggregation),
+      );
       var result = await this.userNotificationModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
