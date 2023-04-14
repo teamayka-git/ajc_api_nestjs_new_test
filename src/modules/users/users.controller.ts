@@ -16,7 +16,7 @@ import {
   Request,
   Put,
 } from '@nestjs/common';
-import { UserCheckEmailExistDto, UserCheckMobileExistDto } from './user.dto';
+import { UserCheckEmailExistDto, UserCheckMobileExistDto, UserNotificationCreatetDto, UserNotificationListDto } from './user.dto';
 
 @ApiTags('Users Docs')
 @Controller('users')
@@ -32,5 +32,14 @@ export class UsersController {
   @Post('checkMobileExisting')
   checkMobileExisting(@Body() dto: UserCheckMobileExistDto) {
     return this.usersService.checkMobileExisting(dto);
+  }
+  @Post('createUserNotification')
+  createUserNotification(@Body() dto: UserNotificationCreatetDto) {
+    return this.usersService.createUserNotification(dto);
+  }
+  
+  @Post('listUserNotifications')
+  listUserNotifications(@Body() dto: UserNotificationListDto) {
+    return this.usersService.listUserNotifications(dto);
   }
 }

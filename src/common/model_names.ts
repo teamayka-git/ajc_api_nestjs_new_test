@@ -96,6 +96,7 @@ export enum ModelNames {
   PRODUCT_STONE_LINKING_TEMPS = 'product_stone_linking_temps',
   REWORK_REPORTS = 'rework_reports',
   ORDER_REJECTED_CANCEL_REPORTS = 'order_rejected_cancel_reports',
+  USER_NOTIFICATIONS = 'user_notifications',
 
   CHAT_PERSONAL_CHAT_MESSAGES = 'chat_personal_chat_messages',
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',

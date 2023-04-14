@@ -1,18 +1,25 @@
-
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { ModelNames } from 'src/common/model_names';
 import * as mongoose from 'mongoose';
 import { User } from 'src/tableModels/user.model';
-import { UserCheckEmailExistDto, UserCheckMobileExistDto } from './user.dto';
+import {
+  UserCheckEmailExistDto,
+  UserCheckMobileExistDto,
+  UserNotificationCreatetDto,
+  UserNotificationListDto,
+} from './user.dto';
 import { GlobalConfig } from 'src/config/global_config';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { UserNotifications } from 'src/tableModels/user_notifications.model';
 @Injectable()
 export class UsersService {
-    constructor(
-        @InjectModel(ModelNames.USER)
-        private readonly userModel: mongoose.Model<User>,
-        @InjectConnection() private readonly connection: mongoose.Connection,
-      ) {}
+  constructor(
+    @InjectModel(ModelNames.USER)
+    private readonly userModel: mongoose.Model<User>,
+    @InjectModel(ModelNames.USER_NOTIFICATIONS)
+    private readonly userNotificationModel: mongoose.Model<UserNotifications>,
+    @InjectConnection() private readonly connection: mongoose.Connection,
+  ) {}
 
   async checkEmailExisting(dto: UserCheckEmailExistDto) {
     var dateTime = new Date().getTime();
@@ -68,6 +75,151 @@ export class UsersService {
       const responseJSON = {
         message: 'success',
         data: { count: resultCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async createUserNotification(dto: UserNotificationCreatetDto) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+    
+      var arrayToUserNotifications = [];
+
+      dto.array.map((mapItem) => {
+        arrayToUserNotifications.push({
+          _viewStatus: 0,
+          _title: dto.title,
+          _body: dto.body,
+          _orderSaleId: dto.orderSaleId != '' ? dto.orderSaleId : null,
+          _userId: mapItem.userId,
+          _createdAt: dateTime,
+          _status: 1,
+        });
+      });
+
+      var result1 = await this.userNotificationModel.insertMany(
+        arrayToUserNotifications,
+        {
+          session: transactionSession,
+        },
+      );
+
+      const responseJSON = { message: 'success', data: { list: result1 } };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async listUserNotifications(dto: UserNotificationListDto) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var arrayAggregation = [];
+
+      if (dto.searchingText != '') {
+        //todo
+        arrayAggregation.push({
+          $match: {
+            $or: [
+              { _title: new RegExp(dto.searchingText, 'i') },
+              { _body: new RegExp(dto.searchingText, 'i') },
+            ],
+          },
+        });
+      }
+      if (dto.notificationIds.length > 0) {
+        var newSettingsId = [];
+        dto.notificationIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
+      }
+      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+      switch (dto.sortType) {
+        case 0:
+          arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
+          break;
+        case 1:
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
+          break;
+      }
+
+      if (dto.skip != -1) {
+        arrayAggregation.push({ $skip: dto.skip });
+        arrayAggregation.push({ $limit: dto.limit });
+      }
+
+      var result = await this.userNotificationModel
+        .aggregate(arrayAggregation)
+        .session(transactionSession);
+
+      var totalCount = 0;
+      if (dto.screenType.includes(0)) {
+        //Get total count
+        var limitIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$limit') === true,
+        );
+        if (limitIndexCount != -1) {
+          arrayAggregation.splice(limitIndexCount, 1);
+        }
+        var skipIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$skip') === true,
+        );
+        if (skipIndexCount != -1) {
+          arrayAggregation.splice(skipIndexCount, 1);
+        }
+        arrayAggregation.push({
+          $group: { _id: null, totalCount: { $sum: 1 } },
+        });
+
+        var resultTotalCount = await this.userNotificationModel
+          .aggregate(arrayAggregation)
+          .session(transactionSession);
+        if (resultTotalCount.length > 0) {
+          totalCount = resultTotalCount[0].totalCount;
+        }
+      }
+
+      const responseJSON = {
+        message: 'success',
+        data: { list: result, totalCount: totalCount },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
