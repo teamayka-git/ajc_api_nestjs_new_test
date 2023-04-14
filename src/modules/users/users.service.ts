@@ -164,7 +164,7 @@ export class UsersService {
       }
 console.log("_userId_   list notification  "+_userId_);
       if (dto.screenType.includes(201)) {
-        arrayAggregation.push({ $match: { _userId: _userId_ } });
+        arrayAggregation.push({ $match: { _userId: new mongoose.Types.ObjectId(_userId_) } });
       }
 
       if (dto.notificationIds.length > 0) {
