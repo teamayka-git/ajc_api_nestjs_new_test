@@ -13,7 +13,7 @@ const descriptionListSortOrderUserNotification = '1-ascending, -1-descending';
 const descriptionListSortTypeUserNotification = '0-Created Date, 1-Status';
 const descriptionStatusUserNotification = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForListUserNotification =
-  '0-total documents count';
+  '0-total documents count, 200 - clear viewed notifications';
 
 export class UserCheckEmailExistDto {
   @IsString()

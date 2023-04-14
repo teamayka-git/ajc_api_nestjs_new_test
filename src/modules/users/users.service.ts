@@ -101,7 +101,6 @@ export class UsersService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-    
       var arrayToUserNotifications = [];
 
       dto.array.map((mapItem) => {
@@ -111,6 +110,7 @@ export class UsersService {
           _body: dto.body,
           _orderSaleId: dto.orderSaleId != '' ? dto.orderSaleId : null,
           _userId: mapItem.userId,
+          _viewAt: 0,
           _createdAt: dateTime,
           _status: 1,
         });
@@ -215,6 +215,23 @@ export class UsersService {
         if (resultTotalCount.length > 0) {
           totalCount = resultTotalCount[0].totalCount;
         }
+      }
+
+      if (dto.screenType.includes(200)) {
+        var notificationIds = [];
+        result.forEach((element) => {
+          notificationIds.push(element._id);
+        });
+        await this.userNotificationModel.updateMany(
+          { _id: { $in: notificationIds } },
+          {
+            $set: {
+              _viewStatus: 1,
+              _viewAt: dateTime,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
       }
 
       const responseJSON = {

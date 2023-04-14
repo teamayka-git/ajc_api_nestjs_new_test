@@ -18,6 +18,7 @@ export const UserNotificationsSchema = new mongoose.Schema({
     default: null,
   },
   _createdAt: { type: Number, required: true, default: -1 },
+  _viewAt: { type: Number, required: true, default: -1 },
   _status: { type: Number, required: true, default: -1 },
 });
 
@@ -29,6 +30,7 @@ export interface UserNotifications {
   _orderSaleId: String;
   _userId: String;
   _createdAt: Number;
+  _viewAt: Number;
   _status: Number;
 }
 
@@ -37,6 +39,7 @@ UserNotificationsSchema.index({ _orderSaleId: 1 });
 UserNotificationsSchema.index({ _userId: 1 });
 UserNotificationsSchema.index({ _status: 1 });
 UserNotificationsSchema.index({ _createdAt: 1 });
+UserNotificationsSchema.index({ _viewAt: 1 });
 
 /*
 _viewStatus:{
