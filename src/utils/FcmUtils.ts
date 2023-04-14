@@ -17,6 +17,6 @@ export class FcmUtils {
       priority: 'high',
     };
 
-    await axios.post('https://fcm.googleapis.com/fcm/send', data, { headers });
+    await axios.post('https://fcm.googleapis.com/fcm/send', dataFinalObject, { headers });
   }
 }
