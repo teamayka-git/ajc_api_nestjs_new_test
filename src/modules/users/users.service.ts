@@ -128,7 +128,7 @@ export class UsersService {
       );
 
       new FcmUtils().sendFcm(dto.title, dto.body, arrayUserFcmIds, {
-        ajc: 'New notification',
+        ajc: 'AJC_NOTIFICATION',
       });
 
       const responseJSON = { message: 'success', data: { list: result1 } };
