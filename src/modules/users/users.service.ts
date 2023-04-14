@@ -104,6 +104,7 @@ export class UsersService {
     transactionSession.startTransaction();
     try {
       var arrayToUserNotifications = [];
+      var arrayUserFcmIds = [];
 
       dto.array.map((mapItem) => {
         arrayToUserNotifications.push({
@@ -116,6 +117,7 @@ export class UsersService {
           _createdAt: dateTime,
           _status: 1,
         });
+        arrayUserFcmIds.push(mapItem.fcmId);
       });
 
       var result1 = await this.userNotificationModel.insertMany(
@@ -125,17 +127,9 @@ export class UsersService {
         },
       );
 
-      new FcmUtils().sendFcm(
-        'API',
-        'Success',
-        [
-          'fRlg1H0NQ_SQswwV64KX-M:APA91bFKy7OnhMmV-DdEWl4DvkqY5u5cgUEhwVnuN_2nqChAHbBMGWT9vx4nEW4KGG3AQe1ThnXQUue0ohPmXN_nm-tkVq1g5LAIsabrnngvgRhj4uMCmousNMfMTRWtPmyMuFXd02Mk',
-        ],
-        {
-          aa: 'aaa',
-          type: 'fayiz',
-        },
-      );
+      new FcmUtils().sendFcm(dto.title, dto.body, arrayUserFcmIds, {
+        ajc: 'New notification',
+      });
 
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
