@@ -162,7 +162,7 @@ export class UsersService {
           },
         });
       }
-
+console.log("_userId_   list notification  "+_userId_);
       if (dto.screenType.includes(201)) {
         arrayAggregation.push({ $match: { _userId: _userId_ } });
       }
@@ -191,6 +191,7 @@ export class UsersService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
+      console.log("arrayAggregation   list notification  "+JSON.stringify(arrayAggregation));
       var result = await this.userNotificationModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
