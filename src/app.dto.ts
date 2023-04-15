@@ -36,6 +36,11 @@ export class GetDashboardDto {
     description: descriptionListScreenTypeForList,
   })
   screenType: number[];
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({})
+  fcmToken: string;
 }
 export class MeDto {
   @IsOptional()
@@ -54,7 +59,6 @@ export class MeDto {
 }
 
 export class tempWorktable {
-
   @IsNumber()
   @ApiProperty({})
   limit: number;
@@ -62,8 +66,6 @@ export class tempWorktable {
   @IsNumber()
   @ApiProperty({})
   skip: number;
-
-  
 }
 
 export class GetUserDto {

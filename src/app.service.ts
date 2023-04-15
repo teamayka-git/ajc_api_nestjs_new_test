@@ -689,6 +689,20 @@ export class AppService {
         }
       }
 
+      if (dto.fcmToken != null && dto.fcmToken != '') {
+        await this.userModel.updateMany(
+          {
+            _id: _userId_,
+          },
+          {
+            $set: {
+              _fcmId: dto.fcmToken,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
+
       const responseJSON = {
         message: 'success',
         data: {
@@ -1922,7 +1936,7 @@ export class AppService {
             _customerId: null,
             _deliveryHubId: null,
             _fcmId: '',
-            _isNotificationEnable:1,
+            _isNotificationEnable: 1,
             _deviceUniqueId: '',
             _permissions: GlobalConfig().SUPER_ADMIN_PERMISSIONS,
             _userType: 0,
