@@ -22,6 +22,6 @@ export class FcmUtils {
       dataFinalObject,
       { headers },
     );
-    console.log('____fcm response    ' + JSON.stringify(response));
+    console.log('____fcm response    ' + (response));
   }
 }
