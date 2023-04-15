@@ -34,6 +34,19 @@ export class UserCheckMobileExistDto {
   existingIds: string[];
 }
 
+export class UserFcmUpdateDto {
+  @IsString()
+  @ApiProperty({})
+  fcmId: string;
+
+}
+export class UserNotificationStatusUpdateDto {
+  @IsNumber()
+  @ApiProperty({})
+  isEnableNotification:number;
+
+}
+
 class UserAndFcmArray {
   @IsString()
   @ApiProperty({})

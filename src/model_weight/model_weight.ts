@@ -1097,6 +1097,7 @@ export class ModelWeight {
       _halmarkId: 1,
       _customerId: 1,
       _fcmId: 1,
+      _isNotificationEnable:1,
       _deliveryHubId: 1,
       _deviceUniqueId: 1,
       _permissions: 1,

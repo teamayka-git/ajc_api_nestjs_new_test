@@ -5,8 +5,10 @@ import { User } from 'src/tableModels/user.model';
 import {
   UserCheckEmailExistDto,
   UserCheckMobileExistDto,
+  UserFcmUpdateDto,
   UserNotificationCreatetDto,
   UserNotificationListDto,
+  UserNotificationStatusUpdateDto,
 } from './user.dto';
 import { GlobalConfig } from 'src/config/global_config';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
@@ -77,6 +79,88 @@ export class UsersService {
       const responseJSON = {
         message: 'success',
         data: { count: resultCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  
+  async userFcmUpdate(dto: UserFcmUpdateDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      await this.userModel.updateMany(
+        {
+          _id: _userId_,
+        },
+        {
+          $set: {
+            _fcmId: dto.fcmId,
+            },
+        },
+        { new: true, session: transactionSession },
+      );
+      const responseJSON = {
+        message: 'success',
+        data: {  },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async userNotificationStatusUpdate(dto: UserNotificationStatusUpdateDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      await this.userModel.updateMany(
+        {
+          _id: _userId_,
+        },
+        {
+          $set: {
+            _isNotificationEnable: dto.isEnableNotification,
+            },
+        },
+        { new: true, session: transactionSession },
+      );
+      const responseJSON = {
+        message: 'success',
+        data: {  },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&

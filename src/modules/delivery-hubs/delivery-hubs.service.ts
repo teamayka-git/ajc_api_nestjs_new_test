@@ -78,6 +78,7 @@ export class DeliveryHubsService {
           _halmarkId: null,
           _customerId: null,
           _fcmId: '',
+          _isNotificationEnable:1,
           _deviceUniqueId: '',
           _permissions: [],
           _userType: 0,

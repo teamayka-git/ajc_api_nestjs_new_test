@@ -1922,6 +1922,7 @@ export class AppService {
             _customerId: null,
             _deliveryHubId: null,
             _fcmId: '',
+            _isNotificationEnable:1,
             _deviceUniqueId: '',
             _permissions: GlobalConfig().SUPER_ADMIN_PERMISSIONS,
             _userType: 0,

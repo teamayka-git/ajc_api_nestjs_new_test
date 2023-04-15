@@ -303,6 +303,7 @@ export class SupplierService {
             _agentId: null,
             _shopId: null,
             _fcmId: '',
+            _isNotificationEnable:1,
             _deviceUniqueId: '',
             _permissions: [],
             _userType: 3,
