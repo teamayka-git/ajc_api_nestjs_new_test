@@ -112,6 +112,7 @@ import { AccountBranchModule } from './modules/account-branch/account-branch.mod
 import { AccountCurrencyModule } from './modules/account-currency/account-currency.module';
 import { HalmarkRequestModule } from './modules/halmark-request/halmark-request.module';
 import { UsersModule } from './modules/users/users.module';
+import { UserNotificationsSchema } from './tableModels/user_notifications.model';
 
 
 @Module({
@@ -146,6 +147,7 @@ import { UsersModule } from './modules/users/users.module';
       { name: ModelNames.PROCESS_MASTER, schema: ProcessMasterSchema },
       { name: ModelNames.DELIVERY, schema: DeliverySchema },
       
+      { name: ModelNames.USER_NOTIFICATIONS, schema: UserNotificationsSchema },
       { name: ModelNames.INVOICES, schema: InvoicesSchema },
       {
         name: ModelNames.GLOBAL_GALLERY_CATEGORIES,

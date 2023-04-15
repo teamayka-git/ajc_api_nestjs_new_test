@@ -101,7 +101,6 @@ export class UsersService {
     }
   }
 
-  
   async userFcmUpdate(dto: UserFcmUpdateDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
@@ -114,13 +113,13 @@ export class UsersService {
         {
           $set: {
             _fcmId: dto.fcmId,
-            },
+          },
         },
         { new: true, session: transactionSession },
       );
       const responseJSON = {
         message: 'success',
-        data: {  },
+        data: {},
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -142,7 +141,10 @@ export class UsersService {
       throw error;
     }
   }
-  async userNotificationStatusUpdate(dto: UserNotificationStatusUpdateDto, _userId_: string) {
+  async userNotificationStatusUpdate(
+    dto: UserNotificationStatusUpdateDto,
+    _userId_: string,
+  ) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -154,13 +156,13 @@ export class UsersService {
         {
           $set: {
             _isNotificationEnable: dto.isEnableNotification,
-            },
+          },
         },
         { new: true, session: transactionSession },
       );
       const responseJSON = {
         message: 'success',
-        data: {  },
+        data: {},
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -326,7 +328,7 @@ export class UsersService {
           notificationIds.push(element._id);
         });
         await this.userNotificationModel.updateMany(
-          { _id: { $in: notificationIds } , _viewStatus:0,},
+          { _id: { $in: notificationIds }, _viewStatus: 0 },
           {
             $set: {
               _viewStatus: 1,
@@ -336,10 +338,21 @@ export class UsersService {
           { new: true, session: transactionSession },
         );
       }
-
+      var ECountUserNotification = 0;
+      if (dto.screenType.includes(202)) {
+        ECountUserNotification = await this.userNotificationModel.count({
+          _viewStatus: 0,
+          _userId: _userId_,
+          _status: 1,
+        });
+      }
       const responseJSON = {
         message: 'success',
-        data: { list: result, totalCount: totalCount },
+        data: {
+          list: result,
+          totalCount: totalCount,
+          ECountUserNotification: ECountUserNotification,
+        },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&

@@ -43,6 +43,7 @@ import { endOfMonth, endOfToday, startOfMonth } from 'date-fns';
 import { OrderSaleHistories } from './tableModels/order_sale_histories.model';
 import { Invoices } from './tableModels/invoices.model';
 import { Delivery } from './tableModels/delivery.model';
+import { UserNotifications } from './tableModels/user_notifications.model';
 
 const twilioClient = require('twilio')(
   'AC9bf34a6b64db1480be17402f908aded8',
@@ -73,6 +74,8 @@ export class AppService {
     @InjectModel(ModelNames.SUB_CATEGORIES)
     private readonly subCategoryModel: mongoose.Model<SubCategories>,
 
+    @InjectModel(ModelNames.USER_NOTIFICATIONS)
+    private readonly userNotificationModel: mongoose.Model<UserNotifications>,
     @InjectModel(ModelNames.DELIVERY)
     private readonly deliveryModel: mongoose.Model<Delivery>,
     @InjectModel(ModelNames.INVOICES)
@@ -349,6 +352,7 @@ export class AppService {
       var wBacklogWorkOrders = [];
       var wHighRiskWorkOrders = [];
 
+      var ECountUserNotification=0;
       var ECountOhPendingOrder = 0;
       var ECountOhCustomOrder = 0;
       var ECountOhStockOrder = 0;
@@ -703,6 +707,27 @@ export class AppService {
         );
       }
 
+
+
+
+ 
+
+
+      ECountUserNotification = await this.userNotificationModel.count({
+  
+        _viewStatus:0,
+        _userId:_userId_,
+  _status: 1,
+});
+
+
+
+
+
+
+
+
+
       const responseJSON = {
         message: 'success',
         data: {
@@ -718,7 +743,7 @@ export class AppService {
             wBacklogWorkOrders.length == 0 ? 0 : wBacklogWorkOrders[0].count,
           EDashHighRiskOrder:
             wHighRiskWorkOrders.length == 0 ? 0 : wHighRiskWorkOrders[0].count,
-
+            ECountUserNotification:ECountUserNotification,
           EDashOHPendingOrder: ECountOhPendingOrder,
           EDashOHCustomOrder: ECountOhCustomOrder,
           EDashOHStockOrder: ECountOhStockOrder,

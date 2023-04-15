@@ -69,6 +69,7 @@ import { OrderSaleChangeRequests } from 'src/tableModels/order_sale_change_reque
 import { OrderSaleChangeRequestDocuments } from 'src/tableModels/order_sale_change_request_documents.model';
 import { ReworkReports } from 'src/tableModels/order_rework_reports.model';
 import { OrderCancelRejectReports } from 'src/tableModels/order_cancel_reject_reports.model';
+import { UserNotifications } from 'src/tableModels/user_notifications.model';
 
 @Injectable()
 export class OrderSalesService {
@@ -96,6 +97,8 @@ export class OrderSalesService {
     @InjectModel(ModelNames.ORDER_REJECTED_CANCEL_REPORTS)
     private readonly orderRejectedCancelReportModel: Model<OrderCancelRejectReports>,
 
+    @InjectModel(ModelNames.USER_NOTIFICATIONS)
+    private readonly userNotificationModel: mongoose.Model<UserNotifications>,
     @InjectModel(ModelNames.ORDER_SALE_CHANGE_REQUEST_DOCUMENTS)
     private readonly orderSaleChangeRequestDocumentsModel: mongoose.Model<OrderSaleChangeRequestDocuments>,
     @InjectModel(ModelNames.ORDER_SALE_CHANGE_REQUESTS)
@@ -3720,6 +3723,22 @@ console.log("___order sale list dto    "+JSON.stringify(dto));
           dueDateMaximumDaysCount: dueDateGenerals[0]._number,
         };
       }
+
+
+      if (dto.screenType.includes(508)) {
+        var ECountUserNotification=0;
+        ECountUserNotification = await this.userNotificationModel.count({
+  
+          _viewStatus:0,
+          _userId:_userId_,
+    _status: 1,
+  });
+
+  responseJSON.data["userUnreadNotificationCount"]=ECountUserNotification;
+
+
+      }
+
 
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&

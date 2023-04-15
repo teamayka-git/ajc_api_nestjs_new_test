@@ -29,6 +29,7 @@ import { OrderSaleChangeRequestsSchema } from 'src/tableModels/order_sale_change
 import { OrderSaleChangeRequestDocumentsSchema } from 'src/tableModels/order_sale_change_request_documents.model';
 import { ReworkReportsSchema } from 'src/tableModels/order_rework_reports.model';
 import { OrderCancelRejectReportsSchema } from 'src/tableModels/order_cancel_reject_reports.model';
+import { UserNotificationsSchema } from 'src/tableModels/user_notifications.model';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { OrderCancelRejectReportsSchema } from 'src/tableModels/order_cancel_rej
         schema: OrderSaleSetProcessesSchema,
       },
       
+      { name: ModelNames.USER_NOTIFICATIONS, schema: UserNotificationsSchema },
       { name: ModelNames.OTP, schema: OtpSchema },
       { name: ModelNames.EMPLOYEE_STOCK_IN_HAND_ITEMS, schema: EmployeeStockInHandsItemSchema },
       { name: ModelNames.REWORK_REPORTS, schema: ReworkReportsSchema },
