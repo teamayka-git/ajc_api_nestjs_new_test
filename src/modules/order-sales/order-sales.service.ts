@@ -1514,7 +1514,7 @@ export class OrderSalesService {
     }
   }
 
-  async list(dto: OrderSaleListDto) {
+  async list(dto: OrderSaleListDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -3692,7 +3692,19 @@ export class OrderSalesService {
             HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }
-
+        if (dto.fcmToken != null && dto.fcmToken != '') {
+          await this.userModel.updateMany(
+            {
+              _id: _userId_,
+            },
+            {
+              $set: {
+                _fcmId: dto.fcmToken,
+              },
+            },
+            { new: true, session: transactionSession },
+          );
+        }
         responseJSON.data['themeManufactureData'] = {
           mobileMainImageUrl: mobileMainImage,
           mobileMainImageRatio: 3.5,

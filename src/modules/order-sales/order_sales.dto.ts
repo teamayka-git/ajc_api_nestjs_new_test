@@ -65,13 +65,14 @@ const descriptionListSortTypeReworkReport =
   '0-id, 1-status, 2-type, 3-arisonSetprocessStatus, 4-order created date, 5-order due date, 6-order uid';
 const descriptionListTypeForReworkReport =
   ' 0 - internal rework, 1 - customer rework';
-const descriptionListScreenTypeForReworkReport = '0- total count,   100-order details, 101-shop details, 102-oh details , 103-root cause details, 104 - arison user details, 105-process master, 106-created user details';
-const descriptionListSortTypeRejectCancelReport="0-id, 1-status, 2-type , 3-order created date, 4-order due date, 5-order uid";
-const descriptionListScreenTypeForRejectCancelReport="0- total count,   100-order details, 101-shop details, 102-oh details , 103-root cause details, 105-process master, 106-created user details";
-const descriptionListTypeForRejectCancelReport=" 0 - customer rejected, 1 - customer cancel, 2 - admin rejected";
-
-
-
+const descriptionListScreenTypeForReworkReport =
+  '0- total count,   100-order details, 101-shop details, 102-oh details , 103-root cause details, 104 - arison user details, 105-process master, 106-created user details';
+const descriptionListSortTypeRejectCancelReport =
+  '0-id, 1-status, 2-type , 3-order created date, 4-order due date, 5-order uid';
+const descriptionListScreenTypeForRejectCancelReport =
+  '0- total count,   100-order details, 101-shop details, 102-oh details , 103-root cause details, 105-process master, 106-created user details';
+const descriptionListTypeForRejectCancelReport =
+  ' 0 - customer rejected, 1 - customer cancel, 2 - admin rejected';
 
 class orderSaleCreateList {
   @IsString()
@@ -393,6 +394,11 @@ export class OrderSaleListDto {
   @IsArray()
   @ApiProperty({ type: [Number] })
   isInvoiceGenerated: number[];
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({})
+  fcmToken: string;
 
   @IsOptional()
   @IsArray()
@@ -1070,7 +1076,6 @@ export class RworkReportDto {
   })
   screenType: number[];
 
-  
   @IsArray()
   @ApiProperty({
     type: [Number],
@@ -1149,7 +1154,6 @@ export class RworkReportDto {
   skip: number;
 }
 
-
 export class OrderRejectCancelReportDto {
   @IsNumber()
   @ApiProperty({ description: descriptionListSortTypeRejectCancelReport })
@@ -1170,7 +1174,6 @@ export class OrderRejectCancelReportDto {
   })
   screenType: number[];
 
-  
   @IsArray()
   @ApiProperty({
     type: [Number],
@@ -1220,8 +1223,6 @@ export class OrderRejectCancelReportDto {
   @ApiProperty({})
   orderDueDateEnd: number;
 
-
-
   @IsNumber()
   @ApiProperty({})
   rejectedDateStart: number;
@@ -1229,8 +1230,6 @@ export class OrderRejectCancelReportDto {
   @IsNumber()
   @ApiProperty({})
   rejectedDateEnd: number;
-
-
 
   @IsString()
   @ApiProperty({})

@@ -119,8 +119,9 @@ export class OrderSalesController {
   }
 
   @Post('list')
-  list(@Body() dto: OrderSaleListDto) {
-    return this.orderSalesService.list(dto);
+  list(@Body() dto: OrderSaleListDto,
+  @Request() req,) {
+    return this.orderSalesService.list(dto, req['_userId_']);
   }
 
   @Post('reportList')
