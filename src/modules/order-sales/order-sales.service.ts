@@ -3692,6 +3692,9 @@ export class OrderSalesService {
             HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }
+
+console.log("___order sale list dto    "+JSON.stringify(dto));
+
         if (dto.fcmToken != null && dto.fcmToken != '') {
           await this.userModel.updateMany(
             {
