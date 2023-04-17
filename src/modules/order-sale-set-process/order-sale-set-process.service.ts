@@ -949,25 +949,29 @@ export class OrderSaleSetProcessService {
               },
             },
           ]);
-          if(resultOrderSaleSetProcessNotification.length==0){
-            throw new HttpException(
-              'Setprocess not found',
-              HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-          }
+        if (resultOrderSaleSetProcessNotification.length == 0) {
+          throw new HttpException(
+            'Setprocess not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
 
-
-          var userFcmIds = [];
-          var userNotificationTable = [];
-          var notificationTitle = 'Worker rejected';
-          var notificationBody = `${resultUserRejectDone[0]._name} (worker) rejected setprocess `;
-          var notificationOrderSale = resultOrderSaleSetProcessNotification[0].orderSaleDetails._id.toString();
-          resultOrderSaleSetProcessNotification.forEach((elementUserNotification) => {
+        var userFcmIds = [];
+        var userNotificationTable = [];
+        var notificationTitle = 'Worker rejected';
+        var notificationBody = `${resultUserRejectDone[0]._name} (worker) rejected setprocess `;
+        var notificationOrderSale =
+          resultOrderSaleSetProcessNotification[0].orderSaleDetails._id.toString();
+        resultOrderSaleSetProcessNotification.forEach(
+          (elementUserNotification) => {
             if (
-              elementUserNotification.orderSaleDetails.ohDetails._isNotificationEnable == 1 &&
+              elementUserNotification.orderSaleDetails.ohDetails
+                ._isNotificationEnable == 1 &&
               elementUserNotification.orderSaleDetails.ohDetails._fcmId != ''
             ) {
-              userFcmIds.push(elementUserNotification.orderSaleDetails.ohDetails._fcmId);
+              userFcmIds.push(
+                elementUserNotification.orderSaleDetails.ohDetails._fcmId,
+              );
             }
             userNotificationTable.push({
               _viewStatus: 0,
@@ -980,26 +984,126 @@ export class OrderSaleSetProcessService {
               _viewAt: 0,
               _status: 1,
             });
+          },
+        );
+        if (userNotificationTable.length != 0) {
+          await this.userNotificationModel.insertMany(userNotificationTable, {
+            session: transactionSession,
           });
-          if (userNotificationTable.length != 0) {
-            await this.userNotificationModel.insertMany(userNotificationTable, {
-              session: transactionSession,
-            });
-          }
-          if (userFcmIds.length != 0) {
-            new FcmUtils().sendFcm(
-              notificationTitle,
-              notificationBody,
-              userFcmIds,
-              {
-                ajc: 'AJC_NOTIFICATION',
-              },
-            );
-          }
-          //done notification
+        }
+        if (userFcmIds.length != 0) {
+          new FcmUtils().sendFcm(
+            notificationTitle,
+            notificationBody,
+            userFcmIds,
+            {
+              ajc: 'AJC_NOTIFICATION',
+            },
+          );
+        }
+        //done notification
       }
 
-     
+      if (dto.orderStatus == 7) {
+        //doing notification
+
+        var resultUserRejectDone = await this.userModel.find(
+          { _id: result._userId },
+          { _isNotificationEnable: 1, _fcmId: 1 },
+        );
+        if (resultUserRejectDone.length == 0) {
+          throw new HttpException(
+            'User not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        var resultOrderSaleSetProcessNotification =
+          await this.orderSaleSetProcessModel.aggregate([
+            {
+              $match: {
+                _id: new mongoose.Types.ObjectId(dto.orderSaleSetProcessId),
+              },
+            },
+
+            {
+              $lookup: {
+                from: ModelNames.ORDER_SALES_MAIN,
+                let: { osId: '$_orderSaleId' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $eq: ['$_id', '$$osId'],
+                      },
+                    },
+                  },
+
+                  {
+                    $project: {
+                      _orderHeadId: 1,
+                      _uid: 1,
+                    },
+                  },
+                ],
+                as: 'orderSaleDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$orderSaleDetails',
+              },
+            },
+          ]);
+        if (resultOrderSaleSetProcessNotification.length == 0) {
+          throw new HttpException(
+            'Setprocess not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        var userFcmIds = [];
+        var userNotificationTable = [];
+        var notificationTitle = 'Order takeback';
+        var notificationBody = `Order takeback from you, ${resultOrderSaleSetProcessNotification[0].orderSaleDetails._uid}`;
+        var notificationOrderSale =
+          resultOrderSaleSetProcessNotification[0].orderSaleDetails._id.toString();
+        resultUserRejectDone.forEach((elementUserNotification) => {
+          if (
+            elementUserNotification._isNotificationEnable == 1 &&
+            elementUserNotification._fcmId != ''
+          ) {
+            userFcmIds.push(elementUserNotification._fcmId);
+          }
+          userNotificationTable.push({
+            _viewStatus: 0,
+            _title: notificationTitle,
+            _body: notificationBody,
+            _orderSaleId:
+              notificationOrderSale == '' ? null : notificationOrderSale,
+            _userId: elementUserNotification._id,
+            _createdAt: dateTime,
+            _viewAt: 0,
+            _status: 1,
+          });
+        });
+        if (userNotificationTable.length != 0) {
+          await this.userNotificationModel.insertMany(userNotificationTable, {
+            session: transactionSession,
+          });
+        }
+        if (userFcmIds.length != 0) {
+          new FcmUtils().sendFcm(
+            notificationTitle,
+            notificationBody,
+            userFcmIds,
+            {
+              ajc: 'AJC_NOTIFICATION',
+            },
+          );
+        }
+        //done notification
+      }
 
       const responseJSON = { message: 'success', data: result };
       if (
