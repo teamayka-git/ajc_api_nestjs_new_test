@@ -16,6 +16,7 @@ import { CompanySchema } from 'src/tableModels/companies.model';
 import { StorePromotionsSchema } from 'src/tableModels/store_promotions.model';
 import { AccountLedgerSchema } from 'src/tableModels/accountLedger.model';
 import { AccountSubgroupSchema } from 'src/tableModels/accountSubgroup.model';
+import { UserNotificationsSchema } from 'src/tableModels/user_notifications.model';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { AccountSubgroupSchema } from 'src/tableModels/accountSubgroup.model';
         schema: GlobalGalleryCategoriesSchema,
       },
 
+      { name: ModelNames.USER_NOTIFICATIONS, schema: UserNotificationsSchema },
       { name: ModelNames.GLOBAL_GALLERIES, schema: GlobalGalleriesSchema },
       { name: ModelNames.STORE_PROMOTIONS, schema: StorePromotionsSchema },
     ]),

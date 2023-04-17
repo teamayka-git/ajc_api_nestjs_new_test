@@ -4,6 +4,7 @@ import {
   IsEmail,
   IsNumber,
   IsObject,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -747,6 +748,11 @@ export class ShopFreezStatusChangeDto {
   @IsString()
   @ApiProperty({})
   freezedDescription: string;
+
+  
+  @IsString()
+  @ApiProperty({})
+  freezedRootCauseName: string;
 
   @IsString()
   @ApiProperty({})

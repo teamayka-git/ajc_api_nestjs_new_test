@@ -38,6 +38,8 @@ import { SmsUtils } from 'src/utils/smsUtils';
 import { StorePromotions } from 'src/tableModels/store_promotions.model';
 import { AccountLedger } from 'src/tableModels/accountLedger.model';
 import { AccountSubgroup } from 'src/tableModels/accountSubgroup.model';
+import { FcmUtils } from 'src/utils/FcmUtils';
+import { UserNotifications } from 'src/tableModels/user_notifications.model';
 @Injectable()
 export class ShopsService {
   constructor(
@@ -59,6 +61,8 @@ export class ShopsService {
     @InjectModel(ModelNames.ACCOUNT_SUBGROUP)
     private readonly accountSubGroupModel: mongoose.Model<AccountSubgroup>,
 
+    @InjectModel(ModelNames.USER_NOTIFICATIONS)
+    private readonly userNotificationModel: mongoose.Model<UserNotifications>,
     @InjectModel(ModelNames.COMPANIES)
     private readonly companyModel: mongoose.Model<Company>,
     @InjectModel(ModelNames.GLOBAL_GALLERY_CATEGORIES)
@@ -385,7 +389,7 @@ export class ShopsService {
             _halmarkId: null,
             _customerId: null,
             _fcmId: '',
-            _isNotificationEnable:1,
+            _isNotificationEnable: 1,
             _deviceUniqueId: '',
             _permissions: [],
             _userType: 0,
@@ -431,7 +435,7 @@ export class ShopsService {
         _halmarkId: null,
         _customerId: null,
         _fcmId: '',
-        _isNotificationEnable:1,
+        _isNotificationEnable: 1,
         _deviceUniqueId: '',
         _permissions: [],
         _userType: 0,
@@ -725,7 +729,7 @@ export class ShopsService {
             _testCenterId: null,
             _deliveryHubId: null,
             _fcmId: '',
-            _isNotificationEnable:1,
+            _isNotificationEnable: 1,
             _customerId: null,
             _deviceUniqueId: '',
             _permissions: [],
@@ -2022,7 +2026,7 @@ export class ShopsService {
             _customType: [dto.arrayUsersNew[i].customType],
             _halmarkId: null,
             _fcmId: '',
-            _isNotificationEnable:1,
+            _isNotificationEnable: 1,
             _deviceUniqueId: '',
             _permissions: [],
             _userType: 0,
@@ -2178,7 +2182,7 @@ export class ShopsService {
             _customType: [dto.arrayUsersNew[i].customType],
             _halmarkId: null,
             _fcmId: '',
-            _isNotificationEnable:1,
+            _isNotificationEnable: 1,
             _deviceUniqueId: '',
             _permissions: [],
             _userType: 0,
@@ -2269,8 +2273,8 @@ export class ShopsService {
           _name: currentShops[i]._name,
           _underId: tradeReceivable[0]._id,
           _address: currentShops[i]._address,
-          _phone: "",
-          _email: "",
+          _phone: '',
+          _email: '',
           _city: '',
           _state: '',
           _country: '',
@@ -2294,7 +2298,7 @@ export class ShopsService {
           },
           { new: true, session: transactionSession },
         );
-        console.log("done 1");
+        console.log('done 1');
       }
 
       await this.accountLedgerModel.insertMany(arrayAccountLedger, {
@@ -2600,6 +2604,58 @@ export class ShopsService {
         },
         { new: true, session: transactionSession },
       );
+
+      //doing notification
+      var userFcmCheck = await this.userModel.find(
+        { _shopId: { $in: dto.shopIds } },
+        { _isNotificationEnable: 1, _fcmId: 1 },
+      );
+      var userFcmIds = [];
+      var userNotificationTable = [];
+      var notificationTitle =
+        dto.isFreezed == 1 ? 'Shop freezed' : 'Shop unfreezed';
+      var notificationBody =
+        dto.isFreezed == 1
+          ? `Rootcause: ${dto.freezedRootCauseName}, ${
+              dto.freezedDescription != '' ? dto.freezedDescription : ''
+            } `
+          : 'Shop unfreezed';
+      var notificationOrderSale = '';
+      userFcmCheck.forEach((elementUserNotification) => {
+        if (
+          elementUserNotification._isNotificationEnable == 1 &&
+          elementUserNotification._fcmId != ''
+        ) {
+          userFcmIds.push(elementUserNotification._fcmId);
+        }
+        userNotificationTable.push({
+          _viewStatus: 0,
+          _title: notificationTitle,
+          _body: notificationBody,
+          _orderSaleId:
+            notificationOrderSale == '' ? null : notificationOrderSale,
+          _userId: elementUserNotification._id,
+          _createdAt: dateTime,
+          _viewAt: 0,
+          _status: 1,
+        });
+      });
+      if (userNotificationTable.length != 0) {
+        await this.userNotificationModel.insertMany(userNotificationTable, {
+          session: transactionSession,
+        });
+      }
+      if (userFcmIds.length != 0) {
+        new FcmUtils().sendFcm(
+          notificationTitle,
+          notificationBody,
+          userFcmIds,
+          {
+            ajc: 'AJC_NOTIFICATION',
+          },
+        );
+      }
+      //done notification
 
       const responseJSON = { message: 'success', data: result };
       if (
