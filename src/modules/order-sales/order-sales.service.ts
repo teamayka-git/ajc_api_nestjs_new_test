@@ -795,7 +795,7 @@ export class OrderSalesService {
       var userFcmIds = [];
       var userNotificationTable = [];
       var notificationTitle = 'New order';
-      var notificationBody = 'You are OH of new order '+uidSalesOrder;
+      var notificationBody = 'You are OH of new order ' + uidSalesOrder;
       var notificationOrderSale = orderSaleId.toString();
       userFcmCheck.forEach((elementUserNotification) => {
         if (
@@ -832,7 +832,6 @@ export class OrderSalesService {
         );
       }
       //done notification
-
 
       console.log('___d6');
       const responseJSON = { message: 'success', data: result1 };
@@ -1239,8 +1238,6 @@ export class OrderSalesService {
         );
       }
 
-
-
       if (dto.amendmentRequestId != null && dto.amendmentRequestId != '') {
         var resultOrder = await this.orderSaleMainModel.find({
           _id: dto.orderSaleId,
@@ -1252,71 +1249,52 @@ export class OrderSalesService {
           );
         }
 
- //doing notification
- var userFcmCheck = await this.userModel.find(
-  { _shopId: resultOrder[0]._shopId,_status:1 },
-  { _isNotificationEnable: 1, _fcmId: 1 },
-);
-var userFcmIds = [];
-var userNotificationTable = [];
-var notificationTitle = 'Amendment accept';
-var notificationBody = 'Order UID: '+resultOrder[0]._uid;
-var notificationOrderSale = dto.orderSaleId.toString();
-userFcmCheck.forEach((elementUserNotification) => {
-  if (
-    elementUserNotification._isNotificationEnable == 1 &&
-    elementUserNotification._fcmId != ''
-  ) {
-    userFcmIds.push(elementUserNotification._fcmId);
-  }
-  userNotificationTable.push({
-    _viewStatus: 0,
-    _title: notificationTitle,
-    _body: notificationBody,
-    _orderSaleId:
-      notificationOrderSale == '' ? null : notificationOrderSale,
-    _userId: elementUserNotification._id,
-    _createdAt: dateTime,
-    _viewAt: 0,
-    _status: 1,
-  });
-});
-if (userNotificationTable.length != 0) {
-  await this.userNotificationModel.insertMany(userNotificationTable, {
-    session: transactionSession,
-  });
-}
-if (userFcmIds.length != 0) {
-  new FcmUtils().sendFcm(
-    notificationTitle,
-    notificationBody,
-    userFcmIds,
-    {
-      ajc: 'AJC_NOTIFICATION',
-    },
-  );
-}
-//done notification
-
-
+        //doing notification
+        var userFcmCheck = await this.userModel.find(
+          { _shopId: resultOrder[0]._shopId, _status: 1 },
+          { _isNotificationEnable: 1, _fcmId: 1 },
+        );
+        var userFcmIds = [];
+        var userNotificationTable = [];
+        var notificationTitle = 'Amendment accept';
+        var notificationBody = 'Order UID: ' + resultOrder[0]._uid;
+        var notificationOrderSale = dto.orderSaleId.toString();
+        userFcmCheck.forEach((elementUserNotification) => {
+          if (
+            elementUserNotification._isNotificationEnable == 1 &&
+            elementUserNotification._fcmId != ''
+          ) {
+            userFcmIds.push(elementUserNotification._fcmId);
+          }
+          userNotificationTable.push({
+            _viewStatus: 0,
+            _title: notificationTitle,
+            _body: notificationBody,
+            _orderSaleId:
+              notificationOrderSale == '' ? null : notificationOrderSale,
+            _userId: elementUserNotification._id,
+            _createdAt: dateTime,
+            _viewAt: 0,
+            _status: 1,
+          });
+        });
+        if (userNotificationTable.length != 0) {
+          await this.userNotificationModel.insertMany(userNotificationTable, {
+            session: transactionSession,
+          });
+        }
+        if (userFcmIds.length != 0) {
+          new FcmUtils().sendFcm(
+            notificationTitle,
+            notificationBody,
+            userFcmIds,
+            {
+              ajc: 'AJC_NOTIFICATION',
+            },
+          );
+        }
+        //done notification
       }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       console.log('___10');
       const responseJSON = { message: 'success', data: result };
@@ -1622,6 +1600,61 @@ if (userFcmIds.length != 0) {
       await this.orderSaleHistoriesModel.insertMany(arraySalesOrderHistories, {
         session: transactionSession,
       });
+
+      var resultOrderDetailsNotification = await this.orderSaleMainModel.find({
+        _id: { $in: dto.orderSaleIds },
+      });
+
+      for (var i = 0; i < resultOrderDetailsNotification.length; i++) {
+        //doing notification
+        var userFcmCheck = await this.userModel.find(
+          { _shopId: resultOrderDetailsNotification[i]._shopId },
+          { _isNotificationEnable: 1, _fcmId: 1 },
+        );
+        var userFcmIds = [];
+        var userNotificationTable = [];
+        var notificationTitle =
+          dto.isHold == 0 ? 'Order hold release' : 'Order hold';
+        var notificationBody =
+          'Order UID: ' + resultOrderDetailsNotification[i]._uid;
+        var notificationOrderSale =
+          resultOrderDetailsNotification[i]._id.toString();
+        userFcmCheck.forEach((elementUserNotification) => {
+          if (
+            elementUserNotification._isNotificationEnable == 1 &&
+            elementUserNotification._fcmId != ''
+          ) {
+            userFcmIds.push(elementUserNotification._fcmId);
+          }
+          userNotificationTable.push({
+            _viewStatus: 0,
+            _title: notificationTitle,
+            _body: notificationBody,
+            _orderSaleId:
+              notificationOrderSale == '' ? null : notificationOrderSale,
+            _userId: elementUserNotification._id,
+            _createdAt: dateTime,
+            _viewAt: 0,
+            _status: 1,
+          });
+        });
+        if (userNotificationTable.length != 0) {
+          await this.userNotificationModel.insertMany(userNotificationTable, {
+            session: transactionSession,
+          });
+        }
+        if (userFcmIds.length != 0) {
+          new FcmUtils().sendFcm(
+            notificationTitle,
+            notificationBody,
+            userFcmIds,
+            {
+              ajc: 'AJC_NOTIFICATION',
+            },
+          );
+        }
+        //done notification
+      }
 
       const responseJSON = { message: 'success', data: result };
       if (
