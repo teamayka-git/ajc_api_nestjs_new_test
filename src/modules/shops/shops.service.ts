@@ -2610,6 +2610,7 @@ export class ShopsService {
         { _shopId: { $in: dto.shopIds } },
         { _isNotificationEnable: 1, _fcmId: 1 },
       );
+      console.log("___shop freez  "+JSON.stringify(userFcmCheck));
       var userFcmIds = [];
       var userNotificationTable = [];
       var notificationTitle =
@@ -2645,6 +2646,8 @@ export class ShopsService {
           session: transactionSession,
         });
       }
+      
+      console.log("___shop freez  "+userFcmIds);
       if (userFcmIds.length != 0) {
         new FcmUtils().sendFcm(
           notificationTitle,
