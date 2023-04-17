@@ -3696,7 +3696,7 @@ export class OrderSalesService {
           );
         }
 
-console.log("___order sale list dto    "+JSON.stringify(dto));
+        console.log('___order sale list dto    ' + JSON.stringify(dto));
 
         if (dto.fcmToken != null && dto.fcmToken != '') {
           await this.userModel.updateMany(
@@ -3724,21 +3724,17 @@ console.log("___order sale list dto    "+JSON.stringify(dto));
         };
       }
 
-
       if (dto.screenType.includes(508)) {
-        var ECountUserNotification=0;
+        var ECountUserNotification = 0;
         ECountUserNotification = await this.userNotificationModel.count({
-  
-          _viewStatus:0,
-          _userId:_userId_,
-    _status: 1,
-  });
+          _viewStatus: 0,
+          _userId: _userId_,
+          _status: 1,
+        });
 
-  responseJSON.data["userUnreadNotificationCount"]=ECountUserNotification;
-
-
+        responseJSON.data['userUnreadNotificationCount'] =
+          ECountUserNotification;
       }
-
 
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -9056,19 +9052,18 @@ console.log("___order sale list dto    "+JSON.stringify(dto));
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-      var resultSetProcess=[];
-if(dto.currentSetprocessId!=""){
-  resultSetProcess = await this.orderSaleSetProcessModel.find({
-    _id: dto.currentSetprocessId,
-  });
-  if (resultSetProcess.length == 0) {
-    throw new HttpException(
-      'Set process not found',
-      HttpStatus.INTERNAL_SERVER_ERROR,
-    );
-  }
-
-}
+      var resultSetProcess = [];
+      if (dto.currentSetprocessId != '') {
+        resultSetProcess = await this.orderSaleSetProcessModel.find({
+          _id: dto.currentSetprocessId,
+        });
+        if (resultSetProcess.length == 0) {
+          throw new HttpException(
+            'Set process not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
 
       const reworkReportModelObject = new this.reworkReportModel({
         _orderId: dto.ordersaleId,
@@ -9083,7 +9078,7 @@ if(dto.currentSetprocessId!=""){
         _type: 0,
         _description: dto.reworkRootcauseDescription,
         // _arisonUser:(dto.currentSetprocessId!="")? resultSetProcess[0]._userId:_userId_ ,
-        _arisonUser: resultSetProcess[0]?._userId || null ,
+        _arisonUser: resultSetProcess[0]?._userId || null,
         _arisonProcessMaster: resultSetProcess[0]?._processId || null,
         _arisonSetProcessStatus: resultSetProcess[0]?._orderStatus || -1,
         _createdUserId: _userId_,
@@ -9801,8 +9796,6 @@ if(dto.currentSetprocessId!=""){
         });
       }
 
-
-      
       if (dto.rejectedDateStart != -1) {
         arrayAggregation.push({
           $match: {
