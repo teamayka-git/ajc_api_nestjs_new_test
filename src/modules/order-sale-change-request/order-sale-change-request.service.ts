@@ -673,6 +673,9 @@ export class OrderSaleChangeRequestService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+      console.log("___d1");
+
       await this.orderSaleChangeRequestModel.findOneAndUpdate(
         {
           _id: dto.cancelRequestId,
@@ -686,6 +689,7 @@ export class OrderSaleChangeRequestService {
         },
         { new: true, session: transactionSession },
       );
+      console.log("___d2");
       if (dto.proceedOrder == 0) {
         var arrayToRejectedCancelReport = [];
         var resultOrderStatusCheck = await this.orderSaleMainModel.find({
@@ -793,17 +797,19 @@ export class OrderSaleChangeRequestService {
           session: transactionSession,
         });
       }
-
+      console.log("___d3");
       //doing notification
       var userFcmCheck = await this.userModel.find(
         { _shopId: resultOrderStatusCheck[0]._shopId, _status: 1 },
         { _isNotificationEnable: 1, _fcmId: 1 },
       );
+      console.log("___d4");
       var userFcmIds = [];
       var userNotificationTable = [];
       var notificationTitle = 'Cancel request accept';
       var notificationBody = 'Order UID: ' + resultOrderStatusCheck[0]._uid;
       var notificationOrderSale = dto.orderSaleId.toString();
+      console.log("___d5");
       userFcmCheck.forEach((elementUserNotification) => {
         if (
           elementUserNotification._isNotificationEnable == 1 &&
@@ -823,6 +829,7 @@ export class OrderSaleChangeRequestService {
           _status: 1,
         });
       });
+      console.log("___d6");
       if (userNotificationTable.length != 0) {
         await this.userNotificationModel.insertMany(userNotificationTable, {
           session: transactionSession,
@@ -839,7 +846,7 @@ export class OrderSaleChangeRequestService {
         );
       }
       //done notification
-
+      console.log("___d7");
       const responseJSON = { message: 'success', data: {} };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
