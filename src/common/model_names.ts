@@ -98,6 +98,11 @@ export enum ModelNames {
   ORDER_REJECTED_CANCEL_REPORTS = 'order_rejected_cancel_reports',
   USER_NOTIFICATIONS = 'user_notifications',
 
+
+  SALES_RETURNS = 'sales_returns',
+  SALES_RETURN_ITEMS = 'sales_return_items',
+
+
   CHAT_PERSONAL_CHAT_MESSAGES = 'chat_personal_chat_messages',
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',
   CHAT_PENDING_MESSAGES = 'chat_pending_messages',

@@ -105,6 +105,7 @@ _code:{
     1026 - Worker dashboard backlog in hours
     1027 - Worker dashboard high risk due date in days
     1028 - maximum amendment count
+    1029 - Sales return prefix
 
 } 
 _type:{
@@ -118,6 +119,7 @@ _type:{
     7 - Software settings
     8 - Purchase
     9 - Dashboard
+    10 - Sales return
 }
 _vlaueType:{
   0-number

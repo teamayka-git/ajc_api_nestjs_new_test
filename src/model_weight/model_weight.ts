@@ -229,6 +229,275 @@ export class ModelWeight {
       _status: 1,
     };
   }
+
+
+
+
+
+
+
+
+
+
+
+
+  public salesReturnItemsTableLight(): Object {
+    return {
+      _id: 1,
+      _invoiceId: 1,
+      _orderSaleItemId: 1,
+      _orderUid: 1,
+      _categoryName: 1,
+      _subCategoryName: 1,
+      _productName: 1,
+      _purity: 1,
+      _hsnCode: 1,
+      _huid: 1,
+      _amount: 1,
+      _productBarcode: 1,
+      _productId: 1,
+    };
+  }
+  public salesReturnItemsTableMinimum(): Object {
+    return {
+      _id: 1,
+      _invoiceId: 1,
+      _orderSaleItemId: 1,
+      _orderUid: 1,
+      _categoryName: 1,
+      _subCategoryName: 1,
+      _productName: 1,
+      _purity: 1,
+      _hsnCode: 1,
+      _isDeliveryRejected: 1,
+      _huid: 1,
+      _netWeight: 1,
+      _amount: 1,
+      _stoneAmount: 1,
+      _totalValue: 1,
+      _productBarcode: 1,
+      _productId: 1,
+      _createdUserId: 1,
+      _status: 1,
+    };
+  }
+  public salesReturnItemsTableMedium(): Object {
+    return {
+      _id: 1,
+      _invoiceId: 1,
+      _orderSaleItemId: 1,
+      _orderUid: 1,
+      _categoryName: 1,
+      _subCategoryName: 1,
+      _productName: 1,
+      _purity: 1,
+      _hsnCode: 1,
+      _huid: 1,
+      _grossWeight: 1,
+      _stoneWeight: 1,
+      _netWeight: 1,
+      _isDeliveryRejected: 1,
+      _tought: 1,
+      _pureWeight: 1,
+      _pureWeightHundredPercentage: 1,
+      _unitRate: 1,
+      _amount: 1,
+      _stoneAmount: 1,
+      _totalValue: 1,
+      _cgst: 1,
+      _sgst: 1,
+      _igst: 1,
+      _metalAmountGst: 1,
+      _stoneAmountGst: 1,
+      _makingChargeWithHundredPercentage: 1,
+      _makingChargeAmount: 1,
+      _productBarcode: 1,
+      _productId: 1,
+      _createdUserId: 1,
+      _status: 1,
+    };
+  }
+  public salesReturnItemsTableMaximum(): Object {
+    return {
+      _id: 1,
+      _invoiceId: 1,
+      _orderSaleItemId: 1,
+      _orderUid: 1,
+      _categoryName: 1,
+      _subCategoryName: 1,
+      _productName: 1,
+      _purity: 1,
+      _hsnCode: 1,
+      _huid: 1,
+      _grossWeight: 1,
+      _stoneWeight: 1,
+      _netWeight: 1,
+      _tought: 1,
+      _isDeliveryRejected: 1,
+      _pureWeight: 1,
+      _pureWeightHundredPercentage: 1,
+      _unitRate: 1,
+      _amount: 1,
+      _stoneAmount: 1,
+      _totalValue: 1,
+      _cgst: 1,
+      _sgst: 1,
+      _igst: 1,
+      _metalAmountGst: 1,
+      _stoneAmountGst: 1,
+      _makingChargeWithHundredPercentage: 1,
+      _makingChargeAmount: 1,
+      _productBarcode: 1,
+      _productId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+  public salesReturnItemsTableCustom1(): Object {
+    return {
+      _id: 1,
+      _invoiceId: 1,
+      
+    };
+  }
+  public salesReturnTableLight(): Object {
+    return {
+      _id: 1,
+      _userId: 1,
+      _uid: 1,
+      _createdAt: 1,
+      _netTotal: 1,
+    };
+  }
+  public salesReturnTableMinimum(): Object {
+    return {
+      _id: 1,
+      _userId: 1,
+      _uid: 1,
+      _shopId: 1,
+      _isAccountPosted: 1,
+      _rootCauseId: 1,
+      _description: 1,
+      _createdUserId: 1,
+
+      _status: 1,
+    };
+  }
+  public salesReturnTableMedium(): Object {
+    return {
+      _id: 1,
+      _userId: 1,
+      _uid: 1,
+      _billMode: 1,
+      _grossAmount: 1,
+      _halmarkingCharge: 1,
+      _otherCharge: 1,
+      _roundOff: 1,
+      _shopId: 1,
+      _netTotal: 1,
+      _saleType: 1,
+      _isFix: 1,
+      _price1: 1,
+      _price2: 1,
+      _metalAmountGst: 1,
+      _stoneAmount: 1,
+      _stoneAmountGst: 1,
+      _pureWeightHundredPercentage: 1,
+      _pureWeight: 1,
+      _cgst: 1,
+      _sgst: 1,
+      _igst: 1,
+      _tdsReceivable: 1,
+      _isAccountPosted: 1,
+      _tdsPayable: 1,
+      _netReceivableAmount: 1,
+      _isDelivered: 1,
+      _cgstHalmarkCharge: 1,
+      _cgstOtherCharge: 1,
+      _sgstHalmarkCharge: 1,
+      _sgstOtherCharge: 1,
+      _igstHalmarkCharge: 1,
+      _igstOtherCharge: 1,
+      _rootCauseId: 1,
+      _description: 1,
+      _createdUserId: 1,
+      _status: 1,
+    };
+  }
+  public salesReturnTableMaximum(): Object {
+    return {
+      _id: 1,
+      _userId: 1,
+      _uid: 1,
+      _billMode: 1,
+      _grossAmount: 1,
+      _halmarkingCharge: 1,
+      _shopId: 1,
+      _otherCharge: 1,
+      _roundOff: 1,
+      _netTotal: 1,
+      _saleType: 1,
+      _isFix: 1,
+      _price1: 1,
+      _price2: 1,
+      _metalAmountGst: 1,
+      _stoneAmount: 1,
+      _stoneAmountGst: 1,
+      _pureWeightHundredPercentage: 1,
+      _pureWeight: 1,
+      _cgst: 1,
+      _sgst: 1,
+      _igst: 1,
+      _isAccountPosted: 1,
+      _tdsReceivable: 1,
+      _tdsPayable: 1,
+      _netReceivableAmount: 1,
+      _isDelivered: 1,
+      _cgstHalmarkCharge: 1,
+      _cgstOtherCharge: 1,
+      _sgstHalmarkCharge: 1,
+      _sgstOtherCharge: 1,
+      _igstHalmarkCharge: 1,
+      _igstOtherCharge: 1,
+      _rootCauseId: 1,
+      _description: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   public subCategoryTableLight(): Object {
     return {
       _id: 1,
