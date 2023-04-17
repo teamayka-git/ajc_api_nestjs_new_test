@@ -503,6 +503,9 @@ export class OrderSaleSetProcessService {
           },
         );
       }
+
+      var userIdAfterFinishSetProcessNewAssignForNotification = '';
+
       console.log('___d1 reject employee    ' + JSON.stringify(dto));
       var objectUpdateOrderSaleSetProcess = {
         _userId: dto.userId == '' || dto.userId == 'nil' ? null : dto.userId,
@@ -836,6 +839,9 @@ export class OrderSaleSetProcessService {
               session: transactionSession,
             });
             console.log('___d13');
+
+            userIdAfterFinishSetProcessNewAssignForNotification =
+              resultEmployees[0]._userId;
           }
         }
       }
@@ -1160,6 +1166,112 @@ export class OrderSaleSetProcessService {
         ) {
           var userFcmCheck = await this.userModel.find(
             { _id: dto.userId },
+            { _isNotificationEnable: 1, _fcmId: 1 },
+          );
+          var userFcmIds = [];
+          var userNotificationTable = [];
+          var notificationTitle = 'Set process assigned';
+          var notificationBody =
+            'New set process assigned for you (Re work),UID: ' +
+            resultOrderSaleSetProcessNotification[0].orderSaleDetails._uid;
+          var notificationOrderSale =
+            resultOrderSaleSetProcessNotification[0].orderSaleDetails._id.toString();
+          userFcmCheck.forEach((elementUserNotification) => {
+            if (
+              elementUserNotification._isNotificationEnable == 1 &&
+              elementUserNotification._fcmId != ''
+            ) {
+              userFcmIds.push(elementUserNotification._fcmId);
+            }
+            userNotificationTable.push({
+              _viewStatus: 0,
+              _title: notificationTitle,
+              _body: notificationBody,
+              _orderSaleId:
+                notificationOrderSale == '' ? null : notificationOrderSale,
+              _userId: elementUserNotification._id,
+              _createdAt: dateTime,
+              _viewAt: 0,
+              _status: 1,
+            });
+          });
+          if (userNotificationTable.length != 0) {
+            await this.userNotificationModel.insertMany(userNotificationTable, {
+              session: transactionSession,
+            });
+          }
+          if (userFcmIds.length != 0) {
+            new FcmUtils().sendFcm(
+              notificationTitle,
+              notificationBody,
+              userFcmIds,
+              {
+                ajc: 'AJC_NOTIFICATION',
+              },
+            );
+          }
+          //done notification
+        }
+      }
+
+      if (dto.isLastSetProcess == 0 && dto.orderStatus == 3) {
+        // userIdAfterFinishSetProcessNewAssignForNotification=resultEmployees[0]._userId;
+
+        //doing notification
+
+        var resultOrderSaleSetProcessNotification =
+          await this.orderSaleSetProcessModel.aggregate([
+            {
+              $match: {
+                _id: new mongoose.Types.ObjectId(dto.orderSaleSetProcessId),
+              },
+            },
+
+            {
+              $lookup: {
+                from: ModelNames.ORDER_SALES_MAIN,
+                let: { osId: '$_orderSaleId' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $eq: ['$_id', '$$osId'],
+                      },
+                    },
+                  },
+
+                  {
+                    $project: {
+                      _orderHeadId: 1,
+                      _uid: 1,
+                      _reWorkCount: 1,
+                      _internalReWorkCount: 1,
+                    },
+                  },
+                ],
+                as: 'orderSaleDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$orderSaleDetails',
+              },
+            },
+          ]);
+        if (resultOrderSaleSetProcessNotification.length == 0) {
+          throw new HttpException(
+            'Setprocess not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+        if (
+          resultOrderSaleSetProcessNotification[0].orderSaleDetails
+            ._reWorkCount > 0 ||
+          resultOrderSaleSetProcessNotification[0].orderSaleDetails
+            ._internalReWorkCount > 0
+        ) {
+          var userFcmCheck = await this.userModel.find(
+            { _id: userIdAfterFinishSetProcessNewAssignForNotification },
             { _isNotificationEnable: 1, _fcmId: 1 },
           );
           var userFcmIds = [];
