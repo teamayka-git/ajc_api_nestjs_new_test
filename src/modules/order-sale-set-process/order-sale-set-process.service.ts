@@ -496,7 +496,7 @@ export class OrderSaleSetProcessService {
           },
         );
       }
-console.log("___d1");
+console.log("___d1 reject employee    "+JSON.stringify(dto));
       var objectUpdateOrderSaleSetProcess = {
         _userId: dto.userId == '' || dto.userId == 'nil' ? null : dto.userId,
         _orderStatus: dto.orderStatus,
