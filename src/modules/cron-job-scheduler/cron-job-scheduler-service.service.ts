@@ -5,7 +5,7 @@ import { Cron } from '@nestjs/schedule';
 export class CronJobSchedulerServiceService {
     
 
-    @Cron('* * * * * *')
+    @Cron('0 0 * * *')
     handleCron() {
         console.log("_____ cronjob");
     }
