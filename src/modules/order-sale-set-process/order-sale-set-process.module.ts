@@ -15,6 +15,8 @@ import { CountersSchema } from 'src/tableModels/counters.model';
 import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
 import { OrderSaleSetProcessDocumentsSchema } from 'src/tableModels/set_process_documents.model';
 import { ProcessMasterSchema } from 'src/tableModels/processMaster.model';
+import { UserNotificationsSchema } from 'src/tableModels/user_notifications.model';
+import { UserSchema } from 'src/tableModels/user.model';
 
 @Module({
   imports:[MongooseModule.forFeature([
@@ -30,6 +32,9 @@ import { ProcessMasterSchema } from 'src/tableModels/processMaster.model';
     {name:ModelNames.GLOBAL_GALLERIES,schema:GlobalGalleriesSchema},
     {name:ModelNames.ORDER_SALE_SET_PROCESSES_DOCUMENTS,schema:OrderSaleSetProcessDocumentsSchema},
     {name:ModelNames.PROCESS_MASTER,schema:ProcessMasterSchema},
+    
+    { name: ModelNames.USER_NOTIFICATIONS, schema: UserNotificationsSchema },
+    { name: ModelNames.USER, schema: UserSchema },
   
   ])],
   controllers: [OrderSaleSetProcessController],

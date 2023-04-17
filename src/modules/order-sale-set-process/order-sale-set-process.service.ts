@@ -29,6 +29,9 @@ import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { OrderSaleSetProcessDocuments } from 'src/tableModels/set_process_documents.model';
 import { ProcessMaster } from 'src/tableModels/processMaster.model';
 import { startOfMonth } from 'date-fns';
+import { User } from 'src/tableModels/user.model';
+import { UserNotifications } from 'src/tableModels/user_notifications.model';
+import { FcmUtils } from 'src/utils/FcmUtils';
 
 @Injectable()
 export class OrderSaleSetProcessService {
@@ -52,6 +55,10 @@ export class OrderSaleSetProcessService {
     @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
     private readonly orderSaleHistoriesModel: mongoose.Model<OrderSaleHistories>,
 
+    @InjectModel(ModelNames.USER)
+    private readonly userModel: mongoose.Model<User>,
+    @InjectModel(ModelNames.USER_NOTIFICATIONS)
+    private readonly userNotificationModel: mongoose.Model<UserNotifications>,
     @InjectModel(ModelNames.PROCESS_MASTER)
     private readonly processMasterModel: mongoose.Model<ProcessMaster>,
     @InjectModel(ModelNames.ORDER_SALES_MAIN)
@@ -116,7 +123,7 @@ export class OrderSaleSetProcessService {
             _workAssignedTime: -1,
             _workStartedTime: -1,
             _workCompletedTime: -1,
-            _processNote: "",
+            _processNote: '',
             _rootCause: '',
             _dueDate: mapItem1.dueDate,
             _description: mapItem1.description,
@@ -496,7 +503,7 @@ export class OrderSaleSetProcessService {
           },
         );
       }
-console.log("___d1 reject employee    "+JSON.stringify(dto));
+      console.log('___d1 reject employee    ' + JSON.stringify(dto));
       var objectUpdateOrderSaleSetProcess = {
         _userId: dto.userId == '' || dto.userId == 'nil' ? null : dto.userId,
         _orderStatus: dto.orderStatus,
@@ -507,7 +514,7 @@ console.log("___d1 reject employee    "+JSON.stringify(dto));
             ? null
             : dto.rootCauseId,
       };
-      console.log("___d2");
+      console.log('___d2');
       switch (dto.orderStatus) {
         case 1:
           objectUpdateOrderSaleSetProcess['_workAssignedTime'] = dateTime;
@@ -517,9 +524,8 @@ console.log("___d1 reject employee    "+JSON.stringify(dto));
           break;
         case 3:
           objectUpdateOrderSaleSetProcess['_workCompletedTime'] = dateTime;
-          if(dto.processNote != null ){
-            
-          objectUpdateOrderSaleSetProcess['_processNote'] = dto.processNote;
+          if (dto.processNote != null) {
+            objectUpdateOrderSaleSetProcess['_processNote'] = dto.processNote;
           }
           break;
       }
@@ -533,7 +539,7 @@ console.log("___d1 reject employee    "+JSON.stringify(dto));
         },
         { new: true, session: transactionSession },
       );
-      console.log("___d3");
+      console.log('___d3');
       var objDefaultProcessHistory = {
         _orderSaleId: result._orderSaleId,
         _userId: null,
@@ -545,7 +551,7 @@ console.log("___d1 reject employee    "+JSON.stringify(dto));
         _description: dto.descriptionSetProcessHistory,
         _status: 1,
       };
-      console.log("___d4");
+      console.log('___d4');
       switch (dto.setProcessHistoryType) {
         /*
           0 - created  process
@@ -578,21 +584,21 @@ console.log("___d1 reject employee    "+JSON.stringify(dto));
         case 6:
           objDefaultProcessHistory._processId = result._processId;
           break;
-          case 7:
-            objDefaultProcessHistory._userId = dto.userId;
-            objDefaultProcessHistory._processId = result._processId;
-            break;
-            case 8:
-              objDefaultProcessHistory._processId = result._processId;
-              break;
+        case 7:
+          objDefaultProcessHistory._userId = dto.userId;
+          objDefaultProcessHistory._processId = result._processId;
+          break;
+        case 8:
+          objDefaultProcessHistory._processId = result._processId;
+          break;
       }
-      console.log("___d5");
+      console.log('___d5');
       const orderSaleSetProcessHistory =
         new this.orderSaleSetProcessHistoriesModel(objDefaultProcessHistory);
       await orderSaleSetProcessHistory.save({
         session: transactionSession,
       });
-      console.log("___d6");
+      console.log('___d6');
       // if (dto.orderStatus == 6) {
       // const orderSaleNewSetProcess = new this.orderSaleSetProcessModel({
       //   _orderSaleId: result._orderSaleId,
@@ -651,13 +657,13 @@ console.log("___d1 reject employee    "+JSON.stringify(dto));
           //finished work
           objSubProcessHistory._type = 3;
         }
-        console.log("___d7");
+        console.log('___d7');
         const orderSaleSubProcessHistory =
           new this.orderSaleSetSubProcessHistoriesModel(objSubProcessHistory);
         await orderSaleSubProcessHistory.save({
           session: transactionSession,
         });
-        console.log("___d8");
+        console.log('___d8');
       }
 
       if (dto.isLastSetProcess == 0 && dto.orderStatus == 3) {
@@ -689,7 +695,7 @@ console.log("___d1 reject employee    "+JSON.stringify(dto));
             },
           ],
         );
-        console.log("___d9");
+        console.log('___d9');
         if (orderSaleSetProcess.length == 0) {
           throw new HttpException(
             'Next set process not found',
@@ -709,7 +715,7 @@ console.log("___d1 reject employee    "+JSON.stringify(dto));
           },
           { new: true, session: transactionSession },
         );
-        console.log("___d10");
+        console.log('___d10');
         if (orderSaleSetProcess[0].processDetails._isAutomatic == 1) {
           var resultEmployees = await this.employeeModel
             .aggregate([
@@ -798,7 +804,7 @@ console.log("___d1 reject employee    "+JSON.stringify(dto));
               },
             ])
             .session(transactionSession);
-            console.log("___d11");
+          console.log('___d11');
           if (resultEmployees.length != 0) {
             await this.orderSaleSetProcessModel.findOneAndUpdate(
               {
@@ -813,7 +819,7 @@ console.log("___d1 reject employee    "+JSON.stringify(dto));
               },
               { new: true, session: transactionSession },
             );
-            console.log("___d12");
+            console.log('___d12');
             const orderSaleSetProcessHistoryAutomation =
               new this.orderSaleSetProcessHistoriesModel({
                 _orderSaleId: result._orderSaleId,
@@ -825,11 +831,11 @@ console.log("___d1 reject employee    "+JSON.stringify(dto));
                 _description: '',
                 _status: 1,
               });
-              
+
             await orderSaleSetProcessHistoryAutomation.save({
               session: transactionSession,
             });
-            console.log("___d13");
+            console.log('___d13');
           }
         }
       }
@@ -847,7 +853,7 @@ console.log("___d1 reject employee    "+JSON.stringify(dto));
           },
           { new: true, session: transactionSession },
         );
-        console.log("___d14");
+        console.log('___d14');
         const orderSaleHistory = new this.orderSaleHistoriesModel({
           _orderSaleId: result._orderSaleId,
           _userId: null,
@@ -863,8 +869,137 @@ console.log("___d1 reject employee    "+JSON.stringify(dto));
         await orderSaleHistory.save({
           session: transactionSession,
         });
-        console.log("___d15");
+        console.log('___d15');
       }
+
+      if (dto.orderStatus == 6) {
+        //doing notification
+        var resultUserRejectDone = await this.userModel.find(
+          { _id: _userId_ },
+          { _name: 1 },
+        );
+        if (resultUserRejectDone.length == 0) {
+          throw new HttpException(
+            'User not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+        var resultOrderSaleSetProcessNotification =
+          await this.orderSaleSetProcessModel.aggregate([
+            {
+              $match: {
+                _id: new mongoose.Types.ObjectId(dto.orderSaleSetProcessId),
+              },
+            },
+
+            {
+              $lookup: {
+                from: ModelNames.ORDER_SALES_MAIN,
+                let: { osId: '$_orderSaleId' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $eq: ['$_id', '$$osId'],
+                      },
+                    },
+                  },
+
+                  {
+                    $project: {
+                      _orderHeadId: 1,
+                      _uid: 1,
+                    },
+                  },
+                  {
+                    $lookup: {
+                      from: ModelNames.USER,
+                      let: { ohId: '$_orderHeadId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: {
+                              $eq: ['$_id', '$$ohId'],
+                            },
+                          },
+                        },
+
+                        {
+                          $project: {
+                            _isNotificationEnable: 1,
+                            _fcmId: 1,
+                          },
+                        },
+                      ],
+                      as: 'ohDetails',
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: '$ohDetails',
+                    },
+                  },
+                ],
+                as: 'orderSaleDetails',
+              },
+            },
+            {
+              $unwind: {
+                path: '$orderSaleDetails',
+              },
+            },
+          ]);
+          if(resultOrderSaleSetProcessNotification.length==0){
+            throw new HttpException(
+              'Setprocess not found',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
+
+
+          var userFcmIds = [];
+          var userNotificationTable = [];
+          var notificationTitle = 'Worker rejected';
+          var notificationBody = `${resultUserRejectDone[0]._name} (worker) rejected setprocess `;
+          var notificationOrderSale = resultOrderSaleSetProcessNotification[0].orderSaleDetails._id.toString();
+          resultOrderSaleSetProcessNotification.forEach((elementUserNotification) => {
+            if (
+              elementUserNotification.orderSaleDetails.ohDetails._isNotificationEnable == 1 &&
+              elementUserNotification.orderSaleDetails.ohDetails._fcmId != ''
+            ) {
+              userFcmIds.push(elementUserNotification.orderSaleDetails.ohDetails._fcmId);
+            }
+            userNotificationTable.push({
+              _viewStatus: 0,
+              _title: notificationTitle,
+              _body: notificationBody,
+              _orderSaleId:
+                notificationOrderSale == '' ? null : notificationOrderSale,
+              _userId: elementUserNotification.orderSaleDetails.ohDetails._id,
+              _createdAt: dateTime,
+              _viewAt: 0,
+              _status: 1,
+            });
+          });
+          if (userNotificationTable.length != 0) {
+            await this.userNotificationModel.insertMany(userNotificationTable, {
+              session: transactionSession,
+            });
+          }
+          if (userFcmIds.length != 0) {
+            new FcmUtils().sendFcm(
+              notificationTitle,
+              notificationBody,
+              userFcmIds,
+              {
+                ajc: 'AJC_NOTIFICATION',
+              },
+            );
+          }
+          //done notification
+      }
+
+     
 
       const responseJSON = { message: 'success', data: result };
       if (
@@ -1431,12 +1566,10 @@ console.log("___d1 reject employee    "+JSON.stringify(dto));
           session: transactionSession,
         },
       );
-     
-
 
       const responseJSON = {
         message: 'success',
-        data: { },
+        data: {},
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
