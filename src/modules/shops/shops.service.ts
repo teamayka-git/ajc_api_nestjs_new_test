@@ -2607,7 +2607,7 @@ export class ShopsService {
 
       //doing notification
       var userFcmCheck = await this.userModel.find(
-        { _shopId: { $in: dto.shopIds } },
+        { _shopId: { $in: dto.shopIds },_status:1 },
         { _isNotificationEnable: 1, _fcmId: 1 },
       );
       console.log("___shop freez  "+JSON.stringify(userFcmCheck));

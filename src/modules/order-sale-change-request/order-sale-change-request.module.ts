@@ -14,6 +14,7 @@ import { GeneralsSchema } from 'src/tableModels/generals.model';
 import { OrderSaleSetProcessesSchema } from 'src/tableModels/order_sale_set_processes.model';
 import { OrderCancelRejectReportsSchema } from 'src/tableModels/order_cancel_reject_reports.model';
 import { UserNotificationsSchema } from 'src/tableModels/user_notifications.model';
+import { UserSchema } from 'src/tableModels/user.model';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { UserNotificationsSchema } from 'src/tableModels/user_notifications.mode
       { name: ModelNames.ORDER_SALE_CHANGE_REQUEST_DOCUMENTS, schema:OrderSaleChangeRequestDocumentsSchema },
       { name: ModelNames.ORDER_REJECTED_CANCEL_REPORTS, schema: OrderCancelRejectReportsSchema },
       
+      { name: ModelNames.USER, schema: UserSchema },
 
       { name: ModelNames.USER_NOTIFICATIONS, schema: UserNotificationsSchema },
       { 
