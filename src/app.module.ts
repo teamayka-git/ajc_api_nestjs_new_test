@@ -113,6 +113,8 @@ import { AccountCurrencyModule } from './modules/account-currency/account-curren
 import { HalmarkRequestModule } from './modules/halmark-request/halmark-request.module';
 import { UsersModule } from './modules/users/users.module';
 import { UserNotificationsSchema } from './tableModels/user_notifications.model';
+import { CronJobSchedulerModule } from './modules/cron-job-scheduler/cron-job-scheduler.module';
+import { CronJobSchedulerServiceService } from './modules/cron-job-scheduler/cron-job-scheduler-service.service';
 
 
 @Module({
@@ -242,6 +244,7 @@ import { UserNotificationsSchema } from './tableModels/user_notifications.model'
     AccountCurrencyModule,
     HalmarkRequestModule,
     UsersModule,
+    CronJobSchedulerModule,
 
     // SalesReturnRequestStatusesModule,
   ],
@@ -254,6 +257,7 @@ import { UserNotificationsSchema } from './tableModels/user_notifications.model'
     },
     { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
     ChatGateway,
+    CronJobSchedulerServiceService,
   ],
 })
 export class AppModule {
