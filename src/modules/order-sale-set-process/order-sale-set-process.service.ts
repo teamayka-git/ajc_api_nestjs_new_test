@@ -1006,7 +1006,7 @@ export class OrderSaleSetProcessService {
 
       if (dto.orderStatus == 7) {
         //doing notification
-
+console.log("_______ orderStatus 7   "+JSON.stringify(result));
         var resultUserRejectDone = await this.userModel.find(
           { _id: result._userId },
           { _isNotificationEnable: 1, _fcmId: 1 },
