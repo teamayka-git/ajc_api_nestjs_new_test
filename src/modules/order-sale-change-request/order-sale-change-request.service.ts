@@ -675,6 +675,8 @@ export class OrderSaleChangeRequestService {
     try {
 
       console.log("___d1");
+      var orderShopIdForNotification="";
+      var orderUIDForNotification="";
 
       await this.orderSaleChangeRequestModel.findOneAndUpdate(
         {
@@ -702,7 +704,8 @@ export class OrderSaleChangeRequestService {
             HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }
-
+        orderShopIdForNotification=resultOrderStatusCheck[0]._shopId;
+        orderUIDForNotification=resultOrderStatusCheck[0]._uid;
         arrayToRejectedCancelReport.push({
           _orderId: resultOrderStatusCheck[0]._id,
           _shop: resultOrderStatusCheck[0]._shopId,
@@ -800,14 +803,14 @@ export class OrderSaleChangeRequestService {
       console.log("___d3");
       //doing notification
       var userFcmCheck = await this.userModel.find(
-        { _shopId: resultOrderStatusCheck[0]._shopId, _status: 1 },
+        { _shopId: orderShopIdForNotification, _status: 1 },
         { _isNotificationEnable: 1, _fcmId: 1 },
       );
       console.log("___d4");
       var userFcmIds = [];
       var userNotificationTable = [];
       var notificationTitle = 'Cancel request accept';
-      var notificationBody = 'Order UID: ' + resultOrderStatusCheck[0]._uid;
+      var notificationBody = 'Order UID: ' + orderUIDForNotification;
       var notificationOrderSale = dto.orderSaleId.toString();
       console.log("___d5");
       userFcmCheck.forEach((elementUserNotification) => {
