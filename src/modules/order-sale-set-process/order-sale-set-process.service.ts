@@ -1035,32 +1035,7 @@ export class OrderSaleSetProcessService {
                       _uid: 1,
                     },
                   },
-                  {
-                    $lookup: {
-                      from: ModelNames.ORDER_SALE_SET_PROCESSES,
-                      let: { osMainId: '$_id' },
-                      pipeline: [
-                        {
-                          $match: {
-                            _status: 1,
-                            _userId: {$ne:null},
-                            _orderStatus:{$in:[1,2,]},
-                            $expr: {
-                              $eq: ['$_orderSaleId', '$$osMainId'],
-                            },
-                          },
-                        },
-
-                        {
-                          $project: {
-                            _orderHeadId: 1,
-                            _uid: 1,
-                          },
-                        },
-                      ],
-                      as: 'setProcess',
-                    },
-                  },
+                  
                 ],
                 as: 'orderSaleDetails',
               },
@@ -1078,11 +1053,9 @@ export class OrderSaleSetProcessService {
           );
         }
 
-console.log("_____resultOrderSaleSetProcessNotification    "+JSON.stringify(resultOrderSaleSetProcessNotification));
-
 
         var resultUserRejectDone = await this.userModel.find(
-          { _id: result._userId },
+          { _id: resultOrderSaleSetProcessNotification[0]._userId },
           { _isNotificationEnable: 1, _fcmId: 1 },
         );
         if (resultUserRejectDone.length == 0) {
