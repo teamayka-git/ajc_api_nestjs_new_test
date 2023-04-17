@@ -13,6 +13,7 @@ import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
 import { GeneralsSchema } from 'src/tableModels/generals.model';
 import { OrderSaleSetProcessesSchema } from 'src/tableModels/order_sale_set_processes.model';
 import { OrderCancelRejectReportsSchema } from 'src/tableModels/order_cancel_reject_reports.model';
+import { UserNotificationsSchema } from 'src/tableModels/user_notifications.model';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { OrderCancelRejectReportsSchema } from 'src/tableModels/order_cancel_rej
       { name: ModelNames.ORDER_REJECTED_CANCEL_REPORTS, schema: OrderCancelRejectReportsSchema },
       
 
+      { name: ModelNames.USER_NOTIFICATIONS, schema: UserNotificationsSchema },
       { 
         name: ModelNames.ORDER_SALE_SET_PROCESSES,
         schema: OrderSaleSetProcessesSchema,
