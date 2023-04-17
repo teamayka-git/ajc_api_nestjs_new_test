@@ -99,9 +99,6 @@ export enum ModelNames {
   USER_NOTIFICATIONS = 'user_notifications',
 
 
-  SALES_RETURNS = 'sales_returns',
-  SALES_RETURN_ITEMS = 'sales_return_items',
-
 
   CHAT_PERSONAL_CHAT_MESSAGES = 'chat_personal_chat_messages',
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',

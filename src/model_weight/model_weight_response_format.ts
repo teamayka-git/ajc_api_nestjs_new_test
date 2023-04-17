@@ -822,47 +822,6 @@ export class ModelWeightResponseFormat {
 
 
 
-  public salesReturnTableResponseFormat(
-    startIndex: int,
-    responseFormatArray: List,
-  ): Object {
-    if (responseFormatArray.length == 0) {
-      return { $project: { _: 0 } };
-    }
-
-    if (responseFormatArray.includes(startIndex)) {
-      return { $project: new ModelWeight().salesReturnTableLight() };
-    } else if (responseFormatArray.includes(startIndex + 1)) {
-      return { $project: new ModelWeight().salesReturnTableMinimum() };
-    } else if (responseFormatArray.includes(startIndex + 2)) {
-      return { $project: new ModelWeight().salesReturnTableMedium() };
-    } else {
-      return { $project: { _: 0 } };
-    }
-  }
-  public salesReturnItemsTableResponseFormat(
-    startIndex: int,
-    responseFormatArray: List,
-  ): Object {
-    if (responseFormatArray.length == 0) {
-      return { $project: { _: 0 } };
-    }
-
-    if (responseFormatArray.includes(startIndex)) {
-      return { $project: new ModelWeight().salesReturnItemsTableLight() };
-    } else if (responseFormatArray.includes(startIndex + 1)) {
-      return { $project: new ModelWeight().salesReturnItemsTableMinimum() };
-    } else if (responseFormatArray.includes(startIndex + 2)) {
-      return { $project: new ModelWeight().salesReturnItemsTableMedium() };
-    } else if (responseFormatArray.includes(startIndex + 4)) {
-      return { $project: new ModelWeight().salesReturnItemsTableCustom1() };
-    } else {
-      return { $project: { _: 0 } };
-    }
-  }
-
-
-
 
 
 

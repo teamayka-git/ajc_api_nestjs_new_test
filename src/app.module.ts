@@ -113,7 +113,6 @@ import { AccountCurrencyModule } from './modules/account-currency/account-curren
 import { HalmarkRequestModule } from './modules/halmark-request/halmark-request.module';
 import { UsersModule } from './modules/users/users.module';
 import { UserNotificationsSchema } from './tableModels/user_notifications.model';
-import { SalesReturnModule } from './modules/sales-return/sales-return.module';
 
 
 @Module({
@@ -243,7 +242,6 @@ import { SalesReturnModule } from './modules/sales-return/sales-return.module';
     AccountCurrencyModule,
     HalmarkRequestModule,
     UsersModule,
-    SalesReturnModule,
 
     // SalesReturnRequestStatusesModule,
   ],
