@@ -807,6 +807,8 @@ export class OrderSaleChangeRequestService {
         });
       }
       console.log("___d3");
+      console.log("___d3.0  "+orderShopIdForNotification);
+      console.log("___d3.1  "+orderUIDForNotification);
       //doing notification
       var userFcmCheck = await this.userModel.find(
         { _shopId: orderShopIdForNotification, _status: 1 },
