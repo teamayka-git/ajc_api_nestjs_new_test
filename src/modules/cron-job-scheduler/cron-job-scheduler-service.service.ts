@@ -213,7 +213,7 @@ export class CronJobSchedulerServiceService {
 
 
 
-  @Cron('28 16 * * *', {
+  @Cron('31 16 * * *', {
     timeZone: 'Asia/Kolkata',
   })
   async workerTodayDueAndBacklogCountSendCronJob() {
