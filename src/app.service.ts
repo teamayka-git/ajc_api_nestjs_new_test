@@ -131,7 +131,7 @@ export class AppService {
 
 var result=await this.ordersaleMainModel.aggregate([
   {$match:{
-    _orderHeadId:_userId_,_workStatus:3,_status:1,
+    _orderHeadId:new mongoose.Types.ObjectId(_userId_),_workStatus:3,_status:1,
   }},
   {
     $lookup: {
