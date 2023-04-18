@@ -211,7 +211,7 @@ export class CronJobSchedulerServiceService {
     }
   }
 
-  @Cron('19 15 * * *', {
+  @Cron('30 17 * * *', {
     timeZone: 'Asia/Kolkata',
   })
   async sendShopUserTodayAddedDesignsCronJob() {

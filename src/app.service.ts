@@ -39,7 +39,13 @@ import { User } from './tableModels/user.model';
 import { UserAttendance } from './tableModels/user_attendances.model';
 import { IndexUtils } from './utils/IndexUtils';
 import { SmsUtils } from './utils/smsUtils';
-import { endOfDay, endOfMonth, endOfToday, startOfDay, startOfMonth } from 'date-fns';
+import {
+  endOfDay,
+  endOfMonth,
+  endOfToday,
+  startOfDay,
+  startOfMonth,
+} from 'date-fns';
 import { OrderSaleHistories } from './tableModels/order_sale_histories.model';
 import { Invoices } from './tableModels/invoices.model';
 import { Delivery } from './tableModels/delivery.model';
@@ -125,24 +131,8 @@ export class AppService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-
-
-
-      console.log(`______start date   ${ startOfDay(dateTime).getTime()}`);
-      console.log(`______end date   ${ endOfDay(dateTime).getTime()}`);
-
-
-var result=await this.productModel.count({
-  _createdAt:{$lte:endOfDay(dateTime).getTime(),$gte:startOfDay(dateTime).getTime()},
-  _type:3,
-  _status:1
-});
-
-
-
-/*
-      var result =   await this.departmentModel.aggregate([
-        { $match: { _code: 1000, _status: 1 } },
+      var result = await this.departmentModel.aggregate([
+        { $match: { _code: 1003, _status: 1 } },
         {
           $lookup: {
             from: ModelNames.EMPLOYEES,
@@ -162,7 +152,6 @@ var result=await this.productModel.count({
                 },
               },
 
-
               {
                 $lookup: {
                   from: ModelNames.USER,
@@ -179,23 +168,27 @@ var result=await this.productModel.count({
                     {
                       $project: {
                         _id: 1,
-                        _name:1,
-                        _isNotificationEnable: 1, _fcmId: 1
+                        _name: 1,
+                        _isNotificationEnable: 1,
+                        _fcmId: 1,
                       },
                     },
 
-
                     {
                       $lookup: {
-                        from: ModelNames.ORDER_SALES_MAIN,
+                        from: ModelNames.ORDER_SALE_SET_PROCESSES,
                         let: { userId: '$_id' },
                         pipeline: [
                           {
                             $match: {
-                              _workStatus: 3,
+                              _dueDate: {
+                                $lte: endOfDay(dateTime).getTime(),
+                                $gte: startOfDay(dateTime).getTime(),
+                              },
                               _status: 1,
+                              _orderStatus: { $in: [1, 2] },
                               $expr: {
-                                $eq: ['$_orderHeadId', '$$userId'],
+                                $eq: ['$_userId', '$$userId'],
                               },
                             },
                           },
@@ -204,48 +197,47 @@ var result=await this.productModel.count({
                               _id: 1,
                             },
                           },
-                          {
-                            $lookup: {
-                              from: ModelNames.ORDER_SALE_SET_PROCESSES,
-                              let: { osId: '$_id' },
-                              pipeline: [
-                                {
-                                  $match: {
-                                    _status: 1,
-                                    _orderStatus: { $in: [0, 4, 5, 6, 7] },
-                                    $expr: {
-                                      $eq: ['$_orderSaleId', '$$osId'],
-                                    },
-                                  },
-                                },  {
-                                  $project: {
-                                    _id: 1,
-                                  },
-                                },
-                              ],
-                              as: 'setProcessList',
-                            },
-                          },
-                          {
-                            $match: { setProcessList: { $ne: [] } },
-                          },
-                          {
-                            $group: { _id: null, totalCount: { $sum: 1 } },
-                          }
                         ],
-                        as: 'orderSaleList',
+                        as: 'todaySetProcess',
                       },
                     },
                     {
-                      $unwind: {
-                        path: '$orderSaleList',
+                      $lookup: {
+                        from: ModelNames.ORDER_SALE_SET_PROCESSES,
+                        let: { userId: '$_id' },
+                        pipeline: [
+                          {
+                            $match: {
+                              _dueDate: {
+                                $lte: startOfDay(dateTime).getTime(),
+                              },
+                              _status: 1,
+                              _orderStatus: { $in: [1, 2] },
+                              $expr: {
+                                $eq: ['$_userId', '$$userId'],
+                              },
+                            },
+                          },
+                          {
+                            $project: {
+                              _id: 1,
+                            },
+                          },
+                        ],
+                        as: 'backlogSetProcess',
                       },
                     },
-
-
-
-
-
+                    {
+                      $match: {
+                        $or: [
+                          { todaySetProcess: { $ne: [] } },
+                          { backlogSetProcess: { $ne: [] } },
+                        ],
+                      },
+                    },
+                    {
+                      $group: { _id: null, totalCount: { $sum: 1 } },
+                    },
                   ],
                   as: 'userDetails',
                 },
@@ -255,14 +247,11 @@ var result=await this.productModel.count({
                   path: '$userDetails',
                 },
               },
-
-
             ],
             as: 'employeeDetails',
           },
         },
-       
-      ]);*/
+      ]);
 
       // var asdf = await twilioClient.messages.create({
       //   // from:'AJCGOLD',
