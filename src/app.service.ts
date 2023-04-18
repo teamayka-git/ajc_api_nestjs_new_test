@@ -258,7 +258,7 @@ export class AppService {
         },
       ]);
 
-      console.log("_____as1");
+      console.log("_____as1   "+JSON.stringify(result));
       if (result.length != 0) {
         for (var j = 0; j < result[0].employeeDetails.length; j++) {
           //doing notification
