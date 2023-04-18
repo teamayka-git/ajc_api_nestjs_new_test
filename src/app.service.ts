@@ -204,6 +204,7 @@ export class AppService {
                         as: 'todaySetProcess',
                       },
                     },
+                    
                     {
                       $lookup: {
                         from: ModelNames.ORDER_SALE_SET_PROCESSES,
@@ -233,14 +234,14 @@ export class AppService {
                         as: 'backlogSetProcess',
                       },
                     },
-                    // {
-                    //   $match: {
-                    //     $or: [
-                    //       { todaySetProcess: { $ne: [] } },
-                    //       { backlogSetProcess: { $ne: [] } },
-                    //     ],
-                    //   },
-                    // },
+                    {
+                      $match: {
+                        $or: [
+                          { todaySetProcess: { $ne: [] } },
+                          { backlogSetProcess: { $ne: [] } },
+                        ],
+                      },
+                    },
                   
                   ],
                   as: 'userDetails',
