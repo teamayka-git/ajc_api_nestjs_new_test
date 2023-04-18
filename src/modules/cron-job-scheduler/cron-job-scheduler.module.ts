@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { UserSchema } from 'src/tableModels/user.model';
 import { UserNotificationsSchema } from 'src/tableModels/user_notifications.model';
+import { DepartmentsSchema } from 'src/tableModels/departments.model';
 
 @Module({
   imports:[
@@ -18,6 +19,8 @@ import { UserNotificationsSchema } from 'src/tableModels/user_notifications.mode
     MongooseModule.forFeature([
       { name: ModelNames.USER, schema: UserSchema },
       { name: ModelNames.USER_NOTIFICATIONS, schema: UserNotificationsSchema },
+      
+      { name: ModelNames.DEPARTMENT, schema: DepartmentsSchema },
     ]),
  
   ],
