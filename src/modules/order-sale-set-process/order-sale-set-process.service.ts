@@ -807,7 +807,8 @@ export class OrderSaleSetProcessService {
               },
             ])
             .session(transactionSession);
-          console.log('___d11');
+            console.log('___d11');
+            console.log('___d11.1    '+JSON.stringify(resultEmployees));
           if (resultEmployees.length != 0) {
             await this.orderSaleSetProcessModel.findOneAndUpdate(
               {
