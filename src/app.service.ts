@@ -152,8 +152,10 @@ var result=await this.ordersaleMainModel.aggregate([
       ],
       as: 'setProcessList',
     },
-  }
-
+  },
+  {
+    $match: { setProcessList: { $ne: [] } },
+  },
 
 
 ]);
