@@ -213,8 +213,10 @@ export class AppService {
                         ],
                         as: 'orderSaleList',
                       },
+                    },
+                    {
+                      $group: { _id: null, totalCount: { $sum: 1 } },
                     }
-
 
 
 
