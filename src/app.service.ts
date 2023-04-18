@@ -129,11 +129,38 @@ export class AppService {
 
 
 
-
-
-
+var result=await this.ordersaleMainModel.aggregate([
+  {$match:{
+    _orderHeadId:_userId_,_workStatus:3,_status:1,
+  }},
+  {
+    $lookup: {
+      from: ModelNames.ORDER_SALE_SET_PROCESSES,
+      let: { osId: '$_id' },
+      pipeline: [
+        {
+          $match: {
+            _status:1,
+            _orderStatus:{$in:[0,4,5,6,7]},
+            $expr: {
+              $eq: ['$_orderSaleId', '$$osId'],
+            },
+          },
+        },
 
       
+      ],
+      as: 'setProcessList',
+    },
+  }
+
+
+
+]);
+
+
+
+
 
 
 
@@ -158,7 +185,7 @@ export class AppService {
 
       const responseJSON = {
         message: 'success',
-        data: dto,
+        data: result,
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
