@@ -114,7 +114,6 @@ import { HalmarkRequestModule } from './modules/halmark-request/halmark-request.
 import { UsersModule } from './modules/users/users.module';
 import { UserNotificationsSchema } from './tableModels/user_notifications.model';
 import { CronJobSchedulerModule } from './modules/cron-job-scheduler/cron-job-scheduler.module';
-import { CronJobSchedulerServiceService } from './modules/cron-job-scheduler/cron-job-scheduler-service.service';
 
 
 @Module({
@@ -257,7 +256,6 @@ import { CronJobSchedulerServiceService } from './modules/cron-job-scheduler/cro
     },
     { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
     ChatGateway,
-    CronJobSchedulerServiceService,
   ],
 })
 export class AppModule {
