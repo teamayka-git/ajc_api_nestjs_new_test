@@ -8,6 +8,7 @@ import { ModelNames } from 'src/common/model_names';
 import { UserSchema } from 'src/tableModels/user.model';
 import { UserNotificationsSchema } from 'src/tableModels/user_notifications.model';
 import { DepartmentsSchema } from 'src/tableModels/departments.model';
+import { ProductsSchema } from 'src/tableModels/products.model';
 
 @Module({
   imports:[
@@ -20,6 +21,7 @@ import { DepartmentsSchema } from 'src/tableModels/departments.model';
       { name: ModelNames.USER, schema: UserSchema },
       { name: ModelNames.USER_NOTIFICATIONS, schema: UserNotificationsSchema },
       
+      { name: ModelNames.PRODUCTS, schema: ProductsSchema },
       { name: ModelNames.DEPARTMENT, schema: DepartmentsSchema },
     ]),
  

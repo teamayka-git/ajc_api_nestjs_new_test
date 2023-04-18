@@ -7,6 +7,14 @@ import { User } from 'src/tableModels/user.model';
 import { UserNotifications } from 'src/tableModels/user_notifications.model';
 import { Departments } from 'src/tableModels/departments.model';
 import { FcmUtils } from 'src/utils/FcmUtils';
+import { Products } from 'src/tableModels/products.model';
+import {
+  endOfDay,
+  endOfMonth,
+  endOfToday,
+  startOfDay,
+  startOfMonth,
+} from 'date-fns';
 
 @Injectable()
 export class CronJobSchedulerServiceService {
@@ -17,19 +25,21 @@ export class CronJobSchedulerServiceService {
     private readonly userNotificationModel: mongoose.Model<UserNotifications>,
     @InjectModel(ModelNames.DEPARTMENT)
     private readonly departmentModel: mongoose.Model<Departments>,
+    @InjectModel(ModelNames.PRODUCTS)
+    private readonly productModel: mongoose.Model<Products>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
   @Cron('0 11,17 * * *', {
     timeZone: 'Asia/Kolkata',
   })
-  async handleCron() {
-    console.log('_____ cronjob');
+  async ohNotAssignedWorkerCountSendCronJob() {
+    console.log('_____ cronjob ohNotAssignedWorkerCountSendCronJob()');
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-      var result =   await this.departmentModel.aggregate([
+      var result = await this.departmentModel.aggregate([
         { $match: { _code: 1000, _status: 1 } },
         {
           $lookup: {
@@ -50,7 +60,6 @@ export class CronJobSchedulerServiceService {
                 },
               },
 
-
               {
                 $lookup: {
                   from: ModelNames.USER,
@@ -67,11 +76,11 @@ export class CronJobSchedulerServiceService {
                     {
                       $project: {
                         _id: 1,
-                        _name:1,
-                        _isNotificationEnable: 1, _fcmId: 1
+                        _name: 1,
+                        _isNotificationEnable: 1,
+                        _fcmId: 1,
                       },
                     },
-
 
                     {
                       $lookup: {
@@ -105,7 +114,8 @@ export class CronJobSchedulerServiceService {
                                       $eq: ['$_orderSaleId', '$$osId'],
                                     },
                                   },
-                                },  {
+                                },
+                                {
                                   $project: {
                                     _id: 1,
                                   },
@@ -119,7 +129,7 @@ export class CronJobSchedulerServiceService {
                           },
                           {
                             $group: { _id: null, totalCount: { $sum: 1 } },
-                          }
+                          },
                         ],
                         as: 'orderSaleList',
                       },
@@ -129,11 +139,6 @@ export class CronJobSchedulerServiceService {
                         path: '$orderSaleList',
                       },
                     },
-
-
-
-
-
                   ],
                   as: 'userDetails',
                 },
@@ -143,95 +148,134 @@ export class CronJobSchedulerServiceService {
                   path: '$userDetails',
                 },
               },
-
-
             ],
             as: 'employeeDetails',
           },
         },
-       
       ]);
-      if(result.length!=0){
+      if (result.length != 0) {
+        for (var j = 0; j < result[0].employeeDetails.length; j++) {
+          //doing notification
 
-for(var j=0;j<result[0].employeeDetails.length;j++){
+          var userFcmIds = [];
+          var userNotificationTable = [];
+          var notificationTitle = 'Pending set process';
+          var notificationBody = `Your ${result[0].employeeDetails[j].userDetails.orderSaleList.totalCount} set process not assigned to workers, its still not pending`;
+          var notificationOrderSale = '';
 
+          if (
+            result[0].employeeDetails[j].userDetails._isNotificationEnable ==
+              1 &&
+            result[0].employeeDetails[j].userDetails._fcmId != ''
+          ) {
+            userFcmIds.push(result[0].employeeDetails[j].userDetails._fcmId);
+          }
+          userNotificationTable.push({
+            _viewStatus: 0,
+            _title: notificationTitle,
+            _body: notificationBody,
+            _orderSaleId:
+              notificationOrderSale == '' ? null : notificationOrderSale,
+            _userId: result[0].employeeDetails[j].userDetails._id,
+            _createdAt: dateTime,
+            _viewAt: 0,
+            _status: 1,
+          });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
- //doing notification
-
-var userFcmIds = [];
-var userNotificationTable = [];
-var notificationTitle = 'Pending set process';
-var notificationBody = `Your ${result[0].employeeDetails[j].userDetails.orderSaleList.totalCount} set process not assigned to workers, its still not pending`;
-var notificationOrderSale = "";
-
-  if (
-    result[0].employeeDetails[j].userDetails._isNotificationEnable == 1 &&
-    result[0].employeeDetails[j].userDetails._fcmId != ''
-  ) {
-    userFcmIds.push(result[0].employeeDetails[j].userDetails._fcmId);
-  }
-  userNotificationTable.push({
-    _viewStatus: 0,
-    _title: notificationTitle,
-    _body: notificationBody,
-    _orderSaleId:
-      notificationOrderSale == '' ? null : notificationOrderSale,
-    _userId: result[0].employeeDetails[j].userDetails._id,
-    _createdAt: dateTime,
-    _viewAt: 0,
-    _status: 1,
-  });
-
-if (userNotificationTable.length != 0) {
-  await this.userNotificationModel.insertMany(userNotificationTable, {
-    session: transactionSession,
-  });
-}
-if (userFcmIds.length != 0) {
-  new FcmUtils().sendFcm(
-    notificationTitle,
-    notificationBody,
-    userFcmIds,
-    {
-      ajc: 'AJC_NOTIFICATION',
-    },
-  );
-}
-//done notification
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
-
-      
+          if (userNotificationTable.length != 0) {
+            await this.userNotificationModel.insertMany(userNotificationTable, {
+              session: transactionSession,
+            });
+          }
+          if (userFcmIds.length != 0) {
+            new FcmUtils().sendFcm(
+              notificationTitle,
+              notificationBody,
+              userFcmIds,
+              {
+                ajc: 'AJC_NOTIFICATION',
+              },
+            );
+          }
+          //done notification
+        }
       }
-    
+
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      //   return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  @Cron('19 15 * * *', {
+    timeZone: 'Asia/Kolkata',
+  })
+  async sendShopUserTodayAddedDesignsCronJob() {
+    console.log('_____ cronjob sendShopUserTodayAddedDesignsCronJob()');
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var result = await this.productModel.count({
+        _createdAt: {
+          $lte: endOfDay(dateTime).getTime(),
+          $gte: startOfDay(dateTime).getTime(),
+        },
+        _type: 3,
+        _status: 1,
+      });
+
+      if (result > 0) {
+         //doing notification
+      var userFcmCheck = await this.userModel.find(
+        { _shopId: {$ne:null},_status:1 },
+        { _isNotificationEnable: 1, _fcmId: 1 },
+      );
+      var userFcmIds = [];
+      var userNotificationTable = [];
+      var notificationTitle = 'Online store updated';
+      var notificationBody = `Today ${result} items added to online store`;
+      var notificationOrderSale = "";
+      userFcmCheck.forEach((elementUserNotification) => {
+        if (
+          elementUserNotification._isNotificationEnable == 1 &&
+          elementUserNotification._fcmId != ''
+        ) {
+          userFcmIds.push(elementUserNotification._fcmId);
+        }
+        userNotificationTable.push({
+          _viewStatus: 0,
+          _title: notificationTitle,
+          _body: notificationBody,
+          _orderSaleId:
+            notificationOrderSale == '' ? null : notificationOrderSale,
+          _userId: elementUserNotification._id,
+          _createdAt: dateTime,
+          _viewAt: 0,
+          _status: 1,
+        });
+      });
+      if (userNotificationTable.length != 0) {
+        await this.userNotificationModel.insertMany(userNotificationTable, {
+          session: transactionSession,
+        });
+      }
+      if (userFcmIds.length != 0) {
+        new FcmUtils().sendFcm(
+          notificationTitle,
+          notificationBody,
+          userFcmIds,
+          {
+            ajc: 'AJC_NOTIFICATION',
+          },
+        );
+      }
+      //done notification
+      }
 
       await transactionSession.commitTransaction();
       await transactionSession.endSession();
