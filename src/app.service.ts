@@ -160,6 +160,8 @@ export class AppService {
                     {
                       $project: {
                         _id: 1,
+                        _name:1,
+                        _isNotificationEnable: 1, _fcmId: 1
                       },
                     },
 
