@@ -848,6 +848,7 @@ export class OrderSaleSetProcessService {
       }
 
       if (dto.isLastSetProcess == 1 && dto.orderStatus == 3) {
+        console.log('___dd1');
         //finish process data
         await this.orderSaleMainModel.findOneAndUpdate(
           {
@@ -880,6 +881,7 @@ export class OrderSaleSetProcessService {
       }
 
       if (dto.orderStatus == 6) {
+        console.log('___dd2');
         //doing notification
         var resultUserRejectDone = await this.userModel.find(
           { _id: _userId_ },
@@ -1012,6 +1014,7 @@ export class OrderSaleSetProcessService {
       }
 
       if (dto.orderStatus == 7) {
+        console.log('___dd3');
         //doing notification
         console.log('_______ orderStatus 7   ' + JSON.stringify(result));
 
@@ -1112,6 +1115,7 @@ export class OrderSaleSetProcessService {
         //done notification
       }
       if (dto.orderStatus == 1) {
+        console.log('___dd4');
         //doing notification
 
         var resultOrderSaleSetProcessNotification =
@@ -1216,6 +1220,7 @@ export class OrderSaleSetProcessService {
       }
 
       if (dto.isLastSetProcess == 0 && dto.orderStatus == 3) {
+        console.log('___dd5');
         // userIdAfterFinishSetProcessNewAssignForNotification=resultEmployees[0]._userId;
 
         //doing notification
