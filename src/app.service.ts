@@ -210,13 +210,14 @@ export class AppService {
                           {
                             $match: { setProcessList: { $ne: [] } },
                           },
+                          {
+                            $group: { _id: null, totalCount: { $sum: 1 } },
+                          }
                         ],
                         as: 'orderSaleList',
                       },
                     },
-                    {
-                      $group: { _id: null, totalCount: { $sum: 1 } },
-                    }
+                    
 
 
 
