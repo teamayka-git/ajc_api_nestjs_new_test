@@ -258,6 +258,66 @@ export class AppService {
         },
       ]);
 
+      console.log("_____as1");
+      if (result.length != 0) {
+        for (var j = 0; j < result[0].employeeDetails.length; j++) {
+          //doing notification
+          console.log("_____as2");
+          var userFcmIds = [];
+          var userNotificationTable = [];
+          var notificationTitle = 'Set process due date report';
+          var notificationBody = `Your set process `;
+          console.log("_____as3");
+          if(result[0].employeeDetails[j].userDetail.todaySetProcess.length!=0){
+            console.log("_____as4");
+            notificationBody+=`${result[0].employeeDetails[j].userDetail.todaySetProcess.length} items due date is today and `;
+          }
+          console.log("_____as5");
+          if(result[0].employeeDetails[j].userDetail.backlogSetProcess.length!=0){
+            console.log("_____as6");
+            notificationBody+=`${result[0].employeeDetails[j].userDetail.backlogSetProcess.length} items already backlog`;
+          }
+          console.log("_____as7");
+          var notificationOrderSale = '';
+
+          if (
+            result[0].employeeDetails[j].userDetails._isNotificationEnable ==
+              1 &&
+            result[0].employeeDetails[j].userDetails._fcmId != ''
+          ) {
+            userFcmIds.push(result[0].employeeDetails[j].userDetails._fcmId);
+          }
+          console.log("_____as8");
+          userNotificationTable.push({
+            _viewStatus: 0,
+            _title: notificationTitle,
+            _body: notificationBody,
+            _orderSaleId:
+              notificationOrderSale == '' ? null : notificationOrderSale,
+            _userId: result[0].employeeDetails[j].userDetails._id,
+            _createdAt: dateTime,
+            _viewAt: 0,
+            _status: 1,
+          });
+          console.log("_____as9");
+          if (userNotificationTable.length != 0) {
+            // await this.userNotificationModel.insertMany(userNotificationTable, {
+            //   session: transactionSession,
+            // });
+          }
+          // if (userFcmIds.length != 0) {
+          //   new FcmUtils().sendFcm(
+          //     notificationTitle,
+          //     notificationBody,
+          //     userFcmIds,
+          //     {
+          //       ajc: 'AJC_NOTIFICATION',
+          //     },
+          //   );
+          // }
+          //done notification
+        }
+      }
       // var asdf = await twilioClient.messages.create({
       //   // from:'AJCGOLD',
       //   body: 'BODYaaabbbd',

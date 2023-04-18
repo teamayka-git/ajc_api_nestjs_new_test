@@ -348,6 +348,8 @@ export class CronJobSchedulerServiceService {
           },
         },
       ]);
+
+      
       if (result.length != 0) {
         for (var j = 0; j < result[0].employeeDetails.length; j++) {
           //doing notification
