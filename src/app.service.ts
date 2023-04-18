@@ -235,11 +235,7 @@ export class AppService {
             as: 'employeeDetails',
           },
         },
-        {
-          $unwind: {
-            path: '$employeeDetails',
-          },
-        },
+       
       ]);
 
       // var result = await this.ordersaleMainModel.aggregate([
