@@ -122,59 +122,154 @@ export class AppService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
-
-
-
-
-
-
-
-var result=await this.ordersaleMainModel.aggregate([
-  {$match:{
-    _orderHeadId:new mongoose.Types.ObjectId(_userId_),_workStatus:3,_status:1,
-  }},
-  {
-    $lookup: {
-      from: ModelNames.ORDER_SALE_SET_PROCESSES,
-      let: { osId: '$_id' },
-      pipeline: [
+      var result =   await this.departmentModel.aggregate([
+        { $match: { _code: 1000, _status: 1 } },
         {
-          $match: {
-            _status:1,
-            _orderStatus:{$in:[0,4,5,6,7]},
-            $expr: {
-              $eq: ['$_orderSaleId', '$$osId'],
-            },
+          $lookup: {
+            from: ModelNames.EMPLOYEES,
+            let: { departmentId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: {
+                    $eq: ['$_departmentId', '$$departmentId'],
+                  },
+                },
+              },
+              {
+                $project: {
+                  _userId: 1,
+                },
+              },
+
+
+              {
+                $lookup: {
+                  from: ModelNames.USER,
+                  let: { userId: '$_userId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        _status: 1,
+                        $expr: {
+                          $eq: ['$_id', '$$userId'],
+                        },
+                      },
+                    },
+                    {
+                      $project: {
+                        _id: 1,
+                      },
+                    },
+
+
+                    {
+                      $lookup: {
+                        from: ModelNames.ORDER_SALES_MAIN,
+                        let: { userId: '$_id' },
+                        pipeline: [
+                          {
+                            $match: {
+                              _workStatus: 3,
+                              _status: 1,
+                              $expr: {
+                                $eq: ['$_orderHeadId', '$$userId'],
+                              },
+                            },
+                          },
+                          {
+                            $project: {
+                              _id: 1,
+                            },
+                          },
+                          {
+                            $lookup: {
+                              from: ModelNames.ORDER_SALE_SET_PROCESSES,
+                              let: { osId: '$_id' },
+                              pipeline: [
+                                {
+                                  $match: {
+                                    _status: 1,
+                                    _orderStatus: { $in: [0, 4, 5, 6, 7] },
+                                    $expr: {
+                                      $eq: ['$_orderSaleId', '$$osId'],
+                                    },
+                                  },
+                                },  {
+                                  $project: {
+                                    _id: 1,
+                                  },
+                                },
+                              ],
+                              as: 'setProcessList',
+                            },
+                          },
+                          {
+                            $match: { setProcessList: { $ne: [] } },
+                          },
+                        ],
+                        as: 'orderSaleList',
+                      },
+                    }
+
+
+
+
+
+
+                  ],
+                  as: 'userDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$userDetails',
+                },
+              },
+
+
+            ],
+            as: 'employeeDetails',
           },
         },
+        {
+          $unwind: {
+            path: '$employeeDetails',
+          },
+        },
+      ]);
 
-      
-      ],
-      as: 'setProcessList',
-    },
-  },
-  {
-    $match: { setProcessList: { $ne: [] } },
-  },
-
-
-]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      // var result = await this.ordersaleMainModel.aggregate([
+      //   {
+      //     $match: {
+      //       _orderHeadId: new mongoose.Types.ObjectId(_userId_),
+      //       _workStatus: 3,
+      //       _status: 1,
+      //     },
+      //   },
+      //   {
+      //     $lookup: {
+      //       from: ModelNames.ORDER_SALE_SET_PROCESSES,
+      //       let: { osId: '$_id' },
+      //       pipeline: [
+      //         {
+      //           $match: {
+      //             _status: 1,
+      //             _orderStatus: { $in: [0, 4, 5, 6, 7] },
+      //             $expr: {
+      //               $eq: ['$_orderSaleId', '$$osId'],
+      //             },
+      //           },
+      //         },
+      //       ],
+      //       as: 'setProcessList',
+      //     },
+      //   },
+      //   {
+      //     $match: { setProcessList: { $ne: [] } },
+      //   },
+      // ]);
 
       // var asdf = await twilioClient.messages.create({
       //   // from:'AJCGOLD',
@@ -406,7 +501,7 @@ var result=await this.ordersaleMainModel.aggregate([
       var wBacklogWorkOrders = [];
       var wHighRiskWorkOrders = [];
 
-      var ECountUserNotification=0;
+      var ECountUserNotification = 0;
       var ECountOhPendingOrder = 0;
       var ECountOhCustomOrder = 0;
       var ECountOhStockOrder = 0;
@@ -761,26 +856,11 @@ var result=await this.ordersaleMainModel.aggregate([
         );
       }
 
-
-
-
- 
-
-
       ECountUserNotification = await this.userNotificationModel.count({
-  
-        _viewStatus:0,
-        _userId:_userId_,
-  _status: 1,
-});
-
-
-
-
-
-
-
-
+        _viewStatus: 0,
+        _userId: _userId_,
+        _status: 1,
+      });
 
       const responseJSON = {
         message: 'success',
@@ -797,7 +877,7 @@ var result=await this.ordersaleMainModel.aggregate([
             wBacklogWorkOrders.length == 0 ? 0 : wBacklogWorkOrders[0].count,
           EDashHighRiskOrder:
             wHighRiskWorkOrders.length == 0 ? 0 : wHighRiskWorkOrders[0].count,
-            ECountUserNotification:ECountUserNotification,
+          ECountUserNotification: ECountUserNotification,
           EDashOHPendingOrder: ECountOhPendingOrder,
           EDashOHCustomOrder: ECountOhCustomOrder,
           EDashOHStockOrder: ECountOhStockOrder,
