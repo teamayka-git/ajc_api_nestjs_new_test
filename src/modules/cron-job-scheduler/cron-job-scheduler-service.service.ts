@@ -20,7 +20,7 @@ export class CronJobSchedulerServiceService {
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
-  @Cron('53 14 * * *', {
+  @Cron('0 11,17 * * *', {
     timeZone: 'Asia/Kolkata',
   })
   async handleCron() {
