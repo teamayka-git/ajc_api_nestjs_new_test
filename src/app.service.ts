@@ -268,6 +268,10 @@ export class AppService {
           var notificationTitle = 'Set process due date report';
           var notificationBody = `Your set process `;
           console.log("_____as3");
+          console.log("_____as3.1 "+JSON.stringify(result[0].employeeDetails[j]));
+          console.log("_____as3.2 "+JSON.stringify(result[0].employeeDetails[j].userDetail));
+          console.log("_____as3.3 "+JSON.stringify(result[0].employeeDetails[j].userDetail.todaySetProcess));
+          console.log("_____as3.4 "+result[0].employeeDetails[j].userDetail.todaySetProcess.length);
           if(result[0].employeeDetails[j].userDetail.todaySetProcess.length!=0){
             console.log("_____as4");
             notificationBody+=`${result[0].employeeDetails[j].userDetail.todaySetProcess.length} items due date is today and `;
