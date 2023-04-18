@@ -197,6 +197,9 @@ export class AppService {
                               _id: 1,
                             },
                           },
+                          {
+                            $group: { _id: null, totalCount: { $sum: 1 } },
+                          },
                         ],
                         as: 'todaySetProcess',
                       },
@@ -223,21 +226,22 @@ export class AppService {
                               _id: 1,
                             },
                           },
+                          {
+                            $group: { _id: null, totalCount: { $sum: 1 } },
+                          },
                         ],
                         as: 'backlogSetProcess',
                       },
                     },
-                    {
-                      $match: {
-                        $or: [
-                          { todaySetProcess: { $ne: [] } },
-                          { backlogSetProcess: { $ne: [] } },
-                        ],
-                      },
-                    },
-                    {
-                      $group: { _id: null, totalCount: { $sum: 1 } },
-                    },
+                    // {
+                    //   $match: {
+                    //     $or: [
+                    //       { todaySetProcess: { $ne: [] } },
+                    //       { backlogSetProcess: { $ne: [] } },
+                    //     ],
+                    //   },
+                    // },
+                  
                   ],
                   as: 'userDetails',
                 },
