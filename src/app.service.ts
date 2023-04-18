@@ -217,7 +217,11 @@ export class AppService {
                         as: 'orderSaleList',
                       },
                     },
-                    
+                    {
+                      $unwind: {
+                        path: '$orderSaleList',
+                      },
+                    },
 
 
 
