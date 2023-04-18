@@ -358,11 +358,11 @@ export class CronJobSchedulerServiceService {
           var userNotificationTable = [];
           var notificationTitle = 'Set process due date report';
           var notificationBody = `Your set process `;
-          if(result[0].employeeDetails[j].userDetail.todaySetProcess.length!=0){
-            notificationBody+=`${result[0].employeeDetails[j].userDetail.todaySetProcess.length} items due date is today and `;
+          if(result[0].employeeDetails[j].userDetails.todaySetProcess.length!=0){
+            notificationBody+=`${result[0].employeeDetails[j].userDetails.todaySetProcess[0].totalCount} items due date is today and `;
           }
-          if(result[0].employeeDetails[j].userDetail.backlogSetProcess.length!=0){
-            notificationBody+=`${result[0].employeeDetails[j].userDetail.backlogSetProcess.length} items already backlog`;
+          if(result[0].employeeDetails[j].userDetails.backlogSetProcess.length!=0){
+            notificationBody+=`${result[0].employeeDetails[j].userDetails.backlogSetProcess[0].totalCount} items already backlog`;
           }
           var notificationOrderSale = '';
 

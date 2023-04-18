@@ -269,17 +269,17 @@ export class AppService {
           var notificationBody = `Your set process `;
           console.log("_____as3");
           console.log("_____as3.1 "+JSON.stringify(result[0].employeeDetails[j]));
-          console.log("_____as3.2 "+JSON.stringify(result[0].employeeDetails[j].userDetail));
-          console.log("_____as3.3 "+JSON.stringify(result[0].employeeDetails[j].userDetail.todaySetProcess));
-          console.log("_____as3.4 "+result[0].employeeDetails[j].userDetail.todaySetProcess.length);
-          if(result[0].employeeDetails[j].userDetail.todaySetProcess.length!=0){
+          console.log("_____as3.2 "+JSON.stringify(result[0].employeeDetails[j].userDetails));
+          console.log("_____as3.3 "+JSON.stringify(result[0].employeeDetails[j].userDetails.todaySetProcess));
+          console.log("_____as3.4 "+result[0].employeeDetails[j].userDetails.todaySetProcess.length);
+          if(result[0].employeeDetails[j].userDetails.todaySetProcess.length!=0){
             console.log("_____as4");
-            notificationBody+=`${result[0].employeeDetails[j].userDetail.todaySetProcess.length} items due date is today and `;
+            notificationBody+=`${result[0].employeeDetails[j].userDetails.todaySetProcess.length} items due date is today and `;
           }
           console.log("_____as5");
-          if(result[0].employeeDetails[j].userDetail.backlogSetProcess.length!=0){
+          if(result[0].employeeDetails[j].userDetails.backlogSetProcess.length!=0){
             console.log("_____as6");
-            notificationBody+=`${result[0].employeeDetails[j].userDetail.backlogSetProcess.length} items already backlog`;
+            notificationBody+=`${result[0].employeeDetails[j].userDetails.backlogSetProcess.length} items already backlog`;
           }
           console.log("_____as7");
           var notificationOrderSale = '';
