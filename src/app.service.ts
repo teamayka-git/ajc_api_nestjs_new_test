@@ -39,7 +39,7 @@ import { User } from './tableModels/user.model';
 import { UserAttendance } from './tableModels/user_attendances.model';
 import { IndexUtils } from './utils/IndexUtils';
 import { SmsUtils } from './utils/smsUtils';
-import { endOfMonth, endOfToday, startOfMonth } from 'date-fns';
+import { endOfDay, endOfMonth, endOfToday, startOfDay, startOfMonth } from 'date-fns';
 import { OrderSaleHistories } from './tableModels/order_sale_histories.model';
 import { Invoices } from './tableModels/invoices.model';
 import { Delivery } from './tableModels/delivery.model';
@@ -122,6 +122,18 @@ export class AppService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+
+
+      console.log(`______start date   ${ startOfDay(dateTime).getTime()}`);
+      console.log(`______end date   ${ endOfDay(dateTime).getTime()}`);
+
+
+var result=[];
+
+
+
+/*
       var result =   await this.departmentModel.aggregate([
         { $match: { _code: 1000, _status: 1 } },
         {
@@ -243,38 +255,7 @@ export class AppService {
           },
         },
        
-      ]);
-
-      // var result = await this.ordersaleMainModel.aggregate([
-      //   {
-      //     $match: {
-      //       _orderHeadId: new mongoose.Types.ObjectId(_userId_),
-      //       _workStatus: 3,
-      //       _status: 1,
-      //     },
-      //   },
-      //   {
-      //     $lookup: {
-      //       from: ModelNames.ORDER_SALE_SET_PROCESSES,
-      //       let: { osId: '$_id' },
-      //       pipeline: [
-      //         {
-      //           $match: {
-      //             _status: 1,
-      //             _orderStatus: { $in: [0, 4, 5, 6, 7] },
-      //             $expr: {
-      //               $eq: ['$_orderSaleId', '$$osId'],
-      //             },
-      //           },
-      //         },
-      //       ],
-      //       as: 'setProcessList',
-      //     },
-      //   },
-      //   {
-      //     $match: { setProcessList: { $ne: [] } },
-      //   },
-      // ]);
+      ]);*/
 
       // var asdf = await twilioClient.messages.create({
       //   // from:'AJCGOLD',
