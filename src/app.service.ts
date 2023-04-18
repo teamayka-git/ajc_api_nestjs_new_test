@@ -117,11 +117,36 @@ export class AppService {
     return 'Hello Worldwwwww!';
   }
 
-  async test(dto: TestDto) {
+  async test(dto: TestDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
       // var asdf = await twilioClient.messages.create({
       //   // from:'AJCGOLD',
       //   body: 'BODYaaabbbd',

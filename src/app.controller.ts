@@ -82,8 +82,8 @@ export class AppController {
 
 
   @Post('test')
-  test(@Body() dto: TestDto,) {
-    return this.appService.test(dto);
+  test(@Body() dto: TestDto,@Request() req) {
+    return this.appService.test(dto,req['_userId_']);
   }
   @Post('tempWorkTableUpdate')
   tempWorkTableUpdate(@Body() dto: tempWorktable,) {
