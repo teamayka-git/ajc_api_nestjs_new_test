@@ -1219,7 +1219,7 @@ export class OrderSaleSetProcessService {
         }
       }
 
-      if (dto.isLastSetProcess == 0 && dto.orderStatus == 3) {
+      if (dto.isLastSetProcess == 0 && dto.orderStatus == 3 && userIdAfterFinishSetProcessNewAssignForNotification!="") {
         console.log('___dd5');
         // userIdAfterFinishSetProcessNewAssignForNotification=resultEmployees[0]._userId;
 
@@ -1264,22 +1264,28 @@ export class OrderSaleSetProcessService {
               },
             },
           ]);
+          console.log("____dd2   "+JSON.stringify(resultOrderSaleSetProcessNotification));
         if (resultOrderSaleSetProcessNotification.length == 0) {
           throw new HttpException(
             'Setprocess not found',
             HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }
+        console.log("____dd3   ");
         if (
           resultOrderSaleSetProcessNotification[0].orderSaleDetails
             ._reWorkCount > 0 ||
           resultOrderSaleSetProcessNotification[0].orderSaleDetails
             ._internalReWorkCount > 0
         ) {
+          
+        console.log("____dd4   ");
           var userFcmCheck = await this.userModel.find(
             { _id: userIdAfterFinishSetProcessNewAssignForNotification },
             { _isNotificationEnable: 1, _fcmId: 1 },
           );
+          
+        console.log("____dd6   ");
           var userFcmIds = [];
           var userNotificationTable = [];
           var notificationTitle = 'Set process assigned';
