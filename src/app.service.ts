@@ -44,6 +44,7 @@ import { OrderSaleHistories } from './tableModels/order_sale_histories.model';
 import { Invoices } from './tableModels/invoices.model';
 import { Delivery } from './tableModels/delivery.model';
 import { UserNotifications } from './tableModels/user_notifications.model';
+import { Products } from './tableModels/products.model';
 
 const twilioClient = require('twilio')(
   'AC9bf34a6b64db1480be17402f908aded8',
@@ -74,6 +75,8 @@ export class AppService {
     @InjectModel(ModelNames.SUB_CATEGORIES)
     private readonly subCategoryModel: mongoose.Model<SubCategories>,
 
+    @InjectModel(ModelNames.PRODUCTS)
+    private readonly productModel: mongoose.Model<Products>,
     @InjectModel(ModelNames.USER_NOTIFICATIONS)
     private readonly userNotificationModel: mongoose.Model<UserNotifications>,
     @InjectModel(ModelNames.DELIVERY)
@@ -129,7 +132,11 @@ export class AppService {
       console.log(`______end date   ${ endOfDay(dateTime).getTime()}`);
 
 
-var result=[];
+var result=await this.productModel.count({
+  _createdAt:{$lte:endOfDay(dateTime).getTime(),$gte:startOfDay(dateTime).getTime()},
+  _type:3,
+  _status:1
+});
 
 
 

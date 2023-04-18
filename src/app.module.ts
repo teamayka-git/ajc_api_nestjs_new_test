@@ -114,6 +114,7 @@ import { HalmarkRequestModule } from './modules/halmark-request/halmark-request.
 import { UsersModule } from './modules/users/users.module';
 import { UserNotificationsSchema } from './tableModels/user_notifications.model';
 import { CronJobSchedulerModule } from './modules/cron-job-scheduler/cron-job-scheduler.module';
+import { ProductsSchema } from './tableModels/products.model';
 
 
 @Module({
@@ -148,6 +149,7 @@ import { CronJobSchedulerModule } from './modules/cron-job-scheduler/cron-job-sc
       { name: ModelNames.PROCESS_MASTER, schema: ProcessMasterSchema },
       { name: ModelNames.DELIVERY, schema: DeliverySchema },
       
+      { name: ModelNames.PRODUCTS, schema: ProductsSchema },
       { name: ModelNames.USER_NOTIFICATIONS, schema: UserNotificationsSchema },
       { name: ModelNames.INVOICES, schema: InvoicesSchema },
       {
