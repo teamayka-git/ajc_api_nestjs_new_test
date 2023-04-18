@@ -20,7 +20,7 @@ export class CronJobSchedulerServiceService {
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
-  @Cron('48 14 * * *', {
+  @Cron('53 14 * * *', {
     timeZone: 'Asia/Kolkata',
   })
   async handleCron() {
@@ -154,7 +154,6 @@ export class CronJobSchedulerServiceService {
       if(result.length!=0){
 
 for(var j=0;j<result[0].employeeDetails.length;j++){
-  if(result[0].employeeDetails[j].userDetails._isNotificationEnable==1 &&result[0].employeeDetails[j].userDetails._fcmId!=""){
 
 
 
@@ -228,9 +227,6 @@ if (userFcmIds.length != 0) {
 
 
 
-
-  
-  }
 }
 
       
