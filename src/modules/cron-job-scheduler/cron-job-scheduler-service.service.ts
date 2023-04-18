@@ -16,7 +16,7 @@ export class CronJobSchedulerServiceService {
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
-  @Cron('37,38 13 * * *')
+  @Cron('41 13 * * *')
   async handleCron() {
     console.log('_____ cronjob');
     var dateTime = new Date().getTime();
