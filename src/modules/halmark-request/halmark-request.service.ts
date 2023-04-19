@@ -175,6 +175,7 @@ export class HalmarkRequestService {
         },
         {
           $set: {
+            _workStatus:5,
             _hmCenter: dto.hmCenterId,
             _updatedAt: dateTime,
             _updatedUserId: _userId_,
