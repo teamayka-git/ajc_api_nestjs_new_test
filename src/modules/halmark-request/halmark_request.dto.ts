@@ -28,7 +28,7 @@ const descriptionBundleListMainWorkStatus =
   '0 - bundle not assigned, 1 - bundle assigned, 2 - bundle not created,  3 - bypassed';
 const descriptionBundleListMainType = ' 0 - order,  1 - test';
 const descriptionHmBundleWorkStatus =
-  ' 0 - pending, 1 - accept, 2 - reject, 3 - completed, 4 - bypassed';
+  ' 0 - pending, 1 - accept, 2 - reject, 3 - completed, 4 - bypassed, 5 - assigned hm center';
 class MakeNewHalmarkBundleArray {
   @IsString()
   @ApiProperty({})
