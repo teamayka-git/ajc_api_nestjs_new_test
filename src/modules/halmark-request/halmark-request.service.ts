@@ -175,7 +175,7 @@ export class HalmarkRequestService {
         },
         {
           $set: {
-            _workStatus:5,
+            _workStatus: 5,
             _hmCenter: dto.hmCenterId,
             _updatedAt: dateTime,
             _updatedUserId: _userId_,
@@ -1860,9 +1860,15 @@ export class HalmarkRequestService {
     try {
       var arrayToMainList = [];
       var arrayToItemList = [];
+      var mainTableId;
 
-      dto.mainList.forEach((elementMainList) => {
-        var mainTableId = new mongoose.Types.ObjectId();
+      var checkTestPscAdded = await this.halmarkBundlesMainModel.find({
+        _hmBundleId: dto.hmBundleId,
+        _type: 1,
+        _status: 1,
+      });
+      if (checkTestPscAdded.length == 0) {
+        mainTableId = new mongoose.Types.ObjectId();
         arrayToMainList.push({
           _id: mainTableId,
           _hmBundleId: dto.hmBundleId,
@@ -1876,21 +1882,24 @@ export class HalmarkRequestService {
           _updatedAt: -1,
           _status: 1,
         });
-        elementMainList.itemList.forEach((elementItem) => {
-          arrayToItemList.push({
-            _orderSaleId: null,
-            _hmMainId: mainTableId,
-            _orderSaleItemId: null,
-            _subCategoryId: elementItem.subCategoryId,
-            _huid: '',
-            _weight: elementItem.weight,
-            _type: 1,
-            _createdUserId: _userId_,
-            _createdAt: dateTime,
-            _updatedUserId: null,
-            _updatedAt: -1,
-            _status: 1,
-          });
+      } else {
+        mainTableId = checkTestPscAdded[0]._id;
+      }
+
+      dto.itemList.forEach((elementMainList) => {
+        arrayToItemList.push({
+          _orderSaleId: null,
+          _hmMainId: mainTableId,
+          _orderSaleItemId: null,
+          _subCategoryId: elementMainList.subCategoryId,
+          _huid: '',
+          _weight: elementMainList.weight,
+          _type: 1,
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
         });
       });
       if (arrayToMainList.length != 0) {

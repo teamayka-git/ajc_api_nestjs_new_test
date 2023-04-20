@@ -232,23 +232,17 @@ class AddTestPiecesItems {
   @ApiProperty({})
   weight: number;
 }
-class AddTestPieces {
-  @IsArray()
-  @ApiProperty({ type: [AddTestPiecesItems] })
-  @ValidateNested({ each: true })
-  @Type(() => AddTestPiecesItems)
-  itemList: AddTestPiecesItems[];
-}
+
 export class AddTestPiecesDto {
   @IsString()
   @ApiProperty({})
   hmBundleId: string;
 
   @IsArray()
-  @ApiProperty({ type: [AddTestPieces] })
+  @ApiProperty({ type: [AddTestPiecesItems] })
   @ValidateNested({ each: true })
-  @Type(() => AddTestPieces)
-  mainList: AddTestPieces[];
+  @Type(() => AddTestPiecesItems)
+  itemList: AddTestPiecesItems[];
 }
 
 
