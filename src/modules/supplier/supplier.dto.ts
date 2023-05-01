@@ -95,7 +95,7 @@ export class SupplierEditDto {
   @ApiProperty({ description: descriptionListGender })
   gender: number;
 
-  @IsEmail()
+  @IsString()
   @ApiProperty({})
   gst: string;
 
