@@ -623,6 +623,70 @@ export class SupplierService {
           },
         );
       }
+
+
+
+
+
+
+
+
+
+
+      if (dto.screenType.includes(102)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.RATE_BASE_MASTERS,
+              let: { ratebaseId: '$_rateBaseMasterId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$ratebaseId'] } } },
+              ],
+              as: 'ratebaseDetails',
+            },
+          },
+          {
+            $unwind: { path: '$ratebaseDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
+      }
+
+
+      if (dto.screenType.includes(103)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.RATE_CARDS,
+              let: { ratecardId: '$_rateCardMasterId' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$_id', '$$ratecardId'] } } },
+              ],
+              as: 'ratecardDetails',
+            },
+          },
+          {
+            $unwind: { path: '$ratecardDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       var result = await this.suppliersModel
         .aggregate(arrayAggregation)
         .session(transactionSession);
