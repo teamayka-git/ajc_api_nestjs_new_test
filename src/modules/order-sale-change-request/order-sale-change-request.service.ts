@@ -535,6 +535,27 @@ export class OrderSaleChangeRequestService {
         { new: true, session: transactionSession },
       );
 
+
+      await this.orderSaleSetProcessModel.updateMany(
+        {
+          _orderSaleId: dto.orderSaleId,_status:1
+        },
+        {
+          $set: {
+            _status: 2,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+
+
+
+
+
+
+
+
       var arrayToOrderHistories = [];
 
       arrayToOrderHistories.push({
