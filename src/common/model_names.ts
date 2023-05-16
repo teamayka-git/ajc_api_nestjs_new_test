@@ -106,7 +106,12 @@ export enum ModelNames {
   ACCOUNT_JOURNAL = 'account_journals',
   ACCOUNT_JOURNAL_ITEMS = 'account_journal_items',
   ACCOUNT_BRANCH = 'account_branchs',
-  ACCOUNT_CURRENCY = 'account_currencies'
+  ACCOUNT_CURRENCY = 'account_currencies',
+  ACCOUNT_VOUCHER = 'account_vouchers',
+  ACCOUNT_VOUCHER_ITEMS = 'account_voucher_items',
+  ACCOUNT_BOOK = 'account_book',
+  ACCOUNT_OUTSTANDING = 'account_outstanding'
+  
   
 
 
