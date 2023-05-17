@@ -12,7 +12,7 @@ import { Transform, Type, Type as ValidateTypes } from 'class-transformer';
 import { Optional } from '@nestjs/common';
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
-const descriptionListScreenTypeForList = '0-total documents count, 100- group details,101-group details under [100] category details,102-group details under [100] category details under[101] sub category details, 103 - invoice details, 104-supplier user details, 105-shop details';
+const descriptionListScreenTypeForList = '0-total documents count, 100- group details,101-group details under [100] category details,102-group details under [100] category details under[101] sub category details, 103 - invoice details, 104-supplier user details, 105-shop details, 106-created user details';
 const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 const descriptionListSortOrder = '1-ascending, -1-descending';
@@ -43,10 +43,15 @@ const descriptionListSortType = '0-Created Date, 1-Status,2-Is Puchase Generated
     bookingAmount: number;
   
     
-  @IsString()
-  @ApiProperty({})
-  groupId: string;
+    @IsString()
+    @ApiProperty({})
+    groupId: string;
 
+    
+    @IsString()
+    @ApiProperty({})
+    referenceNumber: string;
+    
   @IsString()
   @ApiProperty({})
   supplierUserId: string;
@@ -131,6 +136,11 @@ export class PurchaseBookingListDto {
 
   @IsArray()
   @ApiProperty({ type: [String] })
+  invoiceUids: string[];
+
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
   shopIds: string[];
 
 
@@ -161,18 +171,13 @@ export class PurchaseBookingListDto {
   @ApiProperty({})
   bookingAmountEnd: number;
 
-  @IsNumber()
-  @ApiProperty({})
-  bookingThroughStart: number;
-
-  @IsNumber()
-  @ApiProperty({})
-  bookingThroughEnd: number;
-
-
   @IsArray()
   @ApiProperty({ type: [Number], })
   isPurchaseOrgerGenerated: number[];
+  
+  @IsArray()
+  @ApiProperty({ type: [Number], })
+  bookingThrough: number[];
   
 
   @IsNumber()

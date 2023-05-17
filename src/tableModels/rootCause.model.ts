@@ -84,5 +84,6 @@ _type:{
     9 - Amendment order request initiated// for amendment order hold root cause
     10 - Cancel order
     11 - Amendment order
+    12 - internal rework root cause
   }
  */

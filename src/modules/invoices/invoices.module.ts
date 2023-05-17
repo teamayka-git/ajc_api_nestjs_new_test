@@ -11,6 +11,7 @@ import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.m
 import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
 import { GeneralsSchema } from 'src/tableModels/generals.model';
 import { ShopsSchema } from 'src/tableModels/shops.model';
+import { PurchaseBookingSchema } from 'src/tableModels/purchase_booking.model';
 
 @Module({
   imports: [
@@ -24,6 +25,10 @@ import { ShopsSchema } from 'src/tableModels/shops.model';
       {
         name: ModelNames.INVOICE_ITEMS,
         schema: InvoiceItemsSchema,
+      },
+      {
+        name: ModelNames.PURCHASE_BOOKINGS,
+        schema: PurchaseBookingSchema,
       },
       
       { name: ModelNames.SHOPS, schema: ShopsSchema },

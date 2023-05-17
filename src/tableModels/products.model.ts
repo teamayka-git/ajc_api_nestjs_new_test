@@ -39,6 +39,7 @@ export const ProductsSchema = new mongoose.Schema({
     ref: ModelNames.GROUP_MASTERS,
     default: null,
   },
+  _soldCount: { type: Number, required: true, default: -1 },
   _type: { type: Number, required: true, default: -1 },
   _stockStatus: { type: Number, required: true, default: -1 },
   _purity: { type: Number, required: true, default: -1 },
@@ -80,6 +81,7 @@ export interface Products {
   _groupId: String;
   _type: Number;
   _stockStatus: Number;
+  _soldCount:Number;
   _purity: Number;
   _hmSealingStatus: Number;
   _totalStoneWeight: Number;
@@ -96,6 +98,7 @@ export interface Products {
   _status: Number;
 }
 
+ProductsSchema.index({ _soldCount: 1 });
 ProductsSchema.index({ _stockStatus: 1 });
 ProductsSchema.index({ _totalStoneAmount: 1 });
 ProductsSchema.index({ _designUid: 1 });

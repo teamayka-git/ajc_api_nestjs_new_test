@@ -18,7 +18,7 @@ import { Transform, Type, Type as ValidateTypes } from 'class-transformer';
 import { Optional } from '@nestjs/common';
 
 const descriptionListScreenTypeForBranchList =
-  '0-total documents count, 100 - process masters extra, 101-list documents, 102-shop id, 103-root cause populate, 104-order sale histories, 105-set process, 107-workers list extra, 108 - set process under[105] process master, 109 - set process under[105] user, 110 - set process under[105] set sub process,111 - set process under[105] sub process under[110] sub process master,112 - set process under[105] sub process under[110] user populate,113 - set process under[105] sub process under[110] user under global gallery, 114 - order sale history under[104] user details, 115 - order sale history under[104] user details under[114] global gallery, 116 - order sale history under[104] created user details ,117 - order sale history under[104] created user details under[116] global gallery, 118- order sale document under[101] global galleryu populate, 119 - shop under[102] global gallery details, 120 -  order head details, 121 -  order head under[120] global gallery, 122 - shop under[102] relationship manager details,123 - shop under[102] relationship manager under[122] global gallery , 124 - order sale list sales order items ,125 - order sale items list under[124] product details,126 - order sale items list under[124] design details, 127 -  order sale items list under[124] sub category, 128 -  order sale items list under[124] sub category under[127] category details, 129 -  order sale items list under[124] sub category under[127] category under[128] group details, 133 -order sale histories under[104] delivery provider details, 134 - order sale items list under[124] invoice items, 135 - order sale items list under[124] invoice items under[134] invoice details,  136 - order sale items list under[124] invoice items under[134] invoice details under[135] delivery items,  137 - order sale items list under[124] invoice items under[134] invoice details under[135] delivery items under[136] delivery details, 138 - order sale items list under[124] item documents, 139 - order sale items list under[124] item documents under[138] global gallery details, 140 - set process under[105] set process document list, 141 - set process under[105] set process document list [140] under global gallery details, 142 - order hold rootcause ,143 - order amendment requests, 144-change request pending list ,     500 - sub categori list extra, 501 - general settings due date days count extra, 502 - employee app latest version, 503 - customer app latest version, 504-delivery reject root cause, 505 - shop data extra, 506-customer dashboard datas, 507 - online store theme manufacture data ';
+  '0-total documents count, 100 - process masters extra, 101-list documents, 102-shop id, 103-root cause populate, 104-order sale histories, 105-set process, 107-workers list extra, 108 - set process under[105] process master, 109 - set process under[105] user, 110 - set process under[105] set sub process,111 - set process under[105] sub process under[110] sub process master,112 - set process under[105] sub process under[110] user populate,113 - set process under[105] sub process under[110] user under global gallery, 114 - order sale history under[104] user details, 115 - order sale history under[104] user details under[114] global gallery, 116 - order sale history under[104] created user details ,117 - order sale history under[104] created user details under[116] global gallery, 118- order sale document under[101] global galleryu populate, 119 - shop under[102] global gallery details, 120 -  order head details, 121 -  order head under[120] global gallery, 122 - shop under[102] relationship manager details,123 - shop under[102] relationship manager under[122] global gallery , 124 - order sale list sales order items ,125 - order sale items list under[124] product details,126 - order sale items list under[124] design details, 127 -  order sale items list under[124] sub category, 128 -  order sale items list under[124] sub category under[127] category details, 129 -  order sale items list under[124] sub category under[127] category under[128] group details, 133 -order sale histories under[104] delivery provider details, 134 - order sale items list under[124] invoice items, 135 - order sale items list under[124] invoice items under[134] invoice details,  136 - order sale items list under[124] invoice items under[134] invoice details under[135] delivery items,  137 - order sale items list under[124] invoice items under[134] invoice details under[135] delivery items under[136] delivery details, 138 - order sale items list under[124] item documents, 139 - order sale items list under[124] item documents under[138] global gallery details, 140 - set process under[105] set process document list, 141 - set process under[105] set process document list [140] under global gallery details, 142 - order hold rootcause ,143 - order amendment requests, 144-change request pending list, 145 - internal rework root cause details ,     500 - sub categori list extra, 501 - general settings due date days count extra, 502 - employee app latest version, 503 - customer app latest version, 504-delivery reject root cause, 505 - shop data extra, 506-customer dashboard datas, 507 - online store theme manufacture data , 508 - get user unread notification count';
 
 const descriptionListScreenTypeOrderSaleReport =
   '0-total documents count, 100 - process masters extra, 101-list documents, 102-shop id, 103-root cause populate, 104-order sale histories, 105-set process, 107-workers list extra, 108 - set process under[105] process master, 109 - set process under[105] user, 110 - set process under[105] set sub process,111 - set process under[105] sub process under[110] sub process master,112 - set process under[105] sub process under[110] user populate,113 - set process under[105] sub process under[110] user under global gallery, 114 - order sale history under[104] user details, 115 - order sale history under[104] user details under[114] global gallery, 116 - order sale history under[104] created user details ,117 - order sale history under[104] created user details under[116] global gallery, 118- order sale document under[101] global galleryu populate, 119 - shop under[102] global gallery details, 120 -  order head details, 121 - order head under[120] global gallery, 122 - shop under[102] relationship manager details,123 - shop under[102] relationship manager under[122] global gallery , 124 - order sale list sales order items ,125 - order sale items list under[124] product details,126 - order sale items list under[124] design details, 127 -  order sale items list under[124] sub category, 128 -  order sale items list under[124] sub category under[127] category details, 129 -  order sale items list under[124] sub category under[127] category under[128] group details, 130 - shop under[102] branch details, 131 - order sale items list under[124] invoice items, 132 - order sale items list under[124] invoice items under[131] invoice details, , 133 -order sale histories under[104] delivery provider details, 134 -shop under[102] city details    500 - sub categori list extra, 501 - general settings due date days count extra';
@@ -48,18 +48,31 @@ const descriptionFileOriginalName =
 
 const descriptionWorkStatus = '0-pending, 1-accepted, 2-rejected';
 const descriptionListScreenTypeForSetProcessOrdersaleList =
-  '0-total count,100-order details,101-set sub process list, 102-process master  500-order list assigned by me, 103 - set sub process under[101] sub processmaster, 104 - order sale main under[100] shop details, 105 - order sale main under[100] documents details, 106 - order sale main under[100] documents under global gallery details, 107 - order sale main under[100] items list, 108 - order sale main under[100] items list under[107] sub category details , 109 - order sale main under[100] shop details under[104] global gallery, 111 - order sale main under[100] shop details under[104] Orderhead details, 112 - order sale main under[100] shop details under[104] Orderhead details under[111] global gallery, 113 - order sale main under[100] shop details under[104] Relationship manager details, 114 -  order sale main under[100] shop details under[104] relationship manager details under[113] global gallery, 115 - order sale completed set process list, 116 - order sale completed set process list under[115] process master details, 117 - order sale completed set process list under[115] process notes documents list, 118 - order sale completed set process list under[115] process notes documents list under[117] global gallery details, 119 - order sale items under[107] documents,120 - order sale items under[107] documents under[119] global gallery, 121 - os item under[107] design populate,, 122 - order sale main under[100] hold root cause details, 123 - order sale main under[100] order head details, 124 - order sale main under[100] order head details under[123] global gallery ';
+  '0-total count,100-order details,101-set sub process list, 102-process master  500-order list assigned by me, 103 - set sub process under[101] sub processmaster, 104 - order sale main under[100] shop details, 105 - order sale main under[100] documents details, 106 - order sale main under[100] documents under global gallery details, 107 - order sale main under[100] items list, 108 - order sale main under[100] items list under[107] sub category details , 109 - order sale main under[100] shop details under[104] global gallery, 111 - order sale main under[100] shop details under[104] Orderhead details, 112 - order sale main under[100] shop details under[104] Orderhead details under[111] global gallery, 113 - order sale main under[100] shop details under[104] Relationship manager details, 114 -  order sale main under[100] shop details under[104] relationship manager details under[113] global gallery, 115 - order sale completed set process list, 116 - order sale completed set process list under[115] process master details, 117 - order sale completed set process list under[115] process notes documents list, 118 - order sale completed set process list under[115] process notes documents list under[117] global gallery details, 119 - order sale items under[107] documents,120 - order sale items under[107] documents under[119] global gallery, 121 - os item under[107] design populate,, 122 - order sale main under[100] hold root cause details, 123 - order sale main under[100] order head details, 124 - order sale main under[100] order head details under[123] global gallery , 125 - order sale main under[100] rework root cause';
 
 const DescriptionOrderSaleProcessOrderStatus =
   '0-Pending, 1-Assigned, 2-On Working, 3-Completed, 4-Hold, Request To Assign';
 const DescriptionOrderSalesHistoriesType =
   '  0 - order pending  1 - order accept  2 - order reject  3 - set process done  4 - finished goods  5 - product generate request  6 - product generated   7 - deliverychalan generated//need to discuss  8 - halmark issuence requested  9 - halmark issuence bypassed  10 - send to halmark issuence  11 - halmarking issued  12 - halmark request cancelled  13 - halmark request rejected  14 - halmark error occured  15 - send to reissuence   16 - invoice pending  17 - invoice generated  18 - outof delivery pending  19 - hub transfer pending  20 - delivery job assigned  21 - delivery in transit  22 - delivered to customer            23 - delivey accepted  24 - order declined collection pending   25 - order declined collected  26 - order declined inscan  27 - order cancelled  28 - delivery reshedule requested  29 - hub tranfer pending  30 - hub assigned  31 - hub tranfer intransit  32 - hub transfer delivered  33 - hub transfer accepted    100 - order editted  101- sales order actived  102- sales order disabled  103- sales order deleted  104- sales order general remark editted';
-const descriptionType = ' 0 - order sale(custom order), 1 - stock sale(from e store), 2 - sales on approval(from delivery boy), 3 - counter sale(bill from manufactor) ';
+const descriptionType =
+  ' 0 - order sale(custom order), 1 - stock sale(from e store), 2 - sales on approval(from delivery boy), 3 - counter sale(bill from manufactor) ';
 const descriptionDeliveryType =
   ' 0 - bundle delivery,1 - get me the ready item first';
 const descriptionStockStatus = '0 - out of stock, 1 - in stock';
 const descriptionSetProcessOrderStatus =
   'inside ordersale list set process filter with this array if this arrayu not empty';
+const descriptionListSortTypeReworkReport =
+  '0-id, 1-status, 2-type, 3-arisonSetprocessStatus, 4-order created date, 5-order due date, 6-order uid';
+const descriptionListTypeForReworkReport =
+  ' 0 - internal rework, 1 - customer rework';
+const descriptionListScreenTypeForReworkReport =
+  '0- total count,   100-order details, 101-shop details, 102-oh details , 103-root cause details, 104 - arison user details, 105-process master, 106-created user details';
+const descriptionListSortTypeRejectCancelReport =
+  '0-id, 1-status, 2-type , 3-order created date, 4-order due date, 5-order uid';
+const descriptionListScreenTypeForRejectCancelReport =
+  '0- total count,   100-order details, 101-shop details, 102-oh details , 103-root cause details, 105-process master, 106-created user details';
+const descriptionListTypeForRejectCancelReport =
+  ' 0 - customer rejected, 1 - customer cancel, 2 - admin rejected';
 
 class orderSaleCreateList {
   @IsString()
@@ -169,9 +182,6 @@ export class OrderSalesCreateDto {
   @ApiProperty({})
   generalRemark: string;
 
-
-
-
   @IsOptional()
   @IsString()
   @ApiProperty({})
@@ -182,7 +192,6 @@ export class OrderSalesCreateDto {
   @ApiProperty({})
   otpValue: string;
 
-
   @IsOptional()
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
@@ -190,7 +199,6 @@ export class OrderSalesCreateDto {
   @IsArray()
   @ApiProperty({ type: [String] })
   employeeStockInHandItemIds: string[];
-
 
   @Transform(({ value }) =>
     typeof value == 'string' ? JSON.parse(value) : value,
@@ -289,13 +297,10 @@ export class OrderSalesEditDto {
   @ApiProperty({ description: descriptionType })
   type: number;
 
-
   @IsOptional()
   @IsString()
   @ApiProperty({})
   amendmentRequestId: string;
-
-
 
   @IsOptional()
   @Transform(({ value }) =>
@@ -305,7 +310,7 @@ export class OrderSalesEditDto {
   @ApiProperty({})
   amendmentObject: Object;
 
-@IsOptional()
+  @IsOptional()
   @Transform(({ value }) => Number(value))
   @IsNumber()
   @ApiProperty({})
@@ -391,8 +396,13 @@ export class OrderSaleListDto {
   isInvoiceGenerated: number[];
 
   @IsOptional()
+  @IsString()
+  @ApiProperty({})
+  fcmToken: string;
+
+  @IsOptional()
   @IsArray()
-  @ApiProperty({ type: [Number],description:descriptionType })
+  @ApiProperty({ type: [Number], description: descriptionType })
   type: number[];
 
   @IsArray()
@@ -718,14 +728,13 @@ export class OrderSalesWorkStatusChangeDto {
   @ApiProperty({ description: descriptionWorkStatus })
   workStatus: number;
 
-
   @IsNumber()
-  @ApiProperty({  })
+  @ApiProperty({})
   fromWorkStatus: number;
 
   @IsOptional()
   @IsNumber()
-  @ApiProperty({  })
+  @ApiProperty({})
   isProductGenerated: number;
 
   @IsString()
@@ -741,7 +750,7 @@ export class OrderSalesHoldDto {
   orderSaleIds: string[];
 
   @IsNumber()
-  @ApiProperty({  })
+  @ApiProperty({})
   isHold: number;
 
   @IsString()
@@ -780,17 +789,29 @@ export class OrderSalesGetOrderDetailsFromQrBarcodeDto {
   value: string;
 }
 export class OrderSalesReworkSetprocessDto {
-
-  
   @IsString()
   @ApiProperty({})
   ordersaleId: string;
 
-  
+  @IsString()
+  @ApiProperty({})
+  currentSetprocessId: string;
+
+  @IsString()
+  @ApiProperty({})
+  reworkRootcauseId: string;
+
+  @IsString()
+  @ApiProperty({})
+  reworkRootcauseName: string;
+
+  @IsString()
+  @ApiProperty({})
+  reworkRootcauseDescription: string;
+
   @IsNumber()
   @ApiProperty({})
   fromStatus: number;
-
 }
 
 export class GetWorkCountDto {
@@ -1004,51 +1025,221 @@ export class EditOrderSaleGeneralRemarkDto {
 }
 
 class orderSaleSplitItemArrayList {
- 
   @IsString()
   @ApiProperty({})
   orderSaleItemId: string;
-
-
 }
 class orderSaleSplitArrayList {
- 
- 
-
-  
   @IsArray()
   @ApiProperty({ type: [orderSaleSplitItemArrayList] })
   @ValidateNested({ each: true })
   @Type(() => orderSaleSplitItemArrayList)
   items: orderSaleSplitItemArrayList[];
-
-
-
 }
 
 export class OrderSaleSplitDto {
-
-  
   @IsString()
   @ApiProperty({})
   ordersaleId: string;
 
-  
   @IsString()
   @ApiProperty({})
   ordersaleUid: string;
 
-  
   @IsNumber()
   @ApiProperty({})
   fromStatus: number;
 
-
-  
   @IsArray()
   @ApiProperty({ type: [orderSaleSplitArrayList] })
   @ValidateNested({ each: true })
   @Type(() => orderSaleSplitArrayList)
   splitArray: orderSaleSplitArrayList[];
+}
+export class RworkReportDto {
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortTypeReworkReport })
+  sortType: number;
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortOrder })
+  sortOrder: number;
 
+  @IsArray()
+  @ArrayMinSize(1)
+  @ApiProperty({ type: [Number], description: descriptionStatus })
+  statusArray: number[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionListScreenTypeForReworkReport,
+  })
+  screenType: number[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+  })
+  responseFormat: number[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleUids: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  shopIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  ohIds: string[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionListTypeForReworkReport,
+  })
+  type: number[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  rootCauseIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  reworkArisonDepartmentIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  reworkArisonUserIds: string[];
+
+  @IsNumber()
+  @ApiProperty({})
+  orderCreatedDateStart: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  orderCreatedDateEnd: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  orderDueDateStart: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  orderDueDateEnd: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  createdDateStart: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  createdDateEnd: number;
+
+  @IsString()
+  @ApiProperty({})
+  searchingText: string;
+
+  @IsNumber()
+  @ApiProperty({})
+  limit: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  skip: number;
+}
+
+export class OrderRejectCancelReportDto {
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortTypeRejectCancelReport })
+  sortType: number;
+  @IsNumber()
+  @ApiProperty({ description: descriptionListSortOrder })
+  sortOrder: number;
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @ApiProperty({ type: [Number], description: descriptionStatus })
+  statusArray: number[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionListScreenTypeForRejectCancelReport,
+  })
+  screenType: number[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+  })
+  responseFormat: number[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  orderSaleUids: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  shopIds: string[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  ohIds: string[];
+
+  @IsArray()
+  @ApiProperty({
+    type: [Number],
+    description: descriptionListTypeForRejectCancelReport,
+  })
+  type: number[];
+
+  @IsArray()
+  @ApiProperty({ type: [String] })
+  rootCauseIds: string[];
+
+  @IsNumber()
+  @ApiProperty({})
+  orderCreatedDateStart: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  orderCreatedDateEnd: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  orderDueDateStart: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  orderDueDateEnd: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  rejectedDateStart: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  rejectedDateEnd: number;
+
+  @IsString()
+  @ApiProperty({})
+  searchingText: string;
+
+  @IsNumber()
+  @ApiProperty({})
+  limit: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  skip: number;
 }

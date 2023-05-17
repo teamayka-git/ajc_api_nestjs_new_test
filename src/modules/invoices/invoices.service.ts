@@ -8,6 +8,7 @@ import { Counters } from 'src/tableModels/counters.model';
 import {
   InvoiceCreateDto,
   InvoiceListDto,
+  InvoiceMigrationDto,
   InvoiceStatusChangeDto,
 } from './invoices.dto';
 import { GlobalConfig } from 'src/config/global_config';
@@ -17,6 +18,7 @@ import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 import { Generals } from 'src/tableModels/generals.model';
 import { Shops } from 'src/tableModels/shops.model';
+import { PurchaseBooking } from 'src/tableModels/purchase_booking.model';
 
 @Injectable()
 export class InvoicesService {
@@ -33,6 +35,8 @@ export class InvoicesService {
     private readonly generalsModel: mongoose.Model<Generals>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
+    @InjectModel(ModelNames.PURCHASE_BOOKINGS)
+    private readonly purchaseBookingModel: mongoose.Model<PurchaseBooking>,
 
     @InjectModel(ModelNames.SHOPS)
     private readonly shopsModel: mongoose.Model<Shops>,
@@ -52,11 +56,25 @@ export class InvoicesService {
       var shopMongoIds = [];
       var arrayToDeliveryTemp = [];
       var arraySalesOrderHistories = [];
+      var arrayPurchaseBooking = [];
 
       dto.invoices.map((mapItem) => {
         invoiceLocalIds.push(mapItem.localId);
         shopMongoIds.push(new mongoose.Types.ObjectId(mapItem.customerId));
       });
+
+      var resultCounterPurchaseBooking =
+        await this.counterModel.findOneAndUpdate(
+          { _tableName: ModelNames.PURCHASE_BOOKINGS },
+          {
+            $inc: {
+              _count: dto.invoices.filter(
+                (element) => element.isCreatePurchaseBooking == 1,
+              ).length,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
 
       var shopDetails = await this.shopsModel.aggregate([
         {
@@ -108,7 +126,7 @@ export class InvoicesService {
         },
         { new: true, session: transactionSession },
       );
-
+      var indexPurchaseBooking = 0;
       dto.invoices.map((mapItem, index) => {
         var invoiceId = new mongoose.Types.ObjectId();
 
@@ -117,6 +135,8 @@ export class InvoicesService {
           (resultCounterPurchase._count - dto.invoices.length + (index + 1));
         arrayToDeliveryChallan.push({
           _id: invoiceId,
+          _saleType: mapItem.saleType,
+          _isFix: mapItem.isFix,
           _userId: _userId_,
           _uid: inventoryUid,
           _halmarkingCharge: mapItem.halmarkingCharge,
@@ -125,7 +145,20 @@ export class InvoicesService {
           _netTotal: mapItem.netTotal,
           _shopId: mapItem.customerId,
           _localId: mapItem.localId,
+
+          _price1: mapItem.price1,
+          _price2: mapItem.price2,
+          _metalAmountGst: mapItem.metalAmountGst,
+          _stoneAmount: mapItem.stoneAmount,
+          _stoneAmountGst: mapItem.stoneAmountGst,
+          _pureWeightHundredPercentage: mapItem.pureWeightHundredPercentage,
+          _pureWeight: mapItem.pureWeight,
+          _cgst: mapItem.cgst,
+          _sgst: mapItem.sgst,
+          _igst: mapItem.igst,
+
           _isDelivered: 0,
+          _isAccountPosted: 0,
           _tdsReceivable: mapItem.tdsReceivable,
           _tdsPayable: mapItem.tdsPayable,
           _netReceivableAmount: mapItem.netReceivableAmount,
@@ -144,6 +177,34 @@ export class InvoicesService {
           _updatedAt: -1,
           _status: 1,
         });
+
+        if (mapItem.isCreatePurchaseBooking == 1) {
+          arrayPurchaseBooking.push({
+            _invoiceId: invoiceId,
+            _bookingWeight: mapItem.bookingWeight,
+            _bookingRate: mapItem.bookingRate,
+            _bookingAmount: mapItem.bookingAmount,
+            _ref: '',
+            _groupId: mapItem.groupId == '' ? null : mapItem.groupId,
+            _uid:
+              resultCounterPurchaseBooking._count -
+              dto.invoices.filter(
+                (element) => element.isCreatePurchaseBooking == 1,
+              ).length +
+              (indexPurchaseBooking + 1),
+            _supplierUserId:
+              mapItem.supplierUserId == '' ? null : mapItem.supplierUserId,
+            _shopId: mapItem.customerId == '' ? null : mapItem.customerId,
+            _bookingThrough: 0,
+            _isPurchaseOrderGenerated: false,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+          indexPurchaseBooking++;
+        }
 
         mapItem.arrayInvoiceItems.map((mapItem1) => {
           orderIds.push(mapItem1.orderId);
@@ -273,6 +334,11 @@ export class InvoicesService {
       await this.deliveryTempModel.insertMany(arrayToDeliveryTemp, {
         session: transactionSession,
       });
+      if (arrayPurchaseBooking.length != 0) {
+        await this.purchaseBookingModel.insertMany(arrayPurchaseBooking, {
+          session: transactionSession,
+        });
+      }
 
       var result1 = await this.invoiceModel.insertMany(arrayToDeliveryChallan, {
         session: transactionSession,
@@ -334,6 +400,148 @@ export class InvoicesService {
       );
 
       const responseJSON = { message: 'success', data: result };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async temp_migrateCurrentInvoiceToNewFeild(
+    dto: InvoiceMigrationDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var resultGeneral = await this.generalsModel.find({ _code: 1021 });
+      if (resultGeneral.length == 0) {
+        throw new HttpException(
+          'General tax',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      var resultInvoice = await this.invoiceModel.aggregate([
+        { $skip: dto.skip },
+        { $limit: dto.limit },
+        {
+          $lookup: {
+            from: ModelNames.INVOICE_ITEMS,
+            let: { invId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$_invoiceId', '$$invId'] },
+                },
+              },
+            ],
+            as: 'invItems',
+          },
+        },
+      ]);
+
+      for (var i = 0; i < resultInvoice.length; i++) {
+        if (resultInvoice[i].invItems.length == 0) {
+          throw new HttpException(
+            'inv items empty ' + i,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        var invId = resultInvoice[i]._id;
+
+        var metalAmountGst = 0.0;
+        var stoneAmount = 0.0;
+        var stoneAmountGst = 0.0;
+        var pureWeightHundredPercentage = 0.0;
+        var pureWeight = 0.0;
+        var cgst = 0.0;
+        var sgst = 0.0;
+        var igst = 0.0;
+        var price2 =
+          (resultInvoice[i].invItems[0]._unitRate /
+            (resultGeneral[0]._number + 100)) *
+          100;
+        var price1 = resultInvoice[i].invItems[0]._unitRate;
+
+        resultInvoice[i].invItems.forEach((elementChild) => {
+          igst += elementChild._igst;
+          sgst += elementChild._sgst;
+          cgst += elementChild._cgst;
+          pureWeight += elementChild._pureWeight;
+          pureWeightHundredPercentage +=
+            elementChild._pureWeightHundredPercentage;
+          stoneAmountGst += elementChild._stoneAmountGst;
+          stoneAmount += elementChild._stoneAmount;
+          metalAmountGst += elementChild._metalAmountGst;
+        });
+
+        await this.invoiceModel.updateMany(
+          {
+            _id: invId,
+          },
+          {
+            $set: {
+              _metalAmountGst: metalAmountGst,
+              _stoneAmount: stoneAmount,
+              _stoneAmountGst: stoneAmountGst,
+              _pureWeightHundredPercentage: pureWeightHundredPercentage,
+              _pureWeight: pureWeight,
+              _cgst: cgst,
+              _sgst: sgst,
+              _igst: igst,
+              _price1: price1,
+              _price2: price2,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+        console.log(
+          '_____doing ' + i + '   items ' + resultInvoice[i].invItems.length,
+        );
+      }
+
+      /*
+      var result = await this.invoiceModel.updateMany(
+        {
+          _id: { $in: dto.invoiceIds },
+        },
+        {
+          $set: {
+            _rootCauseId:
+              dto.rootCauseId == '' || dto.rootCauseId == 'nil'
+                ? null
+                : dto.rootCauseId,
+            _description:
+              dto.description == '' || dto.description == 'nil'
+                ? null
+                : dto.description,
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+            _status: dto.status,
+          },
+        },
+        { new: true, session: transactionSession },
+      );*/
+
+      const responseJSON = { message: 'success', data: {} };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
@@ -498,6 +706,12 @@ export class InvoicesService {
         arrayAggregation.push({ $skip: dto.skip });
         arrayAggregation.push({ $limit: dto.limit });
       }
+
+      arrayAggregation.push(new ModelWeightResponseFormat().invoiceTableResponseFormat(
+        0,
+        dto.responseFormat,
+      ));
+
       if (dto.screenType.includes(100)) {
         const userPipeline = () => {
           const pipeline = [];

@@ -32,7 +32,7 @@ export interface Generals {
   _name: String;
   _code: Number;
   _string: String;
-  _number: Number;
+  _number: number;
   _json: Object;
   _type: Number;
   _vlaueType: Number;
@@ -118,6 +118,7 @@ _type:{
     7 - Software settings
     8 - Purchase
     9 - Dashboard
+    10 - Sales return
 }
 _vlaueType:{
   0-number

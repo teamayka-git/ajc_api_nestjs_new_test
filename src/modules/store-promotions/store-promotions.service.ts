@@ -39,7 +39,7 @@ export class StorePromotionsService {
           { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
             $inc: {
-              _count: dto.array.length,
+              _count: file['documents'].length,
             },
           },
           { new: true, session: transactionSession },
@@ -83,8 +83,18 @@ export class StorePromotionsService {
             _updatedAt: -1,
             _status: 1,
           });
+
+          console.log(
+            '____as  ' +
+              (
+                resultCounterPurchase._count -
+                file['documents'].length +
+                (i + 1)
+              ).toString(),
+          );
+
           var count = dto.array.findIndex(
-            (it) => it.fileOriginalName == file['documents'][i]['originalname'],
+            (it) => it.fileMobOriginalName == file['documents'][i]['originalname'],
           );
           if (count != -1) {
             dto.array[count]['globalGalleryMobileId'] = globalGalleryId;
@@ -120,17 +130,15 @@ export class StorePromotionsService {
         //   }
         // }
         // console.log('___d3');
-        await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
-          session: transactionSession,
-        });
       }
+      console.log('___dd3');
       if (file.hasOwnProperty('documentsDesk')) {
         console.log('___dd 3');
         var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
           { _tableName: ModelNames.GLOBAL_GALLERIES },
           {
             $inc: {
-              _count: dto.array.length,
+              _count:file['documentsDesk'].length,
             },
           },
           { new: true, session: transactionSession },
@@ -176,9 +184,18 @@ export class StorePromotionsService {
             _updatedAt: -1,
             _status: 1,
           });
+          console.log(
+            '____as  ' +
+              (
+                resultCounterPurchase._count -
+                file['documentsDesk'].length +
+                (i + 1)
+              ).toString(),
+          );
+
           var count = dto.array.findIndex(
             (it) =>
-              it.fileOriginalName == file['documentsDesk'][i]['originalname'],
+              it.fileDeskOriginalName == file['documentsDesk'][i]['originalname'],
           );
           if (count != -1) {
             dto.array[count]['globalGalleryDeskId'] = globalGalleryId;
@@ -214,12 +231,18 @@ export class StorePromotionsService {
 
         //   }
         // }
-        // console.log('___d3');
+      }
+
+      if (arrayGlobalGalleries.length != 0) {
+        console.log(
+          '___arrayGlobalGalleries    ' + JSON.stringify(arrayGlobalGalleries),
+        );
         await this.globalGalleryModel.insertMany(arrayGlobalGalleries, {
           session: transactionSession,
         });
       }
 
+      console.log('___dd7');
       var arrayToStates = [];
 
       dto.array.map((mapItem) => {
@@ -240,7 +263,7 @@ export class StorePromotionsService {
           _status: 1,
         });
       });
-
+      console.log('___dd8');
       var result1 = await this.storePromotionModel.insertMany(arrayToStates, {
         session: transactionSession,
       });

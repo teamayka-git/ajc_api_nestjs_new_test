@@ -39,10 +39,18 @@ import { User } from './tableModels/user.model';
 import { UserAttendance } from './tableModels/user_attendances.model';
 import { IndexUtils } from './utils/IndexUtils';
 import { SmsUtils } from './utils/smsUtils';
-import { endOfMonth, endOfToday, startOfMonth } from 'date-fns';
+import {
+  endOfDay,
+  endOfMonth,
+  endOfToday,
+  startOfDay,
+  startOfMonth,
+} from 'date-fns';
 import { OrderSaleHistories } from './tableModels/order_sale_histories.model';
 import { Invoices } from './tableModels/invoices.model';
 import { Delivery } from './tableModels/delivery.model';
+import { UserNotifications } from './tableModels/user_notifications.model';
+import { Products } from './tableModels/products.model';
 
 const twilioClient = require('twilio')(
   'AC9bf34a6b64db1480be17402f908aded8',
@@ -73,6 +81,10 @@ export class AppService {
     @InjectModel(ModelNames.SUB_CATEGORIES)
     private readonly subCategoryModel: mongoose.Model<SubCategories>,
 
+    @InjectModel(ModelNames.PRODUCTS)
+    private readonly productModel: mongoose.Model<Products>,
+    @InjectModel(ModelNames.USER_NOTIFICATIONS)
+    private readonly userNotificationModel: mongoose.Model<UserNotifications>,
     @InjectModel(ModelNames.DELIVERY)
     private readonly deliveryModel: mongoose.Model<Delivery>,
     @InjectModel(ModelNames.INVOICES)
@@ -114,11 +126,202 @@ export class AppService {
     return 'Hello Worldwwwww!';
   }
 
-  async test(dto: TestDto) {
+  async test(dto: TestDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+      var result = await this.departmentModel.aggregate([
+        { $match: { _code: 1003, _status: 1 } },
+        {
+          $lookup: {
+            from: ModelNames.EMPLOYEES,
+            let: { departmentId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: {
+                    $eq: ['$_departmentId', '$$departmentId'],
+                  },
+                },
+              },
+              {
+                $project: {
+                  _userId: 1,
+                },
+              },
+
+              {
+                $lookup: {
+                  from: ModelNames.USER,
+                  let: { userId: '$_userId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        _status: 1,
+                        $expr: {
+                          $eq: ['$_id', '$$userId'],
+                        },
+                      },
+                    },
+                    {
+                      $project: {
+                        _id: 1,
+                        _name: 1,
+                        _isNotificationEnable: 1,
+                        _fcmId: 1,
+                      },
+                    },
+
+                    {
+                      $lookup: {
+                        from: ModelNames.ORDER_SALE_SET_PROCESSES,
+                        let: { userId: '$_id' },
+                        pipeline: [
+                          {
+                            $match: {
+                              _dueDate: {
+                                $lte: endOfDay(dateTime).getTime(),
+                                $gte: startOfDay(dateTime).getTime(),
+                              },
+                              _status: 1,
+                              _orderStatus: { $in: [1, 2] },
+                              $expr: {
+                                $eq: ['$_userId', '$$userId'],
+                              },
+                            },
+                          },
+                          {
+                            $project: {
+                              _id: 1,
+                            },
+                          },
+                          {
+                            $group: { _id: null, totalCount: { $sum: 1 } },
+                          },
+                        ],
+                        as: 'todaySetProcess',
+                      },
+                    },
+                    
+                    {
+                      $lookup: {
+                        from: ModelNames.ORDER_SALE_SET_PROCESSES,
+                        let: { userId: '$_id' },
+                        pipeline: [
+                          {
+                            $match: {
+                              _dueDate: {
+                                $lte: startOfDay(dateTime).getTime(),
+                              },
+                              _status: 1,
+                              _orderStatus: { $in: [1, 2] },
+                              $expr: {
+                                $eq: ['$_userId', '$$userId'],
+                              },
+                            },
+                          },
+                          {
+                            $project: {
+                              _id: 1,
+                            },
+                          },
+                          {
+                            $group: { _id: null, totalCount: { $sum: 1 } },
+                          },
+                        ],
+                        as: 'backlogSetProcess',
+                      },
+                    },
+                    {
+                      $match: {
+                        $or: [
+                          { todaySetProcess: { $ne: [] } },
+                          { backlogSetProcess: { $ne: [] } },
+                        ],
+                      },
+                    },
+                  
+                  ],
+                  as: 'userDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$userDetails',
+                },
+              },
+            ],
+            as: 'employeeDetails',
+          },
+        },
+      ]);
+
+      console.log("_____as1   "+JSON.stringify(result));
+      if (result.length != 0) {
+        for (var j = 0; j < result[0].employeeDetails.length; j++) {
+          //doing notification
+          console.log("_____as2");
+          var userFcmIds = [];
+          var userNotificationTable = [];
+          var notificationTitle = 'Set process due date report';
+          var notificationBody = `Your set process `;
+          console.log("_____as3");
+          console.log("_____as3.1 "+JSON.stringify(result[0].employeeDetails[j]));
+          console.log("_____as3.2 "+JSON.stringify(result[0].employeeDetails[j].userDetails));
+          console.log("_____as3.3 "+JSON.stringify(result[0].employeeDetails[j].userDetails.todaySetProcess));
+          console.log("_____as3.4 "+result[0].employeeDetails[j].userDetails.todaySetProcess.length);
+          if(result[0].employeeDetails[j].userDetails.todaySetProcess.length!=0){
+            console.log("_____as4");
+            notificationBody+=`${result[0].employeeDetails[j].userDetails.todaySetProcess.length} items due date is today and `;
+          }
+          console.log("_____as5");
+          if(result[0].employeeDetails[j].userDetails.backlogSetProcess.length!=0){
+            console.log("_____as6");
+            notificationBody+=`${result[0].employeeDetails[j].userDetails.backlogSetProcess.length} items already backlog`;
+          }
+          console.log("_____as7");
+          var notificationOrderSale = '';
+
+          if (
+            result[0].employeeDetails[j].userDetails._isNotificationEnable ==
+              1 &&
+            result[0].employeeDetails[j].userDetails._fcmId != ''
+          ) {
+            userFcmIds.push(result[0].employeeDetails[j].userDetails._fcmId);
+          }
+          console.log("_____as8");
+          userNotificationTable.push({
+            _viewStatus: 0,
+            _title: notificationTitle,
+            _body: notificationBody,
+            _orderSaleId:
+              notificationOrderSale == '' ? null : notificationOrderSale,
+            _userId: result[0].employeeDetails[j].userDetails._id,
+            _createdAt: dateTime,
+            _viewAt: 0,
+            _status: 1,
+          });
+          console.log("_____as9");
+          if (userNotificationTable.length != 0) {
+            // await this.userNotificationModel.insertMany(userNotificationTable, {
+            //   session: transactionSession,
+            // });
+          }
+          // if (userFcmIds.length != 0) {
+          //   new FcmUtils().sendFcm(
+          //     notificationTitle,
+          //     notificationBody,
+          //     userFcmIds,
+          //     {
+          //       ajc: 'AJC_NOTIFICATION',
+          //     },
+          //   );
+          // }
+          //done notification
+        }
+      }
       // var asdf = await twilioClient.messages.create({
       //   // from:'AJCGOLD',
       //   body: 'BODYaaabbbd',
@@ -130,7 +333,7 @@ export class AppService {
 
       const responseJSON = {
         message: 'success',
-        data: dto,
+        data: result,
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -349,6 +552,7 @@ export class AppService {
       var wBacklogWorkOrders = [];
       var wHighRiskWorkOrders = [];
 
+      var ECountUserNotification = 0;
       var ECountOhPendingOrder = 0;
       var ECountOhCustomOrder = 0;
       var ECountOhStockOrder = 0;
@@ -689,6 +893,26 @@ export class AppService {
         }
       }
 
+      if (dto.fcmToken != null && dto.fcmToken != '') {
+        await this.userModel.updateMany(
+          {
+            _id: _userId_,
+          },
+          {
+            $set: {
+              _fcmId: dto.fcmToken,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
+
+      ECountUserNotification = await this.userNotificationModel.count({
+        _viewStatus: 0,
+        _userId: _userId_,
+        _status: 1,
+      });
+
       const responseJSON = {
         message: 'success',
         data: {
@@ -704,7 +928,7 @@ export class AppService {
             wBacklogWorkOrders.length == 0 ? 0 : wBacklogWorkOrders[0].count,
           EDashHighRiskOrder:
             wHighRiskWorkOrders.length == 0 ? 0 : wHighRiskWorkOrders[0].count,
-
+          ECountUserNotification: ECountUserNotification,
           EDashOHPendingOrder: ECountOhPendingOrder,
           EDashOHCustomOrder: ECountOhCustomOrder,
           EDashOHStockOrder: ECountOhStockOrder,
@@ -1922,6 +2146,7 @@ export class AppService {
             _customerId: null,
             _deliveryHubId: null,
             _fcmId: '',
+            _isNotificationEnable: 1,
             _deviceUniqueId: '',
             _permissions: GlobalConfig().SUPER_ADMIN_PERMISSIONS,
             _userType: 0,

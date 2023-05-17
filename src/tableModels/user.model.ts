@@ -62,6 +62,7 @@ export const UserSchema = new mongoose.Schema({
   _deviceUniqueId: { type: String, default: '' },
   _permissions: { type: Object, required: true, default: [] },
   _userType: { type: Number, required: true, default: -1 },
+  _isNotificationEnable: { type: Number, required: true, default:1 },
   _customType: { type: Object, required: true, default: [] },
   _createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -100,6 +101,7 @@ export interface User {
   _deviceUniqueId: String;
   _permissions: Object;
   _userType: Number;
+  _isNotificationEnable: Number;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -107,6 +109,7 @@ export interface User {
   _status: Number;
 }
 
+UserSchema.index({ _isNotificationEnable: 1 });
 UserSchema.index({ _logisticPartnerId: 1 });
 UserSchema.index({ _testCenterId: 1 });
 UserSchema.index({ _deliveryHubId: 1 });

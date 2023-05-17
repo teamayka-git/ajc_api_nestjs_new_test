@@ -148,6 +148,7 @@ export class ResponseFormatService {
         Minimum: new ModelWeight().invoiceItemsTableMinimum(),
         Medium: new ModelWeight().invoiceItemsTableMedium(),
         Maximum: new ModelWeight().invoiceItemsTableMaximum(),
+        
       },
     };
     return responseJSON;

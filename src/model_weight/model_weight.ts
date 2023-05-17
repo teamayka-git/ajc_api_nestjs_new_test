@@ -114,12 +114,20 @@ export class ModelWeight {
       _status: 1,
     };
   }
+  public invoiceItemsTableCustom1(): Object {
+    return {
+      _id: 1,
+      _invoiceId: 1,
+      
+    };
+  }
   public invoiceTableLight(): Object {
     return {
       _id: 1,
       _userId: 1,
       _uid: 1,
       _createdAt: 1,
+      _netTotal: 1,
     };
   }
   public invoiceTableMinimum(): Object {
@@ -128,9 +136,11 @@ export class ModelWeight {
       _userId: 1,
       _uid: 1,
       _shopId: 1,
+      _isAccountPosted: 1,
       _rootCauseId: 1,
       _description: 1,
       _createdUserId: 1,
+
       _status: 1,
     };
   }
@@ -146,7 +156,20 @@ export class ModelWeight {
       _roundOff: 1,
       _shopId: 1,
       _netTotal: 1,
+      _saleType: 1,
+      _isFix: 1,
+      _price1: 1,
+      _price2: 1,
+      _metalAmountGst: 1,
+      _stoneAmount: 1,
+      _stoneAmountGst: 1,
+      _pureWeightHundredPercentage: 1,
+      _pureWeight: 1,
+      _cgst: 1,
+      _sgst: 1,
+      _igst: 1,
       _tdsReceivable: 1,
+      _isAccountPosted: 1,
       _tdsPayable: 1,
       _netReceivableAmount: 1,
       _isDelivered: 1,
@@ -174,6 +197,19 @@ export class ModelWeight {
       _otherCharge: 1,
       _roundOff: 1,
       _netTotal: 1,
+      _saleType: 1,
+      _isFix: 1,
+      _price1: 1,
+      _price2: 1,
+      _metalAmountGst: 1,
+      _stoneAmount: 1,
+      _stoneAmountGst: 1,
+      _pureWeightHundredPercentage: 1,
+      _pureWeight: 1,
+      _cgst: 1,
+      _sgst: 1,
+      _igst: 1,
+      _isAccountPosted: 1,
       _tdsReceivable: 1,
       _tdsPayable: 1,
       _netReceivableAmount: 1,
@@ -193,6 +229,27 @@ export class ModelWeight {
       _status: 1,
     };
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   public subCategoryTableLight(): Object {
     return {
       _id: 1,
@@ -276,6 +333,7 @@ export class ModelWeight {
       _workStatus: 1,
       _referenceNumber: 1,
       _parentOrderId: 1,
+      _reworkRootCauseId: 1,
       _type: 1,
       _holdRootCause: 1,
       _isHold: 1,
@@ -302,6 +360,8 @@ export class ModelWeight {
       _holdDescription: 1,
       _rootCauseId: 1,
       _parentOrderId: 1,
+      _reworkRootCauseId: 1,
+      _reworkDescription: 1,
       _isInvoiceGenerated: 1,
       _isProductGenerated: 1,
       _referenceNumber: 1,
@@ -328,6 +388,8 @@ export class ModelWeight {
       _isInvoiceGenerated: 1,
       _isProductGenerated: 1,
       _type: 1,
+      _reworkRootCauseId: 1,
+      _reworkDescription: 1,
       _holdRootCause: 1,
       _isHold: 1,
       _holdDescription: 1,
@@ -422,6 +484,226 @@ export class ModelWeight {
       _status: 1,
     };
   }
+
+  public hmBundleTableLight(): Object {
+    return {
+      _id: 1,
+      _hmCenter: 1,
+      _uid: 1,
+      _workStatus: 1,
+      _status: 1,
+    };
+  }
+  public hmBundleTableMinimum(): Object {
+    return {
+      _id: 1,
+      _hmCenter: 1,
+      _uid: 1,
+      _workStatus: 1,
+      _acceptedAt: 1,
+      _finishedAt: 1,
+      _rootCause: 1,
+      _rootCauseId: 1,
+    };
+  }
+  public hmBundleTableMedium(): Object {
+    return {
+      _id: 1,
+      _hmCenter: 1,
+      _uid: 1,
+      _workStatus: 1,
+      _acceptedAt: 1,
+      _finishedAt: 1,
+      _rootCause: 1,
+      _rootCauseId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+    };
+  }
+  public hmBundleTableMaximum(): Object {
+    return {
+      _id: 1,
+      _hmCenter: 1,
+      _uid: 1,
+      _workStatus: 1,
+      _acceptedAt: 1,
+      _finishedAt: 1,
+      _rootCause: 1,
+      _rootCauseId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+  public hmMainTableLight(): Object {
+    return {
+      _id: 1,
+      _hmBundleId: 1,
+      _orderUid: 1,
+      _orderSaleMainId: 1,
+      _status: 1,
+    };
+  }
+  public hmMainTableMinimum(): Object {
+    return {
+      _id: 1,
+      _hmBundleId: 1,
+      _orderUid: 1,
+      _orderSaleMainId: 1,
+      _workStatus: 1,
+      _type: 1,
+      _createdUserId: 1,
+      _updatedUserId: 1,
+    };
+  }
+  public hmMainTableMedium(): Object {
+    return {
+      _id: 1,
+      _hmBundleId: 1,
+      _orderUid: 1,
+      _orderSaleMainId: 1,
+      _workStatus: 1,
+      _type: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedAt: 1,
+      _updatedUserId: 1,
+      _status: 1,
+    };
+  }
+  public hmMainTableMaximum(): Object {
+    return {
+      _id: 1,
+      _hmBundleId: 1,
+      _orderUid: 1,
+      _orderSaleMainId: 1,
+      _workStatus: 1,
+      _type: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedAt: 1,
+      _updatedUserId: 1,
+      _status: 1,
+    };
+  }
+
+  public hmMainItemsTableLight(): Object {
+    return {
+      _id: 1,
+      _orderSaleId: 1,
+      _hmMainId: 1,
+      _orderSaleItemId: 1,
+      _status: 1,
+    };
+  }
+  public hmMainItemsTableMinimum(): Object {
+    return {
+      _id: 1,
+      _orderSaleId: 1,
+      _hmMainId: 1,
+      _orderSaleItemId: 1,
+      _status: 1,
+      _subCategoryId: 1,
+      _huid: 1,
+      _weight: 1,
+      _type: 1,
+      _createdUserId: 1,
+      _updatedUserId: 1,
+    };
+  }
+  public hmMainItemsTableMedium(): Object {
+    return {
+      _id: 1,
+      _orderSaleId: 1,
+      _hmMainId: 1,
+      _orderSaleItemId: 1,
+      _subCategoryId: 1,
+      _huid: 1,
+      _weight: 1,
+      _type: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+  public hmMainItemsTableMaximum(): Object {
+    return {
+      _id: 1,
+      _orderSaleId: 1,
+      _hmMainId: 1,
+      _orderSaleItemId: 1,
+      _subCategoryId: 1,
+      _huid: 1,
+      _weight: 1,
+      _type: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+  public hmCenterTableLight(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _uid: 1,
+      _cityId: 1,
+      _status: 1,
+    };
+  }
+  public hmCenterTableMinimum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _uid: 1,
+      _cityId: 1,
+      _address: 1,
+      _mobile: 1,
+      _status: 1,
+    };
+  }
+  public hmCenterTableMedium(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _uid: 1,
+      _cityId: 1,
+      _address: 1,
+      _mobile: 1,
+      _ahcNo: 1,
+      _location: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+
+      _status: 1,
+    };
+  }
+  public hmCenterTableMaximum(): Object {
+    return {
+      _id: 1,
+      _name: 1,
+      _uid: 1,
+      _cityId: 1,
+      _address: 1,
+      _mobile: 1,
+      _ahcNo: 1,
+      _location: 1,
+      _dataGuard: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
   public processMasterTableLight(): Object {
     return {
       _id: 1,
@@ -530,6 +812,8 @@ export class ModelWeight {
       _name: 1,
       _branchId: 1,
       _orderHeadId: 1,
+      _accountId: 1,
+      _freezedUserId: 1,
       _globalGalleryId: 1,
       _relationshipManagerId: 1,
       _rateCardId: 1,
@@ -556,6 +840,8 @@ export class ModelWeight {
       _isFreezed: 1,
       _shopType: 1,
       _branchId: 1,
+      _freezedUserId: 1,
+      _accountId: 1,
       _orderHeadId: 1,
       _address: 1,
       _relationshipManagerId: 1,
@@ -594,8 +880,10 @@ export class ModelWeight {
       _freezedRootCause: 1,
       _displayName: 1,
       _name: 1,
+      _freezedUserId: 1,
       _orderSaleRate: 1,
       _stockSaleRate: 1,
+      _accountId: 1,
       _shopType: 1,
       _branchId: 1,
       _orderHeadId: 1,
@@ -637,6 +925,7 @@ export class ModelWeight {
       _uid: 1,
       _displayName: 1,
       _name: 1,
+      _freezedUserId: 1,
       _isFreezed: 1,
       _shopType: 1,
       _branchId: 1,
@@ -661,6 +950,7 @@ export class ModelWeight {
       _cityId: 1,
       _isFreezed: 1,
       _uid: 1,
+      _freezedUserId: 1,
       _displayName: 1,
       _freezedRootCause: 1,
       _freezedDescription: 1,
@@ -828,6 +1118,7 @@ export class ModelWeight {
       _halmarkId: 1,
       _customerId: 1,
       _fcmId: 1,
+      _isNotificationEnable:1,
       _deliveryHubId: 1,
       _deviceUniqueId: 1,
       _permissions: 1,
@@ -949,7 +1240,7 @@ export class ModelWeight {
     return {
       _userId: 1,
       _approveStatus: 1,
-      _uid:1,
+      _uid: 1,
     };
   }
   public employeeStockInHandTableMinimum(): Object {
@@ -957,7 +1248,7 @@ export class ModelWeight {
       _id: 1,
 
       _userId: 1,
-      _uid:1,
+      _uid: 1,
       _approveStatus: 1,
       _status: 1,
     };
@@ -968,7 +1259,7 @@ export class ModelWeight {
 
       _userId: 1,
       _approveStatus: 1,
-      _uid:1,
+      _uid: 1,
       _createdUserId: 1,
       _createdAt: 1,
       _status: 1,
@@ -980,7 +1271,7 @@ export class ModelWeight {
 
       _userId: 1,
       _approveStatus: 1,
-      _uid:1,
+      _uid: 1,
 
       _createdUserId: 1,
       _createdAt: 1,
@@ -1204,8 +1495,8 @@ export class ModelWeight {
       _factoryId: 1,
       _type: 1,
       _uid: 1,
-      _groupType:1,
-      _reminingGrossWeight:1,
+      _groupType: 1,
+      _reminingGrossWeight: 1,
     };
   }
   public factoryStockTransferTableMinimum(): Object {
@@ -1213,8 +1504,8 @@ export class ModelWeight {
       _id: 1,
       _factoryId: 1,
       _type: 1,
-      _groupType:1,
-      _reminingGrossWeight:1,
+      _groupType: 1,
+      _reminingGrossWeight: 1,
       _barcode: 1,
       _status: 1,
       _uid: 1,
@@ -1226,8 +1517,8 @@ export class ModelWeight {
       _factoryId: 1,
       _type: 1,
       _uid: 1,
-      _groupType:1,
-      _reminingGrossWeight:1,
+      _groupType: 1,
+      _reminingGrossWeight: 1,
       _barcode: 1,
       _createdUserId: 1,
       _createdAt: 1,
@@ -1238,12 +1529,12 @@ export class ModelWeight {
     return {
       _id: 1,
       _factoryId: 1,
-      _reminingGrossWeight:1,
+      _reminingGrossWeight: 1,
       _type: 1,
       _uid: 1,
       _barcode: 1,
       _createdUserId: 1,
-      _groupType:1,
+      _groupType: 1,
       _createdAt: 1,
       _updatedUserId: 1,
       _updatedAt: 1,
@@ -1255,7 +1546,8 @@ export class ModelWeight {
     return {
       _id: 1,
       _uid: 1,
-      _isPurchaseOrgerGenerated: 1,
+      _isPurchaseOrderGenerated: 1,
+      _ref:1,
     };
   }
   public purchaseBookingTableMinimum(): Object {
@@ -1264,6 +1556,7 @@ export class ModelWeight {
       _invoiceId: 1,
       _groupId: 1,
       _uid: 1,
+      _ref:1,
       _supplierUserId: 1,
       _shopId: 1,
       _createdUserId: 1,
@@ -1278,10 +1571,11 @@ export class ModelWeight {
       _bookingAmount: 1,
       _groupId: 1,
       _uid: 1,
+      _ref:1,
       _supplierUserId: 1,
       _shopId: 1,
       _bookingThrough: 1,
-      _isPurchaseOrgerGenerated: 1,
+      _isPurchaseOrderGenerated: 1,
       _createdUserId: 1,
       _createdAt: 1,
     };
@@ -1297,8 +1591,9 @@ export class ModelWeight {
       _uid: 1,
       _supplierUserId: 1,
       _shopId: 1,
+      _ref:1,
       _bookingThrough: 1,
-      _isPurchaseOrgerGenerated: 1,
+      _isPurchaseOrderGenerated: 1,
       _createdUserId: 1,
       _createdAt: 1,
       _updatedUserId: 1,
@@ -1311,35 +1606,35 @@ export class ModelWeight {
     return {
       _id: 1,
       _uid: 1,
-      _orderSaleId: 1, 
+      _orderSaleId: 1,
     };
   }
   public orderSaleChangeRequestTableMinimum(): Object {
     return {
       _id: 1,
-      _orderSaleId:1,
-      _rootCause:1,
-      _uid:1,
-      _amendmentJson:1,
-      _description:1,
-      _type:1,
-      _proceedStatus:1,
-      _isMistakeWithManufactor:1,
-      _workStatus:1,
+      _orderSaleId: 1,
+      _rootCause: 1,
+      _uid: 1,
+      _amendmentJson: 1,
+      _description: 1,
+      _type: 1,
+      _proceedStatus: 1,
+      _isMistakeWithManufactor: 1,
+      _workStatus: 1,
     };
   }
   public orderSaleChangeRequestTableMedium(): Object {
     return {
       _id: 1,
-      _orderSaleId:1,
-      _rootCause:1,
-      _uid:1,
-      _description:1,
-      _amendmentJson:1,
-      _type:1,
-      _proceedStatus:1,
-      _isMistakeWithManufactor:1,
-      _workStatus:1,
+      _orderSaleId: 1,
+      _rootCause: 1,
+      _uid: 1,
+      _description: 1,
+      _amendmentJson: 1,
+      _type: 1,
+      _proceedStatus: 1,
+      _isMistakeWithManufactor: 1,
+      _workStatus: 1,
       _createdUserId: 1,
       _createdAt: 1,
     };
@@ -1347,15 +1642,15 @@ export class ModelWeight {
   public orderSaleChangeRequestTableMaximum(): Object {
     return {
       _id: 1,
-      _orderSaleId:1,
-      _rootCause:1,
-      _uid:1,
-      _description:1,
-      _type:1,
-      _amendmentJson:1,
-      _proceedStatus:1,
-      _isMistakeWithManufactor:1,
-      _workStatus:1,
+      _orderSaleId: 1,
+      _rootCause: 1,
+      _uid: 1,
+      _description: 1,
+      _type: 1,
+      _amendmentJson: 1,
+      _proceedStatus: 1,
+      _isMistakeWithManufactor: 1,
+      _workStatus: 1,
       _createdUserId: 1,
       _createdAt: 1,
       _updatedUserId: 1,
@@ -1671,7 +1966,7 @@ export class ModelWeight {
       _id: 1,
       _name: 1,
       _barcode: 1,
-      _stockStatus:1,
+      _stockStatus: 1,
       _type: 1,
       _purity: 1,
       _hmSealingStatus: 1,
@@ -1691,7 +1986,8 @@ export class ModelWeight {
       _hmSealingStatus: 1,
       _designUid: 1,
       _huId: 1,
-      _stockStatus:1,
+      _soldCount: 1,
+      _stockStatus: 1,
       _eCommerceStatus: 1,
       _designerId: 1,
       _status: 1,
@@ -1712,7 +2008,8 @@ export class ModelWeight {
       _orderItemId: 1,
       _grossWeight: 1,
       _barcode: 1,
-      _stockStatus:1,
+      _stockStatus: 1,
+      _soldCount: 1,
       _categoryId: 1,
       _subCategoryId: 1,
       _designUid: 1,
@@ -1738,7 +2035,8 @@ export class ModelWeight {
       _orderItemId: 1,
       _grossWeight: 1,
       _barcode: 1,
-      _stockStatus:1,
+      _stockStatus: 1,
+      _soldCount: 1,
       _categoryId: 1,
       _subCategoryId: 1,
       _designUid: 1,
@@ -1762,7 +2060,7 @@ export class ModelWeight {
     return {
       _id: 1,
 
-      _stockStatus:1,
+      _stockStatus: 1,
       _grossWeight: 1,
       _createdAt: 1,
       _barcode: 1,
@@ -1777,7 +2075,7 @@ export class ModelWeight {
       _id: 1,
       _name: 1,
 
-      _stockStatus:1,
+      _stockStatus: 1,
       _subCategoryId: 1,
       _type: 1,
       _totalStoneWeight: 1,
@@ -1790,7 +2088,7 @@ export class ModelWeight {
   public productTableCustom3(): Object {
     return {
       _id: 1,
-      _stockStatus:1,
+      _stockStatus: 1,
       _designUid: 1,
       _moldNumber: 1,
     };
@@ -1802,7 +2100,7 @@ export class ModelWeight {
       _name: 1,
       _barcode: 1,
       _type: 1,
-      _generatedProductId:1,
+      _generatedProductId: 1,
       _purity: 1,
       _factoryTransferItemId: 1,
       _hmSealingStatus: 1,
@@ -1821,7 +2119,7 @@ export class ModelWeight {
       _purity: 1,
       _hmSealingStatus: 1,
       _designUid: 1,
-      _generatedProductId:1,
+      _generatedProductId: 1,
       _huId: 1,
       _factoryTransferItemId: 1,
       _eCommerceStatus: 1,
@@ -1841,7 +2139,7 @@ export class ModelWeight {
       _name: 1,
       _designerId: 1,
       _shopId: 1,
-      _generatedProductId:1,
+      _generatedProductId: 1,
       _orderItemId: 1,
       _grossWeight: 1,
       _barcode: 1,
@@ -1868,7 +2166,7 @@ export class ModelWeight {
       _name: 1,
       _designerId: 1,
       _shopId: 1,
-      _generatedProductId:1,
+      _generatedProductId: 1,
       _orderItemId: 1,
       _grossWeight: 1,
       _factoryTransferItemId: 1,
@@ -1910,7 +2208,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _name: 1,
-      _generatedProductId:1,
+      _generatedProductId: 1,
 
       _subCategoryId: 1,
       _factoryTransferItemId: 1,
@@ -2069,7 +2367,7 @@ export class ModelWeight {
       _grossWeight: 1,
       _netWeight: 1,
       _description: 1,
-      _reminingGrossWeight:1,
+      _reminingGrossWeight: 1,
     };
   }
   public factoryStockTransferItemTableMinimumn(): Object {
@@ -2083,7 +2381,7 @@ export class ModelWeight {
       _weight_hundred_percentage: 1,
       _groupId: 1,
       _description: 1,
-      _reminingGrossWeight:1,
+      _reminingGrossWeight: 1,
     };
   }
   public factoryStockTransferItemTableMedium(): Object {
@@ -2095,7 +2393,7 @@ export class ModelWeight {
       _stoneWeight: 1,
       _purity: 1,
       _weight_hundred_percentage: 1,
-      _reminingGrossWeight:1,
+      _reminingGrossWeight: 1,
       _groupId: 1,
       _description: 1,
       _createdUserId: 1,
@@ -2112,7 +2410,7 @@ export class ModelWeight {
       _purity: 1,
       _weight_hundred_percentage: 1,
       _description: 1,
-      _reminingGrossWeight:1,
+      _reminingGrossWeight: 1,
       _groupId: 1,
       _createdUserId: 1,
       _createdAt: 1,
@@ -2372,12 +2670,14 @@ export class ModelWeight {
     return {
       _id: 1,
       _name: 1,
+      _type: 1,
     };
   }
   public ratecardTableMinimum(): Object {
     return {
       _id: 1,
       _name: 1,
+      _type: 1,
 
       _status: 1,
     };
@@ -2386,6 +2686,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _name: 1,
+      _type: 1,
       _createdUserId: 1,
       _status: 1,
     };
@@ -2394,6 +2695,7 @@ export class ModelWeight {
     return {
       _id: 1,
       _name: 1,
+      _type: 1,
       _createdUserId: 1,
       _createdAt: 1,
       _updatedUserId: 1,

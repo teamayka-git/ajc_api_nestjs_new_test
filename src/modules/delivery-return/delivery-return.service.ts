@@ -19,6 +19,8 @@ import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
 import { OrderSaleSetProcesses } from 'src/tableModels/order_sale_set_processes.model';
 import { OrderSalesItems } from 'src/tableModels/order_sales_items.model';
 import { OrderSalesDocuments } from 'src/tableModels/order_sales_documents.model';
+import { OrderCancelRejectReports } from 'src/tableModels/order_cancel_reject_reports.model';
+import { ReworkReports } from 'src/tableModels/order_rework_reports.model';
 
 @Injectable()
 export class DeliveryReturnService {
@@ -42,6 +44,11 @@ export class DeliveryReturnService {
     private readonly deliveryReturnItemsModel: mongoose.Model<DeliveryReturnItems>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
+    @InjectModel(ModelNames.REWORK_REPORTS)
+    private readonly reworkReportModel: mongoose.Model<ReworkReports>,
+
+    @InjectModel(ModelNames.ORDER_REJECTED_CANCEL_REPORTS)
+    private readonly orderRejectedCancelReportModel: mongoose.Model<OrderCancelRejectReports>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async create(dto: DeliveryReturnCreateDto, _userId_: string) {
@@ -141,7 +148,7 @@ export class DeliveryReturnService {
           _orderSaleId: eachItem,
           _userId: null,
           _type: 25,
-          _deliveryCounterId:null,
+          _deliveryCounterId: null,
           _shopId: null,
           _orderSaleItemId: null,
           _deliveryProviderId: null,
@@ -230,6 +237,26 @@ export class DeliveryReturnService {
                         $expr: { $eq: ['$_id', '$$delRejPendingId'] },
                       },
                     },
+                    {
+                      $lookup: {
+                        from: ModelNames.ORDER_SALES_MAIN,
+                        let: { salesId: '$_salesId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: { $eq: ['$_id', '$$salesId'] },
+                            },
+                          },
+                        ],
+                        as: 'orderSalesDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$orderSalesDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
                   ],
                   as: 'deleveryRejectPendingDetails',
                 },
@@ -265,13 +292,16 @@ export class DeliveryReturnService {
         var arrayOrderSaleIdCancelled = [];
         var arrayOrderSaleIdRework = [];
 
+        var arrayToRejectedCancelReport = [];
+        var arrayCancelReport = [];
+
         getDeliveryItemsForCheck.forEach((eachItem) => {
           eachItem.deliveryReturnItems.forEach((eachItemChild) => {
             arraySalesOrderHistories.push({
               _orderSaleId: eachItemChild.deleveryRejectPendingDetails._salesId,
               _userId: null,
               _type: 34,
-              _deliveryCounterId:null,
+              _deliveryCounterId: null,
               _shopId: null,
               _orderSaleItemId:
                 eachItemChild.deleveryRejectPendingDetails._salesItemId,
@@ -282,6 +312,7 @@ export class DeliveryReturnService {
             });
 
             if (eachItemChild.deleveryRejectPendingDetails._reworkStatus == 0) {
+              //cancel
               arrayOrderSaleIdCancelled.push(
                 eachItemChild.deleveryRejectPendingDetails._salesId,
               );
@@ -291,7 +322,7 @@ export class DeliveryReturnService {
                   eachItemChild.deleveryRejectPendingDetails._salesId,
                 _userId: null,
                 _type: 27,
-                _deliveryCounterId:null,
+                _deliveryCounterId: null,
                 _shopId: null,
                 _orderSaleItemId:
                   eachItemChild.deleveryRejectPendingDetails._salesItemId,
@@ -300,7 +331,36 @@ export class DeliveryReturnService {
                 _createdAt: dateTime,
                 _status: 1,
               });
+
+              arrayToRejectedCancelReport.push({
+                _orderId: eachItemChild.deleveryRejectPendingDetails._salesId,
+                _shop:
+                  eachItemChild.deleveryRejectPendingDetails.orderSalesDetails
+                    ._shopId,
+                _oh: eachItemChild.deleveryRejectPendingDetails
+                  .orderSalesDetails[0]._orderHeadId,
+                _rootcause: null,
+                _type: 0,
+                _description:
+                  'Customer rejected order admin accept delivery reject',
+                _orderCreatedDate:
+                  eachItemChild.deleveryRejectPendingDetails
+                    .orderSalesDetails[0]._createdAt,
+                _orderDueDate:
+                  eachItemChild.deleveryRejectPendingDetails
+                    .orderSalesDetails[0]._dueDate,
+                _orderUid:
+                  eachItemChild.deleveryRejectPendingDetails
+                    .orderSalesDetails[0]._uid,
+
+                _createdUserId: _userId_,
+                _createdAt: dateTime,
+                _updatedUserId: null,
+                _updatedAt: -1,
+                _status: 1,
+              });
             } else {
+              //rework
               arrayOrderSaleIdRework.push(
                 eachItemChild.deleveryRejectPendingDetails._salesId,
               );
@@ -311,7 +371,7 @@ export class DeliveryReturnService {
                 _userId: null,
                 _type: 40,
                 _shopId: null,
-                _deliveryCounterId:null,
+                _deliveryCounterId: null,
                 _orderSaleItemId:
                   eachItemChild.deleveryRejectPendingDetails._salesItemId,
                 _description: '',
@@ -319,9 +379,54 @@ export class DeliveryReturnService {
                 _createdAt: dateTime,
                 _status: 1,
               });
+
+              arrayCancelReport.push({
+                _orderId: eachItemChild.deleveryRejectPendingDetails._salesId,
+                _shop:
+                  eachItemChild.deleveryRejectPendingDetails.orderSalesDetails
+                    ._shopId,
+                _oh: eachItemChild.deleveryRejectPendingDetails
+                  .orderSalesDetails._orderHeadId,
+                _rootcause: null,
+
+                _orderUid:
+                  eachItemChild.deleveryRejectPendingDetails.orderSalesDetails
+                    ._uid,
+                _orderDueDate:
+                  eachItemChild.deleveryRejectPendingDetails.orderSalesDetails
+                    ._dueDate,
+                _orderCreatedDate:
+                  eachItemChild.deleveryRejectPendingDetails.orderSalesDetails
+                    ._createdAt,
+
+                _type: 1,
+                _description: '',
+                _arisonUser: null,
+                _arisonProcessMaster: null,
+                _arisonSetProcessStatus: -1,
+                _createdUserId: _userId_,
+                _createdAt: dateTime,
+                _updatedUserId: null,
+                _updatedAt: -1,
+                _status: 1,
+              });
             }
           });
         });
+
+        if (arrayToRejectedCancelReport.length != 0) {
+          await this.orderRejectedCancelReportModel.insertMany(
+            arrayToRejectedCancelReport,
+            {
+              session: transactionSession,
+            },
+          );
+        }
+        if (arrayCancelReport.length != 0) {
+          await this.reworkReportModel.insertMany(arrayCancelReport, {
+            session: transactionSession,
+          });
+        }
 
         if (arrayOrderSaleIdCancelled.length != 0) {
           await this.orderSaleModel.updateMany(
@@ -402,13 +507,13 @@ export class DeliveryReturnService {
               },
             },
           ]);
-          
+
           var arrayToMongoOrderSaleMain = [];
           var arrayToMongoOrderSaleItems = [];
           var arrayToMongoOrderSaleDocuments = [];
 
           arrayOrderSaleIdReworkMongo.forEach((eachItem) => {
-             var indexCount = resultOrderSaleOld.findIndex(
+            var indexCount = resultOrderSaleOld.findIndex(
               (findIndexItem) =>
                 findIndexItem._id.toString() == eachItem.toString(),
             );
@@ -419,18 +524,21 @@ export class DeliveryReturnService {
               _uid: resultOrderSaleOld[indexCount]._uid + 'R',
               _referenceNumber: resultOrderSaleOld[indexCount]._referenceNumber,
               _dueDate: resultOrderSaleOld[indexCount]._dueDate,
-              _workStatus: 0,  
+              _workStatus: 0,
               _rootCauseId: null,
-              _isHold:0,
-              _holdDescription:"",
-              _holdRootCause:null,
+              _isHold: 0,
+              _holdDescription: '',
+              _holdRootCause: null,
+              _reworkRootCauseId: null,
+              _reworkDescription: '',
               _parentOrderId: resultOrderSaleOld[indexCount]._id,
               _deliveryType: resultOrderSaleOld[indexCount]._deliveryType,
               _isInvoiceGenerated: 0,
               _isProductGenerated: 0,
               _type: resultOrderSaleOld[indexCount]._type,
-              _reWorkCount:( resultOrderSaleOld[indexCount]._reWorkCount + 1),
-              _internalReWorkCount:resultOrderSaleOld[indexCount]._internalReWorkCount,
+              _reWorkCount: resultOrderSaleOld[indexCount]._reWorkCount + 1,
+              _internalReWorkCount:
+                resultOrderSaleOld[indexCount]._internalReWorkCount,
               _rootCause: '',
               _orderHeadId: resultOrderSaleOld[indexCount]._orderHeadId,
               _description: resultOrderSaleOld[indexCount]._description,
@@ -487,7 +595,7 @@ export class DeliveryReturnService {
               _orderSaleItemId: null,
               _shopId: resultOrderSaleOld[indexCount]._shopId,
               _type: 0,
-              _deliveryCounterId:null,
+              _deliveryCounterId: null,
               _deliveryProviderId: null,
               _description: '',
               _createdUserId: _userId_,
@@ -510,7 +618,6 @@ export class DeliveryReturnService {
               session: transactionSession,
             },
           );
-
         }
         await this.orderSaleHistoriesModel.insertMany(
           arraySalesOrderHistories,
@@ -724,16 +831,24 @@ export class DeliveryReturnService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _uid: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _uid: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _type: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _type: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 4:
-          arrayAggregation.push({ $sort: { _workStatus: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _workStatus: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
       }
       if (dto.skip != -1) {
@@ -776,10 +891,6 @@ export class DeliveryReturnService {
           },
         );
       }
-
-
-
-      
 
       if (dto.screenType.includes(101)) {
         arrayAggregation.push(

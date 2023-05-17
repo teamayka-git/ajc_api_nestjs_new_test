@@ -395,6 +395,130 @@ export class ModelWeightResponseFormat {
     }
   }
 
+
+
+
+
+
+
+
+
+
+
+
+  public hmBundleTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: { _: 0 } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().hmBundleTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().hmBundleTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().hmBundleTableMedium() };
+    } else {
+      return { $project: { _: 0 } };
+    }
+  }
+
+
+
+
+  public hmMainTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: { _: 0 } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().hmMainTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().hmMainTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().hmMainTableMedium() };
+    } else {
+      return { $project: { _: 0 } };
+    }
+  }
+
+  public hmMainItemsTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: { _: 0 } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().hmMainItemsTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().hmMainItemsTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().hmMainItemsTableMedium() };
+    } else {
+      return { $project: { _: 0 } };
+    }
+  }
+
+
+
+  public hmCenterTableResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: { _: 0 } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().hmCenterTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().hmCenterTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().hmCenterTableMedium() };
+    } else {
+      return { $project: { _: 0 } };
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   public productTableResponseFormat(
     startIndex: int,
     responseFormatArray: List,
@@ -680,10 +804,45 @@ export class ModelWeightResponseFormat {
       return { $project: new ModelWeight().invoiceItemsTableMinimum() };
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().invoiceItemsTableMedium() };
+    } else if (responseFormatArray.includes(startIndex + 4)) {
+      return { $project: new ModelWeight().invoiceItemsTableCustom1() };
     } else {
       return { $project: { _: 0 } };
     }
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   public deliveryChellanTableResponseFormat(
     startIndex: int,
     responseFormatArray: List,

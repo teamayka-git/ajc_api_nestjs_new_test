@@ -3,6 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import {
   InvoiceCreateDto,
   InvoiceListDto,
+  InvoiceMigrationDto,
   InvoiceStatusChangeDto,
 } from './invoices.dto';
 import { InvoicesService } from './invoices.service';
@@ -23,6 +24,14 @@ export class InvoicesController {
       req['_userId_'],
     );
   }
+
+  @Post('temp_migrateCurrentInvoiceToNewFeild')
+  temp_migrateCurrentInvoiceToNewFeild(@Body() dto: InvoiceMigrationDto, @Request() req) {
+    return this.invoicesService.temp_migrateCurrentInvoiceToNewFeild(dto, req['_userId_']);
+  }
+
+  
+ 
 
   @Post('list')
   list(@Body() dto: InvoiceListDto) {

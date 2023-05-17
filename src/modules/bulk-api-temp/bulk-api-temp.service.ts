@@ -20,6 +20,8 @@ import { Employee } from 'src/tableModels/employee.model';
 import { BranchBulkDataDto, CityBulkDataDto, DepartmentBulkDataDto, DistrictBulkDataDto, EmployeesBulkDataDto, RatebaseMasterBulkDataDto, RatecardBulkDataDto, ShopBulkDataDto, StateBulkDataDto, TdsTcsMasterBulkDataDto } from './bulk_api_temp.dto';
 import { Shops } from 'src/tableModels/shops.model';
 import { Company } from 'src/tableModels/companies.model';
+import { AccountLedger } from 'src/tableModels/accountLedger.model';
+import { AccountSubgroup } from 'src/tableModels/accountSubgroup.model';
 
 const crypto = require('crypto');
 
@@ -58,6 +60,12 @@ export class BulkApiTempService {
     private readonly tcsModel: mongoose.Model<TcsMasters>,
     @InjectModel(ModelNames.COMPANIES)
     private readonly companyModel: mongoose.Model<Company>,
+    
+    @InjectModel(ModelNames.ACCOUNT_LEDGER)
+    private readonly accountLedgerModel: mongoose.Model<AccountLedger>,
+    @InjectModel(ModelNames.ACCOUNT_SUBGROUP)
+    private readonly accountSubGroupModel: mongoose.Model<AccountSubgroup>,
+
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async create(_userId_: string) {
@@ -718,12 +726,13 @@ export class BulkApiTempService {
       //   { Name: 'SPL9', Percentage: '4' },
       // ];
       var uniqueArray = [];
+      var uniqueTypeArray = [];
       dto.items.filter((element) => {
         const isDuplicate = uniqueArray.includes(element.Name);
 
         if (!isDuplicate) {
           uniqueArray.push(element.Name);
-
+          uniqueTypeArray.push(element.type);
           return true;
         }
 
@@ -733,11 +742,12 @@ export class BulkApiTempService {
       var rateCard = [];
       var rateCardPercentages = [];
 
-      uniqueArray.map((element) => {
+      uniqueArray.map((element,index) => {
         var rateCardId = new mongoose.Types.ObjectId();
         rateCard.push({
           _id: rateCardId,
           _name: element,
+          _type:uniqueTypeArray[index],
           _createdUserId: null,
           _createdAt: 0,
           _updatedUserId: null,
@@ -1002,6 +1012,7 @@ export class BulkApiTempService {
           _halmarkId: null,
           _customerId: null,
           _fcmId: '',
+          _isNotificationEnable:1,
           _deliveryHubId: null,
           _logisticPartnerId: null,
           _deviceUniqueId: '',
@@ -1277,6 +1288,21 @@ export class BulkApiTempService {
         )
         .toString(`hex`);
 
+
+
+
+        var tradeReceivable = await this.accountSubGroupModel.find({
+          _code: '102003',
+        });
+        if (tradeReceivable.length == 0) {
+          throw new HttpException(
+            'Trade receivable not found in acount sub group',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+        
+
+
       var resultCounterPurchase = await this.counterModel.findOneAndUpdate(
         { _tableName: ModelNames.SHOPS },
         {
@@ -1289,6 +1315,7 @@ export class BulkApiTempService {
 
       var arrayUsers = [];
       var arrayshops = [];
+      var arrayAccountLedger = [];
 
       dto.items.forEach((element, index) => {
         var shopId = new mongoose.Types.ObjectId();
@@ -1385,18 +1412,46 @@ if(resultCompany[0].cityDetails.districtDetails.stateDetails._name!=resultCity[c
 
 
 
+
+var shopUid=resultCounterPurchase._count - dto.items.length + index + 1;
+
+
+var shopAccountId = new mongoose.Types.ObjectId();
+arrayAccountLedger.push({
+_id:shopAccountId,
+  _code: tradeReceivable[0]._code + '000' + shopUid,
+  _name: element.LEGAL_NAME,
+  _underId: tradeReceivable[0]._id,
+  _address: element.Address,
+  _phone: element.Mobile,
+  _email: element.Email,
+  _city: '',
+  _state: '',
+  _country: '',
+  _pin: '',
+  _remarks: '',
+  _createdUserId: _userId_,
+  _createdAt: dateTime,
+  _updatedUserId: null,
+  _updatedAt: -1,
+  _status: 1,
+});
+
+
         arrayshops.push({
           _id: shopId,
           _name: element.LEGAL_NAME,
 
           _displayName: element.DISPLAY_NAME,
-          _uid: resultCounterPurchase._count - dto.items.length + index + 1,
+          _uid: shopUid,
           _globalGalleryId: null,
           _orderSaleRate: orderSaleRate,
           _stockSaleRate: stockSaleRate,
           _address: element.Address,
           _shopType: shopType,
+          _freezedUserId:null,
           _isTaxIgstEnabled: isIgstTaxEnabled,
+          _accountId: shopAccountId,
           _commisionType: commisionType,
           _branchId: resultBranch[countIndexBranch]._id,
           _orderHeadId: resultUsers[countIndexUserOH]._id,
@@ -1450,6 +1505,7 @@ if(resultCompany[0].cityDetails.districtDetails.stateDetails._name!=resultCity[c
           _halmarkId: null,
           _customerId: null,
           _fcmId: '',
+          _isNotificationEnable:1,
           _deviceUniqueId: '',
           _permissions: [],
           _userType: 0,
@@ -1483,6 +1539,7 @@ if(resultCompany[0].cityDetails.districtDetails.stateDetails._name!=resultCity[c
           _halmarkId: null,
           _customerId: null,
           _fcmId: '',
+          _isNotificationEnable:1,
           _deviceUniqueId: '',
           _permissions: [],
           _userType: 0,
@@ -1495,6 +1552,11 @@ if(resultCompany[0].cityDetails.districtDetails.stateDetails._name!=resultCity[c
       });
 
       var result1 = await this.shopModel.insertMany(arrayshops, {
+        session: transactionSession,
+      });
+
+
+      await this.accountLedgerModel.insertMany(arrayAccountLedger, {
         session: transactionSession,
       });
 

@@ -18,6 +18,7 @@ import {
   EditOrderSaleGeneralRemarkDto,
   GetWorkCountDto,
   GlobalSearchDto,
+  OrderRejectCancelReportDto,
   OrderSaleHistoryListDto,
   OrderSaleListDto,
   OrderSaleReportListDto,
@@ -30,6 +31,7 @@ import {
   OrderSaleSplitDto,
   OrderSalesReworkSetprocessDto,
   OrderSalesWorkStatusChangeDto,
+  RworkReportDto,
   SetProcessAssignedOrderSaleListDto,
 } from './order_sales.dto';
 
@@ -117,8 +119,9 @@ export class OrderSalesController {
   }
 
   @Post('list')
-  list(@Body() dto: OrderSaleListDto) {
-    return this.orderSalesService.list(dto);
+  list(@Body() dto: OrderSaleListDto,
+  @Request() req,) {
+    return this.orderSalesService.list(dto, req['_userId_']);
   }
 
   @Post('reportList')
@@ -201,6 +204,21 @@ export class OrderSalesController {
     @Request() req,
   ) {
     return this.orderSalesService.orderSplit(dto, req['_userId_']);
+  }
+
+  @Post('reworkReport')
+  reworkReport(
+    @Body() dto: RworkReportDto,
+    @Request() req,
+  ) {
+    return this.orderSalesService.reworkReport(dto, req['_userId_']);
+  }
+  @Post('orderRejectCancelReport')
+  orderRejectCancelReport(
+    @Body() dto: OrderRejectCancelReportDto,
+    @Request() req,
+  ) {
+    return this.orderSalesService.orderRejectCancelReport(dto, req['_userId_']);
   }
 
 
