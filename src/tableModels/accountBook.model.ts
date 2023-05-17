@@ -21,7 +21,7 @@ export const AccountBookSchema = new mongoose.Schema({
   _description: { type: String, required: false, default: '' },
   _docNo: { type: String, required: false, default: '' },
   _docDate: { type: Number, required: false, default: -1 },
-  _crdr: { type: String, required: true, default: 'Cr' },
+  _crdr: { type: Number, required: true, default: 1 },
   _amount: { type: Number, required: true, default: 0 },
   _total: { type: Number, required: true, default: 0 },
   _createdUserId: {

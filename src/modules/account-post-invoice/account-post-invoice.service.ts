@@ -118,6 +118,8 @@ export class AccountPostInvoiceService {
         });
 
 
+          var amount = mapItem.amount - (mapItem.CGST + mapItem.SGST + mapItem.IGST) - mapItem.stoneAmount - mapItem.hmCharge - mapItem.otherCharge - mapItem.roundOff;
+
             // Sales Income
             arrayToVoucherItems.push({
               _voucherId: vid,
@@ -126,8 +128,8 @@ export class AccountPostInvoiceService {
               _currencyId: '63f33292dcc0abe2f6d03166',
               _exRate: 1,
               _crdr: 1,
-              _amount: mapItem.amount,
-              _total: mapItem.amount,
+              _amount: amount,
+              _total: amount,
               _createdUserId: _userId_,
               _createdAt: dateTime,
               _updatedUserId: null,
@@ -146,8 +148,8 @@ export class AccountPostInvoiceService {
             _currencyId: '63f33292dcc0abe2f6d03166',
             _exRate: 1,
             _crdr: 1,
-            _amount: mapItem.amount,
-            _total: mapItem.amount,
+            _amount: amount,
+            _total: amount,
             _createdUserId: _userId_,
             _status: 1,
         });
