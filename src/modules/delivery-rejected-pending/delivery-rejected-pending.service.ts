@@ -4,7 +4,10 @@ import { Model } from 'mongoose';
 import { ModelNames } from 'src/common/model_names';
 import { DeliveryRejectedPendings } from 'src/tableModels/delivery_rejected_pendings.model';
 import * as mongoose from 'mongoose';
-import { DeliveryRejectListListDto, DeliveryRejectPendingCreateDto } from './delivery-rejected-pending.dto';
+import {
+  DeliveryRejectListListDto,
+  DeliveryRejectPendingCreateDto,
+} from './delivery-rejected-pending.dto';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 import { GlobalConfig } from 'src/config/global_config';
 import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
@@ -22,39 +25,34 @@ export class DeliveryRejectedPendingService {
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
-
-
   async create(dto: DeliveryRejectPendingCreateDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+
+console.log("___rejected   "+JSON.stringify(dto));
+
       var arrayToStates = [];
       var arrayOrderIds = [];
       var arrayOrderItemIds = [];
 
-
-
-
-
-
-
-
       dto.array.map((mapItem) => {
         arrayOrderIds.push(mapItem.salesId);
         arrayOrderItemIds.push(mapItem.salesItemId);
-        
+
         arrayToStates.push({
-          _salesItemId:mapItem.salesItemId,
-          _salesId:mapItem.salesId,
-          _deliveryId:mapItem.deliveryId,
-          _invoiceId:mapItem.invoiceId,
-          _shopId:mapItem.shopId,
-          _rootCauseId:mapItem.rootcauseId,
-          _productedBarcode:mapItem.productBarcode,
-          _rootCause:mapItem.rootcause,
-          _reworkStatus:mapItem.reworkStatus,
-          _mistakeType:mapItem.mistakeType,
+          _salesItemId: mapItem.salesItemId,
+          _salesId: mapItem.salesId,
+          _deliveryId: mapItem.deliveryId,
+          _invoiceId: mapItem.invoiceId,
+          _shopId: mapItem.shopId,
+          _rootCauseId: mapItem.rootcauseId,
+          _productedBarcode: mapItem.productBarcode,
+          _rootCause: mapItem.rootcause,
+          _reworkStatus: mapItem.reworkStatus,
+          _mistakeType: mapItem.mistakeType,
 
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -64,28 +62,23 @@ export class DeliveryRejectedPendingService {
         });
       });
 
+      var resultOsCheck = await this.orderSaleMainModel.find(
+        { _id: { $in: arrayOrderIds }, _workStatus: 35 },
+        { _id: 1 },
+      );
+      if (resultOsCheck.length != dto.array.length) {
+        throw new HttpException(
+          'Order status mismatch',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
 
-  var resultOsCheck= await this.orderSaleMainModel.find({_id:{$in:arrayOrderIds},_workStatus:35},{_id:1});
-if(resultOsCheck.length != dto.array.length){
-  throw new HttpException('Order status mismatch', HttpStatus.INTERNAL_SERVER_ERROR);
-}
-
-
-
-
-
-
-
-
-
-      var result1 = await this.deliveryRejectedPendingModel.insertMany(arrayToStates, {
-        session: transactionSession,
-      });
-
-
-
-
-
+      var result1 = await this.deliveryRejectedPendingModel.insertMany(
+        arrayToStates,
+        {
+          session: transactionSession,
+        },
+      );
 
       await this.orderSaleMainModel.updateMany(
         {
@@ -103,13 +96,13 @@ if(resultOsCheck.length != dto.array.length){
 
       var arraySalesOrderHistories = [];
 
-      arrayOrderIds.forEach((eachItem,index) => {
+      arrayOrderIds.forEach((eachItem, index) => {
         arraySalesOrderHistories.push({
           _orderSaleId: eachItem,
           _userId: null,
           _type: 24,
           _shopId: null,
-          _deliveryCounterId:null,
+          _deliveryCounterId: null,
           _orderSaleItemId: dto.array[index].salesItemId,
           _deliveryProviderId: null,
           _description: `Reason: ${dto.array[index].rootcauseIdName} - ${dto.array[index].rootcause}`,
@@ -125,13 +118,6 @@ if(resultOsCheck.length != dto.array.length){
           session: transactionSession,
         },
       );
-
-
-
-
-
-
-
 
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
@@ -154,9 +140,6 @@ if(resultOsCheck.length != dto.array.length){
       throw error;
     }
   }
-
-
-
 
   async list(dto: DeliveryRejectListListDto) {
     var dateTime = new Date().getTime();
@@ -245,16 +228,24 @@ if(resultOsCheck.length != dto.array.length){
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _shopId: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _shopId: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _mistakeType: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _mistakeType: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 4:
-          arrayAggregation.push({ $sort: { _reworkStatus: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _reworkStatus: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
       }
       if (dto.skip != -1) {
@@ -394,17 +385,14 @@ if(resultOsCheck.length != dto.array.length){
               return pipeline;
             };
 
-            pipeline.push(
-              {
-                $lookup: {
-                  from: ModelNames.ORDER_SALES_DOCUMENTS,
-                  let: { orderSaleId: '$_id' },
-                  pipeline: orderSaleMainDocumentsPipeline(),
-                  as: 'orderSaleDocuments',
-                },
+            pipeline.push({
+              $lookup: {
+                from: ModelNames.ORDER_SALES_DOCUMENTS,
+                let: { orderSaleId: '$_id' },
+                pipeline: orderSaleMainDocumentsPipeline(),
+                as: 'orderSaleDocuments',
               },
-              
-            );
+            });
           }
 
           return pipeline;

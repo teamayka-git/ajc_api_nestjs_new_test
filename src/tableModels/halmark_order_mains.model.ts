@@ -62,6 +62,8 @@ _type:{
 _workStatus:{
   0 - bundle not assigned
   1 - bundle assigned
+  2 - bundle not created
+  3 - bypassed
 }
  */
  

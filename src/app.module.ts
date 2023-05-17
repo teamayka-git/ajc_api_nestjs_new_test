@@ -110,6 +110,11 @@ import { AccountLedgerModule } from './modules/account-ledger/account-ledger.mod
 import { AccountJournalModule } from './modules/account-journal/account-journal.module';
 import { AccountBranchModule } from './modules/account-branch/account-branch.module';
 import { AccountCurrencyModule } from './modules/account-currency/account-currency.module';
+import { HalmarkRequestModule } from './modules/halmark-request/halmark-request.module';
+import { UsersModule } from './modules/users/users.module';
+import { UserNotificationsSchema } from './tableModels/user_notifications.model';
+import { CronJobSchedulerModule } from './modules/cron-job-scheduler/cron-job-scheduler.module';
+import { ProductsSchema } from './tableModels/products.model';
 import { AccountPostInvoiceModule } from './modules/account-post-invoice/account-post-invoice.module';
 
 
@@ -145,6 +150,8 @@ import { AccountPostInvoiceModule } from './modules/account-post-invoice/account
       { name: ModelNames.PROCESS_MASTER, schema: ProcessMasterSchema },
       { name: ModelNames.DELIVERY, schema: DeliverySchema },
       
+      { name: ModelNames.PRODUCTS, schema: ProductsSchema },
+      { name: ModelNames.USER_NOTIFICATIONS, schema: UserNotificationsSchema },
       { name: ModelNames.INVOICES, schema: InvoicesSchema },
       {
         name: ModelNames.GLOBAL_GALLERY_CATEGORIES,
@@ -238,6 +245,9 @@ import { AccountPostInvoiceModule } from './modules/account-post-invoice/account
     AccountBranchModule,
     AccountCurrencyModule,
     AccountPostInvoiceModule,
+    HalmarkRequestModule,
+    UsersModule,
+    CronJobSchedulerModule,
 
     // SalesReturnRequestStatusesModule,
   ],

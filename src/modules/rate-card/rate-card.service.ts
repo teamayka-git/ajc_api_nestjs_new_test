@@ -11,6 +11,7 @@ import {
   RateCardListDto,
   RateCardStatusChangeDto,
   RemovePercentagesDto,
+  TempMigrateCurrentRatecardDto,
 } from './rate_card.dto';
 
 @Injectable()
@@ -31,6 +32,7 @@ export class RateCardService {
 
       const rateCardModel = new this.rateCardsModel({
         _name: dto.rateCardName,
+        _type: dto.type,
         _createdUserId: _userId_,
         _createdAt: dateTime,
         _updatedUserId: null,
@@ -93,6 +95,7 @@ export class RateCardService {
         {
           $set: {
             _name: dto.rateCardName,
+            _type: dto.type,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
           },
@@ -115,9 +118,12 @@ export class RateCardService {
         });
       });
 
-      var result11 = await this.rateCardPercentagessModel.insertMany(arrayToStates, {
-        session: transactionSession,
-      });
+      var result11 = await this.rateCardPercentagessModel.insertMany(
+        arrayToStates,
+        {
+          session: transactionSession,
+        },
+      );
 
       for (var i = 0; i < dto.arrayUpdate.length; i++) {
         await this.rateCardPercentagessModel.findOneAndUpdate(
@@ -252,6 +258,9 @@ export class RateCardService {
         });
         arrayAggregation.push({ $match: { _id: { $in: newSettingsId } } });
       }
+      if (dto.type.length > 0) {
+        arrayAggregation.push({ $match: { _type: { $in: dto.type } } });
+      }
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
       switch (dto.sortType) {
@@ -259,10 +268,14 @@ export class RateCardService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _name: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _name: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
       }
 
@@ -340,6 +353,130 @@ export class RateCardService {
         message: 'success',
         data: { list: result, totalCount: totalCount },
       };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async temp_migrateCurrentRatecardToPurchaseType(
+    dto: TempMigrateCurrentRatecardDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var resultRatecard = await this.rateCardsModel.aggregate([
+        // { $skip: dto.skip },
+        // { $limit: dto.limit },
+        {
+          $lookup: {
+            from: ModelNames.RATE_CARD_PERCENTAGESS,
+            let: { invId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$_rateCardId', '$$invId'] },
+                },
+              },
+            ],
+            as: 'percentageItems',
+          },
+        },
+      ]);
+
+      var arrayRatecard = [];
+      var arrayRatecardPercentages = [];
+
+      for (var i = 0; i < resultRatecard.length; i++) {
+        if (resultRatecard[i].percentageItems.length == 0) {
+          throw new HttpException(
+            'percentage items empty ' + i,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        var ratecardId = new mongoose.Types.ObjectId();
+
+        arrayRatecard.push({
+          _id: ratecardId,
+          _name: resultRatecard[i]._name,
+          _type: 1,
+          _createdUserId: resultRatecard[i]._createdUserId,
+          _createdAt: resultRatecard[i]._createdAt,
+          _updatedUserId: resultRatecard[i]._updatedUserId,
+          _updatedAt: resultRatecard[i]._updatedAt,
+          _status: resultRatecard[i]._status,
+        });
+        resultRatecard[i].percentageItems.forEach((elementPercentage) => {
+          arrayRatecardPercentages.push({
+            _rateCardId: ratecardId,
+            _subCategoryId: elementPercentage._subCategoryId,
+            _percentage: elementPercentage._percentage,
+            _createdUserId: elementPercentage._createdUserId,
+            _createdAt: elementPercentage._createdAt,
+            _updatedUserId: elementPercentage._updatedUserId,
+            _updatedAt: elementPercentage._updatedAt,
+            _status: elementPercentage._status,
+          });
+        });
+
+        console.log(
+          '_____doing ' +
+            i +
+            '   items ' +
+            resultRatecard[i].percentageItems.length,
+        );
+      }
+      await this.rateCardsModel.insertMany(arrayRatecard, {
+        session: transactionSession,
+      });
+      await this.rateCardPercentagessModel.insertMany(
+        arrayRatecardPercentages,
+        {
+          session: transactionSession,
+        },
+      );
+      /*
+      var result = await this.invoiceModel.updateMany(
+        {
+          _id: { $in: dto.invoiceIds },
+        },
+        {
+          $set: {
+            _rootCauseId:
+              dto.rootCauseId == '' || dto.rootCauseId == 'nil'
+                ? null
+                : dto.rootCauseId,
+            _description:
+              dto.description == '' || dto.description == 'nil'
+                ? null
+                : dto.description,
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+            _status: dto.status,
+          },
+        },
+        { new: true, session: transactionSession },
+      );*/
+
+      const responseJSON = { message: 'success', data: {} };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=

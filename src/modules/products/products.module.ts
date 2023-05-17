@@ -17,6 +17,8 @@ import { ProductTagLinkingsSchema } from 'src/tableModels/product_tag_linkings.m
 import { ProductsDocumentsSchema } from 'src/tableModels/products_documents.model';
 import { GlobalGalleriesSchema } from 'src/tableModels/globalGalleries.model';
 import { ProductTempsSchema } from 'src/tableModels/product_temps.model';
+import { HalmarkOrderItemsSchema } from 'src/tableModels/halmark_order_items.model';
+import { HalmarkOrderMainSchema } from 'src/tableModels/halmark_order_mains.model';
 
 @Module({
   imports: [
@@ -42,6 +44,8 @@ import { ProductTempsSchema } from 'src/tableModels/product_temps.model';
       { name: ModelNames.PRODUCT_TEMPS, schema: ProductTempsSchema },
 
 
+      { name: ModelNames.HALMARK_ORDER_MAIN, schema: HalmarkOrderMainSchema },
+      { name: ModelNames.HALMARK_ORDER_ITEMS, schema: HalmarkOrderItemsSchema },
 
 
 

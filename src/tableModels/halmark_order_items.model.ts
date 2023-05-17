@@ -9,9 +9,9 @@ export const HalmarkOrderItemsSchema = new mongoose.Schema({
     ref: ModelNames.ORDER_SALES_MAIN,
     default: null,
   },
-  _hmBundleId: {
+  _hmMainId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.ORDER_SALES_MAIN,
+    ref: ModelNames.HALMARK_ORDER_MAIN,
     default: null,
   },
   _orderSaleItemId: {
@@ -21,7 +21,7 @@ export const HalmarkOrderItemsSchema = new mongoose.Schema({
   },
   _subCategoryId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.ORDER_SALES_ITEMS,
+    ref: ModelNames.SUB_CATEGORIES,
     default: null,
   },
   _huid: { type: String, required: false, default: '' },
@@ -45,7 +45,7 @@ export const HalmarkOrderItemsSchema = new mongoose.Schema({
 export interface HalmarkOrderItems {
   _id: String;
   _orderSaleId: String;
-  _hmBundleId: String;
+  _hmMainId: String;
   _orderSaleItemId: String;
   _subCategoryId: String;
   _huid: String;
@@ -59,7 +59,7 @@ export interface HalmarkOrderItems {
 }
 
 HalmarkOrderItemsSchema.index({ _orderSaleId: 1 });
-HalmarkOrderItemsSchema.index({ _hmBundleId: 1 });
+HalmarkOrderItemsSchema.index({ _hmMainId: 1 });
 HalmarkOrderItemsSchema.index({ _orderSaleItemId: 1 });
 HalmarkOrderItemsSchema.index({ _subCategoryId: 1 });
 HalmarkOrderItemsSchema.index({ _huid: 1 });

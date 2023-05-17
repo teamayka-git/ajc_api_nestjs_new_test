@@ -20,6 +20,7 @@ import {
   CheckEmailExistDto,
   CheckMobileExistDto,
   ListShopDto,
+  MigrateCurrentShopToAcountLedgersDto,
   ShopAcrossEmployeesAndCustomersDto,
   ShopAddRemoveCustomerDto,
   ShopAddRemoveUsersDto,
@@ -35,6 +36,10 @@ import { Company } from 'src/tableModels/companies.model';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 import { SmsUtils } from 'src/utils/smsUtils';
 import { StorePromotions } from 'src/tableModels/store_promotions.model';
+import { AccountLedger } from 'src/tableModels/accountLedger.model';
+import { AccountSubgroup } from 'src/tableModels/accountSubgroup.model';
+import { FcmUtils } from 'src/utils/FcmUtils';
+import { UserNotifications } from 'src/tableModels/user_notifications.model';
 @Injectable()
 export class ShopsService {
   constructor(
@@ -51,6 +56,13 @@ export class ShopsService {
     @InjectModel(ModelNames.STORE_PROMOTIONS)
     private readonly storePromotionModel: mongoose.Model<StorePromotions>,
 
+    @InjectModel(ModelNames.ACCOUNT_LEDGER)
+    private readonly accountLedgerModel: mongoose.Model<AccountLedger>,
+    @InjectModel(ModelNames.ACCOUNT_SUBGROUP)
+    private readonly accountSubGroupModel: mongoose.Model<AccountSubgroup>,
+
+    @InjectModel(ModelNames.USER_NOTIFICATIONS)
+    private readonly userNotificationModel: mongoose.Model<UserNotifications>,
     @InjectModel(ModelNames.COMPANIES)
     private readonly companyModel: mongoose.Model<Company>,
     @InjectModel(ModelNames.GLOBAL_GALLERY_CATEGORIES)
@@ -237,6 +249,40 @@ export class ShopsService {
         { new: true, session: transactionSession },
       );
 
+      var shopUid = resultCounterPurchase._count;
+
+      var tradeReceivable = await this.accountSubGroupModel.find({
+        _code: '102003',
+      });
+      if (tradeReceivable.length == 0) {
+        throw new HttpException(
+          'Trade receivable not found in acount sub group',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      const accountLedgerModel = new this.accountLedgerModel({
+        _code: tradeReceivable[0]._code + '000' + shopUid,
+        _name: dto.name,
+        _underId: tradeReceivable[0]._id,
+        _address: dto.address,
+        _phone: dto.mobile,
+        _email: dto.email,
+        _city: '',
+        _state: '',
+        _country: '',
+        _pin: '',
+        _remarks: '',
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _updatedUserId: null,
+        _updatedAt: -1,
+        _status: 1,
+      });
+      var resultAccountLedger = await accountLedgerModel.save({
+        session: transactionSession,
+      });
+
       var shopId = new mongoose.Types.ObjectId();
 
       const newsettingsModel = new this.shopsModel({
@@ -244,11 +290,14 @@ export class ShopsService {
         _name: dto.name,
 
         _displayName: dto.displayName,
-        _uid: resultCounterPurchase._count,
+        _uid: shopUid,
         _globalGalleryId: globalGalleryId,
         _orderSaleRate: dto.orderSaleRate,
         _stockSaleRate: dto.stockSaleRate,
         _address: dto.address,
+        _accountId: resultAccountLedger._id,
+
+        _freezedUserId: null,
         _shopType: dto.shopType,
         _isTaxIgstEnabled: dto.isTaxIgstEnabled,
         _commisionType: dto.commisionType,
@@ -340,6 +389,7 @@ export class ShopsService {
             _halmarkId: null,
             _customerId: null,
             _fcmId: '',
+            _isNotificationEnable: 1,
             _deviceUniqueId: '',
             _permissions: [],
             _userType: 0,
@@ -385,6 +435,7 @@ export class ShopsService {
         _halmarkId: null,
         _customerId: null,
         _fcmId: '',
+        _isNotificationEnable: 1,
         _deviceUniqueId: '',
         _permissions: [],
         _userType: 0,
@@ -678,6 +729,7 @@ export class ShopsService {
             _testCenterId: null,
             _deliveryHubId: null,
             _fcmId: '',
+            _isNotificationEnable: 1,
             _customerId: null,
             _deviceUniqueId: '',
             _permissions: [],
@@ -993,6 +1045,7 @@ export class ShopsService {
           },
         );
       }
+
       if (dto.screenType.includes(50)) {
         arrayAggregation.push(
           {
@@ -1251,6 +1304,72 @@ export class ShopsService {
           },
         );
       }
+
+      if (dto.screenType.includes(117)) {
+        const freezedUserPipeline = () => {
+          const pipeline = [];
+          pipeline.push(
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$userId'] },
+              },
+            },
+            new ModelWeightResponseFormat().userTableResponseFormat(
+              1170,
+              dto.responseFormat,
+            ),
+          );
+
+          const orderHeadGlobalGallery = dto.screenType.includes(118);
+          if (orderHeadGlobalGallery) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.GLOBAL_GALLERIES,
+                  let: { globalGalleryId: '$_globalGalleryId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$globalGalleryId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                      1180,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'globalGalleryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$globalGalleryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            );
+          }
+          return pipeline;
+        };
+
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { userId: '$_freezedUserId' },
+              pipeline: freezedUserPipeline(),
+              as: 'freezedUserDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$freezedUserDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
       if (dto.screenType.includes(102)) {
         const relationshipManagerPipeline = () => {
           const pipeline = [];
@@ -1907,6 +2026,7 @@ export class ShopsService {
             _customType: [dto.arrayUsersNew[i].customType],
             _halmarkId: null,
             _fcmId: '',
+            _isNotificationEnable: 1,
             _deviceUniqueId: '',
             _permissions: [],
             _userType: 0,
@@ -2062,6 +2182,7 @@ export class ShopsService {
             _customType: [dto.arrayUsersNew[i].customType],
             _halmarkId: null,
             _fcmId: '',
+            _isNotificationEnable: 1,
             _deviceUniqueId: '',
             _permissions: [],
             _userType: 0,
@@ -2119,6 +2240,94 @@ export class ShopsService {
       throw error;
     }
   }
+
+  async temp_migrateCurrentShopToAccountLedgers(
+    dto: MigrateCurrentShopToAcountLedgersDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var currentShops = await this.shopsModel.aggregate([
+        { $skip: dto.skip },
+        { $limit: dto.limit },
+      ]);
+
+      var tradeReceivable = await this.accountSubGroupModel.find({
+        _code: '102003',
+      });
+      if (tradeReceivable.length == 0) {
+        throw new HttpException(
+          'Trade receivable not found in acount sub group',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      var arrayAccountLedger = [];
+      for (var i = 0; i < currentShops.length; i++) {
+        var shopAccountId = new mongoose.Types.ObjectId();
+        arrayAccountLedger.push({
+          _id: shopAccountId,
+          _code: tradeReceivable[0]._code + '000' + currentShops[i]._uid,
+          _name: currentShops[i]._name,
+          _underId: tradeReceivable[0]._id,
+          _address: currentShops[i]._address,
+          _phone: '',
+          _email: '',
+          _city: '',
+          _state: '',
+          _country: '',
+          _pin: '',
+          _remarks: '',
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
+        });
+
+        await this.shopsModel.findOneAndUpdate(
+          {
+            _id: currentShops[i]._id,
+          },
+          {
+            $set: {
+              _accountId: shopAccountId,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+        console.log('done 1');
+      }
+
+      await this.accountLedgerModel.insertMany(arrayAccountLedger, {
+        session: transactionSession,
+      });
+
+      const responseJSON = { message: 'success', data: {} };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
   async listCustomersAndEmployeeShopAcross(
     dto: ShopAcrossEmployeesAndCustomersDto,
     _userId_: string,
@@ -2386,6 +2595,7 @@ export class ShopsService {
         },
         {
           $set: {
+            _freezedUserId: _userId_,
             _isFreezed: dto.isFreezed,
             _freezedDescription: dto.freezedDescription,
             _freezedRootCause:
@@ -2394,6 +2604,61 @@ export class ShopsService {
         },
         { new: true, session: transactionSession },
       );
+
+      //doing notification
+      var userFcmCheck = await this.userModel.find(
+        { _shopId: { $in: dto.shopIds },_status:1 },
+        { _isNotificationEnable: 1, _fcmId: 1 },
+      );
+      console.log("___shop freez  "+JSON.stringify(userFcmCheck));
+      var userFcmIds = [];
+      var userNotificationTable = [];
+      var notificationTitle =
+        dto.isFreezed == 1 ? 'Shop freezed' : 'Shop unfreezed';
+      var notificationBody =
+        dto.isFreezed == 1
+          ? `Rootcause: ${dto.freezedRootCauseName}, ${
+              dto.freezedDescription != '' ? dto.freezedDescription : ''
+            } `
+          : 'Shop unfreezed';
+      var notificationOrderSale = '';
+      userFcmCheck.forEach((elementUserNotification) => {
+        if (
+          elementUserNotification._isNotificationEnable == 1 &&
+          elementUserNotification._fcmId != ''
+        ) {
+          userFcmIds.push(elementUserNotification._fcmId);
+        }
+        userNotificationTable.push({
+          _viewStatus: 0,
+          _title: notificationTitle,
+          _body: notificationBody,
+          _orderSaleId:
+            notificationOrderSale == '' ? null : notificationOrderSale,
+          _userId: elementUserNotification._id,
+          _createdAt: dateTime,
+          _viewAt: 0,
+          _status: 1,
+        });
+      });
+      if (userNotificationTable.length != 0) {
+        await this.userNotificationModel.insertMany(userNotificationTable, {
+          session: transactionSession,
+        });
+      }
+      
+      console.log("___shop freez  "+userFcmIds);
+      if (userFcmIds.length != 0) {
+        new FcmUtils().sendFcm(
+          notificationTitle,
+          notificationBody,
+          userFcmIds,
+          {
+            ajc: 'AJC_NOTIFICATION',
+          },
+        );
+      }
+      //done notification
 
       const responseJSON = { message: 'success', data: result };
       if (
@@ -2532,10 +2797,12 @@ export class ShopsService {
         console.log("resultUploadIcon['url']   " + resultUploadIcon['url']);
       }
 
-
-      var resultShop=await this.shopsModel.find({_id:dto.shopId});
-      if(resultShop.length==0){
-        throw new HttpException('Shop not found', HttpStatus.INTERNAL_SERVER_ERROR);
+      var resultShop = await this.shopsModel.find({ _id: dto.shopId });
+      if (resultShop.length == 0) {
+        throw new HttpException(
+          'Shop not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
 
       var objThemeStore = {
@@ -2557,20 +2824,22 @@ export class ShopsService {
       };
 
       if (file.hasOwnProperty('splashImage')) {
-        console.log("___ssss1");
+        console.log('___ssss1');
         objThemeStore['splashImageUrl'] = resultUploadSplash['url'];
-      } else {console.log("___ssss2");
+      } else {
+        console.log('___ssss2');
         if (dto.isSplashImageRemoved == 1) {
-          console.log("___ssss3");
+          console.log('___ssss3');
           objThemeStore['splashImageUrl'] = '';
-        }else{
-          console.log("___ssss4");
-          if(resultShop[0]._themeStore==null){
-            console.log("___ssss5");
+        } else {
+          console.log('___ssss4');
+          if (resultShop[0]._themeStore == null) {
+            console.log('___ssss5');
             objThemeStore['splashImageUrl'] = '';
-          }else{
-            console.log("___ssss6");
-            objThemeStore['splashImageUrl'] = resultShop[0]._themeStore["splashImageUrl"];
+          } else {
+            console.log('___ssss6');
+            objThemeStore['splashImageUrl'] =
+              resultShop[0]._themeStore['splashImageUrl'];
           }
         }
       }
@@ -2580,15 +2849,16 @@ export class ShopsService {
       } else {
         if (dto.isActionbarLogoImageRemoved == 1) {
           objThemeStore['actionbarLogo'] = '';
-        }else{
-          if(resultShop[0]._themeStore==null){
+        } else {
+          if (resultShop[0]._themeStore == null) {
             objThemeStore['actionbarLogo'] = '';
-          }else{
-            objThemeStore['actionbarLogo'] = resultShop[0]._themeStore["actionbarLogo"];
+          } else {
+            objThemeStore['actionbarLogo'] =
+              resultShop[0]._themeStore['actionbarLogo'];
           }
         }
       }
-console.log("objThemeStore        "+JSON.stringify(objThemeStore));
+      console.log('objThemeStore        ' + JSON.stringify(objThemeStore));
       var result = await this.shopsModel.findOneAndUpdate(
         {
           _id: dto.shopId,

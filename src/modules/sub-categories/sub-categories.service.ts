@@ -149,7 +149,10 @@ export class SubCategoriesService {
           arrayToRateCardPercentage.push({
             _rateCardId: mapItem1._id,
             _subCategoryId: subCategoryId,
-            _percentage: mapItem.defaultPercentage,
+            _percentage:
+              mapItem1._type == 0
+                ? mapItem.defaultPercentage
+                : mapItem.defaultPercentagePurchase,
             _createdUserId: _userId_,
             _createdAt: dateTime,
             _updatedUserId: null,
@@ -401,30 +404,27 @@ export class SubCategoriesService {
                 { $match: { $expr: { $eq: ['$_id', '$$categoryId'] } } },
                 { $project: { _groupId: 1 } },
 
- {
-            $lookup: {
-              from: ModelNames.GROUP_MASTERS,
-              let: { groupId: '$_groupId' },
-              pipeline: [
-                { $match: { $expr: { $eq: ['$_id', '$$groupId'] } } },
-                { $project: { _id: 1 } },
-                {$match:{
-                  _id:{$in:newSettingsId}
-                }}
-
-
-
-              ],
-              as: 'groupDetailsMongo',
-            },
-          },
-          {
-            $unwind: {
-              path: '$groupDetailsMongo',
-            },
-          }
-
-
+                {
+                  $lookup: {
+                    from: ModelNames.GROUP_MASTERS,
+                    let: { groupId: '$_groupId' },
+                    pipeline: [
+                      { $match: { $expr: { $eq: ['$_id', '$$groupId'] } } },
+                      { $project: { _id: 1 } },
+                      {
+                        $match: {
+                          _id: { $in: newSettingsId },
+                        },
+                      },
+                    ],
+                    as: 'groupDetailsMongo',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$groupDetailsMongo',
+                  },
+                },
               ],
               as: 'categoryDetailsMongo',
             },

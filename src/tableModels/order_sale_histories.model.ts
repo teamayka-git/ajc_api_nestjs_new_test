@@ -51,8 +51,8 @@ export interface OrderSaleHistories {
   _id: String;
   _orderSaleId: String;
   _orderSaleItemId: String;
-  _deliveryProviderId:String;
-  _deliveryCounterId:String;
+  _deliveryProviderId: String;
+  _deliveryCounterId: String;
   _shopId: string;
   _userId: String;
   _type: number;
@@ -102,7 +102,6 @@ _type:{
   26 - order declined inscan
   27 - order cancelled 
   28 - delivery reshedule requested
-
   29 - hub tranfer pending
   30 - hub assigned
   31 - hub tranfer intransit
@@ -132,6 +131,9 @@ _type:{
   112 - order hold removed 
   113 - order split 
   114 - order split from another order 
+
+  115 - halmark bundle created
+  116 - halmark bundle assign hm center
+  117 - halmark value updated
 }
 */
- 

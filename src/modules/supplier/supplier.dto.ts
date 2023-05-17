@@ -12,7 +12,7 @@ import { Optional } from '@nestjs/common';
 
 const descriptionStatus = '0-Inactive, 1-Active, 2-Delete';
 const descriptionListScreenTypeForList =
-  '0-total documents count, 50-populateImageGlobal Gallery only if user details exist, 100-city details, 101-user details populate';
+  '0-total documents count, 50-populateImageGlobal Gallery only if user details exist, 100-city details, 101-user details populate, 102-ratebase populate, 103-ratecard populate';
 const descriptionListDataGuard =
   '0-edit protect, 1-disabe protect, 2-delete protect';
 const descriptionListGender = '0-male, 1-female, 2-other';
@@ -45,13 +45,21 @@ export class SupplierCreateDto {
   @ApiProperty({})
   email: string;
 
-  @IsEmail()
+  @IsString()
   @ApiProperty({})
   gst: string;
 
   @IsString()
   @ApiProperty({})
   password: string;
+
+  @IsString()
+  @ApiProperty({})
+  rateCardId: string;
+
+  @IsString()
+  @ApiProperty({})
+  rateBaseId: string;
 
   @IsString()
   @ApiProperty({})
@@ -87,13 +95,21 @@ export class SupplierEditDto {
   @ApiProperty({ description: descriptionListGender })
   gender: number;
 
-  @IsEmail()
+  @IsString()
   @ApiProperty({})
   gst: string;
 
   @IsString()
   @ApiProperty({})
   address: string;
+
+  @IsString()
+  @ApiProperty({})
+  rateCardId: string;
+
+  @IsString()
+  @ApiProperty({})
+  rateBaseId: string;
 
   @IsString()
   @ApiProperty({})

@@ -48,6 +48,10 @@ export class DeliveryCounterBundleCreateDto {
   orderSaleIds: string[];
 
 
+  @IsString()
+  @ApiProperty({})
+  osHistoryDescription: string;
+
 }
 
 

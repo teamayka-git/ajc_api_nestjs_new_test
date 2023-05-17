@@ -78,6 +78,26 @@ export class PhotographyRequestListDto {
   @ApiProperty({ type: [String] })
   createdUserIds: string[];
 
+
+  
+  @IsNumber()
+  @ApiProperty({})
+  createdAtStart: number;
+  
+  @IsNumber()
+  @ApiProperty({})
+  createdAtEnd: number;
+
+  
+  @IsNumber()
+  @ApiProperty({})
+  finishedAtStart: number;
+  
+  @IsNumber()
+  @ApiProperty({})
+  finishedAtEnd: number;
+
+
   @IsArray()
   @ApiProperty({ type: [Number], description: descriptionRequestStatus })
   requestStatusArray: number[];
@@ -93,6 +113,9 @@ export class PhotographyRequestListDto {
   @IsString()
   @ApiProperty({})
   searchingText: string;
+
+
+
 }
 
 export class PhotographyStatusChangeDto {

@@ -15,6 +15,21 @@ export const SuppliersSchema = new mongoose.Schema({
     ref: ModelNames.CITIES,
     default: null,
   },
+  _accountId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.ACCOUNT_LEDGER,
+    default: null,
+  },
+  _rateCardMasterId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.RATE_CARDS,
+    default: null,
+  },
+  _rateBaseMasterId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.RATE_BASE_MASTERS,
+    default: null,
+  },
   _lastLogin: { type: Number, required: true, default: -1 },
   _address: { type: String, required: true, default: 'nil' },
   _gst: { type: String, required: false, default: '' },
@@ -41,6 +56,9 @@ export interface Suppliers {
   _uid: String;
   _lastLogin: Number;
   _address: String;
+  _accountId: String;
+  _rateCardMasterId:String;
+  _rateBaseMasterId:String;
   _gst: String;
   _dataGuard: Object;
   _createdUserId: String;
@@ -50,6 +68,9 @@ export interface Suppliers {
   _status: Number;
 }
 
+SuppliersSchema.index({ _rateBaseMasterId: 1 });
+SuppliersSchema.index({ _rateCardMasterId: 1 });
+SuppliersSchema.index({ _accountId: 1 });
 SuppliersSchema.index({ _gst: 1 });
 SuppliersSchema.index({ _status: 1 });
 SuppliersSchema.index({ _name: 1 });

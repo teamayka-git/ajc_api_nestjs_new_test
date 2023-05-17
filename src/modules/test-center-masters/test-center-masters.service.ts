@@ -77,6 +77,7 @@ export class TestCenterMastersService {
           _halmarkId: null,
           _customerId: null,
           _fcmId: '',
+          _isNotificationEnable:1,
           _deliveryHubId: null,
           _deviceUniqueId: '',
           _permissions: [],

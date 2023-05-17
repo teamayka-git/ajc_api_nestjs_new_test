@@ -354,6 +354,57 @@ export class PhotographyRequestService {
         });
       }
 
+
+
+
+      if (dto.createdAtStart != -1) {
+        arrayAggregation.push({
+          $match: {
+            _createdAt: { $gte: dto.createdAtStart },
+          },
+        });
+      }
+
+      if (dto.createdAtEnd != -1) {
+        arrayAggregation.push({
+          $match: {
+            _createdAt: { $lte: dto.createdAtEnd },
+          },
+        });
+      }
+
+      if (dto.finishedAtStart != -1) {
+        arrayAggregation.push({
+          $match: {
+            _finishedAt: { $gte: dto.finishedAtStart },
+          },
+        });
+      }
+
+      if (dto.finishedAtEnd != -1) {
+        arrayAggregation.push({
+          $match: {
+            _finishedAt: { $lte: dto.finishedAtEnd },
+          },
+        });
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       if (dto.requestStatusArray.length > 0) {
         arrayAggregation.push({
           $match: { _requestStatus: { $in: dto.requestStatusArray } },

@@ -73,6 +73,7 @@ export class LogisticsPartnersService {
             _deliveryHubId: null,
             _globalGalleryId:null,
             _fcmId: '',
+            _isNotificationEnable:1,
             _deviceUniqueId: '',
             _permissions: [],
             _userType: 3,

@@ -8,6 +8,7 @@ import {
   EditOrderSaleGeneralRemarkDto,
   GetWorkCountDto,
   GlobalSearchDto,
+  OrderRejectCancelReportDto,
   OrderSaleHistoryListDto,
   OrderSaleListDto,
   OrderSaleReportListDto,
@@ -20,6 +21,7 @@ import {
   OrderSaleSplitDto,
   OrderSalesReworkSetprocessDto,
   OrderSalesWorkStatusChangeDto,
+  RworkReportDto,
   SetProcessAssignedOrderSaleListDto,
 } from './order_sales.dto';
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
@@ -65,6 +67,10 @@ import { Otp } from 'src/tableModels/otp.model';
 import { StorePromotions } from 'src/tableModels/store_promotions.model';
 import { OrderSaleChangeRequests } from 'src/tableModels/order_sale_change_requests.model';
 import { OrderSaleChangeRequestDocuments } from 'src/tableModels/order_sale_change_request_documents.model';
+import { ReworkReports } from 'src/tableModels/order_rework_reports.model';
+import { OrderCancelRejectReports } from 'src/tableModels/order_cancel_reject_reports.model';
+import { UserNotifications } from 'src/tableModels/user_notifications.model';
+import { FcmUtils } from 'src/utils/FcmUtils';
 
 @Injectable()
 export class OrderSalesService {
@@ -87,7 +93,13 @@ export class OrderSalesService {
     private readonly orderSaleDocumentsModel: Model<OrderSalesDocuments>,
     @InjectModel(ModelNames.SHOPS)
     private readonly shopsModel: Model<Shops>,
+    @InjectModel(ModelNames.REWORK_REPORTS)
+    private readonly reworkReportModel: Model<ReworkReports>,
+    @InjectModel(ModelNames.ORDER_REJECTED_CANCEL_REPORTS)
+    private readonly orderRejectedCancelReportModel: Model<OrderCancelRejectReports>,
 
+    @InjectModel(ModelNames.USER_NOTIFICATIONS)
+    private readonly userNotificationModel: mongoose.Model<UserNotifications>,
     @InjectModel(ModelNames.ORDER_SALE_CHANGE_REQUEST_DOCUMENTS)
     private readonly orderSaleChangeRequestDocumentsModel: mongoose.Model<OrderSaleChangeRequestDocuments>,
     @InjectModel(ModelNames.ORDER_SALE_CHANGE_REQUESTS)
@@ -550,10 +562,10 @@ export class OrderSalesService {
 
       var orderWorkStatus = 0;
       var isProductGenerated = 0;
-      if (dto.type == 2 ||dto.type == 3 ) {
+      if (dto.type == 2 || dto.type == 3) {
         //sales on approval
         orderWorkStatus = 16;
-        isProductGenerated=1;
+        isProductGenerated = 1;
       }
 
       const newsettingsModel = new this.orderSaleMainModel({
@@ -569,6 +581,8 @@ export class OrderSalesService {
         _isProductGenerated: isProductGenerated,
         _type: dto.type,
 
+        _reworkRootCauseId: null,
+        _reworkDescription: '',
         _isHold: 0,
         _holdDescription: '',
         _holdRootCause: null,
@@ -773,6 +787,52 @@ export class OrderSalesService {
         );
       }
 
+      //doing notification
+      var userFcmCheck = await this.userModel.find(
+        { _id: orderHeadId },
+        { _isNotificationEnable: 1, _fcmId: 1 },
+      );
+      var userFcmIds = [];
+      var userNotificationTable = [];
+      var notificationTitle = 'New order';
+      var notificationBody = 'You are OH of new order ' + uidSalesOrder;
+      var notificationOrderSale = orderSaleId.toString();
+      userFcmCheck.forEach((elementUserNotification) => {
+        if (
+          elementUserNotification._isNotificationEnable == 1 &&
+          elementUserNotification._fcmId != ''
+        ) {
+          userFcmIds.push(elementUserNotification._fcmId);
+        }
+        userNotificationTable.push({
+          _viewStatus: 0,
+          _title: notificationTitle,
+          _body: notificationBody,
+          _orderSaleId:
+            notificationOrderSale == '' ? null : notificationOrderSale,
+          _userId: elementUserNotification._id,
+          _createdAt: dateTime,
+          _viewAt: 0,
+          _status: 1,
+        });
+      });
+      if (userNotificationTable.length != 0) {
+        await this.userNotificationModel.insertMany(userNotificationTable, {
+          session: transactionSession,
+        });
+      }
+      if (userFcmIds.length != 0) {
+        new FcmUtils().sendFcm(
+          notificationTitle,
+          notificationBody,
+          userFcmIds,
+          {
+            ajc: 'AJC_NOTIFICATION',
+          },
+        );
+      }
+      //done notification
+
       console.log('___d6');
       const responseJSON = { message: 'success', data: result1 };
       if (
@@ -901,6 +961,40 @@ export class OrderSalesService {
       }
 
       if (dto.amendmentRequestId != null && dto.amendmentRequestId != '') {
+        var resultOrder = await this.orderSaleMainModel.find({
+          _id: dto.orderSaleId,
+        });
+        if (resultOrder.length == 0) {
+          throw new HttpException(
+            'Order not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+        const reworkReportModelObject = new this.reworkReportModel({
+          _orderId: dto.orderSaleId,
+          _shop: resultOrder[0]._shopId,
+          _oh: resultOrder[0]._orderHeadId,
+          _rootcause: null,
+
+          _orderUid: resultOrder[0]._uid,
+          _orderDueDate: resultOrder[0]._dueDate,
+          _orderCreatedDate: resultOrder[0]._createdAt,
+
+          _type: 1,
+          _description: '',
+          _arisonUser: null,
+          _arisonProcessMaster: null,
+          _arisonSetProcessStatus: -1,
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
+        });
+        await reworkReportModelObject.save({
+          session: transactionSession,
+        });
+
         console.log('___1');
         await this.orderSaleChangeRequestModel.findOneAndUpdate(
           {
@@ -1143,6 +1237,65 @@ export class OrderSalesService {
           { new: true, session: transactionSession },
         );
       }
+
+      if (dto.amendmentRequestId != null && dto.amendmentRequestId != '') {
+        var resultOrder = await this.orderSaleMainModel.find({
+          _id: dto.orderSaleId,
+        });
+        if (resultOrder.length == 0) {
+          throw new HttpException(
+            'Order not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        //doing notification
+        var userFcmCheck = await this.userModel.find(
+          { _shopId: resultOrder[0]._shopId, _status: 1 },
+          { _isNotificationEnable: 1, _fcmId: 1 },
+        );
+        var userFcmIds = [];
+        var userNotificationTable = [];
+        var notificationTitle = 'Amendment accept';
+        var notificationBody = 'Order UID: ' + resultOrder[0]._uid;
+        var notificationOrderSale = dto.orderSaleId.toString();
+        userFcmCheck.forEach((elementUserNotification) => {
+          if (
+            elementUserNotification._isNotificationEnable == 1 &&
+            elementUserNotification._fcmId != ''
+          ) {
+            userFcmIds.push(elementUserNotification._fcmId);
+          }
+          userNotificationTable.push({
+            _viewStatus: 0,
+            _title: notificationTitle,
+            _body: notificationBody,
+            _orderSaleId:
+              notificationOrderSale == '' ? null : notificationOrderSale,
+            _userId: elementUserNotification._id,
+            _createdAt: dateTime,
+            _viewAt: 0,
+            _status: 1,
+          });
+        });
+        if (userNotificationTable.length != 0) {
+          await this.userNotificationModel.insertMany(userNotificationTable, {
+            session: transactionSession,
+          });
+        }
+        if (userFcmIds.length != 0) {
+          new FcmUtils().sendFcm(
+            notificationTitle,
+            notificationBody,
+            userFcmIds,
+            {
+              ajc: 'AJC_NOTIFICATION',
+            },
+          );
+        }
+        //done notification
+      }
+
       console.log('___10');
       const responseJSON = { message: 'success', data: result };
       if (
@@ -1255,35 +1408,97 @@ export class OrderSalesService {
         );
       }
 
-if(dto.productIdsForStockRemove != null && dto.productIdsForStockRemove.length!=0){
-  await this.productModel.updateMany(
-    {
-      _id: { $in: dto.productIdsForStockRemove },
-    },
-    {
-      $set: {
-        _stockStatus:1
-      },
-    },
-    { new: true, session: transactionSession },
-  );
-}
+      if (dto.workStatus == 1) {
+        var arrayDesignWithQty = [];
+        var resultOrderSaleItems = await this.orderSaleItemsModel.find({
+          _status: 1,
+          _orderSaleId: { $in: dto.orderSaleIds },
+        });
+        resultOrderSaleItems.forEach((elementOrderItem) => {
+          if (elementOrderItem._designId != null) {
+            arrayDesignWithQty.push({
+              designId: elementOrderItem._designId,
+              qty: elementOrderItem._quantity,
+            });
+          }
+        });
 
-   
+        if (arrayDesignWithQty.length != 0) {
+          for (var i = 0; i < arrayDesignWithQty.length; i++) {
+            await this.productModel.findOneAndUpdate(
+              {
+                _id: arrayDesignWithQty[i].designId,
+              },
+              {
+                $inc: {
+                  _soldCount: arrayDesignWithQty[i].qty,
+                },
+              },
+              { new: true, session: transactionSession },
+            );
+          }
+        }
+      } else if (dto.workStatus == 2) {
+        var arrayToRejectedCancelReport = [];
+        var resultOrderStatusCheck = await this.orderSaleMainModel.find({
+          _id: { $in: dto.orderSaleIds },
+        });
+        resultOrderStatusCheck.forEach((elementRejected) => {
+          arrayToRejectedCancelReport.push({
+            _orderId: elementRejected._id,
+            _shop: elementRejected._shopId,
+            _oh: elementRejected._orderHeadId,
+            _rootcause: dto.rootCauseId,
+            _type: 2,
+            _description: dto.rootCause,
+            _orderCreatedDate: elementRejected._createdAt,
+            _orderDueDate: elementRejected._dueDate,
+            _orderUid: elementRejected._uid,
 
-var objOsMain={
-  
-  _rootCauseId:
-  dto.rootCauseId == '' || dto.rootCauseId == 'nil'
-    ? null
-    : dto.rootCauseId,
-_workStatus: dto.workStatus,
-_rootCause: dto.rootCause,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+        });
 
-};
-if(dto.isProductGenerated != null){
-  objOsMain["_isProductGenerated"]=dto.isProductGenerated;
-}
+        await this.orderRejectedCancelReportModel.insertMany(
+          arrayToRejectedCancelReport,
+          {
+            session: transactionSession,
+          },
+        );
+      }
+
+      if (
+        dto.productIdsForStockRemove != null &&
+        dto.productIdsForStockRemove.length != 0
+      ) {
+        await this.productModel.updateMany(
+          {
+            _id: { $in: dto.productIdsForStockRemove },
+          },
+          {
+            $set: {
+              _stockStatus: 1,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+      }
+
+      var objOsMain = {
+        _rootCauseId:
+          dto.rootCauseId == '' || dto.rootCauseId == 'nil'
+            ? null
+            : dto.rootCauseId,
+        _workStatus: dto.workStatus,
+        _rootCause: dto.rootCause,
+      };
+      if (dto.isProductGenerated != null) {
+        objOsMain['_isProductGenerated'] = dto.isProductGenerated;
+      }
 
       var result = await this.orderSaleMainModel.updateMany(
         {
@@ -1386,6 +1601,61 @@ if(dto.isProductGenerated != null){
         session: transactionSession,
       });
 
+      var resultOrderDetailsNotification = await this.orderSaleMainModel.find({
+        _id: { $in: dto.orderSaleIds },
+      });
+
+      for (var i = 0; i < resultOrderDetailsNotification.length; i++) {
+        //doing notification
+        var userFcmCheck = await this.userModel.find(
+          { _shopId: resultOrderDetailsNotification[i]._shopId },
+          { _isNotificationEnable: 1, _fcmId: 1 },
+        );
+        var userFcmIds = [];
+        var userNotificationTable = [];
+        var notificationTitle =
+          dto.isHold == 0 ? 'Order hold release' : 'Order hold';
+        var notificationBody =
+          'Order UID: ' + resultOrderDetailsNotification[i]._uid;
+        var notificationOrderSale =
+          resultOrderDetailsNotification[i]._id.toString();
+        userFcmCheck.forEach((elementUserNotification) => {
+          if (
+            elementUserNotification._isNotificationEnable == 1 &&
+            elementUserNotification._fcmId != ''
+          ) {
+            userFcmIds.push(elementUserNotification._fcmId);
+          }
+          userNotificationTable.push({
+            _viewStatus: 0,
+            _title: notificationTitle,
+            _body: notificationBody,
+            _orderSaleId:
+              notificationOrderSale == '' ? null : notificationOrderSale,
+            _userId: elementUserNotification._id,
+            _createdAt: dateTime,
+            _viewAt: 0,
+            _status: 1,
+          });
+        });
+        if (userNotificationTable.length != 0) {
+          await this.userNotificationModel.insertMany(userNotificationTable, {
+            session: transactionSession,
+          });
+        }
+        if (userFcmIds.length != 0) {
+          new FcmUtils().sendFcm(
+            notificationTitle,
+            notificationBody,
+            userFcmIds,
+            {
+              ajc: 'AJC_NOTIFICATION',
+            },
+          );
+        }
+        //done notification
+      }
+
       const responseJSON = { message: 'success', data: result };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -1408,7 +1678,7 @@ if(dto.isProductGenerated != null){
     }
   }
 
-  async list(dto: OrderSaleListDto) {
+  async list(dto: OrderSaleListDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
@@ -1489,7 +1759,7 @@ if(dto.isProductGenerated != null){
       if (dto.type != null && dto.type.length > 0) {
         arrayAggregation.push({
           $match: { _type: { $in: dto.type } },
-        }); 
+        });
       }
 
       if (dto.workStatus.length > 0) {
@@ -2105,6 +2375,36 @@ if(dto.isProductGenerated != null){
           },
         );
       }
+
+      if (dto.screenType.includes(145)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ROOT_CAUSES,
+              let: { reworkRootCauseId: '$_reworkRootCauseId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$reworkRootCauseId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                  1450,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'internalReworkRootCauseDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$internalReworkRootCauseDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
       if (dto.screenType.includes(120)) {
         const orderSaleShopOrderHeadPipeline = () => {
           const pipeline = [];
@@ -3557,6 +3857,21 @@ if(dto.isProductGenerated != null){
           );
         }
 
+        console.log('___order sale list dto    ' + JSON.stringify(dto));
+
+        if (dto.fcmToken != null && dto.fcmToken != '') {
+          await this.userModel.updateMany(
+            {
+              _id: _userId_,
+            },
+            {
+              $set: {
+                _fcmId: dto.fcmToken,
+              },
+            },
+            { new: true, session: transactionSession },
+          );
+        }
         responseJSON.data['themeManufactureData'] = {
           mobileMainImageUrl: mobileMainImage,
           mobileMainImageRatio: 3.5,
@@ -3568,6 +3883,18 @@ if(dto.isProductGenerated != null){
           deskSliderImages: deskSlideImage,
           dueDateMaximumDaysCount: dueDateGenerals[0]._number,
         };
+      }
+
+      if (dto.screenType.includes(508)) {
+        var ECountUserNotification = 0;
+        ECountUserNotification = await this.userNotificationModel.count({
+          _viewStatus: 0,
+          _userId: _userId_,
+          _status: 1,
+        });
+
+        responseJSON.data['userUnreadNotificationCount'] =
+          ECountUserNotification;
       }
 
       if (
@@ -5976,6 +6303,38 @@ if(dto.isProductGenerated != null){
           },
         );
       }
+
+      arrayAggregation.push(
+        {
+          $lookup: {
+            from: ModelNames.ORDER_SALES_MAIN,
+            let: { orderId: '$_orderSaleId' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_id', '$$orderId'] },
+                },
+              },
+              {
+                $match: {
+                  _workStatus: { $nin: [2, 27] },
+                },
+              },
+              {
+                $project: {
+                  _id: 1,
+                },
+              },
+            ],
+            as: 'mongoCheckOrderSaleStatus',
+          },
+        },
+        {
+          $match: { mongoCheckOrderSaleStatus: { $ne: [] } },
+        },
+      );
+
       arrayAggregation.push({
         $match: {
           _status: 1,
@@ -6150,96 +6509,105 @@ if(dto.isProductGenerated != null){
             );
           }
 
-
-
-
-
-
-
-          
-          
-        if (dto.screenType.includes(123)) {
-          const isorderSaleMainOHPipeline = () => {
-            const pipeline = [];
+          if (dto.screenType.includes(125)) {
             pipeline.push(
               {
-                $match: {
-                  $expr: { $eq: ['$_id', '$$osOhId'] },
+                $lookup: {
+                  from: ModelNames.ROOT_CAUSES,
+                  let: { reworkRootCauseId: '$_reworkRootCauseId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$reworkRootCauseId'] },
+                      },
+                    },
+                    new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                      1250,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'internalReworkRootCauseDetails',
                 },
               },
-
-              new ModelWeightResponseFormat().userTableResponseFormat(
-                1230,
-                dto.responseFormat,
-              ),
+              {
+                $unwind: {
+                  path: '$internalReworkRootCauseDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
             );
+          }
 
-            const isorderSaleMainShopOHPopulate =
-              dto.screenType.includes(124);
-            if (isorderSaleMainShopOHPopulate) {
+          if (dto.screenType.includes(123)) {
+            const isorderSaleMainOHPipeline = () => {
+              const pipeline = [];
               pipeline.push(
                 {
-                  $lookup: {
-                    from: ModelNames.GLOBAL_GALLERIES,
-                    let: { globalGalleryId: '$_globalGalleryId' },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: {
-                            $eq: ['$_id', '$$globalGalleryId'],
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$osOhId'] },
+                  },
+                },
+
+                new ModelWeightResponseFormat().userTableResponseFormat(
+                  1230,
+                  dto.responseFormat,
+                ),
+              );
+
+              const isorderSaleMainShopOHPopulate =
+                dto.screenType.includes(124);
+              if (isorderSaleMainShopOHPopulate) {
+                pipeline.push(
+                  {
+                    $lookup: {
+                      from: ModelNames.GLOBAL_GALLERIES,
+                      let: { globalGalleryId: '$_globalGalleryId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: {
+                              $eq: ['$_id', '$$globalGalleryId'],
+                            },
                           },
                         },
-                      },
 
-                      new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
-                        1240,
-                        dto.responseFormat,
-                      ),
-                    ],
-                    as: 'globalGalleryDetails',
+                        new ModelWeightResponseFormat().globalGalleryTableResponseFormat(
+                          1240,
+                          dto.responseFormat,
+                        ),
+                      ],
+                      as: 'globalGalleryDetails',
+                    },
                   },
-                },
-                {
-                  $unwind: {
-                    path: '$globalGalleryDetails',
-                    preserveNullAndEmptyArrays: true,
+                  {
+                    $unwind: {
+                      path: '$globalGalleryDetails',
+                      preserveNullAndEmptyArrays: true,
+                    },
                   },
+                );
+              }
+
+              return pipeline;
+            };
+
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.USER,
+                  let: { osOhId: '$_orderHeadId' },
+                  pipeline: isorderSaleMainOHPipeline(),
+                  as: 'orderHeadDetails',
                 },
-              );
-            }
-
-            return pipeline;
-          };
-
-          pipeline.push(
-            {
-              $lookup: {
-                from: ModelNames.USER,
-                let: { osOhId: '$_orderHeadId' },
-                pipeline: isorderSaleMainOHPipeline(),
-                as: 'orderHeadDetails',
               },
-            },
-            {
-              $unwind: {
-                path: '$orderHeadDetails',
-                preserveNullAndEmptyArrays: true,
+              {
+                $unwind: {
+                  path: '$orderHeadDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
               },
-            },
-          );
-        }
-
-
-
-
-
-
-
-
-
-
-
-
+            );
+          }
 
           const isorderSaleMainShopPopulate = dto.screenType.includes(104);
           if (isorderSaleMainShopPopulate) {
@@ -8798,6 +9166,8 @@ if(dto.isProductGenerated != null){
         {
           $set: {
             _workStatus: 1,
+            _reworkRootCauseId: dto.reworkRootcauseId,
+            _reworkDescription: dto.reworkRootcauseDescription,
           },
           $inc: {
             _internalReWorkCount: 1,
@@ -8825,7 +9195,7 @@ if(dto.isProductGenerated != null){
         _deliveryCounterId: null,
         _shopId: null,
         _orderSaleItemId: null,
-        _description: '',
+        _description: `${dto.reworkRootcauseName} - ${dto.reworkRootcauseDescription}`,
         _createdUserId: _userId_,
         _createdAt: dateTime,
         _status: 1,
@@ -8833,6 +9203,55 @@ if(dto.isProductGenerated != null){
       await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
         session: transactionSession,
       });
+
+      var resultOrder = await this.orderSaleMainModel.find({
+        _id: dto.ordersaleId,
+      });
+      if (resultOrder.length == 0) {
+        throw new HttpException(
+          'Order not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      var resultSetProcess = [];
+      if (dto.currentSetprocessId != '') {
+        resultSetProcess = await this.orderSaleSetProcessModel.find({
+          _id: dto.currentSetprocessId,
+        });
+        if (resultSetProcess.length == 0) {
+          throw new HttpException(
+            'Set process not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
+
+      const reworkReportModelObject = new this.reworkReportModel({
+        _orderId: dto.ordersaleId,
+        _shop: resultOrder[0]._shopId,
+        _oh: resultOrder[0]._orderHeadId,
+        _rootcause: dto.reworkRootcauseId,
+
+        _orderUid: resultOrder[0]._uid,
+        _orderDueDate: resultOrder[0]._dueDate,
+        _orderCreatedDate: resultOrder[0]._createdAt,
+
+        _type: 0,
+        _description: dto.reworkRootcauseDescription,
+        // _arisonUser:(dto.currentSetprocessId!="")? resultSetProcess[0]._userId:_userId_ ,
+        _arisonUser: resultSetProcess[0]?._userId || null,
+        _arisonProcessMaster: resultSetProcess[0]?._processId || null,
+        _arisonSetProcessStatus: resultSetProcess[0]?._orderStatus || -1,
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _updatedUserId: null,
+        _updatedAt: -1,
+        _status: 1,
+      });
+      await reworkReportModelObject.save({
+        session: transactionSession,
+      });
+
       const responseJSON = {
         message: 'success',
         data: {},
@@ -8957,6 +9376,8 @@ if(dto.isProductGenerated != null){
           _isProductGenerated: orderDetails[0]._isProductGenerated,
           _type: orderDetails[0]._type,
 
+          _reworkRootCauseId: orderDetails[0]._reworkRootCauseId,
+          _reworkDescription: orderDetails[0]._reworkDescription,
           _isHold: orderDetails[0]._isHold,
           _holdDescription: orderDetails[0]._holdDescription,
           _holdRootCause: orderDetails[0]._holdRootCause,
@@ -9014,6 +9435,801 @@ if(dto.isProductGenerated != null){
       const responseJSON = {
         message: 'success',
         data: { input: dto },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+
+  async reworkReport(dto: RworkReportDto, _userId_: string) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var arrayAggregation = [];
+
+      if (dto.searchingText != '') {
+        //todo
+        arrayAggregation.push({
+          $match: {
+            $or: [
+              { _description: new RegExp(dto.searchingText, 'i') },
+              { _orderUid: new RegExp(`^${dto.searchingText}$`, 'i') },
+            ],
+          },
+        });
+      }
+
+      if (dto.orderSaleIds.length > 0) {
+        var newSettingsId = [];
+        dto.orderSaleIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _orderId: { $in: newSettingsId } } });
+      }
+
+      if (dto.orderSaleUids.length > 0) {
+        arrayAggregation.push({
+          $match: { _orderUid: { $in: dto.orderSaleUids } },
+        });
+      }
+
+      if (dto.shopIds.length > 0) {
+        var newSettingsId = [];
+        dto.shopIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _shop: { $in: newSettingsId } } });
+      }
+
+      if (dto.ohIds.length > 0) {
+        var newSettingsId = [];
+        dto.ohIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _oh: { $in: newSettingsId } } });
+      }
+
+      if (dto.type.length > 0) {
+        arrayAggregation.push({ $match: { _type: { $in: dto.type } } });
+      }
+
+      if (dto.rootCauseIds.length > 0) {
+        var newSettingsId = [];
+        dto.rootCauseIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _rootcause: { $in: newSettingsId } },
+        });
+      }
+
+      if (dto.reworkArisonDepartmentIds.length > 0) {
+        var newSettingsId = [];
+        dto.reworkArisonDepartmentIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _arisonProcessMaster: { $in: newSettingsId } },
+        });
+      }
+
+      if (dto.reworkArisonUserIds.length > 0) {
+        var newSettingsId = [];
+        dto.reworkArisonUserIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _arisonUser: { $in: newSettingsId } },
+        });
+      }
+
+      if (dto.createdDateStart != -1) {
+        arrayAggregation.push({
+          $match: {
+            _createdAt: { $gte: dto.createdDateStart },
+          },
+        });
+      }
+
+      if (dto.createdDateEnd != -1) {
+        arrayAggregation.push({
+          $match: {
+            _createdAt: { $lte: dto.createdDateEnd },
+          },
+        });
+      }
+
+      if (dto.orderCreatedDateStart != -1) {
+        arrayAggregation.push({
+          $match: {
+            _orderCreatedDate: { $gte: dto.orderCreatedDateStart },
+          },
+        });
+      }
+
+      if (dto.orderCreatedDateEnd != -1) {
+        arrayAggregation.push({
+          $match: {
+            _orderCreatedDate: { $lte: dto.orderCreatedDateEnd },
+          },
+        });
+      }
+
+      if (dto.orderDueDateStart != -1) {
+        arrayAggregation.push({
+          $match: {
+            _orderDueDate: { $gte: dto.orderDueDateStart },
+          },
+        });
+      }
+
+      if (dto.orderDueDateEnd != -1) {
+        arrayAggregation.push({
+          $match: {
+            _orderDueDate: { $lte: dto.orderDueDateEnd },
+          },
+        });
+      }
+
+      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+
+      switch (dto.sortType) {
+        case 0:
+          arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
+          break;
+        case 1:
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
+          break;
+        case 2:
+          arrayAggregation.push({
+            $sort: { _type: dto.sortOrder, _id: dto.sortOrder },
+          });
+          break;
+        case 3:
+          arrayAggregation.push({
+            $sort: {
+              _arisonSetProcessStatus: dto.sortOrder,
+              _id: dto.sortOrder,
+            },
+          });
+          break;
+        case 4:
+          arrayAggregation.push({
+            $sort: { _orderCreatedDate: dto.sortOrder, _id: dto.sortOrder },
+          });
+          break;
+        case 5:
+          arrayAggregation.push({
+            $sort: { _orderDueDate: dto.sortOrder, _id: dto.sortOrder },
+          });
+          break;
+        case 6:
+          arrayAggregation.push({
+            $sort: { _orderUid: dto.sortOrder, _id: dto.sortOrder },
+          });
+          break;
+      }
+
+      if (dto.skip != -1) {
+        arrayAggregation.push({ $skip: dto.skip });
+        arrayAggregation.push({ $limit: dto.limit });
+      }
+
+      if (dto.screenType.includes(100)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_MAIN,
+              let: { orderId: '$_orderId' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$orderId'] } },
+                },
+                new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+                  1000,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'orderDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.includes(101)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.SHOPS,
+              let: { shopId: '$_shop' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$shopId'] } },
+                },
+                new ModelWeightResponseFormat().shopTableResponseFormat(
+                  1010,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'shopDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$shopDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.includes(102)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { ohId: '$_oh' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$ohId'] } },
+                },
+                new ModelWeightResponseFormat().userTableResponseFormat(
+                  1020,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'ohDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$ohDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.includes(103)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ROOT_CAUSES,
+              let: { rootCauseId: '$_rootcause' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$rootCauseId'] } },
+                },
+                new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                  1030,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'rootCauseDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$rootCauseDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.includes(104)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { arisonUserId: '$_arisonUser' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$arisonUserId'] } },
+                },
+                new ModelWeightResponseFormat().userTableResponseFormat(
+                  1040,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'arisonUserDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$arisonUserDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.includes(105)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.PROCESS_MASTER,
+              let: { processId: '$_arisonProcessMaster' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$processId'] } },
+                },
+                new ModelWeightResponseFormat().processMasterTableResponseFormat(
+                  1050,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'processDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$processDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.includes(104)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { doneUserId: '$_createdUserId' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$doneUserId'] } },
+                },
+                new ModelWeightResponseFormat().userTableResponseFormat(
+                  1050,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'createdUserDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$createdUserDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      var result = await this.reworkReportModel
+        .aggregate(arrayAggregation)
+        .session(transactionSession);
+
+      var totalCount = 0;
+      if (dto.screenType.includes(0)) {
+        //Get total count
+        var limitIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$limit') === true,
+        );
+        if (limitIndexCount != -1) {
+          arrayAggregation.splice(limitIndexCount, 1);
+        }
+        var skipIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$skip') === true,
+        );
+        if (skipIndexCount != -1) {
+          arrayAggregation.splice(skipIndexCount, 1);
+        }
+        arrayAggregation.push({
+          $group: { _id: null, totalCount: { $sum: 1 } },
+        });
+
+        var resultTotalCount = await this.reworkReportModel
+          .aggregate(arrayAggregation)
+          .session(transactionSession);
+        if (resultTotalCount.length > 0) {
+          totalCount = resultTotalCount[0].totalCount;
+        }
+      }
+
+      const responseJSON = {
+        message: 'success',
+        data: { list: result, totalCount: totalCount },
+      };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async orderRejectCancelReport(
+    dto: OrderRejectCancelReportDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+      var arrayAggregation = [];
+
+      if (dto.searchingText != '') {
+        //todo
+        arrayAggregation.push({
+          $match: {
+            $or: [
+              { _description: new RegExp(dto.searchingText, 'i') },
+              { _orderUid: new RegExp(`^${dto.searchingText}$`, 'i') },
+            ],
+          },
+        });
+      }
+
+      if (dto.orderSaleIds.length > 0) {
+        var newSettingsId = [];
+        dto.orderSaleIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _orderId: { $in: newSettingsId } } });
+      }
+
+      if (dto.orderSaleUids.length > 0) {
+        arrayAggregation.push({
+          $match: { _orderUid: { $in: dto.orderSaleUids } },
+        });
+      }
+
+      if (dto.shopIds.length > 0) {
+        var newSettingsId = [];
+        dto.shopIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _shop: { $in: newSettingsId } } });
+      }
+
+      if (dto.ohIds.length > 0) {
+        var newSettingsId = [];
+        dto.ohIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({ $match: { _oh: { $in: newSettingsId } } });
+      }
+
+      if (dto.type.length > 0) {
+        arrayAggregation.push({ $match: { _type: { $in: dto.type } } });
+      }
+
+      if (dto.rootCauseIds.length > 0) {
+        var newSettingsId = [];
+        dto.rootCauseIds.map((mapItem) => {
+          newSettingsId.push(new mongoose.Types.ObjectId(mapItem));
+        });
+        arrayAggregation.push({
+          $match: { _rootcause: { $in: newSettingsId } },
+        });
+      }
+
+      if (dto.orderCreatedDateStart != -1) {
+        arrayAggregation.push({
+          $match: {
+            _orderCreatedDate: { $gte: dto.orderCreatedDateStart },
+          },
+        });
+      }
+
+      if (dto.orderCreatedDateEnd != -1) {
+        arrayAggregation.push({
+          $match: {
+            _orderCreatedDate: { $lte: dto.orderCreatedDateEnd },
+          },
+        });
+      }
+
+      if (dto.rejectedDateStart != -1) {
+        arrayAggregation.push({
+          $match: {
+            _createdAt: { $gte: dto.rejectedDateStart },
+          },
+        });
+      }
+
+      if (dto.rejectedDateEnd != -1) {
+        arrayAggregation.push({
+          $match: {
+            _createdAt: { $lte: dto.rejectedDateEnd },
+          },
+        });
+      }
+
+      if (dto.orderDueDateStart != -1) {
+        arrayAggregation.push({
+          $match: {
+            _orderDueDate: { $gte: dto.orderDueDateStart },
+          },
+        });
+      }
+
+      if (dto.orderDueDateEnd != -1) {
+        arrayAggregation.push({
+          $match: {
+            _orderDueDate: { $lte: dto.orderDueDateEnd },
+          },
+        });
+      }
+
+      arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
+
+      switch (dto.sortType) {
+        case 0:
+          arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
+          break;
+        case 1:
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
+          break;
+        case 2:
+          arrayAggregation.push({
+            $sort: { _type: dto.sortOrder, _id: dto.sortOrder },
+          });
+          break;
+        case 3:
+          arrayAggregation.push({
+            $sort: {
+              _arisonSetProcessStatus: dto.sortOrder,
+              _id: dto.sortOrder,
+            },
+          });
+          break;
+        case 4:
+          arrayAggregation.push({
+            $sort: { _orderCreatedDate: dto.sortOrder, _id: dto.sortOrder },
+          });
+          break;
+        case 5:
+          arrayAggregation.push({
+            $sort: { _orderDueDate: dto.sortOrder, _id: dto.sortOrder },
+          });
+          break;
+        case 6:
+          arrayAggregation.push({
+            $sort: { _orderUid: dto.sortOrder, _id: dto.sortOrder },
+          });
+          break;
+      }
+
+      if (dto.skip != -1) {
+        arrayAggregation.push({ $skip: dto.skip });
+        arrayAggregation.push({ $limit: dto.limit });
+      }
+
+      if (dto.screenType.includes(100)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ORDER_SALES_MAIN,
+              let: { orderId: '$_orderId' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$orderId'] } },
+                },
+                new ModelWeightResponseFormat().orderSaleMainTableResponseFormat(
+                  1000,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'orderDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$orderDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.includes(101)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.SHOPS,
+              let: { shopId: '$_shop' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$shopId'] } },
+                },
+                new ModelWeightResponseFormat().shopTableResponseFormat(
+                  1010,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'shopDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$shopDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.includes(102)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { ohId: '$_oh' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$ohId'] } },
+                },
+                new ModelWeightResponseFormat().userTableResponseFormat(
+                  1020,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'ohDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$ohDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.includes(103)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.ROOT_CAUSES,
+              let: { rootCauseId: '$_rootcause' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$rootCauseId'] } },
+                },
+                new ModelWeightResponseFormat().rootcauseTableResponseFormat(
+                  1030,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'rootCauseDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$rootCauseDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      if (dto.screenType.includes(105)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.PROCESS_MASTER,
+              let: { processId: '$_arisonProcessMaster' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$processId'] } },
+                },
+                new ModelWeightResponseFormat().processMasterTableResponseFormat(
+                  1050,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'processDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$processDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+      if (dto.screenType.includes(104)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { doneUserId: '$_createdUserId' },
+              pipeline: [
+                {
+                  $match: { $expr: { $eq: ['$_id', '$$doneUserId'] } },
+                },
+                new ModelWeightResponseFormat().userTableResponseFormat(
+                  1050,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'createdUserDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$createdUserDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
+
+      var result = await this.orderRejectedCancelReportModel
+        .aggregate(arrayAggregation)
+        .session(transactionSession);
+
+      var totalCount = 0;
+      if (dto.screenType.includes(0)) {
+        //Get total count
+        var limitIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$limit') === true,
+        );
+        if (limitIndexCount != -1) {
+          arrayAggregation.splice(limitIndexCount, 1);
+        }
+        var skipIndexCount = arrayAggregation.findIndex(
+          (it) => it.hasOwnProperty('$skip') === true,
+        );
+        if (skipIndexCount != -1) {
+          arrayAggregation.splice(skipIndexCount, 1);
+        }
+        arrayAggregation.push({
+          $group: { _id: null, totalCount: { $sum: 1 } },
+        });
+
+        var resultTotalCount = await this.orderRejectedCancelReportModel
+          .aggregate(arrayAggregation)
+          .session(transactionSession);
+        if (resultTotalCount.length > 0) {
+          totalCount = resultTotalCount[0].totalCount;
+        }
+      }
+
+      const responseJSON = {
+        message: 'success',
+        data: { list: result, totalCount: totalCount },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&

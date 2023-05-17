@@ -22,6 +22,10 @@ import { UploadedFileDirectoryPath } from 'src/common/uploaded_file_directory_pa
 import { GlobalGalleries } from 'src/tableModels/globalGalleries.model';
 import { Generals } from 'src/tableModels/generals.model';
 import { OrderSaleSetProcesses } from 'src/tableModels/order_sale_set_processes.model';
+import { OrderCancelRejectReports } from 'src/tableModels/order_cancel_reject_reports.model';
+import { FcmUtils } from 'src/utils/FcmUtils';
+import { UserNotifications } from 'src/tableModels/user_notifications.model';
+import { User } from 'src/tableModels/user.model';
 
 @Injectable()
 export class OrderSaleChangeRequestService {
@@ -35,6 +39,12 @@ export class OrderSaleChangeRequestService {
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
 
+    @InjectModel(ModelNames.USER)
+    private readonly userModel: mongoose.Model<User>,
+    @InjectModel(ModelNames.USER_NOTIFICATIONS)
+    private readonly userNotificationModel: mongoose.Model<UserNotifications>,
+    @InjectModel(ModelNames.ORDER_REJECTED_CANCEL_REPORTS)
+    private readonly orderRejectedCancelReportModel: mongoose.Model<OrderCancelRejectReports>,
     @InjectModel(ModelNames.ORDER_SALE_SET_PROCESSES)
     private readonly orderSaleSetProcessModel: mongoose.Model<OrderSaleSetProcesses>,
     @InjectModel(ModelNames.GENERALS)
@@ -341,6 +351,88 @@ export class OrderSaleChangeRequestService {
           },
         );
       }
+
+      //doing notification
+      var userFcmCheck = await this.orderSaleMainModel.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(dto.orderSaleId),
+          },
+        },
+        {
+          $lookup: {
+            from: ModelNames.USER,
+            let: { ohId: '$_orderHeadId' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$_id', '$$ohId'] },
+                },
+              },
+              {
+                $project: {
+                  _isNotificationEnable: 1,
+                  _fcmId: 1,
+                },
+              },
+            ],
+            as: 'ohDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$ohDetails',
+          },
+        },
+      ]);
+      if (userFcmCheck.length == 0) {
+        throw new HttpException(
+          'Order not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      var userFcmIds = [];
+      var userNotificationTable = [];
+      var notificationTitle =
+        dto.type == 0 ? 'Cancel request' : 'Amendment request';
+      var notificationBody = `Order UID: ${userFcmCheck[0]._uid}`;
+      var notificationOrderSale = dto.orderSaleId.toString();
+      userFcmCheck.forEach((elementUserNotification) => {
+        if (
+          elementUserNotification.ohDetails._isNotificationEnable == 1 &&
+          elementUserNotification.ohDetails._fcmId != ''
+        ) {
+          userFcmIds.push(elementUserNotification.ohDetails._fcmId);
+        }
+        userNotificationTable.push({
+          _viewStatus: 0,
+          _title: notificationTitle,
+          _body: notificationBody,
+          _orderSaleId:
+            notificationOrderSale == '' ? null : notificationOrderSale,
+          _userId: elementUserNotification.ohDetails._id,
+          _createdAt: dateTime,
+          _viewAt: 0,
+          _status: 1,
+        });
+      });
+      if (userNotificationTable.length != 0) {
+        await this.userNotificationModel.insertMany(userNotificationTable, {
+          session: transactionSession,
+        });
+      }
+      if (userFcmIds.length != 0) {
+        new FcmUtils().sendFcm(
+          notificationTitle,
+          notificationBody,
+          userFcmIds,
+          {
+            ajc: 'AJC_NOTIFICATION',
+          },
+        );
+      }
+      //done notification
+
       const responseJSON = { message: 'success', data: {} };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -411,6 +503,9 @@ export class OrderSaleChangeRequestService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+   
+
       await this.orderSaleChangeRequestModel.findOneAndUpdate(
         {
           _id: dto.cancelRequestId,
@@ -440,6 +535,27 @@ export class OrderSaleChangeRequestService {
         { new: true, session: transactionSession },
       );
 
+
+      await this.orderSaleSetProcessModel.updateMany(
+        {
+          _orderSaleId: dto.orderSaleId,_status:1
+        },
+        {
+          $set: {
+            _status: 2,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+
+
+
+
+
+
+
+
       var arrayToOrderHistories = [];
 
       arrayToOrderHistories.push({
@@ -459,6 +575,114 @@ export class OrderSaleChangeRequestService {
       await this.orderSaleHistoriesModel.insertMany(arrayToOrderHistories, {
         session: transactionSession,
       });
+
+      var resultOrderStatusCheck = await this.orderSaleMainModel.find({
+        _id: dto.orderSaleId,
+      });
+
+      if (resultOrderStatusCheck.length == 0) {
+        throw new HttpException(
+          'Orer not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      var resultCancelRequest = await this.orderSaleChangeRequestModel.find({
+        _id: dto.cancelRequestId,
+      });
+
+      if (resultCancelRequest.length == 0) {
+        throw new HttpException(
+          'order cancel request not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      var arrayToRejectedCancelReport = [];
+    
+      arrayToRejectedCancelReport.push({
+        _orderId: dto.orderSaleId,
+        _shop: resultOrderStatusCheck[0]._shopId,
+        _oh: resultOrderStatusCheck[0]._orderHeadId,
+        _rootcause: resultCancelRequest[0]._rootCause,
+        _type: 1,
+        _description: resultCancelRequest[0]._description,
+        _orderCreatedDate: resultOrderStatusCheck[0]._createdAt,
+        _orderDueDate: resultOrderStatusCheck[0]._dueDate,
+        _orderUid: resultOrderStatusCheck[0]._uid,
+
+        _createdUserId: _userId_,
+        _createdAt: dateTime,
+        _updatedUserId: null,
+        _updatedAt: -1,
+        _status: 1,
+      });
+
+      await this.orderRejectedCancelReportModel.insertMany(
+        arrayToRejectedCancelReport,
+        {
+          session: transactionSession,
+        },
+      );
+
+      //doing notification
+      var resultOrderStatusCheck = await this.orderSaleMainModel.find({
+        _id: dto.orderSaleId,
+      });
+
+      if (resultOrderStatusCheck.length == 0) {
+        throw new HttpException(
+          'Order not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      //doing notification
+      var userFcmCheck = await this.userModel.find(
+        { _shopId: resultOrderStatusCheck[0]._shopId, _status: 1 },
+        { _isNotificationEnable: 1, _fcmId: 1 },
+      );
+      var userFcmIds = [];
+      var userNotificationTable = [];
+      var notificationTitle = 'Cancel request accept';
+      var notificationBody = 'Order UID: ' +  resultOrderStatusCheck[0]._uid;
+      var notificationOrderSale = dto.orderSaleId.toString();
+      userFcmCheck.forEach((elementUserNotification) => {
+        if (
+          elementUserNotification._isNotificationEnable == 1 &&
+          elementUserNotification._fcmId != ''
+        ) {
+          userFcmIds.push(elementUserNotification._fcmId);
+        }
+        userNotificationTable.push({
+          _viewStatus: 0,
+          _title: notificationTitle,
+          _body: notificationBody,
+          _orderSaleId:
+            notificationOrderSale == '' ? null : notificationOrderSale,
+          _userId: elementUserNotification._id,
+          _createdAt: dateTime,
+          _viewAt: 0,
+          _status: 1,
+        });
+      });
+      if (userNotificationTable.length != 0) {
+        await this.userNotificationModel.insertMany(userNotificationTable, {
+          session: transactionSession,
+        });
+      }
+      if (userFcmIds.length != 0) {
+        new FcmUtils().sendFcm(
+          notificationTitle,
+          notificationBody,
+          userFcmIds,
+          {
+            ajc: 'AJC_NOTIFICATION',
+          },
+        );
+      }
+      //done notification
+
       const responseJSON = { message: 'success', data: {} };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -485,6 +709,10 @@ export class OrderSaleChangeRequestService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+      console.log("___d1");
+     
+
       await this.orderSaleChangeRequestModel.findOneAndUpdate(
         {
           _id: dto.cancelRequestId,
@@ -498,7 +726,45 @@ export class OrderSaleChangeRequestService {
         },
         { new: true, session: transactionSession },
       );
+      console.log("___d2");
       if (dto.proceedOrder == 0) {
+        var arrayToRejectedCancelReport = [];
+        var resultOrderStatusCheck = await this.orderSaleMainModel.find({
+          _id: dto.orderSaleId,
+        });
+
+        if (resultOrderStatusCheck.length == 0) {
+          throw new HttpException(
+            'Order not found',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      
+        arrayToRejectedCancelReport.push({
+          _orderId: resultOrderStatusCheck[0]._id,
+          _shop: resultOrderStatusCheck[0]._shopId,
+          _oh: resultOrderStatusCheck[0]._orderHeadId,
+          _rootcause: null,
+          _type: 2,
+          _description: 'Admin rejected amendment',
+          _orderCreatedDate: resultOrderStatusCheck[0]._createdAt,
+          _orderDueDate: resultOrderStatusCheck[0]._dueDate,
+          _orderUid: resultOrderStatusCheck[0]._uid,
+
+          _createdUserId: _userId_,
+          _createdAt: dateTime,
+          _updatedUserId: null,
+          _updatedAt: -1,
+          _status: 1,
+        });
+
+        await this.orderRejectedCancelReportModel.insertMany(
+          arrayToRejectedCancelReport,
+          {
+            session: transactionSession,
+          },
+        );
+
         await this.orderSaleMainModel.findOneAndUpdate(
           {
             _id: dto.orderSaleId,
@@ -568,7 +834,69 @@ export class OrderSaleChangeRequestService {
           session: transactionSession,
         });
       }
+      console.log("___d3");
 
+
+      var resultOrderStatusCheck = await this.orderSaleMainModel.find({
+        _id: dto.orderSaleId,
+      });
+
+      if (resultOrderStatusCheck.length == 0) {
+        throw new HttpException(
+          'Order not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      //doing notification
+      var userFcmCheck = await this.userModel.find(
+        { _shopId: resultOrderStatusCheck[0]._shopId, _status: 1 },
+        { _isNotificationEnable: 1, _fcmId: 1 },
+      );
+      console.log("___d4");
+      var userFcmIds = [];
+      var userNotificationTable = [];
+      var notificationTitle = 'Cancel request accept';
+      var notificationBody = 'Order UID: ' + resultOrderStatusCheck[0]._uid;
+      var notificationOrderSale = dto.orderSaleId.toString();
+      console.log("___d5");
+      userFcmCheck.forEach((elementUserNotification) => {
+        if (
+          elementUserNotification._isNotificationEnable == 1 &&
+          elementUserNotification._fcmId != ''
+        ) {
+          userFcmIds.push(elementUserNotification._fcmId);
+        }
+        userNotificationTable.push({
+          _viewStatus: 0,
+          _title: notificationTitle,
+          _body: notificationBody,
+          _orderSaleId:
+            notificationOrderSale == '' ? null : notificationOrderSale,
+          _userId: elementUserNotification._id,
+          _createdAt: dateTime,
+          _viewAt: 0,
+          _status: 1,
+        });
+      });
+      console.log("___d6");
+      if (userNotificationTable.length != 0) {
+        await this.userNotificationModel.insertMany(userNotificationTable, {
+          session: transactionSession,
+        });
+      }
+      if (userFcmIds.length != 0) {
+        new FcmUtils().sendFcm(
+          notificationTitle,
+          notificationBody,
+          userFcmIds,
+          {
+            ajc: 'AJC_NOTIFICATION',
+          },
+        );
+      }
+      //done notification
+      console.log("___d7");
       const responseJSON = { message: 'success', data: {} };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -673,7 +1001,7 @@ export class OrderSaleChangeRequestService {
         case 2:
           arrayAggregation.push({
             $sort: {
-              _isPurchaseOrgerGenerated: dto.sortOrder,
+              _isPurchaseOrderGenerated: dto.sortOrder,
               _id: dto.sortOrder,
             },
           });

@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/Auth/roles.decorator';
 import { GuardUserRole } from 'src/common/GuardUserRole';
 import { RateCardService } from './rate-card.service';
-import { RateCardCreateDto, RateCardEditDto, RateCardListDto, RateCardStatusChangeDto, RemovePercentagesDto } from './rate_card.dto';
+import { RateCardCreateDto, RateCardEditDto, RateCardListDto, RateCardStatusChangeDto, RemovePercentagesDto, TempMigrateCurrentRatecardDto } from './rate_card.dto';
 
 
 @ApiTags("rate cards") 
@@ -39,5 +39,9 @@ export class RateCardController {
     return this.rateCardService.list(dto);
   }
 
+  @Post('temp_migrateCurrentRatecardToPurchaseType')
+  temp_migrateCurrentRatecardToPurchaseType(@Body() dto: TempMigrateCurrentRatecardDto, @Request() req) {
+    return this.rateCardService.temp_migrateCurrentRatecardToPurchaseType(dto, req['_userId_']);
+  }
 
 }

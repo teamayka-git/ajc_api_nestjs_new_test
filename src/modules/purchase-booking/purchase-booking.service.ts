@@ -49,6 +49,7 @@ export class PurchaseBookingService {
           _bookingRate: mapItem.bookingRate,
           _bookingAmount: mapItem.bookingAmount,
           _groupId: mapItem.groupId == '' ? null : mapItem.groupId,
+          _ref: mapItem.referenceNumber,
           _uid:
             resultCounterPurchaseBooking._count -
             dto.array.length +
@@ -57,7 +58,7 @@ export class PurchaseBookingService {
             mapItem.supplierUserId == '' ? null : mapItem.supplierUserId,
           _shopId: mapItem.shopId == '' ? null : mapItem.shopId,
           _bookingThrough: mapItem.bookingThrough,
-          _isPurchaseOrgerGenerated: mapItem.isPurchaseGenerated,
+          _isPurchaseOrderGenerated: mapItem.isPurchaseGenerated,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
@@ -222,24 +223,45 @@ export class PurchaseBookingService {
           });
         }
       }
-      if (dto.bookingThroughStart != -1 || dto.bookingThroughEnd != -1) {
-        if (dto.bookingThroughStart != -1) {
-          arrayAggregation.push({
-            $match: { _bookingThrough: { $gte: dto.bookingThroughStart } },
-          });
-        }
-        if (dto.bookingThroughEnd != -1) {
-          arrayAggregation.push({
-            $match: { _bookingThrough: { $lte: dto.bookingThroughEnd } },
-          });
-        }
+      if (dto.bookingThrough.length != 0) {
+        arrayAggregation.push({
+          $match: { _bookingThrough: { $in: dto.bookingThrough } },
+        });
       }
       if (dto.isPurchaseOrgerGenerated.length != 0) {
         arrayAggregation.push({
           $match: {
-            _isPurchaseOrgerGenerated: { $in: dto.isPurchaseOrgerGenerated },
+            _isPurchaseOrderGenerated: { $in: dto.isPurchaseOrgerGenerated },
           },
         });
+      }
+
+      if (dto.invoiceUids.length > 0) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.INVOICES,
+              let: { invoiceId: '$_invoiceId' },
+              pipeline: [
+                {
+                  $match: {
+                    _uid: { $in: dto.invoiceUids },
+                    $expr: { $eq: ['$_id', '$$invoiceId'] },
+                  },
+                },
+                {
+                  $project: {
+                    _id: 1,
+                  },
+                },
+              ],
+              as: 'mongoCheckInvUid',
+            },
+          },
+          {
+            $match: { mongoCheckInvUid: { $ne: [] } },
+          },
+        );
       }
 
       arrayAggregation.push({ $match: { _status: { $in: dto.statusArray } } });
@@ -255,7 +277,7 @@ export class PurchaseBookingService {
         case 2:
           arrayAggregation.push({
             $sort: {
-              _isPurchaseOrgerGenerated: dto.sortOrder,
+              _isPurchaseOrderGenerated: dto.sortOrder,
               _id: dto.sortOrder,
             },
           });
@@ -378,16 +400,13 @@ export class PurchaseBookingService {
         );
       }
 
-
-
-
       if (dto.screenType.includes(103)) {
         arrayAggregation.push(
           {
             $lookup: {
               from: ModelNames.INVOICES,
               let: { invoiceId: '$_invoiceId' },
-              pipeline:[
+              pipeline: [
                 {
                   $match: {
                     $expr: { $eq: ['$_id', '$$invoiceId'] },
@@ -409,6 +428,34 @@ export class PurchaseBookingService {
           },
         );
       }
+      if (dto.screenType.includes(105)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { userId: '$_createdUserId' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', '$$userId'] },
+                  },
+                },
+                new ModelWeightResponseFormat().userTableResponseFormat(
+                  1050,
+                  dto.responseFormat,
+                ),
+              ],
+              as: 'createdUserDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$createdUserDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        );
+      }
 
       if (dto.screenType.includes(104)) {
         arrayAggregation.push(
@@ -416,7 +463,7 @@ export class PurchaseBookingService {
             $lookup: {
               from: ModelNames.USER,
               let: { userId: '$_supplierUserId' },
-              pipeline:[
+              pipeline: [
                 {
                   $match: {
                     $expr: { $eq: ['$_id', '$$userId'] },
@@ -444,7 +491,7 @@ export class PurchaseBookingService {
             $lookup: {
               from: ModelNames.SHOPS,
               let: { shopId: '$_shopId' },
-              pipeline:[
+              pipeline: [
                 {
                   $match: {
                     $expr: { $eq: ['$_id', '$$shopId'] },
@@ -466,13 +513,6 @@ export class PurchaseBookingService {
           },
         );
       }
-
-
-
-
-
-
-
 
       var result = await this.purchaseBookingModel
         .aggregate(arrayAggregation)

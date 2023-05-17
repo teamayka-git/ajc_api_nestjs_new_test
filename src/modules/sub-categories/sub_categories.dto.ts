@@ -78,6 +78,11 @@ class SubCategoriesCreateList {
   @IsNumber()
   @ApiProperty({})
   defaultPercentage: number;
+  
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ApiProperty({})
+  defaultPercentagePurchase: number;
 }
 
 export class SubCategoriesCreateDto {

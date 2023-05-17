@@ -261,6 +261,7 @@ export class AgentService {
             _testCenterId:null,
             _logisticPartnerId:null,
             _fcmId: '',
+            _isNotificationEnable:1,
             _deviceUniqueId: '',
             _permissions: [],
             _userType: 3,

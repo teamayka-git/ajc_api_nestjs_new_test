@@ -4,6 +4,7 @@ import {
   IsEmail,
   IsNumber,
   IsObject,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -23,7 +24,7 @@ const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType =
   '0-Created Date,1-Status  2-UID,  3-orderSaleRate, 4-stockSaleRate, 5-shopType, 6-billingModeSale, 7-billingModePurchase, 8-hallmarkingMandatoryStatus,9-creditAmount, 10-creditDays, 11-stonePricing, 12-agentCommision';
 const descriptionListScreenTypeForFilterLoading =
-  '0-total documents count, 50-globalGalleryImagePopulate only if user details exist, 100-branch populate, 101-orderHead populate, 102-relationship manager populate,  104-rate card populate, 106-city populate, 107-tds populate, 108-tcs populate, 109-ratebase master populate, 110-agent populate, 111-user details populate,112- rate card percentages if ratecard details exist, 113 - orderhead under[101] global gallery, 114 - relationship manager under[102] global gallery ,  115 - agent under[110] global gallery, 116 - freez rootcause details                        ,200- general settings tax,201- general settings shop,202- general settings currency,203- general settings product,204- general settings order, 205-general settings invoice, 206-general settings other, 250-company details, 251 - online store theme manufacture data   ';
+  '0-total documents count, 50-globalGalleryImagePopulate only if user details exist, 100-branch populate, 101-orderHead populate, 102-relationship manager populate,  104-rate card populate, 106-city populate, 107-tds populate, 108-tcs populate, 109-ratebase master populate, 110-agent populate, 111-user details populate,112- rate card percentages if ratecard details exist, 113 - orderhead under[101] global gallery, 114 - relationship manager under[102] global gallery ,  115 - agent under[110] global gallery, 116 - freez rootcause details, 117 - freez user details, 118 - freezed user details under[117] global gallery details                        ,200- general settings tax,201- general settings shop,202- general settings currency,203- general settings product,204- general settings order, 205-general settings invoice, 206-general settings other, 250-company details, 251 - online store theme manufacture data   ';
 const descriptionListScreenTypeEmployeeCustomer =
   '0-total documents count, 50-globalGallery, 51- only customers,100- shop details,101- customer details';
 
@@ -666,6 +667,21 @@ export class ShopAddRemoveCustomerDto {
   arrayUsersNew: CustomerNewUsersCreateList[];
 }
 
+
+export class MigrateCurrentShopToAcountLedgersDto {
+
+  @IsNumber()
+  @ApiProperty({})
+  limit: number;
+
+  
+  @IsNumber()
+  @ApiProperty({})
+  skip: number;
+  
+  
+}
+
 export class ShopAcrossEmployeesAndCustomersDto {
   @IsArray()
   @ApiProperty({ type: [String] })
@@ -732,6 +748,11 @@ export class ShopFreezStatusChangeDto {
   @IsString()
   @ApiProperty({})
   freezedDescription: string;
+
+  
+  @IsString()
+  @ApiProperty({})
+  freezedRootCauseName: string;
 
   @IsString()
   @ApiProperty({})

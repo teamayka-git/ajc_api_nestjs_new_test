@@ -27,6 +27,7 @@ import {
   CheckEmailExistDto,
   CheckMobileExistDto,
   ListShopDto,
+  MigrateCurrentShopToAcountLedgersDto,
   ShopAcrossEmployeesAndCustomersDto,
   ShopAddRemoveCustomerDto,
   ShopAddRemoveUsersDto,
@@ -155,6 +156,18 @@ export class ShopsController {
   addRemoveCustomers(@Body() dto: ShopAddRemoveCustomerDto, @Request() req) {
     return this.shopService.addRemoveCustomers(dto, req['_userId_']);
   }
+
+
+
+
+
+  @Post('temp_migrateCurrentShopToAccountLedgers')
+  temp_migrateCurrentShopToAccountLedgers(@Body() dto: MigrateCurrentShopToAcountLedgersDto, @Request() req) {
+    return this.shopService.temp_migrateCurrentShopToAccountLedgers(dto, req['_userId_']);
+  }
+
+
+
 
   @Post('listCustomersAndEmployeeShopAcross')
   listCustomersAndEmployeeShopAcross(
