@@ -47,7 +47,7 @@ export class AccountPostInvoiceService {
               _voucherDate: mapItem.invoiceDate,
               _voucherType: 1,
               _ledgerId: mapItem.ledgerId,
-              _branchId: mapItem.branchId,
+              _branchId: '63f331cedcc0abe2f6d03160',
               _remarks: 'For the Invoice ' + mapItem.invoiceNo,
               _docNo: '',
               _docDate: -1,
@@ -73,7 +73,7 @@ export class AccountPostInvoiceService {
             _voucherNo: mapItem.invoiceNo,
             _voucherType: 1,
             _ledgerId: mapItem.ledgerId,
-            _branchId: mapItem.branchId,
+            _branchId: '63f331cedcc0abe2f6d03160',
             _description: 'For the Invoice ' + mapItem.invoiceNo,
             _currencyId: '63f33292dcc0abe2f6d03166',
             _exRate: 1,
@@ -91,7 +91,7 @@ export class AccountPostInvoiceService {
             _bookId: bid,
             _voucherNo: mapItem.invoiceNo,
             _voucherType: 1,
-            _branchId: mapItem.branchId,
+            _branchId: '63f331cedcc0abe2f6d03160',
             _ledgerId: mapItem.ledgerId,
             _outstandingType: mapItem.isFixed,
             _rate: mapItem.rate,
@@ -136,13 +136,12 @@ export class AccountPostInvoiceService {
           });
 
           arrayToAccountBook2.push({
-            _id: bid,
             _transactionDate: mapItem.invoiceDate,
             _voucherId: vid,
             _voucherNo: mapItem.invoiceNo,
             _voucherType: 1,
             _ledgerId: '640b7fc216b60aaca1c60cae',
-            _branchId: mapItem.branchId,
+            _branchId: '63f331cedcc0abe2f6d03160',
             _description: 'For the Invoice ' + mapItem.invoiceNo,
             _currencyId: '63f33292dcc0abe2f6d03166',
             _exRate: 1,
@@ -174,13 +173,12 @@ export class AccountPostInvoiceService {
             });
 
             arrayToAccountBook2.push({
-              _id: bid,
               _transactionDate: mapItem.invoiceDate,
               _voucherId: vid,
               _voucherNo: mapItem.invoiceNo,
               _voucherType: 1,
               _ledgerId: '640f0ab5fd139b2099f374b3',
-              _branchId: mapItem.branchId,
+              _branchId: '63f331cedcc0abe2f6d03160',
               _description: 'For the Invoice ' + mapItem.invoiceNo,
               _currencyId: '63f33292dcc0abe2f6d03166',
               _exRate: 1,
@@ -213,13 +211,12 @@ export class AccountPostInvoiceService {
               });
 
               arrayToAccountBook2.push({
-                _id: bid,
                 _transactionDate: mapItem.invoiceDate,
                 _voucherId: vid,
                 _voucherNo: mapItem.invoiceNo,
                 _voucherType: 1,
                 _ledgerId: '640f0ac6fd139b2099f374b5',
-                _branchId: mapItem.branchId,
+                _branchId: '63f331cedcc0abe2f6d03160',
                 _description: 'For the Invoice ' + mapItem.invoiceNo,
                 _currencyId: '63f33292dcc0abe2f6d03166',
                 _exRate: 1,
@@ -252,13 +249,12 @@ export class AccountPostInvoiceService {
               });
 
               arrayToAccountBook2.push({
-                _id: bid,
                 _transactionDate: mapItem.invoiceDate,
                 _voucherId: vid,
                 _voucherNo: mapItem.invoiceNo,
                 _voucherType: 1,
                 _ledgerId: '640f0adcfd139b2099f374b7',
-                _branchId: mapItem.branchId,
+                _branchId: '63f331cedcc0abe2f6d03160',
                 _description: 'For the Invoice ' + mapItem.invoiceNo,
                 _currencyId: '63f33292dcc0abe2f6d03166',
                 _exRate: 1,
@@ -300,13 +296,12 @@ export class AccountPostInvoiceService {
                });
 
                arrayToAccountBook2.push({
-                _id: bid,
                 _transactionDate: mapItem.invoiceDate,
                 _voucherId: vid,
                 _voucherNo: mapItem.invoiceNo,
                 _voucherType: 1,
                 _ledgerId: '640f0adcfd139b2099f374b7',
-                _branchId: mapItem.branchId,
+                _branchId: '63f331cedcc0abe2f6d03160',
                 _description: 'For the Invoice ' + mapItem.invoiceNo,
                 _currencyId: '63f33292dcc0abe2f6d03166',
                 _exRate: 1,
@@ -339,13 +334,12 @@ export class AccountPostInvoiceService {
               });
 
               arrayToAccountBook2.push({
-                _id: bid,
                 _transactionDate: mapItem.invoiceDate,
                 _voucherId: vid,
                 _voucherNo: mapItem.invoiceNo,
                 _voucherType: 1,
                 _ledgerId: '640f05f0fd139b2099f374ab',
-                _branchId: mapItem.branchId,
+                _branchId: '63f331cedcc0abe2f6d03160',
                 _description: 'For the Invoice ' + mapItem.invoiceNo,
                 _currencyId: '63f33292dcc0abe2f6d03166',
                 _exRate: 1,
@@ -378,13 +372,12 @@ export class AccountPostInvoiceService {
                });
 
                arrayToAccountBook2.push({
-                _id: bid,
                 _transactionDate: mapItem.invoiceDate,
                 _voucherId: vid,
                 _voucherNo: mapItem.invoiceNo,
                 _voucherType: 1,
                 _ledgerId: '640f060efd139b2099f374ad',
-                _branchId: mapItem.branchId,
+                _branchId: '63f331cedcc0abe2f6d03160',
                 _description: 'For the Invoice ' + mapItem.invoiceNo,
                 _currencyId: '63f33292dcc0abe2f6d03166',
                 _exRate: 1,
@@ -419,13 +412,12 @@ export class AccountPostInvoiceService {
 
 
                arrayToAccountBook2.push({
-                _id: bid,
                 _transactionDate: mapItem.invoiceDate,
                 _voucherId: vid,
                 _voucherNo: mapItem.invoiceNo,
                 _voucherType: 1,
                 _ledgerId: '640f0619fd139b2099f374af',
-                _branchId: mapItem.branchId,
+                _branchId: '63f331cedcc0abe2f6d03160',
                 _description: 'For the Invoice ' + mapItem.invoiceNo,
                 _currencyId: '63f33292dcc0abe2f6d03166',
                 _exRate: 1,
@@ -489,7 +481,7 @@ export class AccountPostInvoiceService {
               $set: {
                 _voucherDate: dto.invoiceDate,
                 _ledgerId: dto.ledgerId,
-                _branchId: dto.branchId,
+                _branchId: '63f331cedcc0abe2f6d03160',
                 _amount: dto.amount,
                 _updatedUserId: _userId_,
                 _updatedAt: dateTime,

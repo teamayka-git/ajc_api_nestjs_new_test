@@ -85,9 +85,6 @@ class AccountPostInvoiceCreateList {
   @ApiProperty({})
   roundOff: number;
 
-  @IsString()
-  @ApiProperty({})
-  branchId: string;
 
 }
 
@@ -167,10 +164,5 @@ export class AccountPostInvoiceEditDto {
   @IsNumber()
   @ApiProperty({})
   roundOff: number;
-
-  @IsString()
-  @ApiProperty({})
-  branchId: string;
-
 
 }

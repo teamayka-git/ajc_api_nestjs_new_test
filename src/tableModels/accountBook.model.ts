@@ -18,7 +18,7 @@ export const AccountBookSchema = new mongoose.Schema({
     ref: ModelNames.ACCOUNT_BRANCH,
     default: null,
   },
-  _remarks: { type: String, required: true, default: '' },
+  _description: { type: String, required: false, default: '' },
   _docNo: { type: String, required: false, default: '' },
   _docDate: { type: Number, required: false, default: -1 },
   _crdr: { type: String, required: true, default: 'Cr' },
