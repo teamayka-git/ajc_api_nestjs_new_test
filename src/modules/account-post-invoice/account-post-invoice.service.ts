@@ -97,6 +97,7 @@ export class AccountPostInvoiceService {
             _rate: mapItem.rate,
             _amountMetal: mapItem.metalAmount,
             _amountStone: mapItem.stoneAmount,
+            _amountStone_Rec: 0,
             _pureWeightRB: mapItem.rateBase,
             _pureWeight100: mapItem.pureWeight100,
             _pureWeight100_Rec: 0,
