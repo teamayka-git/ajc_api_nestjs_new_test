@@ -108,7 +108,7 @@ export class AccountPostInvoiceService {
             _amountOTH: mapItem.otherCharge,
             _amountOTH_Rec: 0,
             _description: 'For the Invoice ' + mapItem.invoiceNo,
-            _amountTotal: mapItem.pureWeight,
+            _amountTotal: mapItem.amount,
             _amountTotal_Rec: 0,
             _transactionSign: 1,
             _createdUserId: _userId_,
