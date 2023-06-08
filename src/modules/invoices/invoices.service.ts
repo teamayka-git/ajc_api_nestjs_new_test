@@ -49,7 +49,7 @@ export class InvoicesService {
     private readonly orderSaleMainModel: mongoose.Model<OrderSalesMain>,
     @InjectConnection() private readonly connection: mongoose.Connection,
 
-    private readonly accountPostInvoice: AccountPostInvoiceService,
+   private readonly accountPostInvoice: AccountPostInvoiceService,
   ) {}
 
   async create(dto: InvoiceCreateDto, _userId_: string) {
