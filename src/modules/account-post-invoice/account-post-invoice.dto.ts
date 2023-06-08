@@ -16,7 +16,7 @@ const descriptionListScreenTypeForList = '0-total documents count';
 const descriptionListSortOrder = '1-ascending, -1-descending';
 const descriptionListSortType = '0-Created Date, 1-Status, 2-Name, 3-Code';
 
-class AccountPostInvoiceCreateList {
+export class AccountPostInvoiceCreateList {
   @IsString()
   @ApiProperty({})
   ledgerId: string;

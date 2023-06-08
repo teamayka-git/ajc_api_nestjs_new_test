@@ -35,7 +35,7 @@ export class AccountPostInvoiceService {
           var arrayToAccountBook1 = [];
           var arrayToAccountBook2 = [];
           var arrayToOutstandingReceivable = [];
-    
+          console.log("______ invoice auto ______1");
           dto.array.map((mapItem) => {
 
             var vid = new mongoose.Types.ObjectId();
@@ -61,7 +61,8 @@ export class AccountPostInvoiceService {
               _updatedAt: -1,
               _status: 1,
           });
-
+          
+          console.log("______ invoice auto ______2");
 
          var bid = new mongoose.Types.ObjectId();
 
@@ -85,6 +86,7 @@ export class AccountPostInvoiceService {
         });
 
 
+        console.log("______ invoice auto ______3");
           // Outstanding Receivable
           arrayToOutstandingReceivable.push({
             _transactionDate: mapItem.invoiceDate,
@@ -119,6 +121,7 @@ export class AccountPostInvoiceService {
         });
 
 
+        console.log("______ invoice auto ______4");
           var amount = mapItem.amount - (mapItem.CGST + mapItem.SGST + mapItem.IGST) - mapItem.stoneAmount - mapItem.hmCharge - mapItem.otherCharge - mapItem.roundOff;
 
             // Sales Income
@@ -155,6 +158,7 @@ export class AccountPostInvoiceService {
             _status: 1,
         });
 
+        console.log("______ invoice auto ______5");
 
           //Stone Amount
           if(mapItem.stoneAmount > 0)
@@ -438,6 +442,7 @@ export class AccountPostInvoiceService {
 
           });
     
+          console.log("______ invoice auto ______6");
           var result1 = await this.AccountVoucherModel.insertMany(arrayToVoucher, {
             session: transactionSession,
           });
@@ -454,10 +459,12 @@ export class AccountPostInvoiceService {
             session: transactionSession,
           });
 
+          console.log("______ invoice auto ______7");
           var result5 = await this.AccountBookModel.insertMany(arrayToAccountBook2, {
             session: transactionSession,
           });
     
+          console.log("______ invoice auto ______8");
           const responseJSON = { message: 'success', data: { list: result1 } };
         
           await transactionSession.commitTransaction();

@@ -19,6 +19,11 @@ import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_respons
 import { Generals } from 'src/tableModels/generals.model';
 import { Shops } from 'src/tableModels/shops.model';
 import { PurchaseBooking } from 'src/tableModels/purchase_booking.model';
+import { AccountPostInvoiceService } from '../account-post-invoice/account-post-invoice.service';
+import {
+  AccountPostInvoiceCreateDto,
+  AccountPostInvoiceCreateList,
+} from '../account-post-invoice/account-post-invoice.dto';
 
 @Injectable()
 export class InvoicesService {
@@ -43,7 +48,10 @@ export class InvoicesService {
     @InjectModel(ModelNames.ORDER_SALES_MAIN)
     private readonly orderSaleMainModel: mongoose.Model<OrderSalesMain>,
     @InjectConnection() private readonly connection: mongoose.Connection,
+
+    private readonly accountPostInvoice: AccountPostInvoiceService,
   ) {}
+
   async create(dto: InvoiceCreateDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
@@ -58,6 +66,7 @@ export class InvoicesService {
       var arraySalesOrderHistories = [];
       var arrayPurchaseBooking = [];
 
+      var payloadAccountApi = new AccountPostInvoiceCreateDto();
       dto.invoices.map((mapItem) => {
         invoiceLocalIds.push(mapItem.localId);
         shopMongoIds.push(new mongoose.Types.ObjectId(mapItem.customerId));
@@ -84,11 +93,34 @@ export class InvoicesService {
             _status: 1,
           },
         },
+        {
+          $lookup: {
+            from: ModelNames.RATE_BASE_MASTERS,
+            let: { ratebaseMasterId: '$_rateBaseMasterId' },
+            pipeline: [
+              {
+                $match: { $expr: { $eq: ['$_id', '$$ratebaseMasterId'] } },
+              },
+              { $project: { _name: 1 } },
+            ],
+            as: 'ratebaseMaster',
+          },
+        },
+
+
+
       ]);
       console.log('___d4');
       if (shopDetails.length != dto.invoices.length) {
         throw new HttpException(
           'Shop freezed, contact AJC',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      for(var k=0;k<shopDetails.length;k++)
+       if (shopDetails[k].ratebaseMaster==null) {
+        throw new HttpException(
+          'Shop ratebase master is missing',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
@@ -178,6 +210,50 @@ export class InvoicesService {
           _status: 1,
         });
 
+
+
+
+       var indexShop= shopDetails.findIndex(
+          (it) => it._id ==  mapItem.customerId,
+        );
+        console.log("______ invoice auto 1");
+
+        var dtoAccountApiItem = new AccountPostInvoiceCreateList();
+        dtoAccountApiItem.ledgerId=shopDetails[indexShop]._accountId;
+        dtoAccountApiItem.invoiceNo=inventoryUid;
+        dtoAccountApiItem.invoiceDate=dateTime;
+        dtoAccountApiItem.rateBase=shopDetails[indexShop].ratebaseMaster[0]._name;
+        dtoAccountApiItem.amount= mapItem.netReceivableAmount;
+        dtoAccountApiItem.rate=mapItem.price1;
+        dtoAccountApiItem.isFixed=mapItem.isFix;
+        dtoAccountApiItem.pureWeight100=mapItem.pureWeightHundredPercentage;
+        dtoAccountApiItem.pureWeight=mapItem.pureWeight;
+        dtoAccountApiItem.metalAmount=mapItem.metalAmountGst;
+        dtoAccountApiItem.stoneAmount=mapItem.stoneAmount;
+        dtoAccountApiItem.hmCharge= mapItem.halmarkingCharge;
+        dtoAccountApiItem.otherCharge= mapItem.otherCharge;
+        dtoAccountApiItem.CGST=mapItem.cgst;
+        dtoAccountApiItem.SGST=mapItem.sgst;
+        dtoAccountApiItem.IGST=mapItem.igst;
+        dtoAccountApiItem.roundOff=mapItem.roundOff;
+
+        console.log("______ invoice auto 2");
+
+
+
+
+
+
+
+
+        payloadAccountApi.array.push(dtoAccountApiItem);
+
+
+
+        console.log("______ invoice auto 3");
+
+
+
         if (mapItem.isCreatePurchaseBooking == 1) {
           arrayPurchaseBooking.push({
             _invoiceId: invoiceId,
@@ -205,6 +281,10 @@ export class InvoicesService {
           });
           indexPurchaseBooking++;
         }
+
+
+
+
 
         mapItem.arrayInvoiceItems.map((mapItem1) => {
           orderIds.push(mapItem1.orderId);
@@ -314,6 +394,21 @@ export class InvoicesService {
           _updatedAt: -1,
           _status: 1,
         });
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+
       });
 
       var orderNewStatus = 18;
@@ -347,6 +442,10 @@ export class InvoicesService {
         session: transactionSession,
       });
 
+
+      console.log("______ invoice auto 4");
+      await this.accountPostInvoice.create(payloadAccountApi, _userId_);
+      console.log("______ invoice auto 5");
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -707,10 +806,12 @@ export class InvoicesService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-      arrayAggregation.push(new ModelWeightResponseFormat().invoiceTableResponseFormat(
-        0,
-        dto.responseFormat,
-      ));
+      arrayAggregation.push(
+        new ModelWeightResponseFormat().invoiceTableResponseFormat(
+          0,
+          dto.responseFormat,
+        ),
+      );
 
       if (dto.screenType.includes(100)) {
         const userPipeline = () => {
