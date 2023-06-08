@@ -397,7 +397,6 @@ export class AccountPostInvoiceService {
 
 
              }
-          throw new HttpException('Test', HttpStatus.INTERNAL_SERVER_ERROR);
 
              //IGST
              if(mapItem.IGST > 0)
