@@ -211,9 +211,9 @@ class DistrictBulkDataList {
  }
  class RatebaseMasterRatecardBulkDataList {
  
-  @IsString()
+  @IsNumber()
   @ApiProperty({})
-  Name: string;
+  Name: number;
  
   
   

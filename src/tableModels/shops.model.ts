@@ -65,7 +65,7 @@ export const ShopsSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.TDS_MASTERS,
     default: null,
-  },
+  }, 
   _tcsId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.TCS_MASTERS,

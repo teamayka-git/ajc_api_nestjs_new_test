@@ -24,9 +24,9 @@ const descriptionListSortType="0-Created Date, 1-Status,2-Name";
 
 class RateBaseMastersCreateList {
 
-  @IsString()
+  @IsNumber()
   @ApiProperty({})
-  name: string;
+  name: number;
 
   
   @IsArray()
@@ -54,9 +54,9 @@ export class RateBaseMastersEditDto {
   rateBaseMasterId: string;
 
   
-  @IsString()
+  @IsNumber()
   @ApiProperty({})
-  name: string;
+  name: number;
 
   
   @IsArray()
