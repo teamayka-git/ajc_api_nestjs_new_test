@@ -12,6 +12,7 @@ import { OrderSalesMainSchema } from 'src/tableModels/order_sales_main.model';
 import { GeneralsSchema } from 'src/tableModels/generals.model';
 import { ShopsSchema } from 'src/tableModels/shops.model';
 import { PurchaseBookingSchema } from 'src/tableModels/purchase_booking.model';
+import { AccountPostInvoiceService } from '../account-post-invoice/account-post-invoice.service';
 
 @Module({
   imports: [
@@ -38,6 +39,6 @@ import { PurchaseBookingSchema } from 'src/tableModels/purchase_booking.model';
     ]),
   ],
   controllers: [InvoicesController],
-  providers: [InvoicesService],
+  providers: [InvoicesService,AccountPostInvoiceService],
 })
 export class InvoicesModule {}
