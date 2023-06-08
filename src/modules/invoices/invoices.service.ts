@@ -66,7 +66,7 @@ export class InvoicesService {
       var arraySalesOrderHistories = [];
       var arrayPurchaseBooking = [];
 
-      var payloadAccountApi = new AccountPostInvoiceCreateDto();
+      var payloadAccountApi = [];
       dto.invoices.map((mapItem) => {
         invoiceLocalIds.push(mapItem.localId);
         shopMongoIds.push(new mongoose.Types.ObjectId(mapItem.customerId));
@@ -244,9 +244,9 @@ export class InvoicesService {
 
 
 
+        
 
-
-        payloadAccountApi.array.push(dtoAccountApiItem);
+        payloadAccountApi.push(dtoAccountApiItem);
 
 
 
@@ -444,8 +444,14 @@ export class InvoicesService {
 
 
       console.log("______ invoice auto 4");
-      await this.accountPostInvoice.create(payloadAccountApi, _userId_);
+      
+      var payloadAccountApiFinal = new AccountPostInvoiceCreateDto();
       console.log("______ invoice auto 5");
+      payloadAccountApiFinal.array=payloadAccountApi;
+      
+      console.log("______ invoice auto 6");
+      await this.accountPostInvoice.create(payloadAccountApiFinal, _userId_);
+      console.log("______ invoice auto 7");
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
