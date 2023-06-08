@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+
 import * as mongoose from 'mongoose';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { ModelNames } from 'src/common/model_names';
@@ -8,7 +8,7 @@ import { AccountVoucher } from 'src/tableModels/accountVoucher.model';
 import { AccountVoucherItems } from 'src/tableModels/accountVoucherItems.model';
 import { AccountBook } from 'src/tableModels/accountBook.model';
 import { AccountOutstanding } from 'src/tableModels/accountOutstanding.model';
-
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 //Safeer Update
 
 @Injectable()
@@ -397,7 +397,7 @@ export class AccountPostInvoiceService {
 
 
              }
- 
+
              //IGST
              if(mapItem.IGST > 0)
              {
@@ -441,7 +441,6 @@ export class AccountPostInvoiceService {
 
 
           });
-    
           console.log("______ invoice auto ______6");
           var result1 = await this.AccountVoucherModel.insertMany(arrayToVoucher, {
             session: transactionSession,
