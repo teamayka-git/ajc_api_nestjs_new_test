@@ -1069,19 +1069,19 @@ export class ShopsService {
                   },
                 },
                 { $unwind: { path: '$materialStocks' } },
-              
+                {
+                  $project: {
+                    _id: 1,
+                    metalBalance:
+                      '$materialStocks.materialStockBalance',
+                  },
+                },
                
               ],
               as: 'materialStockUserDetails',
             },
           },
-          {
-            $project: {
-              _id: 1,
-              metalBalance:
-                '$materialStockUserDetails.materialStocks.materialStockBalance',
-            },
-          },
+       
           {
             $unwind: {
               path: '$materialStockUserDetails',
