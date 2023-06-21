@@ -74,7 +74,7 @@ export class ModelWeightResponseFormat {
       return { $project: new ModelWeight().globalGalleryTableMinimum() };
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().globalGalleryTableMedium() };
-    }else if (responseFormatArray.includes(startIndex + 3)) {
+    } else if (responseFormatArray.includes(startIndex + 3)) {
       return { $project: new ModelWeight().globalGalleryTableMaximum() };
     } else if (responseFormatArray.includes(startIndex + 4)) {
       return { $project: new ModelWeight().globalGalleryTableCustom1() };
@@ -135,9 +135,13 @@ export class ModelWeightResponseFormat {
     if (responseFormatArray.includes(startIndex)) {
       return { $project: new ModelWeight().orderSaleChangeRequestTableLight() };
     } else if (responseFormatArray.includes(startIndex + 1)) {
-      return { $project: new ModelWeight().orderSaleChangeRequestTableMinimum() };
+      return {
+        $project: new ModelWeight().orderSaleChangeRequestTableMinimum(),
+      };
     } else if (responseFormatArray.includes(startIndex + 2)) {
-      return { $project: new ModelWeight().orderSaleChangeRequestTableMedium() };
+      return {
+        $project: new ModelWeight().orderSaleChangeRequestTableMedium(),
+      };
     } else {
       return { $project: { _: 0 } };
     }
@@ -199,7 +203,6 @@ export class ModelWeightResponseFormat {
     }
   }
 
-  
   public purchaseOrderItemsTableResponseFormat(
     startIndex: int,
     responseFormatArray: List,
@@ -218,7 +221,6 @@ export class ModelWeightResponseFormat {
       return { $project: { _: 0 } };
     }
   }
-
 
   public subProcessMasterTableResponseFormat(
     startIndex: int,
@@ -269,9 +271,13 @@ export class ModelWeightResponseFormat {
     if (responseFormatArray.includes(startIndex)) {
       return { $project: new ModelWeight().orderSaleItemDocumentsTableLight() };
     } else if (responseFormatArray.includes(startIndex + 1)) {
-      return { $project: new ModelWeight().orderSaleItemDocumentsTableMinimum() };
+      return {
+        $project: new ModelWeight().orderSaleItemDocumentsTableMinimum(),
+      };
     } else if (responseFormatArray.includes(startIndex + 2)) {
-      return { $project: new ModelWeight().orderSaleItemDocumentsTableMedium() };
+      return {
+        $project: new ModelWeight().orderSaleItemDocumentsTableMedium(),
+      };
     } else {
       return { $project: { _: 0 } };
     }
@@ -322,11 +328,19 @@ export class ModelWeightResponseFormat {
     }
 
     if (responseFormatArray.includes(startIndex)) {
-      return { $project: new ModelWeight().orderSaleChangeRequestDocumentsTableLight() };
+      return {
+        $project: new ModelWeight().orderSaleChangeRequestDocumentsTableLight(),
+      };
     } else if (responseFormatArray.includes(startIndex + 1)) {
-      return { $project: new ModelWeight().orderSaleChangeRequestDocumentsTableMinimum() };
+      return {
+        $project:
+          new ModelWeight().orderSaleChangeRequestDocumentsTableMinimum(),
+      };
     } else if (responseFormatArray.includes(startIndex + 2)) {
-      return { $project: new ModelWeight().orderSaleChangeRequestDocumentsTableMedium() };
+      return {
+        $project:
+          new ModelWeight().orderSaleChangeRequestDocumentsTableMedium(),
+      };
     } else {
       return { $project: { _: 0 } };
     }
@@ -346,9 +360,9 @@ export class ModelWeightResponseFormat {
       return { $project: new ModelWeight().shopTableMinimum() };
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().shopTableMedium() };
-    }else if (responseFormatArray.includes(startIndex + 3)) {
+    } else if (responseFormatArray.includes(startIndex + 3)) {
       return { $project: { _: 0 } };
-    }else if (responseFormatArray.includes(startIndex + 4)) {
+    } else if (responseFormatArray.includes(startIndex + 4)) {
       return { $project: new ModelWeight().shopTableCustom1() };
     } else if (responseFormatArray.includes(startIndex + 5)) {
       return { $project: new ModelWeight().shopTableCustom2() };
@@ -356,7 +370,7 @@ export class ModelWeightResponseFormat {
       return { $project: { _: 0 } };
     }
   }
-  
+
   public orderSaleMainTableResponseFormat(
     startIndex: int,
     responseFormatArray: List,
@@ -395,17 +409,6 @@ export class ModelWeightResponseFormat {
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-
   public hmBundleTableResponseFormat(
     startIndex: int,
     responseFormatArray: List,
@@ -424,9 +427,6 @@ export class ModelWeightResponseFormat {
       return { $project: { _: 0 } };
     }
   }
-
-
-
 
   public hmMainTableResponseFormat(
     startIndex: int,
@@ -466,8 +466,6 @@ export class ModelWeightResponseFormat {
     }
   }
 
-
-
   public hmCenterTableResponseFormat(
     startIndex: int,
     responseFormatArray: List,
@@ -487,38 +485,6 @@ export class ModelWeightResponseFormat {
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   public productTableResponseFormat(
     startIndex: int,
     responseFormatArray: List,
@@ -533,7 +499,7 @@ export class ModelWeightResponseFormat {
       return { $project: new ModelWeight().productTableMinimum() };
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().productTableMedium() };
-    }else if (responseFormatArray.includes(startIndex + 3)) {
+    } else if (responseFormatArray.includes(startIndex + 3)) {
       return { $project: { _: 0 } };
     } else if (responseFormatArray.includes(startIndex + 4)) {
       return { $project: new ModelWeight().productTableCustom1() };
@@ -546,9 +512,6 @@ export class ModelWeightResponseFormat {
     }
   }
 
-
-
-  
   public productTempTableResponseFormat(
     startIndex: int,
     responseFormatArray: List,
@@ -563,7 +526,7 @@ export class ModelWeightResponseFormat {
       return { $project: new ModelWeight().productTempTableMinimum() };
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().productTempTableMedium() };
-    }else if (responseFormatArray.includes(startIndex + 3)) {
+    } else if (responseFormatArray.includes(startIndex + 3)) {
       return { $project: { _: 0 } };
     } else if (responseFormatArray.includes(startIndex + 4)) {
       return { $project: new ModelWeight().productTempTableCustom1() };
@@ -632,9 +595,6 @@ export class ModelWeightResponseFormat {
     }
   }
 
-
-
-
   public factoryTableResponseFormat(
     startIndex: int,
     responseFormatArray: List,
@@ -663,17 +623,21 @@ export class ModelWeightResponseFormat {
     }
 
     if (responseFormatArray.includes(startIndex)) {
-      return { $project: new ModelWeight().factoryStockTransferItemTableLight() };
+      return {
+        $project: new ModelWeight().factoryStockTransferItemTableLight(),
+      };
     } else if (responseFormatArray.includes(startIndex + 1)) {
-      return { $project: new ModelWeight().factoryStockTransferItemTableMinimumn() };
+      return {
+        $project: new ModelWeight().factoryStockTransferItemTableMinimumn(),
+      };
     } else if (responseFormatArray.includes(startIndex + 2)) {
-      return { $project: new ModelWeight().factoryStockTransferItemTableMedium() };
+      return {
+        $project: new ModelWeight().factoryStockTransferItemTableMedium(),
+      };
     } else {
       return { $project: { _: 0 } };
     }
   }
-
-
 
   public deliveryTableResponseFormat(
     startIndex: int,
@@ -694,9 +658,6 @@ export class ModelWeightResponseFormat {
     }
   }
 
-
-  
-
   public employeeStockInHandTableResponseFormat(
     startIndex: int,
     responseFormatArray: List,
@@ -716,13 +677,6 @@ export class ModelWeightResponseFormat {
     }
   }
 
-
-
-
-
-
-
-
   public employeeStockInHandItemsTableResponseFormat(
     startIndex: int,
     responseFormatArray: List,
@@ -732,26 +686,21 @@ export class ModelWeightResponseFormat {
     }
 
     if (responseFormatArray.includes(startIndex)) {
-      return { $project: new ModelWeight().employeeStockInHandItemsTableLight() };
+      return {
+        $project: new ModelWeight().employeeStockInHandItemsTableLight(),
+      };
     } else if (responseFormatArray.includes(startIndex + 1)) {
-      return { $project: new ModelWeight().employeeStockInHandItemsTableMinimum() };
+      return {
+        $project: new ModelWeight().employeeStockInHandItemsTableMinimum(),
+      };
     } else if (responseFormatArray.includes(startIndex + 2)) {
-      return { $project: new ModelWeight().employeeStockInHandItemsTableMedium() };
+      return {
+        $project: new ModelWeight().employeeStockInHandItemsTableMedium(),
+      };
     } else {
       return { $project: { _: 0 } };
     }
   }
-
-
-
-
-
-
-
-
-
-
-
 
   public deliveryItemsTableResponseFormat(
     startIndex: int,
@@ -810,38 +759,6 @@ export class ModelWeightResponseFormat {
       return { $project: { _: 0 } };
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   public deliveryChellanTableResponseFormat(
     startIndex: int,
@@ -1104,7 +1021,7 @@ export class ModelWeightResponseFormat {
       return {
         $project: new ModelWeight().productDocumentLinkingTableMedium(),
       };
-    }else if (responseFormatArray.includes(startIndex + 3)) {
+    } else if (responseFormatArray.includes(startIndex + 3)) {
       return {
         $project: new ModelWeight().productDocumentLinkingTableCustom1(),
       };
@@ -1144,15 +1061,23 @@ export class ModelWeightResponseFormat {
     }
 
     if (responseFormatArray.includes(startIndex)) {
-      return { $project: new ModelWeight().productTempStonelinkingTableLight() };
+      return {
+        $project: new ModelWeight().productTempStonelinkingTableLight(),
+      };
     } else if (responseFormatArray.includes(startIndex + 1)) {
-      return { $project: new ModelWeight().productTempStonelinkingTableMinimum() };
+      return {
+        $project: new ModelWeight().productTempStonelinkingTableMinimum(),
+      };
     } else if (responseFormatArray.includes(startIndex + 2)) {
-      return { $project: new ModelWeight().productTempStonelinkingTableMedium() };
+      return {
+        $project: new ModelWeight().productTempStonelinkingTableMedium(),
+      };
     } else if (responseFormatArray.includes(startIndex + 3)) {
       return { $project: { _: 0 } };
     } else if (responseFormatArray.includes(startIndex + 4)) {
-      return { $project: new ModelWeight().productTempStonelinkingTableCustom1() };
+      return {
+        $project: new ModelWeight().productTempStonelinkingTableCustom1(),
+      };
     } else {
       return { $project: { _: 0 } };
     }
@@ -1302,7 +1227,9 @@ export class ModelWeightResponseFormat {
     responseFormatArray: List,
   ): Object {
     if (responseFormatArray.length == 0) {
-      return { $project: new ModelWeight().deliveryCounterBundleTableMaximum() };
+      return {
+        $project: new ModelWeight().deliveryCounterBundleTableMaximum(),
+      };
     }
 
     if (responseFormatArray.includes(startIndex)) {
@@ -1314,7 +1241,9 @@ export class ModelWeightResponseFormat {
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().deliveryCounterBundleTableMedium() };
     } else {
-      return { $project: new ModelWeight().deliveryCounterBundleTableMaximum() };
+      return {
+        $project: new ModelWeight().deliveryCounterBundleTableMaximum(),
+      };
     }
   }
 
@@ -1411,6 +1340,63 @@ export class ModelWeightResponseFormat {
       return { $project: new ModelWeight().tagDocumentLinkingTableMinimum() };
     } else if (responseFormatArray.includes(startIndex + 2)) {
       return { $project: new ModelWeight().tagDocumentLinkingTableMedium() };
+    } else {
+      return { $project: { _: 0 } };
+    }
+  }
+  
+  public materialReceiptHeadsResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: { _: 0 } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().materialReceiptHeadsTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().materialReceiptHeadsTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().materialReceiptHeadsTableMedium() };
+    } else {
+      return { $project: { _: 0 } };
+    }
+  }
+  
+  public materialReceiptItemsResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: { _: 0 } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().materialReceiptItemsTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().materialReceiptItemsTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().materialReceiptItemsTableMedium() };
+    } else {
+      return { $project: { _: 0 } };
+    }
+  }
+  
+  public materialStocksResponseFormat(
+    startIndex: int,
+    responseFormatArray: List,
+  ): Object {
+    if (responseFormatArray.length == 0) {
+      return { $project: { _: 0 } };
+    }
+
+    if (responseFormatArray.includes(startIndex)) {
+      return { $project: new ModelWeight().materialStocksTableLight() };
+    } else if (responseFormatArray.includes(startIndex + 1)) {
+      return { $project: new ModelWeight().materialStocksTableMinimum() };
+    } else if (responseFormatArray.includes(startIndex + 2)) {
+      return { $project: new ModelWeight().materialStocksTableMedium() };
     } else {
       return { $project: { _: 0 } };
     }

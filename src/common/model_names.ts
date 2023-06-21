@@ -98,8 +98,6 @@ export enum ModelNames {
   ORDER_REJECTED_CANCEL_REPORTS = 'order_rejected_cancel_reports',
   USER_NOTIFICATIONS = 'user_notifications',
 
-
-
   CHAT_PERSONAL_CHAT_MESSAGES = 'chat_personal_chat_messages',
   CHAT_PERSONAL_CHATS = 'chat_personal_chats',
   CHAT_PENDING_MESSAGES = 'chat_pending_messages',
@@ -115,13 +113,8 @@ export enum ModelNames {
   ACCOUNT_VOUCHER = 'account_vouchers',
   ACCOUNT_VOUCHER_ITEMS = 'account_voucher_items',
   ACCOUNT_BOOK = 'account_books',
-  ACCOUNT_OUTSTANDING = 'account_outstandings'
-  
-  
-
-
-
-
-  
-  
+  ACCOUNT_OUTSTANDING = 'account_outstandings',
+  MATERIAL_RECEIPT_HEADS = 'material_receipt_heads',
+  MATERIAL_RECEIPT_ITEMS = 'material_receipt_items',
+  MATERIAL_STOCKS = 'material_stocks',
 }
