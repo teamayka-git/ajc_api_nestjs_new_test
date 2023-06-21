@@ -1070,15 +1070,16 @@ export class ShopsService {
                 },
                 { $unwind: { path: '$materialStocks' } },
               
-                {
-                  $project: {
-                    _id: 1,
-                    metalBalance:
-                      '$materialStockUserDetails.materialStocks.materialStockBalance',
-                  },
-                },
+               
               ],
               as: 'materialStockUserDetails',
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              metalBalance:
+                '$materialStockUserDetails.materialStocks.materialStockBalance',
             },
           },
           {
