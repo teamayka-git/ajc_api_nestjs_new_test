@@ -990,7 +990,7 @@ export class ShopsService {
             $sort: { _creditAmount: dto.sortOrder, _id: dto.sortOrder },
           });
           break;
-        case 10:
+        case 10: 
           arrayAggregation.push({
             $sort: { _creditDays: dto.sortOrder, _id: dto.sortOrder },
           });
@@ -1018,6 +1018,41 @@ export class ShopsService {
           dto.responseFormat,
         ),
       );
+      if (dto.screenType.includes(119)) {
+        arrayAggregation.push(
+          {
+            $lookup: {
+              from: ModelNames.USER,
+              let: { userId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    _customType: { $in: [5] },
+                    $expr: { $eq: ['$_shopId', '$$userId'] },
+                  },
+                },
+
+                { $project: {_id:1 } },
+
+
+
+
+
+
+
+                
+              ],
+              as: 'materialStockUserDetails',
+            },
+          },
+          {
+            $unwind: { path: '$materialStockUserDetails', preserveNullAndEmptyArrays: true },
+          },
+        );
+      }
+
+
+      
       if (dto.screenType.includes(111)) {
         arrayAggregation.push(
           {
