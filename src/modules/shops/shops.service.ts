@@ -1069,9 +1069,7 @@ export class ShopsService {
                   },
                 },
                 { $unwind: { path: '$materialStocks' } },
-                {
-                  $unwind: { path: '$materialStockUserDetails' },
-                },
+              
                 {
                   $project: {
                     _id: 1,
