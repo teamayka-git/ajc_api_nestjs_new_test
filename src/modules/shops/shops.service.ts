@@ -990,7 +990,7 @@ export class ShopsService {
             $sort: { _creditAmount: dto.sortOrder, _id: dto.sortOrder },
           });
           break;
-        case 10: 
+        case 10:
           arrayAggregation.push({
             $sort: { _creditDays: dto.sortOrder, _id: dto.sortOrder },
           });
@@ -1032,27 +1032,66 @@ export class ShopsService {
                   },
                 },
 
-                { $project: {_id:1 } },
+                { $project: { _id: 1 } },
 
+                {
+                  $lookup: {
+                    from: ModelNames.MATERIAL_STOCKS,
+                    let: { metalStockUserId: '$_id' },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: { $eq: ['$_userId', '$$metalStockUserId'] },
+                        },
+                      },
 
+                      {
+                        $project: {
+                          _id: 1,
 
+                          total: {
+                            $multiply: [
+                              '$_pureWeightHundred',
+                              '$_transactionSign',
+                            ],
+                          },
+                        },
+                      },
 
-
-
-
-                
+                      {
+                        $group: {
+                          _id: null,
+                          materialStockBalance: { $sum: '$total' },
+                        },
+                      },
+                    ],
+                    as: 'materialStocks',
+                  },
+                },
+                { $unwind: { path: '$materialStocks' } },
+                {
+                  $unwind: { path: '$materialStockUserDetails' },
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    metalBalance:
+                      '$materialStockUserDetails.materialStocks.materialStockBalance',
+                  },
+                },
               ],
               as: 'materialStockUserDetails',
             },
           },
           {
-            $unwind: { path: '$materialStockUserDetails', preserveNullAndEmptyArrays: true },
+            $unwind: {
+              path: '$materialStockUserDetails',
+              preserveNullAndEmptyArrays: true,
+            },
           },
         );
       }
 
-
-      
       if (dto.screenType.includes(111)) {
         arrayAggregation.push(
           {
@@ -2642,10 +2681,10 @@ export class ShopsService {
 
       //doing notification
       var userFcmCheck = await this.userModel.find(
-        { _shopId: { $in: dto.shopIds },_status:1 },
+        { _shopId: { $in: dto.shopIds }, _status: 1 },
         { _isNotificationEnable: 1, _fcmId: 1 },
       );
-      console.log("___shop freez  "+JSON.stringify(userFcmCheck));
+      console.log('___shop freez  ' + JSON.stringify(userFcmCheck));
       var userFcmIds = [];
       var userNotificationTable = [];
       var notificationTitle =
@@ -2681,8 +2720,8 @@ export class ShopsService {
           session: transactionSession,
         });
       }
-      
-      console.log("___shop freez  "+userFcmIds);
+
+      console.log('___shop freez  ' + userFcmIds);
       if (userFcmIds.length != 0) {
         new FcmUtils().sendFcm(
           notificationTitle,
