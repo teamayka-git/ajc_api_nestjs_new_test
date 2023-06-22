@@ -58,6 +58,11 @@ export const UserSchema = new mongoose.Schema({
     ref: ModelNames.LOGISTICS_PARTNERS,
     default: null,
   },
+  _deliveryCounterId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.DELIVERY_COUNTERS,
+    default: null,
+  },
   _fcmId: { type: String, default: '' },
   _deviceUniqueId: { type: String, default: '' },
   _permissions: { type: Object, required: true, default: [] },
@@ -99,6 +104,7 @@ export interface User {
   _deliveryHubId: string;
   _logisticPartnerId:String;
   _deviceUniqueId: String;
+  _deliveryCounterId: String;
   _permissions: Object;
   _userType: Number;
   _isNotificationEnable: Number;
@@ -109,6 +115,7 @@ export interface User {
   _status: Number;
 }
 
+UserSchema.index({ _deliveryCounterId: 1 });
 UserSchema.index({ _isNotificationEnable: 1 });
 UserSchema.index({ _logisticPartnerId: 1 });
 UserSchema.index({ _testCenterId: 1 });
@@ -164,6 +171,7 @@ _userType:{
     3 - employee 
     4 - Shop
     5 - default store user
+    6 - delivery counter
 }
 
 _permissions:[
@@ -188,6 +196,7 @@ _customType:{
 9 - Test center user
 10 - logistics partner
 11 - default store user
+12 - delivery counter
 }
 
 

@@ -399,6 +399,7 @@ resultCounterLinkingUsers.forEach((element)=>{
             _fcmId: '',
             _isNotificationEnable:1,
             _deviceUniqueId: '',
+            _deliveryCounterId: null,
             _permissions: dto.permissions,
             _userType: 3,
             _createdUserId: _userId_,

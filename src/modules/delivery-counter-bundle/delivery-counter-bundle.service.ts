@@ -16,6 +16,9 @@ import { DeliveryBundles } from 'src/tableModels/delivery_counter_bundles.model'
 import { GlobalConfig } from 'src/config/global_config';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 import { pipe } from 'rxjs';
+import { MterialStocks } from 'src/tableModels/material_stocks.model';
+import { AccountBranch } from 'src/tableModels/accountBranch.model';
+import { User } from 'src/tableModels/user.model';
 @Injectable()
 export class DeliveryCounterBundleService {
   constructor(
@@ -31,6 +34,13 @@ export class DeliveryCounterBundleService {
     private readonly orderSaleHistoriesModel: mongoose.Model<OrderSaleHistories>,
     @InjectModel(ModelNames.COUNTERS)
     private readonly counterModel: mongoose.Model<Counters>,
+    @InjectModel(ModelNames.USER)
+    private readonly userModel: mongoose.Model<User>,
+
+    @InjectModel(ModelNames.MATERIAL_STOCKS)
+    private readonly materialStocksModel: mongoose.Model<MterialStocks>,
+    @InjectModel(ModelNames.ACCOUNT_BRANCH)
+    private readonly accountBranchModel: mongoose.Model<AccountBranch>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async create(dto: DeliveryCounterBundleCreateDto, _userId_: string) {
@@ -130,7 +140,7 @@ export class DeliveryCounterBundleService {
           _deliveryCounterId: null,
           _orderSaleItemId: null,
           _deliveryProviderId: null,
-          _description:dto.osHistoryDescription,
+          _description: dto.osHistoryDescription,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _status: 1,
@@ -140,6 +150,256 @@ export class DeliveryCounterBundleService {
       await this.orderSaleHistoriesModel.insertMany(arraySalesOrderHistories, {
         session: transactionSession,
       });
+
+      //-- material stock hit start
+      var resultAccountBranch = await this.accountBranchModel
+        .find({ _status: 1 })
+        .limit(1);
+      if (resultAccountBranch.length == 0) {
+        throw new HttpException(
+          'Account Branch not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      var orderSaleIdsMongo = [];
+      dto.orderSaleIds.forEach((elementOrderSale) => {
+        orderSaleIdsMongo.push(elementOrderSale);
+      });
+
+      var resultFromUserMaterialStock = await this.userModel.find({
+        _status: 1,
+        _userType: 6,
+        _customType: { $in: [11] },
+      });
+      if (resultFromUserMaterialStock.length == 0) {
+        throw new HttpException(
+          'Default store user not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      var resultToUserMaterialStock = await this.userModel.find({
+        _status: 1,
+        _deliveryCounterId: dto.deliveryCounterId,
+        _customType: { $in: [12] },
+      });
+      if (resultToUserMaterialStock.length == 0) {
+        throw new HttpException(
+          'To store user not found',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      var orderSaleIdsMongo = [];
+      dto.orderSaleIds.forEach((elementOrderSale) => {
+        orderSaleIdsMongo.push(elementOrderSale);
+      });
+
+      var resultOrderSaleMainStock = await this.orderSaleModel.aggregate([
+        {
+          $match: {
+            _id: { $in: orderSaleIdsMongo },
+          },
+        },
+        {
+          $project: {
+            _shopId: 1,
+            _uid: 1,
+          },
+        },
+        {
+          $lookup: {
+            from: ModelNames.ORDER_SALES_ITEMS,
+            let: { orderSaleId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  _status: 1,
+                  $expr: { $eq: ['$_orderSaleId', '$$orderSaleId'] },
+                },
+              },
+              {
+                $project: {
+                  _subCategoryId: 1,
+                  _productId: 1,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.PRODUCTS,
+                  let: { productId: '$_productId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$productId'] },
+                      },
+                    },
+                    {
+                      $project: {
+                        _id: 1,
+                        _grossWeight: 1,
+                      },
+                    },
+                  ],
+                  as: 'productDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$productDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  from: ModelNames.SUB_CATEGORIES,
+                  let: { subCategoryId: '$_subCategoryId' },
+                  pipeline: [
+                    {
+                      $match: { $expr: { $eq: ['$_id', '$$subCategoryId'] } },
+                    },
+                    {
+                      $project: {
+                        _categoryId: 1,
+                        _id: 1,
+                      },
+                    },
+
+                    {
+                      $lookup: {
+                        from: ModelNames.CATEGORIES,
+                        let: { categoryId: '$_categoryId' },
+                        pipeline: [
+                          {
+                            $match: {
+                              $expr: { $eq: ['$_id', '$$categoryId'] },
+                            },
+                          },
+                          {
+                            $project: {
+                              _groupId: 1,
+                              _id: 1,
+                            },
+                          },
+
+                          {
+                            $lookup: {
+                              from: ModelNames.GROUP_MASTERS,
+                              let: { groupId: '$_groupId' },
+                              pipeline: [
+                                {
+                                  $match: {
+                                    $expr: { $eq: ['$_id', '$$groupId'] },
+                                  },
+                                },
+                                {
+                                  $project: {
+                                    _id: 1,
+                                    _meltingPurity: 1,
+                                  },
+                                },
+                              ],
+                              as: 'groupDetails',
+                            },
+                          },
+                          {
+                            $unwind: {
+                              path: '$groupDetails',
+                              preserveNullAndEmptyArrays: true,
+                            },
+                          },
+                        ],
+                        as: 'categoryDetails',
+                      },
+                    },
+                    {
+                      $unwind: {
+                        path: '$categoryDetails',
+                        preserveNullAndEmptyArrays: true,
+                      },
+                    },
+                  ],
+                  as: 'subCategoryDetails',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$subCategoryDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            ],
+            as: 'orderSaleItems',
+          },
+        },
+      ]);
+
+      var arrayToMaterialStockTable = [];
+
+      resultOrderSaleMainStock.forEach((elementToStock) => {
+        elementToStock.orderSaleItems.forEach((elementToStockItems) => {
+          var meltingPurityMaterialStock =
+            elementToStockItems.subCategoryDetails.categoryDetails.groupDetails
+              ._meltingPurity;
+          var netWeightMaterialStock =
+            elementToStockItems.productDetails._grossWeight;
+          arrayToMaterialStockTable.push({
+            _groupId:
+              elementToStockItems.subCategoryDetails.categoryDetails
+                .groupDetails._id,
+            _subCategoryId: elementToStockItems.subCategoryDetails._id,
+            _voucherId: elementToStock._id,
+            _voucherDetailedId: elementToStockItems._id,
+            _voucherType: 7,
+            _transactionDate: dateTime,
+            _transactionRemark: '',
+            _uidForeign: elementToStock._uid,
+            _userId: resultFromUserMaterialStock[0]._id,
+            _transactionSign: -1,
+            _meltingPrity: meltingPurityMaterialStock,
+            _pureWeightHundred:
+              (netWeightMaterialStock * meltingPurityMaterialStock) / 100,
+            _netWeight: netWeightMaterialStock,
+            _accountBranchId: resultAccountBranch[0]._id,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+
+          arrayToMaterialStockTable.push({
+            _groupId:
+              elementToStockItems.subCategoryDetails.categoryDetails
+                .groupDetails._id,
+            _subCategoryId: elementToStockItems.subCategoryDetails._id,
+            _voucherId: elementToStock._id,
+            _voucherDetailedId: elementToStockItems._id,
+            _voucherType: 7,
+            _transactionDate: dateTime,
+            _transactionRemark: '',
+            _uidForeign: elementToStock._uid,
+            _userId: resultToUserMaterialStock[0]._id,
+            _transactionSign: 1,
+            _meltingPrity: meltingPurityMaterialStock,
+            _pureWeightHundred:
+              (netWeightMaterialStock * meltingPurityMaterialStock) / 100,
+            _netWeight: netWeightMaterialStock,
+            _accountBranchId: resultAccountBranch[0]._id,
+            _createdUserId: _userId_,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1,
+          });
+        });
+      });
+      await this.materialStocksModel.insertMany(arrayToMaterialStockTable, {
+        session: transactionSession,
+      });
+
+      //-- material stock hit end
 
       const responseJSON = { message: 'success', data: result1 };
       if (
@@ -376,7 +636,7 @@ export class DeliveryCounterBundleService {
       var arrayAggregation = [];
       var arrayEmployeeIds = [];
 
-     /* if (dto.screenType.includes(115) && dto.orderHeadIds.length == 0) {
+      /* if (dto.screenType.includes(115) && dto.orderHeadIds.length == 0) {
         throw new HttpException(
           'orderHeadIds is empty, Bcz screenType contains 115',
           HttpStatus.INTERNAL_SERVER_ERROR,
@@ -860,16 +1120,24 @@ export class DeliveryCounterBundleService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { _uid: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _uid: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _type: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _type: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 4:
-          arrayAggregation.push({ $sort: { _workStatus: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { _workStatus: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
       }
 
@@ -1216,7 +1484,8 @@ export class DeliveryCounterBundleService {
                           {
                             $unwind: {
                               path: '$invoiceDetails',
-                              preserveNullAndEmptyArrays:(dto.screenType.includes(116))?false: true,//inv1
+                              preserveNullAndEmptyArrays:
+                                dto.screenType.includes(116) ? false : true, //inv1
                             },
                           },
                         );
@@ -1237,7 +1506,11 @@ export class DeliveryCounterBundleService {
                       {
                         $unwind: {
                           path: '$invoiceItemDetails',
-                          preserveNullAndEmptyArrays:(dto.screenType.includes(116))?false: true,//inv1
+                          preserveNullAndEmptyArrays: dto.screenType.includes(
+                            116,
+                          )
+                            ? false
+                            : true, //inv1
                         },
                       },
                     );
@@ -1363,15 +1636,17 @@ export class DeliveryCounterBundleService {
                         new ModelWeightResponseFormat().userTableResponseFormat(
                           1100,
                           dto.responseFormat,
-                        ), 
+                        ),
                       ],
                       as: 'ohDetails',
-                    },   
+                    },
                   },
                   {
                     $unwind: {
                       path: '$ohDetails',
-                      preserveNullAndEmptyArrays:(dto.screenType.includes(115))?false: true,//inv1
+                      preserveNullAndEmptyArrays: dto.screenType.includes(115)
+                        ? false
+                        : true, //inv1
                     },
                   },
                 );

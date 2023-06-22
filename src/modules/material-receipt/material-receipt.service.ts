@@ -48,7 +48,7 @@ export class MaterialReceiptService {
 
       if (resultBranch.length == 0) {
         throw new HttpException(
-          'Branch not found',
+          'Account Branch not found',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
@@ -170,7 +170,7 @@ export class MaterialReceiptService {
 
       if (resultBranch.length == 0) {
         throw new HttpException(
-          'Branch not found',
+          'Account Branch not found',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }

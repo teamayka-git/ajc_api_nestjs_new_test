@@ -2163,6 +2163,7 @@ export class AppService {
             _isNotificationEnable: 0,
             _email: 'defaultStore@gmail.com' ,
             _deviceUniqueId: '',
+            _deliveryCounterId: null,
             _permissions: [],
            
             _createdUserId: null,
@@ -2206,6 +2207,7 @@ export class AppService {
             _fcmId: '',
             _isNotificationEnable: 1,
             _deviceUniqueId: '',
+            _deliveryCounterId: null,
             _permissions: GlobalConfig().SUPER_ADMIN_PERMISSIONS,
             _userType: 0,
             _createdUserId: null,
