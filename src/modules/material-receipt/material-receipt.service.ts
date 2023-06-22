@@ -11,6 +11,7 @@ import { Counters } from 'src/tableModels/counters.model';
 import { Branch } from 'src/tableModels/branch.model';
 import { GoldRateTimelines } from 'src/tableModels/gold_rate_timelines.model';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
+import { AccountBranch } from 'src/tableModels/accountBranch.model';
 
 @Injectable()
 export class MaterialReceiptService {
@@ -23,8 +24,8 @@ export class MaterialReceiptService {
     private readonly materialReceiptItemsModel: mongoose.Model<MterialReceiptItems>,
     @InjectModel(ModelNames.MATERIAL_STOCKS)
     private readonly materialStocksModel: mongoose.Model<MterialStocks>,
-    @InjectModel(ModelNames.BRANCHES)
-    private readonly branchModel: mongoose.Model<Branch>,
+    @InjectModel(ModelNames.ACCOUNT_BRANCH)
+    private readonly accountBranchModel: mongoose.Model<AccountBranch>,
     @InjectModel(ModelNames.GOLD_RATE_TIMELINES)
     private readonly goldRateTimelineModel: mongoose.Model<GoldRateTimelines>,
     @InjectConnection() private readonly connection: mongoose.Connection,
@@ -38,7 +39,7 @@ export class MaterialReceiptService {
       var arrayToMaterialReceiptItems = [];
       var arrayToMaterialStocks = [];
 
-      var resultBranch = await this.branchModel.find({ _status: 1 }).limit(1);
+      var resultBranch = await this.accountBranchModel.find({ _status: 1 }).limit(1);
       var resultGoldRateTimeline = await this.goldRateTimelineModel
         .find({ _status: 1 })
         .sort({ _id: -1 })
@@ -113,7 +114,7 @@ export class MaterialReceiptService {
           _pureWeightRB: mapItem.pureWeightRB,
           _pureWeightHundred: mapItem.pureWeightHundred,
           _unitRate: resultGoldRateTimeline[0]._ratePerGram,
-          _branchId: resultBranch[0]._id,
+          _accountBranchId: resultBranch[0]._id,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,
@@ -165,7 +166,7 @@ export class MaterialReceiptService {
       var arrayToMaterialReceiptItems = [];
       var arrayToMaterialStocks = [];
 
-      var resultBranch = await this.branchModel.find({ _status: 1 }).limit(1);
+      var resultBranch = await this.accountBranchModel.find({ _status: 1 }).limit(1);
       var resultGoldRateTimeline = await this.goldRateTimelineModel
         .find({ _status: 1 })
         .sort({ _id: -1 })
@@ -258,7 +259,7 @@ export class MaterialReceiptService {
           _pureWeightRB: mapItem.pureWeightRB,
           _pureWeightHundred: mapItem.pureWeightHundred,
           _unitRate: resultGoldRateTimeline[0]._ratePerGram,
-          _branchId: resultBranch[0]._id,
+          _accountBranchId: resultBranch[0]._id,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _updatedUserId: null,

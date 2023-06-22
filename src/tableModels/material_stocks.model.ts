@@ -30,9 +30,9 @@ export const MterialStocksSchema = new mongoose.Schema({
   _pureWeightHundred : { type: Number, required: true, default: -1 },
   _unitRate : { type: Number, required: true, default: -1 },
   
-  _branchId: {
+  _accountBranchId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: ModelNames.BRANCHES,
+    ref: ModelNames.ACCOUNT_BRANCH,
     default: null,
   },
   _createdUserId: {
@@ -63,7 +63,7 @@ export interface MterialStocks {
   _pureWeightRB: Number;
   _pureWeightHundred: Number;
   _unitRate: Number;
-  _branchId: String;
+  _accountBranchId: String;
   _createdUserId: String;
   _createdAt: Number;
   _updatedUserId: String;
@@ -82,7 +82,7 @@ MterialStocksSchema.index({ _transactionSign: 1 });
 MterialStocksSchema.index({ _pureWeightRB: 1 });
 MterialStocksSchema.index({ _pureWeightHundred: 1 });
 MterialStocksSchema.index({ _unitRate: 1 });
-MterialStocksSchema.index({ _branchId: 1 });
+MterialStocksSchema.index({ _accountBranchId: 1 });
 MterialStocksSchema.index({ _createdUserId: 1 });
 MterialStocksSchema.index({ _updatedUserId: 1 });
 MterialStocksSchema.index({ _createdAt: 1 });

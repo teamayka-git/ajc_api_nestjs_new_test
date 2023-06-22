@@ -3887,7 +3887,7 @@ export class ModelWeight {
       _pureWeightRB: 1,
       _pureWeightHundred: 1,
       _unitRate: 1,
-      _branchId: 1,
+      _accountBranchId: 1,
     };
   }
   public materialStocksTableMedium(): Object {
@@ -3904,7 +3904,7 @@ export class ModelWeight {
       _pureWeightRB: 1,
       _pureWeightHundred: 1,
       _unitRate: 1,
-      _branchId: 1,
+      _accountBranchId: 1,
       _createdUserId: 1,
       _createdAt: 1,
       _status: 1,
@@ -3924,7 +3924,7 @@ export class ModelWeight {
       _pureWeightRB: 1,
       _pureWeightHundred: 1,
       _unitRate: 1,
-      _branchId: 1,
+      _accountBranchId: 1,
       _createdUserId: 1,
       _createdAt: 1,
       _updatedUserId: 1,

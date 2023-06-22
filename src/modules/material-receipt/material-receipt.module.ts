@@ -9,6 +9,7 @@ import { MterialStocksSchema } from 'src/tableModels/material_stocks.model';
 import { CountersSchema } from 'src/tableModels/counters.model';
 import { BranchSchema } from 'src/tableModels/branch.model';
 import { GoldRateTimelinesSchema } from 'src/tableModels/gold_rate_timelines.model';
+import { AccountBranchSchema } from 'src/tableModels/accountBranch.model';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { GoldRateTimelinesSchema } from 'src/tableModels/gold_rate_timelines.mod
       },
       { name: ModelNames.MATERIAL_STOCKS, schema: MterialStocksSchema },
       { name: ModelNames.COUNTERS, schema: CountersSchema },
-      { name: ModelNames.BRANCHES, schema: BranchSchema },
+      { name: ModelNames.ACCOUNT_BRANCH, schema: AccountBranchSchema },
       { name: ModelNames.GOLD_RATE_TIMELINES, schema:GoldRateTimelinesSchema },
     ]),
   ],
