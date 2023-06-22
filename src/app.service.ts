@@ -2114,16 +2114,74 @@ export class AppService {
         },
         { upsert: true, new: true, session: transactionSession },
       );
+      await this.countersModel.findOneAndUpdate(
+        { _tableName: ModelNames.MATERIAL_RECEIPT_HEADS },
+        {
+          $setOnInsert: {
+            _count: 0,
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+
 
       var encryptedPassword = await crypto
-        .pbkdf2Sync(
-          '123456',
-          process.env.CRYPTO_ENCRYPTION_SALT,
-          1000,
-          64,
-          `sha512`,
-        )
-        .toString(`hex`);
+      .pbkdf2Sync(
+        '123456',
+        process.env.CRYPTO_ENCRYPTION_SALT,
+        1000,
+        64,
+        `sha512`,
+      )
+      .toString(`hex`);
+
+      var resultUser = await this.userModel.findOneAndUpdate(
+        { _userType: 5,},
+        {
+          $setOnInsert: {
+            _name: 'Default store',
+            _gender: 0,
+            _password: encryptedPassword,
+            _mobile: '0000000000',
+            _globalGalleryId: null,
+            _employeeId: null,
+            _agentId: null,
+            _supplierId: null,
+            _testCenterId: null,
+            _logisticPartnerId: null,
+            _shopId: null,
+            _customType: [11],
+            _halmarkId: null,
+            _customerId: null,
+            _deliveryHubId: null,
+            _fcmId: '',
+            _isNotificationEnable: 0,
+            _email: 'defaultStore@gmail.com' ,
+            _deviceUniqueId: '',
+            _permissions: [],
+           
+            _createdUserId: null,
+            _createdAt: -1,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
+
+
+
+
+
+
+
+     
 
       var employeeId = new mongoose.Types.ObjectId();
       var resultUser = await this.userModel.findOneAndUpdate(

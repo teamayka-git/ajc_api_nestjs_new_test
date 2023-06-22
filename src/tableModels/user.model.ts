@@ -163,6 +163,7 @@ _userType:{
     2 - supplier
     3 - employee 
     4 - Shop
+    5 - default store user
 }
 
 _permissions:[
@@ -186,6 +187,7 @@ _customType:{
 8 - Shop Customer
 9 - Test center user
 10 - logistics partner
+11 - default store user
 }
 
 
