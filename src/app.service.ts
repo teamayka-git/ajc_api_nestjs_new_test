@@ -2141,7 +2141,8 @@ export class AppService {
       .toString(`hex`);
 
       var resultUser = await this.userModel.findOneAndUpdate(
-        { _userType: 5,},
+        {
+          _customType: [11], _userType: 5,},
         {
           $setOnInsert: {
             _name: 'Default store',
@@ -2155,7 +2156,6 @@ export class AppService {
             _testCenterId: null,
             _logisticPartnerId: null,
             _shopId: null,
-            _customType: [11],
             _halmarkId: null,
             _customerId: null,
             _deliveryHubId: null,
