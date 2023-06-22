@@ -4,7 +4,12 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { MterialReceiptHeads } from 'src/tableModels/material_receipt_heads.model';
 import { MterialReceiptItems } from 'src/tableModels/material_receipt_items.model';
 import { MterialStocks } from 'src/tableModels/material_stocks.model';
-import { MaterialReceiptCreateDto, MaterialReceiptEditDto, MaterialReceiptListDto, MaterialReceiptStatusChangeDto } from './material_receipt.dto';
+import {
+  MaterialReceiptCreateDto,
+  MaterialReceiptEditDto,
+  MaterialReceiptListDto,
+  MaterialReceiptStatusChangeDto,
+} from './material_receipt.dto';
 import { GlobalConfig } from 'src/config/global_config';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Counters } from 'src/tableModels/counters.model';
@@ -26,8 +31,6 @@ export class MaterialReceiptService {
     private readonly materialStocksModel: mongoose.Model<MterialStocks>,
     @InjectModel(ModelNames.ACCOUNT_BRANCH)
     private readonly accountBranchModel: mongoose.Model<AccountBranch>,
-    @InjectModel(ModelNames.GOLD_RATE_TIMELINES)
-    private readonly goldRateTimelineModel: mongoose.Model<GoldRateTimelines>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
@@ -39,21 +42,13 @@ export class MaterialReceiptService {
       var arrayToMaterialReceiptItems = [];
       var arrayToMaterialStocks = [];
 
-      var resultBranch = await this.accountBranchModel.find({ _status: 1 }).limit(1);
-      var resultGoldRateTimeline = await this.goldRateTimelineModel
+      var resultBranch = await this.accountBranchModel
         .find({ _status: 1 })
-        .sort({ _id: -1 })
         .limit(1);
 
       if (resultBranch.length == 0) {
         throw new HttpException(
           'Branch not found',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      if (resultGoldRateTimeline.length == 0) {
-        throw new HttpException(
-          'Gold rate not found',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
@@ -103,6 +98,11 @@ export class MaterialReceiptService {
           _status: 1,
         });
         arrayToMaterialStocks.push({
+          _groupId: mapItem.groupId,
+          _subCategoryId:
+            mapItem.subcategoryId == '' ? null : mapItem.subcategoryId,
+          _meltingPrity: mapItem.meltingPurity,
+          _netWeight: mapItem.netWeight,
           _voucherId: resultmaterialReceiptHeadsModel._id,
           _voucherDetailedId: mterialReceiptItemId,
           _voucherType: 8,
@@ -111,9 +111,7 @@ export class MaterialReceiptService {
           _uidForeign: resultCounterMaterialReceipt._count,
           _userId: dto.shopUserId,
           _transactionSign: 1,
-          _pureWeightRB: mapItem.pureWeightRB,
           _pureWeightHundred: mapItem.pureWeightHundred,
-          _unitRate: resultGoldRateTimeline[0]._ratePerGram,
           _accountBranchId: resultBranch[0]._id,
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -166,21 +164,13 @@ export class MaterialReceiptService {
       var arrayToMaterialReceiptItems = [];
       var arrayToMaterialStocks = [];
 
-      var resultBranch = await this.accountBranchModel.find({ _status: 1 }).limit(1);
-      var resultGoldRateTimeline = await this.goldRateTimelineModel
+      var resultBranch = await this.accountBranchModel
         .find({ _status: 1 })
-        .sort({ _id: -1 })
         .limit(1);
 
       if (resultBranch.length == 0) {
         throw new HttpException(
           'Branch not found',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      if (resultGoldRateTimeline.length == 0) {
-        throw new HttpException(
-          'Gold rate not found',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
@@ -191,7 +181,7 @@ export class MaterialReceiptService {
         },
         {
           $set: {
-            _shopId: dto.shopId, 
+            _shopId: dto.shopId,
             _remark: dto.remark,
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
@@ -205,10 +195,9 @@ export class MaterialReceiptService {
         },
         {
           $set: {
-
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
-            _status:2
+            _status: 2,
           },
         },
         { new: true, session: transactionSession },
@@ -221,13 +210,11 @@ export class MaterialReceiptService {
           $set: {
             _updatedUserId: _userId_,
             _updatedAt: dateTime,
-            _status:2
+            _status: 2,
           },
         },
         { new: true, session: transactionSession },
       );
-
-    
 
       dto.array.map((mapItem) => {
         var mterialReceiptItemId = new mongoose.Types.ObjectId();
@@ -248,6 +235,11 @@ export class MaterialReceiptService {
           _status: 1,
         });
         arrayToMaterialStocks.push({
+          _groupId: mapItem.groupId,
+          _subCategoryId:
+            mapItem.subcategoryId == '' ? null : mapItem.subcategoryId,
+          _meltingPrity: mapItem.meltingPurity,
+          _netWeight: mapItem.netWeight,
           _voucherId: dto.materialReceiptId,
           _voucherDetailedId: mterialReceiptItemId,
           _voucherType: 8,
@@ -256,9 +248,7 @@ export class MaterialReceiptService {
           _uidForeign: dto.uid,
           _userId: dto.shopUserId,
           _transactionSign: 1,
-          _pureWeightRB: mapItem.pureWeightRB,
           _pureWeightHundred: mapItem.pureWeightHundred,
-          _unitRate: resultGoldRateTimeline[0]._ratePerGram,
           _accountBranchId: resultBranch[0]._id,
           _createdUserId: _userId_,
           _createdAt: dateTime,
@@ -304,7 +294,6 @@ export class MaterialReceiptService {
     }
   }
 
-  
   async status_change(dto: MaterialReceiptStatusChangeDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
@@ -312,7 +301,8 @@ export class MaterialReceiptService {
     try {
       var result = await this.materialReceiptHeadsModel.updateMany(
         {
-          _id: { $in: dto.materialReceiptIds },_status:dto.fromStatus
+          _id: { $in: dto.materialReceiptIds },
+          _status: dto.fromStatus,
         },
         {
           $set: {
@@ -326,7 +316,8 @@ export class MaterialReceiptService {
 
       await this.materialReceiptItemsModel.updateMany(
         {
-          _materialReceiptId: { $in: dto.materialReceiptIds },_status:dto.fromStatus
+          _materialReceiptId: { $in: dto.materialReceiptIds },
+          _status: dto.fromStatus,
         },
         {
           $set: {
@@ -337,11 +328,11 @@ export class MaterialReceiptService {
         },
         { new: true, session: transactionSession },
       );
-
 
       await this.materialStocksModel.updateMany(
         {
-          _voucherId: { $in: dto.materialReceiptIds },_status:dto.fromStatus
+          _voucherId: { $in: dto.materialReceiptIds },
+          _status: dto.fromStatus,
         },
         {
           $set: {
@@ -352,11 +343,6 @@ export class MaterialReceiptService {
         },
         { new: true, session: transactionSession },
       );
-
-
-
-
-
 
       const responseJSON = { message: 'success', data: result };
       if (
@@ -421,14 +407,13 @@ export class MaterialReceiptService {
         arrayAggregation.push({ $limit: dto.limit });
       }
 
-
       arrayAggregation.push(
         new ModelWeightResponseFormat().materialReceiptHeadsResponseFormat(
           0,
           dto.responseFormat,
         ),
       );
-      if ( dto.screenType.includes(100)) {
+      if (dto.screenType.includes(100)) {
         arrayAggregation.push(
           {
             $lookup: {
@@ -462,7 +447,7 @@ export class MaterialReceiptService {
         .session(transactionSession);
 
       var totalCount = 0;
-      if (dto.screenType.includes( 0)) {
+      if (dto.screenType.includes(0)) {
         //Get total count
         var limitIndexCount = arrayAggregation.findIndex(
           (it) => it.hasOwnProperty('$limit') === true,

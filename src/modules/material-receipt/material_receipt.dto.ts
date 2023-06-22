@@ -37,13 +37,26 @@ class MaterialReceiptCreateList {
   @ApiProperty({})
   tough: number;
 
-  @IsNumber()
-  @ApiProperty({})
-  pureWeightRB: number;
 
   @IsNumber()
   @ApiProperty({})
   pureWeightHundred: number;
+
+
+  
+  
+  @IsNumber()
+  @ApiProperty({})
+  meltingPurity: number;
+  @IsNumber()
+  @ApiProperty({})
+  pureWeightRB: number;
+
+  
+  @IsString()
+  @ApiProperty({})
+  subcategoryId: string;
+  
 }
 
 export class MaterialReceiptCreateDto {
@@ -104,11 +117,22 @@ class MaterialReceiptEditList {
 
   @IsNumber()
   @ApiProperty({})
-  pureWeightRB: number;
+  pureWeightHundred: number;
 
+  
+  
   @IsNumber()
   @ApiProperty({})
-  pureWeightHundred: number;
+  meltingPurity: number;
+  @IsNumber()
+  @ApiProperty({})
+  pureWeightRB: number;
+
+  
+  @IsString()
+  @ApiProperty({})
+  subcategoryId: string;
+  
 }
 
 export class MaterialReceiptEditDto {

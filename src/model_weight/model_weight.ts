@@ -3876,6 +3876,8 @@ export class ModelWeight {
   public materialStocksTableMinimum(): Object {
     return {
       _id: 1,
+      _groupId: 1,
+      _subCategoryId: 1,
       _voucherId: 1,
       _voucherDetailedId: 1,
       _voucherType: 1,
@@ -3884,9 +3886,9 @@ export class ModelWeight {
       _uidForeign: 1,
       _userId: 1,
       _transactionSign: 1,
-      _pureWeightRB: 1,
+      _meltingPrity: 1,
       _pureWeightHundred: 1,
-      _unitRate: 1,
+      _netWeight: 1,
       _accountBranchId: 1,
     };
   }
@@ -3894,6 +3896,8 @@ export class ModelWeight {
     return {
       _id: 1,
       _voucherId: 1,
+      _groupId: 1,
+      _subCategoryId: 1,
       _voucherDetailedId: 1,
       _voucherType: 1,
       _transactionDate: 1,
@@ -3901,9 +3905,9 @@ export class ModelWeight {
       _uidForeign: 1,
       _userId: 1,
       _transactionSign: 1,
-      _pureWeightRB: 1,
+      _meltingPrity: 1,
       _pureWeightHundred: 1,
-      _unitRate: 1,
+      _netWeight: 1,
       _accountBranchId: 1,
       _createdUserId: 1,
       _createdAt: 1,
@@ -3913,6 +3917,8 @@ export class ModelWeight {
   public materialStocksTableMaximum(): Object {
     return {
       _id: 1,
+      _groupId: 1,
+      _subCategoryId: 1,
       _voucherId: 1,
       _voucherDetailedId: 1,
       _voucherType: 1,
@@ -3921,9 +3927,9 @@ export class ModelWeight {
       _uidForeign: 1,
       _userId: 1,
       _transactionSign: 1,
-      _pureWeightRB: 1,
+      _meltingPrity: 1,
       _pureWeightHundred: 1,
-      _unitRate: 1,
+      _netWeight: 1,
       _accountBranchId: 1,
       _createdUserId: 1,
       _createdAt: 1,

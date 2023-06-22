@@ -25,7 +25,6 @@ import { AccountBranchSchema } from 'src/tableModels/accountBranch.model';
       { name: ModelNames.MATERIAL_STOCKS, schema: MterialStocksSchema },
       { name: ModelNames.COUNTERS, schema: CountersSchema },
       { name: ModelNames.ACCOUNT_BRANCH, schema: AccountBranchSchema },
-      { name: ModelNames.GOLD_RATE_TIMELINES, schema:GoldRateTimelinesSchema },
     ]),
   ],
   controllers: [MaterialReceiptController],

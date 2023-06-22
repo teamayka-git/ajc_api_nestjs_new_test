@@ -5,6 +5,16 @@ import { GlobalConfig } from 'src/config/global_config';
 export const MterialStocksSchema = new mongoose.Schema({
   //  _id: mongoose.Schema.Types.ObjectId,
   
+  _groupId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.GROUP_MASTERS,
+    default: null,
+  },
+  _subCategoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelNames.SUB_CATEGORIES,
+    default: null,
+  },
   _voucherId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: ModelNames.MATERIAL_RECEIPT_HEADS,
@@ -26,9 +36,9 @@ export const MterialStocksSchema = new mongoose.Schema({
     default: null,
   },
   _transactionSign : { type: Number, required: true, default: -1 },
-  _pureWeightRB : { type: Number, required: true, default: -1 },
+  _meltingPrity : { type: Number, required: true, default: -1 },
   _pureWeightHundred : { type: Number, required: true, default: -1 },
-  _unitRate : { type: Number, required: true, default: -1 },
+  _netWeight : { type: Number, required: true, default: -1 },
   
   _accountBranchId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -52,6 +62,8 @@ export const MterialStocksSchema = new mongoose.Schema({
 
 export interface MterialStocks {
   _id: String;
+  _groupId: String;
+  _subCategoryId: String;
   _voucherId: String;
   _voucherDetailedId: String;
   _voucherType: Number;
@@ -60,9 +72,9 @@ export interface MterialStocks {
   _uidForeign: String;
   _userId: String;
   _transactionSign: Number;
-  _pureWeightRB: Number;
+  _meltingPrity: Number;
   _pureWeightHundred: Number;
-  _unitRate: Number;
+  _netWeight: Number;
   _accountBranchId: String;
   _createdUserId: String;
   _createdAt: Number;
@@ -71,6 +83,8 @@ export interface MterialStocks {
   _status: Number;
 }
 
+MterialStocksSchema.index({ _groupId: 1 });
+MterialStocksSchema.index({ _subCategoryId: 1 });
 MterialStocksSchema.index({ _voucherId: 1 });
 MterialStocksSchema.index({ _voucherDetailedId: 1 });
 MterialStocksSchema.index({ _voucherType: 1 });
@@ -79,9 +93,9 @@ MterialStocksSchema.index({ _transactionRemark: 1 });
 MterialStocksSchema.index({ _uidForeign: 1 });
 MterialStocksSchema.index({ _userId: 1 });
 MterialStocksSchema.index({ _transactionSign: 1 });
-MterialStocksSchema.index({ _pureWeightRB: 1 });
+MterialStocksSchema.index({ _meltingPrity: 1 });
 MterialStocksSchema.index({ _pureWeightHundred: 1 });
-MterialStocksSchema.index({ _unitRate: 1 });
+MterialStocksSchema.index({ _netWeight: 1 });
 MterialStocksSchema.index({ _accountBranchId: 1 });
 MterialStocksSchema.index({ _createdUserId: 1 });
 MterialStocksSchema.index({ _updatedUserId: 1 });
