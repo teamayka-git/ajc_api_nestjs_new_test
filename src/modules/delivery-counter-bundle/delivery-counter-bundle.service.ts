@@ -154,7 +154,8 @@ export class DeliveryCounterBundleService {
       //-- material stock hit start
       console.log("____material stock start  1");
       var resultAccountBranch = await this.accountBranchModel
-        .find();
+        .find({ _status: 1 })
+        .limit(1);
         
       console.log("____material stock start  1 "+JSON.stringify((resultAccountBranch)));
       if (resultAccountBranch.length == 0) {
