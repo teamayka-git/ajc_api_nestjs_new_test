@@ -172,7 +172,7 @@ export class DeliveryCounterBundleService {
 
       var resultFromUserMaterialStock = await this.userModel.find({
         _status: 1,
-        _userType: 6,
+        _userType: 5,
         _customType: { $in: [11] },
       });
       if (resultFromUserMaterialStock.length == 0) {
