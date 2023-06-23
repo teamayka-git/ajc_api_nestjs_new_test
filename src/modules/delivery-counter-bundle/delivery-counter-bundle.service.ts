@@ -154,8 +154,7 @@ export class DeliveryCounterBundleService {
       //-- material stock hit start
       console.log("____material stock start  1");
       var resultAccountBranch = await this.accountBranchModel
-        .find({ _status: 1 })
-        .limit(1);
+        .find();
         
       console.log("____material stock start  1 "+JSON.stringify((resultAccountBranch)));
       if (resultAccountBranch.length == 0) {
@@ -193,7 +192,10 @@ export class DeliveryCounterBundleService {
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-
+      throw new HttpException(
+        'Success',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
       var orderSaleIdsMongo = [];
       dto.orderSaleIds.forEach((elementOrderSale) => {
         orderSaleIdsMongo.push(elementOrderSale);
