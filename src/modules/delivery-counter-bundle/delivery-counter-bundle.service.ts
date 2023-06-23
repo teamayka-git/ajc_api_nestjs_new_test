@@ -398,10 +398,10 @@ export class DeliveryCounterBundleService {
           });
         });
       });
-      await this.materialStocksModel.insertMany(arrayToMaterialStockTable, {
+var asdf=      await this.materialStocksModel.insertMany(arrayToMaterialStockTable, {
         session: transactionSession,
       });
-
+console.log("____ material stock insert   "+JSON.stringify(asdf));
       //-- material stock hit end
 
       const responseJSON = { message: 'success', data: result1 };
