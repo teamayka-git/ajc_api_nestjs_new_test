@@ -196,7 +196,7 @@ export class DeliveryCounterBundleService {
       
       var orderSaleIdsMongo = [];
       dto.orderSaleIds.forEach((elementOrderSale) => {
-        orderSaleIdsMongo.push(elementOrderSale);
+        orderSaleIdsMongo.push(new mongoose.Types.ObjectId(elementOrderSale));
       });
 
       var resultOrderSaleMainStock = await this.orderSaleModel.aggregate([
