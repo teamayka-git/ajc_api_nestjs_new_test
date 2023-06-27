@@ -109,6 +109,8 @@ export class AccountPostInvoiceService {
             _amountHM_Rec: 0,
             _amountOTH: mapItem.otherCharge,
             _amountOTH_Rec: 0,
+            _amountMC: mapItem.makingCharge,
+            _amountMC_Rec: 0,
             _description: 'For the Invoice ' + mapItem.invoiceNo,
             _amountTotal: mapItem.amount,
             _amountTotal_Rec: 0,

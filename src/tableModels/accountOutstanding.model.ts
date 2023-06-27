@@ -36,6 +36,8 @@ export const AccountOutstandingSchema = new mongoose.Schema({
   _amountHM_Rec: { type: Number, required: true, default: 0 },
   _amountOTH: { type: Number, required: true, default: 0 },
   _amountOTH_Rec: { type: Number, required: true, default: 0 },
+  _amountMC: { type: Number, required: true, default: 0 },
+  _amountMC_Rec: { type: Number, required: true, default: 0 },
   _description: { type: String, required: true, default: '' },
   _amountTotal: { type: Number, required: true, default: 0 },
   _amountTotal_Rec: { type: Number, required: true, default: 0 },
@@ -76,6 +78,8 @@ export interface AccountOutstanding {
   _amountHM_Rec: number;   
   _amountOTH: number;  
   _amountOTH_Rec: number;  
+  _amountMC: number;  
+  _amountMC_Rec: number;  
   _description: String;
   _amountTotal: number;
   _amountTotal_Rec: number;  

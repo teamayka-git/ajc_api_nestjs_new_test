@@ -71,6 +71,10 @@ export class AccountPostInvoiceCreateList {
 
   @IsNumber()
   @ApiProperty({})
+  makingCharge: number;
+
+  @IsNumber()
+  @ApiProperty({})
   CGST: number;
 
   @IsNumber()
@@ -148,6 +152,10 @@ export class AccountPostInvoiceEditDto {
   @IsNumber()
   @ApiProperty({})
   otherCharge: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  makingCharge: number;
 
   @IsNumber()
   @ApiProperty({})
