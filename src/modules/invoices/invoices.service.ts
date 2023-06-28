@@ -228,7 +228,7 @@ export class InvoicesService {
         dtoAccountApiItem.isFixed=mapItem.isFix;
         dtoAccountApiItem.pureWeight100=mapItem.pureWeightHundredPercentage;
         dtoAccountApiItem.pureWeight=mapItem.pureWeight;
-        dtoAccountApiItem.metalAmount=mapItem.metalAmountGst;
+        dtoAccountApiItem.metalAmountWithGST=mapItem.metalAmountGst;
         dtoAccountApiItem.stoneAmount=mapItem.stoneAmount;
         dtoAccountApiItem.hmCharge= mapItem.halmarkingCharge;
         dtoAccountApiItem.otherCharge= mapItem.otherCharge;

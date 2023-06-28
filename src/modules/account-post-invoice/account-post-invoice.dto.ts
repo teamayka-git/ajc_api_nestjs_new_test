@@ -55,7 +55,7 @@ export class AccountPostInvoiceCreateList {
 
   @IsNumber()
   @ApiProperty({})
-  metalAmount: number;
+  metalAmountWithGST: number;
 
   @IsNumber()
   @ApiProperty({})
@@ -72,6 +72,10 @@ export class AccountPostInvoiceCreateList {
   @IsNumber()
   @ApiProperty({})
   makingCharge: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  makingChargeWithGST: number;
 
   @IsNumber()
   @ApiProperty({})
@@ -139,7 +143,7 @@ export class AccountPostInvoiceEditDto {
 
   @IsNumber()
   @ApiProperty({})
-  metalAmount: number;
+  metalAmountWithGST: number;
 
   @IsNumber()
   @ApiProperty({})
@@ -156,6 +160,11 @@ export class AccountPostInvoiceEditDto {
   @IsNumber()
   @ApiProperty({})
   makingCharge: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  makingChargeWithGST: number;
+
 
   @IsNumber()
   @ApiProperty({})
