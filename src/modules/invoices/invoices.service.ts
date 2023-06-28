@@ -49,7 +49,7 @@ export class InvoicesService {
     private readonly orderSaleMainModel: mongoose.Model<OrderSalesMain>,
     @InjectConnection() private readonly connection: mongoose.Connection,
 
-   private readonly accountPostInvoice: AccountPostInvoiceService,
+    private readonly accountPostInvoice: AccountPostInvoiceService,
   ) {}
 
   async create(dto: InvoiceCreateDto, _userId_: string) {
@@ -106,9 +106,6 @@ export class InvoicesService {
             as: 'ratebaseMaster',
           },
         },
-
-
-
       ]);
       console.log('___d4');
       if (shopDetails.length != dto.invoices.length) {
@@ -117,13 +114,13 @@ export class InvoicesService {
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-      for(var k=0;k<shopDetails.length;k++)
-       if (shopDetails[k].ratebaseMaster==null) {
-        throw new HttpException(
-          'Shop ratebase master is missing',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+      for (var k = 0; k < shopDetails.length; k++)
+        if (shopDetails[k].ratebaseMaster == null) {
+          throw new HttpException(
+            'Shop ratebase master is missing',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
 
       let generalList = await this.generalsModel.aggregate([
         {
@@ -165,6 +162,18 @@ export class InvoicesService {
         var inventoryUid =
           generalList[0]._string +
           (resultCounterPurchase._count - dto.invoices.length + (index + 1));
+
+        var makingChargeGstTotal = 0;
+        var makingChargeWithHundredPercentageTotal = 0;
+        var makingChargeAmountTotal = 0;
+
+        mapItem.arrayInvoiceItems.forEach((elementInvoiceItemCount) => {
+          makingChargeGstTotal += elementInvoiceItemCount.makingChargeGst;
+          makingChargeWithHundredPercentageTotal +=
+            elementInvoiceItemCount.makingChargeWithHundredPercentage;
+          makingChargeAmountTotal += elementInvoiceItemCount.makingChargeAmount;
+        });
+
         arrayToDeliveryChallan.push({
           _id: invoiceId,
           _saleType: mapItem.saleType,
@@ -189,6 +198,11 @@ export class InvoicesService {
           _sgst: mapItem.sgst,
           _igst: mapItem.igst,
 
+          _makingChargeGstTotal: makingChargeGstTotal,
+          _makingChargeWithHundredPercentageTotal:
+            makingChargeWithHundredPercentageTotal,
+          _makingChargeAmountTotal: makingChargeAmountTotal,
+
           _isDelivered: 0,
           _isAccountPosted: 0,
           _tdsReceivable: mapItem.tdsReceivable,
@@ -210,49 +224,36 @@ export class InvoicesService {
           _status: 1,
         });
 
-
-
-
-       var indexShop= shopDetails.findIndex(
-          (it) => it._id ==  mapItem.customerId,
+        var indexShop = shopDetails.findIndex(
+          (it) => it._id == mapItem.customerId,
         );
-        console.log("______ invoice auto 1");
+        console.log('______ invoice auto 1');
 
         var dtoAccountApiItem = new AccountPostInvoiceCreateList();
-        dtoAccountApiItem.ledgerId=shopDetails[indexShop]._accountId;
-        dtoAccountApiItem.invoiceNo=inventoryUid;
-        dtoAccountApiItem.invoiceDate=dateTime;
-        dtoAccountApiItem.rateBase=shopDetails[indexShop].ratebaseMaster[0]._name;
-        dtoAccountApiItem.amount= mapItem.netReceivableAmount;
-        dtoAccountApiItem.rate=mapItem.price1;
-        dtoAccountApiItem.isFixed=mapItem.isFix;
-        dtoAccountApiItem.pureWeight100=mapItem.pureWeightHundredPercentage;
-        dtoAccountApiItem.pureWeight=mapItem.pureWeight;
-        dtoAccountApiItem.metalAmount=mapItem.metalAmountGst;
-        dtoAccountApiItem.stoneAmount=mapItem.stoneAmount;
-        dtoAccountApiItem.hmCharge= mapItem.halmarkingCharge;
-        dtoAccountApiItem.otherCharge= mapItem.otherCharge;
-        dtoAccountApiItem.CGST=mapItem.cgst;
-        dtoAccountApiItem.SGST=mapItem.sgst;
-        dtoAccountApiItem.IGST=mapItem.igst;
-        dtoAccountApiItem.roundOff=mapItem.roundOff;
+        dtoAccountApiItem.ledgerId = shopDetails[indexShop]._accountId;
+        dtoAccountApiItem.invoiceNo = inventoryUid;
+        dtoAccountApiItem.invoiceDate = dateTime;
+        dtoAccountApiItem.rateBase =
+          shopDetails[indexShop].ratebaseMaster[0]._name;
+        dtoAccountApiItem.amount = mapItem.netReceivableAmount;
+        dtoAccountApiItem.rate = mapItem.price1;
+        dtoAccountApiItem.isFixed = mapItem.isFix;
+        dtoAccountApiItem.pureWeight100 = mapItem.pureWeightHundredPercentage;
+        dtoAccountApiItem.pureWeight = mapItem.pureWeight;
+        dtoAccountApiItem.metalAmount = mapItem.metalAmountGst;
+        dtoAccountApiItem.stoneAmount = mapItem.stoneAmount;
+        dtoAccountApiItem.hmCharge = mapItem.halmarkingCharge;
+        dtoAccountApiItem.otherCharge = mapItem.otherCharge;
+        dtoAccountApiItem.CGST = mapItem.cgst;
+        dtoAccountApiItem.SGST = mapItem.sgst;
+        dtoAccountApiItem.IGST = mapItem.igst;
+        dtoAccountApiItem.roundOff = mapItem.roundOff;
 
-        console.log("______ invoice auto 2");
-
-
-
-
-
-
-        
+        console.log('______ invoice auto 2');
 
         payloadAccountApi.push(dtoAccountApiItem);
 
-
-
-        console.log("______ invoice auto 3");
-
-
+        console.log('______ invoice auto 3');
 
         if (mapItem.isCreatePurchaseBooking == 1) {
           arrayPurchaseBooking.push({
@@ -281,10 +282,6 @@ export class InvoicesService {
           });
           indexPurchaseBooking++;
         }
-
-
-
-
 
         mapItem.arrayInvoiceItems.map((mapItem1) => {
           orderIds.push(mapItem1.orderId);
@@ -394,21 +391,6 @@ export class InvoicesService {
           _updatedAt: -1,
           _status: 1,
         });
-
-
-
-
-
-        
-
-
-
-
-
-
-
-
-
       });
 
       var orderNewStatus = 18;
@@ -442,16 +424,15 @@ export class InvoicesService {
         session: transactionSession,
       });
 
+      console.log('______ invoice auto 4');
 
-      console.log("______ invoice auto 4");
-      
       var payloadAccountApiFinal = new AccountPostInvoiceCreateDto();
-      console.log("______ invoice auto 5");
-      payloadAccountApiFinal.array=payloadAccountApi;
-      
-      console.log("______ invoice auto 6");
+      console.log('______ invoice auto 5');
+      payloadAccountApiFinal.array = payloadAccountApi;
+
+      console.log('______ invoice auto 6');
       await this.accountPostInvoice.create(payloadAccountApiFinal, _userId_);
-      console.log("______ invoice auto 7");
+      console.log('______ invoice auto 7');
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
