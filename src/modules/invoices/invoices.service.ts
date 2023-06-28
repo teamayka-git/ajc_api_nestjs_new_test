@@ -247,9 +247,10 @@ export class InvoicesService {
         dtoAccountApiItem.SGST=mapItem.sgst;
         dtoAccountApiItem.IGST=mapItem.igst;
         dtoAccountApiItem.roundOff=mapItem.roundOff;
+        dtoAccountApiItem.makingCharge=makingChargeWithHundredPercentageTotal;
+        dtoAccountApiItem.makingChargeWithGST=makingChargeGstTotal;
 
         console.log("______ invoice auto 2");
-
 
 
 
