@@ -97,7 +97,7 @@ export class AccountPostInvoiceService {
             _ledgerId: mapItem.ledgerId,
             _outstandingType: mapItem.isFixed,
             _rate: mapItem.rate,
-            _amountMetal: mapItem.metalAmount,
+            _amountMetal: mapItem.metalAmountWithGST,
             _amountStone: mapItem.stoneAmount,
             _amountStone_Rec: 0,
             _pureWeightRB: mapItem.rateBase,
@@ -109,6 +109,8 @@ export class AccountPostInvoiceService {
             _amountHM_Rec: 0,
             _amountOTH: mapItem.otherCharge,
             _amountOTH_Rec: 0,
+            _amountMC: mapItem.makingChargeWithGST,
+            _amountMC_Rec: 0,
             _description: 'For the Invoice ' + mapItem.invoiceNo,
             _amountTotal: mapItem.amount,
             _amountTotal_Rec: 0,
@@ -273,6 +275,45 @@ export class AccountPostInvoiceService {
             });
 
             }
+
+
+            //Making Charge
+          if(mapItem.stoneAmount > 0)
+          {
+              arrayToVoucherItems.push({
+                _voucherId: vid,
+                _ledgerId: '640f0ab5fd139b2099f374b3',
+                _description: 'For the Invoice ' + mapItem.invoiceNo,
+                _currencyId: '63f33292dcc0abe2f6d03166',
+                _exRate: 1,
+                _crdr: 1,
+                _amount: mapItem.makingCharge,
+                _total: mapItem.makingCharge,
+                _createdUserId: _userId_,
+                _createdAt: dateTime,
+                _updatedUserId: null,
+                _updatedAt: -1,
+                _status: 1,
+            });
+
+            arrayToAccountBook2.push({
+              _transactionDate: mapItem.invoiceDate,
+              _voucherId: vid,
+              _voucherNo: mapItem.invoiceNo,
+              _voucherType: 1,
+              _ledgerId: '640f0ab5fd139b2099f374b3',
+              _branchId: '63f331cedcc0abe2f6d03160',
+              _description: 'For the Invoice ' + mapItem.invoiceNo,
+              _currencyId: '63f33292dcc0abe2f6d03166',
+              _exRate: 1,
+              _crdr: 1,
+              _amount: mapItem.makingCharge,
+              _total: mapItem.makingCharge,
+              _createdUserId: _userId_,
+              _status: 1,
+          });
+
+          }
 
              //Round - Off
              if(mapItem.roundOff != 0)

@@ -230,26 +230,32 @@ export class InvoicesService {
         console.log('______ invoice auto 1');
 
         var dtoAccountApiItem = new AccountPostInvoiceCreateList();
-        dtoAccountApiItem.ledgerId = shopDetails[indexShop]._accountId;
-        dtoAccountApiItem.invoiceNo = inventoryUid;
-        dtoAccountApiItem.invoiceDate = dateTime;
-        dtoAccountApiItem.rateBase =
-          shopDetails[indexShop].ratebaseMaster[0]._name;
-        dtoAccountApiItem.amount = mapItem.netReceivableAmount;
-        dtoAccountApiItem.rate = mapItem.price1;
-        dtoAccountApiItem.isFixed = mapItem.isFix;
-        dtoAccountApiItem.pureWeight100 = mapItem.pureWeightHundredPercentage;
-        dtoAccountApiItem.pureWeight = mapItem.pureWeight;
-        dtoAccountApiItem.metalAmount = mapItem.metalAmountGst;
-        dtoAccountApiItem.stoneAmount = mapItem.stoneAmount;
-        dtoAccountApiItem.hmCharge = mapItem.halmarkingCharge;
-        dtoAccountApiItem.otherCharge = mapItem.otherCharge;
-        dtoAccountApiItem.CGST = mapItem.cgst;
-        dtoAccountApiItem.SGST = mapItem.sgst;
-        dtoAccountApiItem.IGST = mapItem.igst;
-        dtoAccountApiItem.roundOff = mapItem.roundOff;
+        dtoAccountApiItem.ledgerId=shopDetails[indexShop]._accountId;
+        dtoAccountApiItem.invoiceNo=inventoryUid;
+        dtoAccountApiItem.invoiceDate=dateTime;
+        dtoAccountApiItem.rateBase=shopDetails[indexShop].ratebaseMaster[0]._name;
+        dtoAccountApiItem.amount= mapItem.netReceivableAmount;
+        dtoAccountApiItem.rate=mapItem.price1;
+        dtoAccountApiItem.isFixed=mapItem.isFix;
+        dtoAccountApiItem.pureWeight100=mapItem.pureWeightHundredPercentage;
+        dtoAccountApiItem.pureWeight=mapItem.pureWeight;
+        dtoAccountApiItem.metalAmountWithGST=mapItem.metalAmountGst;
+        dtoAccountApiItem.stoneAmount=mapItem.stoneAmount;
+        dtoAccountApiItem.hmCharge= mapItem.halmarkingCharge;
+        dtoAccountApiItem.otherCharge= mapItem.otherCharge;
+        dtoAccountApiItem.CGST=mapItem.cgst;
+        dtoAccountApiItem.SGST=mapItem.sgst;
+        dtoAccountApiItem.IGST=mapItem.igst;
+        dtoAccountApiItem.roundOff=mapItem.roundOff;
 
-        console.log('______ invoice auto 2');
+        console.log("______ invoice auto 2");
+
+
+
+
+
+
+        
 
         payloadAccountApi.push(dtoAccountApiItem);
 
