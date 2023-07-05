@@ -98,6 +98,7 @@ export class AccountPostInvoiceService {
             _outstandingType: mapItem.isFixed,
             _rate: mapItem.rate,
             _amountMetal: mapItem.metalAmountWithGST,
+            _amountMetal_Rec: 0,
             _amountStone: mapItem.stoneAmount,
             _amountStone_Rec: 0,
             _pureWeightRB: mapItem.rateBase,
