@@ -263,6 +263,7 @@ export class AgentService {
             _fcmId: '',
             _isNotificationEnable:1,
             _deviceUniqueId: '',
+            _deliveryCounterId: null,
             _permissions: [],
             _userType: 3,
             _createdUserId: _userId_,

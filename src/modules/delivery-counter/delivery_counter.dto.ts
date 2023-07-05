@@ -38,6 +38,13 @@ class DeliveryCounterCreateList {
   userIdsForLink: string[];
 
 
+  @IsString()
+  @ApiProperty({})
+  email: string;
+
+  @IsString()
+  @ApiProperty({})
+  mobile: string;
 }
 
 export class DeliveryCounterCreateDto {
@@ -51,6 +58,16 @@ export class DeliveryCounterEditDto {
   @IsString()
   @ApiProperty({})
   deliveryCounterId: string;
+
+
+
+  @IsString()
+  @ApiProperty({})
+  email: string;
+
+  @IsString()
+  @ApiProperty({})
+  mobile: string;
 
   @IsString()
   @ApiProperty({})

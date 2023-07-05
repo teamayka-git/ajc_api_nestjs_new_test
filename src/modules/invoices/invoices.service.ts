@@ -49,7 +49,7 @@ export class InvoicesService {
     private readonly orderSaleMainModel: mongoose.Model<OrderSalesMain>,
     @InjectConnection() private readonly connection: mongoose.Connection,
 
-   private readonly accountPostInvoice: AccountPostInvoiceService,
+    private readonly accountPostInvoice: AccountPostInvoiceService,
   ) {}
 
   async create(dto: InvoiceCreateDto, _userId_: string) {
@@ -106,9 +106,6 @@ export class InvoicesService {
             as: 'ratebaseMaster',
           },
         },
-
-
-
       ]);
       console.log('___d4');
       if (shopDetails.length != dto.invoices.length) {
@@ -117,13 +114,13 @@ export class InvoicesService {
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-      for(var k=0;k<shopDetails.length;k++)
-       if (shopDetails[k].ratebaseMaster==null) {
-        throw new HttpException(
-          'Shop ratebase master is missing',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+      for (var k = 0; k < shopDetails.length; k++)
+        if (shopDetails[k].ratebaseMaster == null) {
+          throw new HttpException(
+            'Shop ratebase master is missing',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
 
       let generalList = await this.generalsModel.aggregate([
         {
@@ -165,6 +162,18 @@ export class InvoicesService {
         var inventoryUid =
           generalList[0]._string +
           (resultCounterPurchase._count - dto.invoices.length + (index + 1));
+
+        var makingChargeGstTotal = 0;
+        var makingChargeWithHundredPercentageTotal = 0;
+        var makingChargeAmountTotal = 0;
+
+        mapItem.arrayInvoiceItems.forEach((elementInvoiceItemCount) => {
+          makingChargeGstTotal += elementInvoiceItemCount.makingChargeGst;
+          makingChargeWithHundredPercentageTotal +=
+            elementInvoiceItemCount.makingChargeWithHundredPercentage;
+          makingChargeAmountTotal += elementInvoiceItemCount.makingChargeAmount;
+        });
+
         arrayToDeliveryChallan.push({
           _id: invoiceId,
           _saleType: mapItem.saleType,
@@ -189,6 +198,11 @@ export class InvoicesService {
           _sgst: mapItem.sgst,
           _igst: mapItem.igst,
 
+          _makingChargeGstTotal: makingChargeGstTotal,
+          _makingChargeWithHundredPercentageTotal:
+            makingChargeWithHundredPercentageTotal,
+          _makingChargeAmountTotal: makingChargeAmountTotal,
+
           _isDelivered: 0,
           _isAccountPosted: 0,
           _tdsReceivable: mapItem.tdsReceivable,
@@ -210,13 +224,10 @@ export class InvoicesService {
           _status: 1,
         });
 
-
-
-
-       var indexShop= shopDetails.findIndex(
-          (it) => it._id ==  mapItem.customerId,
+        var indexShop = shopDetails.findIndex(
+          (it) => it._id == mapItem.customerId,
         );
-        console.log("______ invoice auto 1");
+        console.log('______ invoice auto 1');
 
         var dtoAccountApiItem = new AccountPostInvoiceCreateList();
         dtoAccountApiItem.ledgerId=shopDetails[indexShop]._accountId;
@@ -236,9 +247,10 @@ export class InvoicesService {
         dtoAccountApiItem.SGST=mapItem.sgst;
         dtoAccountApiItem.IGST=mapItem.igst;
         dtoAccountApiItem.roundOff=mapItem.roundOff;
+        dtoAccountApiItem.makingCharge=makingChargeWithHundredPercentageTotal;
+        dtoAccountApiItem.makingChargeWithGST=makingChargeGstTotal;
 
         console.log("______ invoice auto 2");
-
 
 
 
@@ -248,11 +260,7 @@ export class InvoicesService {
 
         payloadAccountApi.push(dtoAccountApiItem);
 
-
-
-        console.log("______ invoice auto 3");
-
-
+        console.log('______ invoice auto 3');
 
         if (mapItem.isCreatePurchaseBooking == 1) {
           arrayPurchaseBooking.push({
@@ -281,10 +289,6 @@ export class InvoicesService {
           });
           indexPurchaseBooking++;
         }
-
-
-
-
 
         mapItem.arrayInvoiceItems.map((mapItem1) => {
           orderIds.push(mapItem1.orderId);
@@ -394,21 +398,6 @@ export class InvoicesService {
           _updatedAt: -1,
           _status: 1,
         });
-
-
-
-
-
-        
-
-
-
-
-
-
-
-
-
       });
 
       var orderNewStatus = 18;
@@ -442,16 +431,15 @@ export class InvoicesService {
         session: transactionSession,
       });
 
+      console.log('______ invoice auto 4');
 
-      console.log("______ invoice auto 4");
-      
       var payloadAccountApiFinal = new AccountPostInvoiceCreateDto();
-      console.log("______ invoice auto 5");
-      payloadAccountApiFinal.array=payloadAccountApi;
-      
-      console.log("______ invoice auto 6");
+      console.log('______ invoice auto 5');
+      payloadAccountApiFinal.array = payloadAccountApi;
+
+      console.log('______ invoice auto 6');
       await this.accountPostInvoice.create(payloadAccountApiFinal, _userId_);
-      console.log("______ invoice auto 7");
+      console.log('______ invoice auto 7');
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -613,6 +601,123 @@ export class InvoicesService {
               _igst: igst,
               _price1: price1,
               _price2: price2,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
+        console.log(
+          '_____doing ' + i + '   items ' + resultInvoice[i].invItems.length,
+        );
+      }
+
+      /*
+      var result = await this.invoiceModel.updateMany(
+        {
+          _id: { $in: dto.invoiceIds },
+        },
+        {
+          $set: {
+            _rootCauseId:
+              dto.rootCauseId == '' || dto.rootCauseId == 'nil'
+                ? null
+                : dto.rootCauseId,
+            _description:
+              dto.description == '' || dto.description == 'nil'
+                ? null
+                : dto.description,
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+            _status: dto.status,
+          },
+        },
+        { new: true, session: transactionSession },
+      );*/
+
+      const responseJSON = { message: 'success', data: {} };
+      if (
+        process.env.RESPONSE_RESTRICT == 'true' &&
+        JSON.stringify(responseJSON).length >=
+          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+      ) {
+        throw new HttpException(
+          GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
+            JSON.stringify(responseJSON).length,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  
+  async temp_migrateCurrentInvoiceToMakingCharge(
+    dto: InvoiceMigrationDto,
+    _userId_: string,
+  ) {
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+
+      
+
+      var resultInvoice = await this.invoiceModel.aggregate([
+        { $skip: dto.skip },
+        { $limit: dto.limit },
+        {
+          $lookup: {
+            from: ModelNames.INVOICE_ITEMS,
+            let: { invId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$_invoiceId', '$$invId'] },
+                },
+              },
+            ],
+            as: 'invItems',
+          },
+        },
+      ]);
+
+      for (var i = 0; i < resultInvoice.length; i++) {
+        if (resultInvoice[i].invItems.length == 0) {
+          throw new HttpException(
+            'inv items empty ' + i,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        var invId = resultInvoice[i]._id;
+
+        var makingChargeGstTotal = 0.0;
+        var makingChargeHundredTotal = 0.0;
+        var makingChargeAmountTotal = 0.0;
+       
+
+        resultInvoice[i].invItems.forEach((elementChild) => {
+        
+          
+          makingChargeGstTotal += elementChild._makingChargeGst;
+          makingChargeHundredTotal += elementChild._makingChargeWithHundredPercentage;
+          makingChargeAmountTotal += elementChild._makingChargeAmount;
+        });
+
+        await this.invoiceModel.updateMany(
+          {
+            _id: invId,
+          },
+          {
+            $set: {
+              _makingChargeGstTotal: makingChargeGstTotal,
+              _makingChargeWithHundredPercentageTotal: makingChargeHundredTotal,
+              _makingChargeAmountTotal: makingChargeAmountTotal,
             },
           },
           { new: true, session: transactionSession },

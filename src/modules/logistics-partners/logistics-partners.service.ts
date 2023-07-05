@@ -76,6 +76,7 @@ export class LogisticsPartnersService {
             _isNotificationEnable:1,
             _deviceUniqueId: '',
             _permissions: [],
+            _deliveryCounterId: null,
             _userType: 3,
             _gender: 2,
             _createdUserId: _userId_,

@@ -80,6 +80,7 @@ export class TestCenterMastersService {
           _isNotificationEnable:1,
           _deliveryHubId: null,
           _deviceUniqueId: '',
+          _deliveryCounterId: null,
           _permissions: [],
           _userType: 0,
           _createdUserId: null,

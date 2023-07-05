@@ -10,6 +10,9 @@ import { OrderSalesDocumentsSchema } from 'src/tableModels/order_sales_documents
 import { OrderSaleHistoriesSchema } from 'src/tableModels/order_sale_histories.model';
 import { OrderSalesItemsSchema } from 'src/tableModels/order_sales_items.model';
 import { CountersSchema } from 'src/tableModels/counters.model';
+import { MterialStocksSchema } from 'src/tableModels/material_stocks.model';
+import { AccountBranchSchema } from 'src/tableModels/accountBranch.model';
+import { UserSchema } from 'src/tableModels/user.model';
 
 @Module({
   imports: [
@@ -21,6 +24,11 @@ import { CountersSchema } from 'src/tableModels/counters.model';
       { name: ModelNames.ORDER_SALES_MAIN, schema:OrderSalesMainSchema },
       { name: ModelNames.ORDER_SALES_DOCUMENTS, schema:OrderSalesDocumentsSchema },
       { name: ModelNames.ORDER_SALE_HISTORIES, schema:OrderSaleHistoriesSchema },
+
+      { name: ModelNames.USER, schema: UserSchema },
+      
+      { name: ModelNames.MATERIAL_STOCKS, schema: MterialStocksSchema },
+      { name: ModelNames.ACCOUNT_BRANCH, schema: AccountBranchSchema },
       ]),
   ],
   controllers: [DeliveryCounterBundleController],

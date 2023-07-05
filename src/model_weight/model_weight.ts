@@ -118,7 +118,6 @@ export class ModelWeight {
     return {
       _id: 1,
       _invoiceId: 1,
-      
     };
   }
   public invoiceTableLight(): Object {
@@ -154,7 +153,7 @@ export class ModelWeight {
       _halmarkingCharge: 1,
       _otherCharge: 1,
       _roundOff: 1,
-      _shopId: 1,
+      _shopId: 1, 
       _netTotal: 1,
       _saleType: 1,
       _isFix: 1,
@@ -165,6 +164,9 @@ export class ModelWeight {
       _stoneAmountGst: 1,
       _pureWeightHundredPercentage: 1,
       _pureWeight: 1,
+      _makingChargeGstTotal:1,
+      _makingChargeWithHundredPercentageTotal:1,
+      _makingChargeAmountTotal:1,
       _cgst: 1,
       _sgst: 1,
       _igst: 1,
@@ -205,6 +207,9 @@ export class ModelWeight {
       _stoneAmount: 1,
       _stoneAmountGst: 1,
       _pureWeightHundredPercentage: 1,
+      _makingChargeGstTotal:1,
+      _makingChargeWithHundredPercentageTotal:1,
+      _makingChargeAmountTotal:1,
       _pureWeight: 1,
       _cgst: 1,
       _sgst: 1,
@@ -229,26 +234,6 @@ export class ModelWeight {
       _status: 1,
     };
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   public subCategoryTableLight(): Object {
     return {
@@ -1090,6 +1075,7 @@ export class ModelWeight {
       _testCenterId: 1,
 
       _logisticPartnerId: 1,
+      _deliveryCounterId: 1,
       _shopId: 1,
       _halmarkId: 1,
       _customerId: 1,
@@ -1111,6 +1097,7 @@ export class ModelWeight {
       _customType: 1,
       _employeeId: 1,
       _agentId: 1,
+      _deliveryCounterId: 1,
       _supplierId: 1,
       _testCenterId: 1,
       _logisticPartnerId: 1,
@@ -1118,7 +1105,7 @@ export class ModelWeight {
       _halmarkId: 1,
       _customerId: 1,
       _fcmId: 1,
-      _isNotificationEnable:1,
+      _isNotificationEnable: 1,
       _deliveryHubId: 1,
       _deviceUniqueId: 1,
       _permissions: 1,
@@ -1547,7 +1534,7 @@ export class ModelWeight {
       _id: 1,
       _uid: 1,
       _isPurchaseOrderGenerated: 1,
-      _ref:1,
+      _ref: 1,
     };
   }
   public purchaseBookingTableMinimum(): Object {
@@ -1556,7 +1543,7 @@ export class ModelWeight {
       _invoiceId: 1,
       _groupId: 1,
       _uid: 1,
-      _ref:1,
+      _ref: 1,
       _supplierUserId: 1,
       _shopId: 1,
       _createdUserId: 1,
@@ -1571,7 +1558,7 @@ export class ModelWeight {
       _bookingAmount: 1,
       _groupId: 1,
       _uid: 1,
-      _ref:1,
+      _ref: 1,
       _supplierUserId: 1,
       _shopId: 1,
       _bookingThrough: 1,
@@ -1591,7 +1578,7 @@ export class ModelWeight {
       _uid: 1,
       _supplierUserId: 1,
       _shopId: 1,
-      _ref:1,
+      _ref: 1,
       _bookingThrough: 1,
       _isPurchaseOrderGenerated: 1,
       _createdUserId: 1,
@@ -3756,4 +3743,221 @@ export class ModelWeight {
       _status: 1,
     };
   }
+
+  public materialReceiptHeadsTableLight(): Object {
+    return {
+      _id: 1,
+      _uid: 1,
+      _remark: 1,
+    };
+  }
+  public materialReceiptHeadsTableMinimum(): Object {
+    return {
+      _id: 1,
+      _shopId: 1,
+      _uid: 1,
+      _remark: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _status: 1,
+    };
+  }
+  public materialReceiptHeadsTableMedium(): Object {
+    return {
+      _id: 1,
+      _shopId: 1,
+      _uid: 1,
+      _remark: 1,
+      _status: 1,
+    };
+  }
+  public materialReceiptHeadsTableMaximum(): Object {
+    return {
+      _id: 1,
+      _shopId: 1,
+      _uid: 1,
+      _remark: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+
+
+  
+  public materialReceiptItemsTableLight(): Object {
+    return {
+      _id: 1,
+      _materialReceiptId: 1,
+      _groupId: 1,
+      _status: 1,
+    };
+  }
+  public materialReceiptItemsTableMinimum(): Object {
+    return {
+      _id: 1,
+      _materialReceiptId: 1,
+      _groupId: 1,
+      _grossWeight: 1,
+      _stoneWeight: 1,
+      _netWeight: 1,
+      _tough: 1,
+      _pureWeightRB: 1,
+      _pureWeighthundred: 1,
+    };
+  }
+  public materialReceiptItemsTableMedium(): Object {
+    return {
+      _id: 1,
+      _materialReceiptId: 1,
+      _groupId: 1,
+      _grossWeight: 1,
+      _stoneWeight: 1,
+      _netWeight: 1,
+      _tough: 1,
+      _pureWeightRB: 1,
+      _pureWeighthundred: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _status: 1,
+    };
+  }
+  public materialReceiptItemsTableMaximum(): Object {
+    return {
+      _id: 1,
+      _materialReceiptId: 1,
+      _groupId: 1,
+      _grossWeight: 1,
+      _stoneWeight: 1,
+      _netWeight: 1,
+      _tough: 1,
+      _pureWeightRB: 1,
+      _pureWeighthundred: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  public materialStocksTableLight(): Object {
+    return {
+      _id: 1,
+      _voucherId: 1,
+      _voucherType: 1,
+      _transactionDate: 1,
+      _transactionRemark: 1,
+      _uidForeign: 1,
+      _status: 1,
+    };
+  }
+  public materialStocksTableMinimum(): Object {
+    return {
+      _id: 1,
+      _groupId: 1,
+      _subCategoryId: 1,
+      _voucherId: 1,
+      _voucherDetailedId: 1,
+      _voucherType: 1,
+      _transactionDate: 1,
+      _transactionRemark: 1,
+      _uidForeign: 1,
+      _userId: 1,
+      _transactionSign: 1,
+      _meltingPrity: 1,
+      _pureWeightHundred: 1,
+      _netWeight: 1,
+      _accountBranchId: 1,
+    };
+  }
+  public materialStocksTableMedium(): Object {
+    return {
+      _id: 1,
+      _voucherId: 1,
+      _groupId: 1,
+      _subCategoryId: 1,
+      _voucherDetailedId: 1,
+      _voucherType: 1,
+      _transactionDate: 1,
+      _transactionRemark: 1,
+      _uidForeign: 1,
+      _userId: 1,
+      _transactionSign: 1,
+      _meltingPrity: 1,
+      _pureWeightHundred: 1,
+      _netWeight: 1,
+      _accountBranchId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _status: 1,
+    };
+  }
+  public materialStocksTableMaximum(): Object {
+    return {
+      _id: 1,
+      _groupId: 1,
+      _subCategoryId: 1,
+      _voucherId: 1,
+      _voucherDetailedId: 1,
+      _voucherType: 1,
+      _transactionDate: 1,
+      _transactionRemark: 1,
+      _uidForeign: 1,
+      _userId: 1,
+      _transactionSign: 1,
+      _meltingPrity: 1,
+      _pureWeightHundred: 1,
+      _netWeight: 1,
+      _accountBranchId: 1,
+      _createdUserId: 1,
+      _createdAt: 1,
+      _updatedUserId: 1,
+      _updatedAt: 1,
+      _status: 1,
+    };
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

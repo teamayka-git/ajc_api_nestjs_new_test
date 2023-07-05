@@ -33,6 +33,13 @@ export const InvoicesSchema = new mongoose.Schema({
   _isAccountPosted: { type: Number, required: true, default: -1 },
   _saleType: { type: Number, required: true, default: -1 },
   _isFix: { type: Number, required: true, default: -1 },
+  _makingChargeGstTotal: { type: Number, required: true, default: -1 },
+  _makingChargeWithHundredPercentageTotal: {
+    type: Number,
+    required: true,
+    default: -1,
+  },
+  _makingChargeAmountTotal: { type: Number, required: true, default: -1 },
 
   _price1: { type: Number, required: true, default: -1 },
   _price2: { type: Number, required: true, default: -1 },
@@ -76,6 +83,9 @@ export interface Invoices {
   _saleType: number;
   _isFix: number;
   _halmarkingCharge: number;
+  _makingChargeGstTotal: number;
+  _makingChargeWithHundredPercentageTotal: number;
+  _makingChargeAmountTotal: number;
   _otherCharge: number;
   _roundOff: number;
   _netTotal: number;
@@ -112,6 +122,9 @@ export interface Invoices {
   _status: Number;
 }
 
+InvoicesSchema.index({ _makingChargeGstTotal: 1 });
+InvoicesSchema.index({ _makingChargeWithHundredPercentageTotal: 1 });
+InvoicesSchema.index({ _makingChargeAmountTotal: 1 });
 InvoicesSchema.index({ _price1: 1 });
 InvoicesSchema.index({ _price2: 1 });
 InvoicesSchema.index({ _metalAmountGst: 1 });

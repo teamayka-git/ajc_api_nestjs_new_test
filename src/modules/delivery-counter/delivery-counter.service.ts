@@ -13,7 +13,9 @@ import {
 import { GlobalConfig } from 'src/config/global_config';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 import { DeliveryCounterUserLinkings } from 'src/tableModels/delivery_counter_user_linkings.model';
+import { User } from 'src/tableModels/user.model';
 
+const crypto = require('crypto');
 @Injectable()
 export class DeliveryCounterService {
   constructor(
@@ -21,6 +23,9 @@ export class DeliveryCounterService {
     private readonly deliveryCounterModel: mongoose.Model<DeliveryCounters>,
     @InjectModel(ModelNames.DELIVERY_COUNTER_USER_LINKINGS)
     private readonly deliveryCounterUserLinkingModel: mongoose.Model<DeliveryCounterUserLinkings>,
+    
+    @InjectModel(ModelNames.USER)
+    private readonly userModel: mongoose.Model<User>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async create(dto: DeliveryCounterCreateDto, _userId_: string) {
@@ -30,7 +35,16 @@ export class DeliveryCounterService {
     try {
       var arrayToStates = [];
       var arrayToLinkingUser = [];
-
+      var arrayToUser = [];
+      var encryptedPassword = await crypto
+      .pbkdf2Sync(
+        '123456',
+        process.env.CRYPTO_ENCRYPTION_SALT,
+        1000,
+        64,
+        `sha512`,
+      )
+      .toString(`hex`);
       dto.array.map((mapItem) => {
         var dcId = new mongoose.Types.ObjectId();
         arrayToStates.push({
@@ -43,6 +57,36 @@ export class DeliveryCounterService {
           _updatedUserId: null,
           _updatedAt: -1,
           _status: 1,
+        });
+        arrayToUser.push({
+          _customType: [12],
+           _userType: 6,
+           _name: mapItem.name,
+            _gender: 0,
+            _password: encryptedPassword,
+            _mobile: mapItem.mobile,
+            _globalGalleryId: null,
+            _employeeId: null,
+            _agentId: null,
+            _supplierId: null,
+            _testCenterId: null,
+            _logisticPartnerId: null,
+            _shopId: null,
+            _halmarkId: null,
+            _customerId: null,
+            _deliveryHubId: null,
+            _fcmId: '',
+            _isNotificationEnable: 0,
+            _email:mapItem.email ,
+            _deviceUniqueId: '',
+            _permissions: [],
+            _deliveryCounterId: dcId,
+           
+            _createdUserId: null,
+            _createdAt: -1,
+            _updatedUserId: null,
+            _updatedAt: -1,
+            _status: 1
         });
         mapItem.userIdsForLink.map((mapItemChild) => {
           arrayToLinkingUser.push({
@@ -68,6 +112,11 @@ export class DeliveryCounterService {
           },
         );
       }
+
+      await this.userModel.insertMany(arrayToUser, {
+        session: transactionSession,
+      });
+
       const responseJSON = { message: 'success', data: { list: result1 } };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
@@ -122,6 +171,36 @@ export class DeliveryCounterService {
         },
         { new: true, session: transactionSession },
       );
+
+
+
+       await this.userModel.findOneAndUpdate(
+        {
+          _deliveryCounterId: dto.deliveryCounterId,_customType:{$in:[12]}
+        },
+        {
+          $set: {
+            _name: dto.name,
+            _email: dto.email,
+            _mobile: dto.mobile,
+            
+            _updatedUserId: _userId_,
+            _updatedAt: dateTime,
+          },
+        },
+        { new: true, session: transactionSession },
+      );
+
+
+
+
+
+
+
+
+
+
+
 
       var arrayToLinkingUser = [];
       var arrayToUnlinkLinkingId = [];

@@ -29,6 +29,10 @@ export class InvoicesController {
   temp_migrateCurrentInvoiceToNewFeild(@Body() dto: InvoiceMigrationDto, @Request() req) {
     return this.invoicesService.temp_migrateCurrentInvoiceToNewFeild(dto, req['_userId_']);
   }
+  @Post('temp_migrateCurrentInvoiceToMakingCharge')
+  temp_migrateCurrentInvoiceToMakingCharge(@Body() dto: InvoiceMigrationDto, @Request() req) {
+    return this.invoicesService.temp_migrateCurrentInvoiceToMakingCharge(dto, req['_userId_']);
+  }
 
   
  

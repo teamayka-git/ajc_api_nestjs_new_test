@@ -116,6 +116,7 @@ import { UserNotificationsSchema } from './tableModels/user_notifications.model'
 import { CronJobSchedulerModule } from './modules/cron-job-scheduler/cron-job-scheduler.module';
 import { ProductsSchema } from './tableModels/products.model';
 import { AccountPostInvoiceModule } from './modules/account-post-invoice/account-post-invoice.module';
+import { MaterialReceiptModule } from './modules/material-receipt/material-receipt.module';
 
 
 @Module({
@@ -248,6 +249,7 @@ import { AccountPostInvoiceModule } from './modules/account-post-invoice/account
     HalmarkRequestModule,
     UsersModule,
     CronJobSchedulerModule,
+    MaterialReceiptModule,
 
     // SalesReturnRequestStatusesModule,
   ],
