@@ -26,7 +26,9 @@ export const AccountOutstandingSchema = new mongoose.Schema({
   _outstandingType: { type: Number, required: true, default: 0 },
   _rate: { type: Number, required: true, default: 0 },
   _amountMetal: { type: Number, required: true, default: 0 },
+  _amountMetal_Rec: { type: Number, required: true, default: 0 },
   _amountStone: { type: Number, required: true, default: 0 },
+  _amountStone_Rec: { type: Number, required: true, default: 0 },
   _pureWeightRB: { type: Number, required: true, default: 0 },
   _pureWeight100: { type: Number, required: true, default: 0 },
   _pureWeight100_Rec: { type: Number, required: true, default: 0 },
@@ -68,7 +70,9 @@ export interface AccountOutstanding {
   _outstandingType: number;
   _rate: number;  
   _amountMetal: number;    
+  _amountMetal_Rec: number;    
   _amountStone: number;  
+  _amountStone_Rec: number;  
   _pureWeightRB: number;  
   _pureWeight100: number;  
   _pureWeight100_Rec: number;  
