@@ -63,7 +63,7 @@ async function bootstrap() {
 
   app.useWebSocketAdapter(new SocketIoAdapter(app, ['*']));
 
-  await app.listen(process.env.PORT);
+  await app.listen(process.env.PORT,'0.0.0.0');
   console.log('satarted----------------_');
 }
 bootstrap();
