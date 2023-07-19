@@ -3100,6 +3100,26 @@ export class AppService {
         },
         { upsert: true, new: true, session: transactionSession },
       );
+      await this.generalsModel.findOneAndUpdate(
+        { _code: 1029 },
+        {
+          $setOnInsert: {
+            _string: '',
+            _name: 'Out of delivery inscan bypasss',
+            _number: 0,
+            _vlaueType: 0,
+            _json: { basic: 'basic' },
+            _type: 4,
+            _dataGuard: [0, 1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
       await this.purityModel.findOneAndUpdate(
         { _name: '916' },
         {
