@@ -14,6 +14,7 @@ import { GlobalConfig } from 'src/config/global_config';
 import { ModelWeightResponseFormat } from 'src/model_weight/model_weight_response_format';
 import { OrderSalesMain } from 'src/tableModels/order_sales_main.model';
 import { OrderSaleHistories } from 'src/tableModels/order_sale_histories.model';
+import { Generals } from 'src/tableModels/generals.model';
 
 @Injectable()
 export class DeliveryTempService {
@@ -24,6 +25,8 @@ export class DeliveryTempService {
     private readonly orderSaleMainModel: Model<OrderSalesMain>,
     @InjectModel(ModelNames.ORDER_SALE_HISTORIES)
     private readonly orderSaleMainHistoriesModel: Model<OrderSaleHistories>,
+    @InjectModel(ModelNames.GENERALS)
+    private readonly generalsModel: Model<Generals>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
@@ -573,13 +576,19 @@ export class DeliveryTempService {
           arrayAggregation.push({ $sort: { _id: dto.sortOrder } });
           break;
         case 1:
-          arrayAggregation.push({ $sort: { _status: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _status: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 2:
-          arrayAggregation.push({ $sort: { type: dto.sortOrder  ,_id: dto.sortOrder} });
+          arrayAggregation.push({
+            $sort: { type: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
         case 3:
-          arrayAggregation.push({ $sort: { _code: dto.sortOrder ,_id: dto.sortOrder } });
+          arrayAggregation.push({
+            $sort: { _code: dto.sortOrder, _id: dto.sortOrder },
+          });
           break;
       }
       if (dto.skip != -1) {
@@ -899,41 +908,36 @@ export class DeliveryTempService {
             });
           }
 
-
-
-          const invoiceShopDetails =
-          dto.screenType.includes(113);
-        if (invoiceShopDetails) {
-          pipeline.push(
-            {
-              $lookup: {
-                from: ModelNames.SHOPS,
-                let: { shopId: '$_shopId' },
-                pipeline: [
-                  {
-                    $match: {
-                      $expr: { $eq: ['$_id', '$$shopId'] },
+          const invoiceShopDetails = dto.screenType.includes(113);
+          if (invoiceShopDetails) {
+            pipeline.push(
+              {
+                $lookup: {
+                  from: ModelNames.SHOPS,
+                  let: { shopId: '$_shopId' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$_id', '$$shopId'] },
+                      },
                     },
-                  },
-                  new ModelWeightResponseFormat().shopTableResponseFormat(
-                    1130,
-                    dto.responseFormat,
-                  ),
-                ],
-                as: 'shopDetails',
+                    new ModelWeightResponseFormat().shopTableResponseFormat(
+                      1130,
+                      dto.responseFormat,
+                    ),
+                  ],
+                  as: 'shopDetails',
+                },
               },
-            },
-            {
-              $unwind: {
-                path: '$shopDetails',
-                preserveNullAndEmptyArrays: true,
+              {
+                $unwind: {
+                  path: '$shopDetails',
+                  preserveNullAndEmptyArrays: true,
+                },
               },
-            },
-          );
-        }
+            );
+          }
 
-
-          
           return pipeline;
         };
 
@@ -1014,9 +1018,25 @@ export class DeliveryTempService {
           totalCount = resultTotalCount[0].totalCount;
         }
       }
+
+      var generalTableCodes = [];
+      var generalTableResult = [];
+      if (dto.screenType.includes(114)) {
+        generalTableCodes.push(1029);
+      }
+      if (generalTableCodes.length != 0) {
+        generalTableResult = await this.generalsModel.aggregate([
+          { $match: { _code: { $in: generalTableCodes } } },
+        ]);
+      }
+
       const responseJSON = {
         message: 'success',
-        data: { list: result, totalCount: totalCount },
+        data: {
+          list: result,
+          totalCount: totalCount,
+          generalTable: generalTableResult,
+        },
       };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
