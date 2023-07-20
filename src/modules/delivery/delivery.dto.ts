@@ -62,7 +62,7 @@ export class DeliveryCreateDto {
   @IsOptional()
   @IsNumber()
   @ApiProperty({})
-  isDeliveryBoyIntransitBypassEnabled: number;
+  isOutOfDeliveryIntransitBypassEnabled: number;
 
   @IsNumber()
   @ApiProperty({ description: descriptionType })

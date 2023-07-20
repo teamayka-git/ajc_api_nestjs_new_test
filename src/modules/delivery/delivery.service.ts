@@ -199,8 +199,8 @@ export class DeliveryService {
 
       var orderHistoryDescription = '';
       if (
-        dto.isDeliveryBoyIntransitBypassEnabled != null &&
-        dto.isDeliveryBoyIntransitBypassEnabled == 1
+        dto.isOutOfDeliveryIntransitBypassEnabled != null &&
+        dto.isOutOfDeliveryIntransitBypassEnabled == 1
       ) {
         orderHistoryDescription =
           'with Delivery boy intransit scan bypass done';
