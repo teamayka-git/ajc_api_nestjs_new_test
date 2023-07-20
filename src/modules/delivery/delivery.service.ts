@@ -203,7 +203,7 @@ export class DeliveryService {
         dto.isOutOfDeliveryIntransitBypassEnabled == 1
       ) {
         orderHistoryDescription =
-          'with Delivery boy intransit scan bypass done';
+          'with Out of delivery intransit scan bypass done';
       }
       orderSaleIds.forEach((eachItem) => {
         arraySalesOrderHistories.push({
