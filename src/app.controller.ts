@@ -107,4 +107,18 @@ export class AppController {
   getDashboard(@Body() dto: GetDashboardDto, @Request() req) {
     return this.appService.getDashboard(dto,req['_userId_']);
   }
+
+
+  @Post('testParallelLog')
+  testParallelLog() {
+    return this.appService.testParallelLog();
+  }
+
+
+  @Post('testParallelBulk')
+  testParallelBulk() {
+    return this.appService.testParallelBulk();
+  }
+
+
 }

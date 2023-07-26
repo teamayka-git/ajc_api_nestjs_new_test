@@ -3463,5 +3463,71 @@ export class AppService {
 
     return { message: 'Success', data: {} };
   }
+  async testParallelLog() {
+
+
+console.log("testParallelLog start");
+
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+    
+      
+      const responseJSON = {
+        message: 'success log',
+        data: {
+
+        },
+      };
+
+      console.log("testParallelLog end");
+      
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async testParallelBulk() {
+    
+    console.log("testParallelBulk start");
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+    
+      
+
+for(var i=0;i<10000000;i++){
+  if(i%10000==0){
+
+  
+console.log(`testParallelBulk doing ${i}`);
+}
+}
+
+
+      const responseJSON = {
+        message: 'success bulk',
+        data: {
+
+        },
+      };
+
+      console.log("testParallelBulk end");
+      
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
 }
 //
