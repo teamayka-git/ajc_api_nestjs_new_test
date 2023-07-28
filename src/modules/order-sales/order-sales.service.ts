@@ -8593,6 +8593,31 @@ export class OrderSalesService {
               _code: 1,
             },
           });
+
+pipeline.push({
+  $lookup: {
+    from: ModelNames.DEPARTMENT,
+    let: { departmentId: '$_departmentId' },
+    pipeline: [
+      {
+        $match: {
+          
+          $expr: { $eq: ['$_id', '$$departmentId'] },
+        },
+      },
+
+      { $project: { _id: 1,_name:1 } },
+    ],
+    as: 'departmentDetails',
+  },
+},
+{
+  $unwind: { path: '$departmentDetails' },
+},);
+
+
+
+
           const userMongoCheckPipeline = () => {
             const pipeline = [];
             pipeline.push({
@@ -8823,6 +8848,7 @@ export class OrderSalesService {
             employeeList: 1,
           },
         });
+        console.log("____department users     "+JSON.stringify(aggregateArray));
         resultWorker = await this.departmentModel.aggregate(aggregateArray);
       }
 
