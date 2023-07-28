@@ -8594,27 +8594,30 @@ export class OrderSalesService {
             },
           });
 
-pipeline.push({
-  $lookup: {
-    from: ModelNames.DEPARTMENT,
-    let: { departmentId: '$_departmentId' },
-    pipeline: [
-      {
-        $match: {
+
+          pipeline.push({
+            $lookup: {
+              from: ModelNames.PROCESS_MASTER,
+              let: { processMasterId: '$_processMasterId' },
+              pipeline: [
+                {
+                  $match: {
+                    
+                    $expr: { $eq: ['$_id', '$$processMasterId'] },
+                  },
+                },
           
-          $expr: { $eq: ['$_id', '$$departmentId'] },
-        },
-      },
-
-      { $project: { _id: 1,_name:1 } },
-    ],
-    as: 'departmentDetails',
-  },
-},
-{
-  $unwind: { path: '$departmentDetails' },
-},);
-
+                { $project: { _id: 1,_name:1 } },
+              ],
+              as: 'processMasterDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$processMasterDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },);
 
 
 
