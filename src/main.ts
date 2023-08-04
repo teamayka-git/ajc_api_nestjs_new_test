@@ -36,7 +36,7 @@ async function bootstrap() {
     credentials: true, //jwt response store in cookie
   });
 
-  // app.use(compression());
+  app.use(compression());
 
   app.setGlobalPrefix(process.env.GLOBAL_PREFIX_FOR_API);
   console.log('satarted----------------');
