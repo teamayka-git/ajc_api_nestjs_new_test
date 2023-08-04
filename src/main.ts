@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { SocketIoAdapter } from './socket/socket_adapter';
 import { config } from 'aws-sdk';
-
+import * as compression from 'compression';
 
 //last
 
@@ -35,6 +35,8 @@ async function bootstrap() {
     origin: '*',
     credentials: true, //jwt response store in cookie
   });
+  
+  app.use(compression());
 
   app.setGlobalPrefix(process.env.GLOBAL_PREFIX_FOR_API);
   console.log('satarted----------------');
