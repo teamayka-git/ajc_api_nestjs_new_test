@@ -277,6 +277,7 @@ export class AppModule {
         process.env.GLOBAL_PREFIX_FOR_API + '/shops/login',
         process.env.GLOBAL_PREFIX_FOR_API + '/branch',
         process.env.GLOBAL_PREFIX_FOR_API + '/generals/list',
+        process.env.GLOBAL_PREFIX_FOR_API + '/tag-masters/list',
         process.env.GLOBAL_PREFIX_FOR_API + '/otp/createOtp',
         process.env.GLOBAL_PREFIX_FOR_API + '/changeUserPassword',
       )
