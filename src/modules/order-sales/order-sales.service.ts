@@ -1683,6 +1683,9 @@ export class OrderSalesService {
     const transactionSession = await this.connection.startSession();
     transactionSession.startTransaction();
     try {
+
+console.log("______ dto order list    "+JSON.stringify(dto))
+
       var arrayAggregation = [];
 
       if (dto.searchingText != '') {
