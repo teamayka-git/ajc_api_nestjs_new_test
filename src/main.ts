@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { SocketIoAdapter } from './socket/socket_adapter';
 import { config } from 'aws-sdk';
-
+import * as compression from 'compression';
 
 //last
 
@@ -36,6 +36,8 @@ async function bootstrap() {
     credentials: true, //jwt response store in cookie
   });
 
+  app.use(compression());
+
   app.setGlobalPrefix(process.env.GLOBAL_PREFIX_FOR_API);
   console.log('satarted----------------');
   app.useGlobalPipes(
@@ -63,6 +65,7 @@ async function bootstrap() {
 
   app.useWebSocketAdapter(new SocketIoAdapter(app, ['*']));
 
+  // await app.listen(process.env.PORT,'0.0.0.0');
   await app.listen(process.env.PORT);
   console.log('satarted----------------_');
 }

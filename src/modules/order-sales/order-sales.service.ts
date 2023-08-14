@@ -8591,8 +8591,37 @@ export class OrderSalesService {
               _id: 1,
               _name: 1,
               _code: 1,
+              _processMasterId:1,
             },
           });
+
+
+          pipeline.push({
+            $lookup: {
+              from: ModelNames.PROCESS_MASTER,
+              let: { processMasterId: '$_processMasterId' },
+              pipeline: [
+                {
+                  $match: {
+                    
+                    $expr: { $eq: ['$_id', '$$processMasterId'] },
+                  },
+                },
+          
+                { $project: { _id: 1,_name:1 } },
+              ],
+              as: 'processMasterDetails',
+            },
+          },
+          {
+            $unwind: {
+              path: '$processMasterDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },);
+
+
+
           const userMongoCheckPipeline = () => {
             const pipeline = [];
             pipeline.push({
@@ -8823,6 +8852,7 @@ export class OrderSalesService {
             employeeList: 1,
           },
         });
+        console.log("____department users     "+JSON.stringify(aggregateArray));
         resultWorker = await this.departmentModel.aggregate(aggregateArray);
       }
 

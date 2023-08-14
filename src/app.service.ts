@@ -3100,6 +3100,26 @@ export class AppService {
         },
         { upsert: true, new: true, session: transactionSession },
       );
+      await this.generalsModel.findOneAndUpdate(
+        { _code: 1029 },
+        {
+          $setOnInsert: {
+            _string: '',
+            _name: 'Out of delivery inscan bypasss',
+            _number: 0,
+            _vlaueType: 0,
+            _json: { basic: 'basic' },
+            _type: 4,
+            _dataGuard: [0, 1, 2],
+            _createdUserId: null,
+            _createdAt: dateTime,
+            _updatedUserId: null,
+            _updatedAt: -1,
+          },
+          $set: { _status: 1 },
+        },
+        { upsert: true, new: true, session: transactionSession },
+      );
       await this.purityModel.findOneAndUpdate(
         { _name: '916' },
         {
@@ -3442,6 +3462,72 @@ export class AppService {
     await transactionSession.endSession();
 
     return { message: 'Success', data: {} };
+  }
+  async testParallelLog() {
+
+
+console.log("testParallelLog start");
+
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+    
+      
+      const responseJSON = {
+        message: 'success log',
+        data: {
+
+        },
+      };
+
+      console.log("testParallelLog end");
+      
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
+  }
+  async testParallelBulk() {
+    
+    console.log("testParallelBulk start");
+    var dateTime = new Date().getTime();
+    const transactionSession = await this.connection.startSession();
+    transactionSession.startTransaction();
+    try {
+    
+      
+
+for(var i=0;i<3000000000;i++){
+  if(i%1000000==0){
+
+  
+console.log(`testParallelBulk doing ${i}`);
+}
+}
+
+
+      const responseJSON = {
+        message: 'success bulk',
+        data: {
+
+        },
+      };
+
+      console.log("testParallelBulk end");
+      
+      await transactionSession.commitTransaction();
+      await transactionSession.endSession();
+      return responseJSON;
+    } catch (error) {
+      await transactionSession.abortTransaction();
+      await transactionSession.endSession();
+      throw error;
+    }
   }
 }
 //

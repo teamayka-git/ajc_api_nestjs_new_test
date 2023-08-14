@@ -197,6 +197,14 @@ export class DeliveryService {
 
       var arraySalesOrderHistories = [];
 
+      var orderHistoryDescription = '';
+      if (
+        dto.isOutOfDeliveryIntransitBypassEnabled != null &&
+        dto.isOutOfDeliveryIntransitBypassEnabled == 1
+      ) {
+        orderHistoryDescription =
+          'with Out of delivery intransit scan bypass done';
+      }
       orderSaleIds.forEach((eachItem) => {
         arraySalesOrderHistories.push({
           _orderSaleId: eachItem,
@@ -206,7 +214,7 @@ export class DeliveryService {
           _deliveryCounterId: null,
           _orderSaleItemId: null,
           _deliveryProviderId: null,
-          _description: '',
+          _description: orderHistoryDescription,
           _createdUserId: _userId_,
           _createdAt: dateTime,
           _status: 1,

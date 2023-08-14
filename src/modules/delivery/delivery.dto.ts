@@ -57,6 +57,13 @@ export class DeliveryCreateDto {
   @ApiProperty({})
   hubId: string;
 
+
+  
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty({})
+  isOutOfDeliveryIntransitBypassEnabled: number;
+
   @IsNumber()
   @ApiProperty({ description: descriptionType })
   type: number;
