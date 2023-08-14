@@ -40,6 +40,8 @@ export class AccountPostInvoiceService {
 
             var vid = new mongoose.Types.ObjectId();
 
+            console.log('Invoice Date____________________' + mapItem.invoiceDate);
+            console.log('VoucherId____________________' + vid);
             // Voucher Head
             arrayToVoucher.push({
               _id: vid,
