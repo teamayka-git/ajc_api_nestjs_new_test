@@ -37,12 +37,12 @@ export class DeliveryCounterBundleService {
     @InjectModel(ModelNames.USER)
     private readonly userModel: mongoose.Model<User>,
 
-    @InjectModel(ModelNames.MATERIAL_STOCKS)
-    private readonly materialStocksModel: mongoose.Model<MterialStocks>,
-    @InjectModel(ModelNames.ACCOUNT_BRANCH)
-    private readonly accountBranchModel: mongoose.Model<AccountBranch>,
+    // @InjectModel(ModelNames.MATERIAL_STOCKS)
+    // private readonly materialStocksModel: mongoose.Model<MterialStocks>,
+    // @InjectModel(ModelNames.ACCOUNT_BRANCH)
+    // private readonly accountBranchModel: mongoose.Model<AccountBranch>,
     @InjectConnection() private readonly connection: mongoose.Connection,
-  ) {}
+  ) { }
   async create(dto: DeliveryCounterBundleCreateDto, _userId_: string) {
     var dateTime = new Date().getTime();
     const transactionSession = await this.connection.startSession();
@@ -152,48 +152,50 @@ export class DeliveryCounterBundleService {
       });
 
       //-- material stock hit start
-      console.log("____material stock start  1");
-      var resultAccountBranch = await this.accountBranchModel
-        .find({ _status: 1 })
-        .limit(1);
-        
-      console.log("____material stock start  1 "+JSON.stringify((resultAccountBranch)));
-      if (resultAccountBranch.length == 0) {
-        throw new HttpException(
-          'Account Branch not found',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+      // console.log('____material stock start  1');
+      // var resultAccountBranch = await this.accountBranchModel
+      //   .find({ _status: 1 })
+      //   .limit(1);
+
+      // console.log(
+      //   '____material stock start  1 ' + JSON.stringify(resultAccountBranch),
+      // );
+      // if (resultAccountBranch.length == 0) {
+      //   throw new HttpException(
+      //     'Account Branch not found',
+      //     HttpStatus.INTERNAL_SERVER_ERROR,
+      //   );
+      // }
 
       var orderSaleIdsMongo = [];
       dto.orderSaleIds.forEach((elementOrderSale) => {
         orderSaleIdsMongo.push(elementOrderSale);
       });
 
-      var resultFromUserMaterialStock = await this.userModel.find({
-        _status: 1,
-        _userType: 5,
-        _customType: { $in: [11] },
-      });
-      if (resultFromUserMaterialStock.length == 0) {
-        throw new HttpException(
-          'Default store user not found',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+      // var resultFromUserMaterialStock = await this.userModel.find({
+      //   _status: 1,
+      //   _userType: 5,
+      //   _customType: { $in: [11] },
+      // });
+      // if (resultFromUserMaterialStock.length == 0) {
+      //   throw new HttpException(
+      //     'Default store user not found',
+      //     HttpStatus.INTERNAL_SERVER_ERROR,
+      //   );
+      // }
 
-      var resultToUserMaterialStock = await this.userModel.find({
-        _status: 1,
-        _deliveryCounterId: dto.deliveryCounterId,
-        _customType: { $in: [12] },
-      });
-      if (resultToUserMaterialStock.length == 0) {
-        throw new HttpException(
-          'To store user not found',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      
+      // var resultToUserMaterialStock = await this.userModel.find({
+      //   _status: 1,
+      //   _deliveryCounterId: dto.deliveryCounterId,
+      //   _customType: { $in: [12] },
+      // });
+      // if (resultToUserMaterialStock.length == 0) {
+      //   throw new HttpException(
+      //     'To store user not found',
+      //     HttpStatus.INTERNAL_SERVER_ERROR,
+      //   );
+      // }
+
       var orderSaleIdsMongo = [];
       dto.orderSaleIds.forEach((elementOrderSale) => {
         orderSaleIdsMongo.push(new mongoose.Types.ObjectId(elementOrderSale));
@@ -338,81 +340,84 @@ export class DeliveryCounterBundleService {
         },
       ]);
 
-      var arrayToMaterialStockTable = [];
+      // var arrayToMaterialStockTable = [];
 
-      resultOrderSaleMainStock.forEach((elementToStock) => {
-        elementToStock.orderSaleItems.forEach((elementToStockItems) => {
-          var meltingPurityMaterialStock =
-            elementToStockItems.subCategoryDetails.categoryDetails.groupDetails
-              ._meltingPurity;
-          var netWeightMaterialStock =
-            elementToStockItems.productDetails._grossWeight;
-          arrayToMaterialStockTable.push({
-            _groupId:
-              elementToStockItems.subCategoryDetails.categoryDetails
-                .groupDetails._id,
-            _subCategoryId: elementToStockItems.subCategoryDetails._id,
-            _voucherId: elementToStock._id,
-            _voucherDetailedId: elementToStockItems._id,
-            _voucherType: 7,
-            _transactionDate: dateTime,
-            _transactionRemark: '',
-            _uidForeign: elementToStock._uid,
-            _userId: resultFromUserMaterialStock[0]._id,
-            _transactionSign: -1,
-            _meltingPrity: meltingPurityMaterialStock,
-            _pureWeightHundred:
-              (netWeightMaterialStock * meltingPurityMaterialStock) / 100,
-            _netWeight: netWeightMaterialStock,
-            _accountBranchId: resultAccountBranch[0]._id,
-            _createdUserId: _userId_,
-            _createdAt: dateTime,
-            _updatedUserId: null,
-            _updatedAt: -1,
-            _status: 1,
-          });
+      // resultOrderSaleMainStock.forEach((elementToStock) => {
+      //   elementToStock.orderSaleItems.forEach((elementToStockItems) => {
+      //     var meltingPurityMaterialStock =
+      //       elementToStockItems.subCategoryDetails.categoryDetails.groupDetails
+      //         ._meltingPurity;
+      //     var netWeightMaterialStock =
+      //       elementToStockItems.productDetails._grossWeight;
+      //     arrayToMaterialStockTable.push({
+      //       _groupId:
+      //         elementToStockItems.subCategoryDetails.categoryDetails
+      //           .groupDetails._id,
+      //       _subCategoryId: elementToStockItems.subCategoryDetails._id,
+      //       _voucherId: elementToStock._id,
+      //       _voucherDetailedId: elementToStockItems._id,
+      //       _voucherType: 7,
+      //       _transactionDate: dateTime,
+      //       _transactionRemark: '',
+      //       _uidForeign: elementToStock._uid,
+      //       _userId: resultFromUserMaterialStock[0]._id,
+      //       _transactionSign: -1,
+      //       _meltingPrity: meltingPurityMaterialStock,
+      //       _pureWeightHundred:
+      //         (netWeightMaterialStock * meltingPurityMaterialStock) / 100,
+      //       _netWeight: netWeightMaterialStock,
+      //       _accountBranchId: resultAccountBranch[0]._id,
+      //       _createdUserId: _userId_,
+      //       _createdAt: dateTime,
+      //       _updatedUserId: null,
+      //       _updatedAt: -1,
+      //       _status: 1,
+      //     });
 
-          arrayToMaterialStockTable.push({
-            _groupId:
-              elementToStockItems.subCategoryDetails.categoryDetails
-                .groupDetails._id,
-            _subCategoryId: elementToStockItems.subCategoryDetails._id,
-            _voucherId: elementToStock._id,
-            _voucherDetailedId: elementToStockItems._id,
-            _voucherType: 7,
-            _transactionDate: dateTime,
-            _transactionRemark: '',
-            _uidForeign: elementToStock._uid,
-            _userId: resultToUserMaterialStock[0]._id,
-            _transactionSign: 1,
-            _meltingPrity: meltingPurityMaterialStock,
-            _pureWeightHundred:
-              (netWeightMaterialStock * meltingPurityMaterialStock) / 100,
-            _netWeight: netWeightMaterialStock,
-            _accountBranchId: resultAccountBranch[0]._id,
-            _createdUserId: _userId_,
-            _createdAt: dateTime,
-            _updatedUserId: null,
-            _updatedAt: -1,
-            _status: 1,
-          });
-        });
-      });
-var asdf=      await this.materialStocksModel.insertMany(arrayToMaterialStockTable, {
-        session: transactionSession,
-      });
-console.log("____ material stock insert   "+JSON.stringify(asdf));
+      //     arrayToMaterialStockTable.push({
+      //       _groupId:
+      //         elementToStockItems.subCategoryDetails.categoryDetails
+      //           .groupDetails._id,
+      //       _subCategoryId: elementToStockItems.subCategoryDetails._id,
+      //       _voucherId: elementToStock._id,
+      //       _voucherDetailedId: elementToStockItems._id,
+      //       _voucherType: 7,
+      //       _transactionDate: dateTime,
+      //       _transactionRemark: '',
+      //       _uidForeign: elementToStock._uid,
+      //       _userId: resultToUserMaterialStock[0]._id,
+      //       _transactionSign: 1,
+      //       _meltingPrity: meltingPurityMaterialStock,
+      //       _pureWeightHundred:
+      //         (netWeightMaterialStock * meltingPurityMaterialStock) / 100,
+      //       _netWeight: netWeightMaterialStock,
+      //       _accountBranchId: resultAccountBranch[0]._id,
+      //       _createdUserId: _userId_,
+      //       _createdAt: dateTime,
+      //       _updatedUserId: null,
+      //       _updatedAt: -1,
+      //       _status: 1,
+      //     });
+      //   });
+      // });
+      // var asdf = await this.materialStocksModel.insertMany(
+      //   arrayToMaterialStockTable,
+      //   {
+      //     session: transactionSession,
+      //   },
+      // );
+      // console.log('____ material stock insert   ' + JSON.stringify(asdf));
       //-- material stock hit end
 
       const responseJSON = { message: 'success', data: result1 };
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
-          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+        GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
         throw new HttpException(
           GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-            JSON.stringify(responseJSON).length,
+          JSON.stringify(responseJSON).length,
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
@@ -485,7 +490,7 @@ console.log("____ material stock insert   "+JSON.stringify(asdf));
       }
       console.log(
         'getDeliveryItemsForCheck   ' +
-          JSON.stringify(getDeliveryItemsForCheck),
+        JSON.stringify(getDeliveryItemsForCheck),
       );
 
       var updateObj = {
@@ -614,11 +619,11 @@ console.log("____ material stock insert   "+JSON.stringify(asdf));
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
-          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+        GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
         throw new HttpException(
           GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-            JSON.stringify(responseJSON).length,
+          JSON.stringify(responseJSON).length,
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
@@ -1761,11 +1766,11 @@ console.log("____ material stock insert   "+JSON.stringify(asdf));
       if (
         process.env.RESPONSE_RESTRICT == 'true' &&
         JSON.stringify(responseJSON).length >=
-          GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
+        GlobalConfig().RESPONSE_RESTRICT_DEFAULT_COUNT
       ) {
         throw new HttpException(
           GlobalConfig().RESPONSE_RESTRICT_RESPONSE +
-            JSON.stringify(responseJSON).length,
+          JSON.stringify(responseJSON).length,
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
