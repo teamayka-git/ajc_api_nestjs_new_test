@@ -1408,7 +1408,7 @@ export class OrderSalesService {
         );
       }
 
-      if (dto.workStatus == 1) {
+      if (dto.workStatus == 1) { 
         var arrayDesignWithQty = [];
         var resultOrderSaleItems = await this.orderSaleItemsModel.find({
           _status: 1,
@@ -1469,7 +1469,40 @@ export class OrderSalesService {
             session: transactionSession,
           },
         );
+
+
+
+
+
+
+
+
+
+      }else if (dto.workStatus == 27){
+
+        
+        await this.orderSaleSetProcessModel.findOneAndUpdate(
+          {
+            _orderSaleId:dto.orderSaleIds ,_status:1,_orderStatus:{$in:[0,1,2,4]}
+          },
+          {
+            $set: {
+              _orderStatus:7,
+              _updatedUserId: _userId_,
+              _updatedAt: dateTime,
+            },
+          },
+          { new: true, session: transactionSession },
+        );
+
       }
+
+
+
+
+
+
+
 
       if (
         dto.productIdsForStockRemove != null &&

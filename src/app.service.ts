@@ -587,7 +587,7 @@ export class AppService {
           resultUserDetails[0].employeeDetails.departmentDetails._code == 1003
         ) {
           //worker
-          wCountPendingOrder = await this.osSetPrcosessModel.count({
+          wCountPendingOrder = await this.osSetPrcosessModel.count({ 
             _userId: _userId_,
             _orderStatus: { $nin: [3, 5, 6, 7] },
             _status: 1,
