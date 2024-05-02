@@ -22,7 +22,14 @@ export class SmsUtils {
   }
 
   async  sendSmsSMSBits(toNumber:String,otp:String,userName:String)  {
-    fetch(`https://app.smsbits.in/api/web?id=OTk5NTg0Mzk4NQ&senderid=AJCAST&to=${toNumber}&msg=Dear ${userName}, you OTP is ${otp}. Thank you for using our service by CNTSMS&port=TA&dltid=9995843985&tempid=1707161960458377485`, {
+    fetch(
+      
+      // `https://app.smsbits.in/api/web?id=OTk5NTg0Mzk4NQ&senderid=AJCAST&to=${toNumber}&msg=Dear ${userName}, you OTP is ${otp}. Thank you for using our service by CNTSMS&port=TA&dltid=9995843985&tempid=1707161960458377485`
+      `https://app.smsbits.in/api/web?id=OTQwMDI1MjMwMg&senderid=SMSBIT&to=${toNumber}&msg=Dear ${userName},this is your ${otp} --- to login the user account. SMSBIT&port=TA&dltid=9400252302&tempid=1707168836463685702`
+    
+    
+    
+      , {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: '{}'
