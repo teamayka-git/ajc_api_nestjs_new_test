@@ -9,7 +9,7 @@ import { SocketIoAdapter } from './socket/socket_adapter';
 import { config } from 'aws-sdk';
 import * as compression from 'compression';
 
-//last
+//last   
 
 async function bootstrap() {
   config.update({
@@ -67,7 +67,7 @@ async function bootstrap() {
 
   // await app.listen(process.env.PORT,'0.0.0.0');
   await app.listen(process.env.PORT);
-  console.log('satarted----------------_');
+  console.log('satarted----------------___');
 }
 bootstrap();
    
