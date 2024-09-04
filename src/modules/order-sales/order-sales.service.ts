@@ -182,19 +182,22 @@ export class OrderSalesService {
         //     }
         //   }
         // }
+
+        console.log('___d1.1.1.1');
+
         for (var i = 0; i < file['documents'].length; i++) {
           var resultUpload = await new S3BucketUtils().uploadMyFile(
             file['documents'][i],
             UploadedFileDirectoryPath.GLOBAL_GALLERY_SHOP,
           );
-
+          console.log('___d1.1.1.2');
           if (resultUpload['status'] == 0) {
             throw new HttpException(
               'File upload error',
               HttpStatus.INTERNAL_SERVER_ERROR,
             );
           }
-
+          console.log('___d1.1.1.3');
           var count = dto.arrayDocuments.findIndex(
             (it) => it.fileOriginalName == file['documents'][i]['originalname'],
           );
